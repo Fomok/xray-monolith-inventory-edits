@@ -49,8 +49,10 @@ void CWeaponMagazinedWGrenade::Load(LPCSTR section)
 	LoadLauncherKoeffs();
 
 	// load ammo classes SECOND (grenade_class)
+	// demonized: support for "grenade_class" field in grenade launcher section
 	m_ammoTypes2.clear();
-	LPCSTR S = pSettings->r_string(section, "grenade_class");
+	LPCSTR sec = m_eGrenadeLauncherStatus == ALife::eAddonAttachable && pSettings->section_exist(GetGrenadeLauncherName()) && pSettings->line_exist(GetGrenadeLauncherName(), "grenade_class") ? GetGrenadeLauncherName().c_str() : section;
+	LPCSTR S = pSettings->r_string(sec, "grenade_class");
 	if (S && S[0])
 	{
 		string128 _ammoItem;
@@ -61,7 +63,7 @@ void CWeaponMagazinedWGrenade::Load(LPCSTR section)
 			m_ammoTypes2.push_back(_ammoItem);
 		}
 	}
-
+		
 	iMagazineSize2 = iMagazineSize;
 }
 
@@ -120,6 +122,21 @@ BOOL CWeaponMagazinedWGrenade::net_Spawn(CSE_Abstract* DC)
 		}
 	}
 	return l_res;
+}
+
+// demonized: add and remove grenade class for a weapon
+void CWeaponMagazinedWGrenade::AddGrenadeClass(LPCSTR ammo_sect)
+{
+	shared_str s = ammo_sect;
+	if (std::find(m_ammoTypes2.begin(), m_ammoTypes2.end(), s) == m_ammoTypes2.end()) {
+		m_ammoTypes2.push_back(s);
+	}
+}
+
+void CWeaponMagazinedWGrenade::RemoveGrenadeClass(LPCSTR ammo_sect)
+{
+	shared_str s = ammo_sect;
+	m_ammoTypes2.erase(std::remove(m_ammoTypes2.begin(), m_ammoTypes2.end(), s), m_ammoTypes2.end());
 }
 
 void CWeaponMagazinedWGrenade::switch2_Reload()

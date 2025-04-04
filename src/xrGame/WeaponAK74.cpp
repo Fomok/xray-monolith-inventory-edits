@@ -61,6 +61,10 @@ void CWeaponAK74::script_register	(lua_State *L)
 			.def("SetAmmoType", &CWeapon::SetAmmoType)
 			.def("GetAmmoType", &CWeapon::GetAmmoType)
 			.def("AmmoTypeForEach", &CWeapon::AmmoTypeForEach)
+
+			.def("AddAmmoClass", &CWeapon::AddAmmoClass)
+			.def("RemoveAmmoClass", &CWeapon::RemoveAmmoClass)
+
 			.def("RPM", &CWeapon::RPMScript)
 			.def("RealRPM", &CWeapon::RealRPMScript)
 			.def("ModeRPM", &CWeapon::ModeRPMScript)
@@ -217,5 +221,8 @@ void CWeaponAK74::script_register	(lua_State *L)
 			.def("SetAmmoType2", &CWeaponMagazinedWGrenade::SetAmmoType2)
 			.def("GetAmmoType2", &CWeaponMagazinedWGrenade::GetAmmoType2)
 			.def("AmmoTypeForEach2", &CWeaponMagazinedWGrenade::AmmoTypeForEach2)
+
+			.def("AddGrenadeClass", &CWeaponMagazinedWGrenade::AddGrenadeClass)
+			.def("RemoveGrenadeClass", &CWeaponMagazinedWGrenade::RemoveGrenadeClass)
 	];
 }

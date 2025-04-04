@@ -176,6 +176,13 @@ class_<CScriptGameObject>& script_register_game_object1(class_<CScriptGameObject
 		.def("set_ammo_type", &CScriptGameObject::SetAmmoType)
 		.def("get_ammo_type", &CScriptGameObject::GetAmmoType)
 		.def("get_ammo_count_for_type", &CScriptGameObject::GetAmmoCount)
+
+		// demonized: add and remove ammo class for a weapon
+		.def("add_ammo_class", &CScriptGameObject::AddAmmoClass)
+		.def("remove_ammo_class", &CScriptGameObject::RemoveAmmoClass)
+		.def("add_grenade_class", &CScriptGameObject::AddGrenadeClass)
+		.def("remove_grenade_class", &CScriptGameObject::RemoveGrenadeClass)
+
 		.def("get_main_weapon_type", &CScriptGameObject::GetMainWeaponType)
 		.def("get_weapon_type", &CScriptGameObject::GetWeaponType)
 		.def("set_main_weapon_type", &CScriptGameObject::SetMainWeaponType)

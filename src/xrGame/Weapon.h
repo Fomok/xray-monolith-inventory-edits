@@ -1014,6 +1014,9 @@ protected:
 public:
 	xr_vector<shared_str> m_ammoTypes;
 
+	void AddAmmoClass(LPCSTR ammo_sect);
+	void RemoveAmmoClass(LPCSTR ammo_sect);
+
 	DEFINE_VECTOR(shared_str, SCOPES_VECTOR, SCOPES_VECTOR_IT);
 	SCOPES_VECTOR m_scopes;
 	u8 m_cur_scope;

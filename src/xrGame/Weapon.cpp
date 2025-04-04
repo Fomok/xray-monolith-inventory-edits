@@ -550,6 +550,21 @@ void CWeapon::ForceUpdateFireParticles()
 	}
 }
 
+// demonized: add and remove ammo class for a weapon
+void CWeapon::AddAmmoClass(LPCSTR ammo_sect)
+{
+	shared_str s = ammo_sect;
+	if (std::find(m_ammoTypes.begin(), m_ammoTypes.end(), s) == m_ammoTypes.end()) {
+		m_ammoTypes.push_back(s);
+	}
+}
+
+void CWeapon::RemoveAmmoClass(LPCSTR ammo_sect)
+{
+	shared_str s = ammo_sect;
+	m_ammoTypes.erase(std::remove(m_ammoTypes.begin(), m_ammoTypes.end(), s), m_ammoTypes.end());
+}
+
 void CWeapon::Load(LPCSTR section)
 {
 	inherited::Load(section);

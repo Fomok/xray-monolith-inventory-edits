@@ -957,6 +957,10 @@ public:
 	bool HasAmmoType(u8 type);
 	int GetAmmoCount(u8 type);
 	void SetAmmoType(u8 type);
+	void AddAmmoClass(LPCSTR ammo_section);
+	void RemoveAmmoClass(LPCSTR ammo_section);
+	void AddGrenadeClass(LPCSTR ammo_section);
+	void RemoveGrenadeClass(LPCSTR ammo_section);
 	void SetMainWeaponType(u32 type);
 	void SetWeaponType(u32 type);
 	u32 GetMainWeaponType();

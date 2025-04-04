@@ -627,6 +627,52 @@ u8 CScriptGameObject::GetAmmoType()
 	return weapon->GetAmmoType();
 }
 
+// demonized: add and remove ammo class for a weapon
+void CScriptGameObject::AddAmmoClass(LPCSTR ammo_section) {
+	CWeapon* weapon = smart_cast<CWeapon*>(&object());
+	if (!weapon) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+			"CWeapon : cannot access class member AddAmmoClass!");
+		return;
+	}
+
+	weapon->AddAmmoClass(ammo_section);
+}
+
+void CScriptGameObject::RemoveAmmoClass(LPCSTR ammo_section) {
+	CWeapon* weapon = smart_cast<CWeapon*>(&object());
+	if (!weapon) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+			"CWeapon : cannot access class member RemoveAmmoClass!");
+		return;
+	}
+
+	weapon->RemoveAmmoClass(ammo_section);
+}
+
+void CScriptGameObject::AddGrenadeClass(LPCSTR ammo_section) {
+	CWeaponMagazinedWGrenade* weapon = smart_cast<CWeaponMagazinedWGrenade*>(&object());
+	if (!weapon) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+			"CWeaponMagazinedWGrenade : cannot access class member AddGrenadeClass!");
+		return;
+	}
+
+	weapon->AddGrenadeClass(ammo_section);
+}
+
+void CScriptGameObject::RemoveGrenadeClass(LPCSTR ammo_section) {
+	CWeaponMagazinedWGrenade* weapon = smart_cast<CWeaponMagazinedWGrenade*>(&object());
+	if (!weapon) {
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+			"CWeaponMagazinedWGrenade : cannot access class member RemoveGrenadeClass!");
+		return;
+	}
+
+	weapon->RemoveGrenadeClass(ammo_section);
+}
+
+
 void CScriptGameObject::SetMainWeaponType(u32 type)
 {
 	CWeapon* weapon = smart_cast<CWeapon*>(&object());

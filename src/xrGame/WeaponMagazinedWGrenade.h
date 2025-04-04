@@ -40,6 +40,9 @@ public:
 
 	virtual void OnStateSwitch(u32 S, u32 oldState);
 
+	void AddGrenadeClass(LPCSTR ammo_sect);
+	void RemoveGrenadeClass(LPCSTR ammo_sect);
+
 	virtual void switch2_Reload();
 	virtual void switch2_StartAim();
 	virtual void switch2_EndAim();
