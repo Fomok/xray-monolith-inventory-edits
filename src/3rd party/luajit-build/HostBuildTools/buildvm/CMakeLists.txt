@@ -33,8 +33,14 @@ target_include_directories(buildvm
 target_compile_options(buildvm
 	PRIVATE
 	${HOST_ACFLAGS}
-    -Wno-discarded-qualifiers
 )
+
+if (NOT MSVC)
+	target_compile_options(buildvm
+		PRIVATE
+		-Wno-discarded-qualifiers
+	)
+endif()
 
 target_link_options(buildvm
     PRIVATE
