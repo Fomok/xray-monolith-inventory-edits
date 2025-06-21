@@ -1,4 +1,4 @@
-add_executable(xrEngine)
+add_executable(xrEngine WIN32)
 
 target_sources(xrEngine PRIVATE
     "../3rd party/discord/achievement_manager.cpp"
@@ -143,7 +143,7 @@ target_link_libraries(xrEngine
   xrCore
   xrCDB
   xrSound
-  luajit-2
+  xrLuaJIT
   luabind
   xrAPI
   xrRender_R4
