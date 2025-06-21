@@ -1,0 +1,38 @@
+add_library(xrNetServer STATIC)
+
+target_sources(xrNetServer PRIVATE
+  ip_filter.cpp
+  NET_AuthCheck.cpp
+  NET_Client.cpp
+  NET_Common.cpp
+  NET_Compressor.cpp
+  NET_Log.cpp
+  NET_Server.cpp
+  stdafx.cpp
+)
+
+target_include_directories(xrNetServer
+  PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_SOURCE_DIR}/src/3rd party/dxerr"
+  "${CMAKE_SOURCE_DIR}/sdk/include"
+)
+
+target_compile_definitions(xrNetServer
+  PUBLIC
+  NDEBUG
+  XR_NETSERVER_EXPORTS
+
+  PRIVATE
+  WIN32
+  _WINDOWS
+  _SECURE_SCL=0
+)
+
+target_precompile_headers(xrNetServer
+  PRIVATE stdafx.h
+)
+
+enable_parallel_build(xrNetServer)
+disable_exceptions()
+silence_stdext_hash_deprecation_warnings(xrNetServer)

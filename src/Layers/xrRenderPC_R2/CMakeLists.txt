@@ -1,0 +1,225 @@
+add_library(xrRender_R2 STATIC)
+
+target_sources(xrRender_R2 PRIVATE
+    ../../xrEngine/ai_script_lua_debug.cpp
+    ../../xrEngine/ai_script_lua_extension.cpp
+    ../xrRenderDX9/dx9r_constants_cache.cpp
+    ../xrRender/Animation.cpp
+    ../xrRender/blenders/Blender.cpp
+    ../xrRender/blenders/Blender_Palette.cpp
+    ../xrRender/blenders/Blender_Recorder.cpp
+    ../xrRender/Blender_BmmD.cpp
+    ../xrRender/Blender_detail_still.cpp
+    ../xrRender/Blender_Editor_Selection.cpp
+    ../xrRender/Blender_Editor_Wire.cpp
+    "../xrRender/Blender_Lm(EbB).cpp"
+    ../xrRender/Blender_Model_EbB.cpp
+    ../xrRender/Blender_Particle.cpp
+    ../xrRender/Blender_Recorder_R2.cpp
+    ../xrRender/Blender_Recorder_StandartBinding.cpp
+    ../xrRender/Blender_Screen_SET.cpp
+    ../xrRender/Blender_tree.cpp
+    ../xrRender/ColorMapManager.cpp
+    ../xrRender/D3DUtils.cpp
+    ../xrRender/DetailManager.cpp
+    ../xrRender/DetailManager_CACHE.cpp
+    ../xrRender/DetailManager_Decompress.cpp
+    ../xrRender/DetailManager_soft.cpp
+    ../xrRender/DetailManager_VS.cpp
+    ../xrRender/DetailModel.cpp
+    ../xrRender/du_box.cpp
+    ../xrRender/du_cone.cpp
+    ../xrRender/du_cylinder.cpp
+    ../xrRender/du_sphere.cpp
+    ../xrRender/du_sphere_part.cpp
+    ../xrRender/dxApplicationRender.cpp
+    ../xrRender/dxConsoleRender.cpp
+    ../xrRender/dxDebugRender.cpp
+    ../xrRender/dxEnvironmentRender.cpp
+    ../xrRender/dxFontRender.cpp
+    ../xrRender/dxImGuiRender.cpp
+    ../xrRender/dxLensFlareRender.cpp
+    ../xrRender/dxObjectSpaceRender.cpp
+    ../xrRender/dxParticleCustom.cpp
+    ../xrRender/dxRainRender.cpp
+    ../xrRender/dxRenderDeviceRender.cpp
+    ../xrRender/dxRenderFactory.cpp
+    ../xrRender/dxStatGraphRender.cpp
+    ../xrRender/dxStatsRender.cpp
+    ../xrRender/dxThunderboltDescRender.cpp
+    ../xrRender/dxThunderboltRender.cpp
+    ../xrRender/dxUIRender.cpp
+    ../xrRender/dxUISequenceVideoItem.cpp
+    ../xrRender/dxUIShader.cpp
+    ../xrRender/dxWallMarkArray.cpp
+    ../xrRender/ETextureParams.cpp
+    ../xrRender/FBasicVisual.cpp
+    ../xrRender/FHierrarhyVisual.cpp
+    ../xrRender/FLOD.cpp
+    ../xrRender/FProgressive.cpp
+    ../xrRender/FSkinned.cpp
+    ../xrRender/FTreeVisual.cpp
+    ../xrRender/FVisual.cpp
+    ../xrRender/HOM.cpp
+    ../xrRender/HW.cpp
+    ../xrRender/HWCaps.cpp
+    ../xrRender/light.cpp
+    ../xrRender/LightTrack.cpp
+    ../xrRender/Light_DB.cpp
+    ../xrRender/Light_Package.cpp
+    ../xrRender/ModelPool.cpp
+    ../xrRender/NvTriStrip.cpp
+    ../xrRender/NvTriStripObjects.cpp
+    ../xrRender/occRasterizer.cpp
+    ../xrRender/occRasterizer_core.cpp
+    ../xrRender/ParticleEffect.cpp
+    ../xrRender/ParticleEffectActions.cpp
+    ../xrRender/ParticleEffectDef.cpp
+    ../xrRender/ParticleGroup.cpp
+    ../xrRender/PSLibrary.cpp
+    ../xrRender/rendertarget_phase_blur.cpp
+    ../xrRender/rendertarget_phase_dof.cpp
+    ../xrRender/rendertarget_phase_lut.cpp
+    ../xrRender/rendertarget_phase_nightvision.cpp
+    ../xrRender/rendertarget_phase_gasmask_drops.cpp
+    ../xrRender/rendertarget_phase_gasmask_dudv.cpp
+    ../xrRender/rendertarget_phase_pp_bloom.cpp
+    ../xrRender/rendertarget_phase_smaa.cpp
+    ../xrRender/rendertarget_phase_sunshafts.cpp
+    ../xrRender/ResourceManager.cpp
+    ../xrRender/ResourceManager_Loader.cpp
+    ../xrRender/ResourceManager_Reset.cpp
+    ../xrRender/ResourceManager_Resources.cpp
+    ../xrRender/ResourceManager_Scripting.cpp
+    ../xrRender/R_Backend.cpp
+    ../xrRender/R_Backend_DBG.cpp
+    ../xrRender/R_Backend_hemi.cpp
+    ../xrRender/R_Backend_Runtime.cpp
+    ../xrRender/R_Backend_tree.cpp
+    ../xrRender/R_Backend_xform.cpp
+    ../xrRender/r_constants.cpp
+    ../xrRender/R_DStreams.cpp
+    ../xrRender/r__dsgraph_build.cpp
+    ../xrRender/r__dsgraph_render.cpp
+    ../xrRender/r__dsgraph_render_lods.cpp
+    ../xrRender/r__occlusion.cpp
+    ../xrRender/r__pixel_calculator.cpp
+    ../xrRender/r__screenshot.cpp
+    ../xrRender/r__sector.cpp
+    ../xrRender/r__sector_traversal.cpp
+    ../xrRender/Shader.cpp
+    ../xrRender/SH_Atomic.cpp
+    ../xrRender/SH_Constant.cpp
+    ../xrRender/SH_Matrix.cpp
+    ../xrRender/SH_RT.cpp
+    ../xrRender/SH_Texture.cpp
+    ../xrRender/SkeletonAnimated.cpp
+    ../xrRender/SkeletonCustom.cpp
+    ../xrRender/SkeletonRigid.cpp
+    ../xrRender/SkeletonX.cpp
+    ../xrRender/stats_manager.cpp
+    ../xrRender/Texture.cpp
+    ../xrRender/TextureDescrManager.cpp
+    ../xrRender/tga.cpp
+    ../xrRender/tss_def.cpp
+    ../xrRender/uber_deffer.cpp
+    ../xrRender/VertexCache.cpp
+    ../xrRender/WallmarksEngine.cpp
+    ../xrRender/xrRender_console.cpp
+    ../xrRender/xrStripify.cpp
+    ../xrRender/xr_effgamma.cpp
+    blender_bloom_build.cpp
+    blender_blur.cpp
+    blender_combine.cpp
+    blender_deffer_aref.cpp
+    blender_deffer_flat.cpp
+    blender_deffer_model.cpp
+    blender_dof.cpp
+    blender_lut.cpp
+    blender_nightvision.cpp
+    blender_gasmask_drops.cpp
+    blender_gasmask_dudv.cpp
+    blender_light_direct.cpp
+    blender_light_direct_cascade.cpp
+    blender_light_mask.cpp
+    blender_light_occq.cpp
+    blender_light_point.cpp
+    blender_light_reflected.cpp
+    blender_light_spot.cpp
+    blender_luminance.cpp
+    blender_pp_bloom.cpp
+    blender_smaa.cpp
+    blender_ssao.cpp
+    blender_ss_sunshafts.cpp
+    light_GI.cpp
+    Light_Render_Direct.cpp
+    Light_Render_Direct_ComputeXFS.cpp
+    light_smapvis.cpp
+    light_vis.cpp
+    r2.cpp
+    r2_blenders.cpp
+    r2_loader.cpp
+    r2_rendertarget.cpp
+    r2_rendertarget_accum_direct.cpp
+    r2_rendertarget_accum_omnipart_geom.cpp
+    r2_rendertarget_accum_point.cpp
+    r2_rendertarget_accum_point_geom.cpp
+    r2_rendertarget_accum_reflected.cpp
+    r2_rendertarget_accum_spot.cpp
+    r2_rendertarget_accum_spot_geom.cpp
+    r2_rendertarget_draw_volume.cpp
+    r2_rendertarget_enable_scissor.cpp
+    r2_rendertarget_phase_accumulator.cpp
+    r2_rendertarget_phase_bloom.cpp
+    r2_rendertarget_phase_combine.cpp
+    r2_rendertarget_phase_luminance.cpp
+    r2_rendertarget_phase_occq.cpp
+    r2_rendertarget_phase_PP.cpp
+    r2_rendertarget_phase_scene.cpp
+    r2_rendertarget_phase_smap_D.cpp
+    r2_rendertarget_phase_smap_S.cpp
+    r2_rendertarget_phase_ssao.cpp
+    r2_R_calculate.cpp
+    r2_R_lights.cpp
+    r2_R_render.cpp
+    r2_R_sun.cpp
+    r2_sector_detect.cpp
+    r2_test_hw.cpp
+    stdafx.cpp
+    xrRender_R2.cpp
+)
+
+target_precompile_headers(xrRender_R2
+  PRIVATE stdafx.h
+)
+
+target_include_directories(xrRender_R2
+  PRIVATE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_SOURCE_DIR}/sdk/include"
+  "${CMAKE_SOURCE_DIR}/sdk/include/dxsdk"
+  "${CMAKE_SOURCE_DIR}/sdk/include/nvapi"
+  "${CMAKE_SOURCE_DIR}/src/3rd party"
+  "${CMAKE_SOURCE_DIR}/src/3rd party/imgui"
+  "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
+  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
+)
+
+target_compile_definitions(xrRender_R2
+  PUBLIC
+  NDEBUG
+  XRRENDER_R2_EXPORTS
+
+  PRIVATE
+  WIN32
+  _WINDOWS
+  _USRDLL
+)
+
+target_precompile_headers(xrRender_R2
+  PRIVATE stdafx.h
+)
+
+enable_parallel_build(xrRender_R2)
+disable_exceptions()
+silence_stdext_hash_deprecation_warnings(xrRender_R2)

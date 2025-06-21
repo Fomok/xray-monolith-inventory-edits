@@ -1,0 +1,8 @@
+add_subdirectory("xrAPI")
+#add_subdirectory("xrRender")
+#add_subdirectory("xrRenderDX10")
+#add_subdirectory("xrRenderDX9")
+add_subdirectory("xrRenderPC_R1")
+add_subdirectory("xrRenderPC_R2")
+add_subdirectory("xrRenderPC_R3")
+add_subdirectory("xrRenderPC_R4")
