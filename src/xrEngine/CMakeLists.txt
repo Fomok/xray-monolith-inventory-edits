@@ -103,6 +103,8 @@ target_sources(xrEngine PRIVATE
     xr_object_list.cpp
     x_ray.cpp
     _scripting.cpp
+
+    resource.rc
 )
 
 target_precompile_headers(xrEngine

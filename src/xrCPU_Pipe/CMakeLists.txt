@@ -8,6 +8,8 @@ target_sources(xrCPU_Pipe PRIVATE
     xrSkin2W.cpp
     xrSkin2W_SSE.cpp
     xrSkin2W_thread.cpp
+
+    xrCPU_Pipe.rc
 )
 
 target_include_directories(xrCPU_Pipe

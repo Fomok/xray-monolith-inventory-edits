@@ -5,6 +5,8 @@ target_sources(OpenAL32 PRIVATE
     OpenAL-Windows/Router/alc.cpp
     OpenAL-Windows/Router/alList.cpp
     OpenAL-Windows/Router/OpenAL32.cpp
+
+    OpenAL-Windows/Router/OpenAL32.rc
 )
 
 target_include_directories(OpenAL32

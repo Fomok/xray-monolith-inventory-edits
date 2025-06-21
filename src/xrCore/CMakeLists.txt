@@ -66,6 +66,8 @@ target_sources(xrCore PRIVATE
     _math.cpp
     _sphere.cpp
     _std_extensions.cpp
+
+    xrCore.rc
 )
 
 target_include_directories(xrCore
