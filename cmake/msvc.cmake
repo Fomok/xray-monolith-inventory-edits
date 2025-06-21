@@ -190,6 +190,7 @@ set(includes ucrt shared um winrt cppwinrt)
 set(libs ucrt um)
 
 list(TRANSFORM includes PREPEND "${XRAY_MSVS_WINDOWS_SDK_ROOT}/Include/${XRAY_MSVS_WINDOWS_SDK_VERSION}/")
+
 list(TRANSFORM lib PREPEND "${XRAY_MSVS_WINDOWS_SDK_ROOT}/Lib/${XRAY_MSVS_WINDOWS_SDK_VERSION}/")
 list(TRANSFORM lib APPEND "/${windows.sdk.target}")
 
@@ -204,4 +205,5 @@ cmake_path(
     NORMALIZE)
 
 set(msvc.include ${msvc.tools.include} ${msvc.sdk.include})
+set(msvc.lib ${lib})
 
