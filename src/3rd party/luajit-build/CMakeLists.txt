@@ -22,9 +22,9 @@ set(ABIVER 5.1)
 set(NODOTABIVER 51)
 
 set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk")
-set(LUAJIT_DIR ${CMAKE_SOURCE_DIR}/Externals/LuaJIT/src CACHE PATH "Location of luajit sources")
+set(LUAJIT_DIR "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src" CACHE PATH "Location of luajit sources")
 
-option(LUAJIT_BUILD_STATIC_LIB "Build as static library" OFF)
+option(LUAJIT_BUILD_STATIC_LIB "Build as static library" ON)
 option(LUAJIT_BUILD_APP "Build application" OFF)
 
 # NOTE: Not working because there is no lib_package_rel.c file
@@ -85,6 +85,9 @@ else()
     add_library(xrLuaJIT SHARED)
 endif()
 
+# Output as lua51 to satisfy Anomaly's xrEngine implementation
+set_target_properties(xrLuaJIT PROPERTIES OUTPUT_NAME "lua51")
+
 # Compiler options
 if (PROJECT_PLATFORM_E2K)
     # O3 on E2K mcst-lcc approximately equal to O2 at X86/ARM gcc
@@ -106,12 +109,12 @@ set(CCOPT "${CCOPT} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE
 string(REPLACE " " ";" CCOPT "${CCOPT}")
 
 if (NOT MSVC)
-add_compile_options(
+  add_compile_options(
     -Wdeclaration-after-statement
     -Wredundant-decls
     -Wshadow
     -Wpointer-arith
-)
+  )
 endif()
 
 if (LUAJIT_DISABLE_FFI)
@@ -215,10 +218,10 @@ if (WIN32)
     #string(APPEND TARGET_STRIP "--strip-unneeded")
 
     if (NOT MSVC)
-    target_link_options(xrLuaJIT
-        PRIVATE
-        " -shared -Wl,--out-implib,libluajit-${ABIVER}.dll.a"
-    )
+        target_link_options(xrLuaJIT
+            PRIVATE
+            " -shared -Wl,--out-implib,libluajit-${ABIVER}.dll.a"
+        )
     endif()
 
     if (NOT LUAJIT_BUILD_STATIC_LIB)
@@ -356,7 +359,7 @@ set(BUILDVM_ARCH "${CMAKE_CURRENT_BINARY_DIR}/buildvm_arch.h")
 
 # Generate buildvm arch header
 set(MINILUA_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/HostBuildTools/minilua")
-set(MINILUA_FILE "${MINILUA_BINARY_DIR}/minilua")
+set(MINILUA_FILE "${MINILUA_BINARY_DIR}/Release/minilua")
 
 add_custom_command(
     OUTPUT "${MINILUA_FILE}"
@@ -389,7 +392,7 @@ set_target_properties(buildvm_arch PROPERTIES
 
 # Buildvm
 set(BUILDVM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/HostBuildTools/buildvm")
-set(BUILDVM_FILE "${BUILDVM_BINARY_DIR}/buildvm")
+set(BUILDVM_FILE "${BUILDVM_BINARY_DIR}/Release/buildvm")
 
 add_custom_command(
     OUTPUT "${BUILDVM_FILE}"
@@ -483,14 +486,14 @@ else()
         "${LUAJIT_DIR}/lj_api.c"
         "${LUAJIT_DIR}/lj_asm.c"
         "${LUAJIT_DIR}/lj_asm.h"
-        "${LUAJIT_DIR}/lj_assert.c"
+        #"${LUAJIT_DIR}/lj_assert.c"
         "${LUAJIT_DIR}/lj_bc.c"
         "${LUAJIT_DIR}/lj_bc.h"
         "${LUAJIT_DIR}/lj_bcdump.h"
         "${LUAJIT_DIR}/lj_bcread.c"
         "${LUAJIT_DIR}/lj_bcwrite.c"
-        "${LUAJIT_DIR}/lj_buf.c"
-        "${LUAJIT_DIR}/lj_buf.h"
+        #"${LUAJIT_DIR}/lj_buf.c"
+        #"${LUAJIT_DIR}/lj_buf.h"
         "${LUAJIT_DIR}/lj_carith.c"
         "${LUAJIT_DIR}/lj_carith.h"
         "${LUAJIT_DIR}/lj_ccall.c"
@@ -553,10 +556,10 @@ else()
         "${LUAJIT_DIR}/lj_opt_split.c"
         "${LUAJIT_DIR}/lj_parse.c"
         "${LUAJIT_DIR}/lj_parse.h"
-        "${LUAJIT_DIR}/lj_prng.c"
-        "${LUAJIT_DIR}/lj_prng.h"
-        "${LUAJIT_DIR}/lj_profile.c"
-        "${LUAJIT_DIR}/lj_profile.h"
+        #"${LUAJIT_DIR}/lj_prng.c"
+        #"${LUAJIT_DIR}/lj_prng.h"
+        #"${LUAJIT_DIR}/lj_profile.c"
+        #"${LUAJIT_DIR}/lj_profile.h"
         "${LUAJIT_DIR}/lj_record.c"
         "${LUAJIT_DIR}/lj_record.h"
         "${LUAJIT_DIR}/lj_snap.c"
@@ -565,9 +568,9 @@ else()
         "${LUAJIT_DIR}/lj_state.h"
         "${LUAJIT_DIR}/lj_str.c"
         "${LUAJIT_DIR}/lj_str.h"
-        "${LUAJIT_DIR}/lj_strfmt.c"
-        "${LUAJIT_DIR}/lj_strfmt.h"
-        "${LUAJIT_DIR}/lj_strfmt_num.c"
+        #"${LUAJIT_DIR}/lj_strfmt.c"
+        #"${LUAJIT_DIR}/lj_strfmt.h"
+        #"${LUAJIT_DIR}/lj_strfmt_num.c"
         "${LUAJIT_DIR}/lj_strscan.c"
         "${LUAJIT_DIR}/lj_strscan.h"
         "${LUAJIT_DIR}/lj_tab.c"
@@ -586,6 +589,8 @@ else()
         "${LUAJIT_DIR}/luaconf.h"
         "${LUAJIT_DIR}/luajit.h"
         "${LUAJIT_DIR}/lualib.h"
+
+        "${LUAJIT_DIR}/xr_alloc.c"
     )
 endif()
 
@@ -604,10 +609,10 @@ target_link_libraries(xrLuaJIT
 )
 
 if (NOT MSVC)
-target_compile_options(xrLuaJIT
-    PRIVATE
-    -Wno-comment
-)
+  target_compile_options(xrLuaJIT
+      PRIVATE
+      -Wno-comment
+  )
 endif()
 
 set_target_properties(xrLuaJIT PROPERTIES
