@@ -111,7 +111,11 @@ target_precompile_headers(xrEngine
   PRIVATE stdafx.h
 )
 
-target_include_directories(xrEngine PUBLIC
+add_executable_manifest(xrEngine
+  "${CMAKE_SOURCE_DIR}/src/xrEngine/as-invoker-manifest-part.xml")
+
+target_include_directories(xrEngine
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
   "${CMAKE_SOURCE_DIR}/src/3rd party"
   "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"

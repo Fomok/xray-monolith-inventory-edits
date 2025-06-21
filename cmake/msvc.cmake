@@ -4,6 +4,19 @@
 
 include_guard(GLOBAL)
 
+## Manifest tool abstraction
+
+macro(add_executable_manifest target manifest)
+  if (MSVC)
+    add_custom_command(
+        TARGET ${target}
+        POST_BUILD
+        COMMAND mt -manifest ${manifest} -outputresource:"$(TargetDir)$(TargetFileName)"
+        COMMENT "Adding manifest..." 
+    )
+  endif()
+endmacro()
+
 ## Compiler definition abstractions
 
 # Disable stdext::hash_map deprecation warnings
