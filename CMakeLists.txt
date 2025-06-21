@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 4.0)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # Default to x64, as CMake doesn't populate it in case of default fallback (ex. via the GUI)
-if(NOT DEFINED CMAKE_GENERATOR_PLATFORM)
+if(NOT CMAKE_GENERATOR_PLATFORM)
     set(CMAKE_GENERATOR_PLATFORM x64)
 endif()
 
