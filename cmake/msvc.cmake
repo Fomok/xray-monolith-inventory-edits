@@ -4,6 +4,18 @@
 
 include_guard(GLOBAL)
 
+## Compiler definition abstractions
+
+# Disable stdext::hash_map deprecation warnings
+macro(silence_stdext_hash_deprecation_warnings TARGET)
+  target_compile_definitions(${TARGET}
+    PRIVATE
+    _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
+  )
+endmacro()
+
+## Find MSVC environment and expose via msvc.include / msvc.lib
+
 # Ensure custom variables are copied to `try_compile` calls
 set(CMAKE_TRY_COMPILE_PLATFORM_VARIABLES
   XRAY_MSVS_VERSION

@@ -19,6 +19,7 @@ if(NOT CMAKE_GENERATOR_PLATFORM)
     set(CMAKE_GENERATOR_PLATFORM x64)
 endif()
 
+include(util)
 include(msvc)
 
 project(Anomaly VERSION 2025.6.20
@@ -27,19 +28,6 @@ project(Anomaly VERSION 2025.6.20
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# Disable CXX exceptions for the current scope
-macro(disable_exceptions)
-  string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-endmacro()
-
-# Disable stdext::hash_map deprecation warnings
-macro(silence_stdext_hash_deprecation_warnings TARGET)
-  target_compile_definitions(${TARGET}
-    PRIVATE
-    _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
-  )
-endmacro()
 
 # Enable parallel building for the given target
 macro(enable_parallel_build TARGET)
