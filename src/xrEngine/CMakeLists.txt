@@ -105,18 +105,6 @@ target_sources(xrEngine PRIVATE
     _scripting.cpp
 )
 
-target_compile_definitions(xrEngine
-  PUBLIC
-  NDEBUG
-  ENGINE_BUILD
-  STATIC_RENDERER_R4
-
-  PRIVATE
-  WIN32
-  _WINDOWS
-  _SECURE_SCL=0
-)
-
 target_precompile_headers(xrEngine
   PRIVATE stdafx.h
 )
@@ -131,6 +119,18 @@ target_include_directories(xrEngine PUBLIC
   "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
   "${CMAKE_SOURCE_DIR}/sdk/include"
   "${CMAKE_SOURCE_DIR}/sdk/include/dxsdk"
+)
+
+target_compile_definitions(xrEngine
+  PUBLIC
+  NDEBUG
+  ENGINE_BUILD
+  STATIC_RENDERER_R4
+
+  PRIVATE
+  WIN32
+  _WINDOWS
+  _SECURE_SCL=0
 )
 
 target_link_directories(xrEngine

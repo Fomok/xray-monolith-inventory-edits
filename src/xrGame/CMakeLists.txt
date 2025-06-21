@@ -1243,6 +1243,12 @@ target_include_directories(xrGame
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
+target_precompile_headers(xrGame
+  PRIVATE
+  "$<$<COMPILE_LANGUAGE:CXX>:stdafx.h>"
+  "$<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>"
+)
+
 target_compile_definitions(xrGame
   PUBLIC
   NDEBUG

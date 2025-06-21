@@ -73,6 +73,10 @@ target_include_directories(xrPhysics
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
+target_precompile_headers(xrPhysics
+  PRIVATE stdafx.h
+)
+
 target_compile_definitions(xrPhysics
   PUBLIC
   NDEBUG
@@ -85,10 +89,6 @@ target_compile_definitions(xrPhysics
   _WINDOWS
   _USRDLL
   _SECURE_SCL=0
-)
-
-target_precompile_headers(xrPhysics
-  PRIVATE stdafx.h
 )
 
 enable_parallel_build(xrPhysics)

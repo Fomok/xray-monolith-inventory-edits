@@ -11,6 +11,10 @@ target_include_directories(ReShadeCompat
   "${CMAKE_SOURCE_DIR}/src/3rd party"
 )
 
+target_precompile_headers(ReShadeCompat
+  PRIVATE stdafx.h
+)
+
 target_compile_definitions(ReShadeCompat
   PUBLIC
   NDEBUG
@@ -24,8 +28,6 @@ target_compile_definitions(ReShadeCompat
   _SECURE_SCL=0
 )
 
-target_precompile_headers(ReShadeCompat
-  PRIVATE stdafx.h
-)
-
 enable_parallel_build(ReShadeCompat)
+disable_exceptions()
+silence_stdext_hash_deprecation_warnings(ReShadeCompat)

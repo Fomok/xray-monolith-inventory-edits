@@ -216,10 +216,6 @@ target_compile_definitions(xrRender_R2
   _USRDLL
 )
 
-target_precompile_headers(xrRender_R2
-  PRIVATE stdafx.h
-)
-
 enable_parallel_build(xrRender_R2)
 disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrRender_R2)

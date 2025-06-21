@@ -49,6 +49,10 @@ target_include_directories(xrCDB
   "${CMAKE_SOURCE_DIR}/src/3rd party"
 )
 
+target_precompile_headers(ReShadeCompat
+  PRIVATE stdafx.h
+)
+
 target_compile_definitions(xrCDB
   PUBLIC
   NDEBUG

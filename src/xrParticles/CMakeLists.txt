@@ -17,6 +17,10 @@ target_include_directories(xrParticles
   "${CMAKE_SOURCE_DIR}/src/3rd party"
 )
 
+target_precompile_headers(xrParticles
+  PRIVATE stdafx.h
+)
+
 target_compile_definitions(xrParticles
   PUBLIC
   NDEBUG
@@ -26,10 +30,6 @@ target_compile_definitions(xrParticles
   WIN32
   _WINDOWS
   _SECURE_SCL=0
-)
-
-target_precompile_headers(xrParticles
-  PRIVATE stdafx.h
 )
 
 enable_parallel_build(xrParticles)

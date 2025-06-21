@@ -248,10 +248,6 @@ target_compile_definitions(xrRender_R3
   _SECURE_SCL=0
 )
 
-target_precompile_headers(xrRender_R3
-  PRIVATE stdafx.h
-)
-
 enable_parallel_build(xrRender_R3)
 disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrRender_R3)

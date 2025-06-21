@@ -46,10 +46,6 @@ target_compile_definitions(xrSound
   _SECURE_SCL=0
 )
 
-target_precompile_headers(xrSound
-  PRIVATE stdafx.h
-)
-
 enable_parallel_build(xrSound)
 disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrSound)

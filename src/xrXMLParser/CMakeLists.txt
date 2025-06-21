@@ -28,10 +28,6 @@ target_compile_definitions(xrXMLParser
   _SECURE_SCL=0
 )
 
-target_precompile_headers(xrXMLParser
-  PRIVATE stdafx.h
-)
-
 enable_parallel_build(xrXMLParser)
 disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrXMLParser)

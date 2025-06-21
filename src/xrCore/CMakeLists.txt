@@ -74,6 +74,10 @@ target_include_directories(xrCore
   "${CMAKE_SOURCE_DIR}/src/3rd party/DXERR"
 )
 
+target_precompile_headers(xrCore
+  PRIVATE stdafx.h
+)
+
 target_compile_definitions(xrCore
   PUBLIC
   NDEBUG
@@ -85,11 +89,6 @@ target_compile_definitions(xrCore
   _WINDOWS
   _USRDLL
   _SECURE_SCL=0
-)
-
-target_precompile_headers(xrCore
-  PRIVATE stdafx.h
-  PRIVATE pch_script.h
 )
 
 enable_parallel_build(xrCore)

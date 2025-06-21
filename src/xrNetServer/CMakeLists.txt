@@ -18,6 +18,10 @@ target_include_directories(xrNetServer
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
+target_precompile_headers(xrNetServer
+  PRIVATE stdafx.h
+)
+
 target_compile_definitions(xrNetServer
   PUBLIC
   NDEBUG
@@ -27,10 +31,6 @@ target_compile_definitions(xrNetServer
   WIN32
   _WINDOWS
   _SECURE_SCL=0
-)
-
-target_precompile_headers(xrNetServer
-  PRIVATE stdafx.h
 )
 
 enable_parallel_build(xrNetServer)

@@ -15,6 +15,10 @@ target_include_directories(xrCPU_Pipe
   "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
+target_precompile_headers(xrCore
+  PRIVATE stdafx.h
+)
+
 target_compile_definitions(xrCPU_Pipe
   PUBLIC
   NDEBUG

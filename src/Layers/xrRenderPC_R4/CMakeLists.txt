@@ -258,10 +258,6 @@ target_compile_definitions(xrRender_R4
   _SECURE_SCL=0
 )
 
-target_precompile_headers(xrRender_R4
-  PRIVATE stdafx.h
-)
-
 enable_parallel_build(xrRender_R4)
 disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrRender_R4)
