@@ -12,6 +12,10 @@
 
 cmake_minimum_required(VERSION 4.0)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(msvc)
+
 project(Anomaly VERSION 2025.6.20
                 DESCRIPTION "X-Ray Monolith Edition for S.T.A.L.K.E.R. Anomaly"
                 LANGUAGES CXX C)
