@@ -8,6 +8,12 @@ cmake_minimum_required(VERSION 3.13)
 
 project(xrLuaJIT C CXX ASM)
 
+# If using MSBuild, add its toolchain to the include path
+if(MSVC)
+  set(env_include ${msvc.include} $ENV{INCLUDE})
+  set(ENV{INCLUDE} "${env_include}")
+endif()
+
 # Version
 set(MAJVER 2)
 set(MINVER 0)
@@ -99,12 +105,14 @@ set(CCOPT "${CCOPT} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE
 
 string(REPLACE " " ";" CCOPT "${CCOPT}")
 
+if (NOT MSVC)
 add_compile_options(
-    #-Wdeclaration-after-statement
-    #-Wredundant-decls
-    #-Wshadow
-    #-Wpointer-arith
+    -Wdeclaration-after-statement
+    -Wredundant-decls
+    -Wshadow
+    -Wpointer-arith
 )
+endif()
 
 if (LUAJIT_DISABLE_FFI)
     list(APPEND XCFLAGS "-DLUAJIT_DISABLE_FFI")
@@ -146,14 +154,24 @@ set(CCOPTIONS "${CCOPT};${XCFLAGS}")
 
 target_compile_options(xrLuaJIT PRIVATE ${CCOPTIONS})
 
+# Account for disparity in platform compiler arguments
+if(MSVC)
+    set(TESTARCH_ARGS /Zc:preprocessor /PD /EP /E lj_arch.h)
+else()
+    set(TESTARCH_ARGS -E lj_arch.h -dM)
+endif()
+
+# Run luajit's architecture analyzer
 execute_process(
-    COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} -E lj_arch.h -dM
+    COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} ${TESTARCH_ARGS}
     WORKING_DIRECTORY "${LUAJIT_DIR}"
+    RESULT_VARIABLE TESTARCH_RESULT
     OUTPUT_VARIABLE TESTARCH_OUTPUT
     ERROR_VARIABLE TESTARCH_ERROR
 )
 
-if(NOT "${TESTARCH_ERROR}" STREQUAL "")
+# If the error code is non-zero, print the error
+if(${TESTARCH_RESULT})
     message("TESTARCH_ERROR=${TESTARCH_ERROR}")
 endif()
 
@@ -196,10 +214,12 @@ string(APPEND TARGET_ARCH "-DLUAJIT_TARGET=LUAJIT_ARCH_${TARGET_LJARCH}")
 if (WIN32)
     #string(APPEND TARGET_STRIP "--strip-unneeded")
 
+    if (NOT MSVC)
     target_link_options(xrLuaJIT
         PRIVATE
         " -shared -Wl,--out-implib,libluajit-${ABIVER}.dll.a"
     )
+    endif()
 
     if (NOT LUAJIT_BUILD_STATIC_LIB)
         string(APPEND HOST_XCFLAGS " -DLUA_BUILD_AS_DLL")
@@ -583,10 +603,12 @@ target_link_libraries(xrLuaJIT
     $<$<BOOL:${LUA_USE_DLOPEN}>:dl>
 )
 
+if (NOT MSVC)
 target_compile_options(xrLuaJIT
     PRIVATE
     -Wno-comment
 )
+endif()
 
 set_target_properties(xrLuaJIT PROPERTIES
     PREFIX ""
