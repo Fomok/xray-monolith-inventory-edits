@@ -1,5 +1,11 @@
 add_library(libogg_static STATIC)
 
+set_property(
+  TARGET libogg_static
+  PROPERTY FOLDER
+  ${FOLDER_SDK}
+)
+
 target_sources(libogg_static PRIVATE
   src/bitwise.c
   src/framing.c

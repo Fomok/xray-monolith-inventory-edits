@@ -85,6 +85,12 @@ else()
     add_library(xrLuaJIT SHARED)
 endif()
 
+set_property(
+  TARGET xrLuaJIT
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
 # Output as lua51 to satisfy Anomaly's xrEngine implementation
 set_target_properties(xrLuaJIT PROPERTIES OUTPUT_NAME "lua51")
 
@@ -386,6 +392,12 @@ add_custom_target(buildvm_arch
     DEPENDS ${BUILDVM_ARCH}
 )
 
+set_property(
+  TARGET buildvm_arch
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
 set_target_properties(buildvm_arch PROPERTIES
     ADDITIONAL_CLEAN_FILES "${MINILUA_BINARY_DIR}"
 )
@@ -411,6 +423,12 @@ add_custom_command(
 
 add_custom_target(buildvm
     DEPENDS "${BUILDVM_FILE}"
+)
+
+set_property(
+  TARGET buildvm
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
 )
 
 set_target_properties(buildvm PROPERTIES

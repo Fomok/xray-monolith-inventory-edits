@@ -1,5 +1,11 @@
 add_library(CxImage STATIC)
 
+set_property(
+  TARGET CxImage
+  PROPERTY FOLDER
+  ${FOLDER_3RD_PARTY}
+)
+
 target_sources(CxImage PRIVATE
   ximacfg.cpp
   ximaenc.cpp

@@ -1,5 +1,11 @@
 add_library(xrCDB STATIC)
 
+set_property(
+  TARGET xrCDB
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources_grouped(
   TARGET xrCDB
   NAME "Engine/Source Files"

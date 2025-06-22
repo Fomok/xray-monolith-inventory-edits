@@ -1,5 +1,11 @@
 add_library(luajit-2 STATIC)
 
+set_property(
+  TARGET luabind
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
 set_target_properties(luajit-2 PROPERTIES 
     OUTPUT_NAME "lua51"
 )

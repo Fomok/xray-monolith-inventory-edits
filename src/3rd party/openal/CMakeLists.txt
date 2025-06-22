@@ -1,5 +1,11 @@
 add_library(OpenAL32 STATIC)
 
+set_property(
+  TARGET OpenAL32
+  PROPERTY FOLDER
+  ${FOLDER_3RD_PARTY}
+)
+
 target_sources(OpenAL32 PRIVATE
   OpenAL-Windows/Router/al.cpp
   OpenAL-Windows/Router/alc.cpp

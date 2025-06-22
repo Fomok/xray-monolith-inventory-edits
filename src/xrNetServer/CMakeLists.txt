@@ -1,5 +1,11 @@
 add_library(xrNetServer STATIC)
 
+set_property(
+  TARGET xrNetServer
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources(xrNetServer PRIVATE
   ip_filter.cpp
   NET_AuthCheck.cpp

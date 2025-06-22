@@ -1,5 +1,11 @@
 add_library(xrXMLParser STATIC)
 
+set_property(
+  TARGET xrXMLParser
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources_grouped(
   TARGET xrXMLParser
   NAME "Kernel/Source Files"

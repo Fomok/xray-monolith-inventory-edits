@@ -1,5 +1,11 @@
 add_library(ode STATIC)
 
+set_property(
+  TARGET ode
+  PROPERTY FOLDER
+  ${FOLDER_3RD_PARTY}
+)
+
 target_sources(ode PRIVATE
   ode/src/array.cpp
   ode/src/Bounder33.cpp

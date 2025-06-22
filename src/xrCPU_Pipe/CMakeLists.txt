@@ -1,5 +1,11 @@
 add_library(xrCPU_Pipe STATIC)
 
+set_property(
+  TARGET xrCPU_Pipe
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources_grouped(
   TARGET xrCPU_Pipe
   NAME "Kernel/Source Files"

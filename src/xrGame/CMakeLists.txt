@@ -1,5 +1,11 @@
 add_library(xrGame STATIC)
 
+set_property(
+  TARGET xrGame
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources(xrGame PRIVATE
   ../xrServerEntities/alife_human_brain.cpp
   ../xrServerEntities/alife_monster_brain.cpp

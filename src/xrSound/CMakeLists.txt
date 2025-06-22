@@ -1,5 +1,11 @@
 add_library(xrSound STATIC)
 
+set_property(
+  TARGET xrSound
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources(xrSound PRIVATE
   guids.cpp
   OpenALDeviceList.cpp

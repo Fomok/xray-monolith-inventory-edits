@@ -1,5 +1,11 @@
 add_library(ReShadeCompat STATIC)
 
+set_property(
+  TARGET ReShadeCompat
+  PROPERTY FOLDER
+  ${FOLDER_3RD_PARTY}
+)
+
 target_sources(ReShadeCompat PRIVATE
   addon.cpp
   stdafx.cpp

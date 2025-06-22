@@ -1,5 +1,11 @@
 add_library(crypto STATIC)
 
+set_property(
+  TARGET crypto
+  PROPERTY FOLDER
+  ${FOLDER_3RD_PARTY}
+)
+
 target_sources(crypto PRIVATE
   crypto.cpp
   xr_dsa.cpp

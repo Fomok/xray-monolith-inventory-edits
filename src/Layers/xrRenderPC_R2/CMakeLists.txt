@@ -1,5 +1,11 @@
 add_library(xrRender_R2 STATIC)
 
+set_property(
+  TARGET xrRender_R2
+  PROPERTY FOLDER
+  ${FOLDER_RENDER}
+)
+
 target_sources(xrRender_R2 PRIVATE
   ../../xrEngine/ai_script_lua_debug.cpp
   ../../xrEngine/ai_script_lua_extension.cpp

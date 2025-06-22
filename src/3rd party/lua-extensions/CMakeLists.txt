@@ -1,5 +1,11 @@
 add_library(lua-extensions STATIC)
 
+set_property(
+  TARGET lua-extensions
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
 target_sources(lua-extensions PRIVATE
   base.cpp
   lfs.c

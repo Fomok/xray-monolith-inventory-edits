@@ -1,5 +1,11 @@
 add_library(libtheora_static STATIC)
 
+set_property(
+  TARGET libtheora_static
+  PROPERTY FOLDER
+  ${FOLDER_SDK}
+)
+
 target_sources(libtheora_static PRIVATE
   lib/analyze.c
   lib/apiwrapper.c

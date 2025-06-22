@@ -1,5 +1,11 @@
 add_library(xrParticles STATIC)
 
+set_property(
+  TARGET xrParticles
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources_grouped(
   TARGET xrParticles
   NAME "Kernel/Source Files"

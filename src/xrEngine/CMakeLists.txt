@@ -1,5 +1,11 @@
 add_executable(xrEngine WIN32)
 
+set_property(
+  TARGET xrEngine
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources(xrEngine PRIVATE
   "../3rd party/discord/achievement_manager.cpp"
   "../3rd party/discord/activity_manager.cpp"

@@ -1,5 +1,11 @@
 add_library(luabind STATIC)
 
+set_property(
+  TARGET luabind
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
 set_target_properties(luabind PROPERTIES
   OUTPUT_NAME "luabind.beta7-devel.rc4"
 )

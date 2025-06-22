@@ -1,5 +1,11 @@
 add_library(imgui STATIC)
 
+set_property(
+  TARGET imgui
+  PROPERTY FOLDER
+  ${FOLDER_3RD_PARTY}
+)
+
 target_sources(imgui PRIVATE
   IconsFontAwesome6.h
   imconfig.h

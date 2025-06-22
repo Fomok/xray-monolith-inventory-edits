@@ -1,5 +1,11 @@
 add_library(libjpeg STATIC)
 
+set_property(
+  TARGET libjpeg
+  PROPERTY FOLDER
+  ${FOLDER_SDK}
+)
+
 target_sources(libjpeg PRIVATE
   ansi2knr.c
   cdjpeg.c

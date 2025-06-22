@@ -7,6 +7,15 @@ if(NOT CMAKE_GENERATOR_PLATFORM)
     set(CMAKE_GENERATOR_PLATFORM x64)
 endif()
 
+# Configure folders
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set(FOLDER_XRAY "X-Ray")
+set(FOLDER_3RD_PARTY "X-Ray/3rd Party")
+set(FOLDER_LUA "X-Ray/Lua")
+set(FOLDER_RENDER "X-Ray/Render")
+set(FOLDER_SDK "X-Ray/SDK")
+
 include(util)
 include(msvc)
 

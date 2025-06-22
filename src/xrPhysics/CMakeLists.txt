@@ -1,5 +1,11 @@
 add_library(xrPhysics STATIC)
 
+set_property(
+  TARGET xrPhysics
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources(xrPhysics PRIVATE
   ../xrServerEntities/PHNetState.cpp
   ActorCameraCollision.cpp

@@ -1,6 +1,12 @@
 # Vorbis
 add_library(libvorbis_static STATIC)
 
+set_property(
+  TARGET libvorbis_static
+  PROPERTY FOLDER
+  ${FOLDER_SDK}
+)
+
 target_sources(libvorbis_static PRIVATE
   lib/analysis.c
   lib/bitrate.c
@@ -87,6 +93,12 @@ enable_parallel_build(libvorbis_static)
 
 # Vorbis File
 add_library(libvorbisfile_static STATIC)
+
+set_property(
+  TARGET libvorbisfile_static
+  PROPERTY FOLDER
+  ${FOLDER_SDK}
+)
 
 target_sources(libvorbisfile_static PRIVATE
   lib/vorbisfile.c

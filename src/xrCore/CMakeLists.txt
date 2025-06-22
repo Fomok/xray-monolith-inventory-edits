@@ -1,5 +1,11 @@
 add_library(xrCore STATIC)
 
+set_property(
+  TARGET xrCore
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources_grouped(
   TARGET xrCore
   NAME "Compression/LZ/Source Files"

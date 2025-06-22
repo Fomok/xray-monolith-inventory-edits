@@ -1,5 +1,11 @@
 add_library(xrAPI STATIC)
 
+set_property(
+  TARGET xrAPI
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
 target_sources_grouped(
   TARGET xrAPI
   NAME "Kernel/Source Files"
