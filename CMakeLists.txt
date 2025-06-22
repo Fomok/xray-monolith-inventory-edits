@@ -15,6 +15,7 @@ set(FOLDER_3RD_PARTY "X-Ray/3rd Party")
 set(FOLDER_LUA "X-Ray/Lua")
 set(FOLDER_RENDER "X-Ray/Render")
 set(FOLDER_SDK "X-Ray/SDK")
+set(FOLDER_GAMEDATA "X-Ray/Gamedata")
 
 include(util)
 include(msvc)
@@ -36,3 +37,4 @@ endmacro()
 # Hand off to subdirectories
 add_subdirectory("sdk")
 add_subdirectory("src")
+add_subdirectory("gamedata")

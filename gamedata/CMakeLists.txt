@@ -1,0 +1,5 @@
+add_subdirectory(configs)
+add_subdirectory(materials)
+add_subdirectory(scripts)
+add_subdirectory(shaders)
+add_subdirectory(textures)
