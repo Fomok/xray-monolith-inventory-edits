@@ -1,15 +1,3 @@
-# TODO:
-# - [X] Compile all modules in isolation
-# - [-] Compile and link via xrEngine
-# - [ ] Strip redundant preprocessor definitions
-# - [ ] Reintegrate existing DX / AVX build configurations and their settings
-# - [ ] Enable / disable exceptions based on build type
-# - [ ] Fix wonky StackWalker library
-#   - Library and header are both stored inside xrGame instead of freestanding
-# - [ ] Replace stdext::hash_map with std::unordered_map
-#   - Allows removal of silence_stdext_hash_deprecation_warnings
-# - [ ] Clean up relative include paths
-
 cmake_minimum_required(VERSION 4.0)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
