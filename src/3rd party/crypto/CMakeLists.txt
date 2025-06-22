@@ -2,82 +2,13 @@ add_library(crypto STATIC)
 
 target_sources(crypto PRIVATE
   crypto.cpp
+  xr_dsa.cpp
+  xr_sha.cpp
+
   crypto.h
   crypto_api_def.h
-  xr_dsa.cpp
   xr_dsa.h
-  xr_sha.cpp
   xr_sha.h
-  
-  openssl/openssl/aes.h
-  openssl/openssl/asn1.h
-  openssl/openssl/asn1_mac.h
-  openssl/openssl/asn1t.h
-  openssl/openssl/bio.h
-  openssl/openssl/blowfish.h
-  openssl/openssl/bn.h
-  openssl/openssl/buffer.h
-  openssl/openssl/cast.h
-  openssl/openssl/comp.h
-  openssl/openssl/conf.h
-  openssl/openssl/conf_api.h
-  openssl/openssl/crypto.h
-  openssl/openssl/des.h
-  openssl/openssl/des_old.h
-  openssl/openssl/dh.h
-  openssl/openssl/dsa.h
-  openssl/openssl/dso.h
-  openssl/openssl/dtls1.h
-  openssl/openssl/e_os2.h
-  openssl/openssl/ebcdic.h
-  openssl/openssl/ec.h
-  openssl/openssl/ecdh.h
-  openssl/openssl/ecdsa.h
-  openssl/openssl/engine.h
-  openssl/openssl/err.h
-  openssl/openssl/evp.h
-  openssl/openssl/hmac.h
-  openssl/openssl/idea.h
-  openssl/openssl/krb5_asn.h
-  openssl/openssl/kssl.h
-  openssl/openssl/lhash.h
-  openssl/openssl/md2.h
-  openssl/openssl/md4.h
-  openssl/openssl/md5.h
-  openssl/openssl/obj_mac.h
-  openssl/openssl/objects.h
-  openssl/openssl/ocsp.h
-  openssl/openssl/opensslconf.h
-  openssl/openssl/opensslv.h
-  openssl/openssl/ossl_typ.h
-  openssl/openssl/pem.h
-  openssl/openssl/pem2.h
-  openssl/openssl/pkcs12.h
-  openssl/openssl/pkcs7.h
-  openssl/openssl/pq_compat.h
-  openssl/openssl/pqueue.h
-  openssl/openssl/rand.h
-  openssl/openssl/rc2.h
-  openssl/openssl/rc4.h
-  openssl/openssl/ripemd.h
-  openssl/openssl/rsa.h
-  openssl/openssl/safestack.h
-  openssl/openssl/sha.h
-  openssl/openssl/ssl.h
-  openssl/openssl/ssl2.h
-  openssl/openssl/ssl23.h
-  openssl/openssl/ssl3.h
-  openssl/openssl/stack.h
-  openssl/openssl/store.h
-  openssl/openssl/symhacks.h
-  openssl/openssl/tls1.h
-  openssl/openssl/tmdiff.h
-  openssl/openssl/txt_db.h
-  openssl/openssl/ui.h
-  openssl/openssl/ui_compat.h
-  openssl/openssl/x509.h
-  openssl/openssl/x509_vfy.h
-  openssl/openssl/x509v3.h
 
   openssl/src/a_bitstr.c
   openssl/src/a_d2i_fp.c
@@ -179,6 +110,82 @@ target_sources(crypto PRIVATE
   openssl/src/x_bignum.c
   openssl/src/x_long.c
   openssl/src/x_sig.c
+
+  openssl/openssl/aes.h
+  openssl/openssl/asn1.h
+  openssl/openssl/asn1_mac.h
+  openssl/openssl/asn1t.h
+  openssl/openssl/bio.h
+  openssl/openssl/blowfish.h
+  openssl/openssl/bn.h
+  openssl/openssl/buffer.h
+  openssl/openssl/cast.h
+  openssl/openssl/comp.h
+  openssl/openssl/conf.h
+  openssl/openssl/conf_api.h
+  openssl/openssl/crypto.h
+  openssl/openssl/des.h
+  openssl/openssl/des_old.h
+  openssl/openssl/dh.h
+  openssl/openssl/dsa.h
+  openssl/openssl/dso.h
+  openssl/openssl/dtls1.h
+  openssl/openssl/e_os2.h
+  openssl/openssl/ebcdic.h
+  openssl/openssl/ec.h
+  openssl/openssl/ecdh.h
+  openssl/openssl/ecdsa.h
+  openssl/openssl/engine.h
+  openssl/openssl/err.h
+  openssl/openssl/evp.h
+  openssl/openssl/hmac.h
+  openssl/openssl/idea.h
+  openssl/openssl/krb5_asn.h
+  openssl/openssl/kssl.h
+  openssl/openssl/lhash.h
+  openssl/openssl/md2.h
+  openssl/openssl/md4.h
+  openssl/openssl/md5.h
+  openssl/openssl/obj_mac.h
+  openssl/openssl/objects.h
+  openssl/openssl/ocsp.h
+  openssl/openssl/opensslconf.h
+  openssl/openssl/opensslv.h
+  openssl/openssl/ossl_typ.h
+  openssl/openssl/pem.h
+  openssl/openssl/pem2.h
+  openssl/openssl/pkcs12.h
+  openssl/openssl/pkcs7.h
+  openssl/openssl/pq_compat.h
+  openssl/openssl/pqueue.h
+  openssl/openssl/rand.h
+  openssl/openssl/rc2.h
+  openssl/openssl/rc4.h
+  openssl/openssl/ripemd.h
+  openssl/openssl/rsa.h
+  openssl/openssl/safestack.h
+  openssl/openssl/sha.h
+  openssl/openssl/ssl.h
+  openssl/openssl/ssl2.h
+  openssl/openssl/ssl23.h
+  openssl/openssl/ssl3.h
+  openssl/openssl/stack.h
+  openssl/openssl/store.h
+  openssl/openssl/symhacks.h
+  openssl/openssl/tls1.h
+  openssl/openssl/tmdiff.h
+  openssl/openssl/txt_db.h
+  openssl/openssl/ui.h
+  openssl/openssl/ui_compat.h
+  openssl/openssl/x509.h
+  openssl/openssl/x509_vfy.h
+  openssl/openssl/x509v3.h
+)
+
+target_sources_grouped(
+  TARGET crypto
+  NAME "OpenSSL"
+  FILES
 )
 
 target_include_directories(crypto

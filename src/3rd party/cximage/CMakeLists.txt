@@ -1,27 +1,28 @@
 add_library(CxImage STATIC)
 
 target_sources(CxImage PRIVATE
-  xfile.h
   ximacfg.cpp
-  ximacfg.h
-  ximadef.h
   ximaenc.cpp
   ximaexif.cpp
-  ximage.cpp
-  ximage.h
+  xImage.cpp
   ximainfo.cpp
   ximaint.cpp
-  ximaiter.h
   ximajpg.cpp
-  ximajpg.h
   ximalpha.cpp
   ximalyr.cpp
   ximapal.cpp
   ximasel.cpp
   ximath.cpp
+  xmemfile.cpp
+
+  xfile.h
+  ximacfg.h
+  ximadef.h
+  ximage.h
+  ximaiter.h
+  ximajpg.h
   ximath.h
   xiofile.h
-  xmemfile.cpp
   xmemfile.h
 )
 

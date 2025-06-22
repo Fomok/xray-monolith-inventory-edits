@@ -3,6 +3,9 @@ add_library(libogg_static STATIC)
 target_sources(libogg_static PRIVATE
   src/bitwise.c
   src/framing.c
+
+  ogg.h
+  os_types.h
 )
 
 target_include_directories(libogg_static

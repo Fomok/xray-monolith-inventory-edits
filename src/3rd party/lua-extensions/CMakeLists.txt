@@ -5,6 +5,10 @@ target_sources(lua-extensions PRIVATE
   lfs.c
   lmarshal.c
   script_additional_libs.cpp
+
+  lfs.h
+  lmarshal.h
+  script_additional_libs.h
 )
 
 target_include_directories(lua-extensions

@@ -3,6 +3,9 @@ add_library(xrAPI STATIC)
 target_sources(xrAPI PRIVATE
   stdafx.cpp
   xrAPI.cpp
+
+  ../../Include/xrAPI/xrAPI.h
+  stdafx.h
 )
 
 target_include_directories(xrAPI

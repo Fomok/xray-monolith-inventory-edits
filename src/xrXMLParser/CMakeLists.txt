@@ -1,11 +1,15 @@
 add_library(xrXMLParser STATIC)
 
 target_sources(xrXMLParser PRIVATE
-    StdAfx.cpp
-    tinyxml.cpp
-    tinyxmlerror.cpp
-    tinyxmlparser.cpp
-    xrXMLParser.cpp
+  StdAfx.cpp
+  tinyxml.cpp
+  tinyxmlerror.cpp
+  tinyxmlparser.cpp
+  xrXMLParser.cpp
+
+  stdafx.h
+  tinyxml.h
+  xrXMLParser.h
 )
 
 target_precompile_headers(xrXMLParser

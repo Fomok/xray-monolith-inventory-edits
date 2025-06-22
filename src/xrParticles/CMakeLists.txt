@@ -1,14 +1,23 @@
 add_library(xrParticles STATIC)
 
 target_sources(xrParticles PRIVATE
-    noise.cpp
-    particle_actions.cpp
-    particle_actions_collection.cpp
-    particle_actions_collection_io.cpp
-    particle_core.cpp
-    particle_effect.cpp
-    particle_manager.cpp
-    stdafx.cpp
+  noise.cpp
+  particle_actions.cpp
+  particle_actions_collection.cpp
+  particle_actions_collection_io.cpp
+  particle_core.cpp
+  particle_effect.cpp
+  particle_manager.cpp
+  stdafx.cpp
+
+  noise.h
+  particle_actions.h
+  particle_actions_collection.h
+  particle_core.h
+  particle_effect.h
+  particle_manager.h
+  psystem.h
+  stdafx.h
 )
 
 target_include_directories(xrParticles

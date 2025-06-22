@@ -1,15 +1,20 @@
 add_library(xrCPU_Pipe STATIC)
 
 target_sources(xrCPU_Pipe PRIVATE
-    PLC.cpp
-    StdAfx.cpp
-    ttapi.cpp
-    xrCPU_Pipe.cpp
-    xrSkin2W.cpp
-    xrSkin2W_SSE.cpp
-    xrSkin2W_thread.cpp
+  PLC.cpp
+  StdAfx.cpp
+  ttapi.cpp
+  xrCPU_Pipe.cpp
+  xrSkin2W.cpp
+  xrSkin2W_SSE.cpp
+  xrSkin2W_thread.cpp
 
-    xrCPU_Pipe.rc
+  resource.h
+  StdAfx.h
+  ttapi.h
+  xrCPU_Pipe.h
+
+  xrCPU_Pipe.rc
 )
 
 target_include_directories(xrCPU_Pipe

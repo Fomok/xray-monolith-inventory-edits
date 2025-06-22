@@ -9,6 +9,18 @@ target_sources(xrNetServer PRIVATE
   NET_Log.cpp
   NET_Server.cpp
   stdafx.cpp
+
+  ip_filter.h
+  NET_AuthCheck.h
+  NET_Client.h
+  NET_Common.h
+  NET_Compressor.h
+  NET_Log.h
+  NET_Messages.h
+  NET_PlayersMonitor.h
+  NET_Server.h
+  NET_Shared.h
+  stdafx.h
 )
 
 target_include_directories(xrNetServer
