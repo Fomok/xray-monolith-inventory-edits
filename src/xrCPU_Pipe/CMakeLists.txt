@@ -1,20 +1,57 @@
 add_library(xrCPU_Pipe STATIC)
 
-target_sources(xrCPU_Pipe PRIVATE
-  PLC.cpp
+target_sources_grouped(
+  TARGET xrCPU_Pipe
+  NAME "Kernel/Source Files"
+  FILES
   StdAfx.cpp
-  ttapi.cpp
   xrCPU_Pipe.cpp
+)
+
+target_sources_grouped(
+  TARGET xrCPU_Pipe
+  NAME "Kernel/Header Files"
+  FILES
+  StdAfx.h
+  xrCPU_Pipe.h
+)
+
+target_sources_grouped(
+  TARGET xrCPU_Pipe
+  NAME "PLC"
+  FILES
+  PLC.cpp
+)
+
+target_sources_grouped(
+  TARGET xrCPU_Pipe
+  NAME "Resources"
+  FILES
+  resource.h
+  xrCPU_Pipe.rc
+)
+
+target_sources_grouped(
+  TARGET xrCPU_Pipe
+  NAME "Skinning"
+  FILES
   xrSkin2W.cpp
   xrSkin2W_SSE.cpp
   xrSkin2W_thread.cpp
+)
 
-  resource.h
-  StdAfx.h
+target_sources_grouped(
+  TARGET xrCPU_Pipe
+  NAME "TTAPI/Source Files"
+  FILES
+  ttapi.cpp
+)
+
+target_sources_grouped(
+  TARGET xrCPU_Pipe
+  NAME "TTAPI/Header Files"
+  FILES
   ttapi.h
-  xrCPU_Pipe.h
-
-  xrCPU_Pipe.rc
 )
 
 target_include_directories(xrCPU_Pipe

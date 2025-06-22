@@ -1,6 +1,24 @@
 add_library(xrParticles STATIC)
 
-target_sources(xrParticles PRIVATE
+target_sources_grouped(
+  TARGET xrParticles
+  NAME "Kernel/Source Files"
+  FILES
+  stdafx.cpp
+)
+
+target_sources_grouped(
+  TARGET xrParticles
+  NAME "Kernel/Header Files"
+  FILES
+  psystem.h
+  stdafx.h
+)
+
+target_sources_grouped(
+  TARGET xrParticles
+  NAME "PAPI/Source Files"
+  FILES
   noise.cpp
   particle_actions.cpp
   particle_actions_collection.cpp
@@ -8,16 +26,18 @@ target_sources(xrParticles PRIVATE
   particle_core.cpp
   particle_effect.cpp
   particle_manager.cpp
-  stdafx.cpp
+)
 
+target_sources_grouped(
+  TARGET xrParticles
+  NAME "PAPI/Header Files"
+  FILES
   noise.h
   particle_actions.h
   particle_actions_collection.h
   particle_core.h
   particle_effect.h
   particle_manager.h
-  psystem.h
-  stdafx.h
 )
 
 target_include_directories(xrParticles

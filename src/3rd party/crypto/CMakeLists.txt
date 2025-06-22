@@ -7,18 +7,19 @@ target_sources(crypto PRIVATE
 
   crypto.h
   crypto_api_def.h
-  xr_dsa.h
-  xr_sha.h
+)
 
+target_sources_grouped(
+  TARGET crypto
+  NAME "OpenSSL/Source Files"
+  FILES
+  openssl/src/asn1_lib.c
   openssl/src/a_bitstr.c
   openssl/src/a_d2i_fp.c
   openssl/src/a_dup.c
   openssl/src/a_int.c
   openssl/src/a_object.c
   openssl/src/a_type.c
-  openssl/src/asn1_lib.c
-  openssl/src/b_print.c
-  openssl/src/bio_lcl.h
   openssl/src/bio_lib.c
   openssl/src/bn_add.c
   openssl/src/bn_asm.c
@@ -29,13 +30,11 @@ target_sources(crypto PRIVATE
   openssl/src/bn_exp2.c
   openssl/src/bn_gcd.c
   openssl/src/bn_kron.c
-  openssl/src/bn_lcl.h
   openssl/src/bn_lib.c
   openssl/src/bn_mod.c
   openssl/src/bn_mont.c
   openssl/src/bn_mul.c
   openssl/src/bn_prime.c
-  openssl/src/bn_prime.h
   openssl/src/bn_print.c
   openssl/src/bn_rand.c
   openssl/src/bn_recp.c
@@ -44,10 +43,10 @@ target_sources(crypto PRIVATE
   openssl/src/bn_sqrt.c
   openssl/src/bn_word.c
   openssl/src/bss_file.c
-  openssl/src/buf_str.c
   openssl/src/buffer.c
+  openssl/src/buf_str.c
+  openssl/src/b_print.c
   openssl/src/cryptlib.c
-  openssl/src/cryptlib.h
   openssl/src/dh_check.c
   openssl/src/dh_key.c
   openssl/src/dh_lib.c
@@ -62,39 +61,32 @@ target_sources(crypto PRIVATE
   openssl/src/dsa_sign.c
   openssl/src/dsa_utl.c
   openssl/src/dsa_vrf.c
-  openssl/src/e_os.h
   openssl/src/eng_ctrl.c
   openssl/src/eng_init.c
-  openssl/src/eng_int.h
   openssl/src/eng_lib.c
   openssl/src/eng_list.c
   openssl/src/eng_table.c
   openssl/src/err.c
   openssl/src/err_def.c
-  openssl/src/evp_locl.h
   openssl/src/ex_data.c
   openssl/src/lhash.c
-  openssl/src/m_sha1.c
   openssl/src/md_rand.c
-  openssl/src/md32_common.h
   openssl/src/mem.c
   openssl/src/mem_clr.c
+  openssl/src/m_sha1.c
   openssl/src/obj_dat.c
-  openssl/src/obj_dat.h
   openssl/src/obj_lib.c
   openssl/src/rand_eng.c
-  openssl/src/rand_lcl.h
   openssl/src/rand_lib.c
   openssl/src/rand_win.c
   openssl/src/rsa_lib.c
   openssl/src/rsa_sign.c
-  openssl/src/sha_dgst.c
-  openssl/src/sha_locl.h
-  openssl/src/sha_one.c
-  openssl/src/sha1_one.c
   openssl/src/sha1dgst.c
+  openssl/src/sha1_one.c
   openssl/src/sha256.c
   openssl/src/sha512.c
+  openssl/src/sha_dgst.c
+  openssl/src/sha_one.c
   openssl/src/stack.c
   openssl/src/tasn_dec.c
   openssl/src/tasn_enc.c
@@ -110,11 +102,16 @@ target_sources(crypto PRIVATE
   openssl/src/x_bignum.c
   openssl/src/x_long.c
   openssl/src/x_sig.c
+)
 
+target_sources_grouped(
+  TARGET crypto
+  NAME "OpenSSL/Header Files"
+  FILES
   openssl/openssl/aes.h
   openssl/openssl/asn1.h
-  openssl/openssl/asn1_mac.h
   openssl/openssl/asn1t.h
+  openssl/openssl/asn1_mac.h
   openssl/openssl/bio.h
   openssl/openssl/blowfish.h
   openssl/openssl/bn.h
@@ -130,7 +127,6 @@ target_sources(crypto PRIVATE
   openssl/openssl/dsa.h
   openssl/openssl/dso.h
   openssl/openssl/dtls1.h
-  openssl/openssl/e_os2.h
   openssl/openssl/ebcdic.h
   openssl/openssl/ec.h
   openssl/openssl/ecdh.h
@@ -138,6 +134,7 @@ target_sources(crypto PRIVATE
   openssl/openssl/engine.h
   openssl/openssl/err.h
   openssl/openssl/evp.h
+  openssl/openssl/e_os2.h
   openssl/openssl/hmac.h
   openssl/openssl/idea.h
   openssl/openssl/krb5_asn.h
@@ -146,8 +143,8 @@ target_sources(crypto PRIVATE
   openssl/openssl/md2.h
   openssl/openssl/md4.h
   openssl/openssl/md5.h
-  openssl/openssl/obj_mac.h
   openssl/openssl/objects.h
+  openssl/openssl/obj_mac.h
   openssl/openssl/ocsp.h
   openssl/openssl/opensslconf.h
   openssl/openssl/opensslv.h
@@ -156,8 +153,8 @@ target_sources(crypto PRIVATE
   openssl/openssl/pem2.h
   openssl/openssl/pkcs12.h
   openssl/openssl/pkcs7.h
-  openssl/openssl/pq_compat.h
   openssl/openssl/pqueue.h
+  openssl/openssl/pq_compat.h
   openssl/openssl/rand.h
   openssl/openssl/rc2.h
   openssl/openssl/rc4.h
@@ -178,15 +175,23 @@ target_sources(crypto PRIVATE
   openssl/openssl/ui.h
   openssl/openssl/ui_compat.h
   openssl/openssl/x509.h
-  openssl/openssl/x509_vfy.h
   openssl/openssl/x509v3.h
+  openssl/openssl/x509_vfy.h
+  openssl/src/bio_lcl.h
+  openssl/src/bn_lcl.h
+  openssl/src/bn_prime.h
+  openssl/src/cryptlib.h
+  openssl/src/eng_int.h
+  openssl/src/evp_locl.h
+  openssl/src/e_os.h
+  openssl/src/md32_common.h
+  openssl/src/obj_dat.h
+  openssl/src/rand_lcl.h
+  openssl/src/sha_locl.h
+  xr_dsa.h
+  xr_sha.h
 )
 
-target_sources_grouped(
-  TARGET crypto
-  NAME "OpenSSL"
-  FILES
-)
 
 target_include_directories(crypto
   PRIVATE

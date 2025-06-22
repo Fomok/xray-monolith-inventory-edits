@@ -1,9 +1,17 @@
 add_library(xrAPI STATIC)
 
-target_sources(xrAPI PRIVATE
+target_sources_grouped(
+  TARGET xrAPI
+  NAME "Kernel/Source Files"
+  FILES
   stdafx.cpp
   xrAPI.cpp
+)
 
+target_sources_grouped(
+  TARGET xrAPI
+  NAME "Kernel/Header Files"
+  FILES
   ../../Include/xrAPI/xrAPI.h
   stdafx.h
 )
