@@ -1,4 +1,4 @@
-add_custom_target(dxsdk)
+add_library(dxsdk INTERFACE)
 
 set_property(
   TARGET dxsdk
@@ -30,4 +30,9 @@ target_sources(dxsdk
   d3dx9tex.h
   d3dx9xof.h
   dxerr.h
+)
+
+target_include_directories(dxsdk
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

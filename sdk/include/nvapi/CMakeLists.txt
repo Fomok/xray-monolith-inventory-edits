@@ -1,4 +1,4 @@
-add_custom_target(NVAPI)
+add_library(NVAPI INTERFACE)
 
 set_property(
   TARGET NVAPI
@@ -21,4 +21,9 @@ target_sources(NVAPI
   nvHLSLExtns.h
   nvHLSLExtnsInternal.h
   nvShaderExtnEnums.h
+)
+
+target_include_directories(NVAPI
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

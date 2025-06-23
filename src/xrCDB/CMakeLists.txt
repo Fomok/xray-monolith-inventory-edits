@@ -129,8 +129,9 @@ target_sources_grouped(
 )
 
 target_include_directories(xrCDB
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_SOURCE_DIR}/sdk/include"
   "${CMAKE_SOURCE_DIR}/src/3rd party"
 )
@@ -142,6 +143,11 @@ target_precompile_headers(ReShadeCompat
 target_compile_definitions(xrCDB
   PRIVATE
   XRCDB_EXPORTS
+)
+
+target_link_libraries(xrCDB
+  PRIVATE
+  xrCore
 )
 
 enable_parallel_build(xrCDB)

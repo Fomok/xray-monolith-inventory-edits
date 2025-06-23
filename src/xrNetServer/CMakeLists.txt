@@ -45,5 +45,10 @@ target_compile_definitions(xrNetServer
   XR_NETSERVER_EXPORTS
 )
 
+target_link_libraries(xrNetServer
+  PRIVATE
+  xrCore
+)
+
 enable_parallel_build(xrNetServer)
 silence_stdext_hash_deprecation_warnings(xrNetServer)

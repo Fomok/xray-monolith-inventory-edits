@@ -38,7 +38,7 @@ target_sources(Scripts
   options_modded_exes_hdr10.script
   options_modded_exes_keyboard.script
   options_modded_exes_logging.script
-  options_modded_exes_metrics.script
+  options_modded_exes_optimizations.script
   options_modded_exes_monsters.script
   options_modded_exes_mouse.script
   options_modded_exes_particles.script

@@ -423,11 +423,10 @@ target_precompile_headers(xrRender_R3
 )
 
 target_include_directories(xrRender_R3
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/sdk/include/dxsdk"
-  "${CMAKE_SOURCE_DIR}/sdk/include/nvapi"
   "${CMAKE_SOURCE_DIR}/src/3rd party"
   "${CMAKE_SOURCE_DIR}/src/3rd party/imgui"
   "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
@@ -438,6 +437,13 @@ target_compile_definitions(xrRender_R3
   PRIVATE
   USE_DX10
   XRRENDER_R3_EXPORTS
+)
+
+target_link_libraries(xrRender_R3
+  PRIVATE
+  xrCore
+  dxsdk
+  NVAPI
 )
 
 enable_parallel_build(xrRender_R3)

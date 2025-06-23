@@ -729,7 +729,6 @@ target_sources(xrGame PRIVATE
   PostprocessAnimator.cpp
   pp_effector_custom.cpp
   pp_effector_distance.cpp
-  #profiler.cpp
   profile_data_types.cpp
   profile_data_types_script.cpp
   profile_store.cpp
@@ -2334,8 +2333,6 @@ target_sources(xrGame PRIVATE
   pp_effector_distance.h
   problem_solver.h
   problem_solver_inline.h
-  profiler.h
-  profiler_inline.h
   profile_data_types.h
   profile_store.h
   property_evaluator.h
@@ -2878,8 +2875,9 @@ target_sources(xrGame PRIVATE
 )
 
 target_include_directories(xrGame
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/ai/monsters"
   "${CMAKE_SOURCE_DIR}/src"
   "${CMAKE_SOURCE_DIR}/src/3rd party"
@@ -2904,6 +2902,8 @@ target_compile_definitions(xrGame
 target_link_libraries(xrGame
   PUBLIC
   ode
+  PRIVATE
+  xrCore
 )
 
 enable_parallel_build(xrGame)

@@ -1,4 +1,4 @@
-add_custom_target(cs)
+add_library(cs INTERFACE)
 
 set_property(
   TARGET cs
@@ -15,4 +15,9 @@ target_sources(cs
   lua_studio_backend/interfaces.h
   lua_studio_backend/library_linkage.h
   lua_studio_backend/world.h
+)
+
+target_include_directories(cs
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

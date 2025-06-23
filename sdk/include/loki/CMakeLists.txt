@@ -1,4 +1,4 @@
-add_custom_target(loki)
+add_library(loki INTERFACE)
 
 set_property(
   TARGET loki
@@ -33,4 +33,9 @@ target_sources(loki
   Variant.h
   VC_Alignment.h
   Visitor.h
+)
+
+target_include_directories(loki
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

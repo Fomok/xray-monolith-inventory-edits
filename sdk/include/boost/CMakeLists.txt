@@ -1,4 +1,4 @@
-add_custom_target(boost)
+add_library(boost INTERFACE)
 
 set_property(
   TARGET boost
@@ -1809,4 +1809,9 @@ target_sources(boost
   version.hpp
   visit_each.hpp
   weak_ptr.hpp
+)
+
+target_include_directories(boost
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

@@ -404,6 +404,13 @@ target_sources_grouped(
 
 target_sources_grouped(
   TARGET xrCore
+  NAME "Profling"
+  FILES
+  profiler.h
+)
+
+target_sources_grouped(
+  TARGET xrCore
   NAME "Shared Memory & String Library/Source Files"
   FILES
   crc32.cpp
@@ -454,8 +461,9 @@ target_sources(xrCore PRIVATE
 )
 
 target_include_directories(xrCore
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_SOURCE_DIR}/src/3rd party/DXERR"
 )
 

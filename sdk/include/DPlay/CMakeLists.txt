@@ -1,4 +1,4 @@
-add_custom_target(DPlay)
+add_library(DPlay INTERFACE)
 
 set_property(
   TARGET DPlay
@@ -10,4 +10,9 @@ target_sources(DPlay
   PRIVATE
   dpaddr.h
   dplay8.h
+)
+
+target_include_directories(DPlay
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )
