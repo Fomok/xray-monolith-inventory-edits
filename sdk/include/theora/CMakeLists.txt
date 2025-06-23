@@ -70,16 +70,4 @@ target_include_directories(libtheora_static
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
-target_compile_definitions(libtheora_static
-  PUBLIC
-  NDEBUG
-
-  PRIVATE
-  WIN32
-  _WINDOWS
-  _CRT_SECURE_NO_DEPRECATE
-  _CRT_NONSTDC_NO_DEPRECATE
-  _BIND_TO_CURRENT_CRT_VERSION
-)
-
 enable_parallel_build(libtheora_static)

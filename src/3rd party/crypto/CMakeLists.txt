@@ -206,13 +206,9 @@ target_include_directories(crypto
 )
 
 target_compile_definitions(crypto
-  PUBLIC
-  CRYPTO_BUILD
-  
   PRIVATE
-  _CRT_SECURE_NO_WARNINGS
+  CRYPTO_BUILD
 )
 
 enable_parallel_build(crypto)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(crypto)

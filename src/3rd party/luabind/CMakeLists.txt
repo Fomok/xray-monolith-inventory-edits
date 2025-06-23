@@ -129,14 +129,8 @@ target_precompile_headers(luabind
 )
 
 target_compile_definitions(luabind
-  PUBLIC
-  NDEBUG
-  LUABIND_BUILDING
-
   PRIVATE
-  WIN32
-  _SECURE_SCL=0
-  _HAS_ITERATOR_DEBUGGING=0
+  LUABIND_BUILDING
 )
 
 enable_parallel_build(luabind)

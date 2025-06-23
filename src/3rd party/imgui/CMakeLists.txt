@@ -47,12 +47,4 @@ target_include_directories(imgui
   "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_definitions(imgui
-  PUBLIC
-  NDEBUG
-
-  PRIVATE
-  _CONSOLE
-)
-
 enable_parallel_build(imgui)

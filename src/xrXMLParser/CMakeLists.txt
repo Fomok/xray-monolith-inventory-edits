@@ -48,16 +48,9 @@ target_include_directories(xrXMLParser
 )
 
 target_compile_definitions(xrXMLParser
-  PUBLIC
-  NDEBUG
-  XRXMLPARSER_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _SECURE_SCL=0
+  XRXMLPARSER_EXPORTS
 )
 
 enable_parallel_build(xrXMLParser)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrXMLParser)

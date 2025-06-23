@@ -453,18 +453,10 @@ target_include_directories(xrRender_R4
 )
 
 target_compile_definitions(xrRender_R4
-  PUBLIC
-  NDEBUG
+  PRIVATE
   USE_DX11
   XRRENDER_R4_EXPORTS
-
-  PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
 )
 
 enable_parallel_build(xrRender_R4)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrRender_R4)

@@ -140,17 +140,9 @@ target_precompile_headers(ReShadeCompat
 )
 
 target_compile_definitions(xrCDB
-  PUBLIC
-  NDEBUG
-  XRCDB_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
+  XRCDB_EXPORTS
 )
 
 enable_parallel_build(xrCDB)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrCDB)

@@ -464,18 +464,11 @@ target_precompile_headers(xrCore
 )
 
 target_compile_definitions(xrCore
-  PUBLIC
-  NDEBUG
+  PRIVATE
   PURE_ALLOC
   XRCORE_EXPORTS
-
-  PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
+  PORTABLE_BUGSLAYERUTIL
 )
 
 enable_parallel_build(xrCore)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrCore)

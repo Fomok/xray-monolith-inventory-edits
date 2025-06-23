@@ -384,16 +384,9 @@ target_include_directories(xrRender_R2
 )
 
 target_compile_definitions(xrRender_R2
-  PUBLIC
-  NDEBUG
-  XRRENDER_R2_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
+  XRRENDER_R2_EXPORTS
 )
 
 enable_parallel_build(xrRender_R2)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrRender_R2)

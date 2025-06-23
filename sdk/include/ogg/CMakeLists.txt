@@ -20,13 +20,4 @@ target_include_directories(libogg_static
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
-target_compile_definitions(libogg_static
-  PUBLIC
-  NDEBUG
-
-  PRIVATE
-  WIN32
-  _WINDOWS
-)
-
 enable_parallel_build(libogg_static)

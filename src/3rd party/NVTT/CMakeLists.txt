@@ -152,13 +152,4 @@ target_include_directories(NVTT
   "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
-target_compile_definitions(NVTT
-  PUBLIC
-  NDEBUG
-
-  PRIVATE
-  WIN32
-  _MBCS
-)
-
 enable_parallel_build(NVTT)

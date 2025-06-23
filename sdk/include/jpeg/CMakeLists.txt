@@ -98,10 +98,5 @@ target_include_directories(libjpeg
   "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_definitions(libjpeg
-  PRIVATE
-  _VC80_UPGRADE=0x0710
-  _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
-)
-
 enable_parallel_build(libjpeg)
+silence_stdext_hash_deprecation_warnings(libjpeg)

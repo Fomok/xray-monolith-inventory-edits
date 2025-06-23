@@ -3,7 +3,7 @@ add_library(ReShadeCompat STATIC)
 set_property(
   TARGET ReShadeCompat
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_XRAY}
 )
 
 target_sources(ReShadeCompat PRIVATE
@@ -22,18 +22,10 @@ target_precompile_headers(ReShadeCompat
 )
 
 target_compile_definitions(ReShadeCompat
-  PUBLIC
-  NDEBUG
+  PRIVATE
   PURE_ALLOC
   XRCORE_EXPORTS
-
-  PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
 )
 
 enable_parallel_build(ReShadeCompat)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(ReShadeCompat)

@@ -23,10 +23,4 @@ target_include_directories(lua-extensions
   "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
 )
 
-target_compile_definitions(lua-extensions
-  PRIVATE
-  _WINDLL
-  _CRT_SECURE_NO_WARNINGS
-)
-
 enable_parallel_build(lua-extensions)

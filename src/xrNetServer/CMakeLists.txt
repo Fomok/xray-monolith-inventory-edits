@@ -41,16 +41,9 @@ target_precompile_headers(xrNetServer
 )
 
 target_compile_definitions(xrNetServer
-  PUBLIC
-  NDEBUG
-  XR_NETSERVER_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _SECURE_SCL=0
+  XR_NETSERVER_EXPORTS
 )
 
 enable_parallel_build(xrNetServer)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrNetServer)

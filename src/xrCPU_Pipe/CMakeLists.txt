@@ -70,17 +70,9 @@ target_precompile_headers(xrCore
 )
 
 target_compile_definitions(xrCPU_Pipe
-  PUBLIC
-  NDEBUG
-  XRCPU_PIPE_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
+  XRCPU_PIPE_EXPORTS
 )
 
 enable_parallel_build(xrCPU_Pipe)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrCPU_Pipe)

@@ -2897,19 +2897,14 @@ target_precompile_headers(xrGame
 )
 
 target_compile_definitions(xrGame
-  PUBLIC
-  NDEBUG
-  XRGAME_EXPORTS
-  dSINGLE
-
   PRIVATE
-  WIN32
-  MSVC
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
+  XRGAME_EXPORTS
+)
+
+target_link_libraries(xrGame
+  PUBLIC
+  ode
 )
 
 enable_parallel_build(xrGame)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrGame)

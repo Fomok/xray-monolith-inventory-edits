@@ -3,7 +3,7 @@ add_library(xrAPI STATIC)
 set_property(
   TARGET xrAPI
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_RENDER}
 )
 
 target_sources_grouped(
@@ -28,14 +28,8 @@ target_include_directories(xrAPI
 )
 
 target_compile_definitions(xrAPI
-  PUBLIC
-  NDEBUG
-  XRAPI_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
+  XRAPI_EXPORTS
 )
 
 target_precompile_headers(xrAPI

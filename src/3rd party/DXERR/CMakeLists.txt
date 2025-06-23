@@ -17,10 +17,5 @@ target_include_directories(DXERR
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
-target_compile_definitions(DXERR
-  PRIVATE
-  _VC80_UPGRADE=0x0710
-)
-
 enable_parallel_build(DXERR)
 silence_stdext_hash_deprecation_warnings(DXERR)

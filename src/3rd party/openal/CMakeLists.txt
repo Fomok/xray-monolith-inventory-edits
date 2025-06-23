@@ -23,14 +23,4 @@ target_include_directories(OpenAL32
   "${CMAKE_CURRENT_SOURCE_DIR}/OpenAL-Windows/Router"
 )
 
-target_compile_definitions(OpenAL32
-  PUBLIC
-  NDEBUG
-
-  PRIVATE
-  WIN32
-  _WINDOWS
-  _SECURE_SCL=0
-)
-
 enable_parallel_build(ode)

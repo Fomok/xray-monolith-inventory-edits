@@ -177,19 +177,14 @@ target_precompile_headers(xrPhysics
 )
 
 target_compile_definitions(xrPhysics
-  PUBLIC
-  NDEBUG
-  dSINGLE
-  XRPHYSICS_EXPORTS
-
   PRIVATE
-  WIN32
-  MSVC
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
+  XRPHYSICS_EXPORTS
+)
+
+target_link_libraries(xrPhysics
+  PUBLIC
+  ode
 )
 
 enable_parallel_build(xrPhysics)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrPhysics)

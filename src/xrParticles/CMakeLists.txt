@@ -57,16 +57,9 @@ target_precompile_headers(xrParticles
 )
 
 target_compile_definitions(xrParticles
-  PUBLIC
-  NDEBUG
-  XR_PARTICLES_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _SECURE_SCL=0
+  XR_PARTICLES_EXPORTS
 )
 
 enable_parallel_build(xrParticles)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrParticles)

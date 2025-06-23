@@ -55,17 +55,9 @@ target_include_directories(xrSound
 )
 
 target_compile_definitions(xrSound
-  PUBLIC
-  NDEBUG
-  XRSOUND_EXPORTS
-
   PRIVATE
-  WIN32
-  _WINDOWS
-  _USRDLL
-  _SECURE_SCL=0
+  XRSOUND_EXPORTS
 )
 
 enable_parallel_build(xrSound)
-disable_exceptions()
 silence_stdext_hash_deprecation_warnings(xrSound)

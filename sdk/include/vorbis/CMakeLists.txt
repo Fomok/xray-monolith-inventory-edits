@@ -80,13 +80,8 @@ target_include_directories(libvorbis_static
 )
 
 target_compile_definitions(libvorbis_static
-  PUBLIC
-  ANALYSIS
-  NDEBUG
-
   PRIVATE
-  WIN32
-  _WINDOWS
+  ANALYSIS
 )
 
 enable_parallel_build(libvorbis_static)
@@ -110,15 +105,6 @@ target_include_directories(libvorbisfile_static
   PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}"
   "${CMAKE_SOURCE_DIR}/sdk/include"
-)
-
-target_compile_definitions(libvorbisfile_static
-  PUBLIC
-  NDEBUG
-
-  PRIVATE
-  WIN32
-  _WINDOWS
 )
 
 enable_parallel_build(libvorbisfile_static)

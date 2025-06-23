@@ -38,15 +38,16 @@ target_include_directories(CxImage
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
-target_compile_definitions(CxImage
-  PUBLIC
-  NDEBUG
-  JAS_WIN_MSVC_BUILD
-  CXIMAGE_BUILD
+if(MSVC)
+  target_compile_definitions(CxImage
+    PUBLIC
+    JAS_WIN_MSVC_BUILD
+  )
+endif()
 
+target_compile_definitions(CxImage
   PRIVATE
-  WIN32
-  _LIB
+  CXIMAGE_BUILD
 )
 
 enable_parallel_build(CxImage)
