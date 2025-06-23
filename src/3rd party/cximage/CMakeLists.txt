@@ -33,8 +33,9 @@ target_sources(CxImage PRIVATE
 )
 
 target_include_directories(CxImage
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 

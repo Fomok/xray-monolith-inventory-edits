@@ -1,4 +1,4 @@
-add_custom_target(tbb)
+add_library(tbb INTERFACE)
 
 set_property(
   TARGET tbb
@@ -132,4 +132,9 @@ target_sources(tbb
   tbb_thread.h
   tbbmalloc_proxy.h
   tick_count.h
+)
+
+target_include_directories(tbb
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

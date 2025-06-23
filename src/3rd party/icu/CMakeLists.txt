@@ -1,4 +1,4 @@
-add_custom_target(icu)
+add_library(icu INTERFACE)
 
 set_property(
   TARGET icu
@@ -195,4 +195,9 @@ target_sources(icu
   include/unicode/uvernum.h
   include/unicode/uversion.h
   include/unicode/vtzone.h
+)
+
+target_include_directories(icu
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

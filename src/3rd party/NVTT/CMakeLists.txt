@@ -145,8 +145,9 @@ target_sources(NVTT PRIVATE
 )
 
 target_include_directories(NVTT
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/src"
   "${CMAKE_CURRENT_SOURCE_DIR}/src/nvtt/squish"
   "${CMAKE_CURRENT_SOURCE_DIR}/include"

@@ -1,4 +1,4 @@
-add_custom_target(stackwalker)
+add_library(stackwalker INTERFACE)
 
 set_property(
   TARGET stackwalker
@@ -9,4 +9,9 @@ set_property(
 target_sources(stackwalker
   PRIVATE
   include/StackWalker.h
+)
+
+target_include_directories(stackwalker
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

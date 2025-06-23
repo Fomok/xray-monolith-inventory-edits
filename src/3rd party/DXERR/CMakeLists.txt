@@ -12,8 +12,9 @@ target_sources(DXERR PRIVATE
 )
 
 target_include_directories(DXERR
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 

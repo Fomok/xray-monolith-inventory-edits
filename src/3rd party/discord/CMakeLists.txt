@@ -1,4 +1,4 @@
-add_custom_target(discord)
+add_library(discord INTERFACE)
 
 set_property(
   TARGET discord
@@ -39,4 +39,9 @@ target_sources(discord
   user_manager.h
   voice_manager.cpp
   voice_manager.h
+)
+
+target_include_directories(discord
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

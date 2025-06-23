@@ -200,8 +200,9 @@ target_sources_grouped(
 
 
 target_include_directories(crypto
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/openssl"
 )
 

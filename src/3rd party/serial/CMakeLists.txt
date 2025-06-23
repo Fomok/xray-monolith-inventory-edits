@@ -1,4 +1,4 @@
-add_custom_target(serial)
+add_library(serial INTERFACE)
 
 set_property(
   TARGET serial
@@ -10,4 +10,9 @@ target_sources(serial
   PRIVATE
   tbb/parallel_for.h
   tbb/tbb_annotate.h
+)
+
+target_include_directories(serial
+  INTERFACE
+  "${CMAKE_CURRENT_SOURCE_DIR}"
 )

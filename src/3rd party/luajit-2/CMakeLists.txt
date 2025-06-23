@@ -145,7 +145,7 @@ target_sources(luajit-2 PRIVATE
 )
 
 target_include_directories(luajit-2
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 

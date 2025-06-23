@@ -117,8 +117,9 @@ target_sources(luabind PRIVATE
 )
 
 target_include_directories(luabind
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
+  PRIVATE
   "${CMAKE_SOURCE_DIR}/sdk/include"
   "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
 )
