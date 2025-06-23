@@ -305,7 +305,7 @@ IPureServer::EConnect IPureServer::Connect(LPCSTR options, GameDescriptionData& 
 	{
 		//---------------------------
 #ifdef DEBUG
-	string1024 tmp;
+		const wchar_t* tmp = L"";
 #endif // DEBUG
 		//	HRESULT CoInitializeExRes = CoInitializeEx(NULL, 0);	
 		//	if (CoInitializeExRes != S_OK && CoInitializeExRes != S_FALSE)
@@ -327,9 +327,9 @@ IPureServer::EConnect IPureServer::Connect(LPCSTR options, GameDescriptionData& 
 
 		// Initialize IDirectPlay8Client object.
 #ifdef DEBUG
-    CHK_DX(NET->Initialize	(this, Handler, 0));
+		CHK_DX(NET->Initialize(this, Handler, 0));
 #else
-		CHK_DX(NET->Initialize (this, Handler, DPNINITIALIZE_DISABLEPARAMVAL));
+		CHK_DX(NET->Initialize(this, Handler, DPNINITIALIZE_DISABLEPARAMVAL));
 #endif
 
 		BOOL bSimulator = FALSE;

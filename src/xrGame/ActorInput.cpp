@@ -824,7 +824,7 @@ void CActor::NoClipFly(int cmd)
 			if(det_active)
 			{
 				CCustomDetector* det = smart_cast<CCustomDetector*>(det_active);
-					det->ToggleDetector(g_player_hud->attached_item(0)!=NULL);
+					det->ToggleDevice(g_player_hud->attached_item(0)!=NULL);
 				return;
 			}
 		}

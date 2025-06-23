@@ -3,6 +3,15 @@
 #pragma once
 
 #ifndef DEBUG
+#ifdef _DEBUG
+#define DEBUG
+#endif
+#ifdef MIXED
+#define DEBUG
+#endif
+#endif
+
+#ifndef DEBUG
 # define MASTER_GOLD
 #endif // DEBUG
 
@@ -84,15 +93,6 @@
 #include <typeinfo>
 #include <thread>
 //#include <process.h>
-
-#ifndef DEBUG
-#ifdef _DEBUG
-#define DEBUG
-#endif
-#ifdef MIXED
-#define DEBUG
-#endif
-#endif
 
 #ifdef XRCORE_STATIC
 # define NO_FS_SCAN

@@ -6,16 +6,6 @@
 #include "..\editors\ECore\stdafx.h"
 #else
 
-#ifndef NDEBUG
-# ifndef INGAME_EDITOR
-# define INGAME_EDITOR
-# endif // #ifndef INGAME_EDITOR
-#endif // #ifndef NDEBUG
-
-#ifdef INGAME_EDITOR
-# define _WIN32_WINNT 0x0550
-#endif // #ifdef INGAME_EDITOR
-
 #include "../xrCore/xrCore.h"
 #include "../Include/xrAPI/xrAPI.h"
 

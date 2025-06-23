@@ -11,6 +11,10 @@
 
 #pragma once
 
+#ifdef DEBUG
+#include <loki/Typelist.h>
+#endif
+
 struct lua_State;
 
 #ifdef SCRIPT_REGISTRATOR

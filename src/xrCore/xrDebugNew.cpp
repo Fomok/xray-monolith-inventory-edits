@@ -833,7 +833,7 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 		xr_strcat(error_message, sizeof(error_message), "\r\n");
 #ifdef DEBUG
         if (!IsDebuggerPresent())
-            os_clipboard::update_clipboard(buffer);
+            os_clipboard::update_clipboard(error_message);
 #endif //-DEBUG
 	}
 

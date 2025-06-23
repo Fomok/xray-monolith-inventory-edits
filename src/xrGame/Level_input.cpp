@@ -205,10 +205,6 @@ void CLevel::IR_OnKeyboardPress(int key)
 
 	if (_curr == kPAUSE)
 	{
-#ifdef INGAME_EDITOR
-        if (Device.editor())	return;
-#endif // INGAME_EDITOR
-
 		if (!g_block_pause && (IsGameTypeSingle() || IsDemoPlay()))
 		{
 #ifdef DEBUG
