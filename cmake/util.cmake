@@ -27,7 +27,42 @@ function(target_sources_grouped)
     source_group(${PARSED_ARGS_NAME} FILES ${PARSED_ARGS_FILES})
 endfunction()
 
-# Disable CXX exceptions for the current scope
-macro(disable_exceptions)
+# Remove global exception flags and replace them with debug-only ones
+macro(configure_exceptions)
   string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+  string(APPEND CMAKE_CXX_FLAGS_DEBUG " /EHsc")
+endmacro()
+
+# Enable parallel building for the given target
+macro(enable_parallel_build TARGET)
+  if(MSVC)
+    target_compile_options(${TARGET} PRIVATE /MP)
+  endif()
+endmacro()
+
+# Enable AVX for the given target
+macro(enable_avx TARGET)
+  if(MSVC)
+    target_compile_options(${TARGET} PRIVATE /arch:AVX)
+  endif()
+endmacro()
+
+## Manifest tool abstraction
+macro(add_executable_manifest target manifest)
+  if (MSVC)
+    add_custom_command(
+        TARGET ${target}
+        POST_BUILD
+        COMMAND mt -manifest ${manifest} -outputresource:"$(TargetDir)$(TargetFileName)"
+        COMMENT "Adding manifest..." 
+    )
+  endif()
+endmacro()
+
+# Disable stdext::hash_map deprecation warnings
+macro(silence_stdext_hash_deprecation_warnings TARGET)
+  target_compile_definitions(${TARGET}
+    PRIVATE
+    _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
+  )
 endmacro()

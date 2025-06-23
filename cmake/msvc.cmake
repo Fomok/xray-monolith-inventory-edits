@@ -4,29 +4,6 @@
 
 include_guard(GLOBAL)
 
-## Manifest tool abstraction
-
-macro(add_executable_manifest target manifest)
-  if (MSVC)
-    add_custom_command(
-        TARGET ${target}
-        POST_BUILD
-        COMMAND mt -manifest ${manifest} -outputresource:"$(TargetDir)$(TargetFileName)"
-        COMMENT "Adding manifest..." 
-    )
-  endif()
-endmacro()
-
-## Compiler definition abstractions
-
-# Disable stdext::hash_map deprecation warnings
-macro(silence_stdext_hash_deprecation_warnings TARGET)
-  target_compile_definitions(${TARGET}
-    PRIVATE
-    _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
-  )
-endmacro()
-
 ## Find MSVC environment and expose via msvc.include / msvc.lib
 
 # Ensure custom variables are copied to `try_compile` calls

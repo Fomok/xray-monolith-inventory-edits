@@ -1,0 +1,105 @@
+{
+  "version": 3,
+
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/_build/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "installDir": "${sourceDir}/_build/install/${presetName}"
+    },
+    {
+      "name": "windows-base",
+      "hidden": true,
+      "inherits": "base",
+      "generator": "Visual Studio 17 2022",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "x64-debug",
+      "displayName": "x64 Debug",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "XRAY_PROFILER": "Disabled"
+      }
+    },
+    {
+      "name": "x64-relwithdebinfo",
+      "displayName": "x64 RelWithDebInfo",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "VERIFY_IN_RELEASE": false,
+        "XRAY_PROFILER": "Disabled"
+      }
+    },
+    {
+      "name": "x64-release",
+      "displayName": "x64 Release",
+      "inherits": "windows-base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VERIFY_IN_RELEASE": false,
+        "XRAY_PROFILER": "Disabled"
+      }
+    },
+    {
+      "name": "x64-verified",
+      "displayName": "x64 Verified",
+      "inherits": "x64-release",
+      "cacheVariables": {
+        "VERIFY_IN_RELEASE": true,
+        "XRAY_PROFILER": "Disabled"
+      }
+    },
+    {
+      "name": "x64-profiled",
+      "displayName": "x64 Profiled",
+      "inherits": "x64-release",
+      "cacheVariables": {
+        "XRAY_PROFILER": "Optick"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-debug",
+      "displayName": "Debug",
+      "configurePreset": "x64-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-relwithdebinfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "x64-relwithdebinfo",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "windows-release",
+      "displayName": "Release",
+      "configurePreset": "x64-release",
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-verified",
+      "displayName": "Verified",
+      "configurePreset": "x64-verified",
+      "configuration": "Verified"
+    },
+    {
+      "name": "windows-profiled",
+      "displayName": "Profiled",
+      "configurePreset": "x64-profiled",
+      "configuration": "Profiled"
+    }
+  ]
+}

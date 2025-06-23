@@ -1,3 +1,5 @@
+set(ODE_DOUBLE_PRECISION Off CACHE BOOL "Use double-precision floating point for collision logic.")
+
 add_library(ode STATIC)
 
 set_property(
@@ -93,17 +95,11 @@ target_include_directories(ode
   "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
-target_compile_definitions(ode
-  PUBLIC
-  NDEBUG
-  dNODEBUG
-  dSINGLE
+if(ODE_DOUBLE_PRECISION)
+  target_compile_definitions(ode PUBLIC dDOUBLE)
+else()
+  target_compile_definitions(ode PUBLIC dSINGLE)
+endif()
 
-  PRIVATE
-  WIN32
-  MSVC
-  _WINDOWS
-  _SECURE_SCL=0
-)
 
 enable_parallel_build(ode)
