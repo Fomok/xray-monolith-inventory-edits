@@ -367,7 +367,11 @@ set(BUILDVM_ARCH "${CMAKE_CURRENT_BINARY_DIR}/buildvm_arch.h")
 
 # Generate buildvm arch header
 set(MINILUA_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/HostBuildTools/minilua")
-set(MINILUA_FILE "${MINILUA_BINARY_DIR}/Release/minilua")
+if (WIN32)
+  set(MINILUA_FILE "${MINILUA_BINARY_DIR}/Release/minilua.exe")
+else()
+  set(MINILUA_FILE "${MINILUA_BINARY_DIR}/Release/minilua")
+endif()
 
 add_custom_command(
     OUTPUT "${MINILUA_FILE}"
@@ -406,7 +410,11 @@ set_target_properties(buildvm_arch PROPERTIES
 
 # Buildvm
 set(BUILDVM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/HostBuildTools/buildvm")
-set(BUILDVM_FILE "${BUILDVM_BINARY_DIR}/Release/buildvm")
+if (WIN32)
+  set(BUILDVM_FILE "${BUILDVM_BINARY_DIR}/Release/buildvm.exe")
+else()
+  set(BUILDVM_FILE "${BUILDVM_BINARY_DIR}/Release/buildvm")
+endif()
 
 add_custom_command(
     OUTPUT "${BUILDVM_FILE}"
