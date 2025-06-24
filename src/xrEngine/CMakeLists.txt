@@ -1,4 +1,4 @@
-add_custom_target(xrEngine)
+add_library(xrEngine INTERFACE)
 
 set_property(
   TARGET xrEngine
@@ -6,4 +6,12 @@ set_property(
   ${FOLDER_XRAY}
 )
 
-target_engine_sources(xrEngine ${XR_ENGINE_SOURCES})
+target_sources(xrEngine
+  PRIVATE
+  ${XR_ENGINE_SOURCES}
+)
+
+target_include_directories(xrEngine
+  INTERFACE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)

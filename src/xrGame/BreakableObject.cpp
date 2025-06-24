@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "BreakableObject.h"
 #include "xrserver_objects_alife.h"
-#include "../xrphysics/IPHStaticGeomShell.h"
-#include "../xrphysics/PhysicsShell.h"
-//#include "../xrphysics/extendedgeom.h"
-//#include "../xrphysics/mathutilsode.h"
+#include "IPHStaticGeomShell.h"
+#include "PhysicsShell.h"
+//#include "extendedgeom.h"
+//#include "mathutilsode.h"
 //#include "Physics.h"
-#include "../xrEngine/xr_collide_form.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "xr_collide_form.h"
+#include "Kinematics.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

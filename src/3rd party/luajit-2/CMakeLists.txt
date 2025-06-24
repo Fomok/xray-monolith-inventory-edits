@@ -6,10 +6,6 @@ set_property(
   ${FOLDER_LUA}
 )
 
-set_target_properties(luajit-2 PROPERTIES 
-    OUTPUT_NAME "lua51"
-)
-
 target_sources(luajit-2 PRIVATE
   src/lib_aux.c      
   src/lib_base.c      
@@ -146,7 +142,7 @@ target_sources(luajit-2 PRIVATE
 
 target_include_directories(luajit-2
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/src"
+  ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
 enable_parallel_build(luajit-2)

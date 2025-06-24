@@ -2,7 +2,7 @@
 #define	dxStatsRender_included
 #pragma once
 
-#include "..\..\Include\xrRender\StatsRender.h"
+#include "StatsRender.h"
 
 class dxStatsRender : public IStatsRender
 {

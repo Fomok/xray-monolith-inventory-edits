@@ -24,4 +24,4 @@ target_include_directories(OpenAL32
   "${CMAKE_CURRENT_SOURCE_DIR}/OpenAL-Windows/Router"
 )
 
-enable_parallel_build(ode)
+enable_parallel_build(OpenAL32)

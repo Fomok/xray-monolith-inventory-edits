@@ -20,16 +20,16 @@ class CDUInterface;
 
 #ifndef _EDITOR
 #ifndef XRGAME_EXPORTS
-		#include "../xrSound/Sound.h"
+		#include "Sound.h"
 #endif
 #endif
 
 #include "xrEProps.h"
 
 #ifndef XRGAME_EXPORTS
-	#include "..\..\Include\xrRender\DrawUtils.h"
+	#include "DrawUtils.h"
 #else
-#include "..\Include\xrRender\DrawUtils.h"
+#include "DrawUtils.h"
 #endif
 #pragma warning(push)
 #pragma warning(disable:4005)

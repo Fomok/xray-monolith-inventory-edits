@@ -153,15 +153,6 @@ target_sources_grouped(
 
 target_sources_grouped(
   TARGET xrCore
-  NAME "Debug Core/Header Files"
-  FILES
-  "../3rd party/stackwalker/include/StackWalker.h"
-  xrDebug.h
-  xrDebug_macros.h
-)
-
-target_sources_grouped(
-  TARGET xrCore
   NAME "FS/File Stream Reader/Source Files"
   FILES
   file_stream_reader.cpp
@@ -449,8 +440,8 @@ target_sources_grouped(
   xrSyncronize.h
 )
 
-target_sources(xrCore PRIVATE
-
+target_sources(xrCore
+  PRIVATE
   ../build_config_defines.h
   ChooseTypes.H
   client_id.h
@@ -462,9 +453,7 @@ target_sources(xrCore PRIVATE
 
 target_include_directories(xrCore
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/src/3rd party/DXERR"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_precompile_headers(xrCore
@@ -476,6 +465,15 @@ target_compile_definitions(xrCore
   PURE_ALLOC
   XRCORE_EXPORTS
   PORTABLE_BUGSLAYERUTIL
+)
+
+target_link_libraries(xrCore
+  PUBLIC
+  DXERR
+  StackWalker
+  winmm
+  xrAPI
+  xrCDB
 )
 
 enable_parallel_build(xrCore)

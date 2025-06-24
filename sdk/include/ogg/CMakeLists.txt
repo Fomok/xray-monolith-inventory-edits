@@ -16,8 +16,8 @@ target_sources(libogg_static PRIVATE
 
 target_include_directories(libogg_static
   PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/sdk/include
 )
 
 enable_parallel_build(libogg_static)

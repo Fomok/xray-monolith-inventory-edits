@@ -1,18 +1,4 @@
 set(XR_ENGINE_SOURCES
-  "../3rd party/discord/achievement_manager.cpp"
-  "../3rd party/discord/activity_manager.cpp"
-  "../3rd party/discord/application_manager.cpp"
-  "../3rd party/discord/core.cpp"
-  "../3rd party/discord/image_manager.cpp"
-  "../3rd party/discord/lobby_manager.cpp"
-  "../3rd party/discord/network_manager.cpp"
-  "../3rd party/discord/overlay_manager.cpp"
-  "../3rd party/discord/relationship_manager.cpp"
-  "../3rd party/discord/storage_manager.cpp"
-  "../3rd party/discord/store_manager.cpp"
-  "../3rd party/discord/types.cpp"
-  "../3rd party/discord/user_manager.cpp"
-  "../3rd party/discord/voice_manager.cpp"
   ai_script_lua_debug.cpp
   ai_script_lua_extension.cpp
   bone.cpp
@@ -102,23 +88,6 @@ set(XR_ENGINE_SOURCES
   x_ray.cpp
   _scripting.cpp
 
-  "../3rd party/discord/achievement_manager.h"
-  "../3rd party/discord/activity_manager.h"
-  "../3rd party/discord/application_manager.h"
-  "../3rd party/discord/core.h"
-  "../3rd party/discord/discord.h"
-  "../3rd party/discord/event.h"
-  "../3rd party/discord/ffi.h"
-  "../3rd party/discord/image_manager.h"
-  "../3rd party/discord/lobby_manager.h"
-  "../3rd party/discord/network_manager.h"
-  "../3rd party/discord/overlay_manager.h"
-  "../3rd party/discord/relationship_manager.h"
-  "../3rd party/discord/storage_manager.h"
-  "../3rd party/discord/store_manager.h"
-  "../3rd party/discord/types.h"
-  "../3rd party/discord/user_manager.h"
-  "../3rd party/discord/voice_manager.h"
   ai_script_lua_extension.h
   ai_script_lua_space.h
   ai_script_space.h
@@ -216,22 +185,6 @@ set(XR_ENGINE_SOURCES
   resource.rc
 )
 
-# Given a list of sources, prepend the xrEngine source dir to each,
-# and add it to the given target
-function(target_engine_sources TARGET)
-  foreach(src ${ARGN})
-    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/src/xrEngine/${src}")
-  endforeach()
-  target_sources(${TARGET} PRIVATE ${SOURCES})
-endfunction()
-
-function(target_engine_precompile_headers TARGET)
-  foreach(src ${ARGN})
-    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/src/xrEngine/${src}")
-  endforeach()
-  target_precompile_headers(${TARGET} PRIVATE ${SOURCES})
-endfunction()
-
 # Add an xrEngine target with the given name
 macro(add_engine_target name)
   add_executable(${name} WIN32)
@@ -249,56 +202,32 @@ macro(add_engine_target name)
     "${CMAKE_SOURCE_DIR}/src/xrEngine/as-invoker-manifest-part.xml")
 
   target_include_directories(${name}
-    PUBLIC
+    PRIVATE
     "${CMAKE_SOURCE_DIR}/src/xrEngine"
-    "${CMAKE_SOURCE_DIR}/src/3rd party"
-    "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
-    "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
-    "${CMAKE_SOURCE_DIR}/src/3rd party/imgui"
-    "${CMAKE_SOURCE_DIR}/src/3rd party/icu/include"
-    "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
-    "${CMAKE_SOURCE_DIR}/sdk/include"
-    "${CMAKE_SOURCE_DIR}/sdk/include/dxsdk"
   )
 
   target_compile_definitions(${name}
-    PRIVATE
+    PUBLIC
     ENGINE_BUILD
   )
 
-  target_link_directories(${name}
-    PRIVATE
-    "${CMAKE_SOURCE_DIR}/sdk/libraries/x64"
-    "${CMAKE_SOURCE_DIR}/src/3rd party/stackwalker/lib"
-  )
-
   target_link_libraries(${name}
-    xrCore
-    xrCDB
-    xrSound
-    xrLuaJIT
-    luabind
-    xrAPI
-    xrNetServer
-    ReShadeCompat
-    imgui
-    xrParticles
-    xrCPU_Pipe
-    lua-extensions
-    xrGame
-    xrPhysics
-    xrXMLParser
+    PUBLIC
     crypto
-    CxImage
-    libjpeg
-    ode
-    libogg_static
-    libtheora_static
-    libvorbis_static
-    libvorbisfile_static
-    OpenAL32
-
-    StackWalker
+    discord
+    dinput8
+    icu
+    imgui
+    lua-extensions
+    ReShadeCompat
+    Vfw32
+    xrCDB
+    xrGame
+    xrRender
+    xrParticles
+    xrPhysics
+    xrSound
+    xrXMLParser
   )
 
   enable_parallel_build(${name})
@@ -310,7 +239,7 @@ macro(configure_engine_target TARGET DEFINE LINK)
     PRIVATE
     ${DEFINE}
   )
-  target_link_libraries(${TARGET} ${LINK})
+  target_link_libraries(${TARGET} PRIVATE ${LINK})
 endmacro()
 
 # Setup executable targets
@@ -318,29 +247,29 @@ add_engine_target(AnomalyDX8)
 configure_engine_target(AnomalyDX8 STATIC_RENDERER_R1 xrRender_R1)
 
 add_engine_target(AnomalyDX8AVX)
-configure_engine_target(AnomalyDX8AVX STATIC_RENDERER_R1 xrRender_R1)
 enable_avx(AnomalyDX8AVX)
+configure_engine_target(AnomalyDX8AVX STATIC_RENDERER_R1 xrRender_R1)
 
 add_engine_target(AnomalyDX9)
 configure_engine_target(AnomalyDX9 STATIC_RENDERER_R2 xrRender_R2)
 
 add_engine_target(AnomalyDX9AVX)
-configure_engine_target(AnomalyDX9AVX STATIC_RENDERER_R2 xrRender_R2)
 enable_avx(AnomalyDX9AVX)
+configure_engine_target(AnomalyDX9AVX STATIC_RENDERER_R2 xrRender_R2)
 
 add_engine_target(AnomalyDX10)
 configure_engine_target(AnomalyDX10 STATIC_RENDERER_R3 xrRender_R3)
 
 add_engine_target(AnomalyDX10AVX)
-configure_engine_target(AnomalyDX10AVX STATIC_RENDERER_R3 xrRender_R3)
 enable_avx(AnomalyDX10AVX)
+configure_engine_target(AnomalyDX10AVX STATIC_RENDERER_R3 xrRender_R3)
 
 add_engine_target(AnomalyDX11)
 configure_engine_target(AnomalyDX11 STATIC_RENDERER_R4 xrRender_R4)
 
 add_engine_target(AnomalyDX11AVX)
-configure_engine_target(AnomalyDX11AVX STATIC_RENDERER_R4 xrRender_R4)
 enable_avx(AnomalyDX11AVX)
+configure_engine_target(AnomalyDX11AVX STATIC_RENDERER_R4 xrRender_R4)
 
 set_property(
   DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

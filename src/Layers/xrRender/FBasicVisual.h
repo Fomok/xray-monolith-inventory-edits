@@ -2,9 +2,9 @@
 #define FBasicVisualH
 #pragma once
 
-#include "../../xrEngine/vis_common.h"
+#include "vis_common.h"
 
-#include "../../Include/xrRender/RenderVisual.h"
+#include "RenderVisual.h"
 
 #define VLOAD_NOVERTICES		(1<<0)
 

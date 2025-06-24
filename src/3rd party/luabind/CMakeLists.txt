@@ -6,12 +6,7 @@ set_property(
   ${FOLDER_LUA}
 )
 
-set_target_properties(luabind PROPERTIES
-  OUTPUT_NAME "luabind.beta7-devel.rc4"
-)
-
 target_sources(luabind PRIVATE
-  library_linkage.cpp
   luabind_memory.cpp
   pch.cpp
   src/class.cpp
@@ -92,7 +87,6 @@ target_sources(luabind PRIVATE
   luabind/function.hpp
   luabind/functor.hpp
   luabind/iterator_policy.hpp
-  luabind/library_linkage.h
   luabind/luabind.hpp
   luabind/luabind_auto_ptr.h
   luabind/luabind_delete.h
@@ -118,10 +112,8 @@ target_sources(luabind PRIVATE
 
 target_include_directories(luabind
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/luabind
 )
 
 target_precompile_headers(luabind
@@ -132,6 +124,12 @@ target_precompile_headers(luabind
 target_compile_definitions(luabind
   PRIVATE
   LUABIND_BUILDING
+)
+
+target_link_libraries(luabind
+  PUBLIC
+  LuaJIT
+  boost
 )
 
 enable_parallel_build(luabind)

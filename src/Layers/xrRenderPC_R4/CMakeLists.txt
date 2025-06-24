@@ -230,7 +230,6 @@ target_sources(xrRender_R4 PRIVATE
   r4_R_render.cpp
   r4_R_sun_support.cpp
   R_Backend_LOD.cpp
-  stdafx.cpp
   xrRender_R4.cpp
 
   ../../Include/xrRender/ApplicationRender.h
@@ -442,13 +441,7 @@ target_precompile_headers(xrRender_R4
 
 target_include_directories(xrRender_R4
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/imgui"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_compile_definitions(xrRender_R4
@@ -459,9 +452,16 @@ target_compile_definitions(xrRender_R4
 
 target_link_libraries(xrRender_R4
   PRIVATE
-  xrCore
+  dxgi
   dxsdk
+  imgui
+  loki
+  luabind
   NVAPI
+  tbb
+  xrAPI
+  xrCore
+  xrEngine
 )
 
 enable_parallel_build(xrRender_R4)

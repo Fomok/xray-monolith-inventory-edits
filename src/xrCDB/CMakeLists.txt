@@ -130,10 +130,7 @@ target_sources_grouped(
 
 target_include_directories(xrCDB
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_precompile_headers(ReShadeCompat
@@ -146,7 +143,7 @@ target_compile_definitions(xrCDB
 )
 
 target_link_libraries(xrCDB
-  PRIVATE
+  PUBLIC
   xrCore
 )
 

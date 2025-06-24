@@ -7,7 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include "../Include/xrRender/DebugRender.h"
+#include "DebugRender.h"
 
 class CDebugRenderer {
 private:

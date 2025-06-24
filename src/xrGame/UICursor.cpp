@@ -3,7 +3,7 @@
 
 #include "ui/UIStatic.h"
 #include "ui/UIBtnHint.h"
-#include "xrEngine/IInputReceiver.h"
+#include "IInputReceiver.h"
 
 #define C_DEFAULT	D3DCOLOR_XRGB(0xff,0xff,0xff)
 

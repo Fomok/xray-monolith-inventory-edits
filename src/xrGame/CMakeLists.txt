@@ -1253,7 +1253,6 @@ target_sources(xrGame PRIVATE
   ../xrServerEntities/character_info.h
   ../xrServerEntities/character_info_defs.h
   ../xrServerEntities/clsid_game.h
-  ../Include/xrRender/DrawUtils.h
   ../xrCore/FastDelegate.h
   ../xrServerEntities/gametype_chooser.h
   ../xrServerEntities/game_base_space.h
@@ -2876,34 +2875,33 @@ target_sources(xrGame PRIVATE
 
 target_include_directories(xrGame
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
   PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}/ai/monsters"
-  "${CMAKE_SOURCE_DIR}/src"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/cximage"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
-  "${CMAKE_SOURCE_DIR}/src/xrServerEntities"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 )
 
 target_precompile_headers(xrGame
   PRIVATE
-  "$<$<COMPILE_LANGUAGE:CXX>:stdafx.h>"
-  "$<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>"
+  $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
+  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
 )
 
 target_compile_definitions(xrGame
-  PRIVATE
+  PUBLIC
   XRGAME_EXPORTS
 )
 
 target_link_libraries(xrGame
   PUBLIC
+  CxImage
+  loki
+  luabind
   ode
-  PRIVATE
   xrCore
+  xrCDB
+  xrEngine
+  xrNetServer
+  xrPhysics
 )
 
 enable_parallel_build(xrGame)

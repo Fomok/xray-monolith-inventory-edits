@@ -4,18 +4,18 @@
 #include "../xrEngine/cl_intersect.h"
 #include "../xrserverentities/alife_space.h"
 
-#include "../xrphysics/phCharacter.h"
-#include "../xrphysics/IPHCapture.h"
-#include "../xrphysics/iphysicsshellholder.h"
-#include "../xrphysics/ElevatorState.h"
-#include "../xrphysics/CalculateTriangle.h"
-#include "../xrphysics/Icolisiondamageinfo.h"
-#include "../xrphysics/phvalide.h"
-#include "../xrphysics/physicsshell.h"
-#include "../xrphysics/iphworld.h"
+#include "phCharacter.h"
+#include "IPHCapture.h"
+#include "iphysicsshellholder.h"
+#include "ElevatorState.h"
+#include "CalculateTriangle.h"
+#include "Icolisiondamageinfo.h"
+#include "phvalide.h"
+#include "physicsshell.h"
+#include "iphworld.h"
 #include "detail_path_manager.h"
-#include "../xrEngine/gamemtllib.h"
-#include "../xrEngine/xr_object.h"
+#include "gamemtllib.h"
+#include "xr_object.h"
 #include "CaptureBoneCallback.h"
 #include "Level.h"
 #include "physicsshellholder.h"
@@ -23,7 +23,8 @@
 #include "phdebug.h"
 #endif
 
-#include "../Include/xrRender/Kinematics.h"
+//#include	"KinematicsAnimated.h"
+#include "Kinematics.h"
 
 #define GROUND_FRICTION	10.0f
 #define AIR_FRICTION	0.01f
@@ -1229,7 +1230,7 @@ BOOL CPHMovementControl::BorderTraceCallback(collide::rq_result& result, LPVOID 
 	}
 	else
 	{
-		//получить треугольник и узнать его материал
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		T = Level().ObjectSpace.GetStaticTris() + result.element;
 		mtl_idx = T->material;
 	}

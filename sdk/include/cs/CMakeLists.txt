@@ -19,5 +19,5 @@ target_sources(cs
 
 target_include_directories(cs
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )

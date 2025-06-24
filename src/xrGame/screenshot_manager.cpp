@@ -2,7 +2,7 @@
 #include "screenshot_manager.h"
 #include "level.h"
 #include "game_cl_mp.h"
-#include "xrCore/ppmd_compressor.h"
+#include "ppmd_compressor.h"
 #include "screenshots_writer.h"
 
 #ifdef DEBUG
@@ -13,9 +13,6 @@
 #include "ximage.h"
 #include "xmemfile.h"
 #include "profiler.h"
-
-#pragma comment(lib,"cximage.lib")
-#pragma comment(lib,"libjpeg.lib")
 
 void* cxalloc(size_t size)
 {

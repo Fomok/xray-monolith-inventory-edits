@@ -19,9 +19,12 @@ target_sources(lua-extensions PRIVATE
 
 target_include_directories(lua-extensions
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(lua-extensions
+  PUBLIC
+  LuaJIT
 )
 
 enable_parallel_build(lua-extensions)

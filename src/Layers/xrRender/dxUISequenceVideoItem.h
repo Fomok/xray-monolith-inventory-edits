@@ -2,7 +2,7 @@
 #define	dxUISequenceVideoItem_included
 #pragma once
 
-#include "..\..\Include\xrRender\UISequenceVideoItem.h"
+#include "UISequenceVideoItem.h"
 
 class dxUISequenceVideoItem : public IUISequenceVideoItem
 {

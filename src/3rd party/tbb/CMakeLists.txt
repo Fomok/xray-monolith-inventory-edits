@@ -136,5 +136,15 @@ target_sources(tbb
 
 target_include_directories(tbb
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_SOURCE_DIR}/src/3rd party"
+)
+
+find_library(
+  LIBRARY_TBB tbb
+  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+target_link_libraries(tbb
+  INTERFACE
+  ${LIBRARY_TBB}
 )

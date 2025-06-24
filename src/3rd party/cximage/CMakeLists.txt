@@ -34,9 +34,7 @@ target_sources(CxImage PRIVATE
 
 target_include_directories(CxImage
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 if(MSVC)
@@ -49,6 +47,11 @@ endif()
 target_compile_definitions(CxImage
   PRIVATE
   CXIMAGE_BUILD
+)
+
+target_link_libraries(CxImage
+  PUBLIC
+  jpeg
 )
 
 enable_parallel_build(CxImage)

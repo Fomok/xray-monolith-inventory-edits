@@ -12,12 +12,12 @@
 #endif
 #pragma warning(default:4995)
 #include "../xrRender/HW.h"
-#include "../../xrEngine/XR_IOConsole.h"
-#include "../../Include/xrAPI/xrAPI.h"
-#include "../xrRender/xrRender_console.h"
+#include "XR_IOConsole.h"
+#include "xrAPI.h"
+#include "xrRender_console.h"
 
-#include "StateManager\dx10SamplerStateCache.h"
-#include "StateManager\dx10StateCache.h"
+#include "StateManager/dx10SamplerStateCache.h"
+#include "StateManager/dx10StateCache.h"
 
 #ifndef _EDITOR
 void fill_vid_mode_list(CHW* _hw);

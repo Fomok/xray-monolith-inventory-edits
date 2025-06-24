@@ -2,7 +2,7 @@
 #define	dxUIRender_included
 #pragma once
 
-#include "..\..\Include\xrRender\UIRender.h"
+#include "UIRender.h"
 
 class dxUIRender : public IUIRender
 {

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "imgui_base.h"
 #include <imgui.h>
-#include <imgui/IconsFontAwesome6.h>
+#include <IconsFontAwesome6.h>
 #include "device.h"
 #include "IGame_Persistent.h"
 

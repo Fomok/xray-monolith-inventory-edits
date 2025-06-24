@@ -11,14 +11,14 @@
 
 #include "ActorEffector.h"
 
-#include "../xrphysics/iPHWorld.h"
-#include "../xrphysics/actorcameracollision.h"
+#include "iPHWorld.h"
+#include "actorcameracollision.h"
 #include "level.h"
 #include "xr_level_controller.h"
 #include "game_cl_base.h"
 #include "infoportion.h"
 #include "alife_registry_wrappers.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "client_spawn_manager.h"
 #include "hit.h"
 #include "PHDestroyable.h"

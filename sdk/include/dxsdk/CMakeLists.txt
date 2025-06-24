@@ -34,5 +34,45 @@ target_sources(dxsdk
 
 target_include_directories(dxsdk
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+find_library(
+  LIBRARY_D3D9 d3d9
+  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+find_library(
+  LIBRARY_D3DX9 d3dx9
+  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+find_library(
+  LIBRARY_D3D10 d3d10
+  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+find_library(
+  LIBRARY_D3DX10 d3dx10
+  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+find_library(
+  LIBRARY_D3D11 d3d11
+  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+find_library(
+  LIBRARY_D3DX11 d3dx11
+  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+target_link_libraries(dxsdk
+  INTERFACE
+  ${LIBRARY_D3D9}
+  ${LIBRARY_D3DX9}
+  ${LIBRARY_D3D10}
+  ${LIBRARY_D3DX10}
+  ${LIBRARY_D3D11}
+  ${LIBRARY_D3DX11}
 )

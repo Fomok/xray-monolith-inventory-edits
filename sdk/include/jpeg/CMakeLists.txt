@@ -1,12 +1,12 @@
-add_library(libjpeg STATIC)
+add_library(jpeg STATIC)
 
 set_property(
-  TARGET libjpeg
+  TARGET jpeg
   PROPERTY FOLDER
   ${FOLDER_SDK}
 )
 
-target_sources(libjpeg PRIVATE
+target_sources(jpeg PRIVATE
   ansi2knr.c
   cdjpeg.c
   cjpeg.c
@@ -93,10 +93,10 @@ target_sources(libjpeg PRIVATE
   transupp.h
 )
 
-target_include_directories(libjpeg
-  PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+target_include_directories(jpeg
+  PUBLIC
+  ${CMAKE_SOURCE_DIR}/sdk/include
 )
 
-enable_parallel_build(libjpeg)
-silence_stdext_hash_deprecation_warnings(libjpeg)
+enable_parallel_build(jpeg)
+silence_stdext_hash_deprecation_warnings(jpeg)

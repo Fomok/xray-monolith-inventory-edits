@@ -140,9 +140,7 @@ target_sources(xrRender_R1 PRIVATE
   LightPPA.cpp
   LightProjector.cpp
   LightShadows.cpp
-  stdafx.cpp
   xrRender_R1.cpp
-  ../../Include/R_light.h
   ../../Include/xrRender/animation_blend.h
   ../../Include/xrRender/animation_motion.h
   ../../Include/xrRender/ApplicationRender.h
@@ -175,6 +173,7 @@ target_sources(xrRender_R1 PRIVATE
   ../../Include/xrRender/WallMarkArray.h
   ../xrRenderDX9/dx9R_Backend_Runtime.h
   ../xrRenderDX9/dx9r_constants_cache.h
+  ../xrRender/R_light.h
   ../xrRender/Animation.h
   ../xrRender/AnimationKeyCalculate.h
   ../xrRender/blenders/Blender.h
@@ -305,12 +304,6 @@ target_precompile_headers(xrRender_R1
 target_include_directories(xrRender_R1
   PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/imgui"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
 )
 
 target_compile_definitions(xrRender_R1
@@ -320,9 +313,16 @@ target_compile_definitions(xrRender_R1
 
 target_link_libraries(xrRender_R1
   PRIVATE
-  xrCore
   dxsdk
+  imgui
+  loki
+  luabind
   NVAPI
+  tbb
+  xrAPI
+  xrCore
+  xrCPU_Pipe
+  xrEngine
 )
 
 enable_parallel_build(xrRender_R1)

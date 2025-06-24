@@ -22,7 +22,7 @@
 
 #include "xrPhysics.h"
 
-#include "../include/xrapi/xrapi.h"
+#include "../Layers/xrAPI/xrAPI.h"
 #ifdef	DEBUG
 #include "d3d9types.h"
 #endif

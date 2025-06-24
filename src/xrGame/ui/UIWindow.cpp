@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "UIWindow.h"
-#include "../UICursor.h"
-#include "../MainMenu.h"
+#include "UICursor.h"
+#include "MainMenu.h"
 
-#include "../Include/xrRender/DebugRender.h"
-#include "../Include/xrRender/UIRender.h"
-#include "../UIGameCustom.h"
-#include "../ui/UIDialogWnd.h"
+#include "DebugRender.h"
+#include "UIRender.h"
+#include "UIGameCustom.h"
+#include "UIDialogWnd.h"
 //#include "UIHelper.h"
 //#include "UIHint.h"
-//#include "../ScriptXMLInit.h"
+//#include "ScriptXMLInit.h"
 
 
 poolSS<_12b, 128> ui_allocator;

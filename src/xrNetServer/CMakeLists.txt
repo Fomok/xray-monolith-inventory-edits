@@ -30,23 +30,18 @@ target_sources(xrNetServer PRIVATE
 )
 
 target_include_directories(xrNetServer
-  PRIVATE
+  PUBLIC
   "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/dxerr"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
 )
 
 target_precompile_headers(xrNetServer
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(xrNetServer
-  PRIVATE
-  XR_NETSERVER_EXPORTS
-)
-
 target_link_libraries(xrNetServer
-  PRIVATE
+  PUBLIC
+  DPlay
+  Ws2_32
   xrCore
 )
 

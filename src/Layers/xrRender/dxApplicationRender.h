@@ -2,8 +2,8 @@
 #define dxApplicationRender_included
 #pragma once
 
-#include "..\..\Include\xrRender\ApplicationRender.h"
-#include "..\..\xrEngine\x_ray.h"
+#include "ApplicationRender.h"
+#include "x_ray.h"
 
 class dxApplicationRender : public IApplicationRender
 {

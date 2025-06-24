@@ -6,13 +6,13 @@
 #include "PHCapture.h"
 //#include "Entity.h"
 //#include "inventory_item.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 //#include "Actor.h"
 //#include "Inventory.h"
 //#include "CaptureBoneCallback.h"
 #include "iphysicsshellholder.h"
-#include "../xrengine/bone.h"
-#include "../xrengine/device.h"
+#include "bone.h"
+#include "device.h"
 extern class CPHWorld* ph_world;
 
 ///////////////////////////////////////////////////////////////////////////////////

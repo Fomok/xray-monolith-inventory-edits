@@ -23,8 +23,8 @@
 
 #define DEVICE_RESET_PRECACHE_FRAME_COUNT 10
 
-#include "../Include/xrRender/FactoryPtr.h"
-#include "../Include/xrRender/RenderDeviceRender.h"
+#include "FactoryPtr.h"
+#include "RenderDeviceRender.h"
 #include "imgui_base.h"
 
 class engine_impl;

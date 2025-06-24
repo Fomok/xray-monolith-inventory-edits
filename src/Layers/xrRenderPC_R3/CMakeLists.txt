@@ -221,7 +221,6 @@ target_sources(xrRender_R3 PRIVATE
   r3_R_rain.cpp
   r3_R_render.cpp
   r3_R_sun_support.cpp
-  stdafx.cpp
   xrRender_R3.cpp
   ../../Include/xrRender/ApplicationRender.h
   ../../Include/xrRender/ConsoleRender.h
@@ -424,13 +423,7 @@ target_precompile_headers(xrRender_R3
 
 target_include_directories(xrRender_R3
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/imgui"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_compile_definitions(xrRender_R3
@@ -441,9 +434,16 @@ target_compile_definitions(xrRender_R3
 
 target_link_libraries(xrRender_R3
   PRIVATE
-  xrCore
+  dxgi
   dxsdk
+  imgui
+  loki
+  luabind
   NVAPI
+  tbb
+  xrAPI
+  xrCore
+  xrEngine
 )
 
 enable_parallel_build(xrRender_R3)

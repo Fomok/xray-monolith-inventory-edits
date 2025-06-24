@@ -7,7 +7,7 @@ set_property(
 )
 
 target_sources(discord
-  PRIVATE
+  INTERFACE
   achievement_manager.cpp
   achievement_manager.h
   activity_manager.cpp
@@ -43,5 +43,15 @@ target_sources(discord
 
 target_include_directories(discord
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+find_library(
+  LIBRARY_DISCORD_GAME_SDK discord_game_sdk
+  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+target_link_libraries(discord
+  INTERFACE
+  ${LIBRARY_DISCORD_GAME_SDK}
 )

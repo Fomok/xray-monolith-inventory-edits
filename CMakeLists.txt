@@ -31,12 +31,13 @@ include(folders)
 # Configure exceptions
 configure_exceptions()
 
-# Setup executable targets
-include(targets)
+# Setup gamedata
+add_subdirectory(gamedata)
 
 # Setup library targets
 add_subdirectory(sdk)
 add_subdirectory(src)
 
-# Setup gamedata
-add_subdirectory(gamedata)
+# Setup executable targets
+include(targets)
+

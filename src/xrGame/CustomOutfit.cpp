@@ -6,14 +6,14 @@
 #include "stdafx.h"
 
 #include "customoutfit.h"
-#include "../xrphysics/PhysicsShell.h"
+#include "PhysicsShell.h"
 #include "inventory_space.h"
 #include "Inventory.h"
 #include "Actor.h"
 #include "game_cl_base.h"
 #include "Level.h"
 #include "BoneProtections.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "player_hud.h"
 #include "ActorHelmet.h"
 

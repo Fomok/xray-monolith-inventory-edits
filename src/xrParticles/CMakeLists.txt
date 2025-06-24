@@ -49,16 +49,17 @@ target_sources_grouped(
 target_include_directories(xrParticles
   PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
 )
 
 target_precompile_headers(xrParticles
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(xrParticles
-  PRIVATE
-  XR_PARTICLES_EXPORTS
+target_link_libraries(xrParticles
+  PUBLIC
+  tbb
+  xrCore
+  xrCPU_Pipe
 )
 
 enable_parallel_build(xrParticles)

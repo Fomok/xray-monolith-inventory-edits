@@ -13,9 +13,7 @@ target_sources(DXERR PRIVATE
 
 target_include_directories(DXERR
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 enable_parallel_build(DXERR)

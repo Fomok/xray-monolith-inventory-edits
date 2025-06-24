@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Include/xrRender/ImGuiRender.h"
+#include "ImGuiRender.h"
 
 class dxImGuiRender : public IImGuiRender
 {

@@ -9,7 +9,7 @@
 //#include "Level.h"
 #include "iphysicsshellholder.h"
 #include "PhysicsShellAnimator.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 
 ///////////////////////////////////////////////////////////////
 ///#pragma warning(disable:4995)

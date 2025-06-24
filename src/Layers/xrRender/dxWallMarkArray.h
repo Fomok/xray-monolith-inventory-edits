@@ -2,7 +2,7 @@
 #define dxWallMarkArray_included
 #pragma once
 
-#include "..\..\Include\xrRender\WallMarkArray.h"
+#include "WallMarkArray.h"
 
 class dxWallMarkArray : public IWallMarkArray
 {

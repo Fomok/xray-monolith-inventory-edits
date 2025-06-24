@@ -1,4 +1,4 @@
-add_custom_target(xrRender)
+add_library(xrRender INTERFACE)
 
 set_property(
   TARGET xrRender
@@ -21,6 +21,36 @@ target_sources(xrRender
   Utils/dxHashHelper.cpp
   Utils/dxHashHelper.h
 
+  animation_blend.h
+  animation_motion.h
+  ApplicationRender.h
+  ConsoleRender.h
+  DebugRender.h
+  DebugShader.h
+  DrawUtils.h
+  EnvironmentRender.h
+  FactoryPtr.h
+  FontRender.h
+  ImGuiRender.h
+  Kinematics.h
+  KinematicsAnimated.h
+  LensFlareRender.h
+  ObjectSpaceRender.h
+  ParticleCustom.h
+  particles_systems_library_interface.hpp
+  RainRender.h
+  RenderDetailModel.h
+  RenderDeviceRender.h
+  RenderFactory.h
+  RenderVisual.h
+  StatGraphRender.h
+  StatsRender.h
+  ThunderboltDescRender.h
+  ThunderboltRender.h
+  UIRender.h
+  UISequenceVideoItem.h
+  UIShader.h
+  WallMarkArray.h
   Animation.cpp
   Animation.h
   AnimationKeyCalculate.h
@@ -203,6 +233,7 @@ target_sources(xrRender
   rendertarget_phase_pp_bloom.cpp
   rendertarget_phase_smaa.cpp
   rendertarget_phase_sunshafts.cpp
+  R_light.h
   ResourceManager.cpp
   ResourceManager.h
   ResourceManager_Loader.cpp
@@ -253,4 +284,9 @@ target_sources(xrRender
   xrRender_console.h
   xrStripify.cpp
   xrStripify.h
+)
+
+target_include_directories(xrRender
+  INTERFACE
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )

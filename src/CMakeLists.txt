@@ -1,5 +1,4 @@
 add_subdirectory("3rd party")
-add_subdirectory("Include")
 add_subdirectory("ReShadeCompat")
 add_subdirectory("Layers")
 

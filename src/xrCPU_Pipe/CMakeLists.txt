@@ -61,17 +61,17 @@ target_sources_grouped(
 )
 
 target_include_directories(xrCPU_Pipe
-  PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrCore
+target_precompile_headers(xrCPU_Pipe
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(xrCPU_Pipe
-  PRIVATE
-  XRCPU_PIPE_EXPORTS
+target_link_libraries(xrCPU_Pipe
+  PUBLIC
+  xrCDB
 )
 
 enable_parallel_build(xrCPU_Pipe)

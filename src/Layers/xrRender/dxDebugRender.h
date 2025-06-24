@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Include/xrRender/DebugRender.h"
+#include "DebugRender.h"
 
 class dxDebugRender : public IDebugRender
 {

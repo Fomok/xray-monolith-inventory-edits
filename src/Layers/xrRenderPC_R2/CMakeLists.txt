@@ -191,7 +191,6 @@ target_sources(xrRender_R2 PRIVATE
   r2_R_sun.cpp
   r2_sector_detect.cpp
   r2_test_hw.cpp
-  stdafx.cpp
   xrRender_R2.cpp
   ../../Include/xrRender/animation_blend.h
   ../../Include/xrRender/animation_motion.h
@@ -373,13 +372,7 @@ target_precompile_headers(xrRender_R2
 
 target_include_directories(xrRender_R2
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  PRIVATE
-  "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/imgui"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luabind"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/luajit-2/src"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_compile_definitions(xrRender_R2
@@ -389,9 +382,15 @@ target_compile_definitions(xrRender_R2
 
 target_link_libraries(xrRender_R2
   PRIVATE
-  xrCore
   dxsdk
+  imgui
+  loki
+  luabind
   NVAPI
+  tbb
+  xrAPI
+  xrCore
+  xrEngine
 )
 
 enable_parallel_build(xrRender_R2)

@@ -4,18 +4,18 @@
 //#include "Physics.h"
 #include "xrserver_objects_alife.h"
 #include "Level.h"
-#include "../Include/xrRender/Kinematics.h"
-#include "../Include/xrRender/KinematicsAnimated.h"
-#include "../xrEngine/xr_collide_form.h"
-#include "../xrEngine/cf_dynamic_mesh.h"
+#include "Kinematics.h"
+#include "KinematicsAnimated.h"
+#include "xr_collide_form.h"
+#include "cf_dynamic_mesh.h"
 #include "PHSynchronize.h"
 #include "game_object_space.h"
-//#include "../xrphysics/PhysicsShellAnimator.h"
+//#include "PhysicsShellAnimator.h"
 #include "moving_bones_snd_player.h"
-#include "../xrphysics/extendedgeom.h"
+#include "extendedgeom.h"
 #ifdef	DEBUG
 #include "phdebug.h"
-#include "../xrengine/objectdump.h"
+#include "objectdump.h"
 #endif
 BOOL dbg_draw_doors = false;
 

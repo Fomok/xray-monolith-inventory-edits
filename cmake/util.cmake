@@ -66,3 +66,21 @@ macro(silence_stdext_hash_deprecation_warnings TARGET)
     _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
   )
 endmacro()
+
+# Given a list of sources, prepend the xrEngine source dir to each,
+# and add it to the given target
+function(target_engine_sources TARGET)
+  foreach(src ${ARGN})
+    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/src/xrEngine/${src}")
+  endforeach()
+  target_sources(${TARGET} PRIVATE ${SOURCES})
+endfunction()
+
+# Given a list of precompiled headers, prepend the xrEngine source dir to each,
+# and add it to the given target
+function(target_engine_precompile_headers TARGET)
+  foreach(src ${ARGN})
+    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/src/xrEngine/${src}")
+  endforeach()
+  target_precompile_headers(${TARGET} PRIVATE ${SOURCES})
+endfunction()

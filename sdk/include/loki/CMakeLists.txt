@@ -37,5 +37,5 @@ target_sources(loki
 
 target_include_directories(loki
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_SOURCE_DIR}/sdk/include
 )

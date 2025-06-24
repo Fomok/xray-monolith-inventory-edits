@@ -10,9 +10,9 @@
 #include "SpaceUtils.h"
 #include "MathUtils.h"
 #include "iPhysicsShellHolder.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "PHCollideValidator.h"
-#include "../xrengine/bone.h"
+#include "bone.h"
 //#include "game_object_space.h"
 //#pragma warning(disable:4995)
 //#pragma warning(disable:4267)

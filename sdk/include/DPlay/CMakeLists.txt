@@ -14,5 +14,5 @@ target_sources(DPlay
 
 target_include_directories(DPlay
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_SOURCE_DIR}/sdk/include
 )

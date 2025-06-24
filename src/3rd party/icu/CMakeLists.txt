@@ -199,5 +199,27 @@ target_sources(icu
 
 target_include_directories(icu
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+find_library(
+  LIBRARY_ICUUC icuuc
+  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+find_library(
+  LIBRARY_SICUDT sicudt
+  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+find_library(
+  LIBRARY_SICUUC sicuuc
+  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+target_link_libraries(icu
+  INTERFACE
+  ${LIBRARY_ICUUC}
+  ${LIBRARY_SICUDT}
+  ${LIBRARY_SICUUC}
 )

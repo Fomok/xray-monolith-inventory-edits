@@ -91,9 +91,8 @@ target_sources(ode PRIVATE
 
 target_include_directories(ode
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/ode/src"
-  PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 if(ODE_DOUBLE_PRECISION)

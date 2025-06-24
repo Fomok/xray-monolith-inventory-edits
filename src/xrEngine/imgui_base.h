@@ -1,7 +1,7 @@
 #pragma once
 
 #include "IInputReceiver.h"
-#include "../Include/xrRender/ImGuiRender.h"
+#include "ImGuiRender.h"
 
 #define IMGUI_DISABLE_OBSOLETE_KEYIO
 struct ImGuiContext;

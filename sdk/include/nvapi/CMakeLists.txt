@@ -25,5 +25,15 @@ target_sources(NVAPI
 
 target_include_directories(NVAPI
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+find_library(
+  LIBRARY_NVAPI nvapi
+  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+)
+
+target_link_libraries(NVAPI
+  INTERFACE
+  ${LIBRARY_NVAPI}
 )

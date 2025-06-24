@@ -1,8 +1,8 @@
 #pragma once
 #include "firedeps.h"
-#include "../xrEngine/ObjectAnimator.h"
-#include "../Include/xrRender/Kinematics.h"
-#include "../Include/xrRender/KinematicsAnimated.h"
+#include "ObjectAnimator.h"
+#include "Kinematics.h"
+#include "KinematicsAnimated.h"
 #include "actor_defs.h"
 
 #define SCOPE_ATTACH_IDX 2

@@ -1,9 +1,9 @@
 #include "StdAfx.h"
-#include "../../xrEngine/_d3d_extensions.h"
-#include "../../xrEngine/xrLevel.h"
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-#include "../../Include/R_light.h"
+#include "_d3d_extensions.h"
+#include "xrLevel.h"
+#include "igame_persistent.h"
+#include "environment.h"
+#include "R_light.h"
 #include "light_db.h"
 
 CLight_DB::CLight_DB()

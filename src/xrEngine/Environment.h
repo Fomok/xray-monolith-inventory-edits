@@ -20,8 +20,8 @@ class CLensFlareDescriptor;
 
 #define DAY_LENGTH 86400.f
 
-#include "../Include/xrRender/FactoryPtr.h"
-#include "../Include/xrRender/EnvironmentRender.h"
+#include "FactoryPtr.h"
+#include "EnvironmentRender.h"
 
 #include "../build_config_defines.h"
 

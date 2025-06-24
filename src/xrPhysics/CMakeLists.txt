@@ -167,23 +167,23 @@ target_precompile_headers(xrPhysics
 )
 
 target_include_directories(xrPhysics
-  PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_precompile_headers(xrPhysics
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(xrPhysics
-  PRIVATE
-  XRPHYSICS_EXPORTS
-)
-
 target_link_libraries(xrPhysics
   PUBLIC
+  loki
   ode
+  tbb
+  xrAPI
+  xrCDB
+  xrEngine
+  xrRender
 )
 
 enable_parallel_build(xrPhysics)

@@ -14,7 +14,7 @@
 #include "squad_hierarchy_holder.h"
 #include "group_hierarchy_holder.h"
 #include "customzone.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "detail_path_manager.h"
 #include "memory_manager.h"
 #include "visual_memory_manager.h"
@@ -48,10 +48,10 @@
 #include "level_path_manager.h"
 
 // Lain: added
-#include "../xrEngine/IGame_Level.h"
-#include "../xrCore/_vector3d_ext.h"
+#include "IGame_Level.h"
+#include "_vector3d_ext.h"
 #include "debug_text_tree.h"
-#include "../xrPhysics/IPHWorld.h"
+#include "IPHWorld.h"
 
 #ifdef DEBUG
 #	include "debug_renderer.h"

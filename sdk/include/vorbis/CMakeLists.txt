@@ -74,9 +74,9 @@ target_sources(libvorbis_static PRIVATE
 )
 
 target_include_directories(libvorbis_static
-  PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/sdk/include
 )
 
 target_compile_definitions(libvorbis_static
@@ -102,9 +102,9 @@ target_sources(libvorbisfile_static PRIVATE
 )
 
 target_include_directories(libvorbisfile_static
-  PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/sdk/include
 )
 
 enable_parallel_build(libvorbisfile_static)

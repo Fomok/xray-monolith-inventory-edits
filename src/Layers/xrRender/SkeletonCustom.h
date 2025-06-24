@@ -3,8 +3,8 @@
 #define SkeletonCustomH
 
 #include		"fhierrarhyvisual.h"
-#include		"../../xrEngine/bone.h"
-#include		"../../Include/xrRender/Kinematics.h"
+#include		"bone.h"
+#include		"Kinematics.h"
 
 // consts
 extern xrCriticalSection UCalc_Mutex;

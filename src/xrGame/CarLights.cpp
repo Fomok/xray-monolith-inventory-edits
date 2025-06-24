@@ -8,10 +8,10 @@
 #include "hit.h"
 #include "PHDestroyable.h"
 #include "Car.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 //#include "PHWorld.h"
 //extern CPHWorld*	ph_world;
-#include "../xrphysics/IPHWorld.h"
+#include "IPHWorld.h"
 
 SCarLight::SCarLight()
 {

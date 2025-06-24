@@ -42,21 +42,29 @@ target_sources(xrSound PRIVATE
   stdafx.h
 )
 
-target_precompile_headers(xrSound
-  PRIVATE stdafx.h
-)
+target_precompile_headers(xrSound PRIVATE stdafx.h)
 
 target_include_directories(xrSound
   PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
-  "${CMAKE_SOURCE_DIR}/src/3rd party/openal/include"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_compile_definitions(xrSound
   PRIVATE
   XRSOUND_EXPORTS
+)
+
+target_link_libraries(xrSound
+  PUBLIC
+  dxsdk
+  dxguid
+  libogg_static
+  libtheora_static
+  libvorbis_static
+  libvorbisfile_static
+  OpenAL32
+  tbb
+  xrCore
 )
 
 enable_parallel_build(xrSound)

@@ -6,7 +6,7 @@
 
 cmake_minimum_required(VERSION 3.13)
 
-project(xrLuaJIT C CXX ASM)
+project(LuaJIT C CXX ASM)
 
 include(msvc)
 
@@ -82,19 +82,16 @@ execute_process(
 
 # TODO: check windows supports same target name for static and shared lib
 if (LUAJIT_BUILD_STATIC_LIB)
-    add_library(xrLuaJIT STATIC)
+    add_library(LuaJIT STATIC)
 else()
-    add_library(xrLuaJIT SHARED)
+    add_library(LuaJIT SHARED)
 endif()
 
 set_property(
-  TARGET xrLuaJIT
+  TARGET LuaJIT
   PROPERTY FOLDER
   ${FOLDER_LUA}
 )
-
-# Output as lua51 to satisfy Anomaly's xrEngine implementation
-set_target_properties(xrLuaJIT PROPERTIES OUTPUT_NAME "lua51")
 
 # Compiler options
 if (PROJECT_PLATFORM_E2K)
@@ -163,7 +160,7 @@ endif()
 
 set(CCOPTIONS "${CCOPT};${XCFLAGS}")
 
-target_compile_options(xrLuaJIT PRIVATE ${CCOPTIONS})
+target_compile_options(LuaJIT PRIVATE ${CCOPTIONS})
 
 # Account for disparity in platform compiler arguments
 if(MSVC)
@@ -226,7 +223,7 @@ if (WIN32)
     #string(APPEND TARGET_STRIP "--strip-unneeded")
 
     if (NOT MSVC)
-        target_link_options(xrLuaJIT
+        target_link_options(LuaJIT
             PRIVATE
             " -shared -Wl,--out-implib,libluajit-${ABIVER}.dll.a"
         )
@@ -356,7 +353,7 @@ separate_arguments(HOST_ALDFLAGS)
 separate_arguments(DASM_FLAGS)
 separate_arguments(TARGET_XCFLAGS)
 
-target_compile_options(xrLuaJIT
+target_compile_options(LuaJIT
     PRIVATE
     ${TARGET_XCFLAGS}
 )
@@ -491,7 +488,7 @@ add_buildvm_target("lj_recdef.h" "recdef" ${LJLIB_C})
 add_buildvm_target("lj_folddef.h" "folddef" "${LUAJIT_DIR}/lj_opt_fold.c")
 add_buildvm_target("jit/vmdef.lua" "libvm" ${LJLIB_C})
 
-target_sources(xrLuaJIT PRIVATE
+target_sources(LuaJIT PRIVATE
     "${LJ_VM_SRC}"
     "${CMAKE_CURRENT_BINARY_DIR}/lj_ffdef.h"
     "${CMAKE_CURRENT_BINARY_DIR}/lj_bcdef.h"
@@ -501,10 +498,10 @@ target_sources(xrLuaJIT PRIVATE
 )
 
 if (CMAKE_UNITY_BUILD)
-    target_sources(xrLuaJIT PRIVATE "${LUAJIT_DIR}/ljamalg.c")
+    target_sources(LuaJIT PRIVATE "${LUAJIT_DIR}/ljamalg.c")
 else()
     # TODO: use lj_asm_ lj_emit lj_target?
-    target_sources(xrLuaJIT PRIVATE
+    target_sources(LuaJIT PRIVATE
         ${LJLIB_C}
         "${LUAJIT_DIR}/lauxlib.h"
         "${LUAJIT_DIR}/lib_aux.c"
@@ -622,7 +619,7 @@ else()
     )
 endif()
 
-target_include_directories(xrLuaJIT
+target_include_directories(LuaJIT
     PUBLIC
     "${LUAJIT_DIR}"
 
@@ -630,37 +627,37 @@ target_include_directories(xrLuaJIT
     "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
-target_link_libraries(xrLuaJIT
+target_link_libraries(LuaJIT
     PRIVATE
     $<$<BOOL:${LUA_USE_POSIX}>:m>
     $<$<BOOL:${LUA_USE_DLOPEN}>:dl>
 )
 
 if (NOT MSVC)
-  target_compile_options(xrLuaJIT
+  target_compile_options(LuaJIT
       PRIVATE
       -Wno-comment
   )
 endif()
 
-set_target_properties(xrLuaJIT PROPERTIES
+set_target_properties(LuaJIT PROPERTIES
     PREFIX ""
     UNITY_BUILD OFF
 )
 
 install(
-    TARGETS xrLuaJIT LIBRARY
+    TARGETS LuaJIT LIBRARY
     DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
 if (LUAJIT_BUILD_APP)
     add_executable(luajit
-        "${LUAJIT_DIR}/luajit.c"
+        ${LUAJIT_DIR}/luajit.c
     )
 
     target_link_libraries(luajit
         PRIVATE
-        xrLuaJIT
+        LuaJIT
     )
 
     target_link_options(luajit
@@ -678,7 +675,7 @@ if (LUAJIT_BUILD_APP)
         )
         target_link_libraries(wluajit
             PRIVATE
-            xrLuaJIT
+            LuaJIT
         )
     endif()
 endif()

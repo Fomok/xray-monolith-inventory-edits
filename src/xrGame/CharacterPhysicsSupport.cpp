@@ -8,17 +8,14 @@
 #include "CustomMonster.h"
 
 
-#include "../Include/xrRender/KinematicsAnimated.h"
+#include "KinematicsAnimated.h"
 
 
-#include "../xrphysics/PhysicsShell.h"
-#include "../xrphysics/iActivationShape.h"
-//#include "../xrphysics/Extendedgeom.h"
-#include "../xrphysics/geometry.h"
-//#include "../xrphysics/phdynamicdata.h"
-#include "../xrphysics/IPHCapture.h"
-//#include "../xrphysics/ICollideValidator.h"
-#include "../xrphysics/IPHWorld.h"
+#include "PhysicsShell.h"
+#include "iActivationShape.h"
+#include "geometry.h"
+#include "IPHCapture.h"
+#include "IPHWorld.h"
 
 //#include "Physics.h"
 

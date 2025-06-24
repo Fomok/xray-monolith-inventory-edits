@@ -66,8 +66,8 @@ target_sources(libtheora_static PRIVATE
 
 target_include_directories(libtheora_static
   PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
-  "${CMAKE_SOURCE_DIR}/sdk/include"
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/sdk/include
 )
 
 enable_parallel_build(libtheora_static)
