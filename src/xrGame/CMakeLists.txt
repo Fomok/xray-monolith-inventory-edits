@@ -2893,6 +2893,7 @@ target_compile_definitions(xrGame
 
 target_link_libraries(xrGame
   PUBLIC
+  crypto
   CxImage
   loki
   luabind

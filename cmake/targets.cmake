@@ -213,7 +213,6 @@ macro(add_engine_target name)
 
   target_link_libraries(${name}
     PUBLIC
-    crypto
     discord
     dinput8
     icu
@@ -221,11 +220,8 @@ macro(add_engine_target name)
     lua-extensions
     ReShadeCompat
     Vfw32
-    xrCDB
     xrGame
-    xrRender
     xrParticles
-    xrPhysics
     xrSound
     xrXMLParser
   )

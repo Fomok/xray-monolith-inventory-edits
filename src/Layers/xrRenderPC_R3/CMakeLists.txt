@@ -433,7 +433,7 @@ target_compile_definitions(xrRender_R3
 )
 
 target_link_libraries(xrRender_R3
-  PRIVATE
+  PUBLIC
   dxgi
   dxsdk
   imgui
@@ -444,6 +444,7 @@ target_link_libraries(xrRender_R3
   xrAPI
   xrCore
   xrEngine
+  xrRender
 )
 
 enable_parallel_build(xrRender_R3)

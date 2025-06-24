@@ -381,7 +381,7 @@ target_compile_definitions(xrRender_R2
 )
 
 target_link_libraries(xrRender_R2
-  PRIVATE
+  PUBLIC
   dxsdk
   imgui
   loki
@@ -391,6 +391,7 @@ target_link_libraries(xrRender_R2
   xrAPI
   xrCore
   xrEngine
+  xrRender
 )
 
 enable_parallel_build(xrRender_R2)

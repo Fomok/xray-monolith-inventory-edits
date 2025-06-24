@@ -39,12 +39,13 @@ target_sources_grouped(
 )
 
 target_precompile_headers(xrXMLParser
-  PRIVATE stdafx.h
+  PRIVATE
+  stdafx.h
 )
 
 target_include_directories(xrXMLParser
-  PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_compile_definitions(xrXMLParser
