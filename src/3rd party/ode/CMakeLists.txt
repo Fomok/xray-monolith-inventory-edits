@@ -1,4 +1,8 @@
-set(ODE_DOUBLE_PRECISION Off CACHE BOOL "Use double-precision floating point for collision logic.")
+option(
+  ODE_DOUBLE_PRECISION
+  "Use double-precision floating point for collision logic."
+  OFF
+)
 
 add_library(ode STATIC)
 
