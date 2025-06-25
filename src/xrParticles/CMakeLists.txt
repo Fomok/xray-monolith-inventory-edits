@@ -8,14 +8,7 @@ set_property(
 
 target_sources_grouped(
   TARGET xrParticles
-  NAME "Kernel/Source Files"
-  FILES
-  stdafx.cpp
-)
-
-target_sources_grouped(
-  TARGET xrParticles
-  NAME "Kernel/Header Files"
+  NAME "Kernel"
   FILES
   psystem.h
   stdafx.h
