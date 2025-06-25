@@ -7,8 +7,6 @@ set_property(
 )
 
 target_sources(xrRender_R1 PRIVATE
-  ../../xrEngine/ai_script_lua_debug.cpp
-  ../../xrEngine/ai_script_lua_extension.cpp
   ../xrRenderDX9/dx9r_constants_cache.cpp
   ../xrRender/Animation.cpp
   ../xrRender/blenders/Blender.cpp
@@ -141,36 +139,36 @@ target_sources(xrRender_R1 PRIVATE
   LightProjector.cpp
   LightShadows.cpp
   xrRender_R1.cpp
-  ../../Include/xrRender/animation_blend.h
-  ../../Include/xrRender/animation_motion.h
-  ../../Include/xrRender/ApplicationRender.h
-  ../../Include/xrRender/ConsoleRender.h
-  ../../Include/xrRender/DebugRender.h
-  ../../Include/xrRender/DebugShader.h
-  ../../Include/xrRender/DrawUtils.h
-  ../../Include/xrRender/EnvironmentRender.h
-  ../../Include/xrRender/FactoryPtr.h
-  ../../Include/xrRender/FontRender.h
-  ../../Include/xrRender/ImGuiRender.h
-  ../../Include/xrRender/Kinematics.h
-  ../../Include/xrRender/KinematicsAnimated.h
-  ../../Include/xrRender/LensFlareRender.h
-  ../../Include/xrRender/ObjectSpaceRender.h
-  ../../Include/xrRender/ParticleCustom.h
-  ../../Include/xrRender/particles_systems_library_interface.hpp
-  ../../Include/xrRender/RainRender.h
-  ../../Include/xrRender/RenderDetailModel.h
-  ../../Include/xrRender/RenderDeviceRender.h
-  ../../Include/xrRender/RenderFactory.h
-  ../../Include/xrRender/RenderVisual.h
-  ../../Include/xrRender/StatGraphRender.h
-  ../../Include/xrRender/StatsRender.h
-  ../../Include/xrRender/ThunderboltDescRender.h
-  ../../Include/xrRender/ThunderboltRender.h
-  ../../Include/xrRender/UIRender.h
-  ../../Include/xrRender/UISequenceVideoItem.h
-  ../../Include/xrRender/UIShader.h
-  ../../Include/xrRender/WallMarkArray.h
+  ../xrRender/animation_blend.h
+  ../xrRender/animation_motion.h
+  ../xrRender/ApplicationRender.h
+  ../xrRender/ConsoleRender.h
+  ../xrRender/DebugRender.h
+  ../xrRender/DebugShader.h
+  ../xrRender/DrawUtils.h
+  ../xrRender/EnvironmentRender.h
+  ../xrRender/FactoryPtr.h
+  ../xrRender/FontRender.h
+  ../xrRender/ImGuiRender.h
+  ../xrRender/Kinematics.h
+  ../xrRender/KinematicsAnimated.h
+  ../xrRender/LensFlareRender.h
+  ../xrRender/ObjectSpaceRender.h
+  ../xrRender/ParticleCustom.h
+  ../xrRender/particles_systems_library_interface.hpp
+  ../xrRender/RainRender.h
+  ../xrRender/RenderDetailModel.h
+  ../xrRender/RenderDeviceRender.h
+  ../xrRender/RenderFactory.h
+  ../xrRender/RenderVisual.h
+  ../xrRender/StatGraphRender.h
+  ../xrRender/StatsRender.h
+  ../xrRender/ThunderboltDescRender.h
+  ../xrRender/ThunderboltRender.h
+  ../xrRender/UIRender.h
+  ../xrRender/UISequenceVideoItem.h
+  ../xrRender/UIShader.h
+  ../xrRender/WallMarkArray.h
   ../xrRenderDX9/dx9R_Backend_Runtime.h
   ../xrRenderDX9/dx9r_constants_cache.h
   ../xrRender/R_light.h

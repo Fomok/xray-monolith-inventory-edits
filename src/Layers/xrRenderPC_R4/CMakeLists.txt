@@ -7,8 +7,6 @@ set_property(
 )
 
 target_sources(xrRender_R4 PRIVATE
-  ../../xrEngine/ai_script_lua_debug.cpp
-  ../../xrEngine/ai_script_lua_extension.cpp
   ../xrRenderDX10/3DFluid/dx103DFluidBlenders.cpp
   ../xrRenderDX10/3DFluid/dx103DFluidData.cpp
   ../xrRenderDX10/3DFluid/dx103DFluidEmitters.cpp
@@ -232,34 +230,34 @@ target_sources(xrRender_R4 PRIVATE
   R_Backend_LOD.cpp
   xrRender_R4.cpp
 
-  ../../Include/xrRender/ApplicationRender.h
-  ../../Include/xrRender/ConsoleRender.h
-  ../../Include/xrRender/DebugRender.h
-  ../../Include/xrRender/DebugShader.h
-  ../../Include/xrRender/DrawUtils.h
-  ../../Include/xrRender/EnvironmentRender.h
-  ../../Include/xrRender/FactoryPtr.h
-  ../../Include/xrRender/FontRender.h
-  ../../Include/xrRender/ImGuiRender.h
-  ../../Include/xrRender/Kinematics.h
-  ../../Include/xrRender/KinematicsAnimated.h
-  ../../Include/xrRender/LensFlareRender.h
-  ../../Include/xrRender/ObjectSpaceRender.h
-  ../../Include/xrRender/ParticleCustom.h
-  ../../Include/xrRender/particles_systems_library_interface.hpp
-  ../../Include/xrRender/RainRender.h
-  ../../Include/xrRender/RenderDetailModel.h
-  ../../Include/xrRender/RenderDeviceRender.h
-  ../../Include/xrRender/RenderFactory.h
-  ../../Include/xrRender/RenderVisual.h
-  ../../Include/xrRender/StatGraphRender.h
-  ../../Include/xrRender/StatsRender.h
-  ../../Include/xrRender/ThunderboltDescRender.h
-  ../../Include/xrRender/ThunderboltRender.h
-  ../../Include/xrRender/UIRender.h
-  ../../Include/xrRender/UISequenceVideoItem.h
-  ../../Include/xrRender/UIShader.h
-  ../../Include/xrRender/WallMarkArray.h
+  ../xrRender/ApplicationRender.h
+  ../xrRender/ConsoleRender.h
+  ../xrRender/DebugRender.h
+  ../xrRender/DebugShader.h
+  ../xrRender/DrawUtils.h
+  ../xrRender/EnvironmentRender.h
+  ../xrRender/FactoryPtr.h
+  ../xrRender/FontRender.h
+  ../xrRender/ImGuiRender.h
+  ../xrRender/Kinematics.h
+  ../xrRender/KinematicsAnimated.h
+  ../xrRender/LensFlareRender.h
+  ../xrRender/ObjectSpaceRender.h
+  ../xrRender/ParticleCustom.h
+  ../xrRender/particles_systems_library_interface.hpp
+  ../xrRender/RainRender.h
+  ../xrRender/RenderDetailModel.h
+  ../xrRender/RenderDeviceRender.h
+  ../xrRender/RenderFactory.h
+  ../xrRender/RenderVisual.h
+  ../xrRender/StatGraphRender.h
+  ../xrRender/StatsRender.h
+  ../xrRender/ThunderboltDescRender.h
+  ../xrRender/ThunderboltRender.h
+  ../xrRender/UIRender.h
+  ../xrRender/UISequenceVideoItem.h
+  ../xrRender/UIShader.h
+  ../xrRender/WallMarkArray.h
   ../xrRenderDX10/3DFluid/dx103DFluidBlenders.h
   ../xrRenderDX10/3DFluid/dx103DFluidData.h
   ../xrRenderDX10/3DFluid/dx103DFluidEmitters.h
@@ -415,7 +413,6 @@ target_sources(xrRender_R4 PRIVATE
   blender_smaa.h
   blender_ssao.h
   blender_ss_sunshafts.h
-  ../../xrEngine/cl_intersect.h
   ComputeShader.h
   CSCompiler.h
   ../xrRender/DetailFormat.h
