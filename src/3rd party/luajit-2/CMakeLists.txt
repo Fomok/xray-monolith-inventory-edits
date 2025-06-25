@@ -1,7 +1,7 @@
-add_library(luajit-2 STATIC)
+add_custom_target(luajit-2)
 
 set_property(
-  TARGET luabind
+  TARGET luajit-2
   PROPERTY FOLDER
   ${FOLDER_LUA}
 )
