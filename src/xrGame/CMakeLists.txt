@@ -2903,6 +2903,3 @@ target_link_libraries(xrGame
   xrNetServer
   xrPhysics
 )
-
-enable_parallel_build(xrGame)
-silence_stdext_hash_deprecation_warnings(xrGame)
