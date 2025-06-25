@@ -170,10 +170,6 @@ target_include_directories(xrPhysics
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrPhysics
-  PRIVATE stdafx.h
-)
-
 target_link_libraries(xrPhysics
   PUBLIC
   loki
