@@ -225,9 +225,6 @@ macro(add_engine_target name)
     xrSound
     xrXMLParser
   )
-
-  enable_parallel_build(${name})
-  silence_stdext_hash_deprecation_warnings(${name})
 endmacro()
 
 macro(configure_engine_target TARGET DEFINE LINK)

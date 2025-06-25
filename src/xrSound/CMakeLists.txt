@@ -66,6 +66,3 @@ target_link_libraries(xrSound
   tbb
   xrCore
 )
-
-enable_parallel_build(xrSound)
-silence_stdext_hash_deprecation_warnings(xrSound)

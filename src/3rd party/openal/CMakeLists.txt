@@ -23,5 +23,3 @@ target_include_directories(OpenAL32
   PRIVATE
   "${CMAKE_CURRENT_SOURCE_DIR}/OpenAL-Windows/Router"
 )
-
-enable_parallel_build(OpenAL32)

@@ -26,5 +26,3 @@ target_link_libraries(lua-extensions
   PUBLIC
   LuaJIT
 )
-
-enable_parallel_build(lua-extensions)

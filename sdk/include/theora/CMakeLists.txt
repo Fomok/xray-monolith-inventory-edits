@@ -69,5 +69,3 @@ target_include_directories(libtheora_static
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/sdk/include
 )
-
-enable_parallel_build(libtheora_static)

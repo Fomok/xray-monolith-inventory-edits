@@ -33,13 +33,6 @@ macro(configure_exceptions)
   string(APPEND CMAKE_CXX_FLAGS_DEBUG " /EHsc")
 endmacro()
 
-# Enable parallel building for the given target
-macro(enable_parallel_build TARGET)
-  if(MSVC)
-    target_compile_options(${TARGET} PRIVATE /MP)
-  endif()
-endmacro()
-
 # Enable AVX for the given target
 macro(enable_avx TARGET)
   if(MSVC)
@@ -57,14 +50,6 @@ macro(add_executable_manifest target manifest)
         COMMENT "Adding manifest..." 
     )
   endif()
-endmacro()
-
-# Disable stdext::hash_map deprecation warnings
-macro(silence_stdext_hash_deprecation_warnings TARGET)
-  target_compile_definitions(${TARGET}
-    PRIVATE
-    _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
-  )
 endmacro()
 
 # Given a list of sources, prepend the xrEngine source dir to each,

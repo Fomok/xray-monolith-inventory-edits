@@ -106,5 +106,3 @@ target_include_directories(libvorbisfile_static
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/sdk/include
 )
-
-enable_parallel_build(libvorbisfile_static)

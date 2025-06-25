@@ -15,6 +15,3 @@ target_include_directories(DXERR
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-enable_parallel_build(DXERR)
-silence_stdext_hash_deprecation_warnings(DXERR)

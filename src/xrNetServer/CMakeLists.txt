@@ -44,6 +44,3 @@ target_link_libraries(xrNetServer
   Ws2_32
   xrCore
 )
-
-enable_parallel_build(xrNetServer)
-silence_stdext_hash_deprecation_warnings(xrNetServer)

@@ -26,6 +26,3 @@ target_compile_definitions(ReShadeCompat
   PURE_ALLOC
   XRCORE_EXPORTS
 )
-
-enable_parallel_build(ReShadeCompat)
-silence_stdext_hash_deprecation_warnings(ReShadeCompat)

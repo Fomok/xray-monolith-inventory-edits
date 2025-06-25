@@ -131,5 +131,3 @@ target_link_libraries(luabind
   LuaJIT
   boost
 )
-
-enable_parallel_build(luabind)

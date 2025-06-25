@@ -34,5 +34,3 @@ target_link_libraries(xrAPI
   PUBLIC
   xrRender
 )
-
-enable_parallel_build(xrAPI)

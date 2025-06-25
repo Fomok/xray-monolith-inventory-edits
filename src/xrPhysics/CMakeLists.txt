@@ -185,6 +185,3 @@ target_link_libraries(xrPhysics
   xrEngine
   xrRender
 )
-
-enable_parallel_build(xrPhysics)
-silence_stdext_hash_deprecation_warnings(xrPhysics)

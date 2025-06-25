@@ -152,5 +152,3 @@ target_include_directories(NVTT
   "${CMAKE_CURRENT_SOURCE_DIR}/src/nvtt/squish"
   "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
-
-enable_parallel_build(NVTT)

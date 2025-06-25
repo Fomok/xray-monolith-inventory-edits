@@ -100,6 +100,3 @@ if(ODE_DOUBLE_PRECISION)
 else()
   target_compile_definitions(ode PUBLIC dSINGLE)
 endif()
-
-
-enable_parallel_build(ode)

@@ -46,5 +46,3 @@ target_include_directories(imgui
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-enable_parallel_build(imgui)

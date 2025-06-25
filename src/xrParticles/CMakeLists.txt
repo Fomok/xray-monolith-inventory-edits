@@ -61,6 +61,3 @@ target_link_libraries(xrParticles
   xrCore
   xrCPU_Pipe
 )
-
-enable_parallel_build(xrParticles)
-silence_stdext_hash_deprecation_warnings(xrParticles)

@@ -476,5 +476,5 @@ target_link_libraries(xrCore
   xrCDB
 )
 
-enable_parallel_build(xrCore)
-silence_stdext_hash_deprecation_warnings(xrCore)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Profiled")
+  target_link_libraries(xrCore PUBLIC optick)

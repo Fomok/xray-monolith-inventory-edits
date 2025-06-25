@@ -446,6 +446,3 @@ target_link_libraries(xrRender_R3
   xrEngine
   xrRender
 )
-
-enable_parallel_build(xrRender_R3)
-silence_stdext_hash_deprecation_warnings(xrRender_R3)

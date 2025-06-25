@@ -139,10 +139,3 @@ target_sources(luajit-2 PRIVATE
   #src/host/minilua.c
   src/xr_alloc.c
 )
-
-target_include_directories(luajit-2
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
-
-enable_parallel_build(luajit-2)

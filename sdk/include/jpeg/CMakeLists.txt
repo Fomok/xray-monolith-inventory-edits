@@ -97,6 +97,3 @@ target_include_directories(jpeg
   PUBLIC
   ${CMAKE_SOURCE_DIR}/sdk/include
 )
-
-enable_parallel_build(jpeg)
-silence_stdext_hash_deprecation_warnings(jpeg)

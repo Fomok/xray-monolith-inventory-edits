@@ -53,5 +53,3 @@ target_link_libraries(CxImage
   PUBLIC
   jpeg
 )
-
-enable_parallel_build(CxImage)

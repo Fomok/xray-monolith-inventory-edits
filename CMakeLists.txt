@@ -31,6 +31,68 @@ include(folders)
 # Configure exceptions
 configure_exceptions()
 
+# Configure compiler options
+add_compile_options(
+  /Gd                   # __cdecl calling convention
+  /diagnostics:column   # Enable rich diagnostics
+  /Gm-                  # Disable minimal rebuild
+  /fp:precise           # Precise floating-point mode
+  /MP                   # Enable multi-process compilation
+  /WX-                  # Don't treat warnings as errors
+  /FC                   # Use full paths in diagnostic messages
+)
+
+
+# Configure linker options
+add_link_options(
+  /NXCOMPAT             # Mark verified with data execution prevention
+  /LARGEADDRESSAWARE    # Enable large-address awareness
+  /ERRORREPORT:PROMPT   # Enable error reporting prompt
+  /DYNAMICBASE:NO       # Don't use a dynamic base address
+  /DEBUG                # Include debug information
+)
+
+# Suppress deprecation errors
+add_compile_definitions(
+  _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
+)
+
+# Setup Debug / Release configuration
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  add_compile_options(
+    /Oy-                # Don't omit frame pointers
+    /W4                 # Warning level 4
+  )
+
+  add_link_options(
+    /OPT:NOICF          # Disable COMDAT folding
+    /INCREMENTAL        # Enable incremental linking
+    /FIXED:NO           # Don't use a fixed base address
+    /OPT:NOREF          # Don't eliminate unreferenced functions and data
+  )
+else()
+  # Remove built-in function inlining setting
+  string(REPLACE "/Ob2" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+  message("CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
+
+  add_compile_options(
+    /Ob3                # Aggressive function inlining
+    /GT                 # Fiber-safe optimizations
+    /Gy                 # Function-level linking
+    /Oi                 # Intrinsic functions
+    /GF                 # String pooling
+    /Oy                 # Omit frame pointers
+    #/GL                 # Whole-program optimization
+  )
+
+  add_link_options(
+    /OPT:ICF            # Enable COMDAT folding
+    /INCREMENTAL:NO     # Disable incremental linking
+    /LTCG               # Use link-time code generation
+    /OPT:REF            # Eliminate unreferenced functions and data
+  )
+endif()
+
 # Setup gamedata
 add_subdirectory(gamedata)
 
@@ -40,4 +102,3 @@ add_subdirectory(src)
 
 # Setup executable targets
 include(targets)
-

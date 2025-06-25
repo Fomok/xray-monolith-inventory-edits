@@ -52,6 +52,3 @@ target_compile_definitions(xrXMLParser
   PRIVATE
   XRXMLPARSER_EXPORTS
 )
-
-enable_parallel_build(xrXMLParser)
-silence_stdext_hash_deprecation_warnings(xrXMLParser)

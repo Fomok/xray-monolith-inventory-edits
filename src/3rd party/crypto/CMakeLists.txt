@@ -210,6 +210,3 @@ target_compile_definitions(crypto
   PRIVATE
   CRYPTO_BUILD
 )
-
-enable_parallel_build(crypto)
-silence_stdext_hash_deprecation_warnings(crypto)

@@ -73,6 +73,3 @@ target_link_libraries(xrCPU_Pipe
   PUBLIC
   xrCDB
 )
-
-enable_parallel_build(xrCPU_Pipe)
-silence_stdext_hash_deprecation_warnings(xrCPU_Pipe)

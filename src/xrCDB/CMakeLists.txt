@@ -146,6 +146,3 @@ target_link_libraries(xrCDB
   PUBLIC
   xrCore
 )
-
-enable_parallel_build(xrCDB)
-silence_stdext_hash_deprecation_warnings(xrCDB)
