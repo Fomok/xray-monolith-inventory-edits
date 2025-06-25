@@ -1,12 +1,12 @@
-add_library(libtheora_static STATIC)
+add_library(theora STATIC)
 
 set_property(
-  TARGET libtheora_static
+  TARGET theora
   PROPERTY FOLDER
   ${FOLDER_SDK}
 )
 
-target_sources(libtheora_static PRIVATE
+target_sources(theora PRIVATE
   lib/analyze.c
   lib/apiwrapper.c
   lib/bitpack.c
@@ -64,7 +64,7 @@ target_sources(libtheora_static PRIVATE
   lib/quant.h
 )
 
-target_include_directories(libtheora_static
+target_include_directories(theora
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/sdk/include

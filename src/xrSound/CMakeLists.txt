@@ -57,10 +57,10 @@ target_link_libraries(xrSound
   PUBLIC
   dxsdk
   dxguid
-  libogg_static
-  libtheora_static
-  libvorbis_static
-  libvorbisfile_static
+  ogg
+  theora
+  vorbis
+  vorbisfile
   OpenAL32
   tbb
   xrCore

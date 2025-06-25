@@ -1,13 +1,13 @@
 # Vorbis
-add_library(libvorbis_static STATIC)
+add_library(vorbis STATIC)
 
 set_property(
-  TARGET libvorbis_static
+  TARGET vorbis
   PROPERTY FOLDER
   ${FOLDER_SDK}
 )
 
-target_sources(libvorbis_static PRIVATE
+target_sources(vorbis PRIVATE
   lib/analysis.c
   lib/bitrate.c
   lib/block.c
@@ -73,35 +73,33 @@ target_sources(libvorbis_static PRIVATE
   lib/window.h
 )
 
-target_include_directories(libvorbis_static
+target_include_directories(vorbis
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/sdk/include
 )
 
-target_compile_definitions(libvorbis_static
+target_compile_definitions(vorbis
   PRIVATE
   ANALYSIS
 )
 
-enable_parallel_build(libvorbis_static)
-
 # Vorbis File
-add_library(libvorbisfile_static STATIC)
+add_library(vorbisfile STATIC)
 
 set_property(
-  TARGET libvorbisfile_static
+  TARGET vorbisfile
   PROPERTY FOLDER
   ${FOLDER_SDK}
 )
 
-target_sources(libvorbisfile_static PRIVATE
+target_sources(vorbisfile PRIVATE
   lib/vorbisfile.c
 
   vorbisfile.h
 )
 
-target_include_directories(libvorbisfile_static
+target_include_directories(vorbisfile
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/sdk/include

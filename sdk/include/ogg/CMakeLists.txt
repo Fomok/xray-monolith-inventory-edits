@@ -1,12 +1,12 @@
-add_library(libogg_static STATIC)
+add_library(ogg STATIC)
 
 set_property(
-  TARGET libogg_static
+  TARGET ogg
   PROPERTY FOLDER
   ${FOLDER_SDK}
 )
 
-target_sources(libogg_static PRIVATE
+target_sources(ogg PRIVATE
   src/bitwise.c
   src/framing.c
 
@@ -14,7 +14,7 @@ target_sources(libogg_static PRIVATE
   os_types.h
 )
 
-target_include_directories(libogg_static
+target_include_directories(ogg
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/sdk/include
