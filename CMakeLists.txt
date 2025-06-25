@@ -40,6 +40,7 @@ add_compile_options(
   /MP                   # Enable multi-process compilation
   /WX-                  # Don't treat warnings as errors
   /FC                   # Use full paths in diagnostic messages
+  /Zi                   # Store debug information in PDB
 )
 
 
@@ -49,13 +50,10 @@ add_link_options(
   /LARGEADDRESSAWARE    # Enable large-address awareness
   /ERRORREPORT:PROMPT   # Enable error reporting prompt
   /DYNAMICBASE:NO       # Don't use a dynamic base address
-  /DEBUG                # Include debug information
 )
 
 # Suppress deprecation errors
-add_compile_definitions(
-  _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
-)
+add_compile_definitions(_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS)
 
 # Setup Debug / Release configuration
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
@@ -73,7 +71,6 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
 else()
   # Remove built-in function inlining setting
   string(REPLACE "/Ob2" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-  message("CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
 
   add_compile_options(
     /Ob3                # Aggressive function inlining
@@ -82,7 +79,7 @@ else()
     /Oi                 # Intrinsic functions
     /GF                 # String pooling
     /Oy                 # Omit frame pointers
-    #/GL                 # Whole-program optimization
+    /GL                 # Whole-program optimization
   )
 
   add_link_options(
