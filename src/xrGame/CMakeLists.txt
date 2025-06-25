@@ -938,7 +938,6 @@ target_sources(xrGame PRIVATE
   static_obstacles_avoider.cpp
   stats_submitter.cpp
   stats_submitter_dsa_params.cpp
-  StdAfx.cpp
   steering_behaviour.cpp
   step_manager.cpp
   string_table.cpp

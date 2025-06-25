@@ -10,7 +10,6 @@ target_sources_grouped(
   TARGET xrXMLParser
   NAME "Kernel/Source Files"
   FILES
-  StdAfx.cpp
   xrXMLParser.cpp
 )
 

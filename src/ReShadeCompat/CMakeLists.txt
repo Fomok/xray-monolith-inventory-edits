@@ -8,7 +8,6 @@ set_property(
 
 target_sources(ReShadeCompat PRIVATE
   addon.cpp
-  stdafx.cpp
 )
 
 target_include_directories(ReShadeCompat

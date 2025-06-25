@@ -62,7 +62,6 @@ set(XR_ENGINE_SOURCES
   SkeletonMotions.cpp
   StatGraph.cpp
   Stats.cpp
-  stdafx.cpp
   Text_Console.cpp
   Text_Console_WndProc.cpp
   thunderbolt.cpp

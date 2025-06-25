@@ -58,7 +58,6 @@ target_sources(xrPhysics PRIVATE
   PhysicsShellAnimator.cpp
   physics_scripted.cpp
   ShellHit.cpp
-  stdafx.cpp
   #tri-colliderknoopc/dcTriListCollider.cpp
   tri-colliderknoopc/dSortTriPrimitive.cpp
   tri-colliderknoopc/dTriBox.cpp

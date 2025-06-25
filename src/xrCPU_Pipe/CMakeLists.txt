@@ -10,7 +10,6 @@ target_sources_grouped(
   TARGET xrCPU_Pipe
   NAME "Kernel/Source Files"
   FILES
-  StdAfx.cpp
   xrCPU_Pipe.cpp
 )
 

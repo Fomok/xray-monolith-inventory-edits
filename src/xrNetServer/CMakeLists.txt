@@ -14,7 +14,6 @@ target_sources(xrNetServer PRIVATE
   NET_Compressor.cpp
   NET_Log.cpp
   NET_Server.cpp
-  stdafx.cpp
 
   ip_filter.h
   NET_AuthCheck.h

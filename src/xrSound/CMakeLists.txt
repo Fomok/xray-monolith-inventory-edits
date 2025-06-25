@@ -25,7 +25,6 @@ target_sources(xrSound PRIVATE
   SoundRender_Source_loader.cpp
   SoundRender_Target.cpp
   SoundRender_TargetA.cpp
-  stdafx.cpp
 
   cl_intersect.h
   OpenALDeviceList.h

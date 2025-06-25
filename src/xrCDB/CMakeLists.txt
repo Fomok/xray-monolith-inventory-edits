@@ -37,7 +37,6 @@ target_sources_grouped(
   FILES
   #cl_raypick.cpp
   Frustum.cpp
-  StdAfx.cpp
   xrCDB.cpp
   xrCDB_box.cpp
   xrCDB_Collector.cpp

@@ -125,7 +125,6 @@ target_sources_grouped(
   blackbox/GetLoadedModules.cpp
   blackbox/IsNT.cpp
   blackbox/NT4ProcessInfo.cpp
-  blackbox/stdafx_.cpp
   blackbox/TLHELPProcessInfo.cpp
 )
 
