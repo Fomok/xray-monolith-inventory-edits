@@ -55,8 +55,9 @@
     {
       "name": "x64-verified",
       "displayName": "x64 Verified",
-      "inherits": "x64-release",
+      "inherits": "windows-base",
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
         "VERIFY_IN_RELEASE": true,
         "XRAY_PROFILER": "Disabled"
       }
@@ -64,8 +65,10 @@
     {
       "name": "x64-profiled",
       "displayName": "x64 Profiled",
-      "inherits": "x64-release",
+      "inherits": "windows-base",
       "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VERIFY_IN_RELEASE": false,
         "XRAY_PROFILER": "Optick"
       }
     }
@@ -93,13 +96,13 @@
       "name": "windows-verified",
       "displayName": "Verified",
       "configurePreset": "x64-verified",
-      "configuration": "Verified"
+      "configuration": "Release"
     },
     {
       "name": "windows-profiled",
       "displayName": "Profiled",
       "configurePreset": "x64-profiled",
-      "configuration": "Profiled"
+      "configuration": "Release"
     }
   ]
 }
