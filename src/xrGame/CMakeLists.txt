@@ -1,3 +1,5 @@
+## xrGame
+
 add_library(xrGame STATIC)
 
 set_property(
@@ -556,7 +558,6 @@ target_sources(xrGame PRIVATE
   ik_foot_collider.cpp
   ik_limb_state.cpp
   ik_object_shift.cpp
-  script_imgui_script.cpp
   imotion_position.cpp
   imotion_velocity.cpp
   InfoDocument.cpp
@@ -764,75 +765,10 @@ target_sources(xrGame PRIVATE
   screenshot_manager.cpp
   screenshot_server.cpp
   ScriptXMLInit.cpp
-  script_abstract_action.cpp
-  script_action_condition.cpp
-  script_action_condition_script.cpp
-  script_action_planner_action_wrapper.cpp
-  script_action_planner_wrapper.cpp
-  script_action_wrapper.cpp
-  script_animation_action.cpp
-  script_animation_action_script.cpp
-  script_attachment_manager.cpp
-  script_attachment_script.cpp
-  script_binder.cpp
-  script_binder_object.cpp
-  script_binder_object_script.cpp
-  script_binder_object_wrapper.cpp
-  script_effector.cpp
-  script_effector_script.cpp
-  script_effector_wrapper.cpp
-  script_engine_help.cpp
-  script_entity.cpp
-  script_entity_action.cpp
-  script_entity_action_script.cpp
-  script_game_object.cpp
-  script_game_object2.cpp
-  script_game_object3.cpp
-  script_game_object4.cpp
-  script_game_object_inventory_owner.cpp
-  script_game_object_script.cpp
-  script_game_object_script2.cpp
-  script_game_object_script3.cpp
-  script_game_object_script_trader.cpp
-  script_game_object_smart_covers.cpp
-  script_game_object_trader.cpp
-  script_game_object_use.cpp
-  script_game_object_use2.cpp
-  script_hit.cpp
-  script_hit_script.cpp
-  script_lanim.cpp
-  script_monster_action.cpp
-  script_monster_action_script.cpp
-  script_monster_hit_info_script.cpp
-  script_movement_action.cpp
-  script_movement_action_script.cpp
-  script_object.cpp
-  script_object_action.cpp
-  script_object_action_script.cpp
-  script_particles.cpp
-  script_particles_script.cpp
-  script_particle_action.cpp
-  script_particle_action_script.cpp
-  script_property_evaluator_wrapper.cpp
-  script_render_device_script.cpp
-  script_sound.cpp
-  script_sound_action.cpp
-  script_sound_action_script.cpp
-  script_sound_info_script.cpp
-  script_sound_script.cpp
-  script_wallmarks_manager.cpp
-  script_wallmarks_script.cpp
-  script_watch_action.cpp
-  script_watch_action_script.cpp
-  script_world_property_script.cpp
-  script_world_state_script.cpp
-  script_zone.cpp
-  script_zone_script.cpp
   searchlight.cpp
   secure_messaging.cpp
   seniority_hierarchy_holder.cpp
   server_entity_wrapper.cpp
-  script_light_script.cpp
   ShootingObject.cpp
   shootingObject_dump_impl.cpp
   sight_action.cpp
@@ -2195,76 +2131,6 @@ target_sources(xrGame PRIVATE
   screenshots_writer.h
   screenshot_manager.h
   screenshot_server.h
-  script_attachment_manager.h
-  script_imgui.h
-  script_imgui_inline.h
-  script_light_inline.h
-  ScriptXMLInit.h
-  script_abstract_action.h
-  script_abstract_action_inline.h
-  script_action_condition.h
-  script_action_condition_inline.h
-  script_action_planner_action_wrapper.h
-  script_action_planner_action_wrapper_inline.h
-  script_action_planner_wrapper.h
-  script_action_planner_wrapper_inline.h
-  script_action_wrapper.h
-  script_action_wrapper_inline.h
-  script_animation_action.h
-  script_animation_action_inline.h
-  script_binder.h
-  script_binder_inline.h
-  script_binder_object.h
-  script_binder_object_wrapper.h
-  script_bind_macroses.h
-  script_callback_ex.h
-  script_callback_ex_generators.h
-  script_callback_ex_inline.h
-  script_callback_ex_nonvoid.h
-  script_callback_ex_void.h
-  script_effector.h
-  script_effector_inline.h
-  script_effector_wrapper.h
-  script_effector_wrapper_inline.h
-  script_entity.h
-  script_entity_action.h
-  script_entity_action_inline.h
-  script_entity_inline.h
-  script_entity_space.h
-  script_game_object.h
-  script_game_object_impl.h
-  script_hit.h
-  script_hit_inline.h
-  script_lanim.h
-  script_light.h
-  script_monster_action.h
-  script_monster_action_inline.h
-  script_monster_hit_info.h
-  script_movement_action.h
-  script_movement_action_inline.h
-  script_object.h
-  script_object_action.h
-  script_object_action_inline.h
-  script_particles.h
-  script_particles_inline.h
-  script_particle_action.h
-  script_particle_action_inline.h
-  script_property_evaluator_wrapper.h
-  script_property_evaluator_wrapper_inline.h
-  script_render_device.h
-  script_sound.h
-  script_sound_action.h
-  script_sound_action_inline.h
-  script_sound_info.h
-  script_sound_inline.h
-  script_ui_registrator.h
-  script_wallmarks_manager.h
-  script_watch_action.h
-  script_watch_action_inline.h
-  script_world_property.h
-  script_world_property_inline.h
-  script_world_state.h
-  script_zone.h
   searchlight.h
   secure_messaging.h
   seniority_hierarchy_holder.h
@@ -2546,11 +2412,14 @@ target_link_libraries(xrGame
   luabind
   ode
   xrCore
-  xrCDB
   xrEngine
   xrNetServer
   xrPhysics
+  xrScripts
+  xrUI
 )
+
+## xrUI
 
 add_library(xrUI STATIC)
 
@@ -2939,4 +2808,185 @@ target_link_libraries(xrUI
   luabind
   xrNetServer
   xrPhysics
+)
+
+## xrScripts
+
+add_library(xrScripts STATIC)
+
+set_property(
+  TARGET xrScripts
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
+target_sources(xrScripts PRIVATE
+  script_abstract_action.cpp
+  script_action_condition.cpp
+  script_action_condition_script.cpp
+  script_action_planner_action_wrapper.cpp
+  script_action_planner_wrapper.cpp
+  script_action_wrapper.cpp
+  script_animation_action.cpp
+  script_animation_action_script.cpp
+  script_attachment_manager.cpp
+  script_attachment_script.cpp
+  script_binder.cpp
+  script_binder_object.cpp
+  script_binder_object_script.cpp
+  script_binder_object_wrapper.cpp
+  script_effector.cpp
+  script_effector_script.cpp
+  script_effector_wrapper.cpp
+  script_engine_help.cpp
+  script_entity.cpp
+  script_entity_action.cpp
+  script_entity_action_script.cpp
+  script_game_object.cpp
+  script_game_object2.cpp
+  script_game_object3.cpp
+  script_game_object4.cpp
+  script_game_object_inventory_owner.cpp
+  script_game_object_script.cpp
+  script_game_object_script2.cpp
+  script_game_object_script3.cpp
+  script_game_object_script_trader.cpp
+  script_game_object_smart_covers.cpp
+  script_game_object_trader.cpp
+  script_game_object_use.cpp
+  script_game_object_use2.cpp
+  script_hit.cpp
+  script_hit_script.cpp
+  script_lanim.cpp
+  script_monster_action.cpp
+  script_monster_action_script.cpp
+  script_monster_hit_info_script.cpp
+  script_movement_action.cpp
+  script_movement_action_script.cpp
+  script_object.cpp
+  script_object_action.cpp
+  script_object_action_script.cpp
+  script_particles.cpp
+  script_particles_script.cpp
+  script_particle_action.cpp
+  script_particle_action_script.cpp
+  script_property_evaluator_wrapper.cpp
+  script_render_device_script.cpp
+  script_sound.cpp
+  script_sound_action.cpp
+  script_sound_action_script.cpp
+  script_sound_info_script.cpp
+  script_sound_script.cpp
+  script_wallmarks_manager.cpp
+  script_wallmarks_script.cpp
+  script_watch_action.cpp
+  script_watch_action_script.cpp
+  script_world_property_script.cpp
+  script_world_state_script.cpp
+  script_zone.cpp
+  script_zone_script.cpp
+  script_imgui_script.cpp
+  script_light_script.cpp
+
+  script_zone.h
+  ScriptXMLInit.h
+  script_attachment_manager.h
+  script_imgui.h
+  script_imgui_inline.h
+  script_light_inline.h
+  script_abstract_action.h
+  script_abstract_action_inline.h
+  script_action_condition.h
+  script_action_condition_inline.h
+  script_action_planner_action_wrapper.h
+  script_action_planner_action_wrapper_inline.h
+  script_action_planner_wrapper.h
+  script_action_planner_wrapper_inline.h
+  script_action_wrapper.h
+  script_action_wrapper_inline.h
+  script_animation_action.h
+  script_animation_action_inline.h
+  script_binder.h
+  script_binder_inline.h
+  script_binder_object.h
+  script_binder_object_wrapper.h
+  script_bind_macroses.h
+  script_callback_ex.h
+  script_callback_ex_generators.h
+  script_callback_ex_inline.h
+  script_callback_ex_nonvoid.h
+  script_callback_ex_void.h
+  script_effector.h
+  script_effector_inline.h
+  script_effector_wrapper.h
+  script_effector_wrapper_inline.h
+  script_entity.h
+  script_entity_action.h
+  script_entity_action_inline.h
+  script_entity_inline.h
+  script_entity_space.h
+  script_game_object.h
+  script_game_object_impl.h
+  script_hit.h
+  script_hit_inline.h
+  script_lanim.h
+  script_light.h
+  script_monster_action.h
+  script_monster_action_inline.h
+  script_monster_hit_info.h
+  script_movement_action.h
+  script_movement_action_inline.h
+  script_object.h
+  script_object_action.h
+  script_object_action_inline.h
+  script_particles.h
+  script_particles_inline.h
+  script_particle_action.h
+  script_particle_action_inline.h
+  script_property_evaluator_wrapper.h
+  script_property_evaluator_wrapper_inline.h
+  script_render_device.h
+  script_sound.h
+  script_sound_action.h
+  script_sound_action_inline.h
+  script_sound_info.h
+  script_sound_inline.h
+  script_ui_registrator.h
+  script_wallmarks_manager.h
+  script_watch_action.h
+  script_watch_action_inline.h
+  script_world_property.h
+  script_world_property_inline.h
+  script_world_state.h
+)
+
+target_include_directories(xrScripts
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  PRIVATE
+  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
+)
+
+target_compile_definitions(xrScripts
+  PRIVATE
+  XRGAME_EXPORTS
+)
+
+target_precompile_headers(xrScripts
+  PRIVATE
+  $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
+  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
+)
+
+target_link_libraries(xrScripts
+  PUBLIC
+  DPlay
+  luabind
+  xrAPI
+  xrCDB
+  xrEngine
+  xrRender
+  xrPhysics
+  xrSound
+  xrNetServer
 )
