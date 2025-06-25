@@ -224,7 +224,6 @@ target_sources_grouped(
   NAME "Kernel/Source Files"
   FILES
   FTimer.cpp
-  stdafx.cpp
   xrCore.cpp
 )
 
@@ -456,7 +455,9 @@ target_include_directories(xrCore
 )
 
 target_precompile_headers(xrCore
-  PRIVATE stdafx.h
+  PRIVATE
+  stdafx.h
+  blackbox/stdafx_.h
 )
 
 target_compile_definitions(xrCore
@@ -477,3 +478,4 @@ target_link_libraries(xrCore
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Profiled")
   target_link_libraries(xrCore PUBLIC optick)
+endif()
