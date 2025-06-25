@@ -954,193 +954,6 @@ target_sources(xrGame PRIVATE
   trade_parameters.cpp
   traffic_optimization.cpp
   trajectories.cpp
-  UIAchivementsIndicator.cpp
-  UICursor.cpp
-  UIDialogHolder.cpp
-  UIDosimeter.cpp
-  UIGameAHunt.cpp
-  UIGameCTA.cpp
-  UIGameCustom.cpp
-  UIGameCustom_script.cpp
-  UIGameDM.cpp
-  UIGameMP.cpp
-  UIGameSP.cpp
-  UIGameTDM.cpp
-  UIPanelsClassFactory.cpp
-  UIPlayerItem.cpp
-  UIStaticItem.cpp
-  UITeamHeader.cpp
-  UITeamPanels.cpp
-  UITeamState.cpp
-  UIZoneMap.cpp
-  ui/ArtefactDetectorUI.cpp
-  ui/map_hint.cpp
-  ui/MMSound.cpp
-  ui/Restrictions.cpp
-  ui/ServerList.cpp
-  ui/ServerList_GameSpy_func.cpp
-  ui/TeamInfo.cpp
-  ui/UI3tButton.cpp
-  ui/UIAchievements.cpp
-  ui/UIRankingsCoC.cpp
-  ui/UIActorMenu.cpp
-  ui/UIActorMenuDeadBodySearch.cpp
-  ui/UIActorMenuInitialize.cpp
-  ui/UIActorMenuInventory.cpp
-  ui/UIActorMenuTrade.cpp
-  ui/UIActorMenuUpgrade.cpp
-  ui/UIActorMenu_action.cpp
-  ui/UIActorMenu_script.cpp
-  ui/UIActorStateInfo.cpp
-  ui/UIAnimatedStatic.cpp
-  ui/UIBoosterInfo.cpp
-  ui/UIBtnHint.cpp
-  ui/UIButton.cpp
-  ui/UIButton_script.cpp
-  ui/UIBuyWeaponTab.cpp
-  ui/UIBuyWndShared.cpp
-  ui/UICarPanel.cpp
-  ui/UICDkey.cpp
-  ui/UICellCustomItems.cpp
-  ui/UICellItem.cpp
-  ui/UICellItemFactory.cpp
-  ui/UIChangeMap.cpp
-  ui/ChangeWeatherDialog.cpp
-  ui/UICharacterInfo.cpp
-  ui/UIChatWnd.cpp
-  ui/UICheckButton.cpp
-  ui/UIComboBox.cpp
-  ui/UIComboBox_script.cpp
-  ui/UICustomEdit.cpp
-  ui/UICustomSpin.cpp
-  ui/UIDemoPlayControl.cpp
-  ui/UIDialogWnd.cpp
-  ui/UIDoubleProgressBar.cpp
-  ui/UIDragDropListEx.cpp
-  ui/UIDragDropReferenceList.cpp
-  ui/UIEditBox.cpp
-  ui/UIEditBoxEx.cpp
-  ui/UIEditBox_script.cpp
-  ui/UIEditKeyBind.cpp
-  ui/UIFixedScrollBar.cpp
-  ui/UIFrameLineWnd.cpp
-  ui/UIFrameWindow.cpp
-  ui/UIGameLog.cpp
-  ui/UIGameTutorial.cpp
-  ui/UIGameTutorialSimpleItem.cpp
-  ui/UIGameTutorialVideoItem.cpp
-  ui/UIHelper.cpp
-  ui/UIHint.cpp
-  ui/UIHudStatesWnd.cpp
-  ui/UIInventoryUpgradeWnd.cpp
-  ui/UIInventoryUpgradeWnd_add.cpp
-  ui/UIInventoryUtilities.cpp
-  ui/UIInvUpgrade.cpp
-  ui/UIInvUpgradeInfo.cpp
-  ui/UIInvUpgradeProperty.cpp
-  ui/UIItemInfo.cpp
-  ui/UIKeyBinding.cpp
-  ui/UIKickPlayer.cpp
-  ui/UILanimController.cpp
-  ui/UILine.cpp
-  ui/UILines.cpp
-  ui/UIListBox.cpp
-  ui/UIListBoxItem.cpp
-  ui/UIListBoxItemMsgChain.cpp
-  ui/UIListBox_script.cpp
-  ui/UIListItemServer.cpp
-  ui/UILogsWnd.cpp
-  ui/UIMainIngameWnd.cpp
-  ui/UIMap.cpp
-  ui/UIMapDesc.cpp
-  ui/UIMapInfo.cpp
-  ui/UIMapInfo_script.cpp
-  ui/UIMapLegend.cpp
-  ui/UIMapList.cpp
-  ui/UIMapWnd.cpp
-  ui/UIMapWnd2.cpp
-  ui/UIMapWndActions.cpp
-  ui/UIMessageBox.cpp
-  ui/UIMessageBoxEx.cpp
-  ui/UIMessageBox_script.cpp
-  ui/UIMessagesWindow.cpp
-  ui/UIMMShniaga.cpp
-  ui/UIMoneyIndicator.cpp
-  ui/UIMotionIcon.cpp
-  ui/UIMPAdminMenu.cpp
-  ui/UIMPChangeMapAdm.cpp
-  ui/UIMpItemsStoreWnd.cpp
-  ui/UIMPPlayersAdm.cpp
-  ui/UIMPServerAdm.cpp
-  ui/UIMpTradeWnd.cpp
-  ui/UIMpTradeWnd_init.cpp
-  ui/UIMpTradeWnd_items.cpp
-  ui/UIMpTradeWnd_misc.cpp
-  ui/UIMpTradeWnd_trade.cpp
-  ui/UIMpTradeWnd_wpn.cpp
-  ui/UINewsItemWnd.cpp
-  ui/UIOptConCom.cpp
-  ui/UIOptionsItem.cpp
-  ui/UIOptionsManager.cpp
-  ui/UIOptionsManagerScript.cpp
-  ui/UIOutfitInfo.cpp
-  ui/UIPdaKillMessage.cpp
-  ui/UIPdaMsgListItem.cpp
-  ui/UIPdaWnd.cpp
-  ui/UIProgressBar.cpp
-  ui/UIProgressBar_script.cpp
-  ui/UIProgressShape.cpp
-  ui/UIPropertiesBox.cpp
-  ui/UIPropertiesBox_script.cpp
-  ui/UIRadioButton.cpp
-  ui/UIRankIndicator.cpp
-  ui/UIRankingWnd.cpp
-  ui/UIScriptWnd.cpp
-  ui/UIScriptWnd_script.cpp
-  ui/uiscriptwnd_script2.cpp
-  ui/UIScrollBar.cpp
-  ui/UIScrollBox.cpp
-  ui/UIScrollView.cpp
-  ui/UISecondTaskWnd.cpp
-  ui/UIServerInfo.cpp
-  ui/UISkinSelector.cpp
-  ui/UISpawnWnd.cpp
-  ui/UISpeechMenu.cpp
-  ui/UISpinNum.cpp
-  ui/UISpinText.cpp
-  ui/UIStatic.cpp
-  ui/UIStatic_script.cpp
-  ui/UIStatix.cpp
-  ui/UIStats.cpp
-  ui/UIStatsIcon.cpp
-  ui/UIStatsPlayerInfo.cpp
-  ui/UIStatsPlayerList.cpp
-  ui/UISubLine.cpp
-  ui/UITabButton.cpp
-  ui/UITabButtonMP.cpp
-  ui/UITabControl.cpp
-  ui/UITabControl_script.cpp
-  ui/UITalkDialogWnd.cpp
-  ui/UITalkWnd.cpp
-  ui/UITaskWnd.cpp
-  ui/UITextureMaster.cpp
-  ui/UITextVote.cpp
-  ui/UITrackBar.cpp
-  ui/UITrackButton.cpp
-  ui/UIVote.cpp
-  ui/UIVoteStatusWnd.cpp
-  ui/UIVotingCategory.cpp
-  ui/UIWindow.cpp
-  ui/UIWindow_script.cpp
-  ui/UIWndCallback.cpp
-  ui/UIWpnParams.cpp
-  ui/UIXmlInit.cpp
-  ui/ui_af_params.cpp
-  ui/ui_arrow.cpp
-  ui/UI_IB_Static.cpp
-  ui/xrUIXmlParser.cpp
-  ui_base.cpp
-  ui_export_script.cpp
   UsableScriptObject.cpp
   vision_client.cpp
   visual_memory_manager.cpp
@@ -2639,6 +2452,303 @@ target_sources(xrGame PRIVATE
   trade_parameters_inline.h
   traffic_optimization.h
   trajectories.h
+  UsableScriptObject.h
+  vertex_allocator_fixed.h
+  vertex_allocator_fixed_inline.h
+  vertex_manager_fixed.h
+  vertex_manager_fixed_inline.h
+  vertex_manager_hash_fixed.h
+  vertex_manager_hash_fixed_inline.h
+  vertex_path.h
+  vertex_path_inline.h
+  vision_client.h
+  vision_client_inline.h
+  visual_memory_manager.h
+  visual_memory_manager_inline.h
+  visual_memory_params.h
+  wallmark_manager.h
+  Weapon.h
+  WeaponAK74.h
+  WeaponAmmo.h
+  WeaponAutomaticShotgun.h
+  WeaponBinoculars.h
+  WeaponBinocularsVision.h
+  weaponBM16.h
+  WeaponCustomAuto.h
+  WeaponCustomPistol.h
+  WeaponFN2000.h
+  WeaponFORT.h
+  WeaponGroza.h
+  WeaponHPSA.h
+  WeaponKnife.h
+  WeaponLR300.h
+  WeaponMagazined.h
+  WeaponMagazinedWGrenade.h
+  WeaponPistol.h
+  WeaponPM.h
+  WeaponRevolver.h
+  WeaponRG6.h
+  WeaponRPG7.h
+  WeaponShotgun.h
+  WeaponSSRS.h
+  WeaponStatMgun.h
+  HolderEntityObject.h
+  WeaponSVD.h
+  WeaponSVU.h
+  WeaponUSP45.h
+  WeaponVal.h
+  WeaponVintorez.h
+  WeaponWalther.h
+  Wound.h
+  wrapper_abstract.h
+  wrapper_abstract_inline.h
+  xrClientsPool.h
+  xrGameSpyServer.h
+  xrGameSpyServer_callbacks.h
+  xrServer.h
+  xrServerMapSync.h
+  xrServer_info.h
+  xrServer_svclient_validation.h
+  xrServer_updates_compressor.h
+  xr_dsa_signer.h
+  xr_dsa_verifyer.h
+  xr_level_controller.h
+  xr_time.h
+  ZoneCampfire.h
+  ZoneVisual.h
+  zone_effector.h
+  ZudaArtifact.h
+)
+
+target_include_directories(xrGame
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  PRIVATE
+  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
+)
+
+target_precompile_headers(xrGame
+  PRIVATE
+  $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
+  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
+)
+
+target_compile_definitions(xrGame
+  PUBLIC
+  XRGAME_EXPORTS
+)
+
+target_link_libraries(xrGame
+  PUBLIC
+  crypto
+  CxImage
+  loki
+  luabind
+  ode
+  xrCore
+  xrCDB
+  xrEngine
+  xrNetServer
+  xrPhysics
+)
+
+add_library(xrUI STATIC)
+
+set_property(
+  TARGET xrUI
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
+target_sources(xrUI PRIVATE
+  UIAchivementsIndicator.cpp
+  UICursor.cpp
+  UIDialogHolder.cpp
+  UIDosimeter.cpp
+  UIGameAHunt.cpp
+  UIGameCTA.cpp
+  UIGameCustom.cpp
+  UIGameCustom_script.cpp
+  UIGameDM.cpp
+  UIGameMP.cpp
+  UIGameSP.cpp
+  UIGameTDM.cpp
+  UIPanelsClassFactory.cpp
+  UIPlayerItem.cpp
+  UIStaticItem.cpp
+  UITeamHeader.cpp
+  UITeamPanels.cpp
+  UITeamState.cpp
+  UIZoneMap.cpp
+  ui/ArtefactDetectorUI.cpp
+  ui/map_hint.cpp
+  ui/MMSound.cpp
+  ui/Restrictions.cpp
+  ui/ServerList.cpp
+  ui/ServerList_GameSpy_func.cpp
+  ui/TeamInfo.cpp
+  ui/UI3tButton.cpp
+  ui/UIAchievements.cpp
+  ui/UIRankingsCoC.cpp
+  ui/UIActorMenu.cpp
+  ui/UIActorMenuDeadBodySearch.cpp
+  ui/UIActorMenuInitialize.cpp
+  ui/UIActorMenuInventory.cpp
+  ui/UIActorMenuTrade.cpp
+  ui/UIActorMenuUpgrade.cpp
+  ui/UIActorMenu_action.cpp
+  ui/UIActorMenu_script.cpp
+  ui/UIActorStateInfo.cpp
+  ui/UIAnimatedStatic.cpp
+  ui/UIBoosterInfo.cpp
+  ui/UIBtnHint.cpp
+  ui/UIButton.cpp
+  ui/UIButton_script.cpp
+  ui/UIBuyWeaponTab.cpp
+  ui/UIBuyWndShared.cpp
+  ui/UICarPanel.cpp
+  ui/UICDkey.cpp
+  ui/UICellCustomItems.cpp
+  ui/UICellItem.cpp
+  ui/UICellItemFactory.cpp
+  ui/UIChangeMap.cpp
+  ui/ChangeWeatherDialog.cpp
+  ui/UICharacterInfo.cpp
+  ui/UIChatWnd.cpp
+  ui/UICheckButton.cpp
+  ui/UIComboBox.cpp
+  ui/UIComboBox_script.cpp
+  ui/UICustomEdit.cpp
+  ui/UICustomSpin.cpp
+  ui/UIDemoPlayControl.cpp
+  ui/UIDialogWnd.cpp
+  ui/UIDoubleProgressBar.cpp
+  ui/UIDragDropListEx.cpp
+  ui/UIDragDropReferenceList.cpp
+  ui/UIEditBox.cpp
+  ui/UIEditBoxEx.cpp
+  ui/UIEditBox_script.cpp
+  ui/UIEditKeyBind.cpp
+  ui/UIFixedScrollBar.cpp
+  ui/UIFrameLineWnd.cpp
+  ui/UIFrameWindow.cpp
+  ui/UIGameLog.cpp
+  ui/UIGameTutorial.cpp
+  ui/UIGameTutorialSimpleItem.cpp
+  ui/UIGameTutorialVideoItem.cpp
+  ui/UIHelper.cpp
+  ui/UIHint.cpp
+  ui/UIHudStatesWnd.cpp
+  ui/UIInventoryUpgradeWnd.cpp
+  ui/UIInventoryUpgradeWnd_add.cpp
+  ui/UIInventoryUtilities.cpp
+  ui/UIInvUpgrade.cpp
+  ui/UIInvUpgradeInfo.cpp
+  ui/UIInvUpgradeProperty.cpp
+  ui/UIItemInfo.cpp
+  ui/UIKeyBinding.cpp
+  ui/UIKickPlayer.cpp
+  ui/UILanimController.cpp
+  ui/UILine.cpp
+  ui/UILines.cpp
+  ui/UIListBox.cpp
+  ui/UIListBoxItem.cpp
+  ui/UIListBoxItemMsgChain.cpp
+  ui/UIListBox_script.cpp
+  ui/UIListItemServer.cpp
+  ui/UILogsWnd.cpp
+  ui/UIMainIngameWnd.cpp
+  ui/UIMap.cpp
+  ui/UIMapDesc.cpp
+  ui/UIMapInfo.cpp
+  ui/UIMapInfo_script.cpp
+  ui/UIMapLegend.cpp
+  ui/UIMapList.cpp
+  ui/UIMapWnd.cpp
+  ui/UIMapWnd2.cpp
+  ui/UIMapWndActions.cpp
+  ui/UIMessageBox.cpp
+  ui/UIMessageBoxEx.cpp
+  ui/UIMessageBox_script.cpp
+  ui/UIMessagesWindow.cpp
+  ui/UIMMShniaga.cpp
+  ui/UIMoneyIndicator.cpp
+  ui/UIMotionIcon.cpp
+  ui/UIMPAdminMenu.cpp
+  ui/UIMPChangeMapAdm.cpp
+  ui/UIMpItemsStoreWnd.cpp
+  ui/UIMPPlayersAdm.cpp
+  ui/UIMPServerAdm.cpp
+  ui/UIMpTradeWnd.cpp
+  ui/UIMpTradeWnd_init.cpp
+  ui/UIMpTradeWnd_items.cpp
+  ui/UIMpTradeWnd_misc.cpp
+  ui/UIMpTradeWnd_trade.cpp
+  ui/UIMpTradeWnd_wpn.cpp
+  ui/UINewsItemWnd.cpp
+  ui/UIOptConCom.cpp
+  ui/UIOptionsItem.cpp
+  ui/UIOptionsManager.cpp
+  ui/UIOptionsManagerScript.cpp
+  ui/UIOutfitInfo.cpp
+  ui/UIPdaKillMessage.cpp
+  ui/UIPdaMsgListItem.cpp
+  ui/UIPdaWnd.cpp
+  ui/UIProgressBar.cpp
+  ui/UIProgressBar_script.cpp
+  ui/UIProgressShape.cpp
+  ui/UIPropertiesBox.cpp
+  ui/UIPropertiesBox_script.cpp
+  ui/UIRadioButton.cpp
+  ui/UIRankIndicator.cpp
+  ui/UIRankingWnd.cpp
+  ui/UIScriptWnd.cpp
+  ui/UIScriptWnd_script.cpp
+  ui/uiscriptwnd_script2.cpp
+  ui/UIScrollBar.cpp
+  ui/UIScrollBox.cpp
+  ui/UIScrollView.cpp
+  ui/UISecondTaskWnd.cpp
+  ui/UIServerInfo.cpp
+  ui/UISkinSelector.cpp
+  ui/UISpawnWnd.cpp
+  ui/UISpeechMenu.cpp
+  ui/UISpinNum.cpp
+  ui/UISpinText.cpp
+  ui/UIStatic.cpp
+  ui/UIStatic_script.cpp
+  ui/UIStatix.cpp
+  ui/UIStats.cpp
+  ui/UIStatsIcon.cpp
+  ui/UIStatsPlayerInfo.cpp
+  ui/UIStatsPlayerList.cpp
+  ui/UISubLine.cpp
+  ui/UITabButton.cpp
+  ui/UITabButtonMP.cpp
+  ui/UITabControl.cpp
+  ui/UITabControl_script.cpp
+  ui/UITalkDialogWnd.cpp
+  ui/UITalkWnd.cpp
+  ui/UITaskWnd.cpp
+  ui/UITextureMaster.cpp
+  ui/UITextVote.cpp
+  ui/UITrackBar.cpp
+  ui/UITrackButton.cpp
+  ui/UIVote.cpp
+  ui/UIVoteStatusWnd.cpp
+  ui/UIVotingCategory.cpp
+  ui/UIWindow.cpp
+  ui/UIWindow_script.cpp
+  ui/UIWndCallback.cpp
+  ui/UIWpnParams.cpp
+  ui/UIXmlInit.cpp
+  ui/ui_af_params.cpp
+  ui/ui_arrow.cpp
+  ui/UI_IB_Static.cpp
+  ui/xrUIXmlParser.cpp
+  ui_base.cpp
+  ui_export_script.cpp
+
   UIAchivementsIndicator.h
   UICursor.h
   UIDialogHolder.h
@@ -2804,102 +2914,29 @@ target_sources(xrGame PRIVATE
   ui/xrUIXmlParser.h
   ui_base.h
   ui_defs.h
-  UsableScriptObject.h
-  vertex_allocator_fixed.h
-  vertex_allocator_fixed_inline.h
-  vertex_manager_fixed.h
-  vertex_manager_fixed_inline.h
-  vertex_manager_hash_fixed.h
-  vertex_manager_hash_fixed_inline.h
-  vertex_path.h
-  vertex_path_inline.h
-  vision_client.h
-  vision_client_inline.h
-  visual_memory_manager.h
-  visual_memory_manager_inline.h
-  visual_memory_params.h
-  wallmark_manager.h
-  Weapon.h
-  WeaponAK74.h
-  WeaponAmmo.h
-  WeaponAutomaticShotgun.h
-  WeaponBinoculars.h
-  WeaponBinocularsVision.h
-  weaponBM16.h
-  WeaponCustomAuto.h
-  WeaponCustomPistol.h
-  WeaponFN2000.h
-  WeaponFORT.h
-  WeaponGroza.h
-  WeaponHPSA.h
-  WeaponKnife.h
-  WeaponLR300.h
-  WeaponMagazined.h
-  WeaponMagazinedWGrenade.h
-  WeaponPistol.h
-  WeaponPM.h
-  WeaponRevolver.h
-  WeaponRG6.h
-  WeaponRPG7.h
-  WeaponShotgun.h
-  WeaponSSRS.h
-  WeaponStatMgun.h
-  HolderEntityObject.h
-  WeaponSVD.h
-  WeaponSVU.h
-  WeaponUSP45.h
-  WeaponVal.h
-  WeaponVintorez.h
-  WeaponWalther.h
-  Wound.h
-  wrapper_abstract.h
-  wrapper_abstract_inline.h
-  xrClientsPool.h
-  xrGameSpyServer.h
-  xrGameSpyServer_callbacks.h
-  xrServer.h
-  xrServerMapSync.h
-  xrServer_info.h
-  xrServer_svclient_validation.h
-  xrServer_updates_compressor.h
-  xr_dsa_signer.h
-  xr_dsa_verifyer.h
-  xr_level_controller.h
-  xr_time.h
-  ZoneCampfire.h
-  ZoneVisual.h
-  zone_effector.h
-  ZudaArtifact.h
 )
 
-target_include_directories(xrGame
+target_include_directories(xrUI
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   PRIVATE
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 )
 
-target_precompile_headers(xrGame
+target_precompile_headers(xrUI
   PRIVATE
-  $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
-  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
+  stdafx.h
 )
 
-target_compile_definitions(xrGame
+target_compile_definitions(xrUI
   PUBLIC
   XRGAME_EXPORTS
 )
 
-target_link_libraries(xrGame
+target_link_libraries(xrUI
   PUBLIC
-  crypto
   CxImage
-  loki
   luabind
-  ode
-  xrCore
-  xrCDB
-  xrEngine
   xrNetServer
   xrPhysics
 )

@@ -222,6 +222,7 @@ macro(add_engine_target name)
     xrGame
     xrParticles
     xrSound
+    xrUI
     xrXMLParser
   )
 endmacro()
