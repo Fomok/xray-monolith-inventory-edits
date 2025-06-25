@@ -17,7 +17,8 @@ target_include_directories(ReShadeCompat
 )
 
 target_precompile_headers(ReShadeCompat
-  PRIVATE stdafx.h
+  PRIVATE
+  stdafx.h
 )
 
 target_compile_definitions(ReShadeCompat
