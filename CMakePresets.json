@@ -28,8 +28,6 @@
       "displayName": "x64 Debug",
       "inherits": "windows-base",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "VERIFY_IN_RELEASE": false,
         "XRAY_PROFILER": "None"
       }
     },
@@ -38,8 +36,6 @@
       "displayName": "x64 RelWithDebInfo",
       "inherits": "windows-base",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-        "VERIFY_IN_RELEASE": false,
         "XRAY_PROFILER": "None"
       }
     },
@@ -48,8 +44,6 @@
       "displayName": "x64 Release",
       "inherits": "windows-base",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "VERIFY_IN_RELEASE": false,
         "XRAY_PROFILER": "None"
       }
     },
@@ -58,8 +52,6 @@
       "displayName": "x64 Verified",
       "inherits": "windows-base",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "VERIFY_IN_RELEASE": true,
         "XRAY_PROFILER": "None"
       }
     },
@@ -68,8 +60,6 @@
       "displayName": "x64 Profiled",
       "inherits": "windows-base",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "VERIFY_IN_RELEASE": false,
         "XRAY_PROFILER": "Optick"
       }
     }
@@ -97,7 +87,7 @@
       "name": "windows-verified",
       "displayName": "Verified",
       "configurePreset": "x64-verified",
-      "configuration": "Release"
+      "configuration": "Verified"
     },
     {
       "name": "windows-profiled",

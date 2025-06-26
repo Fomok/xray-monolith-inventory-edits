@@ -9,15 +9,32 @@ project(
   LANGUAGES CXX C
 )
 
-# Setup language standard and enforce it
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+# Ensure VS will acknowledge our custom build types
+set(CMAKE_CONFIGURATION_TYPES
+  # Debug build - currently broken due to compile errors
+  Debug
+  # Pseudo-debug build
+  Verified
+  # Release build with no debug info
+  Release
+  # Release build with PDB debug info
+  RelWithDebInfo
+)
+
+# Use Debug flags for Verified builds
+set(CMAKE_EXE_LINKER_FLAGS_VERIFIED ${CMAKE_EXE_LINKER_FLAGS_DEBUG})
+set(CMAKE_CXX_FLAGS_VERIFIED ${CMAKE_CXX_FLAGS_DEBUG})
+set(CMAKE_C_FLAGS_VERIFIED ${CMAKE_C_FLAGS_DEBUG})
 
 # Default generator platform to x64,
 # as CMake doesn't populate it in case of default fallback (ex. via the GUI)
 if(NOT CMAKE_GENERATOR_PLATFORM)
     set(CMAKE_GENERATOR_PLATFORM x64)
 endif()
+
+# Setup language standard and enforce it
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Extend import path
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -31,64 +48,125 @@ include(folders)
 # Configure exceptions
 configure_exceptions()
 
-# Configure compiler options
-add_compile_options(
-  /Gd                   # __cdecl calling convention
-  /diagnostics:column   # Enable rich diagnostics
-  /Gm-                  # Disable minimal rebuild
-  /fp:precise           # Precise floating-point mode
-  /MP                   # Enable multi-process compilation
-  /WX-                  # Don't treat warnings as errors
-  /FC                   # Use full paths in diagnostic messages
-  /Zi                   # Store debug information in PDB
+# Remove built-in CMake flags
+string(
+  REPLACE
+  "/Ob2" ""
+  CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}"
 )
 
+string(
+  REPLACE "/Ob1" ""
+  CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
+)
+
+# Configure compiler options
+add_compile_options(
+  ## Shared config
+  # __cdecl calling convention
+  /Gd
+  # Enable rich diagnostics
+  /diagnostics:column
+  # Disable minimal rebuild
+  /Gm-
+  # Precise floating-point mode
+  /fp:precise
+  # Enable multi-process compilation
+  /MP
+  # Don't treat warnings as errors
+  /WX-
+  # Use full paths in diagnostic messages
+  /FC
+  # Store debug information in PDB
+  /Zi
+  # Use multi-threaded DLL
+  /MD
+
+  ## Debug config
+  # Don't omit frame pointers
+  $<$<CONFIG:Debug>:/Oy->
+  $<$<CONFIG:Verified>:/Oy->
+  # Warning level 4
+  $<$<CONFIG:Debug>:/W4>
+  $<$<CONFIG:Verified>:/W4>
+  # Enable security check
+  $<$<CONFIG:Debug>:/GS>
+  $<$<CONFIG:Verified>:/GS>
+
+  ## Release configs
+  # Don't bake debug info or generate PDB files in Release
+  $<$<CONFIG:Release>:/DEBUG:NONE>
+  # Aggressive function inlining
+  $<$<CONFIG:Release>:/Ob3>
+  $<$<CONFIG:RelWithDebInfo>:/Ob3>
+  # Omit frame pointers
+  $<$<CONFIG:Release>:/Oy>
+  $<$<CONFIG:RelWithDebInfo>:/Oy>
+  # Fiber-safe optimizations
+  $<$<CONFIG:Release>:/GT>
+  $<$<CONFIG:RelWithDebInfo>:/GT>
+  # Function-level linking
+  $<$<CONFIG:Release>:/Gy>
+  $<$<CONFIG:RelWithDebInfo>:/Gy>
+  # Intrinsic functions
+  $<$<CONFIG:Release>:/Oi>
+  $<$<CONFIG:RelWithDebInfo>:/Oi>
+  # String pooling
+  $<$<CONFIG:Release>:/GF>
+  $<$<CONFIG:RelWithDebInfo>:/GF>
+  # Whole-program optimization
+  $<$<CONFIG:Release>:/GL>
+  $<$<CONFIG:RelWithDebInfo>:/GL>
+)
 
 # Configure linker options
 add_link_options(
-  /NXCOMPAT             # Mark verified with data execution prevention
-  /LARGEADDRESSAWARE    # Enable large-address awareness
-  /ERRORREPORT:PROMPT   # Enable error reporting prompt
-  /DYNAMICBASE:NO       # Don't use a dynamic base address
+  ## Shared config
+  # Mark verified with data execution prevention
+  /NXCOMPAT
+  # Enable large-address awareness
+  /LARGEADDRESSAWARE
+  # Enable error reporting prompt
+  /ERRORREPORT:PROMPT
+  # Don't use a dynamic base address
+  /DYNAMICBASE:NO
+
+  ## Debug config
+  # Disable COMDAT folding
+  $<$<CONFIG:Debug>:/OPT:NOICF>
+  $<$<CONFIG:Verified>:/OPT:NOICF>
+  # Link incrementally
+  $<$<CONFIG:Debug>:/INCREMENTAL>
+  $<$<CONFIG:Verified>:/INCREMENTAL>
+  # Don't eliminate unreferenced functions and data
+  $<$<CONFIG:Debug>:/OPT:NOREF>
+  $<$<CONFIG:Verified>:/OPT:NOREF>
+  # Don't use a fixed address space
+  $<$<CONFIG:Debug>:/FIXED:NO>
+  $<$<CONFIG:Verified>:/FIXED:NO>
+
+  ## Release / RelWithDebInfo config
+  # Enable COMDAT folding
+  $<$<CONFIG:Release>:/OPT:ICF>
+  $<$<CONFIG:RelWithDebInfo>:/OPT:ICF>
+  # Don't link incrementally
+  $<$<CONFIG:Release>:/INCREMENTAL:NO>
+  $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
+  # Eliminate unreferenced functions and data
+  $<$<CONFIG:Release>:/OPT:REF>
+  $<$<CONFIG:RelWithDebInfo>:/OPT:REF>
+  # Enable link-time code generation
+  $<$<CONFIG:Release>:/LTCG>
+  $<$<CONFIG:RelWithDebInfo>:/LTCG>
 )
 
-# Suppress deprecation errors
-add_compile_definitions(_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS)
-
-# Setup Debug / Release configuration
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  add_compile_options(
-    /Oy-                # Don't omit frame pointers
-    /W4                 # Warning level 4
-  )
-
-  add_link_options(
-    /OPT:NOICF          # Disable COMDAT folding
-    /INCREMENTAL        # Enable incremental linking
-    /FIXED:NO           # Don't use a fixed base address
-    /OPT:NOREF          # Don't eliminate unreferenced functions and data
-  )
-else()
-  # Remove built-in function inlining setting
-  string(REPLACE "/Ob2" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
-
-  add_compile_options(
-    /Ob3                # Aggressive function inlining
-    /GT                 # Fiber-safe optimizations
-    /Gy                 # Function-level linking
-    /Oi                 # Intrinsic functions
-    /GF                 # String pooling
-    /Oy                 # Omit frame pointers
-    /GL                 # Whole-program optimization
-  )
-
-  add_link_options(
-    /OPT:ICF            # Enable COMDAT folding
-    /INCREMENTAL:NO     # Disable incremental linking
-    /LTCG               # Use link-time code generation
-    /OPT:REF            # Eliminate unreferenced functions and data
-  )
-endif()
+# Configure compile definitions
+add_compile_definitions(
+  # Suppress deprecation errors
+  _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
+  # Activate verification for Verified builds
+  $<$<CONFIG:Verified>:USE_VERIFY_IN_RELEASE>
+)
 
 # Setup profiler
 set(PROFILER_NONE 0)
