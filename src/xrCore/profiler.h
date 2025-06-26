@@ -1,8 +1,8 @@
 #pragma once
 
 // Profiler backends
-#define PROFILER_NONE   (0)
-#define PROFILER_OPTICK (1)
+#define PROFILER_NONE   0
+#define PROFILER_OPTICK 1
 
 // Set active profiler backend
 #if !defined(XRCORE_PROFILER)
@@ -22,14 +22,12 @@
 #	define START_PROFILE(a) { PROF_EVENT(a)
 #	define STOP_PROFILE		}
 #else
-#	define START_PROFILE(a) {
-#	define STOP_PROFILE		}
-
 #	define PROF_THREAD(Name)
 #	define PROF_START_CAPTURE()
 #	define PROF_STOP_CAPTURE()
 #	define PROF_SAVE_CAPTURE(Name)
 #	define PROF_FRAME(Name)
 #	define PROF_EVENT(Name)
-#	define PROF_EVENT_DYNAMIC(...) {};
+#	define START_PROFILE(a) {
+#	define STOP_PROFILE		}
 #endif

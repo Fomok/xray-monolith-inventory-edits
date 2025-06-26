@@ -1,3 +1,6 @@
+set(XRAY_PROFILER "None" CACHE STRING "Profiling backend")
+set_property(CACHE XRAY_PROFILER PROPERTY STRINGS None Optick) 
+
 add_library(xrCore STATIC)
 
 set_property(
@@ -470,12 +473,13 @@ target_compile_definitions(xrCore
 target_link_libraries(xrCore
   PUBLIC
   DXERR
+  optick
   StackWalker
   winmm
   xrAPI
   xrCDB
 )
 
-if(${CMAKE_BUILD_TYPE} STREQUAL "Profiled")
+if(${XRAY_PROFILER} STREQUAL "Optick")
   target_link_libraries(xrCore PUBLIC optick)
 endif()

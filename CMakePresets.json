@@ -29,7 +29,8 @@
       "inherits": "windows-base",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "XRAY_PROFILER": "Disabled"
+        "VERIFY_IN_RELEASE": false,
+        "XRAY_PROFILER": "None"
       }
     },
     {
@@ -39,7 +40,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "VERIFY_IN_RELEASE": false,
-        "XRAY_PROFILER": "Disabled"
+        "XRAY_PROFILER": "None"
       }
     },
     {
@@ -49,7 +50,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "VERIFY_IN_RELEASE": false,
-        "XRAY_PROFILER": "Disabled"
+        "XRAY_PROFILER": "None"
       }
     },
     {
@@ -59,7 +60,7 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "VERIFY_IN_RELEASE": true,
-        "XRAY_PROFILER": "Disabled"
+        "XRAY_PROFILER": "None"
       }
     },
     {

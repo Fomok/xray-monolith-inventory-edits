@@ -90,6 +90,20 @@ else()
   )
 endif()
 
+# Setup profiler
+set(PROFILER_NONE 0)
+set(PROFILER_OPTICK 1)
+
+if(${XRAY_PROFILER} STREQUAL "None")
+  add_compile_definitions(
+    XRCORE_PROFILER=${PROFILER_NONE}
+  )
+elseif(${XRAY_PROFILER} STREQUAL "Optick")
+  add_compile_definitions(
+    XRCORE_PROFILER=${PROFILER_OPTICK}
+  )
+endif()
+
 # Setup gamedata
 add_subdirectory(gamedata)
 
