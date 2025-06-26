@@ -42,5 +42,5 @@ target_include_directories(optick
 
 target_compile_definitions(optick
   PUBLIC
-  OPTICK_ENABLE_GPU_VULKAN=0
+  OPTICK_ENABLE_GPU=0
 )
