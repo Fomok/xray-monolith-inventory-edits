@@ -20,6 +20,7 @@ target_sources(xrRender_R4 PRIVATE
   ../xrRenderDX10/dx10BufferUtils.cpp
   ../xrRenderDX10/dx10ConstantBuffer.cpp
   ../xrRenderDX10/dx10DetailManager_VS.cpp
+  ../xrRenderDX10/dx10EventWrapper.cpp
   ../xrRenderDX10/dx10HW.cpp
   ../xrRenderDX10/dx10ResourceManager_Resources.cpp
   ../xrRenderDX10/dx10ResourceManager_Scripting.cpp
@@ -271,6 +272,7 @@ target_sources(xrRender_R4 PRIVATE
   ../xrRenderDX10/dx10ConstantBuffer.h
   ../xrRenderDX10/dx10ConstantBuffer_impl.h
   ../xrRenderDX10/dx10R_Backend_Runtime.h
+  ../xrRenderDX10/dx10EventWrapper.h
   ../xrRenderDX10/dx10r_constants_cache.h
   ../xrRenderDX10/dx10StateUtils.h
   ../xrRenderDX10/dx10TextureUtils.h
