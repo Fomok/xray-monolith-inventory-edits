@@ -13,21 +13,21 @@
 // Implement profiler macro interface
 #if XRCORE_PROFILER == PROFILER_OPTICK
 #	include "../3rd party/optick-git/src/optick.h"
-#	define PROF_THREAD(Name) OPTICK_THREAD(Name)
+#	define PROF_THREAD(...) OPTICK_THREAD(__VA_ARGS__)
 #	define PROF_START_CAPTURE() OPTICK_START_CAPTURE()
 #	define PROF_STOP_CAPTURE() OPTICK_STOP_CAPTURE()
-#	define PROF_SAVE_CAPTURE(Name) OPTICK_SAVE_CAPTURE(Name)
-#	define PROF_FRAME(Name) OPTICK_FRAME(Name)
-#	define PROF_EVENT(Name) OPTICK_EVENT(Name)
-#	define START_PROFILE(a) { PROF_EVENT(a)
+#	define PROF_SAVE_CAPTURE(...) OPTICK_SAVE_CAPTURE(__VA_ARGS__)
+#	define PROF_FRAME(...) OPTICK_FRAME(__VA_ARGS__)
+#	define PROF_EVENT(...) OPTICK_EVENT(__VA_ARGS__)
+#	define START_PROFILE(...) { PROF_EVENT(__VA_ARGS__)
 #	define STOP_PROFILE		}
 #else
-#	define PROF_THREAD(Name)
+#	define PROF_THREAD(...)
 #	define PROF_START_CAPTURE()
 #	define PROF_STOP_CAPTURE()
-#	define PROF_SAVE_CAPTURE(Name)
-#	define PROF_FRAME(Name)
-#	define PROF_EVENT(Name)
-#	define START_PROFILE(a) {
+#	define PROF_SAVE_CAPTURE(...)
+#	define PROF_FRAME(...)
+#	define PROF_EVENT(...)
+#	define START_PROFILE(...) {
 #	define STOP_PROFILE		}
 #endif
