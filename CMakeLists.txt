@@ -113,8 +113,6 @@ add_compile_options(
   $<$<CONFIG:Verified>:/GS>
 
   ## Release configs
-  # Don't bake debug info or generate PDB files in Release
-  $<$<CONFIG:Release>:/DEBUG:NONE>
   # Aggressive function inlining
   $<$<CONFIG:Release>:/Ob3>
   $<$<CONFIG:RelWithDebInfo>:/Ob3>
