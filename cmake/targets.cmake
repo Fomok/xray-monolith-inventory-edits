@@ -219,6 +219,7 @@ macro(add_engine_target name)
     lua-extensions
     ReShadeCompat
     Vfw32
+    xrCore
     xrGame
     xrParticles
     xrSound
