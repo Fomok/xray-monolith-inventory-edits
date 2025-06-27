@@ -423,6 +423,11 @@ target_include_directories(xrRender_R3
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+target_compile_options(xrRender_R3
+  PRIVATE
+  /Zm110
+)
+
 target_compile_definitions(xrRender_R3
   PRIVATE
   USE_DX10

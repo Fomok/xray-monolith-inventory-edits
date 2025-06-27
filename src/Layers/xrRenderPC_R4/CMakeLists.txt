@@ -443,6 +443,12 @@ target_include_directories(xrRender_R4
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+target_compile_options(xrRender_R4
+  PRIVATE
+  # Increase preallocated stack size by 13%
+  /Zm113
+)
+
 target_compile_definitions(xrRender_R4
   PRIVATE
   USE_DX11
