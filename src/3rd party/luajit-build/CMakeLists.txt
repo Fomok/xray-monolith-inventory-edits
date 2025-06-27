@@ -8,10 +8,9 @@ cmake_minimum_required(VERSION 3.13)
 
 project(LuaJIT C CXX ASM)
 
-include(msvc)
-
 # If using MSBuild, add its toolchain to the include path
 if(MSVC)
+  include(msvc)
   set(env_include ${msvc.include} $ENV{INCLUDE})
   set(ENV{INCLUDE} "${env_include}")
 endif()
