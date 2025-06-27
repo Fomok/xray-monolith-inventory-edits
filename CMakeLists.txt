@@ -66,8 +66,6 @@ string(
 # Configure compiler options
 add_compile_options(
   ## Shared config
-  # __cdecl calling convention
-  /Gd
   # Enable rich diagnostics
   /diagnostics:column
   # Disable minimal rebuild
