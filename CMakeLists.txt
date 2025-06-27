@@ -1,6 +1,9 @@
 # Use minimum VS-supported CMake for broad IDE compatibility
 cmake_minimum_required(VERSION 3.20)
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY MultiThreadedDLL)
+set(CMAKE_VS_USE_DEBUG_LIBRARIES "$<CONFIG:Debug,Verified>")
+
 # Define project
 project(
   Anomaly
