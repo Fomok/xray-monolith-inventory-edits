@@ -425,6 +425,7 @@ target_include_directories(xrRender_R3
 
 target_compile_options(xrRender_R3
   PRIVATE
+  # Increase preallocated stack size by 10%
   /Zm110
 )
 
