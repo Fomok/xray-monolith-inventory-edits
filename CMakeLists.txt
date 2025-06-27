@@ -48,9 +48,6 @@ include(util)
 # Configure IDE folders
 include(folders)
 
-# Configure exceptions
-configure_exceptions()
-
 # Remove built-in CMake flags
 string(
   REPLACE
@@ -168,6 +165,9 @@ add_compile_definitions(
   # Activate verification for Verified builds
   $<$<CONFIG:Verified>:USE_VERIFY_IN_RELEASE>
 )
+
+# Configure exceptions
+configure_exceptions()
 
 # Setup profiler
 set(PROFILER_NONE 0)
