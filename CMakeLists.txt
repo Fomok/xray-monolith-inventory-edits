@@ -12,6 +12,13 @@ project(
   LANGUAGES CXX C
 )
 
+# Setup language standard and enforce it
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Extend import path
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 # Ensure VS will acknowledge our custom build types
 set(CMAKE_CONFIGURATION_TYPES
   # Debug build - currently broken due to compile errors
@@ -44,24 +51,11 @@ string(
   CMAKE_C_FLAGS_VERIFIED "${CMAKE_C_FLAGS_VERIFIED}"
 )
 
-message("CMAKE_EXE_LINKER_FLAGS_VERIFIED: ${CMAKE_EXE_LINKER_FLAGS_VERIFIED}")
-message("CMAKE_SHARED_LINKER_FLAGS_VERIFIED: ${CMAKE_SHARED_LINKER_FLAGS_VERIFIED}")
-message("CMAKE_STATIC_LINKER_FLAGS_VERIFIED: ${CMAKE_SHARED_LINKER_FLAGS_VERIFIED}")
-message("CMAKE_CXX_FLAGS_VERIFIED: ${CMAKE_CXX_FLAGS_VERIFIED}")
-message("CMAKE_C_FLAGS_VERIFIED: ${CMAKE_C_FLAGS_VERIFIED}")
-
 # Default generator platform to x64,
 # as CMake doesn't populate it in case of default fallback (ex. via the GUI)
 if(NOT CMAKE_GENERATOR_PLATFORM)
     set(CMAKE_GENERATOR_PLATFORM x64)
 endif()
-
-# Setup language standard and enforce it
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-# Extend import path
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Bring utilities into scope
 include(util)

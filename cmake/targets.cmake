@@ -198,11 +198,11 @@ macro(add_engine_target name)
   target_engine_precompile_headers(${name} stdafx.h)
 
   add_executable_manifest(${name}
-    "${CMAKE_SOURCE_DIR}/src/xrEngine/as-invoker-manifest-part.xml")
+    ${CMAKE_SOURCE_DIR}/src/xrEngine/as-invoker-manifest-part.xml)
 
   target_include_directories(${name}
     PRIVATE
-    "${CMAKE_SOURCE_DIR}/src/xrEngine"
+    ${CMAKE_SOURCE_DIR}/src/xrEngine
   )
 
   target_compile_definitions(${name}

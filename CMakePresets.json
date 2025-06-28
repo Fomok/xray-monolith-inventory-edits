@@ -16,7 +16,10 @@
       "name": "windows-base",
       "hidden": true,
       "inherits": "base",
-      "generator": "Visual Studio 17 2022",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.MSVC.toolchain.cmake"
+      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",

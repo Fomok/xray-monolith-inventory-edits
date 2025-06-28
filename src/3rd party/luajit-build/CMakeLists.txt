@@ -8,13 +8,6 @@ cmake_minimum_required(VERSION 3.13)
 
 project(LuaJIT C CXX ASM)
 
-# If using MSBuild, add its toolchain to the include path
-if(MSVC)
-  include(msvc)
-  set(env_include ${msvc.include} $ENV{INCLUDE})
-  set(ENV{INCLUDE} "${env_include}")
-endif()
-
 # Version
 set(MAJVER 2)
 set(MINVER 0)
@@ -92,23 +85,31 @@ set_property(
   ${FOLDER_LUA}
 )
 
+if(MSVC)
+  set(CCOPT_OPT_PREFIX /)
+else()
+  set(CCOPT_OPT_PREFIX -)
+endif()
+
 # Compiler options
 if (PROJECT_PLATFORM_E2K)
     # O3 on E2K mcst-lcc approximately equal to O2 at X86/ARM gcc
-    set(CCOPT_OPT_LEVEL "-O3")
+    set(CCOPT_OPT_LEVEL O3)
 else()
-    set(CCOPT_OPT_LEVEL "-O2")
+    set(CCOPT_OPT_LEVEL O2)
 endif()
 
-set(CCOPT "${CMAKE_C_FLAGS} ${CCOPT_OPT_LEVEL}")
+set(CCOPT "${CMAKE_C_FLAGS} ${CCOPT_OPT_PREFIX}${CCOPT_OPT_LEVEL}")
 
-if (USE_ADDRESS_SANITIZER)
-    set(CCOPT "${CCOPT} -fno-stack-protector")
-else()
-    set(CCOPT "${CCOPT} -fomit-frame-pointer -fno-stack-protector")
+if (NOT MSVC)
+  if (USE_ADDRESS_SANITIZER)
+      set(CCOPT "${CCOPT} -fno-stack-protector")
+  else()
+      set(CCOPT "${CCOPT} -fomit-frame-pointer -fno-stack-protector")
+  endif()
 endif()
 
-set(CCOPT "${CCOPT} -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE")
+set(CCOPT "${CCOPT} ${CCOPT_OPT_PREFIX}D_FILE_OFFSET_BITS=64 ${CCOPT_OPT_PREFIX}D_LARGEFILE_SOURCE ${CCOPT_OPT_PREFIX}U_FORTIFY_SOURCE")
 
 string(REPLACE " " ";" CCOPT "${CCOPT}")
 
@@ -122,39 +123,39 @@ if (NOT MSVC)
 endif()
 
 if (LUAJIT_DISABLE_FFI)
-    list(APPEND XCFLAGS "-DLUAJIT_DISABLE_FFI")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_FFI")
 endif()
 
 if (LUAJIT_ENABLE_LUA52COMPAT)
-    list(APPEND XCFLAGS "-DLUAJIT_ENABLE_LUA52COMPAT")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_ENABLE_LUA52COMPAT")
 endif()
 
 if (LUAJIT_DISABLE_JIT)
-    list(APPEND XCFLAGS "-DLUAJIT_DISABLE_JIT")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_JIT")
 endif()
 
 if (LUAJIT_DISABLE_GC64)
-    list(APPEND XCFLAGS "-DLUAJIT_DISABLE_GC64")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_GC64")
 endif()
 
 if (LUAJIT_USE_SYSMALLOC)
-    list(APPEND XCFLAGS "-DLUAJIT_USE_SYSMALLOC")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_SYSMALLOC")
 endif()
 
 if (LUAJIT_USE_VALGRIND)
-    list(APPEND XCFLAGS "-DLUAJIT_USE_VALGRIND")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_VALGRIND")
 endif()
 
 if (LUAJIT_USE_GDBJIT)
-    list(APPEND XCFLAGS "-DLUAJIT_USE_GDBJIT")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_GDBJIT")
 endif()
 
 if (LUA_USE_APICHECK)
-    list(APPEND XCFLAGS "-DLUA_USE_APICHECK")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUA_USE_APICHECK")
 endif()
 
 if (LUA_USE_ASSERT)
-    list(APPEND XCFLAGS "-DLUA_USE_ASSERT")
+    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUA_USE_ASSERT")
 endif()
 
 set(CCOPTIONS "${CCOPT};${XCFLAGS}")
@@ -165,12 +166,20 @@ target_compile_options(LuaJIT PRIVATE ${CCOPTIONS})
 if(MSVC)
     set(TESTARCH_ARGS /Zc:preprocessor /PD /EP /E lj_arch.h)
 else()
-    set(TESTARCH_ARGS -E lj_arch.h -dM)
+    set(TESTARCH_ARGS -dM -E lj_arch.h)
 endif()
+
+# Populate INCLUDE
+set(CCINCLUDES "")
+cmake_path(CONVERT "${CMAKE_C_STANDARD_INCLUDE_DIRECTORIES}" TO_NATIVE_PATH_LIST CCOPT_INCLUDES)
+foreach(INC ${CCOPT_INCLUDES})
+  list(APPEND CCINCLUDES ${CCOPT_OPT_PREFIX}I${INC})
+  list(APPEND HOST_INCLUDES ${INC})
+endforeach()
 
 # Run luajit's architecture analyzer
 execute_process(
-    COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} ${TESTARCH_ARGS}
+    COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} ${CCINCLUDES} ${TESTARCH_ARGS}
     WORKING_DIRECTORY "${LUAJIT_DIR}"
     RESULT_VARIABLE TESTARCH_RESULT
     OUTPUT_VARIABLE TESTARCH_OUTPUT
@@ -370,7 +379,7 @@ else()
 endif()
 
 add_custom_command(
-    OUTPUT "${MINILUA_FILE}"
+    OUTPUT ${MINILUA_FILE}
     COMMAND ${CMAKE_COMMAND}
         -B${MINILUA_BINARY_DIR}
         -G${CMAKE_GENERATOR}
@@ -380,14 +389,16 @@ add_custom_command(
         -DCMAKE_BUILD_TYPE=Release
         -DLUAJIT_DIR=${LUAJIT_DIR}
         -DLUA_USE_POSIX=${LUA_USE_POSIX}
-        -DHOST_ACFLAGS="${HOST_ACFLAGS}"
-        -DHOST_ALDFLAGS="${HOST_ALDFLAGS}"
+        -DHOST_ACFLAGS=${HOST_ACFLAGS}
+        -DHOST_ALDFLAGS=${HOST_ALDFLAGS}
+        "-DHOST_INCLUDES=${HOST_INCLUDES}"
     COMMAND ${CMAKE_COMMAND} --build ${MINILUA_BINARY_DIR} --config Release --verbose
 )
 
 add_custom_command(OUTPUT ${BUILDVM_ARCH}
-    COMMAND "${MINILUA_FILE}" ${DASM} ${DASM_FLAGS} -o ${BUILDVM_ARCH} ${DASM_DASC}
-    DEPENDS "${MINILUA_FILE}"
+    COMMAND ${MINILUA_FILE} ${DASM} ${DASM_FLAGS} -o ${BUILDVM_ARCH} ${DASM_DASC}
+    DEPENDS ${MINILUA_FILE}
+    VERBATIM
 )
 
 add_custom_target(buildvm_arch
@@ -413,7 +424,7 @@ else()
 endif()
 
 add_custom_command(
-    OUTPUT "${BUILDVM_FILE}"
+    OUTPUT ${BUILDVM_FILE}
     COMMAND ${CMAKE_COMMAND}
         -B${BUILDVM_BINARY_DIR}
         -G${CMAKE_GENERATOR}
@@ -422,13 +433,14 @@ add_custom_command(
         -DCMAKE_BUILD_TYPE=Release
         -DLUAJIT_DIR=${LUAJIT_DIR}
         -DBUILDVM_ARCH=${BUILDVM_ARCH}
-        -DHOST_ACFLAGS="${HOST_ACFLAGS}"
-        -DHOST_ALDFLAGS="${HOST_ALDFLAGS}"
+        -DHOST_ACFLAGS=${HOST_ACFLAGS}
+        -DHOST_ALDFLAGS=${HOST_ALDFLAGS}
+        "-DHOST_INCLUDES=${HOST_INCLUDES}"
     COMMAND ${CMAKE_COMMAND} --build ${BUILDVM_BINARY_DIR} --config Release --verbose
 )
 
 add_custom_target(buildvm
-    DEPENDS "${BUILDVM_FILE}"
+    DEPENDS ${BUILDVM_FILE}
 )
 
 set_property(
@@ -464,9 +476,9 @@ endif()
 
 macro(add_buildvm_target target mode)
     add_custom_command(
-        OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${target}"
-        COMMAND "${BUILDVM_FILE}" ARGS -m ${mode} -o ${CMAKE_CURRENT_BINARY_DIR}/${target} ${ARGN}
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${target}
+        COMMAND ${BUILDVM_FILE} ARGS -m ${mode} -o ${CMAKE_CURRENT_BINARY_DIR}/${target} ${ARGN}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS buildvm ${ARGN}
     )
 endmacro()

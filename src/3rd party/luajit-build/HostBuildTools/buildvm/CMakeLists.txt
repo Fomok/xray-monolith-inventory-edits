@@ -26,6 +26,7 @@ target_sources(buildvm PRIVATE
 
 target_include_directories(buildvm
 	PRIVATE
+    ${HOST_INCLUDES}
 	${CMAKE_CURRENT_BINARY_DIR}/../..
 	${LUAJIT_DIR}
 )
