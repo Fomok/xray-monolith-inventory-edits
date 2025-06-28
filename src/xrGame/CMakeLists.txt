@@ -8,7 +8,8 @@ set_property(
   ${FOLDER_XRAY}
 )
 
-target_sources(xrGame PRIVATE
+target_sources(xrGame
+  PRIVATE
   ../xrServerEntities/alife_human_brain.cpp
   ../xrServerEntities/alife_monster_brain.cpp
   ../xrServerEntities/alife_space.cpp
