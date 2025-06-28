@@ -13,12 +13,26 @@
       "installDir": "${sourceDir}/_build/install/${presetName}"
     },
     {
-      "name": "windows-base",
+      "name": "msvc-base",
       "hidden": true,
       "inherits": "base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
-          "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.MSVC.toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.MSVC.toolchain.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "clang-base",
+      "hidden": true,
+      "inherits": "base",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.Clang.toolchain.cmake"
       },
       "condition": {
         "type": "equals",
@@ -29,7 +43,7 @@
     {
       "name": "x64-debug",
       "displayName": "x64 Debug",
-      "inherits": "windows-base",
+      "inherits": "msvc-base",
       "cacheVariables": {
         "XRAY_PROFILER": "None"
       }
@@ -37,7 +51,7 @@
     {
       "name": "x64-relwithdebinfo",
       "displayName": "x64 RelWithDebInfo",
-      "inherits": "windows-base",
+      "inherits": "msvc-base",
       "cacheVariables": {
         "XRAY_PROFILER": "None"
       }
@@ -45,7 +59,7 @@
     {
       "name": "x64-release",
       "displayName": "x64 Release",
-      "inherits": "windows-base",
+      "inherits": "msvc-base",
       "cacheVariables": {
         "XRAY_PROFILER": "None"
       }
@@ -53,7 +67,7 @@
     {
       "name": "x64-verified",
       "displayName": "x64 Verified",
-      "inherits": "windows-base",
+      "inherits": "msvc-base",
       "cacheVariables": {
         "XRAY_PROFILER": "None"
       }
@@ -61,7 +75,7 @@
     {
       "name": "x64-profiled",
       "displayName": "x64 Profiled",
-      "inherits": "windows-base",
+      "inherits": "msvc-base",
       "cacheVariables": {
         "XRAY_PROFILER": "Optick"
       }

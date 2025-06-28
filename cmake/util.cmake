@@ -29,8 +29,14 @@ endfunction()
 
 # Remove global exception flags and replace them with debug-only ones
 macro(configure_exceptions)
-  string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  string(APPEND CMAKE_CXX_FLAGS_DEBUG " /EHsc")
+  if(MSVC)
+    string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    string(APPEND CMAKE_CXX_FLAGS_DEBUG " /EHsc")
+  else()
+    add_compile_options(
+      $<$<NOT:$<CONFIG:Debug>>:-fno-exceptions>
+    )
+  endif()
 endmacro()
 
 # Enable AVX for the given target
