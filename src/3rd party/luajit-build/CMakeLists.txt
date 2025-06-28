@@ -389,8 +389,8 @@ add_custom_command(
         -DCMAKE_BUILD_TYPE=Release
         -DLUAJIT_DIR=${LUAJIT_DIR}
         -DLUA_USE_POSIX=${LUA_USE_POSIX}
-        -DHOST_ACFLAGS=${HOST_ACFLAGS}
-        -DHOST_ALDFLAGS=${HOST_ALDFLAGS}
+        "-DHOST_ACFLAGS=${HOST_ACFLAGS}"
+        "-DHOST_ALDFLAGS=${HOST_ALDFLAGS}"
         "-DHOST_INCLUDES=${HOST_INCLUDES}"
     COMMAND ${CMAKE_COMMAND} --build ${MINILUA_BINARY_DIR} --config Release --verbose
 )
@@ -433,8 +433,8 @@ add_custom_command(
         -DCMAKE_BUILD_TYPE=Release
         -DLUAJIT_DIR=${LUAJIT_DIR}
         -DBUILDVM_ARCH=${BUILDVM_ARCH}
-        -DHOST_ACFLAGS=${HOST_ACFLAGS}
-        -DHOST_ALDFLAGS=${HOST_ALDFLAGS}
+        "-DHOST_ACFLAGS=${HOST_ACFLAGS}"
+        "-DHOST_ALDFLAGS=${HOST_ALDFLAGS}"
         "-DHOST_INCLUDES=${HOST_INCLUDES}"
     COMMAND ${CMAKE_COMMAND} --build ${BUILDVM_BINARY_DIR} --config Release --verbose
 )
