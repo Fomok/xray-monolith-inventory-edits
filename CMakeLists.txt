@@ -55,6 +55,9 @@ endif()
 # Configure profiler
 include(profiler)
 
+# Setup compressor
+add_subdirectory(compressor)
+
 # Setup gamedata
 add_subdirectory(gamedata)
 
