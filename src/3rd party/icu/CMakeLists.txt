@@ -204,17 +204,17 @@ target_include_directories(icu
 
 find_library(
   LIBRARY_ICUUC icuuc
-  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+  HINT ${XRAY_SDK_LIB}
 )
 
 find_library(
   LIBRARY_SICUDT sicudt
-  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+  HINT ${XRAY_SDK_LIB}
 )
 
 find_library(
   LIBRARY_SICUUC sicuuc
-  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+  HINT ${XRAY_SDK_LIB}
 )
 
 target_link_libraries(icu

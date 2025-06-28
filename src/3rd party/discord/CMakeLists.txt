@@ -48,7 +48,7 @@ target_include_directories(discord
 
 find_library(
   LIBRARY_DISCORD_GAME_SDK discord_game_sdk
-  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+  HINT ${XRAY_SDK_LIB}
 )
 
 target_link_libraries(discord

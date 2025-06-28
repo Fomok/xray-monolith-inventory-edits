@@ -14,5 +14,5 @@ target_sources(serial
 
 target_include_directories(serial
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )

@@ -37,35 +37,12 @@ target_include_directories(dxsdk
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-find_library(
-  LIBRARY_D3D9 d3d9
-  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
-)
-
-find_library(
-  LIBRARY_D3DX9 d3dx9
-  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
-)
-
-find_library(
-  LIBRARY_D3D10 d3d10
-  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
-)
-
-find_library(
-  LIBRARY_D3DX10 d3dx10
-  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
-)
-
-find_library(
-  LIBRARY_D3D11 d3d11
-  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
-)
-
-find_library(
-  LIBRARY_D3DX11 d3dx11
-  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
-)
+find_library(LIBRARY_D3D9 d3d9 HINTS ${XRAY_SDK_LIB})
+find_library(LIBRARY_D3DX9 d3dx9 HINTS ${XRAY_SDK_LIB})
+find_library(LIBRARY_D3D10 d3d10 HINTS ${XRAY_SDK_LIB})
+find_library(LIBRARY_D3DX10 d3dx10 HINTS ${XRAY_SDK_LIB})
+find_library(LIBRARY_D3D11 d3d11 HINTS ${XRAY_SDK_LIB})
+find_library(LIBRARY_D3DX11 d3dx11 HINTS ${XRAY_SDK_LIB})
 
 target_link_libraries(dxsdk
   INTERFACE

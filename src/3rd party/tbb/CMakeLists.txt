@@ -136,13 +136,10 @@ target_sources(tbb
 
 target_include_directories(tbb
   INTERFACE
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
+  ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-find_library(
-  LIBRARY_TBB tbb
-  HINT ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
-)
+find_library(LIBRARY_TBB tbb HINT ${XRAY_SDK_LIB})
 
 target_link_libraries(tbb
   INTERFACE

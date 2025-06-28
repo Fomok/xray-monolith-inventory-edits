@@ -41,7 +41,7 @@ target_sources_grouped(
 
 target_include_directories(xrParticles
   PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_precompile_headers(xrParticles

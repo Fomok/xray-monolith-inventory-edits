@@ -1,3 +1,5 @@
+include_guard()
+
 set(XR_ENGINE_SOURCES
   ai_script_lua_debug.cpp
   ai_script_lua_extension.cpp
@@ -184,6 +186,24 @@ set(XR_ENGINE_SOURCES
   resource.rc
 )
 
+# Given a list of sources, prepend the xrEngine source dir to each,
+# and add it to the given target
+function(target_engine_sources TARGET)
+  foreach(src ${ARGN})
+    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/src/xrEngine/${src}")
+  endforeach()
+  target_sources(${TARGET} PRIVATE ${SOURCES})
+endfunction()
+
+# Given a list of precompiled headers, prepend the xrEngine source dir to each,
+# and add it to the given target
+function(target_engine_precompile_headers TARGET)
+  foreach(src ${ARGN})
+    list(APPEND SOURCES "${CMAKE_SOURCE_DIR}/src/xrEngine/${src}")
+  endforeach()
+  target_precompile_headers(${TARGET} PRIVATE ${SOURCES})
+endfunction()
+
 # Add an xrEngine target with the given name
 macro(add_engine_target name)
   add_executable(${name} WIN32)
@@ -233,6 +253,13 @@ macro(configure_engine_target TARGET DEFINE LINK)
     ${DEFINE}
   )
   target_link_libraries(${TARGET} PRIVATE ${LINK})
+endmacro()
+
+# Enable AVX for the given target
+macro(enable_avx TARGET)
+  if(MSVC)
+    target_compile_options(${TARGET} PRIVATE /arch:AVX)
+  endif()
 endmacro()
 
 # Setup executable targets

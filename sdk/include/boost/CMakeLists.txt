@@ -1813,5 +1813,5 @@ target_sources(boost
 
 target_include_directories(boost
   INTERFACE
-  ${CMAKE_SOURCE_DIR}/sdk/include
+  ${XRAY_SDK_INCLUDE}
 )

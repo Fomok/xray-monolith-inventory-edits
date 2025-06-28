@@ -3,14 +3,14 @@
 
   "configurePresets": [
     {
-      "name": "base",
-      "hidden": true,
-      "binaryDir": "${sourceDir}/_build/${presetName}",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "installDir": "${sourceDir}/_build/install/${presetName}"
+        "name": "base",
+        "hidden": true,
+        "binaryDir": "${sourceDir}/_build/${presetName}",
+        "architecture": {
+            "value": "x64",
+            "strategy": "external"
+        },
+        "installDir": "${sourceDir}/_build/install/${presetName}"
     },
     {
       "name": "msvc-base",
@@ -32,7 +32,7 @@
       "inherits": "base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.Clang.toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/WindowsToolchain/Windows.Clang.toolchain.cmake"
       },
       "condition": {
         "type": "equals",
@@ -46,7 +46,8 @@
       "inherits": "msvc-base",
       "cacheVariables": {
         "XRAY_PROFILER": "None"
-      }
+      },
+      "hidden": true
     },
     {
       "name": "x64-relwithdebinfo",
@@ -83,34 +84,34 @@
   ],
   "buildPresets": [
     {
-      "name": "windows-debug",
-      "displayName": "Debug",
-      "configurePreset": "x64-debug",
-      "configuration": "Debug"
+        "name": "windows-debug",
+        "displayName": "Debug",
+        "configurePreset": "x64-debug",
+        "configuration": "Debug"
     },
     {
-      "name": "windows-relwithdebinfo",
-      "displayName": "RelWithDebInfo",
-      "configurePreset": "x64-relwithdebinfo",
-      "configuration": "RelWithDebInfo"
+        "name": "windows-verified",
+        "displayName": "Verified",
+        "configurePreset": "x64-verified",
+        "configuration": "Verified"
     },
     {
-      "name": "windows-release",
-      "displayName": "Release",
-      "configurePreset": "x64-release",
-      "configuration": "Release"
+        "name": "windows-profiled",
+        "displayName": "Profiled",
+        "configurePreset": "x64-profiled",
+        "configuration": "Release"
     },
     {
-      "name": "windows-verified",
-      "displayName": "Verified",
-      "configurePreset": "x64-verified",
-      "configuration": "Verified"
+        "name": "windows-release",
+        "displayName": "Release",
+        "configurePreset": "x64-release",
+        "configuration": "Release"
     },
     {
-      "name": "windows-profiled",
-      "displayName": "Profiled",
-      "configurePreset": "x64-profiled",
-      "configuration": "Release"
-    }
+        "name": "windows-relwithdebinfo",
+        "displayName": "RelWithDebInfo",
+        "configurePreset": "x64-relwithdebinfo",
+        "configuration": "RelWithDebInfo"
+    },
   ]
 }

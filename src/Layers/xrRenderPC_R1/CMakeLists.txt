@@ -301,7 +301,7 @@ target_precompile_headers(xrRender_R1
 
 target_include_directories(xrRender_R1
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_compile_definitions(xrRender_R1

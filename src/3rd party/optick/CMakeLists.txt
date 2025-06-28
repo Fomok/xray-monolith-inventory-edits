@@ -37,7 +37,7 @@ target_sources(optick
 
 target_include_directories(optick
   PUBLIC
-  "${CMAKE_SOURCE_DIR}/src/3rd party/optick-git/src"
+  ${CMAKE_CURRENT_SOURCE_DIR}/../optick-git/src
 )
 
 target_compile_definitions(optick

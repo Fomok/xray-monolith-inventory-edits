@@ -30,7 +30,7 @@ target_include_directories(NVAPI
 
 find_library(
   LIBRARY_NVAPI nvapi
-  HINTS ${CMAKE_SOURCE_DIR}/sdk/libraries/x64
+  HINTS ${XRAY_SDK_LIB}
 )
 
 target_link_libraries(NVAPI

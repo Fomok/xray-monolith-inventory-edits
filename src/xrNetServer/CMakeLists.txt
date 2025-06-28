@@ -30,7 +30,7 @@ target_sources(xrNetServer PRIVATE
 
 target_include_directories(xrNetServer
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_precompile_headers(xrNetServer

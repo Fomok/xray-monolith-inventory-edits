@@ -102,5 +102,5 @@ target_sources(vorbisfile PRIVATE
 target_include_directories(vorbisfile
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/sdk/include
+  ${XRAY_SDK_INCLUDE}
 )

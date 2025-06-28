@@ -12,7 +12,7 @@ target_sources(ReShadeCompat PRIVATE
 
 target_include_directories(ReShadeCompat
   PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
   "${CMAKE_SOURCE_DIR}/src/3rd party"
 )
 

@@ -1,3 +1,5 @@
+include_guard()
+
 # Rename built-in CMake folder
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER CMake)
 

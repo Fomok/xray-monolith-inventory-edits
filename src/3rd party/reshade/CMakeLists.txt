@@ -8,5 +8,5 @@ set_property(
 
 target_include_directories(reshade
   INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}"
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )

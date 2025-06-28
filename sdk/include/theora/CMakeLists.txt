@@ -67,5 +67,5 @@ target_sources(theora PRIVATE
 target_include_directories(theora
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/sdk/include
+  ${XRAY_SDK_INCLUDE}
 )

@@ -19,7 +19,7 @@ target_sources(OpenAL32 PRIVATE
 
 target_include_directories(OpenAL32
   PUBLIC
-  "${CMAKE_CURRENT_SOURCE_DIR}/include"
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
   PRIVATE
-  "${CMAKE_CURRENT_SOURCE_DIR}/OpenAL-Windows/Router"
+  ${CMAKE_CURRENT_SOURCE_DIR}/OpenAL-Windows/Router
 )

@@ -95,5 +95,5 @@ target_sources(jpeg PRIVATE
 
 target_include_directories(jpeg
   PUBLIC
-  ${CMAKE_SOURCE_DIR}/sdk/include
+  ${XRAY_SDK_INCLUDE}
 )

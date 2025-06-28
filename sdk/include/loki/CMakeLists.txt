@@ -37,5 +37,5 @@ target_sources(loki
 
 target_include_directories(loki
   INTERFACE
-  ${CMAKE_SOURCE_DIR}/sdk/include
+  ${XRAY_SDK_INCLUDE}
 )
