@@ -46,7 +46,7 @@ macro(add_executable_manifest target manifest)
     add_custom_command(
         TARGET ${target}
         POST_BUILD
-        COMMAND mt -manifest ${manifest} -outputresource:"$(TargetDir)$(TargetFileName)"
+      COMMAND mt -manifest ${manifest} -outputresource:$<TARGET_FILE:${target}>
         COMMENT "Adding manifest..." 
     )
   endif()
