@@ -1,24 +1,22 @@
 {
-  "version": 3,
-
+    "version": 3,
   "configurePresets": [
     {
-        "name": "base",
-        "hidden": true,
-        "binaryDir": "${sourceDir}/_build/${presetName}",
-        "architecture": {
-            "value": "x64",
-            "strategy": "external"
-        },
-        "installDir": "${sourceDir}/_build/install/${presetName}"
+      "name": "Base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/_build/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "installDir": "${sourceDir}/_build/install/${presetName}"
     },
     {
-      "name": "msvc-base",
+      "name": "Base.MSVC.MSBuild",
       "hidden": true,
-      "inherits": "base",
-      "generator": "Ninja Multi-Config",
+      "inherits": "Base",
+      "generator": "Visual Studio 17 2022",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.MSVC.toolchain.cmake"
       },
       "condition": {
         "type": "equals",
@@ -27,9 +25,23 @@
       }
     },
     {
-      "name": "clang-base",
+      "name": "Base.MSVC.Ninja",
       "hidden": true,
-      "inherits": "base",
+      "inherits": "Base",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/WindowsToolchain/Windows.MSVC.toolchain.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "Base.Clang.Ninja",
+      "hidden": true,
+      "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
         "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/WindowsToolchain/Windows.Clang.toolchain.cmake"
@@ -41,77 +53,87 @@
       }
     },
     {
-      "name": "x64-debug",
+      "name": "x64.Debug",
       "displayName": "x64 Debug",
-      "inherits": "msvc-base",
+      "inherits": "Base.MSVC.MSBuild",
       "cacheVariables": {
-        "XRAY_PROFILER": "None"
+        "XRAY_PROFILER": "None",
+        "XRAY_RELEASE": false,
+        "XRAY_PDB": false
       },
       "hidden": true
     },
     {
-      "name": "x64-relwithdebinfo",
-      "displayName": "x64 RelWithDebInfo",
-      "inherits": "msvc-base",
-      "cacheVariables": {
-        "XRAY_PROFILER": "None"
-      }
-    },
-    {
-      "name": "x64-release",
-      "displayName": "x64 Release",
-      "inherits": "msvc-base",
-      "cacheVariables": {
-        "XRAY_PROFILER": "None"
-      }
-    },
-    {
-      "name": "x64-verified",
+      "name": "x64.Verified",
       "displayName": "x64 Verified",
-      "inherits": "msvc-base",
+      "inherits": "Base.MSVC.MSBuild",
       "cacheVariables": {
-        "XRAY_PROFILER": "None"
+        "XRAY_PROFILER": "None",
+        "XRAY_RELEASE": false,
+        "XRAY_PDB": false
       }
     },
     {
-      "name": "x64-profiled",
+      "name": "x64.Profiled",
       "displayName": "x64 Profiled",
-      "inherits": "msvc-base",
+      "inherits": "Base.MSVC.MSBuild",
       "cacheVariables": {
-        "XRAY_PROFILER": "Optick"
+        "XRAY_PROFILER": "Optick",
+        "XRAY_RELEASE": true,
+        "XRAY_PDB": false
+      }
+    },
+    {
+      "name": "x64.Release",
+      "displayName": "x64 Release",
+      "inherits": "Base.MSVC.MSBuild",
+      "cacheVariables": {
+        "XRAY_PROFILER": "None",
+        "XRAY_RELEASE": true,
+        "XRAY_PDB": false
+      }
+    },
+    {
+      "name": "x64.RelWithDebInfo",
+      "displayName": "x64 RelWithDebInfo",
+      "inherits": "Base.MSVC.MSBuild",
+      "cacheVariables": {
+        "XRAY_PROFILER": "None",
+        "XRAY_RELEASE": true,
+        "XRAY_PDB": true
       }
     }
   ],
-  "buildPresets": [
-    {
-        "name": "windows-debug",
-        "displayName": "Debug",
-        "configurePreset": "x64-debug",
-        "configuration": "Debug"
-    },
-    {
-        "name": "windows-verified",
-        "displayName": "Verified",
-        "configurePreset": "x64-verified",
-        "configuration": "Verified"
-    },
-    {
-        "name": "windows-profiled",
-        "displayName": "Profiled",
-        "configurePreset": "x64-profiled",
-        "configuration": "Release"
-    },
-    {
-        "name": "windows-release",
-        "displayName": "Release",
-        "configurePreset": "x64-release",
-        "configuration": "Release"
-    },
-    {
-        "name": "windows-relwithdebinfo",
-        "displayName": "RelWithDebInfo",
-        "configurePreset": "x64-relwithdebinfo",
-        "configuration": "RelWithDebInfo"
-    },
-  ]
+    "buildPresets": [
+        {
+            "name": "Windows.Debug",
+            "displayName": "Debug",
+            "configurePreset": "x64.Debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "Windows.Verified",
+            "displayName": "Verified",
+            "configurePreset": "x64.Verified",
+            "configuration": "Verified"
+        },
+        {
+            "name": "Windows.Profiled",
+            "displayName": "Profiled",
+            "configurePreset": "x64.Profiled",
+            "configuration": "Release"
+        },
+        {
+            "name": "Windows.Release",
+            "displayName": "Release",
+            "configurePreset": "x64.Release",
+            "configuration": "Release"
+        },
+        {
+            "name": "Windows.RelWithDebInfo",
+            "displayName": "RelWithDebInfo",
+            "configurePreset": "x64.RelWithDebInfo",
+            "configuration": "RelWithDebInfo"
+        }
+    ]
 }
