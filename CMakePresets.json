@@ -15,8 +15,6 @@
       "name": "MSVC.MSBuild",
       "inherits": "Base",
       "generator": "Visual Studio 17 2022",
-      "cacheVariables": {
-      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
