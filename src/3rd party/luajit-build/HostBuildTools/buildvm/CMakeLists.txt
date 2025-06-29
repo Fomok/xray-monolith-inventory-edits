@@ -13,6 +13,12 @@ separate_arguments(HOST_ALDFLAGS)
 
 add_executable(buildvm)
 
+set_property(
+  TARGET buildvm
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
 target_sources(buildvm PRIVATE
     "${LUAJIT_DIR}/host/buildvm_asm.c"
 	"${LUAJIT_DIR}/host/buildvm_fold.c"

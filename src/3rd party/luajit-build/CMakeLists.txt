@@ -370,90 +370,14 @@ set(DASM_DASC "${LUAJIT_DIR}/vm_${DASM_ARCH}.dasc")
 set(DASM "${LUAJIT_DIR}/../dynasm/dynasm.lua")
 set(BUILDVM_ARCH "${CMAKE_CURRENT_BINARY_DIR}/buildvm_arch.h")
 
-# Generate buildvm arch header
-set(MINILUA_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/HostBuildTools/minilua")
-if (WIN32)
-  set(MINILUA_FILE "${MINILUA_BINARY_DIR}/Release/minilua.exe")
-else()
-  set(MINILUA_FILE "${MINILUA_BINARY_DIR}/Release/minilua")
-endif()
-
-add_custom_command(
-    OUTPUT ${MINILUA_FILE}
-    COMMAND ${CMAKE_COMMAND}
-        -B${MINILUA_BINARY_DIR}
-        -G${CMAKE_GENERATOR}
-        -S${CMAKE_CURRENT_SOURCE_DIR}/HostBuildTools/minilua
-        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
-        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-        -DCMAKE_BUILD_TYPE=Release
-        -DLUAJIT_DIR=${LUAJIT_DIR}
-        -DLUA_USE_POSIX=${LUA_USE_POSIX}
-        "-DHOST_ACFLAGS=${HOST_ACFLAGS}"
-        "-DHOST_ALDFLAGS=${HOST_ALDFLAGS}"
-        "-DHOST_INCLUDES=${HOST_INCLUDES}"
-    COMMAND ${CMAKE_COMMAND} --build ${MINILUA_BINARY_DIR} --config Release --verbose
-)
+add_subdirectory("HostBuildTools/minilua")
 
 add_custom_command(OUTPUT ${BUILDVM_ARCH}
-    COMMAND ${MINILUA_FILE} ${DASM} ${DASM_FLAGS} -o ${BUILDVM_ARCH} ${DASM_DASC}
-    DEPENDS ${MINILUA_FILE}
+    COMMAND $<TARGET_FILE:minilua> ${DASM} ${DASM_FLAGS} -o ${BUILDVM_ARCH} ${DASM_DASC}
     VERBATIM
 )
 
-add_custom_target(buildvm_arch
-    DEPENDS ${BUILDVM_ARCH}
-)
-
-set_property(
-  TARGET buildvm_arch
-  PROPERTY FOLDER
-  ${FOLDER_LUA}
-)
-
-set_target_properties(buildvm_arch PROPERTIES
-    ADDITIONAL_CLEAN_FILES "${MINILUA_BINARY_DIR}"
-)
-
-# Buildvm
-set(BUILDVM_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/HostBuildTools/buildvm")
-if (WIN32)
-  set(BUILDVM_FILE "${BUILDVM_BINARY_DIR}/Release/buildvm.exe")
-else()
-  set(BUILDVM_FILE "${BUILDVM_BINARY_DIR}/Release/buildvm")
-endif()
-
-add_custom_command(
-    OUTPUT ${BUILDVM_FILE}
-    COMMAND ${CMAKE_COMMAND}
-        -B${BUILDVM_BINARY_DIR}
-        -G${CMAKE_GENERATOR}
-        -S${CMAKE_CURRENT_SOURCE_DIR}/HostBuildTools/buildvm
-        -DCMAKE_VERBOSE_MAKEFILE=${CMAKE_VERBOSE_MAKEFILE}
-        -DCMAKE_BUILD_TYPE=Release
-        -DLUAJIT_DIR=${LUAJIT_DIR}
-        -DBUILDVM_ARCH=${BUILDVM_ARCH}
-        "-DHOST_ACFLAGS=${HOST_ACFLAGS}"
-        "-DHOST_ALDFLAGS=${HOST_ALDFLAGS}"
-        "-DHOST_INCLUDES=${HOST_INCLUDES}"
-    COMMAND ${CMAKE_COMMAND} --build ${BUILDVM_BINARY_DIR} --config Release --verbose
-)
-
-add_custom_target(buildvm
-    DEPENDS ${BUILDVM_FILE}
-)
-
-set_property(
-  TARGET buildvm
-  PROPERTY FOLDER
-  ${FOLDER_LUA}
-)
-
-set_target_properties(buildvm PROPERTIES
-    ADDITIONAL_CLEAN_FILES "${BUILDVM_BINARY_DIR}"
-)
-
-add_dependencies(buildvm buildvm_arch)
+add_subdirectory("HostBuildTools/buildvm")
 
 list(APPEND LJLIB_C
     "${LUAJIT_DIR}/lib_base.c"
@@ -477,7 +401,7 @@ endif()
 macro(add_buildvm_target target mode)
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${target}
-        COMMAND ${BUILDVM_FILE} ARGS -m ${mode} -o ${CMAKE_CURRENT_BINARY_DIR}/${target} ${ARGN}
+        COMMAND $<TARGET_FILE:buildvm> ARGS -m ${mode} -o ${CMAKE_CURRENT_BINARY_DIR}/${target} ${ARGN}
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS buildvm ${ARGN}
     )
