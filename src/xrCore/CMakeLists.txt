@@ -1,6 +1,3 @@
-set(XRAY_PROFILER "None" CACHE STRING "Profiling backend")
-set_property(CACHE XRAY_PROFILER PROPERTY STRINGS None Optick) 
-
 add_library(xrCore STATIC)
 
 set_property(
@@ -479,7 +476,3 @@ target_link_libraries(xrCore
   xrAPI
   xrCDB
 )
-
-if(${XRAY_PROFILER} STREQUAL "Optick")
-  target_link_libraries(xrCore PUBLIC optick)
-endif()

@@ -9,7 +9,7 @@ if (WIN32)
   include(XRay.Win32)
 endif()
 
-include(today)
+include(Today)
 
 # Define project
 project(
@@ -29,6 +29,9 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Setup build configurations
+include(XRay.Configs)
+
 # Configure toolchain-specific settings
 if(${MSVC})
   include(XRay.MSVC)
@@ -38,24 +41,24 @@ else()
   message(FATAL_ERROR "Unsupported compiler")
 endif()
 
-# Setup build configurations
-include(configs)
+# Setup compiler
+include(XRay.Compiler)
+
+# Setup linker
+include(XRay.Linker)
 
 # Define paths
-include(paths)
+include(XRay.Paths)
 
 # Configure IDE folders
-include(folders)
+include(XRay.Folders)
 
 # Setup global compiler definitions
-include(definitions)
-
-# Configure profiler
-include(profiler)
+include(XRay.Compiler.Definitions)
 
 # Bring utilities into scope
-include(sources)
-include(manifest)
+include(XRay.Util.Sources)
+include(XRay.Util.Manifest)
 
 # Setup compressor
 add_subdirectory(compressor)
@@ -70,4 +73,4 @@ add_subdirectory(sdk)
 add_subdirectory(src)
 
 # Setup executable targets
-include(targets)
+include(XRay.Targets)

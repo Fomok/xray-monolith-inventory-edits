@@ -1,20 +1,9 @@
 include_guard()
 
-# Remove built-in CMake flags
-string(
-    REPLACE
-    "/Ob2" ""
-    CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}"
-)
+cmake_minimum_required(VERSION 3.12)
 
-string(
-    REPLACE "/Ob1" ""
-    CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}"
-)
-
-# Configure compiler options
-add_compile_options(
-    ## Shared config
+# Shared compiler flags
+set(XRAY_COMPILER_FLAGS
     # Enable rich diagnostics
     /diagnostics:column
     # Disable minimal rebuild
@@ -31,45 +20,42 @@ add_compile_options(
     /Zi
     # Use multi-threaded DLL
     /MD
-
-    ## Debug config
-    # Don't omit frame pointers
-    $<$<CONFIG:Debug>:/Oy->
-    $<$<CONFIG:Verified>:/Oy->
-    # Warning level 4
-    $<$<CONFIG:Debug>:/W4>
-    $<$<CONFIG:Verified>:/W4>
-    # Enable security check
-    $<$<CONFIG:Debug>:/GS>
-    $<$<CONFIG:Verified>:/GS>
-
-    ## Release configs
-    # Aggressive function inlining
-    $<$<CONFIG:Release>:/Ob3>
-    $<$<CONFIG:RelWithDebInfo>:/Ob3>
-    # Omit frame pointers
-    $<$<CONFIG:Release>:/Oy>
-    $<$<CONFIG:RelWithDebInfo>:/Oy>
-    # Fiber-safe optimizations
-    $<$<CONFIG:Release>:/GT>
-    $<$<CONFIG:RelWithDebInfo>:/GT>
-    # Function-level linking
-    $<$<CONFIG:Release>:/Gy>
-    $<$<CONFIG:RelWithDebInfo>:/Gy>
-    # Intrinsic functions
-    $<$<CONFIG:Release>:/Oi>
-    $<$<CONFIG:RelWithDebInfo>:/Oi>
-    # String pooling
-    $<$<CONFIG:Release>:/GF>
-    $<$<CONFIG:RelWithDebInfo>:/GF>
-    # Whole-program optimization
-    $<$<CONFIG:Release>:/GL>
-    $<$<CONFIG:RelWithDebInfo>:/GL>
 )
 
-# Configure linker options
-add_link_options(
-    ## Shared config
+# Debug flags
+set(XRAY_COMPILER_FLAGS_DEBUG
+    # Don't omit frame pointers
+    /Oy-
+    # Warning level 4
+    /W4
+    # Enable security check
+    /GS
+    # Enable exceptions
+    /EHsc
+)
+
+# Release flags
+set(XRAY_COMPILER_FLAGS_RELEASE
+    # Aggressive function inlining
+    /Ob3
+    # Omit frame pointers
+    /Oy
+    # Fiber-safe optimizations
+    /GT
+    # Function-level linking
+    /Gy
+    # Intrinsic functions
+    /Oi
+    # String pooling
+    /GF
+    # Whole-program optimization
+    /GL
+    # Not Debug
+    /DNDEBUG
+)
+
+# Shared linker options
+set(XRAY_LINKER_FLAGS
     # Mark verified with data execution prevention
     /NXCOMPAT
     # Enable large-address awareness
@@ -78,36 +64,28 @@ add_link_options(
     /ERRORREPORT:PROMPT
     # Don't use a dynamic base address
     /DYNAMICBASE:NO
-
-    ## Debug config
-    # Disable COMDAT folding
-    $<$<CONFIG:Debug>:/OPT:NOICF>
-    $<$<CONFIG:Verified>:/OPT:NOICF>
-    # Link incrementally
-    $<$<CONFIG:Debug>:/INCREMENTAL>
-    $<$<CONFIG:Verified>:/INCREMENTAL>
-    # Don't eliminate unreferenced functions and data
-    $<$<CONFIG:Debug>:/OPT:NOREF>
-    $<$<CONFIG:Verified>:/OPT:NOREF>
-    # Don't use a fixed address space
-    $<$<CONFIG:Debug>:/FIXED:NO>
-    $<$<CONFIG:Verified>:/FIXED:NO>
-
-    ## Release / RelWithDebInfo config
-    # Enable COMDAT folding
-    $<$<CONFIG:Release>:/OPT:ICF>
-    $<$<CONFIG:RelWithDebInfo>:/OPT:ICF>
-    # Don't link incrementally
-    $<$<CONFIG:Release>:/INCREMENTAL:NO>
-    $<$<CONFIG:RelWithDebInfo>:/INCREMENTAL:NO>
-    # Eliminate unreferenced functions and data
-    $<$<CONFIG:Release>:/OPT:REF>
-    $<$<CONFIG:RelWithDebInfo>:/OPT:REF>
-    # Enable link-time code generation
-    $<$<CONFIG:Release>:/LTCG>
-    $<$<CONFIG:RelWithDebInfo>:/LTCG>
 )
 
-# Configure exceptions
-string(REPLACE "/EHsc" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-string(APPEND CMAKE_CXX_FLAGS_DEBUG " /EHsc")
+# Debug linker options
+set(XRAY_LINKER_FLAGS_DEBUG
+    # Disable COMDAT folding
+    /OPT:NOICF
+    # Link incrementally
+    /INCREMENTAL
+    # Don't eliminate unreferenced functions and data
+    /OPT:NOREF
+    # Don't use a fixed address space
+    /FIXED:NO
+)
+
+# Release linker options
+set(XRAY_LINKER_FLAGS_RELEASE
+    # Enable COMDAT folding
+    /OPT:ICF
+    # Don't link incrementally
+    /INCREMENTAL:NO
+    # Eliminate unreferenced functions and data
+    /OPT:REF
+    # Enable link-time code generation
+    /LTCG
+)

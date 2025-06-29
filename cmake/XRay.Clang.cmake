@@ -1,13 +1,18 @@
 include_guard()
 
-add_compile_options(
+set(XRAY_COMPILER_FLAGS
   # Compatibility flags
   -Wno-implicit-function-declaration
   -Wno-c++11-narrowing
   -Wno-invalid-token-paste
   -Wno-nonportable-include-path
   -Wno-shift-negative_value
+)
 
-  # Configure exceptions
-  $<$<NOT:$<CONFIG:Debug>>:-fno-exceptions>
+set(XRAY_COMPILER_FLAGS_DEBUG
+  -fexceptions
+)
+
+set(XRAY_COMPILER_FLAGS_RELEASE
+  -fno-exceptions
 )

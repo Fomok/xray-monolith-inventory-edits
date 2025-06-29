@@ -1,5 +1,5 @@
 {
-    "version": 3,
+  "version": 3,
   "configurePresets": [
     {
       "name": "Base",
@@ -12,8 +12,7 @@
       "installDir": "${sourceDir}/_build/install/${presetName}"
     },
     {
-      "name": "Base.MSVC.MSBuild",
-      "hidden": true,
+      "name": "MSVC.MSBuild",
       "inherits": "Base",
       "generator": "Visual Studio 17 2022",
       "cacheVariables": {
@@ -25,12 +24,11 @@
       }
     },
     {
-      "name": "Base.MSVC.Ninja",
-      "hidden": true,
+      "name": "MSVC.Ninja",
       "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/WindowsToolchain/Windows.MSVC.toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.MSVC.toolchain.cmake"
       },
       "condition": {
         "type": "equals",
@@ -39,101 +37,138 @@
       }
     },
     {
-      "name": "Base.Clang.Ninja",
+      "name": "Clang.Ninja",
       "hidden": true,
       "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/WindowsToolchain/Windows.Clang.toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.Clang.toolchain.cmake"
       },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
-      }
-    },
-    {
-      "name": "x64.Debug",
-      "displayName": "x64 Debug",
-      "inherits": "Base.MSVC.MSBuild",
-      "cacheVariables": {
-        "XRAY_PROFILER": "None",
-        "XRAY_RELEASE": false,
-        "XRAY_PDB": false
-      },
-      "hidden": true
-    },
-    {
-      "name": "x64.Verified",
-      "displayName": "x64 Verified",
-      "inherits": "Base.MSVC.MSBuild",
-      "cacheVariables": {
-        "XRAY_PROFILER": "None",
-        "XRAY_RELEASE": false,
-        "XRAY_PDB": false
-      }
-    },
-    {
-      "name": "x64.Profiled",
-      "displayName": "x64 Profiled",
-      "inherits": "Base.MSVC.MSBuild",
-      "cacheVariables": {
-        "XRAY_PROFILER": "Optick",
-        "XRAY_RELEASE": true,
-        "XRAY_PDB": false
-      }
-    },
-    {
-      "name": "x64.Release",
-      "displayName": "x64 Release",
-      "inherits": "Base.MSVC.MSBuild",
-      "cacheVariables": {
-        "XRAY_PROFILER": "None",
-        "XRAY_RELEASE": true,
-        "XRAY_PDB": false
-      }
-    },
-    {
-      "name": "x64.RelWithDebInfo",
-      "displayName": "x64 RelWithDebInfo",
-      "inherits": "Base.MSVC.MSBuild",
-      "cacheVariables": {
-        "XRAY_PROFILER": "None",
-        "XRAY_RELEASE": true,
-        "XRAY_PDB": true
       }
     }
   ],
-    "buildPresets": [
-        {
-            "name": "Windows.Debug",
-            "displayName": "Debug",
-            "configurePreset": "x64.Debug",
-            "configuration": "Debug"
-        },
-        {
-            "name": "Windows.Verified",
-            "displayName": "Verified",
-            "configurePreset": "x64.Verified",
-            "configuration": "Verified"
-        },
-        {
-            "name": "Windows.Profiled",
-            "displayName": "Profiled",
-            "configurePreset": "x64.Profiled",
-            "configuration": "Release"
-        },
-        {
-            "name": "Windows.Release",
-            "displayName": "Release",
-            "configurePreset": "x64.Release",
-            "configuration": "Release"
-        },
-        {
-            "name": "Windows.RelWithDebInfo",
-            "displayName": "RelWithDebInfo",
-            "configurePreset": "x64.RelWithDebInfo",
-            "configuration": "RelWithDebInfo"
-        }
-    ]
+  "buildPresets": [
+    {
+      "name": "Base.Debug",
+      "hidden": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "Base.Verified",
+      "hidden": true,
+      "configuration": "Verified"
+    },
+    {
+      "name": "Base.Profiled",
+      "hidden": true,
+      "configuration": "Profiled"
+    },
+    {
+      "name": "Base.Release",
+      "hidden": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "Base.RelWithDebInfo",
+      "hidden": true,
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "MSVC.MSBuild.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "MSVC.MSBuild.Verified",
+      "displayName": "Verified",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "MSVC.MSBuild.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "MSVC.MSBuild.Release",
+      "displayName": "Release",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "MSVC.MSBuild.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "MSVC.Ninja.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "MSVC.Ninja.Verified",
+      "displayName": "Verified",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "MSVC.Ninja.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "MSVC.Ninja.Release",
+      "displayName": "Release",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "MSVC.Ninja.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "Clang.Ninja.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "Clang.Ninja.Verified",
+      "displayName": "Verified",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "Clang.Ninja.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "Clang.Ninja.Release",
+      "displayName": "Release",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "Clang.Ninja.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.RelWithDebInfo"
+    }
+  ]
 }

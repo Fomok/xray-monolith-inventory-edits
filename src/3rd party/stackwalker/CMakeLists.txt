@@ -17,10 +17,10 @@ target_include_directories(StackWalker
 )
 
 find_library(
-  STACKWALKER_LIBRARY StackWalker
+  LIBRARY_STACKWALKER StackWalker
   HINTS ${CMAKE_CURRENT_SOURCE_DIR}/lib
 )
 
 target_link_libraries(StackWalker
-  INTERFACE ${STACKWALKER_LIBRARY}
+  INTERFACE ${LIBRARY_STACKWALKER}
 )
