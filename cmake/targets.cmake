@@ -1,5 +1,8 @@
 include_guard()
 
+option(XRAY_RELEASE Off "On if this configuration is a Release build.")
+option(XRAY_PDB Off "On if this configuration generates PDB files.")
+
 set(XR_ENGINE_SOURCES
   ai_script_lua_debug.cpp
   ai_script_lua_extension.cpp
@@ -245,6 +248,32 @@ macro(add_engine_target name)
     xrSound
     xrXMLParser
   )
+
+  if (${XRAY_PDB})
+    set(PDB_ZIP ${name}_pdb.zip)
+    add_custom_target(${name}-PDB)
+
+    set_property(
+      TARGET ${name}-PDB
+      PROPERTY FOLDER
+      ${FOLDER_RELEASE_PDB}
+    )
+
+    target_sources(${name}-PDB
+      PRIVATE
+      ${PDB_ZIP}
+    )
+
+    add_custom_command(
+        OUTPUT ${PDB_ZIP}
+        COMMAND ${CMAKE_COMMAND} -E tar "cf" "${PDB_ZIP}" --format=zip "$<TARGET_PDB_FILE:${name}>"
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMENT "Zip $<TARGET_PDB_FILE:${name}> to ${CMAKE_BINARY_DIR}/${PDB_ZIP}."
+        VERBATIM
+    )
+
+    add_dependencies(${name}-PDB ${name})
+  endif()
 endmacro()
 
 macro(configure_engine_target TARGET DEFINE LINK)
@@ -296,3 +325,39 @@ set_property(
   PROPERTY VS_STARTUP_PROJECT
   AnomalyDX11AVX
 )
+
+if (${XRAY_RELEASE})
+  # Setup release target
+  set(MODDED_EXES_TARGET STALKER-Anomaly-Modded-Exes)
+  set(MODDED_EXES_ZIP STALKER-Anomaly-modded-exes_${TODAY_DASHES}.zip)
+  add_custom_target(${MODDED_EXES_TARGET})
+
+  set_property(
+    TARGET ${MODDED_EXES_TARGET}
+    PROPERTY FOLDER
+    ${FOLDER_RELEASE}
+  )
+
+  add_custom_command(
+    OUTPUT ${MODDED_EXES_ZIP}
+    COMMAND ${CMAKE_COMMAND}
+      -E tar "cf" "${PDB_ZIP}"
+      --format=zip
+      $<TARGET_FILE:AnomalyDX8>
+      $<TARGET_FILE:AnomalyDX8AVX>
+      $<TARGET_FILE:AnomalyDX9>
+      $<TARGET_FILE:AnomalyDX9AVX>
+      $<TARGET_FILE:AnomalyDX10>
+      $<TARGET_FILE:AnomalyDX10AVX>
+      $<TARGET_FILE:AnomalyDX11>
+      $<TARGET_FILE:AnomalyDX11AVX>
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Zip executables to to ${CMAKE_BINARY_DIR}/${MODDED_EXES_ZIP}."
+    VERBATIM
+  )
+
+  target_sources(${MODDED_EXES_TARGET}
+    PRIVATE
+    ${MODDED_EXES_ZIP}
+  )
+endif()

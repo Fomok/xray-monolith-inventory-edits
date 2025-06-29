@@ -10,13 +10,32 @@ cmake_path(
   CONVERT ${CMAKE_SOURCE_DIR}/gamedata
   TO_NATIVE_PATH_LIST XRAY_GAMEDATA
 )
-set(XRAY_GAMEDATA ${XRAY_GAMEDATA} CACHE PATH "X-Ray Gamedata")
+set(
+  XRAY_GAMEDATA ${XRAY_GAMEDATA}
+  CACHE PATH "X-Ray Gamedata"
+)
 
-set(XRAY_GAMEDATA_SOURCE_DB ${CMAKE_SOURCE_DIR}/gamedata.db0)
-set(XRAY_GAMEDATA_BINARY_DB ${CMAKE_CURRENT_BINARY_DIR}/gamedata.db0)
+set(
+  XRAY_GAMEDATA_SOURCE_NAME gamedata.db0
+  CACHE PATH "X-Ray Gamedata DB Source Name"
+)
+set(
+  XRAY_GAMEDATA_SOURCE_DB
+  ${CMAKE_SOURCE_DIR}/${XRAY_GAMEDATA_SOURCE_NAME}
+)
+
+set(
+  XRAY_GAMEDATA_BINARY_NAME 00_modded_exes_gamedata.db0
+  CACHE PATH "X-Ray Gamedata DB Binary Name"
+)
+set(
+  XRAY_GAMEDATA_BINARY_DB
+  ${CMAKE_CURRENT_BINARY_DIR}/${XRAY_GAMEDATA_BINARY_NAME}
+)
+
 
 add_custom_command(
-  OUTPUT gamedata.db0
+  OUTPUT ${XRAY_GAMEDATA_BINARY_NAME}
   COMMAND ${XRAY_COMPRESSOR}
     ${XRAY_GAMEDATA}
     -ltx build_patch.ltx
@@ -49,7 +68,7 @@ add_custom_command(
 
 target_sources(Gamedata
   PRIVATE
-  gamedata.db0
+  ${XRAY_GAMEDATA_BINARY_NAME}
 )
 
 target_sources_grouped(

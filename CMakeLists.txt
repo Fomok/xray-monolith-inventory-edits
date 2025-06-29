@@ -9,10 +9,12 @@ if (WIN32)
   include(XRay.Win32)
 endif()
 
+include(today)
+
 # Define project
 project(
   Anomaly
-  VERSION 2025.6.20
+  VERSION ${TODAY_DOTS}
   DESCRIPTION "X-Ray Monolith Edition for S.T.A.L.K.E.R. Anomaly"
   LANGUAGES CXX C
 )
@@ -27,9 +29,14 @@ endif()
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Bring utilities into scope
-include(sources)
-include(manifest)
+# Configure toolchain-specific settings
+if(${MSVC})
+  include(XRay.MSVC)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  include(XRay.Clang)
+else()
+  message(FATAL_ERROR "Unsupported compiler")
+endif()
 
 # Setup build configurations
 include(configs)
@@ -43,17 +50,12 @@ include(folders)
 # Setup global compiler definitions
 include(definitions)
 
-# Configure toolchain-specific settings
-if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-  include(XRay.MSVC)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  include(XRay.Clang)
-else()
-  error("Unsupported compiler")
-endif()
-
 # Configure profiler
 include(profiler)
+
+# Bring utilities into scope
+include(sources)
+include(manifest)
 
 # Setup compressor
 add_subdirectory(compressor)
