@@ -112,7 +112,7 @@ jobs:
       uses: actions/upload-artifact@v4.6.0
       with:
         # Artifact name
-        name: ${{matrix.buildconf}}_exe
+        name: Anomaly${{matrix.buildconf}}_exe
         
         # A file, directory or wildcard pattern that describes what to upload
         path: ./_build/MSVC.Ninja/RelWithDebInfo/Anomaly${{matrix.buildconf}}.exe
@@ -148,7 +148,10 @@ jobs:
         retention-days: 1
 
   release:
-    needs: build
+    needs: [
+      pack_gamedata,
+      build
+    ]
     name: Release
     runs-on: ubuntu-latest
     steps:
@@ -168,6 +171,25 @@ jobs:
 
     - name: Download artifacts
       uses: actions/download-artifact@v4.1.8
+      with:
+        artifact-ids:
+          ${{env.PACK_GAMEDATA_NAME}}
+          Anomaly${{env.DX8}}_exe
+          Anomaly${{env.DX8}}_pdb
+          Anomaly${{env.DX8AVX}}_exe
+          Anomaly${{env.DX8AVX}}_pdb
+          Anomaly${{env.DX9}}_exe
+          Anomaly${{env.DX9}}_pdb
+          Anomaly${{env.DX9AVX}}_exe
+          Anomaly${{env.DX9AVX}}_pdb
+          Anomaly${{env.DX10}}_exe
+          Anomaly${{env.DX10}}_pdb
+          Anomaly${{env.DX10AVX}}_exe
+          Anomaly${{env.DX10AVX}}_pdb
+          Anomaly${{env.DX11}}_exe
+          Anomaly${{env.DX11}}_pdb
+          Anomaly${{env.DX11AVX}}_exe
+          Anomaly${{env.DX11AVX}}_pdb
 
     - name: Zip Exe folder
       run: |
@@ -176,14 +198,14 @@ jobs:
         mkdir release/db
         mkdir release/db/mods
         mv ${{env.PACK_GAMEDATA_NAME}}/*.db0 release/db/mods
-        mv ${{env.DX11}}_exe/*.exe release/bin
-        mv ${{env.DX10}}_exe/*.exe release/bin
-        mv ${{env.DX9}}_exe/*.exe release/bin
-        mv ${{env.DX8}}_exe/*.exe release/bin
-        mv ${{env.DX11AVX}}_exe/*.exe release/bin
-        mv ${{env.DX10AVX}}_exe/*.exe release/bin
-        mv ${{env.DX9AVX}}_exe/*.exe release/bin
-        mv ${{env.DX8AVX}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX11}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX10}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX9}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX8}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX11AVX}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX10AVX}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX9AVX}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX8AVX}}_exe/*.exe release/bin
         cd release
         zip -r 'STALKER-Anomaly-modded-exes_${{steps.datetime.outputs.today}}.zip' ./*
         mv 'STALKER-Anomaly-modded-exes_${{steps.datetime.outputs.today}}.zip' ../
@@ -194,14 +216,14 @@ jobs:
     - name: Move PDBs to folder
       run: |
         mkdir pdb
-        mv ${{env.DX11}}_pdb/*.zip pdb
-        mv ${{env.DX10}}_pdb/*.zip pdb
-        mv ${{env.DX9}}_pdb/*.zip pdb
-        mv ${{env.DX8}}_pdb/*.zip pdb
-        mv ${{env.DX11AVX}}_pdb/*.zip pdb
-        mv ${{env.DX10AVX}}_pdb/*.zip pdb
-        mv ${{env.DX9AVX}}_pdb/*.zip pdb
-        mv ${{env.DX8AVX}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX11}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX10}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX9}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX8}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX11AVX}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX10AVX}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX9AVX}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX8AVX}}_pdb/*.zip pdb
 
     - name: Publish
       uses: softprops/action-gh-release@v2.3.2
