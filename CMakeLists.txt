@@ -58,7 +58,6 @@ include(XRay.Compiler.Definitions)
 
 # Bring utilities into scope
 include(XRay.Util.Sources)
-include(XRay.Util.Manifest)
 
 # Setup compressor
 add_subdirectory(compressor)

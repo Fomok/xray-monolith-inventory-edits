@@ -184,6 +184,7 @@ set(XR_ENGINE_SOURCES
   _d3d_extensions.h
 
   resource.rc
+  dpi-aware.manifest
 )
 
 # Given a list of sources, prepend the xrEngine source dir to each,
@@ -216,9 +217,6 @@ macro(add_engine_target name)
 
   target_engine_sources(${name} ${XR_ENGINE_SOURCES})
   target_engine_precompile_headers(${name} stdafx.h)
-
-  add_executable_manifest(${name}
-    ${CMAKE_SOURCE_DIR}/src/xrEngine/as-invoker-manifest-part.xml)
 
   target_include_directories(${name}
     PRIVATE
