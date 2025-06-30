@@ -20,6 +20,8 @@ set(XRAY_COMPILER_FLAGS
     /Zi
     # Use multi-threaded DLL
     /MD
+    # Use full paths in diagnostics
+    /FC
 )
 
 # Debug flags
@@ -40,6 +42,8 @@ set(XRAY_COMPILER_FLAGS_RELEASE
     /Ob3
     # Omit frame pointers
     /Oy
+    # Favor code speed over size
+    /Ot
     # Fiber-safe optimizations
     /GT
     # Function-level linking
@@ -50,6 +54,8 @@ set(XRAY_COMPILER_FLAGS_RELEASE
     /GF
     # Whole-program optimization
     /GL
+    # Disable security check
+    /GS-
     # Not Debug
     /DNDEBUG
 )
@@ -70,8 +76,6 @@ set(XRAY_LINKER_FLAGS
 set(XRAY_LINKER_FLAGS_DEBUG
     # Disable COMDAT folding
     /OPT:NOICF
-    # Link incrementally
-    /INCREMENTAL
     # Don't eliminate unreferenced functions and data
     /OPT:NOREF
     # Don't use a fixed address space
@@ -82,8 +86,6 @@ set(XRAY_LINKER_FLAGS_DEBUG
 set(XRAY_LINKER_FLAGS_RELEASE
     # Enable COMDAT folding
     /OPT:ICF
-    # Don't link incrementally
-    /INCREMENTAL:NO
     # Eliminate unreferenced functions and data
     /OPT:REF
     # Enable link-time code generation
