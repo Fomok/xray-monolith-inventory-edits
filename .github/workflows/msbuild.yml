@@ -17,15 +17,15 @@ env:
   # Configuration type to build.
   # You can convert this to a build matrix if you need coverage of multiple configuration types.
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-  DX11: DX11
-  DX10: DX10
-  DX9: DX9
-  DX8: DX8
-  DX11AVX: DX11AVX
-  DX10AVX: DX10AVX
-  DX9AVX: DX9AVX
-  DX8AVX: DX8AVX
   PACK_GAMEDATA_NAME: 00_modded_exes_gamedata.db0
+  DX8: DX8
+  DX8AVX: DX8AVX
+  DX9: DX9
+  DX9AVX: DX9AVX
+  DX10: DX10
+  DX10AVX: DX10AVX
+  DX11: DX11
+  DX11AVX: DX11AVX
 
 jobs:
   pack_gamedata:
@@ -70,7 +70,16 @@ jobs:
 
     strategy:
       matrix:
-        buildconf: ["DX11", "DX10", "DX9", "DX8", "DX11AVX", "DX10AVX", "DX9AVX", "DX8AVX"]
+        buildconf: [
+          "DX8",
+          "DX8AVX",
+          "DX9",
+          "DX9AVX",
+          "DX10",
+          "DX10AVX",
+          "DX11",
+          "DX11AVX"
+        ]
 
     steps:
     - name: Configure Pagefile
@@ -198,14 +207,14 @@ jobs:
         mkdir release/db
         mkdir release/db/mods
         mv ${{env.PACK_GAMEDATA_NAME}}/*.db0 release/db/mods
-        mv Anomaly${{env.DX11}}_exe/*.exe release/bin
-        mv Anomaly${{env.DX10}}_exe/*.exe release/bin
-        mv Anomaly${{env.DX9}}_exe/*.exe release/bin
         mv Anomaly${{env.DX8}}_exe/*.exe release/bin
-        mv Anomaly${{env.DX11AVX}}_exe/*.exe release/bin
-        mv Anomaly${{env.DX10AVX}}_exe/*.exe release/bin
-        mv Anomaly${{env.DX9AVX}}_exe/*.exe release/bin
         mv Anomaly${{env.DX8AVX}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX9}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX9AVX}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX10}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX10AVX}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX11}}_exe/*.exe release/bin
+        mv Anomaly${{env.DX11AVX}}_exe/*.exe release/bin
         cd release
         zip -r 'STALKER-Anomaly-modded-exes_${{steps.datetime.outputs.today}}.zip' ./*
         mv 'STALKER-Anomaly-modded-exes_${{steps.datetime.outputs.today}}.zip' ../
@@ -216,14 +225,14 @@ jobs:
     - name: Move PDBs to folder
       run: |
         mkdir pdb
-        mv Anomaly${{env.DX11}}_pdb/*.zip pdb
-        mv Anomaly${{env.DX10}}_pdb/*.zip pdb
-        mv Anomaly${{env.DX9}}_pdb/*.zip pdb
         mv Anomaly${{env.DX8}}_pdb/*.zip pdb
-        mv Anomaly${{env.DX11AVX}}_pdb/*.zip pdb
-        mv Anomaly${{env.DX10AVX}}_pdb/*.zip pdb
-        mv Anomaly${{env.DX9AVX}}_pdb/*.zip pdb
         mv Anomaly${{env.DX8AVX}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX9}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX9AVX}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX10}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX10AVX}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX11}}_pdb/*.zip pdb
+        mv Anomaly${{env.DX11AVX}}_pdb/*.zip pdb
 
     - name: Publish
       uses: softprops/action-gh-release@v2.3.2
