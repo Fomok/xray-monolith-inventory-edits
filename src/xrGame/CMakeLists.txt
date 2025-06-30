@@ -2406,17 +2406,21 @@ target_compile_definitions(xrGame
 )
 
 target_link_libraries(xrGame
-  PUBLIC
+  PRIVATE
   crypto
   CxImage
   loki
   lua-extensions
   luabind
+  LuaJIT
   ode
+  xrAPI
+  xrCDB
   xrCore
   xrEngine
   xrNetServer
   xrPhysics
+  xrRender
   xrScripts
   xrUI
 )
@@ -2805,11 +2809,18 @@ target_compile_definitions(xrUI
 )
 
 target_link_libraries(xrUI
-  PUBLIC
+  PRIVATE
   CxImage
+  DPlay
   luabind
+  LuaJIT
+  xrAPI
+  xrCDB
+  xrCore
+  xrEngine
   xrNetServer
   xrPhysics
+  xrRender
 )
 
 ## xrScripts
@@ -2981,11 +2992,14 @@ target_precompile_headers(xrScripts
 )
 
 target_link_libraries(xrScripts
-  PUBLIC
+  PRIVATE
   DPlay
+  imgui
   luabind
+  LuaJIT
   xrAPI
   xrCDB
+  xrCore
   xrEngine
   xrRender
   xrPhysics

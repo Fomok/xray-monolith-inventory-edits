@@ -115,6 +115,8 @@ target_compile_definitions(xrCDB
 )
 
 target_link_libraries(xrCDB
-  PUBLIC
+  PRIVATE
+  xrAPI
   xrCore
+  xrRender
 )

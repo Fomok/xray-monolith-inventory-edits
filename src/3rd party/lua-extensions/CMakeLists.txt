@@ -23,6 +23,6 @@ target_include_directories(lua-extensions
 )
 
 target_link_libraries(lua-extensions
-  PUBLIC
+  PRIVATE
   LuaJIT
 )

@@ -38,8 +38,9 @@ target_precompile_headers(xrNetServer
 )
 
 target_link_libraries(xrNetServer
-  PUBLIC
+  PRIVATE
   DPlay
+  DXERR
   Ws2_32
   xrCore
 )

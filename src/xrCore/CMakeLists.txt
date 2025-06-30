@@ -223,7 +223,7 @@ target_sources(xrCore
   client_id.h
   robin_hood.h
 
-  #resource.h
+  resource.h
   xrCore.rc
 )
 
@@ -246,7 +246,7 @@ target_compile_definitions(xrCore
 )
 
 target_link_libraries(xrCore
-  PUBLIC
+  PRIVATE
   DXERR
   optick
   StackWalker

@@ -37,7 +37,7 @@ target_precompile_headers(xrParticles
 )
 
 target_link_libraries(xrParticles
-  PUBLIC
+  PRIVATE
   tbb
   xrCore
   xrCPU_Pipe

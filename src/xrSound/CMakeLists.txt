@@ -54,7 +54,7 @@ target_compile_definitions(xrSound
 )
 
 target_link_libraries(xrSound
-  PUBLIC
+  PRIVATE
   dxsdk
   dxguid
   ogg
@@ -63,5 +63,7 @@ target_link_libraries(xrSound
   vorbisfile
   OpenAL32
   tbb
+  xrAPI
   xrCore
+  xrRender
 )

@@ -50,6 +50,6 @@ target_compile_definitions(CxImage
 )
 
 target_link_libraries(CxImage
-  PUBLIC
+  PRIVATE
   jpeg
 )

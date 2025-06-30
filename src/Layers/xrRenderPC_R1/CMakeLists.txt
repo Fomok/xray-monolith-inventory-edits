@@ -310,14 +310,16 @@ target_compile_definitions(xrRender_R1
 )
 
 target_link_libraries(xrRender_R1
-  PUBLIC
+  PRIVATE
   dxsdk
   imgui
   loki
   luabind
+  LuaJIT
   NVAPI
   tbb
   xrAPI
+  xrCDB
   xrCore
   xrCPU_Pipe
   xrEngine
