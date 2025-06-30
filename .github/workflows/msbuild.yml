@@ -127,16 +127,16 @@ jobs:
         retention-days: 1
 
     - name: Zip PDB
-      run: cmake --build ./_build/MSVC.Ninja --config RelWithDebInfo --target ${{matrix.buildconf}}-PDB
+      run: cmake --build ./_build/MSVC.Ninja --config RelWithDebInfo --target Anomaly${{matrix.buildconf}}-PDB
 
     - name: Upload PDB
       uses: actions/upload-artifact@v4.6.0
       with:
         # Artifact name
-        name: ${{matrix.buildconf}}_pdb
+        name: Anomaly${{matrix.buildconf}}_pdb
         
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./_build/MSVC.Ninja/${{matrix.buildconf}}_pdb.zip
+        path: ./_build/MSVC.Ninja/Anomaly${{matrix.buildconf}}_pdb.zip
         
         # The desired behavior if no files are found using the provided path. Available Options:
           #  warn: Output a warning but do not fail the action
