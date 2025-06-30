@@ -57,11 +57,11 @@ target_sources(xrGame
   ../xrServerEntities/xrServer_Objects_ALife_Items_script.cpp
   ../xrServerEntities/xrServer_Objects_ALife_Items_script2.cpp
   ../xrServerEntities/xrServer_Objects_ALife_Items_script3.cpp
-  ../xrServerEntities/xrServer_Objects_ALife_Monsters.cpp
-  ../xrServerEntities/xrServer_Objects_ALife_Monsters_script.cpp
-  ../xrServerEntities/xrServer_Objects_ALife_Monsters_script2.cpp
+  ../xrServerEntities/xrServer_Objects_ALife_monsters.cpp
+  ../xrServerEntities/xrServer_Objects_ALife_monsters_script.cpp
+  ../xrServerEntities/xrServer_Objects_ALife_monsters_script2.cpp
   ../xrServerEntities/xrserver_objects_alife_monsters_script3.cpp
-  ../xrServerEntities/xrServer_Objects_ALife_Monsters_script4.cpp
+  ../xrServerEntities/xrServer_Objects_ALife_monsters_script4.cpp
   ../xrServerEntities/xrServer_Objects_ALife_script.cpp
   ../xrServerEntities/xrServer_Objects_ALife_script2.cpp
   ../xrServerEntities/xrServer_Objects_ALife_script3.cpp
@@ -119,121 +119,121 @@ target_sources(xrGame
   agent_memory_manager.cpp
   aimers_base.cpp
   aimers_weapon.cpp
-  AI/ai_monsters_misc.cpp
-  AI/Crow/ai_crow.cpp
-  ai/Monsters/ai_monster_bones.cpp
-  ai/Monsters/ai_monster_effector.cpp
-  ai/Monsters/ai_monster_motion_stats.cpp
-  ai/Monsters/ai_monster_squad.cpp
-  ai/Monsters/ai_monster_squad_attack.cpp
-  ai/Monsters/ai_monster_squad_manager.cpp
-  ai/Monsters/ai_monster_squad_rest.cpp
-  ai/Monsters/ai_monster_utils.cpp
-  ai/Monsters/anim_triple.cpp
-  ai/Monsters/anomaly_detector.cpp
+  ai/ai_monsters_misc.cpp
+  ai/crow/ai_crow.cpp
+  ai/monsters/ai_monster_bones.cpp
+  ai/monsters/ai_monster_effector.cpp
+  ai/monsters/ai_monster_motion_stats.cpp
+  ai/monsters/ai_monster_squad.cpp
+  ai/monsters/ai_monster_squad_attack.cpp
+  ai/monsters/ai_monster_squad_manager.cpp
+  ai/monsters/ai_monster_squad_rest.cpp
+  ai/monsters/ai_monster_utils.cpp
+  ai/monsters/anim_triple.cpp
+  ai/monsters/anomaly_detector.cpp
   ai/monsters/anti_aim_ability.cpp
-  ai/Monsters/BaseMonster/base_monster.cpp
-  ai/Monsters/BaseMonster/base_monster_anim.cpp
-  ai/Monsters/BaseMonster/base_monster_debug.cpp
-  ai/Monsters/BaseMonster/base_monster_feel.cpp
-  ai/Monsters/BaseMonster/base_monster_misc.cpp
-  ai/Monsters/BaseMonster/base_monster_net.cpp
-  ai/Monsters/BaseMonster/base_monster_path.cpp
-  ai/Monsters/BaseMonster/base_monster_script.cpp
-  ai/Monsters/BaseMonster/base_monster_startup.cpp
-  ai/Monsters/BaseMonster/base_monster_think.cpp
-  ai/Monsters/Bloodsucker/bloodsucker.cpp
-  ai/Monsters/Bloodsucker/bloodsucker_alien.cpp
-  ai/Monsters/Bloodsucker/bloodsucker_script.cpp
-  ai/Monsters/Bloodsucker/bloodsucker_state_manager.cpp
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_effector.cpp
-  ai/Monsters/Boar/boar.cpp
-  ai/Monsters/Boar/boar_script.cpp
-  ai/Monsters/Boar/boar_state_manager.cpp
-  ai/Monsters/Burer/burer.cpp
-  ai/Monsters/Burer/burer_fast_gravi.cpp
-  ai/Monsters/Burer/burer_script.cpp
-  ai/Monsters/Burer/burer_state_manager.cpp
-  ai/Monsters/Cat/cat.cpp
-  ai/Monsters/Cat/cat_script.cpp
-  ai/Monsters/Cat/cat_state_manager.cpp
-  ai/Monsters/Chimera/chimera.cpp
-  ai/Monsters/Chimera/chimera_script.cpp
-  ai/Monsters/Chimera/chimera_state_manager.cpp
-  ai/Monsters/controlled_actor.cpp
-  ai/Monsters/Controller/controller.cpp
-  ai/Monsters/Controller/controller_animation.cpp
-  ai/Monsters/Controller/controller_direction.cpp
-  ai/Monsters/Controller/controller_psy_hit.cpp
-  ai/Monsters/Controller/controller_psy_hit_effector.cpp
-  ai/Monsters/Controller/controller_script.cpp
-  ai/Monsters/Controller/controller_state_manager.cpp
-  ai/Monsters/control_animation.cpp
-  ai/Monsters/control_animation_base.cpp
-  ai/Monsters/control_animation_base_accel.cpp
-  ai/Monsters/control_animation_base_load.cpp
-  ai/Monsters/control_animation_base_update.cpp
-  ai/Monsters/control_critical_wound.cpp
-  ai/Monsters/control_direction.cpp
-  ai/Monsters/control_direction_base.cpp
-  ai/Monsters/control_jump.cpp
-  ai/Monsters/control_manager.cpp
-  ai/Monsters/control_manager_custom.cpp
-  ai/Monsters/control_melee_jump.cpp
-  ai/Monsters/control_movement.cpp
-  ai/Monsters/control_movement_base.cpp
-  ai/Monsters/control_path_builder.cpp
-  ai/Monsters/control_path_builder_base.cpp
-  ai/Monsters/control_path_builder_base_path.cpp
-  ai/Monsters/control_path_builder_base_set.cpp
-  ai/Monsters/control_path_builder_base_update.cpp
-  ai/Monsters/control_rotation_jump.cpp
-  ai/Monsters/control_run_attack.cpp
-  ai/Monsters/control_sequencer.cpp
-  ai/Monsters/control_threaten.cpp
-  ai/Monsters/corpse_cover.cpp
-  ai/Monsters/Dog/dog.cpp
-  ai/Monsters/Dog/dog_script.cpp
-  ai/Monsters/Dog/dog_state_manager.cpp
-  ai/Monsters/energy_holder.cpp
-  ai/Monsters/Flesh/flesh.cpp
-  ai/Monsters/Flesh/flesh_script.cpp
-  ai/Monsters/Flesh/flesh_state_manager.cpp
-  ai/Monsters/Fracture/fracture.cpp
-  ai/Monsters/Fracture/fracture_script.cpp
-  ai/Monsters/Fracture/fracture_state_manager.cpp
-  ai/Monsters/invisibility.cpp
-  ai/Monsters/melee_checker.cpp
+  ai/monsters/basemonster/base_monster.cpp
+  ai/monsters/basemonster/base_monster_anim.cpp
+  ai/monsters/basemonster/base_monster_debug.cpp
+  ai/monsters/basemonster/base_monster_feel.cpp
+  ai/monsters/basemonster/base_monster_misc.cpp
+  ai/monsters/basemonster/base_monster_net.cpp
+  ai/monsters/basemonster/base_monster_path.cpp
+  ai/monsters/basemonster/base_monster_script.cpp
+  ai/monsters/basemonster/base_monster_startup.cpp
+  ai/monsters/basemonster/base_monster_think.cpp
+  ai/monsters/bloodsucker/bloodsucker.cpp
+  ai/monsters/bloodsucker/bloodsucker_alien.cpp
+  ai/monsters/bloodsucker/bloodsucker_script.cpp
+  ai/monsters/bloodsucker/bloodsucker_state_manager.cpp
+  ai/monsters/bloodsucker/bloodsucker_vampire_effector.cpp
+  ai/monsters/boar/boar.cpp
+  ai/monsters/boar/boar_script.cpp
+  ai/monsters/boar/boar_state_manager.cpp
+  ai/monsters/burer/burer.cpp
+  ai/monsters/burer/burer_fast_gravi.cpp
+  ai/monsters/burer/burer_script.cpp
+  ai/monsters/burer/burer_state_manager.cpp
+  ai/monsters/cat/cat.cpp
+  ai/monsters/cat/cat_script.cpp
+  ai/monsters/cat/cat_state_manager.cpp
+  ai/monsters/chimera/chimera.cpp
+  ai/monsters/chimera/chimera_script.cpp
+  ai/monsters/chimera/chimera_state_manager.cpp
+  ai/monsters/controlled_actor.cpp
+  ai/monsters/controller/controller.cpp
+  ai/monsters/controller/controller_animation.cpp
+  ai/monsters/controller/controller_direction.cpp
+  ai/monsters/controller/controller_psy_hit.cpp
+  ai/monsters/controller/controller_psy_hit_effector.cpp
+  ai/monsters/controller/controller_script.cpp
+  ai/monsters/controller/controller_state_manager.cpp
+  ai/monsters/control_animation.cpp
+  ai/monsters/control_animation_base.cpp
+  ai/monsters/control_animation_base_accel.cpp
+  ai/monsters/control_animation_base_load.cpp
+  ai/monsters/control_animation_base_update.cpp
+  ai/monsters/control_critical_wound.cpp
+  ai/monsters/control_direction.cpp
+  ai/monsters/control_direction_base.cpp
+  ai/monsters/control_jump.cpp
+  ai/monsters/control_manager.cpp
+  ai/monsters/control_manager_custom.cpp
+  ai/monsters/control_melee_jump.cpp
+  ai/monsters/control_movement.cpp
+  ai/monsters/control_movement_base.cpp
+  ai/monsters/control_path_builder.cpp
+  ai/monsters/control_path_builder_base.cpp
+  ai/monsters/control_path_builder_base_path.cpp
+  ai/monsters/control_path_builder_base_set.cpp
+  ai/monsters/control_path_builder_base_update.cpp
+  ai/monsters/control_rotation_jump.cpp
+  ai/monsters/control_run_attack.cpp
+  ai/monsters/control_sequencer.cpp
+  ai/monsters/control_threaten.cpp
+  ai/monsters/corpse_cover.cpp
+  ai/monsters/dog/dog.cpp
+  ai/monsters/dog/dog_script.cpp
+  ai/monsters/dog/dog_state_manager.cpp
+  ai/monsters/energy_holder.cpp
+  ai/monsters/flesh/flesh.cpp
+  ai/monsters/flesh/flesh_script.cpp
+  ai/monsters/flesh/flesh_state_manager.cpp
+  ai/monsters/fracture/fracture.cpp
+  ai/monsters/fracture/fracture_script.cpp
+  ai/monsters/fracture/fracture_state_manager.cpp
+  ai/monsters/invisibility.cpp
+  ai/monsters/melee_checker.cpp
   ai/monsters/monster_aura.cpp
-  ai/Monsters/monster_corpse_manager.cpp
-  ai/Monsters/monster_corpse_memory.cpp
-  ai/Monsters/monster_cover_manager.cpp
-  ai/Monsters/monster_enemy_manager.cpp
-  ai/Monsters/monster_enemy_memory.cpp
-  ai/Monsters/monster_event_manager.cpp
-  ai/Monsters/monster_hit_memory.cpp
-  ai/Monsters/monster_home.cpp
-  ai/Monsters/monster_morale.cpp
-  ai/Monsters/monster_sound_memory.cpp
-  ai/Monsters/Poltergeist/poltergeist.cpp
-  ai/Monsters/Poltergeist/poltergeist_ability.cpp
-  ai/Monsters/Poltergeist/poltergeist_flame_thrower.cpp
-  ai/Monsters/Poltergeist/poltergeist_movement.cpp
-  ai/Monsters/Poltergeist/poltergeist_script.cpp
-  ai/Monsters/Poltergeist/poltergeist_state_manager.cpp
-  ai/Monsters/Poltergeist/poltergeist_telekinesis.cpp
-  ai/Monsters/Pseudodog/pseudodog.cpp
-  ai/Monsters/Pseudodog/pseudodog_psi_effector.cpp
-  ai/Monsters/Pseudodog/pseudodog_script.cpp
-  ai/Monsters/Pseudodog/pseudodog_state_manager.cpp
-  ai/Monsters/Pseudodog/psy_dog.cpp
-  ai/Monsters/Pseudodog/psy_dog_aura.cpp
-  ai/Monsters/Pseudodog/psy_dog_state_manager.cpp
-  ai/Monsters/PseudoGigant/pseudogigant_script.cpp
-  ai/Monsters/PseudoGigant/pseudogigant_state_manager.cpp
-  ai/Monsters/PseudoGigant/pseudo_gigant.cpp
-  ai/Monsters/PseudoGigant/pseudo_gigant_step_effector.cpp
-  ai/Monsters/psy_aura.cpp
+  ai/monsters/monster_corpse_manager.cpp
+  ai/monsters/monster_corpse_memory.cpp
+  ai/monsters/monster_cover_manager.cpp
+  ai/monsters/monster_enemy_manager.cpp
+  ai/monsters/monster_enemy_memory.cpp
+  ai/monsters/monster_event_manager.cpp
+  ai/monsters/monster_hit_memory.cpp
+  ai/monsters/monster_home.cpp
+  ai/monsters/monster_morale.cpp
+  ai/monsters/monster_sound_memory.cpp
+  ai/monsters/poltergeist/poltergeist.cpp
+  ai/monsters/poltergeist/poltergeist_ability.cpp
+  ai/monsters/poltergeist/poltergeist_flame_thrower.cpp
+  ai/monsters/poltergeist/poltergeist_movement.cpp
+  ai/monsters/poltergeist/poltergeist_script.cpp
+  ai/monsters/poltergeist/poltergeist_state_manager.cpp
+  ai/monsters/poltergeist/poltergeist_telekinesis.cpp
+  ai/monsters/pseudodog/pseudodog.cpp
+  ai/monsters/pseudodog/pseudodog_psi_effector.cpp
+  ai/monsters/pseudodog/pseudodog_script.cpp
+  ai/monsters/pseudodog/pseudodog_state_manager.cpp
+  ai/monsters/pseudodog/psy_dog.cpp
+  ai/monsters/pseudodog/psy_dog_aura.cpp
+  ai/monsters/pseudodog/psy_dog_state_manager.cpp
+  ai/monsters/pseudogigant/pseudogigant_script.cpp
+  ai/monsters/pseudogigant/pseudogigant_state_manager.cpp
+  ai/monsters/pseudogigant/pseudo_gigant.cpp
+  ai/monsters/pseudogigant/pseudo_gigant_step_effector.cpp
+  ai/monsters/psy_aura.cpp
   ai/monsters/rats/ai_rat.cpp
   ai/monsters/rats/ai_rat_animations.cpp
   ai/monsters/rats/ai_rat_behaviour.cpp
@@ -244,29 +244,29 @@ target_sources(xrGame
   ai/monsters/rats/rat_state_activation.cpp
   ai/monsters/rats/rat_state_initialize.cpp
   ai/monsters/rats/rat_state_switch.cpp
-  ai/Monsters/Snork/snork.cpp
-  ai/Monsters/Snork/snork_jump.cpp
-  ai/Monsters/Snork/snork_script.cpp
-  ai/Monsters/Snork/snork_state_manager.cpp
-  ai/Monsters/telekinesis.cpp
-  ai/Monsters/telekinetic_object.cpp
-  ai/Monsters/Tushkano/tushkano.cpp
-  ai/Monsters/Tushkano/tushkano_script.cpp
-  ai/Monsters/Tushkano/tushkano_state_manager.cpp
-  ai/Monsters/Zombie/zombie.cpp
-  ai/Monsters/Zombie/zombie_script.cpp
-  ai/Monsters/Zombie/zombie_state_manager.cpp
+  ai/monsters/snork/snork.cpp
+  ai/monsters/snork/snork_jump.cpp
+  ai/monsters/snork/snork_script.cpp
+  ai/monsters/snork/snork_state_manager.cpp
+  ai/monsters/telekinesis.cpp
+  ai/monsters/telekinetic_object.cpp
+  ai/monsters/tushkano/tushkano.cpp
+  ai/monsters/tushkano/tushkano_script.cpp
+  ai/monsters/tushkano/tushkano_state_manager.cpp
+  ai/monsters/zombie/zombie.cpp
+  ai/monsters/zombie/zombie_script.cpp
+  ai/monsters/zombie/zombie_state_manager.cpp
   ai/phantom/phantom.cpp
-  Ai/Stalker/ai_stalker.cpp
+  ai/stalker/ai_stalker.cpp
   ai/stalker/ai_stalker_cover.cpp
   ai/stalker/ai_stalker_debug.cpp
-  Ai/Stalker/ai_stalker_events.cpp
-  Ai/Stalker/ai_stalker_feel.cpp
-  Ai/Stalker/ai_stalker_fire.cpp
-  Ai/Stalker/ai_stalker_misc.cpp
-  Ai/Stalker/ai_stalker_script.cpp
+  ai/stalker/ai_stalker_events.cpp
+  ai/stalker/ai_stalker_feel.cpp
+  ai/stalker/ai_stalker_fire.cpp
+  ai/stalker/ai_stalker_misc.cpp
+  ai/stalker/ai_stalker_script.cpp
   ai/stalker/ai_stalker_script_entity.cpp
-  Ai/Trader/ai_trader.cpp
+  ai/trader/ai_trader.cpp
   ai/trader/ai_trader_script.cpp
   ai/trader/trader_animation.cpp
   ai/weighted_random.cpp
@@ -471,8 +471,8 @@ target_sources(xrGame
   GalantineArtifact.cpp
   GameObject.cpp
   GamePersistent.cpp
-  gamespy/CdkeyDecode/base32.c
-  gamespy/CdkeyDecode/cdkeydecode.c
+  gamespy/cdkeydecode/base32.c
+  gamespy/cdkeydecode/cdkeydecode.c
   GameTask.cpp
   GametaskManager.cpp
   GameTask_script.cpp
@@ -543,16 +543,16 @@ target_sources(xrGame
   HUDTarget.cpp
   hud_item_object.cpp
   IKFoot.cpp
-  IKLimbsController.cpp
-  Ik/aint.cxx
-  Ik/Dof7control.cpp
-  Ik/eqn.cxx
-  Ik/eulersolver.cxx
-  Ik/IKLimb.cpp
-  Ik/jtlimits.cxx
-  Ik/limb.cxx
-  Ik/math3d.cpp
-  Ik/mathTrig.cpp
+  IKLimbscontroller.cpp
+  ik/aint.cxx
+  ik/Dof7control.cpp
+  ik/eqn.cxx
+  ik/eulersolver.cxx
+  ik/IKLimb.cpp
+  ik/jtlimits.cxx
+  ik/limb.cxx
+  ik/math3d.cpp
+  ik/mathTrig.cpp
   ik_anim_state.cpp
   ik_calculate_data.cpp
   ik_dbg_matrix.cpp
@@ -812,7 +812,7 @@ target_sources(xrGame
   spectator_camera_first_eye.cpp
   sprinter_stopper.cpp
   squad_hierarchy_holder.cpp
-  StalkerOutfit.cpp
+  stalkerOutfit.cpp
   stalker_alife_actions.cpp
   stalker_alife_planner.cpp
   stalker_alife_task_actions.cpp
@@ -1088,7 +1088,7 @@ target_sources(xrGame
   ../xrServerEntities/xrServer_Objects_ALife.h
   ../xrServerEntities/xrServer_Objects_ALife_All.h
   ../xrServerEntities/xrServer_Objects_ALife_Items.h
-  ../xrServerEntities/xrServer_Objects_ALife_Monsters.h
+  ../xrServerEntities/xrServer_Objects_ALife_monsters.h
   ../xrServerEntities/xrServer_Objects_Alife_Smartcovers.h
   ../xrServerEntities/xrServer_Object_Base.h
   ../xrServerEntities/xrServer_script_macroses.h
@@ -1158,139 +1158,139 @@ target_sources(xrGame
   aimers_bone_inline.h
   aimers_weapon.h
   aimers_weapon_inline.h
-  AI/ai_monsters_anims.h
-  AI/ai_monsters_misc.h
-  AI/Crow/ai_crow.h
-  ai/Monsters/ai_monster_bones.h
-  ai/Monsters/ai_monster_defs.h
-  ai/Monsters/ai_monster_effector.h
-  ai/Monsters/ai_monster_motion_stats.h
-  ai/Monsters/ai_monster_shared_data.h
-  ai/Monsters/ai_monster_squad.h
-  ai/Monsters/ai_monster_squad_manager.h
-  ai/Monsters/ai_monster_squad_manager_inline.h
-  ai/Monsters/ai_monster_utils.h
-  ai/Monsters/anim_triple.h
-  ai/Monsters/anomaly_detector.h
+  ai/ai_monsters_anims.h
+  ai/ai_monsters_misc.h
+  ai/crow/ai_crow.h
+  ai/monsters/ai_monster_bones.h
+  ai/monsters/ai_monster_defs.h
+  ai/monsters/ai_monster_effector.h
+  ai/monsters/ai_monster_motion_stats.h
+  ai/monsters/ai_monster_shared_data.h
+  ai/monsters/ai_monster_squad.h
+  ai/monsters/ai_monster_squad_manager.h
+  ai/monsters/ai_monster_squad_manager_inline.h
+  ai/monsters/ai_monster_utils.h
+  ai/monsters/anim_triple.h
+  ai/monsters/anomaly_detector.h
   ai/monsters/anti_aim_ability.h
-  ai/Monsters/BaseMonster/base_monster.h
-  ai/Monsters/BaseMonster/base_monster_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker.h
-  ai/Monsters/Bloodsucker/bloodsucker_alien.h
-  ai/Monsters/Bloodsucker/bloodsucker_attack_state.h
-  ai/Monsters/Bloodsucker/bloodsucker_attack_state_hide.h
-  ai/Monsters/Bloodsucker/bloodsucker_attack_state_hide_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker_attack_state_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker_predator.h
-  ai/Monsters/Bloodsucker/bloodsucker_predator_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker_predator_lite.h
-  ai/Monsters/Bloodsucker/bloodsucker_predator_lite_inline.h
+  ai/monsters/basemonster/base_monster.h
+  ai/monsters/basemonster/base_monster_inline.h
+  ai/monsters/bloodsucker/bloodsucker.h
+  ai/monsters/bloodsucker/bloodsucker_alien.h
+  ai/monsters/bloodsucker/bloodsucker_attack_state.h
+  ai/monsters/bloodsucker/bloodsucker_attack_state_hide.h
+  ai/monsters/bloodsucker/bloodsucker_attack_state_hide_inline.h
+  ai/monsters/bloodsucker/bloodsucker_attack_state_inline.h
+  ai/monsters/bloodsucker/bloodsucker_predator.h
+  ai/monsters/bloodsucker/bloodsucker_predator_inline.h
+  ai/monsters/bloodsucker/bloodsucker_predator_lite.h
+  ai/monsters/bloodsucker/bloodsucker_predator_lite_inline.h
   ai/monsters/bloodsucker/bloodsucker_state_capture_jump.h
   ai/monsters/bloodsucker/bloodsucker_state_capture_jump_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker_state_manager.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_approach.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_approach_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_effector.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_execute.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_execute_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_hide.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_hide_inline.h
-  ai/Monsters/Bloodsucker/bloodsucker_vampire_inline.h
-  ai/Monsters/Boar/boar.h
-  ai/Monsters/Boar/boar_state_manager.h
-  ai/Monsters/Burer/burer.h
-  ai/Monsters/Burer/burer_fast_gravi.h
-  ai/Monsters/Burer/burer_state_attack.h
+  ai/monsters/bloodsucker/bloodsucker_state_manager.h
+  ai/monsters/bloodsucker/bloodsucker_vampire.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_approach.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_approach_inline.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_effector.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_execute.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_execute_inline.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_hide.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_hide_inline.h
+  ai/monsters/bloodsucker/bloodsucker_vampire_inline.h
+  ai/monsters/boar/boar.h
+  ai/monsters/boar/boar_state_manager.h
+  ai/monsters/burer/burer.h
+  ai/monsters/burer/burer_fast_gravi.h
+  ai/monsters/burer/burer_state_attack.h
   ai/monsters/burer/burer_state_attack_antiaim.h
   ai/monsters/burer/burer_state_attack_antiaim_inline.h
-  ai/Monsters/Burer/burer_state_attack_gravi.h
-  ai/Monsters/Burer/burer_state_attack_gravi_inline.h
-  ai/Monsters/Burer/burer_state_attack_inline.h
-  ai/Monsters/Burer/burer_state_attack_melee.h
-  ai/Monsters/Burer/burer_state_attack_melee_inline.h
-  ai/Monsters/Burer/burer_state_attack_run_around.h
-  ai/Monsters/Burer/burer_state_attack_run_around_inline.h
+  ai/monsters/burer/burer_state_attack_gravi.h
+  ai/monsters/burer/burer_state_attack_gravi_inline.h
+  ai/monsters/burer/burer_state_attack_inline.h
+  ai/monsters/burer/burer_state_attack_melee.h
+  ai/monsters/burer/burer_state_attack_melee_inline.h
+  ai/monsters/burer/burer_state_attack_run_around.h
+  ai/monsters/burer/burer_state_attack_run_around_inline.h
   ai/monsters/burer/burer_state_attack_shield.h
   ai/monsters/burer/burer_state_attack_shield_inline.h
-  ai/Monsters/Burer/burer_state_attack_tele.h
-  ai/Monsters/Burer/burer_state_attack_tele_inline.h
-  ai/Monsters/Burer/burer_state_manager.h
-  ai/Monsters/Cat/cat.h
-  ai/Monsters/Cat/cat_state_manager.h
-  ai/Monsters/Chimera/chimera.h
-  ai/Monsters/Chimera/chimera_state_hunting.h
-  ai/Monsters/Chimera/chimera_state_hunting_come_out.h
-  ai/Monsters/Chimera/chimera_state_hunting_come_out_inline.h
-  ai/Monsters/Chimera/chimera_state_hunting_inline.h
-  ai/Monsters/Chimera/chimera_state_hunting_move_to_cover.h
-  ai/Monsters/Chimera/chimera_state_hunting_move_to_cover_inline.h
-  ai/Monsters/Chimera/chimera_state_manager.h
-  ai/Monsters/Chimera/chimera_state_threaten.h
-  ai/Monsters/Chimera/chimera_state_threaten_inline.h
-  ai/Monsters/Chimera/chimera_state_threaten_roar.h
-  ai/Monsters/Chimera/chimera_state_threaten_roar_inline.h
-  ai/Monsters/Chimera/chimera_state_threaten_steal.h
-  ai/Monsters/Chimera/chimera_state_threaten_steal_inline.h
-  ai/Monsters/Chimera/chimera_state_threaten_walk.h
-  ai/Monsters/Chimera/chimera_state_threaten_walk_inline.h
-  ai/Monsters/controlled_actor.h
-  ai/Monsters/controlled_entity.h
-  ai/Monsters/controlled_entity_inline.h
-  ai/Monsters/Controller/controller.h
-  ai/Monsters/Controller/controller_animation.h
-  ai/Monsters/Controller/controller_direction.h
-  ai/Monsters/Controller/controller_psy_hit.h
-  ai/Monsters/Controller/controller_psy_hit_effector.h
-  ai/Monsters/Controller/controller_state_attack.h
-  ai/Monsters/Controller/controller_state_attack_camp.h
-  ai/Monsters/Controller/controller_state_attack_camp_inline.h
-  ai/Monsters/Controller/controller_state_attack_fast_move.h
-  ai/Monsters/Controller/controller_state_attack_fast_move_inline.h
-  ai/Monsters/Controller/controller_state_attack_fire.h
-  ai/Monsters/Controller/controller_state_attack_fire_inline.h
-  ai/Monsters/Controller/controller_state_attack_hide.h
-  ai/Monsters/Controller/controller_state_attack_hide_inline.h
-  ai/Monsters/Controller/controller_state_attack_hide_lite.h
-  ai/Monsters/Controller/controller_state_attack_hide_lite_inline.h
-  ai/Monsters/Controller/controller_state_attack_inline.h
-  ai/Monsters/Controller/controller_state_attack_moveout.h
-  ai/Monsters/Controller/controller_state_attack_moveout_inline.h
-  ai/Monsters/Controller/controller_state_control_hit.h
-  ai/Monsters/Controller/controller_state_control_hit_inline.h
-  ai/Monsters/Controller/controller_state_manager.h
-  ai/Monsters/Controller/controller_state_panic.h
-  ai/Monsters/Controller/controller_tube.h
-  ai/Monsters/Controller/controller_tube_inline.h
-  ai/Monsters/control_animation.h
-  ai/Monsters/control_animation_base.h
-  ai/Monsters/control_combase.h
-  ai/Monsters/control_com_defs.h
-  ai/Monsters/control_critical_wound.h
-  ai/Monsters/control_direction.h
-  ai/Monsters/control_direction_base.h
-  ai/Monsters/control_jump.h
-  ai/Monsters/control_manager.h
-  ai/Monsters/control_manager_custom.h
-  ai/Monsters/control_melee_jump.h
-  ai/Monsters/control_movement.h
-  ai/Monsters/control_movement_base.h
-  ai/Monsters/control_path_builder.h
-  ai/Monsters/control_path_builder_base.h
-  ai/Monsters/control_path_builder_base_inline.h
-  ai/Monsters/control_rotation_jump.h
-  ai/Monsters/control_run_attack.h
-  ai/Monsters/control_sequencer.h
-  ai/Monsters/control_threaten.h
-  ai/Monsters/corpse_cover.h
-  ai/Monsters/custom_events.h
-  ai/Monsters/Dog/dog.h
-  ai/Monsters/Dog/dog_state_manager.h
-  ai/Monsters/energy_holder.h
-  ai/Monsters/Flesh/flesh.h
-  ai/Monsters/Flesh/flesh_state_manager.h
-  ai/Monsters/Fracture/fracture.h
-  ai/Monsters/Fracture/fracture_state_manager.h
+  ai/monsters/burer/burer_state_attack_tele.h
+  ai/monsters/burer/burer_state_attack_tele_inline.h
+  ai/monsters/burer/burer_state_manager.h
+  ai/monsters/cat/cat.h
+  ai/monsters/cat/cat_state_manager.h
+  ai/monsters/chimera/chimera.h
+  ai/monsters/chimera/chimera_state_hunting.h
+  ai/monsters/chimera/chimera_state_hunting_come_out.h
+  ai/monsters/chimera/chimera_state_hunting_come_out_inline.h
+  ai/monsters/chimera/chimera_state_hunting_inline.h
+  ai/monsters/chimera/chimera_state_hunting_move_to_cover.h
+  ai/monsters/chimera/chimera_state_hunting_move_to_cover_inline.h
+  ai/monsters/chimera/chimera_state_manager.h
+  ai/monsters/chimera/chimera_state_threaten.h
+  ai/monsters/chimera/chimera_state_threaten_inline.h
+  ai/monsters/chimera/chimera_state_threaten_roar.h
+  ai/monsters/chimera/chimera_state_threaten_roar_inline.h
+  ai/monsters/chimera/chimera_state_threaten_steal.h
+  ai/monsters/chimera/chimera_state_threaten_steal_inline.h
+  ai/monsters/chimera/chimera_state_threaten_walk.h
+  ai/monsters/chimera/chimera_state_threaten_walk_inline.h
+  ai/monsters/controlled_actor.h
+  ai/monsters/controlled_entity.h
+  ai/monsters/controlled_entity_inline.h
+  ai/monsters/controller/controller.h
+  ai/monsters/controller/controller_animation.h
+  ai/monsters/controller/controller_direction.h
+  ai/monsters/controller/controller_psy_hit.h
+  ai/monsters/controller/controller_psy_hit_effector.h
+  ai/monsters/controller/controller_state_attack.h
+  ai/monsters/controller/controller_state_attack_camp.h
+  ai/monsters/controller/controller_state_attack_camp_inline.h
+  ai/monsters/controller/controller_state_attack_fast_move.h
+  ai/monsters/controller/controller_state_attack_fast_move_inline.h
+  ai/monsters/controller/controller_state_attack_fire.h
+  ai/monsters/controller/controller_state_attack_fire_inline.h
+  ai/monsters/controller/controller_state_attack_hide.h
+  ai/monsters/controller/controller_state_attack_hide_inline.h
+  ai/monsters/controller/controller_state_attack_hide_lite.h
+  ai/monsters/controller/controller_state_attack_hide_lite_inline.h
+  ai/monsters/controller/controller_state_attack_inline.h
+  ai/monsters/controller/controller_state_attack_moveout.h
+  ai/monsters/controller/controller_state_attack_moveout_inline.h
+  ai/monsters/controller/controller_state_control_hit.h
+  ai/monsters/controller/controller_state_control_hit_inline.h
+  ai/monsters/controller/controller_state_manager.h
+  ai/monsters/controller/controller_state_panic.h
+  ai/monsters/controller/controller_tube.h
+  ai/monsters/controller/controller_tube_inline.h
+  ai/monsters/control_animation.h
+  ai/monsters/control_animation_base.h
+  ai/monsters/control_combase.h
+  ai/monsters/control_com_defs.h
+  ai/monsters/control_critical_wound.h
+  ai/monsters/control_direction.h
+  ai/monsters/control_direction_base.h
+  ai/monsters/control_jump.h
+  ai/monsters/control_manager.h
+  ai/monsters/control_manager_custom.h
+  ai/monsters/control_melee_jump.h
+  ai/monsters/control_movement.h
+  ai/monsters/control_movement_base.h
+  ai/monsters/control_path_builder.h
+  ai/monsters/control_path_builder_base.h
+  ai/monsters/control_path_builder_base_inline.h
+  ai/monsters/control_rotation_jump.h
+  ai/monsters/control_run_attack.h
+  ai/monsters/control_sequencer.h
+  ai/monsters/control_threaten.h
+  ai/monsters/corpse_cover.h
+  ai/monsters/custom_events.h
+  ai/monsters/dog/dog.h
+  ai/monsters/dog/dog_state_manager.h
+  ai/monsters/energy_holder.h
+  ai/monsters/flesh/flesh.h
+  ai/monsters/flesh/flesh_state_manager.h
+  ai/monsters/fracture/fracture.h
+  ai/monsters/fracture/fracture_state_manager.h
   ai/monsters/group_states/group_state_attack.h
   ai/monsters/group_states/group_state_attack_inline.h
   ai/monsters/group_states/group_state_attack_run.h
@@ -1318,176 +1318,176 @@ target_sources(xrGame
   ai/monsters/group_states/group_state_squad_move_to_radius.h
   ai/monsters/group_states/group_state_squad_move_to_radius_inline.h
   ai/monsters/group_states/state_adapter.h
-  ai/Monsters/invisibility.h
-  ai/Monsters/melee_checker.h
-  ai/Monsters/melee_checker_inline.h
+  ai/monsters/invisibility.h
+  ai/monsters/melee_checker.h
+  ai/monsters/melee_checker_inline.h
   ai/monsters/monster_aura.h
-  ai/Monsters/monster_corpse_manager.h
-  ai/Monsters/monster_corpse_memory.h
-  ai/Monsters/monster_cover_manager.h
-  ai/Monsters/monster_enemy_manager.h
-  ai/Monsters/monster_enemy_memory.h
-  ai/Monsters/monster_event_manager.h
-  ai/Monsters/monster_event_manager_defs.h
-  ai/Monsters/monster_hit_memory.h
-  ai/Monsters/monster_home.h
-  ai/Monsters/monster_morale.h
-  ai/Monsters/monster_morale_inline.h
-  ai/Monsters/monster_sound_defs.h
-  ai/Monsters/monster_sound_memory.h
-  ai/Monsters/monster_state_manager.h
-  ai/Monsters/monster_state_manager_inline.h
-  ai/Monsters/monster_velocity_space.h
-  ai/Monsters/Poltergeist/poltergeist.h
-  ai/Monsters/Poltergeist/poltergeist_movement.h
-  ai/Monsters/Poltergeist/poltergeist_state_attack_hidden.h
-  ai/Monsters/Poltergeist/poltergeist_state_attack_hidden_inline.h
-  ai/Monsters/Poltergeist/poltergeist_state_manager.h
-  ai/Monsters/Poltergeist/poltergeist_state_rest.h
-  ai/Monsters/Pseudodog/pseudodog.h
-  ai/Monsters/Pseudodog/pseudodog_psi_effector.h
-  ai/Monsters/Pseudodog/pseudodog_state_manager.h
-  ai/Monsters/Pseudodog/psy_dog.h
-  ai/Monsters/Pseudodog/psy_dog_aura.h
-  ai/Monsters/Pseudodog/psy_dog_state_manager.h
-  ai/Monsters/Pseudodog/psy_dog_state_psy_attack.h
-  ai/Monsters/Pseudodog/psy_dog_state_psy_attack_hide.h
-  ai/Monsters/Pseudodog/psy_dog_state_psy_attack_hide_inline.h
-  ai/Monsters/Pseudodog/psy_dog_state_psy_attack_inline.h
-  ai/Monsters/PseudoGigant/pseudogigant_state_manager.h
-  ai/Monsters/PseudoGigant/pseudo_gigant.h
-  ai/Monsters/PseudoGigant/pseudo_gigant_step_effector.h
-  ai/Monsters/psy_aura.h
+  ai/monsters/monster_corpse_manager.h
+  ai/monsters/monster_corpse_memory.h
+  ai/monsters/monster_cover_manager.h
+  ai/monsters/monster_enemy_manager.h
+  ai/monsters/monster_enemy_memory.h
+  ai/monsters/monster_event_manager.h
+  ai/monsters/monster_event_manager_defs.h
+  ai/monsters/monster_hit_memory.h
+  ai/monsters/monster_home.h
+  ai/monsters/monster_morale.h
+  ai/monsters/monster_morale_inline.h
+  ai/monsters/monster_sound_defs.h
+  ai/monsters/monster_sound_memory.h
+  ai/monsters/monster_state_manager.h
+  ai/monsters/monster_state_manager_inline.h
+  ai/monsters/monster_velocity_space.h
+  ai/monsters/poltergeist/poltergeist.h
+  ai/monsters/poltergeist/poltergeist_movement.h
+  ai/monsters/poltergeist/poltergeist_state_attack_hidden.h
+  ai/monsters/poltergeist/poltergeist_state_attack_hidden_inline.h
+  ai/monsters/poltergeist/poltergeist_state_manager.h
+  ai/monsters/poltergeist/poltergeist_state_rest.h
+  ai/monsters/pseudodog/pseudodog.h
+  ai/monsters/pseudodog/pseudodog_psi_effector.h
+  ai/monsters/pseudodog/pseudodog_state_manager.h
+  ai/monsters/pseudodog/psy_dog.h
+  ai/monsters/pseudodog/psy_dog_aura.h
+  ai/monsters/pseudodog/psy_dog_state_manager.h
+  ai/monsters/pseudodog/psy_dog_state_psy_attack.h
+  ai/monsters/pseudodog/psy_dog_state_psy_attack_hide.h
+  ai/monsters/pseudodog/psy_dog_state_psy_attack_hide_inline.h
+  ai/monsters/pseudodog/psy_dog_state_psy_attack_inline.h
+  ai/monsters/pseudogigant/pseudogigant_state_manager.h
+  ai/monsters/pseudogigant/pseudo_gigant.h
+  ai/monsters/pseudogigant/pseudo_gigant_step_effector.h
+  ai/monsters/psy_aura.h
   ai/monsters/rats/ai_rat.h
   ai/monsters/rats/ai_rat_impl.h
   ai/monsters/rats/ai_rat_inline.h
   ai/monsters/rats/ai_rat_space.h
-  ai/Monsters/scanning_ability.h
-  ai/Monsters/scanning_ability_inline.h
-  ai/Monsters/Snork/snork.h
-  ai/Monsters/Snork/snork_jump.h
-  ai/Monsters/Snork/snork_state_manager.h
-  ai/Monsters/state.h
-  ai/Monsters/States/monster_state_attack.h
-  ai/Monsters/States/monster_state_attack_camp.h
-  ai/Monsters/States/monster_state_attack_camp_inline.h
-  ai/Monsters/States/monster_state_attack_camp_stealout.h
-  ai/Monsters/States/monster_state_attack_camp_stealout_inline.h
-  ai/Monsters/States/monster_state_attack_inline.h
-  ai/Monsters/States/monster_state_attack_melee.h
-  ai/Monsters/States/monster_state_attack_melee_inline.h
+  ai/monsters/scanning_ability.h
+  ai/monsters/scanning_ability_inline.h
+  ai/monsters/snork/snork.h
+  ai/monsters/snork/snork_jump.h
+  ai/monsters/snork/snork_state_manager.h
+  ai/monsters/state.h
+  ai/monsters/states/monster_state_attack.h
+  ai/monsters/states/monster_state_attack_camp.h
+  ai/monsters/states/monster_state_attack_camp_inline.h
+  ai/monsters/states/monster_state_attack_camp_stealout.h
+  ai/monsters/states/monster_state_attack_camp_stealout_inline.h
+  ai/monsters/states/monster_state_attack_inline.h
+  ai/monsters/states/monster_state_attack_melee.h
+  ai/monsters/states/monster_state_attack_melee_inline.h
   ai/monsters/states/monster_state_attack_on_run.h
   ai/monsters/states/monster_state_attack_on_run_inline.h
-  ai/Monsters/States/monster_state_attack_run.h
+  ai/monsters/states/monster_state_attack_run.h
   ai/monsters/states/monster_state_attack_run_attack.h
   ai/monsters/states/monster_state_attack_run_attack_inline.h
-  ai/Monsters/States/monster_state_attack_run_inline.h
-  ai/Monsters/States/monster_state_controlled.h
-  ai/Monsters/States/monster_state_controlled_attack.h
-  ai/Monsters/States/monster_state_controlled_attack_inline.h
-  ai/Monsters/States/monster_state_controlled_follow.h
-  ai/Monsters/States/monster_state_controlled_follow_inline.h
-  ai/Monsters/States/monster_state_controlled_inline.h
-  ai/Monsters/States/monster_state_eat.h
-  ai/Monsters/States/monster_state_eat_drag.h
-  ai/Monsters/States/monster_state_eat_drag_inline.h
-  ai/Monsters/States/monster_state_eat_eat.h
-  ai/Monsters/States/monster_state_eat_eat_inline.h
-  ai/Monsters/States/monster_state_eat_inline.h
-  ai/Monsters/States/monster_state_find_enemy.h
-  ai/Monsters/States/monster_state_find_enemy_angry.h
-  ai/Monsters/States/monster_state_find_enemy_angry_inline.h
-  ai/Monsters/States/monster_state_find_enemy_inline.h
-  ai/Monsters/States/monster_state_find_enemy_look.h
-  ai/Monsters/States/monster_state_find_enemy_look_inline.h
-  ai/Monsters/States/monster_state_find_enemy_run.h
-  ai/Monsters/States/monster_state_find_enemy_run_inline.h
-  ai/Monsters/States/monster_state_find_enemy_walk.h
-  ai/Monsters/States/monster_state_find_enemy_walk_inline.h
-  ai/Monsters/States/monster_state_hear_danger_sound.h
-  ai/Monsters/States/monster_state_hear_danger_sound_inline.h
-  ai/Monsters/States/monster_state_hear_int_sound.h
-  ai/Monsters/States/monster_state_hear_int_sound_inline.h
-  ai/Monsters/States/monster_state_help_sound.h
-  ai/Monsters/States/monster_state_help_sound_inline.h
-  ai/Monsters/States/monster_state_hitted.h
-  ai/Monsters/States/monster_state_hitted_hide.h
-  ai/Monsters/States/monster_state_hitted_hide_inline.h
-  ai/Monsters/States/monster_state_hitted_inline.h
-  ai/Monsters/States/monster_state_hitted_moveout.h
-  ai/Monsters/States/monster_state_hitted_moveout_inline.h
-  ai/Monsters/States/monster_state_home_point_attack.h
-  ai/Monsters/States/monster_state_home_point_attack_inline.h
-  ai/Monsters/States/monster_state_home_point_danger.h
-  ai/Monsters/States/monster_state_home_point_danger_inline.h
-  ai/Monsters/States/monster_state_home_point_rest.h
-  ai/Monsters/States/monster_state_home_point_rest_inline.h
-  ai/Monsters/States/monster_state_panic.h
-  ai/Monsters/States/monster_state_panic_inline.h
-  ai/Monsters/States/monster_state_panic_run.h
-  ai/Monsters/States/monster_state_panic_run_inline.h
-  ai/Monsters/States/monster_state_rest.h
-  ai/Monsters/States/monster_state_rest_fun.h
-  ai/Monsters/States/monster_state_rest_fun_inline.h
-  ai/Monsters/States/monster_state_rest_idle.h
-  ai/Monsters/States/monster_state_rest_idle_inline.h
-  ai/Monsters/States/monster_state_rest_inline.h
-  ai/Monsters/States/monster_state_rest_sleep.h
-  ai/Monsters/States/monster_state_rest_sleep_inline.h
-  ai/Monsters/States/monster_state_rest_walk_graph.h
-  ai/Monsters/States/monster_state_rest_walk_graph_inline.h
-  ai/Monsters/States/monster_state_smart_terrain_task.h
-  ai/Monsters/States/monster_state_smart_terrain_task_graph_walk.h
-  ai/Monsters/States/monster_state_smart_terrain_task_graph_walk_inline.h
-  ai/Monsters/States/monster_state_smart_terrain_task_inline.h
-  ai/Monsters/States/monster_state_squad_rest.h
-  ai/Monsters/States/monster_state_squad_rest_follow.h
-  ai/Monsters/States/monster_state_squad_rest_follow_inline.h
-  ai/Monsters/States/monster_state_squad_rest_inline.h
-  ai/Monsters/States/monster_state_steal.h
-  ai/Monsters/States/monster_state_steal_inline.h
-  ai/Monsters/States/state_custom_action.h
-  ai/Monsters/States/state_custom_action_inline.h
-  ai/Monsters/States/state_custom_action_look.h
-  ai/Monsters/States/state_custom_action_look_inline.h
-  ai/Monsters/States/state_data.h
-  ai/Monsters/States/state_hide_from_point.h
-  ai/Monsters/States/state_hide_from_point_inline.h
-  ai/Monsters/States/state_hit_object.h
-  ai/Monsters/States/state_hit_object_inline.h
-  ai/Monsters/States/state_look_point.h
-  ai/Monsters/States/state_look_point_inline.h
-  ai/Monsters/States/state_look_unprotected_area.h
-  ai/Monsters/States/state_look_unprotected_area_inline.h
-  ai/Monsters/States/state_move_around_point.h
-  ai/Monsters/States/state_move_around_point_inline.h
-  ai/Monsters/States/state_move_to_point.h
-  ai/Monsters/States/state_move_to_point_inline.h
-  ai/Monsters/States/state_move_to_restrictor.h
-  ai/Monsters/States/state_move_to_restrictor_inline.h
-  ai/Monsters/States/state_test_look_actor.h
-  ai/Monsters/States/state_test_look_actor_inline.h
-  ai/Monsters/States/state_test_state.h
-  ai/Monsters/States/state_test_state_inline.h
-  ai/Monsters/state_defs.h
-  ai/Monsters/state_inline.h
-  ai/Monsters/state_manager.h
-  ai/Monsters/telekinesis.h
-  ai/Monsters/telekinesis_inline.h
-  ai/Monsters/telekinetic_object.h
-  ai/Monsters/Tushkano/tushkano.h
-  ai/Monsters/Tushkano/tushkano_state_manager.h
-  ai/Monsters/Zombie/zombie.h
-  ai/Monsters/Zombie/zombie_state_attack_run.h
-  ai/Monsters/Zombie/zombie_state_attack_run_inline.h
-  ai/Monsters/Zombie/zombie_state_manager.h
+  ai/monsters/states/monster_state_attack_run_inline.h
+  ai/monsters/states/monster_state_controlled.h
+  ai/monsters/states/monster_state_controlled_attack.h
+  ai/monsters/states/monster_state_controlled_attack_inline.h
+  ai/monsters/states/monster_state_controlled_follow.h
+  ai/monsters/states/monster_state_controlled_follow_inline.h
+  ai/monsters/states/monster_state_controlled_inline.h
+  ai/monsters/states/monster_state_eat.h
+  ai/monsters/states/monster_state_eat_drag.h
+  ai/monsters/states/monster_state_eat_drag_inline.h
+  ai/monsters/states/monster_state_eat_eat.h
+  ai/monsters/states/monster_state_eat_eat_inline.h
+  ai/monsters/states/monster_state_eat_inline.h
+  ai/monsters/states/monster_state_find_enemy.h
+  ai/monsters/states/monster_state_find_enemy_angry.h
+  ai/monsters/states/monster_state_find_enemy_angry_inline.h
+  ai/monsters/states/monster_state_find_enemy_inline.h
+  ai/monsters/states/monster_state_find_enemy_look.h
+  ai/monsters/states/monster_state_find_enemy_look_inline.h
+  ai/monsters/states/monster_state_find_enemy_run.h
+  ai/monsters/states/monster_state_find_enemy_run_inline.h
+  ai/monsters/states/monster_state_find_enemy_walk.h
+  ai/monsters/states/monster_state_find_enemy_walk_inline.h
+  ai/monsters/states/monster_state_hear_danger_sound.h
+  ai/monsters/states/monster_state_hear_danger_sound_inline.h
+  ai/monsters/states/monster_state_hear_int_sound.h
+  ai/monsters/states/monster_state_hear_int_sound_inline.h
+  ai/monsters/states/monster_state_help_sound.h
+  ai/monsters/states/monster_state_help_sound_inline.h
+  ai/monsters/states/monster_state_hitted.h
+  ai/monsters/states/monster_state_hitted_hide.h
+  ai/monsters/states/monster_state_hitted_hide_inline.h
+  ai/monsters/states/monster_state_hitted_inline.h
+  ai/monsters/states/monster_state_hitted_moveout.h
+  ai/monsters/states/monster_state_hitted_moveout_inline.h
+  ai/monsters/states/monster_state_home_point_attack.h
+  ai/monsters/states/monster_state_home_point_attack_inline.h
+  ai/monsters/states/monster_state_home_point_danger.h
+  ai/monsters/states/monster_state_home_point_danger_inline.h
+  ai/monsters/states/monster_state_home_point_rest.h
+  ai/monsters/states/monster_state_home_point_rest_inline.h
+  ai/monsters/states/monster_state_panic.h
+  ai/monsters/states/monster_state_panic_inline.h
+  ai/monsters/states/monster_state_panic_run.h
+  ai/monsters/states/monster_state_panic_run_inline.h
+  ai/monsters/states/monster_state_rest.h
+  ai/monsters/states/monster_state_rest_fun.h
+  ai/monsters/states/monster_state_rest_fun_inline.h
+  ai/monsters/states/monster_state_rest_idle.h
+  ai/monsters/states/monster_state_rest_idle_inline.h
+  ai/monsters/states/monster_state_rest_inline.h
+  ai/monsters/states/monster_state_rest_sleep.h
+  ai/monsters/states/monster_state_rest_sleep_inline.h
+  ai/monsters/states/monster_state_rest_walk_graph.h
+  ai/monsters/states/monster_state_rest_walk_graph_inline.h
+  ai/monsters/states/monster_state_smart_terrain_task.h
+  ai/monsters/states/monster_state_smart_terrain_task_graph_walk.h
+  ai/monsters/states/monster_state_smart_terrain_task_graph_walk_inline.h
+  ai/monsters/states/monster_state_smart_terrain_task_inline.h
+  ai/monsters/states/monster_state_squad_rest.h
+  ai/monsters/states/monster_state_squad_rest_follow.h
+  ai/monsters/states/monster_state_squad_rest_follow_inline.h
+  ai/monsters/states/monster_state_squad_rest_inline.h
+  ai/monsters/states/monster_state_steal.h
+  ai/monsters/states/monster_state_steal_inline.h
+  ai/monsters/states/state_custom_action.h
+  ai/monsters/states/state_custom_action_inline.h
+  ai/monsters/states/state_custom_action_look.h
+  ai/monsters/states/state_custom_action_look_inline.h
+  ai/monsters/states/state_data.h
+  ai/monsters/states/state_hide_from_point.h
+  ai/monsters/states/state_hide_from_point_inline.h
+  ai/monsters/states/state_hit_object.h
+  ai/monsters/states/state_hit_object_inline.h
+  ai/monsters/states/state_look_point.h
+  ai/monsters/states/state_look_point_inline.h
+  ai/monsters/states/state_look_unprotected_area.h
+  ai/monsters/states/state_look_unprotected_area_inline.h
+  ai/monsters/states/state_move_around_point.h
+  ai/monsters/states/state_move_around_point_inline.h
+  ai/monsters/states/state_move_to_point.h
+  ai/monsters/states/state_move_to_point_inline.h
+  ai/monsters/states/state_move_to_restrictor.h
+  ai/monsters/states/state_move_to_restrictor_inline.h
+  ai/monsters/states/state_test_look_actor.h
+  ai/monsters/states/state_test_look_actor_inline.h
+  ai/monsters/states/state_test_state.h
+  ai/monsters/states/state_test_state_inline.h
+  ai/monsters/state_defs.h
+  ai/monsters/state_inline.h
+  ai/monsters/state_manager.h
+  ai/monsters/telekinesis.h
+  ai/monsters/telekinesis_inline.h
+  ai/monsters/telekinetic_object.h
+  ai/monsters/tushkano/tushkano.h
+  ai/monsters/tushkano/tushkano_state_manager.h
+  ai/monsters/zombie/zombie.h
+  ai/monsters/zombie/zombie_state_attack_run.h
+  ai/monsters/zombie/zombie_state_attack_run_inline.h
+  ai/monsters/zombie/zombie_state_manager.h
   ai/phantom/phantom.h
   ai/position_prediction.h
-  Ai/Stalker/ai_stalker.h
+  ai/stalker/ai_stalker.h
   ai/stalker/ai_stalker_impl.h
   ai/stalker/ai_stalker_inline.h
-  Ai/Stalker/ai_stalker_space.h
-  Ai/Trader/ai_trader.h
+  ai/stalker/ai_stalker_space.h
+  ai/trader/ai_trader.h
   ai/trader/trader_animation.h
   ai/weighted_random.h
   ai_debug.h
@@ -1746,8 +1746,8 @@ target_sources(xrGame
   GalantineArtifact.h
   GameObject.h
   GamePersistent.h
-  gamespy/CdkeyDecode/base32.h
-  gamespy/CdkeyDecode/cdkeydecode.h
+  gamespy/cdkeydecode/base32.h
+  gamespy/cdkeydecode/cdkeydecode.h
   GameTask.h
   GameTaskDefs.h
   GametaskManager.h
@@ -1832,16 +1832,16 @@ target_sources(xrGame
   id_generator.h
   IKFoot.h
   IKFoot_inl.h
-  IKLimbsController.h
-  Ik/aint.h
-  Ik/Dof7control.h
-  Ik/eqn.h
-  Ik/eulersolver.h
-  Ik/IKLimb.h
-  Ik/jtlimits.h
-  Ik/limb.h
-  Ik/math3d.h
-  Ik/mathTrig.h
+  IKLimbscontroller.h
+  ik/aint.h
+  ik/Dof7control.h
+  ik/eqn.h
+  ik/eulersolver.h
+  ik/IKLimb.h
+  ik/jtlimits.h
+  ik/limb.h
+  ik/math3d.h
+  ik/mathTrig.h
   ik_anim_state.h
   ik_calculate_data.h
   ik_calculate_state.h
@@ -2212,7 +2212,7 @@ target_sources(xrGame
   sprinter_stopper.h
   squad_hierarchy_holder.h
   squad_hierarchy_holder_inline.h
-  StalkerOutfit.h
+  stalkerOutfit.h
   stalker_alife_actions.h
   stalker_alife_planner.h
   stalker_alife_task_actions.h
@@ -2508,7 +2508,7 @@ target_sources(xrUI PRIVATE
   ui/UIGameTutorialVideoItem.cpp
   ui/UIHelper.cpp
   ui/UIHint.cpp
-  ui/UIHudStatesWnd.cpp
+  ui/UIHudstatesWnd.cpp
   ui/UIInventoryUpgradeWnd.cpp
   ui/UIInventoryUpgradeWnd_add.cpp
   ui/UIInventoryUtilities.cpp
@@ -2518,7 +2518,7 @@ target_sources(xrUI PRIVATE
   ui/UIItemInfo.cpp
   ui/UIKeyBinding.cpp
   ui/UIKickPlayer.cpp
-  ui/UILanimController.cpp
+  ui/UILanimcontroller.cpp
   ui/UILine.cpp
   ui/UILines.cpp
   ui/UIListBox.cpp
@@ -2606,7 +2606,7 @@ target_sources(xrUI PRIVATE
   ui/UITrackButton.cpp
   ui/UIVote.cpp
   ui/UIVoteStatusWnd.cpp
-  ui/UIVotingCategory.cpp
+  ui/UIVotingcategory.cpp
   ui/UIWindow.cpp
   ui/UIWindow_script.cpp
   ui/UIWndCallback.cpp
@@ -2686,7 +2686,7 @@ target_sources(xrUI PRIVATE
   ui/UIGameTutorial.h
   ui/UIHelper.h
   ui/UIHint.h
-  ui/UIHudStatesWnd.h
+  ui/UIHudstatesWnd.h
   ui/UIInteractiveBackground.h
   ui/UIInventoryUpgradeWnd.h
   ui/UIInventoryUtilities.h
@@ -2696,7 +2696,7 @@ target_sources(xrUI PRIVATE
   ui/UIItemInfo.h
   ui/UIKeyBinding.h
   ui/UIKickPlayer.h
-  ui/UILanimController.h
+  ui/UILanimcontroller.h
   ui/UILine.h
   ui/UILines.h
   ui/uilinestd.h
@@ -2773,7 +2773,7 @@ target_sources(xrUI PRIVATE
   ui/UITrackButton.h
   ui/UIVote.h
   ui/UIVoteStatusWnd.h
-  ui/UIVotingCategory.h
+  ui/UIVotingcategory.h
   ui/UIWindow.h
   ui/UIWndCallback.h
   ui/UIWpnParams.h
