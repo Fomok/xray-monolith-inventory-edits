@@ -234,7 +234,6 @@ macro(add_engine_target name)
     dinput8
     icu
     imgui
-    lua-extensions
     ReShadeCompat
     Vfw32
     xrCore

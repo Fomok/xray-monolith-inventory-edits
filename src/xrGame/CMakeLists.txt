@@ -2410,6 +2410,7 @@ target_link_libraries(xrGame
   crypto
   CxImage
   loki
+  lua-extensions
   luabind
   ode
   xrCore
