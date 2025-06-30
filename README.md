@@ -177,14 +177,98 @@ The original engine is used in S.T.A.L.K.E.R. Call of Pripyat game released by G
 
 ## How to make my own modded exe?
 
-How to compile exes:
+### Setup
+
 1. Fork this xray-monolith
 2. Clone the fork onto your pc
-3. Run `git submodule update --init --recursive` to pull git submodules
-4. Select all-in-one-vs2022-wpo branch
-5. Compile the engine-vs2022.sln solution with VS2022
-6. For batch builds of all configurations use `batch_build.bat` in xray-monolith repo
-7. For successful compilation, **the latest build tools with MFC and ATL libraries is required**
+3. Run `git submodule init --recursive` to pull git submodules
+4. Select `all-in-one-vs2022-wpo` branch
+
+### Build
+
+For successful compilation, **the latest build tools with MFC and ATL libraries is required**
+
+#### Configure Presets
+
+`MSVC.MSBuild` - Original MSBuild toolchain. Slow.
+
+`MSVC.Ninja` - New Ninja toolchain. Fast.
+
+#### Build Presets
+
+`<ConfigurePreset>.Verified`
+
+Unoptimized release build, fast compiles, additional console assertions, generate PDB files for debugging
+
+`<ConfigurePreset>.Profiled`
+
+Optimized release build, middling compiles, Optick profiler support
+
+`<ConfigurePreset>.Release`
+
+Optimized release build, middling compiles
+
+`<ConfigurePreset>.RelWithDebInfo`
+
+Optimized release build, long compiles, generate PDB files for debugging
+
+#### Targets
+
+`Targets/AnomalyDX<VER>`
+
+Anomaly executable with corresponding DirectX renderer
+
+`Targets/AnomalyDX<VER>AVX`
+
+Anomaly executable with corresponding DirectX renderer and AVX instructions
+
+`Release/AnomalyDX<VER><AVX>-PDB`
+
+Pack individual executable PDB files into `_build/<ConfigurePreset>/AnomalyDX<VER><AVX>_pdb.zip`
+
+`X-Ray/Gamedata`
+
+Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_exes_gamedata.db0`
+
+#### CMake (CLI)
+
+1. Ensure CMake is installed and added to your `PATH`
+2. Open a shell inside your `xray-monolith` directory
+3. Configure the `_build` directory with `cmake --preset <ConfigurePreset>`
+4. Build a target with `cmake --build --preset <BuildPreset> --target <TargetName>`
+   - Omitting the `--target` argument will build all targets
+
+#### CMake (GUI)
+
+1. Open the CMake GUI
+2. Set the `Where is the source code` field to your `xray-monolith` directory
+3. Set the `Preset` field to your Configure Preset of choice
+4. Click `Configure`
+5. Modify generation settings as desired in the resulting popup
+6. Click `Generate`
+7. Click `Open Project`, or follow the instructions for your generator of choice
+
+#### Visual Studio 2022
+1. Open VS2022
+2. Select `Open a local folder`
+3. Select your `xray-monolith` directory
+4. Wait for the project to load
+5. `Tools` -> `Options` -> `CMake` -> Untick `Enable unified build and configuration preset menu`
+6. Use dropdowns to select configuration and build presets
+7. `View` -> `CMake Targets`
+8. `Anomaly Project` -> `Targets` -> Right Click -> `Set as startup item` / `Build` / `Debug` / `Launch`
+   - Right click `Anomaly Project` -> `Build All` to build all targets
+
+#### Visual Studio Code
+1. Open VS Code
+2. Install the `C/C++ Extension Pack` from the `Extensions` tab
+   - Sets up language support, CMake support, themes
+3. `File` -> `Open Folder...`
+4. Select your `xray-monolith` directory
+5. Click the `CMake` tab
+6. Setup configuration and build presets via sidebar
+7. Build / Debug / Launch via sidebar
+   - `Project Outline` -> `Build All Projects` icon to build all targets
 
 ## Changelog
 **2025.06.30**
