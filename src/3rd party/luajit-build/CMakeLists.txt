@@ -377,6 +377,19 @@ add_custom_command(OUTPUT ${BUILDVM_ARCH}
     VERBATIM
 )
 
+add_custom_target(buildvm_arch)
+
+set_property(
+  TARGET buildvm_arch
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
+target_sources(buildvm_arch
+  PRIVATE
+  ${BUILDVM_ARCH}
+)
+
 add_subdirectory("HostBuildTools/buildvm")
 
 list(APPEND LJLIB_C

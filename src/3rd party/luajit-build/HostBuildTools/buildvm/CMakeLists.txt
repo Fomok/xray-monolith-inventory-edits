@@ -30,6 +30,8 @@ target_sources(buildvm PRIVATE
 	"${BUILDVM_ARCH}"
 )
 
+add_dependencies(buildvm buildvm_arch)
+
 target_include_directories(buildvm
 	PRIVATE
     ${HOST_INCLUDES}
