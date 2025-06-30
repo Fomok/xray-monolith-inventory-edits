@@ -15,10 +15,8 @@ target_sources(crypto PRIVATE
   crypto_api_def.h
 )
 
-target_sources_grouped(
-  TARGET crypto
-  NAME "OpenSSL/Source Files"
-  FILES
+target_sources(crypto
+  PRIVATE
   openssl/src/asn1_lib.c
   openssl/src/a_bitstr.c
   openssl/src/a_d2i_fp.c
@@ -110,10 +108,8 @@ target_sources_grouped(
   openssl/src/x_sig.c
 )
 
-target_sources_grouped(
-  TARGET crypto
-  NAME "OpenSSL/Header Files"
-  FILES
+target_sources(crypto
+  PRIVATE
   openssl/openssl/aes.h
   openssl/openssl/asn1.h
   openssl/openssl/asn1t.h

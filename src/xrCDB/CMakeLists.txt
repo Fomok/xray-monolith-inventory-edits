@@ -6,10 +6,8 @@ set_property(
   ${FOLDER_XRAY}
 )
 
-target_sources_grouped(
-  TARGET xrCDB
-  NAME "Engine/Source Files"
-  FILES
+target_sources(xrCDB
+  PRIVATE
   ISpatial.cpp
   ISpatial_q_box.cpp
   ISpatial_q_frustum.cpp
@@ -19,22 +17,12 @@ target_sources_grouped(
   xr_area_query.cpp
   xr_area_raypick.cpp
   xrXRC.cpp
-)
 
-target_sources_grouped(
-  TARGET xrCDB
-  NAME "Engine/Header Files"
-  FILES
   ISpatial.h
   xr_area.h
   xr_collide_defs.h
   xrXRC.h
-)
 
-target_sources_grouped(
-  TARGET xrCDB
-  NAME "Kernel/Source Files"
-  FILES
   #cl_raypick.cpp
   Frustum.cpp
   xrCDB.cpp
@@ -42,21 +30,11 @@ target_sources_grouped(
   xrCDB_Collector.cpp
   xrCDB_frustum.cpp
   xrCDB_ray.cpp
-)
 
-target_sources_grouped(
-  TARGET xrCDB
-  NAME "Kernel/Header Files"
-  FILES
   Frustum.h
   StdAfx.h
   xrCDB.h
-)
 
-target_sources_grouped(
-  TARGET xrCDB
-  NAME "Opcode/Source Files"
-  FILES
   Opcode.cpp
   OPC_AABB.cpp
   OPC_AABBCollider.cpp
@@ -80,12 +58,7 @@ target_sources_grouped(
   OPC_TreeCollider.cpp
   OPC_Triangle.cpp
   OPC_VolumeCollider.cpp
-)
-
-target_sources_grouped(
-  TARGET xrCDB
-  NAME "Opcode/Header Files"
-  FILES
+  
   Opcode.h
   OPC_AABB.h
   OPC_AABBCollider.h

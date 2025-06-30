@@ -71,10 +71,8 @@ target_sources(Gamedata
   ${XRAY_GAMEDATA_BINARY_NAME}
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Configs/Unlocalizers
-  FILES
+target_sources(Gamedata
+  PRIVATE
   configs/unlocalizers/unlocalizer_modded_exes_axr_trade_manager.ltx
   configs/unlocalizers/unlocalizer_modded_exes_global.ltx
   configs/unlocalizers/unlocalizer_modded_exes_item_device_script_fixes.ltx
@@ -86,32 +84,24 @@ target_sources_grouped(
   configs/unlocalizers/unlocalizer_ui_options.ltx
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Configs/UI
-  FILES
+target_sources(Gamedata
+  PRIVATE
   configs/ui/ui_ctrl_hdr.xml
   configs/ui/ui_ctrl_hdr_16.xml
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Configs/Text/English
-  FILES
+target_sources(Gamedata
+  PRIVATE
   configs/text/eng/ui_mm_modded_exes.xml
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Configs/Text/Russian
-  FILES
+target_sources(Gamedata
+  PRIVATE
   configs/text/rus/ui_mm_modded_exes.xml
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Configs
-  FILES
+target_sources(Gamedata
+  PRIVATE
   configs/mod_script_dxml.ltx
   configs/mod_system_base_hud.ltx
   configs/mod_system_flashlight_definition.ltx
@@ -120,18 +110,14 @@ target_sources_grouped(
   configs/patrol_paths.ltx
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Materials
-  FILES
+target_sources(Gamedata
+  PRIVATE
   materials/material_pairs.ltx
   materials/materials.ltx
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Scripts
-  FILES
+target_sources(Gamedata
+  PRIVATE
   scripts/_g_patches.script
   scripts/aaa_sound_object_patch.script
   scripts/aaaa_script_fixes_mp.script
@@ -178,19 +164,15 @@ target_sources_grouped(
   scripts/ui_options_modded_exes.script
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Shaders/R2
-  FILES
+target_sources(Gamedata
+  PRIVATE
   shaders/r2/combine_2_naa.ps
   shaders/r2/fakescope.ps
   shaders/r2/heatvision.ps
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Shaders/R3
-  FILES
+target_sources(Gamedata
+  PRIVATE
   shaders/r3/combine_2_naa.ps
   shaders/r3/common_functions.h
   shaders/r3/deffer_tree_branch_bump_d-hq.vs
@@ -222,10 +204,8 @@ target_sources_grouped(
   shaders/r3/yuv2rgb.ps
 )
 
-target_sources_grouped(
-  TARGET Gamedata
-  NAME Textures/UI
-  FILES
+target_sources(Gamedata
+  PRIVATE
   textures/ui/cursor_dot.dds
   textures/ui/cursor_cross.dds
   textures/ui/cursor_plus.dds

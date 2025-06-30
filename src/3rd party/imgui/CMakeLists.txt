@@ -22,20 +22,13 @@ target_sources(imgui PRIVATE
   imstb_truetype.h
 )
 
-target_sources_grouped(
-  TARGET imgui
-  NAME "Backends/Source Files"
-  FILES
+target_sources(imgui
+  PRIVATE
   imgui_custom.cpp
   backends/imgui_impl_dx10.cpp
   backends/imgui_impl_dx11.cpp
   backends/imgui_impl_dx9.cpp
-)
 
-target_sources_grouped(
-  TARGET imgui
-  NAME "Backends/Header Files"
-  FILES
   imgui_custom.h
   backends/imgui_impl_dx10.h
   backends/imgui_impl_dx11.h

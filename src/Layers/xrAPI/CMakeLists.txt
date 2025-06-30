@@ -6,17 +6,9 @@ set_property(
   ${FOLDER_RENDER}
 )
 
-target_sources_grouped(
-  TARGET xrAPI
-  NAME "Kernel/Source Files"
-  FILES
+target_sources(xrAPI
+  PRIVATE
   xrAPI.cpp
-)
-
-target_sources_grouped(
-  TARGET xrAPI
-  NAME "Kernel/Header Files"
-  FILES
   stdafx.h
   xrAPI.h
 )

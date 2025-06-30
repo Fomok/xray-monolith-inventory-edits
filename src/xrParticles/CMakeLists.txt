@@ -6,18 +6,11 @@ set_property(
   ${FOLDER_XRAY}
 )
 
-target_sources_grouped(
-  TARGET xrParticles
-  NAME "Kernel"
-  FILES
+target_sources(xrParticles
+  PRIVATE
   psystem.h
   stdafx.h
-)
-
-target_sources_grouped(
-  TARGET xrParticles
-  NAME "PAPI/Source Files"
-  FILES
+  
   noise.cpp
   particle_actions.cpp
   particle_actions_collection.cpp
@@ -25,12 +18,7 @@ target_sources_grouped(
   particle_core.cpp
   particle_effect.cpp
   particle_manager.cpp
-)
-
-target_sources_grouped(
-  TARGET xrParticles
-  NAME "PAPI/Header Files"
-  FILES
+  
   noise.h
   particle_actions.h
   particle_actions_collection.h

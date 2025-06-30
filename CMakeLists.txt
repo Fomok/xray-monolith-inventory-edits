@@ -56,9 +56,6 @@ include(XRay.Folders)
 # Setup global compiler definitions
 include(XRay.Compiler.Definitions)
 
-# Bring utilities into scope
-include(XRay.Util.Sources)
-
 # Setup compressor
 add_subdirectory(compressor)
 
