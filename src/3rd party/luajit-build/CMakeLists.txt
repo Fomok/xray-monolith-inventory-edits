@@ -352,12 +352,10 @@ if (TARGET_LJARCH STREQUAL "ppc")
 endif()
 
 set(HOST_ACFLAGS "${CMAKE_C_FLAGS} ${CCOPTIONS} ${TARGET_ARCH}")
-set(HOST_ALDFLAGS "${CMAKE_C_FLAGS}")
 
 string(APPEND TARGET_XCFLAGS " -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -U_FORTIFY_SOURCE")
 
 separate_arguments(HOST_ACFLAGS)
-separate_arguments(HOST_ALDFLAGS)
 separate_arguments(DASM_FLAGS)
 separate_arguments(TARGET_XCFLAGS)
 

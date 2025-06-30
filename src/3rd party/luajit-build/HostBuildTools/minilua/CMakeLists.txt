@@ -9,7 +9,6 @@ if (CMAKE_VERBOSE_MAKEFILE)
 endif()
 
 separate_arguments(HOST_ACFLAGS)
-separate_arguments(HOST_ALDFLAGS)
 
 add_executable(minilua)
 
@@ -36,9 +35,4 @@ target_include_directories(minilua
 target_link_libraries(minilua
   PRIVATE
   $<$<BOOL:${LUA_USE_POSIX}>:m>
-)
-
-target_link_options(minilua
-  PRIVATE
-  ${HOST_ALDFLAGS}
 )

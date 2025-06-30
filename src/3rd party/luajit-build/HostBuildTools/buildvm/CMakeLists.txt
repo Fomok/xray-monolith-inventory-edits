@@ -9,7 +9,6 @@ if (CMAKE_VERBOSE_MAKEFILE)
 endif()
 
 separate_arguments(HOST_ACFLAGS)
-separate_arguments(HOST_ALDFLAGS)
 
 add_executable(buildvm)
 
@@ -50,8 +49,3 @@ if (NOT MSVC)
 		-Wno-discarded-qualifiers
 	)
 endif()
-
-target_link_options(buildvm
-    PRIVATE
-    ${HOST_ALDFLAGS}
-)
