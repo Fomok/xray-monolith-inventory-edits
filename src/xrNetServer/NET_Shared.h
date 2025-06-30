@@ -1,17 +1,8 @@
 #pragma once
-#ifdef XR_NETSERVER_EXPORTS
+
 #define XRNETSERVER_API
-//__declspec(dllexport)
-#else
-	#define XRNETSERVER_API
-//__declspec(dllimport)
 
-#ifndef _EDITOR
-		#pragma comment(lib,	"xrNetServer"	)
-#endif
-#endif
-
-#include "../xrCore/net_utils.h"
+#include "net_utils.h"
 #include <dplay/dplay8.h>
 #include "net_messages.h"
 

@@ -2,7 +2,7 @@
 #ifndef ParticleCustomH
 #define ParticleCustomH
 
-#include "../../Include/xrRender/ParticleCustom.h"
+#include "ParticleCustom.h"
 #include "FBasicVisual.h"
 
 //---------------------------------------------------------------------------

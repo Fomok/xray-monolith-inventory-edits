@@ -20,8 +20,8 @@ class CLensFlareDescriptor;
 
 #define DAY_LENGTH 86400.f
 
-#include "../Include/xrRender/FactoryPtr.h"
-#include "../Include/xrRender/EnvironmentRender.h"
+#include "FactoryPtr.h"
+#include "EnvironmentRender.h"
 
 #include "../build_config_defines.h"
 
@@ -253,7 +253,7 @@ class ENGINE_API CEnvironment
 {
 	friend class dxEnvironmentRender;
 
-	struct str_pred : public std::binary_function<shared_str, shared_str, bool>
+	struct str_pred : public std::function<bool(shared_str, shared_str)>
 	{
 		IC bool operator()(const shared_str& x, const shared_str& y) const
 		{
@@ -382,11 +382,7 @@ public:
     float ed_to_time;
 public:
     void ED_Reload();
-    float GetGameTime() { return fGameTime; }
 #else // #ifdef _EDITOR
-# ifdef INGAME_EDITOR
-    float GetGameTime() { return fGameTime; }
-# endif // #ifdef INGAME_EDITOR
 
 	bool m_paused;
 

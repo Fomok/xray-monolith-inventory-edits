@@ -15,9 +15,9 @@
 #include "level.h"
 #include "xr_level_controller.h"
 #include "game_cl_base.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "ai_object_location.h"
-#include "../xrphysics/mathutils.h"
+#include "mathutils.h"
 #include "object_broker.h"
 #include "player_hud.h"
 #include "gamepersistent.h"
@@ -29,12 +29,12 @@
 #include "ui/UIWindow.h"
 #include "ui/UIXmlInit.h"
 #include "Torch.h"
-#include "../xrCore/vector.h"
+#include "vector.h"
 #include "ActorNightVision.h"
 #include "HUDManager.h"
 #include "WeaponMagazinedWGrenade.h"
-#include "../xrEngine/GameMtlLib.h"
-#include "../Layers/xrRender/xrRender_console.h"
+#include "GameMtlLib.h"
+#include "xrRender_console.h"
 #include "pch_script.h"
 #include "script_game_object.h"
 
@@ -3048,13 +3048,13 @@ void CWeapon::debug_draw_firedeps()
         CDebugRenderer			&render = Level().debug_renderer();
 
         if(hud_adj_mode==5)
-            render.draw_aabb(get_LastFP(),	0.005f,0.005f,0.005f,D3DCOLOR_XRGB(255,0,0));
+            render.draw_aabb(get_LastFP(),	0.005f,0.005f,0.005f,D3DCOLOR_XRGB(255,0,0), true);
 
         if(hud_adj_mode==6)
-            render.draw_aabb(get_LastFP2(),	0.005f,0.005f,0.005f,D3DCOLOR_XRGB(0,0,255));
+            render.draw_aabb(get_LastFP2(),	0.005f,0.005f,0.005f,D3DCOLOR_XRGB(0,0,255), true);
 
         if(hud_adj_mode==7)
-            render.draw_aabb(get_LastSP(),		0.005f,0.005f,0.005f,D3DCOLOR_XRGB(0,255,0));
+            render.draw_aabb(get_LastSP(),		0.005f,0.005f,0.005f,D3DCOLOR_XRGB(0,255,0), true);
     }
 #endif // DEBUG
 }

@@ -8,11 +8,6 @@
 
 //#include "securom_api.h"
 
-//#define STATIC_RENDERER_R1
-//#define STATIC_RENDERER_R2
-//#define STATIC_RENDERER_R3
-//#define STATIC_RENDERER_R4
-
 extern xr_token* vid_quality_token;
 
 //////////////////////////////////////////////////////////////////////
@@ -22,70 +17,6 @@ extern xr_token* vid_quality_token;
 void __cdecl dummy(void)
 {
 };
-
-// xrSound
-// libogg_static.lib;libvorbis_static.lib;libvorbisfile_static.lib;OpenAL32.lib
-// xrPhysics
-// libvorbisfile_static.lib;libogg_static.lib;OpenAL32.lib
-// xrNetServer
-// Ws2_32.lib;dxerr.lib
-// xrEngine
-// vfw32.lib;libogg_static.lib;libtheora_static.lib
-// xrRenderR4
-// dxguid.lib;d3dx11.lib;D3DCompiler.lib;d3d11.lib;dxgi.lib;nvapi.lib;dxerr.lib;d3d10.lib
-// xrRenderR3
-// dxguid.lib;d3dcompiler.lib;d3d10.lib;d3dx10.lib;dxgi.lib;nvapi.lib
-// xrRenderR2
-// nvapi.lib
-// xrRenderR1
-// d3dx9.lib;nvapi.lib
-// OpenAL32
-// version.lib;winmm.lib
-
-#pragma comment(lib, "Ws2_32.lib")
-#pragma comment(lib, "vfw32.lib")
-#pragma comment(lib, "nvapi.lib")
-
-#if !defined(STATIC_RENDERER_R1) && !defined(STATIC_RENDERER_R2) && !defined(STATIC_RENDERER_R3) && !defined(STATIC_RENDERER_R4)
-	#error Select one of the renderers R1, R2, R3, or R4
-#endif
-
-#ifdef STATIC_RENDERER_R1
-#if defined(STATIC_RENDERER_R2) || defined(STATIC_RENDERER_R3) || defined(STATIC_RENDERER_R4)
-		#error Only one of the renderers R1, R2, R3, and R4 can be selected at once
-#endif
-	#pragma comment(lib, "xrRender_R1.lib")
-	#pragma comment(lib, "d3dx9.lib")
-#endif
-#ifdef STATIC_RENDERER_R2
-#if defined(STATIC_RENDERER_R1) || defined(STATIC_RENDERER_R3) || defined(STATIC_RENDERER_R4)
-		#error Only one of the renderers R1, R2, R3, and R4 can be selected at once
-#endif
-	#pragma comment(lib, "xrRender_R2.lib")
-#endif
-#ifdef STATIC_RENDERER_R3
-#if defined(STATIC_RENDERER_R1) || defined(STATIC_RENDERER_R2) || defined(STATIC_RENDERER_R4)
-		#error Only one of the renderers R1, R2, R3, and R4 can be selected at once
-#endif
-#pragma comment(lib, "xrRender_R3.lib")
-#pragma comment(lib, "dxguid.lib")
-#pragma comment(lib, "d3dcompiler.lib")
-#pragma comment(lib, "d3d10.lib")
-#pragma comment(lib, "d3dx10.lib")
-#pragma comment(lib, "dxgi.lib")
-#endif
-#ifdef STATIC_RENDERER_R4
-#if  defined(STATIC_RENDERER_R1) || defined(STATIC_RENDERER_R2) || defined(STATIC_RENDERER_R3)
-		#error Only one of the renderers R1, R2, R3, and R4 can be selected at once
-#endif
-	#pragma comment(lib, "xrRender_R4.lib")
-	#pragma comment(lib, "dxguid.lib")
-	#pragma comment(lib, "d3dx11.lib")
-	#pragma comment(lib, "D3DCompiler.lib")
-	#pragma comment(lib, "d3d11.lib")
-	#pragma comment(lib, "dxgi.lib")
-	#pragma comment(lib, "d3d10.lib")
-#endif
 
 CEngineAPI::CEngineAPI()
 {
@@ -127,16 +58,16 @@ extern BOOL DllMainXrRenderR3(HANDLE hModule, DWORD ul_reason_for_call, LPVOID l
 extern BOOL DllMainXrRenderR4(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
 
 #ifdef STATIC_RENDERER_R1
-	#define DLL_MAIN_RENDERER DllMainXrRenderR1
+    #define DLL_MAIN_RENDERER DllMainXrRenderR1
 #endif
 #ifdef STATIC_RENDERER_R2
-	#define DLL_MAIN_RENDERER DllMainXrRenderR2
+    #define DLL_MAIN_RENDERER DllMainXrRenderR2
 #endif
 #ifdef STATIC_RENDERER_R3
-#define DLL_MAIN_RENDERER DllMainXrRenderR3
+    #define DLL_MAIN_RENDERER DllMainXrRenderR3
 #endif
 #ifdef STATIC_RENDERER_R4
-	#define DLL_MAIN_RENDERER DllMainXrRenderR4
+    #define DLL_MAIN_RENDERER DllMainXrRenderR4
 #endif
 
 void CEngineAPI::InitializeNotDedicated()
@@ -297,14 +228,14 @@ typedef bool /*_declspec(dllexport)*/ SupportsDX11RenderingREF();
 
 extern "C" {
 #ifdef STATIC_RENDERER_R2
-	bool /*_declspec(dllexport)*/ SupportsAdvancedRendering();
+	bool SupportsAdvancedRendering();
 #endif
 #ifdef STATIC_RENDERER_R3
-bool /*_declspec(dllexport)*/ SupportsDX10Rendering();
+bool SupportsDX10Rendering();
 
 #endif
 #ifdef STATIC_RENDERER_R4
-	bool /*_declspec(dllexport)*/ SupportsDX11Rendering();
+	bool SupportsDX11Rendering();
 #endif
 };
 

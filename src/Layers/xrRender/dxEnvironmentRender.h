@@ -2,7 +2,7 @@
 #define dxEnvironmentRender_included
 #pragma once
 
-#include "..\..\Include\xrRender\EnvironmentRender.h"
+#include "EnvironmentRender.h"
 
 #include "blenders\blender.h"
 

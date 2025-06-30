@@ -6,10 +6,10 @@
 #include "hit.h"
 #include "PHDestroyable.h"
 #include "car.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 //#include "PHWorld.h"
 //extern CPHWorld*	ph_world;
-#include "../xrphysics/IPHWorld.h"
+#include "IPHWorld.h"
 
 CCar::SCarSound::SCarSound(CCar* car)
 {

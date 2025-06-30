@@ -1,0 +1,28 @@
+add_library(ReShadeCompat STATIC)
+
+set_property(
+  TARGET ReShadeCompat
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
+target_sources(ReShadeCompat PRIVATE
+  addon.cpp
+)
+
+target_include_directories(ReShadeCompat
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  "${CMAKE_SOURCE_DIR}/src/3rd party"
+)
+
+target_precompile_headers(ReShadeCompat
+  PRIVATE
+  stdafx.h
+)
+
+target_compile_definitions(ReShadeCompat
+  PRIVATE
+  PURE_ALLOC
+  XRCORE_EXPORTS
+)

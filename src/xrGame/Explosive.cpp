@@ -29,14 +29,14 @@
 #endif
 
 //#include "Physics.h"
-#include "../xrphysics/MathUtils.h"
-//#include "../xrphysics/phvalidevalues.h"
-#include "../xrphysics/iActivationShape.h"
-#include "../xrphysics/iphworld.h"
+#include "MathUtils.h"
+//#include "phvalidevalues.h"
+#include "iActivationShape.h"
+#include "iphworld.h"
 #include "game_base_space.h"
 #include "profiler.h"
 
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #define EFFECTOR_RADIUS 30.f
 const u16 TEST_RAYS_PER_OBJECT = 5;
 const u16 BLASTED_OBJ_PROCESSED_PER_FRAME = 3;

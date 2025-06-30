@@ -8,7 +8,7 @@
 //#include "SkeletonCustom.h"
 // Instead of SkeletonCustom:
 #include "bone.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "cl_intersect.h"
 
 #include "../xrServerEntities/object_broker.h"

@@ -6,7 +6,7 @@
 #include "UIKickPlayer.h"
 #include "UIChangeMap.h"
 #include <dinput.h>
-#include "xrEngine/XR_IOConsole.h"
+#include "XR_IOConsole.h"
 #include "UIMapList.h"
 #include "../UIGameCustom.h"
 

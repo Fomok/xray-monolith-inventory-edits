@@ -1,9 +1,9 @@
 #include	"stdafx.h"
 #include	"ik_foot_collider.h"
 
-#include "../xrEngine/gamemtllib.h"
-#include "../xrEngine/cl_intersect.h"
-#include "../include/xrrender/Kinematics.h"
+#include "gamemtllib.h"
+#include "cl_intersect.h"
+#include "Kinematics.h"
 
 #include "Level.h"
 #include "GameObject.h"

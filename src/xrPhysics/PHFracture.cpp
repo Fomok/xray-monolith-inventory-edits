@@ -5,9 +5,9 @@
 #include "PHShell.h"
 #include "console_vars.h"
 
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "ph_valid_ode.h"
-#include "../xrEngine/bone.h"
+#include "bone.h"
 
 #pragma warning(disable:4995)
 #pragma warning(disable:4267)

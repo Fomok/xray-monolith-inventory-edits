@@ -13,7 +13,7 @@
 #include "entity_alive.h"
 #include "ai/monsters/basemonster/base_monster.h"
 #include "CharacterPhysicsSupport.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 
 CMaterialManager::CMaterialManager(CObject* object, CPHMovementControl* movement_control)
 {

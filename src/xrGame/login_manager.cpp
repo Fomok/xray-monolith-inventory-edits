@@ -9,8 +9,6 @@
 
 #include <shellapi.h>
 
-//#pragma comment(lib, "shell32.lib")
-
 namespace gamespy_gp
 {
 	login_manager::login_manager(CGameSpy_Full* fullgs_obj)

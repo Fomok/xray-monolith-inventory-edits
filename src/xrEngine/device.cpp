@@ -17,7 +17,7 @@
 #pragma warning(default:4995)
 
 #include "x_ray.h"
-#include "discord\discord.h"
+#include "discord.h"
 #include "render.h"
 #include <chrono>
 
@@ -32,8 +32,6 @@
 
 #include "xrSash.h"
 #include "igame_persistent.h"
-
-#pragma comment( lib, "d3dx9.lib" )
 
 ENGINE_API CRenderDevice Device;
 ENGINE_API CLoadScreenRenderer load_screen_renderer;

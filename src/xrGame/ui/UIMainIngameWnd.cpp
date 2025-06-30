@@ -42,7 +42,7 @@
 
 #ifdef DEBUG
 #	include "../attachable_item.h"
-#	include "../../xrEngine/xr_input.h"
+#	include "xr_input.h"
 #endif
 
 #include "UIScrollView.h"
@@ -57,7 +57,7 @@
 void test_draw();
 void test_key(int dik);
 
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 
 
 using namespace InventoryUtilities;

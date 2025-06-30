@@ -6,16 +6,15 @@
 #include "hit_immunity.h"
 #include "damage_manager.h"
 #include "DestroyablePhysicsObject.h"
-#include "../Include/xrRender/KinematicsAnimated.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "KinematicsAnimated.h"
+#include "Kinematics.h"
 #include "xrServer_Objects_ALife.h"
 #include "game_object_space.h"
 #include "script_callback_ex.h"
 #include "script_game_object.h"
-#include "../xrphysics/PhysicsShell.h"
+#include "PhysicsShell.h"
 #ifdef DEBUG
-#include "../xrphysics/IPHWorld.h"
-//#include "PHWorld.h"
+#include "IPHWorld.h"
 //extern CPHWorld			*ph_world;
 #endif
 CDestroyablePhysicsObject::CDestroyablePhysicsObject()

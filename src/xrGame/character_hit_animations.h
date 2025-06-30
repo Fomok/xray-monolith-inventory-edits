@@ -3,7 +3,7 @@ class CEntityAlive;
 class IKinematics;
 
 //#include "../Include/xrRender/KinematicsAnimated.h"
-#include "../Include/xrRender/KinematicsAnimated.h"
+#include "KinematicsAnimated.h"
 
 class character_hit_animation_controller
 {

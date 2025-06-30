@@ -14,6 +14,10 @@
 #include "alife_space.h"
 #include "../xrCore/client_id.h"
 
+#ifdef DEBUG
+#include "loki/Typelist.h"
+#endif
+
 class NET_Packet;
 class xrClientData;
 class CSE_ALifeGroupAbstract;

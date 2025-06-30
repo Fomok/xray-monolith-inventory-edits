@@ -15,8 +15,8 @@
 #include "material_manager.h"
 #include "Weapon.h"
 
-#include "../Include/xrRender/UIRender.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "UIRender.h"
+#include "Kinematics.h"
 
 #ifdef DEBUG
 #	include "debug_renderer.h"

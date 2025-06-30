@@ -404,13 +404,6 @@ void CHUDManager::SetCrosshairDisp(float dispf, float disps)
 	m_pHUDTarget->SetDispersion(psHUD_Flags.test(HUD_CROSSHAIR_DYNAMIC) ? dispf : disps);
 }
 
-#ifdef DEBUG
-void CHUDManager::SetFirstBulletCrosshairDisp(float fbdispf)
-{
-    m_pHUDTarget->GetHUDCrosshair().SetFirstBulletDispertion(fbdispf);
-}
-#endif
-
 void CHUDManager::ShowCrosshair(bool show)
 {
 	m_pHUDTarget->ShowCrosshair(show);

@@ -2,9 +2,9 @@
 #include "phantom.h"
 #include "../../level.h"
 #include "../../../xrServerEntities/xrserver_objects_alife_monsters.h"
-#include "../../../xrEngine/motion.h"
-#include "../Include/xrRender/RenderVisual.h"
-#include "../Include/xrRender/KinematicsAnimated.h"
+#include "motion.h"
+#include "RenderVisual.h"
+#include "KinematicsAnimated.h"
 
 CPhantom::CPhantom()
 {

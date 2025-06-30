@@ -2,7 +2,7 @@
 #define dxThunderboltRender_included
 #pragma once
 
-#include "..\..\Include\xrRender\ThunderboltRender.h"
+#include "ThunderboltRender.h"
 
 class dxThunderboltRender : public IThunderboltRender
 {

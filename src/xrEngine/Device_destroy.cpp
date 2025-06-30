@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "../Include/xrRender/DrawUtils.h"
+#include "DrawUtils.h"
 #include "render.h"
 #include "IGame_Persistent.h"
 #include "xr_IOConsole.h"

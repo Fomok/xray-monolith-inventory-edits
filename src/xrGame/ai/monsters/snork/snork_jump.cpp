@@ -2,8 +2,8 @@
 #include "snork.h"
 #include "snork_jump.h"
 //#include "../jump_ability.h"
-#include "../../../../Include/xrRender/KinematicsAnimated.h"
-#include "../../../level.h"
+#include "KinematicsAnimated.h"
+#include "level.h"
 
 //CSnorkJump::CSnorkJump(CSnork *monster)
 //{

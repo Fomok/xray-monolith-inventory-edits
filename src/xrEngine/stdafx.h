@@ -3,21 +3,11 @@
 #pragma once
 
 #ifdef _EDITOR
-#include "..\editors\ECore\stdafx.h"
+#include "../editors/ECore/stdafx.h"
 #else
 
-#ifndef NDEBUG
-# ifndef INGAME_EDITOR
-# define INGAME_EDITOR
-# endif // #ifndef INGAME_EDITOR
-#endif // #ifndef NDEBUG
-
-#ifdef INGAME_EDITOR
-# define _WIN32_WINNT 0x0550
-#endif // #ifdef INGAME_EDITOR
-
 #include "../xrCore/xrCore.h"
-#include "../Include/xrAPI/xrAPI.h"
+#include "../Layers/xrAPI/xrAPI.h"
 
 #ifdef _DEBUG
 # define D3D_DEBUG_INFO
@@ -65,29 +55,6 @@
 #include "../xrSound/sound.h"
 
 extern ENGINE_API CInifile* pGameIni;
-
-#pragma comment( lib, "xrCore.lib" )
-#pragma comment( lib, "xrCDB.lib" )
-#pragma comment( lib, "xrSound.lib" )
-
-//AVO: lua re-org
-#ifdef USE_LUAJIT_ONE //defined in project props
-#pragma comment(lib, "LuaJIT-1.1.8.lib")
-#else
-#pragma comment(lib, "lua51.lib" )
-#endif
-//#include "lua/library_linkage.h"
-//-AVO
-
-#include "luabind/library_linkage.h"
-
-#pragma comment( lib, "xrAPI.lib" )
-
-#pragma comment( lib, "winmm.lib" )
-
-#pragma comment( lib, "d3d9.lib" )
-#pragma comment( lib, "dinput8.lib" )
-#pragma comment( lib, "dxguid.lib" )
 
 #ifndef DEBUG
 # define LUABIND_NO_ERROR_CHECKING

@@ -8,10 +8,10 @@
 
 //#include "entity_alive.h"
 //#include "phmovementcontrol.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "iphysicsshellholder.h"
-#include "../xrengine/bone.h"
-#include "../xrengine/device.h"
+#include "bone.h"
+#include "device.h"
 #include "mathutilsode.h"
 #include "phelement.h"
 

@@ -21,7 +21,7 @@
 #include "script_entity_action.h"
 #include "inventory.h"
 #include "xrserver_objects_alife_items.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "level.h"
 #include "ui/UIMainIngameWnd.h"
 //#include "UIGameCustom.h"
@@ -31,7 +31,7 @@
 //#include "PHActivationShape.h"
 #include "CharacterPhysicsSupport.h"
 #include "car_memory.h"
-#include "../xrphysics/IPHWorld.h"
+#include "IPHWorld.h"
 BONE_P_MAP CCar::bone_map = BONE_P_MAP();
 
 //extern CPHWorld*	ph_world;

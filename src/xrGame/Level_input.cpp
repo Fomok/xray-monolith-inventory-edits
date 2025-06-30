@@ -23,13 +23,13 @@
 #include "saved_game_wrapper.h"
 #include "ui\UIPdaWnd.h"
 
-#include "../Include/xrRender/DebugRender.h"
+#include "DebugRender.h"
 
-#include "build_config_defines.h"
+#include "../build_config_defines.h"
 
 //Alundaio
 #include "pch_script.h"
-#include "../../xrServerEntities/script_engine.h"
+#include "script_engine.h"
 using namespace luabind;
 //-Alundaio
 
@@ -205,10 +205,6 @@ void CLevel::IR_OnKeyboardPress(int key)
 
 	if (_curr == kPAUSE)
 	{
-#ifdef INGAME_EDITOR
-        if (Device.editor())	return;
-#endif // INGAME_EDITOR
-
 		if (!g_block_pause && (IsGameTypeSingle() || IsDemoPlay()))
 		{
 #ifdef DEBUG

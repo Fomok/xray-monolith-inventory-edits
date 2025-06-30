@@ -49,11 +49,11 @@
 #include "../xrEngine/cl_intersect.h"
 //#include "ExtendedGeom.h"
 #include "alife_registry_wrappers.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "artefact.h"
 #include "CharacterPhysicsSupport.h"
 #include "material_manager.h"
-#include "../xrphysics/IColisiondamageInfo.h"
+#include "IColisiondamageInfo.h"
 #include "ui/UIMainIngameWnd.h"
 #include "map_manager.h"
 #include "GameTaskManager.h"
@@ -66,7 +66,7 @@
 #include "player_hud.h"
 #include "ai/monsters/basemonster/base_monster.h"
 
-#include "../Include/xrRender/UIRender.h"
+#include "UIRender.h"
 
 #include "ai_object_location.h"
 #include "ui/uiMotionIcon.h"
@@ -74,7 +74,7 @@
 #include "ActorHelmet.h"
 #include "UI/UIDragDropReferenceList.h"
 
-#include "build_config_defines.h"
+#include "../build_config_defines.h"
 
 #include "ActorNightVision.h"
 #include "Flashlight.h"
@@ -86,7 +86,7 @@ using namespace luabind;
 //-Alundaio
 
 //Rezy
-#include "xrEngine\x_ray.h"
+#include "x_ray.h"
 #include "ui/UIHudStatesWnd.h"
 #include "script_attachment_manager.h"
 

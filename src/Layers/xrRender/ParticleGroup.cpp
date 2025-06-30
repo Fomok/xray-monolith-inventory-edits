@@ -358,7 +358,7 @@ void OnGroupParticleDead(void* owner, u32 param, PAPI::Particle& m, u32 idx)
 }
 
 //------------------------------------------------------------------------------
-struct zero_vis_pred : public std::unary_function<dxRender_Visual*, bool>
+struct zero_vis_pred : public std::function<bool(dxRender_Visual*)>
 {
 	bool operator()(const dxRender_Visual* x) { return x == 0; }
 };

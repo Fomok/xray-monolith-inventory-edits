@@ -7,10 +7,10 @@
 
 
 //#include "ode_include.h"
-#include "../xrphysics/MathUtils.h"
-#include "../include/xrrender/Kinematics.h"
-#include "../xrEngine/bone.h"
-#include "../xrEngine/ennumerateVertices.h"
+#include "MathUtils.h"
+#include "Kinematics.h"
+#include "bone.h"
+#include "ennumerateVertices.h"
 #include <boost/noncopyable.hpp>
 
 

@@ -2,7 +2,7 @@
 #define	dxThunderboltDescRender_included
 #pragma once
 
-#include "..\..\Include\xrRender\ThunderboltDescRender.h"
+#include "ThunderboltDescRender.h"
 
 class IRender_DetailModel;
 

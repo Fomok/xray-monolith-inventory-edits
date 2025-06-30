@@ -4,8 +4,8 @@
 #ifndef XR_IOCONSOLE_H_INCLUDED
 #define XR_IOCONSOLE_H_INCLUDED
 
-#include "../Include/xrRender/FactoryPtr.h"
-#include "../Include/xrRender/UIShader.h"
+#include "FactoryPtr.h"
+#include "UIShader.h"
 
 //refs
 class ENGINE_API CGameFont;
@@ -85,7 +85,7 @@ class ENGINE_API CConsole :
 	public pureScreenResolutionChanged
 {
 public:
-	struct str_pred : public std::binary_function<char*, char*, bool>
+	struct str_pred : public std::function<bool(char*, char*)>
 	{
 		IC bool operator()(const char* x, const char* y) const
 		{

@@ -30,3 +30,5 @@ src/3rd party/luajit-2/src/jit/vmdef.lua
 # emacs temp file
 \#*\#
 *~
+/compressor/engine.log
+/compressor/engine.log

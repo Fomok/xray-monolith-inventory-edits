@@ -33,9 +33,8 @@
 #include "util.h"
 #include "stdlib.h"
 
+#include <random>
 #include <algorithm>
-
-
 
 #define ALLOCA dALLOCA16
 
@@ -390,6 +389,7 @@ static void SOR_LCP (int m, int nb, dRealMutablePtr J, int *jb, dxBody * const *
 	dIASSERT (j==m);
 #endif
 
+	std::mt19937 rng(std::time(nullptr));
 	for (int iteration=0; iteration < num_iterations; iteration++) {
 
 #ifdef REORDER_CONSTRAINTS
@@ -425,7 +425,7 @@ static void SOR_LCP (int m, int nb, dRealMutablePtr J, int *jb, dxBody * const *
 #endif
 #ifdef RANDOMLY_REORDER_CONSTRAINTS
 		if ((iteration & 3) == 0) {
-			std::random_shuffle	(order,order+m);
+			std::shuffle(order, order+m, rng);
 			/*
 			for (i=1; i<m; ++i) {
 				IndexError tmp = order[i];

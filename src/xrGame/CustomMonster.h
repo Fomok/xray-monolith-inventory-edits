@@ -6,10 +6,10 @@
 
 #include "entity_alive.h"
 #include "script_entity.h"
-#include "../xrEngine/feel_vision.h"
-#include "../xrEngine/feel_sound.h"
-#include "../xrEngine/feel_touch.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "feel_vision.h"
+#include "feel_sound.h"
+#include "feel_touch.h"
+#include "Kinematics.h"
 #include "associative_vector.h"
 #include "trajectories.h"
 

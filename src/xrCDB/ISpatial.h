@@ -138,15 +138,13 @@ public:
 	void _remove(ISpatial* _S);
 	void _insert(ISpatial* _S);
 
-	BOOL _empty()
+	bool _empty()
 	{
-		return items.empty() && (
-			0 == (
-				ptrt(children[0]) | ptrt(children[1]) |
-				ptrt(children[2]) | ptrt(children[3]) |
-				ptrt(children[4]) | ptrt(children[5]) |
-				ptrt(children[6]) | ptrt(children[7])
-			)
+		return items.empty() && !(
+			children[0] || children[1] ||
+			children[2] || children[3] ||
+			children[4] || children[5] ||
+			children[6] || children[7]
 		);
 	}
 };

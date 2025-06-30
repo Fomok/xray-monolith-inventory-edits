@@ -1,0 +1,57 @@
+cmake_minimum_required(VERSION 3.22)
+
+project(buildvm C)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if (CMAKE_VERBOSE_MAKEFILE)
+    set(CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
+endif()
+
+separate_arguments(HOST_ACFLAGS)
+separate_arguments(HOST_ALDFLAGS)
+
+add_executable(buildvm)
+
+set_property(
+  TARGET buildvm
+  PROPERTY FOLDER
+  ${FOLDER_LUA}
+)
+
+target_sources(buildvm PRIVATE
+    "${LUAJIT_DIR}/host/buildvm_asm.c"
+	"${LUAJIT_DIR}/host/buildvm_fold.c"
+	"${LUAJIT_DIR}/host/buildvm_lib.c"
+	#"${LUAJIT_DIR}/host/buildvm_libbc.h"
+	"${LUAJIT_DIR}/host/buildvm_peobj.c"
+	"${LUAJIT_DIR}/host/buildvm.c"
+	"${LUAJIT_DIR}/host/buildvm.h"
+	"${BUILDVM_ARCH}"
+)
+
+add_dependencies(buildvm buildvm_arch)
+
+target_include_directories(buildvm
+	PRIVATE
+    ${HOST_INCLUDES}
+	${CMAKE_CURRENT_BINARY_DIR}/../..
+	${LUAJIT_DIR}
+)
+
+target_compile_options(buildvm
+	PRIVATE
+	${HOST_ACFLAGS}
+)
+
+if (NOT MSVC)
+	target_compile_options(buildvm
+		PRIVATE
+		-Wno-discarded-qualifiers
+	)
+endif()
+
+target_link_options(buildvm
+    PRIVATE
+    ${HOST_ALDFLAGS}
+)

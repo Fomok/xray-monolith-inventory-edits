@@ -9,7 +9,9 @@
 #include "pch_script.h"
 #include "script_storage.h"
 #include "script_thread.h"
-#include "../xrCore/mezz_stringbuffer.h"
+#include "ai_space.h"
+#include "script_engine.h"
+#include "mezz_stringbuffer.h"
 #include <stdarg.h>
 #include <unordered_map>
 #include <set>

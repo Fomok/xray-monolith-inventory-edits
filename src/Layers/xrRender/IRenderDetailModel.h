@@ -2,7 +2,7 @@
 #define IRenderDetailModelH
 #pragma once
 
-#include "../../Include/xrRender/RenderDetailModel.h"
+#include "RenderDetailModel.h"
 
 //////////////////////////////////////////////////////////////////////////
 // definition (Detail Model)

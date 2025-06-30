@@ -66,10 +66,12 @@
 #else
 DEFINE_VECTOR(ref_sound, SoundVec, SoundIt);
 DEFINE_VECTOR(shared_str, PSVec, PSIt);
-#include "../Include/xrRender/WallMarkArray.h"
-#include "../Include/xrRender/RenderFactory.h"
+#include "WallMarkArray.h"
+#include "RenderFactory.h"
 // DEFINE_VECTOR(ref_shader,ShaderVec,ShaderIt);
 #endif
+
+#include "xrapi.h"
 
 struct MTL_EXPORT_API SGameMtl
 {
@@ -409,11 +411,5 @@ public:
  { _res_.clone(GET_RANDOM(_mtl_pair_##->_a_vector_),st_Effect,sg_SourceType); }
 
 extern MTL_EXPORT_API CGameMtlLibrary GMLib;
-
-//#ifdef _EDITOR
-//extern MTL_EXPORT_API CGameMtlLibrary* PGMLib;
-//#else
-#include "../include/xrapi/xrapi.h"
-//#endif
 
 #endif

@@ -1,0 +1,172 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "Base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/_build/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "installDir": "${sourceDir}/_build/install/${presetName}"
+    },
+    {
+      "name": "MSVC.MSBuild",
+      "inherits": "Base",
+      "generator": "Visual Studio 17 2022",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "MSVC.Ninja",
+      "inherits": "Base",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.MSVC.toolchain.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "Clang.Ninja",
+      "hidden": true,
+      "inherits": "Base",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/cmake/WindowsToolchain/Windows.Clang.toolchain.cmake"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Base.Debug",
+      "hidden": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "Base.Verified",
+      "hidden": true,
+      "configuration": "Verified"
+    },
+    {
+      "name": "Base.Profiled",
+      "hidden": true,
+      "configuration": "Profiled"
+    },
+    {
+      "name": "Base.Release",
+      "hidden": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "Base.RelWithDebInfo",
+      "hidden": true,
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "MSVC.MSBuild.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "MSVC.MSBuild.Verified",
+      "displayName": "Verified",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "MSVC.MSBuild.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "MSVC.MSBuild.Release",
+      "displayName": "Release",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "MSVC.MSBuild.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "MSVC.MSBuild",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "MSVC.Ninja.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "MSVC.Ninja.Verified",
+      "displayName": "Verified",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "MSVC.Ninja.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "MSVC.Ninja.Release",
+      "displayName": "Release",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "MSVC.Ninja.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "MSVC.Ninja",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "Clang.Ninja.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "Clang.Ninja.Verified",
+      "displayName": "Verified",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "Clang.Ninja.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "Clang.Ninja.Release",
+      "displayName": "Release",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "Clang.Ninja.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "Clang.Ninja",
+      "inherits": "Base.RelWithDebInfo"
+    }
+  ]
+}

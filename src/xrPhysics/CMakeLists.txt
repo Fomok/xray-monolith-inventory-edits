@@ -1,0 +1,182 @@
+add_library(xrPhysics STATIC)
+
+set_property(
+  TARGET xrPhysics
+  PROPERTY FOLDER
+  ${FOLDER_XRAY}
+)
+
+target_sources(xrPhysics PRIVATE
+  ../xrServerEntities/PHNetState.cpp
+  ActorCameraCollision.cpp
+  collisiondamagereceiver.cpp
+  console_vars.cpp
+  dcylinder/dCylinder.cpp
+  debug_output.cpp
+  DisablingParams.cpp
+  dRayMotions.cpp
+  ElevatorState.cpp
+  ExtendedGeom.cpp
+  Geometry.cpp
+  GeometryBits.cpp
+  IActivationShape.cpp
+  MathUtils.cpp
+  MovementBoxDynamicActivate.cpp
+  params.cpp
+  PHActivationShape.cpp
+  PHActorCharacter.cpp
+  PHAICharacter.cpp
+  PHCapture.cpp
+  PHCaptureInit.cpp
+  PHCharacter.cpp
+  PHCollideValidator.cpp
+  PHContactBodyEffector.cpp
+  PHDisabling.cpp
+  PHDynamicData.cpp
+  PHElement.cpp
+  PHElementNetState.cpp
+  PHFracture.cpp
+  PHGeometryOwner.cpp
+  PHInterpolation.cpp
+  PHIsland.cpp
+  PHJoint.cpp
+  PHJointDestroyInfo.cpp
+  PHMoveStorage.cpp
+  PHObject.cpp
+  PHShell.cpp
+  PHShellActivate.cpp
+  PHShellNetState.cpp
+  PHShellSplitter.cpp
+  PHSimpleCharacter.cpp
+  PHSplitedShell.cpp
+  PHStaticGeomShell.cpp
+  phvalide.cpp
+  PHWorld.cpp
+  Physics.cpp
+  PhysicsExternalCommon.cpp
+  PhysicsShell.cpp
+  PhysicsShellAnimator.cpp
+  physics_scripted.cpp
+  ShellHit.cpp
+  #tri-colliderknoopc/dcTriListCollider.cpp
+  tri-colliderknoopc/dSortTriPrimitive.cpp
+  tri-colliderknoopc/dTriBox.cpp
+  tri-colliderknoopc/dTriCallideK.cpp
+  tri-colliderknoopc/dTriCylinder.cpp
+  tri-colliderknoopc/dTriList.cpp
+  tri-colliderknoopc/dTriSphere.cpp
+  xrPhysics.cpp
+
+  ../xrServerEntities/PHNetState.h
+  ActorCameraCollision.h
+  BlockAllocator.h
+  CalculateTriangle.h
+  console_vars.h
+  CycleConstStorage.h
+  DamageSource.h
+  dcylinder/dCylinder.h
+  debug_output.h
+  DisablingParams.h
+  dRayMotions.h
+  ElevatorState.h
+  ExtendedGeom.h
+  Geometry.h
+  GeometryBits.h
+  IActivationShape.h
+  iclimableobject.h
+  IColisiondamageInfo.h
+  ICollideValidator.h
+  icollisiondamagereceiver.h
+  IElevatorState.h
+  IPHCapture.h
+  IPHStaticGeomShell.h
+  IPHWorld.h
+  IPhysicsShellHolder.h
+  iphysics_scripted.h
+  MathUtils.h
+  MathUtilsOde.h
+  matrix_utils.h
+  MovementBoxDynamicActivate.h
+  ode_include.h
+  ode_redefine.h
+  params.h
+  PHActivationShape.h
+  PHActorCharacter.h
+  PHActorCharacterInline.h
+  PHAICharacter.h
+  PHBaseBodyEffector.h
+  PHCapture.h
+  PHCharacter.h
+  PHCollideValidator.h
+  PHContactBodyEffector.h
+  PHDefs.h
+  PHDisabling.h
+  PHDynamicData.h
+  PHElement.h
+  PHElementInline.h
+  PHFracture.h
+  PHGeometryOwner.h
+  PHImpact.h
+  PHInterpolation.h
+  PHIsland.h
+  PHItemList.h
+  PHJoint.h
+  PHJointDestroyInfo.h
+  PHMoveStorage.h
+  PHObject.h
+  PHShell.h
+  PHShellBuildJoint.h
+  PHShellSplitter.h
+  PHSimpleCharacter.h
+  PHSimpleCharacterInline.h
+  PHSplitedShell.h
+  PHStaticGeomShell.h
+  PHUpdateObject.h
+  phvalide.h
+  PHValideValues.h
+  PHWorld.h
+  Physics.h
+  PhysicsCommon.h
+  PhysicsExternalCommon.h
+  PhysicsShell.h
+  PhysicsShellAnimator.h
+  PhysicsShellAnimatorBoneData.h
+  physics_scripted.h
+  ph_valid_ode.h
+  SpaceUtils.h
+  stdafx.h
+  tri-colliderknoopc/dcTriangle.h
+  tri-colliderknoopc/dcTriListCollider.h
+  tri-colliderknoopc/dSortTriPrimitive.h
+  tri-colliderknoopc/dTriBox.h
+  tri-colliderknoopc/dTriCollideK.h
+  tri-colliderknoopc/dTriColliderCommon.h
+  tri-colliderknoopc/dTriColliderMath.h
+  tri-colliderknoopc/dTriCylinder.h
+  tri-colliderknoopc/dTriList.h
+  tri-colliderknoopc/dTriSphere.h
+  tri-colliderknoopc/dxTriList.h
+  tri-colliderknoopc/TriPrimitiveCollideClassDef.h
+  tri-colliderknoopc/__aabb_tri.h
+  xrPhysics.h
+)
+
+target_precompile_headers(xrPhysics
+  PRIVATE stdafx.h
+)
+
+target_include_directories(xrPhysics
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(xrPhysics
+  PUBLIC
+  loki
+  ode
+  tbb
+  xrAPI
+  xrCDB
+  xrEngine
+  xrRender
+)

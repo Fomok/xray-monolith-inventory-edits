@@ -11,8 +11,8 @@
 //refs
 class ENGINE_API IRender_DetailModel;
 
-#include "../Include/xrRender/FactoryPtr.h"
-#include "../Include/xrRender/RainRender.h"
+#include "FactoryPtr.h"
+#include "RainRender.h"
 
 // SSS
 #include "../../xrEngine/perlin.h"

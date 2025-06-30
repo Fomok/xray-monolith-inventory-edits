@@ -6,10 +6,10 @@
 #include "phcharacter.h"
 #include "iclimableobject.h"
 
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 #include "PHCollideValidator.h"
-#include "../xrengine/xr_object.h"
-#include "../xrengine/bone.h"
+#include "xr_object.h"
+#include "bone.h"
 
 //#include "game_object_space.h"
 

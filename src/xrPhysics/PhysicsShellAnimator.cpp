@@ -1,12 +1,12 @@
 #include "StdAfx.h"
 #include "PhysicsShellAnimator.h"
 #include "PhysicsShellAnimatorBoneData.h"
-#include "../Include/xrRender/KinematicsAnimated.h"
-#include "../Include/xrRender/Kinematics.h"
+#include "KinematicsAnimated.h"
+#include "Kinematics.h"
 #include "PHDynamicData.h"
 //#include "game_object_space.h"
 #include "IPhysicsShellHolder.h"
-#include "../xrEngine/bone.h"
+#include "bone.h"
 
 
 CPhysicsShellAnimator::

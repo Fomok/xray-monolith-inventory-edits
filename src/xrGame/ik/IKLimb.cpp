@@ -3,7 +3,7 @@
 
 #include <boost/noncopyable.hpp>
 
-#include "../../include/xrrender/Kinematics.h"
+#include "Kinematics.h"
 
 #include "gameobject.h"
 
@@ -11,8 +11,8 @@
 #include "../ik_anim_state.h"
 
 //#include "../ode_include.h"
-#include "../../xrphysics/MathUtils.h"
-#include "../../xrphysics/matrix_utils.h"
+#include "MathUtils.h"
+#include "matrix_utils.h"
 #include "../pose_extrapolation.h"
 #ifdef DEBUG
 #include "../PHDebug.h"

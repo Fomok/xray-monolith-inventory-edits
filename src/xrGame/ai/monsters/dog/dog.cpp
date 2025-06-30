@@ -4,17 +4,17 @@
 #include "../monster_velocity_space.h"
 #include "../control_animation_base.h"
 #include "../control_movement_base.h"
-#include "../../../date_time.h"
-#include "../../../../Include/xrRender/KinematicsAnimated.h"
+#include "date_time.h"
+#include "KinematicsAnimated.h"
 #include "../monster_home.h"
 #include "../ai_monster_squad.h"
 #include "../ai_monster_squad_manager.h"
-#include "../../../CharacterPhysicsSupport.h"
+#include "CharacterPhysicsSupport.h"
 
-#include "../../../level_graph.h"
-#include "../../../ai_space.h"
-#include "../../../ai_object_location.h"
-#include "../../../actor.h"
+#include "level_graph.h"
+#include "ai_space.h"
+#include "ai_object_location.h"
+#include "actor.h"
 
 #ifdef _DEBUG
 #	include <dinput.h>

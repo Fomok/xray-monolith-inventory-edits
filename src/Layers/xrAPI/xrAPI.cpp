@@ -2,9 +2,9 @@
 //
 
 #include "stdafx.h"
-#include "../../Include/xrApi/xrAPI.h"
+#include "xrAPI.h"
 
-#include "../xrRender/dxRenderFactory.h"
+#include "dxRenderFactory.h"
 
 extern dxRenderFactory RenderFactoryImpl;
 

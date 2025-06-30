@@ -2,10 +2,10 @@
 
 #include "interactive_motion.h"
 
-#include "../xrphysics/physicsshell.h"
+#include "physicsshell.h"
 #include "PhysicsShellHolder.h"
 
-#include "../Include/xrRender/Kinematics.h"
+#include "Kinematics.h"
 
 #include "game_object_space.h"
 

@@ -5,7 +5,7 @@
 #include "inventory_space.h"
 #include "gametype_chooser.h"
 #include "UIDialogHolder.h"
-#include "xrEngine/CustomHUD.h"
+#include "CustomHUD.h"
 #include "script_game_object.h"
 
 // refs

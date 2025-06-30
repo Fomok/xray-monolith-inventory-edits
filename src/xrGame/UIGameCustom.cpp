@@ -16,7 +16,7 @@
 #include "inventory.h"
 #include "game_cl_base.h"
 
-#include "xrEngine/x_ray.h"
+#include "x_ray.h"
 
 #include "ui\UICellItem.h" //Alundaio
 //#include "script_game_object.h" //Alundaio

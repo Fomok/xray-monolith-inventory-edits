@@ -4,12 +4,12 @@
 
 #include "stdafx.h"
 #include "LightProjector.h"
-#include "../../include/xrRender/RenderVisual.h"
-#include "../../xrEngine/xr_object.h"
-#include "../xrRender/lighttrack.h"
+#include "RenderVisual.h"
+#include "xr_object.h"
+#include "lighttrack.h"
 
 #ifndef _EDITOR
-#include "../../xrCPU_Pipe/ttapi.h"
+#include "ttapi.h"
 #endif
 
 
