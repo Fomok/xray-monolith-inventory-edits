@@ -2397,7 +2397,6 @@ target_include_directories(xrGame
 target_precompile_headers(xrGame
   PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
-  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
 )
 
 target_compile_definitions(xrGame
@@ -2988,7 +2987,7 @@ target_compile_definitions(xrScripts
 target_precompile_headers(xrScripts
   PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
-  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
+  #$<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
 )
 
 target_link_libraries(xrScripts

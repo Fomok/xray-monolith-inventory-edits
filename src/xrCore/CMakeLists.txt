@@ -235,7 +235,6 @@ target_include_directories(xrCore
 target_precompile_headers(xrCore
   PRIVATE
   stdafx.h
-  blackbox/stdafx_.h
 )
 
 target_compile_definitions(xrCore
