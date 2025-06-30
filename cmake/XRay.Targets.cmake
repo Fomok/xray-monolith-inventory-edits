@@ -252,7 +252,7 @@ macro(add_engine_target name)
   set_property(
     TARGET ${name}-PDB
     PROPERTY FOLDER
-    ${FOLDER_RELEASE_PDB}
+    ${FOLDER_RELEASE}
   )
 
   target_sources(${name}-PDB
