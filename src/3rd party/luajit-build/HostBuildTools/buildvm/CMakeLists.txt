@@ -15,7 +15,7 @@ add_executable(buildvm)
 set_property(
   TARGET buildvm
   PROPERTY FOLDER
-  ${FOLDER_LUA}
+  ${FOLDER_LUA_BUILD}
 )
 
 target_sources(buildvm PRIVATE

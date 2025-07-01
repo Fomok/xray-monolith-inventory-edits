@@ -380,7 +380,7 @@ add_custom_target(buildvm_arch)
 set_property(
   TARGET buildvm_arch
   PROPERTY FOLDER
-  ${FOLDER_LUA}
+  ${FOLDER_LUA_BUILD}
 )
 
 target_sources(buildvm_arch

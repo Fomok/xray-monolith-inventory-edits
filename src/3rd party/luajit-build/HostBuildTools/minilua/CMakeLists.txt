@@ -15,7 +15,7 @@ add_executable(minilua)
 set_property(
   TARGET minilua
   PROPERTY FOLDER
-  ${FOLDER_LUA}
+  ${FOLDER_LUA_BUILD}
 )
 
 target_sources(minilua PRIVATE
