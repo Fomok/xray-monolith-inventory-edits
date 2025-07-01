@@ -3,7 +3,7 @@ add_library(imgui STATIC)
 set_property(
   TARGET imgui
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(imgui PRIVATE

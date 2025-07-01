@@ -3,7 +3,7 @@ add_library(OpenAL32 STATIC)
 set_property(
   TARGET OpenAL32
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(OpenAL32 PRIVATE

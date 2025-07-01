@@ -9,7 +9,7 @@ add_library(ode STATIC)
 set_property(
   TARGET ode
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(ode PRIVATE

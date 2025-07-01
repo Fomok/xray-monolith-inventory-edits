@@ -3,7 +3,7 @@ add_library(DXERR STATIC)
 set_property(
   TARGET DXERR
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(DXERR PRIVATE

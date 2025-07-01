@@ -3,7 +3,7 @@ add_library(crypto STATIC)
 set_property(
   TARGET crypto
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(crypto PRIVATE

@@ -3,7 +3,7 @@ add_library(NVTT STATIC)
 set_property(
   TARGET NVTT
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(NVTT PRIVATE

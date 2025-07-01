@@ -3,7 +3,7 @@ add_library(discord INTERFACE)
 set_property(
   TARGET discord
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(discord

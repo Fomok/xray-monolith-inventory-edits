@@ -3,7 +3,7 @@ add_library(optick STATIC)
 set_property(
   TARGET optick
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(optick

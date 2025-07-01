@@ -5,7 +5,7 @@ add_library(icu INTERFACE)
 set_property(
   TARGET icu
   PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(icu
