@@ -1,11 +1,5 @@
 add_custom_target(Gamedata)
 
-set_property(
-  TARGET Gamedata
-  PROPERTY FOLDER
-  ${FOLDER_XRAY}
-)
-
 cmake_path(
   CONVERT ${CMAKE_SOURCE_DIR}/gamedata
   TO_NATIVE_PATH_LIST XRAY_GAMEDATA
