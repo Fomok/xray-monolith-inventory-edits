@@ -1,9 +1,11 @@
+include(cmake/XRay.XMLParser.TinyXML.cmake)
+
 add_library(xrXMLParser STATIC)
 
 set_property(
   TARGET xrXMLParser
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_XRAY_XML_PARSER}
 )
 
 target_sources(xrXMLParser
@@ -12,12 +14,6 @@ target_sources(xrXMLParser
   
   stdafx.h
   xrXMLParser.h
-  
-  tinyxml.cpp
-  tinyxmlerror.cpp
-  tinyxmlparser.cpp
-  
-  tinyxml.h
 )
 
 target_precompile_headers(xrXMLParser
@@ -33,4 +29,9 @@ target_include_directories(xrXMLParser
 target_compile_definitions(xrXMLParser
   PRIVATE
   XRXMLPARSER_EXPORTS
+)
+
+target_link_libraries(xrXMLParser
+  PRIVATE
+  xrXMLParser.TinyXML
 )
