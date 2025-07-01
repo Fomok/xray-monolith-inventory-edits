@@ -212,7 +212,7 @@ macro(add_engine_target name)
   set_property(
     TARGET ${name}
     PROPERTY FOLDER
-    ${FOLDER_TARGETS}
+    ${FOLDER_ENGINE}
   )
 
   target_engine_sources(${name} ${XR_ENGINE_SOURCES})
