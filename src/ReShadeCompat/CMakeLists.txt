@@ -3,7 +3,7 @@ add_library(ReShadeCompat STATIC)
 set_property(
   TARGET ReShadeCompat
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_EXTERNAL}
 )
 
 target_sources(ReShadeCompat PRIVATE
