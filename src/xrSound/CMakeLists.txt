@@ -3,7 +3,7 @@ add_library(xrSound STATIC)
 set_property(
   TARGET xrSound
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_XRAY_SOUND}
 )
 
 target_sources(xrSound PRIVATE

@@ -3,7 +3,7 @@ add_library(xrNetServer STATIC)
 set_property(
   TARGET xrNetServer
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_XRAY_NET_SERVER}
 )
 
 target_sources(xrNetServer PRIVATE

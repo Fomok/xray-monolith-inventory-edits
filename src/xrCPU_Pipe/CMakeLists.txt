@@ -3,7 +3,7 @@ add_library(xrCPU_Pipe STATIC)
 set_property(
   TARGET xrCPU_Pipe
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_XRAY_CPU_PIPE}
 )
 
 target_sources(xrCPU_Pipe

@@ -3,7 +3,7 @@ add_library(xrCore STATIC)
 set_property(
   TARGET xrCore
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_XRAY_CORE}
 )
 
 target_sources(xrCore

@@ -3,7 +3,7 @@ add_library(xrParticles STATIC)
 set_property(
   TARGET xrParticles
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_XRAY_PARTICLES}
 )
 
 target_sources(xrParticles

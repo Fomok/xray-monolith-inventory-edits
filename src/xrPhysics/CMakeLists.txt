@@ -3,7 +3,7 @@ add_library(xrPhysics STATIC)
 set_property(
   TARGET xrPhysics
   PROPERTY FOLDER
-  ${FOLDER_XRAY}
+  ${FOLDER_XRAY_PHYSICS}
 )
 
 target_sources(xrPhysics PRIVATE
