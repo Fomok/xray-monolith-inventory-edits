@@ -1,3 +1,5 @@
+option(ICU_STATIC "Link ICU libraries statically." Off)
+
 add_library(icu INTERFACE)
 
 set_property(
@@ -202,24 +204,31 @@ target_include_directories(icu
   ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-find_library(
-  LIBRARY_ICUUC icuuc
-  HINT ${XRAY_SDK_LIB}
-)
+if(${ICU_STATIC})
+  find_library(
+    LIBRARY_SICUDT sicudt
+    HINT ${XRAY_SDK_LIB}
+  )
 
-find_library(
-  LIBRARY_SICUDT sicudt
-  HINT ${XRAY_SDK_LIB}
-)
+  find_library(
+    LIBRARY_SICUUC sicuuc
+    HINT ${XRAY_SDK_LIB}
+  )
 
-find_library(
-  LIBRARY_SICUUC sicuuc
-  HINT ${XRAY_SDK_LIB}
-)
+  target_link_libraries(icu
+    INTERFACE
+    ${LIBRARY_SICUDT}
+    ${LIBRARY_SICUUC}
+  )
+else()
+  add_library(icuuc SHARED IMPORTED)
+  set_property(TARGET icuuc PROPERTY
+              IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/sdk/binaries/icuuc65.dll)
+  set_property(TARGET icuuc PROPERTY
+              IMPORTED_IMPLIB ${CMAKE_SOURCE_DIR}/sdk/libraries/x64.old/icuuc.lib)
 
-target_link_libraries(icu
-  INTERFACE
-  ${LIBRARY_ICUUC}
-  ${LIBRARY_SICUDT}
-  ${LIBRARY_SICUUC}
-)
+  target_link_libraries(icu
+    INTERFACE
+    icuuc
+  )
+endif()

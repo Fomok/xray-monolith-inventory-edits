@@ -46,12 +46,20 @@ target_include_directories(discord
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-find_library(
-  LIBRARY_DISCORD_GAME_SDK discord_game_sdk
-  HINT ${XRAY_SDK_LIB}
+add_library(discord_game_sdk SHARED IMPORTED)
+set_property(
+  TARGET discord_game_sdk
+  PROPERTY IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/sdk/binaries/discord_game_sdk.dll
+)
+set_property(
+  TARGET discord_game_sdk
+  PROPERTY
+  IMPORTED_IMPLIB
+  ${CMAKE_SOURCE_DIR}/sdk/libraries/x64.old/discord_game_sdk.lib
 )
 
 target_link_libraries(discord
   INTERFACE
-  ${LIBRARY_DISCORD_GAME_SDK}
+  discord_game_sdk
 )
