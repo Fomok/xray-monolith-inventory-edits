@@ -7,10 +7,10 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER CMake)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define folder names
-set(FOLDER_SDK SDK)
 set(FOLDER_EXTERNAL External)
 set(FOLDER_LUA External/Lua)
 set(FOLDER_LUA_BUILD External/Lua/Build)
+set(FOLDER_SDK External/SDK)
 set(FOLDER_XRAY X-Ray)
 set(FOLDER_XRAY_CDB X-Ray/CDB)
 set(FOLDER_XRAY_GAME X-Ray/Game)
