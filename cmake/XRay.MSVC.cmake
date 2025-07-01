@@ -73,6 +73,8 @@ set(XRAY_LINKER_FLAGS
     /ERRORREPORT:PROMPT
     # Don't use a dynamic base address
     /DYNAMICBASE:NO
+    # Allow larger PDBs
+    /PDBPAGESIZE:16384
 )
 
 # Debug linker options

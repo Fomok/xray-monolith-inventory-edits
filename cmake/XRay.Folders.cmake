@@ -8,6 +8,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 # Define folder names
 set(FOLDER_XRAY X-Ray)
+set(FOLDER_XRAY_CDB "X-Ray/CDB")
 set(FOLDER_XRAY_GAME "X-Ray/Game")
 set(FOLDER_3RD_PARTY "X-Ray/3rd Party")
 set(FOLDER_LUA X-Ray/Lua)
