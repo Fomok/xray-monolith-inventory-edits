@@ -1,5 +1,7 @@
-add_core_static(XRay.Core.Compression.LZ
+add_module(XRay.Core.Compression.LZ
+  PARENT XRay.Core
+
+  SOURCES
   LzHuf.cpp
   lzhuf.h
 )
-target_folder(XRay.Core.Compression.LZ ${FOLDER_XRAY_CORE_COMPRESSION})

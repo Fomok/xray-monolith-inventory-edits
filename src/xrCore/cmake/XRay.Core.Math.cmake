@@ -1,5 +1,7 @@
-add_core_static(XRay.Core.Math
-  PRIVATE
+add_module(XRay.Core.Math
+  PARENT XRay.Core
+  
+  SOURCES
   cpuid.cpp
   
   cpuid.h
@@ -56,5 +58,3 @@ add_core_static(XRay.Core.Math
   _vector4.h
   vector.h
 )
-
-target_folder(XRay.Core.Math ${FOLDER_XRAY_CORE})

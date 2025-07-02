@@ -1,6 +1,7 @@
-add_core_static(XRay.Core.Memory.Monitor
+add_module(XRay.Core.Memory.Monitor
+  PARENT XRay.Core
+  
+  SOURCES
   memory_monitor.cpp
   memory_monitor.h
 )
-
-target_folder(XRay.Core.Memory.Monitor ${FOLDER_XRAY_CORE_MEMORY})

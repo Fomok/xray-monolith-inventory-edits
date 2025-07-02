@@ -1,4 +1,7 @@
-add_core_static(XRay.Core.Compression.PPMD
+add_module(XRay.Core.Compression.PPMD
+  PARENT XRay.Core
+  
+  SOURCES
   PPMd.h
   PPMdType.h
   
@@ -13,5 +16,3 @@ add_core_static(XRay.Core.Compression.PPMD
   ppmd_compressor.cpp
   ppmd_compressor.h
 )
-
-target_folder(XRay.Core.Compression.PPMD ${FOLDER_XRAY_CORE_COMPRESSION})

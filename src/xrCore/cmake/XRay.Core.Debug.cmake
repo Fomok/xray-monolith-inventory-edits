@@ -1,7 +1,7 @@
-add_core_static(XRay.Core.Debug
-  PRIVATE
+add_module(XRay.Core.Debug
+  PARENT XRay.Core
+  
+  SOURCES
   #xrDebug.cpp
   xrDebugNew.cpp
 )
-
-target_folder(XRay.Core.Debug ${FOLDER_XRAY_CORE_DEBUG})

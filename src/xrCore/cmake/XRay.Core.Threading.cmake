@@ -1,5 +1,7 @@
-add_core_static(XRay.Core.Threading
-  PRIVATE
+add_module(X-Ray.Core.Threading
+  PARENT XRay.Core
+
+  SOURCES
   Lock.cpp
   ScopeLock.cpp
   xrSyncronize.cpp
@@ -8,5 +10,3 @@ add_core_static(XRay.Core.Threading
   ScopeLock.hpp
   xrSyncronize.h
 )
-
-target_folder(XRay.Core.Threading ${FOLDER_XRAY_CORE})

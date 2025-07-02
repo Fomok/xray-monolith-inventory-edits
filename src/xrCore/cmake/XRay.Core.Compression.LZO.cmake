@@ -1,5 +1,8 @@
 
-add_core_static(XRay.Core.Compression.LZO
+add_module(XRay.Core.Compression.LZO
+  PARENT XRay.Core
+  
+  SOURCES
   lzo_compressor.cpp
   rt_lzo1x_1.cpp
   rt_lzo1x_9x.cpp
@@ -19,4 +22,3 @@ add_core_static(XRay.Core.Compression.LZO
   rt_lzo_ptr.h
   rt_miniacc.h
 )
-target_folder(XRay.Core.Compression.LZO ${FOLDER_XRAY_CORE_COMPRESSION})

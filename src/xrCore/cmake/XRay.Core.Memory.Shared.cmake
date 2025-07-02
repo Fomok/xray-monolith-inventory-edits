@@ -1,4 +1,7 @@
-add_core_static(XRay.Core.Memory.Shared
+add_module(XRay.Core.Memory.Shared
+  PARENT XRay.Core
+
+  SOURCES
   crc32.cpp
   mezz_stringbuffer.cpp
   xr_shared.cpp
@@ -11,5 +14,3 @@ add_core_static(XRay.Core.Memory.Shared
   xrsharedmem.h
   xrstring.h
 )
-
-target_folder(XRay.Core.Memory.Shared ${FOLDER_XRAY_CORE_MEMORY})

@@ -1,5 +1,7 @@
-add_core_static(XRay.Core.Debug.BlackBox
-  PRIVATE
+add_module(XRay.Core.Debug.BlackBox
+  PARENT XRay.Core
+  
+  SOURCES
   blackbox/BlackBoxUI.cpp
   blackbox/BSUFunctions.cpp
   #blackbox/DiagAssert.cpp
@@ -18,5 +20,3 @@ add_core_static(XRay.Core.Debug.BlackBox
   blackbox/WarningsOff.h
   blackbox/WarningsOn.h
 )
-target_folder(XRay.Core.Debug.BlackBox ${FOLDER_XRAY_CORE_DEBUG})
-

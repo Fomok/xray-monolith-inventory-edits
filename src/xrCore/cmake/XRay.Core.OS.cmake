@@ -1,6 +1,7 @@
-add_core_static(XRay.Core.OS
+add_module(XRay.Core.OS
+  PARENT XRay.Core
+  
+  SOURCES
   os_clipboard.cpp
   os_clipboard.h
 )
-
-target_folder(XRay.Core.OS ${FOLDER_XRAY_CORE})

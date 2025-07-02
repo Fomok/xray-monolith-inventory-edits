@@ -1,4 +1,7 @@
-add_core_static(XRay.Core.Memory.Manager
+add_module(XRay.Core.Memory.Manager
+  PARENT XRay.Core
+  
+  SOURCES
   memory_allocation_stats.cpp
   memory_usage.cpp
   xrMemory.cpp
@@ -19,5 +22,3 @@ add_core_static(XRay.Core.Memory.Manager
   xrMemory_subst_borland.h
   xrMemory_subst_msvc.h
 )
-
-target_folder(XRay.Core.Memory.Manager ${FOLDER_XRAY_CORE_MEMORY})

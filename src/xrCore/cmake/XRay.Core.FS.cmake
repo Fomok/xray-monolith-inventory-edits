@@ -1,5 +1,7 @@
-add_core_static(XRay.Core.FS
-  PRIVATE
+add_module(XRay.Core.FS
+  PARENT XRay.Core
+  
+  SOURCES
   file_stream_reader.cpp
   
   file_stream_reader.h
@@ -31,5 +33,3 @@ add_core_static(XRay.Core.FS
   net_utils.h
   xr_ini.h
 )
-
-target_folder(XRay.Core.FS ${FOLDER_XRAY_CORE})
