@@ -1,3 +1,10 @@
+include(cmake/XRay.Sound.Cache.cmake)
+include(cmake/XRay.Sound.Core.cmake)
+include(cmake/XRay.Sound.Emitter.cmake)
+include(cmake/XRay.Sound.Environment.cmake)
+include(cmake/XRay.Sound.Source.cmake)
+include(cmake/XRay.Sound.Target.cmake)
+
 add_library(XRay.Sound STATIC)
 
 set_property(
@@ -10,34 +17,11 @@ target_sources(XRay.Sound PRIVATE
   guids.cpp
   OpenALDeviceList.cpp
   sound.cpp
-  SoundRender_Cache.cpp
-  SoundRender_Core.cpp
-  SoundRender_CoreA.cpp
-  SoundRender_Core_Processor.cpp
-  SoundRender_Core_SourceManager.cpp
-  SoundRender_Core_StartStop.cpp
-  SoundRender_Emitter.cpp
-  SoundRender_Emitter_FSM.cpp
-  SoundRender_Emitter_StartStop.cpp
-  SoundRender_Emitter_streamer.cpp
-  SoundRender_Environment.cpp
-  SoundRender_Source.cpp
-  SoundRender_Source_loader.cpp
-  SoundRender_Target.cpp
-  SoundRender_TargetA.cpp
 
   cl_intersect.h
   OpenALDeviceList.h
   Sound.h
   SoundRender.h
-  SoundRender_Cache.h
-  SoundRender_Core.h
-  SoundRender_CoreA.h
-  SoundRender_Emitter.h
-  SoundRender_Environment.h
-  SoundRender_Source.h
-  SoundRender_Target.h
-  SoundRender_TargetA.h
   stdafx.h
 )
 
@@ -66,4 +50,10 @@ target_link_libraries(XRay.Sound
   XRay.Core
   XRay.Render
   XRay.Render.API
+  XRay.Sound.Cache
+  XRay.Sound.Core
+  XRay.Sound.Emitter
+  XRay.Sound.Environment
+  XRay.Sound.Source
+  XRay.Sound.Target
 )
