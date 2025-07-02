@@ -1,12 +1,12 @@
-add_library(XRay.CDB.Opcode STATIC)
+add_library(XRay.Collision.Opcode STATIC)
 
 set_property(
-  TARGET XRay.CDB.Opcode
+  TARGET XRay.Collision.Opcode
   PROPERTY FOLDER
-  ${FOLDER_XRAY_CDB}
+  ${FOLDER_XRAY_COLLISION}
 )
 
-target_sources(XRay.CDB.Opcode
+target_sources(XRay.Collision.Opcode
   PRIVATE
 
   Opcode.cpp
@@ -74,21 +74,21 @@ target_sources(XRay.CDB.Opcode
   OPC_VolumeCollider.h
 )
 
-target_include_directories(XRay.CDB.Opcode
+target_include_directories(XRay.Collision.Opcode
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(XRay.CDB.Opcode
+target_precompile_headers(XRay.Collision.Opcode
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(XRay.CDB.Opcode
+target_compile_definitions(XRay.Collision.Opcode
   PRIVATE
   XRCDB_EXPORTS
 )
 
-target_link_libraries(XRay.CDB.Opcode
+target_link_libraries(XRay.Collision.Opcode
   PRIVATE
   XRay.Render.API
   XRay.Core

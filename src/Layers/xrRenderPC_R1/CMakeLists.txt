@@ -318,7 +318,7 @@ target_link_libraries(XRay.Render.R1
   LuaJIT
   NVAPI
   tbb
-  XRay.CDB
+  XRay.Collision
   XRay.Core
   XRay.CPUPipe
   XRay.Engine

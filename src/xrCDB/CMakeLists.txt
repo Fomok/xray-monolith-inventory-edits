@@ -1,15 +1,15 @@
-include(cmake/XRay.CDB.Engine.cmake)
-include(cmake/XRay.CDB.Opcode.cmake)
+include(cmake/XRay.Collision.Engine.cmake)
+include(cmake/XRay.Collision.Opcode.cmake)
 
-add_library(XRay.CDB STATIC)
+add_library(XRay.Collision STATIC)
 
 set_property(
-  TARGET XRay.CDB
+  TARGET XRay.Collision
   PROPERTY FOLDER
-  ${FOLDER_XRAY_CDB}
+  ${FOLDER_XRAY_COLLISION}
 )
 
-target_sources(XRay.CDB
+target_sources(XRay.Collision
   PRIVATE
   #cl_raypick.cpp
   Frustum.cpp
@@ -24,25 +24,25 @@ target_sources(XRay.CDB
   xrCDB.h
 )
 
-target_include_directories(XRay.CDB
+target_include_directories(XRay.Collision
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(XRay.CDB
+target_precompile_headers(XRay.Collision
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(XRay.CDB
+target_compile_definitions(XRay.Collision
   PRIVATE
   XRCDB_EXPORTS
 )
 
-target_link_libraries(XRay.CDB
+target_link_libraries(XRay.Collision
   PRIVATE
   XRay.Core
-  XRay.CDB.Engine
-  XRay.CDB.Opcode
+  XRay.Collision.Engine
+  XRay.Collision.Opcode
   XRay.Render
   XRay.Render.API
 )

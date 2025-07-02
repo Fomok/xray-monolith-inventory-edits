@@ -39,6 +39,6 @@ target_precompile_headers(XRay.CPUPipe
 target_link_libraries(XRay.CPUPipe
   PRIVATE
   XRay.Render.API
-  XRay.CDB
+  XRay.Collision
   XRay.Render
 )

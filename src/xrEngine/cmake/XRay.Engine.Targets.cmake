@@ -37,7 +37,7 @@ macro(add_engine_target name)
     LuaJIT
     ReShadeCompat
     Vfw32
-    XRay.CDB
+    XRay.Collision
     XRay.Core
     XRay.Game
     XRay.Engine

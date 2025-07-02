@@ -533,7 +533,7 @@ target_link_libraries(XRay.Game.AI
   DPlay
   luabind
   LuaJIT
-  XRay.CDB
+  XRay.Collision
   XRay.Core
   XRay.Engine
   XRay.NetServer

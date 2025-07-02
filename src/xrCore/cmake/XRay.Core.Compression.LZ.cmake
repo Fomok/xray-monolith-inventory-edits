@@ -36,5 +36,5 @@ target_link_libraries(XRay.Core.Compression.LZ
   StackWalker
   winmm
   XRay.Render.API
-  XRay.CDB
+  XRay.Collision
 )

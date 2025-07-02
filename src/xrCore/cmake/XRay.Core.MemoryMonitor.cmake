@@ -37,5 +37,5 @@ target_link_libraries(XRay.Core.MemoryMonitor
   StackWalker
   winmm
   XRay.Render.API
-  XRay.CDB
+  XRay.Collision
 )

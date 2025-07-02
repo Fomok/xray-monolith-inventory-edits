@@ -169,7 +169,7 @@ target_link_libraries(XRay.Game.Scripts
   imgui
   luabind
   LuaJIT
-  XRay.CDB
+  XRay.Collision
   XRay.Core
   XRay.Engine
   XRay.Render

@@ -1875,7 +1875,7 @@ target_link_libraries(XRay.Game
   luabind
   LuaJIT
   ode
-  XRay.CDB
+  XRay.Collision
   XRay.Core
   XRay.Engine
   XRay.Game.AI

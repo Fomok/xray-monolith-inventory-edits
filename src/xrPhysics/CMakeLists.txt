@@ -175,7 +175,7 @@ target_link_libraries(XRay.Physics
   loki
   ode
   tbb
-  XRay.CDB
+  XRay.Collision
   XRay.Engine
   XRay.Render
   XRay.Render.API

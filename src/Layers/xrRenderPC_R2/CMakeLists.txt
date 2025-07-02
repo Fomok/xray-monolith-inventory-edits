@@ -390,7 +390,7 @@ target_link_libraries(XRay.Render.R2
   LuaJIT
   NVAPI
   tbb
-  XRay.CDB
+  XRay.Collision
   XRay.Core
   XRay.Engine
   XRay.Render

@@ -64,5 +64,5 @@ target_link_libraries(XRay.Core.FS
   StackWalker
   winmm
   XRay.Render.API
-  XRay.CDB
+  XRay.Collision
 )

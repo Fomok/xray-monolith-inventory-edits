@@ -65,7 +65,7 @@ target_link_libraries(XRay.Core
   StackWalker
   winmm
   XRay.Render.API
-  XRay.CDB
+  XRay.Collision
   XRay.Core.Compression.LZ
   XRay.Core.Compression.LZO
   XRay.Core.Compression.PPMD

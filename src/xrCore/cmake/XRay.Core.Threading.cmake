@@ -41,5 +41,5 @@ target_link_libraries(XRay.Core.Threading
   StackWalker
   winmm
   XRay.Render.API
-  XRay.CDB
+  XRay.Collision
 )
