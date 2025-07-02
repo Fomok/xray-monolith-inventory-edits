@@ -1,7 +1,79 @@
-include(cmake/XRay.Game.AI.cmake)
-include(cmake/XRay.Game.Physics.cmake)
-include(cmake/XRay.Game.Scripts.cmake)
-include(cmake/XRay.Game.UI.cmake)
+macro(add_xray_game_static NAME)
+  add_library(${NAME} STATIC)
+
+  set_property(
+    TARGET ${NAME}
+    PROPERTY FOLDER
+    ${FOLDER_XRAY_GAME}
+  )
+
+  target_sources(${NAME}
+    PRIVATE
+    ${ARGN}
+  )
+
+  target_include_directories(${NAME}
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/src/xrServerEntities
+  )
+
+  target_precompile_headers(${NAME}
+    PRIVATE
+    stdafx.h
+  )
+
+  target_compile_definitions(${NAME}
+    PUBLIC
+    XRGAME_EXPORTS
+  )
+
+  target_link_libraries(${NAME}
+    PRIVATE
+    DPlay
+    luabind
+    LuaJIT
+    XRay.Collision
+    XRay.Core
+    XRay.Engine
+    XRay.NetServer
+    XRay.Physics
+    XRay.Render
+    XRay.Render.API
+  )
+
+  target_link_libraries(XRay.Game
+    PRIVATE
+    ${NAME}
+  )
+endmacro()
+
+macro(add_xray_game_interface NAME)
+  add_library(${NAME} INTERFACE)
+
+  set_property(
+    TARGET ${NAME}
+    PROPERTY FOLDER
+    ${FOLDER_XRAY_GAME}
+  )
+
+  target_sources(${NAME}
+    INTERFACE
+    ${ARGN}
+  )
+
+  target_include_directories(${NAME}
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_SOURCE_DIR}/src/xrServerEntities
+  )
+
+  target_link_libraries(XRay.Game
+    PRIVATE
+    ${NAME}
+  )
+endmacro()
 
 add_library(XRay.Game STATIC)
 
@@ -75,9 +147,6 @@ target_sources(XRay.Game
   account_manager.cpp
   account_manager_console.cpp
   account_manager_script.cpp
-  action_base_script.cpp
-  action_planner_action_script.cpp
-  action_planner_script.cpp
   ActivatingCharCollisionDelay.cpp
   Actor.cpp
   ActorAnimation.cpp
@@ -119,8 +188,6 @@ target_sources(XRay.Game
   agent_manager_properties.cpp
   agent_member_manager.cpp
   agent_memory_manager.cpp
-  aimers_base.cpp
-  aimers_weapon.cpp
   alife_anomalous_zone.cpp
   alife_combat_manager.cpp
   alife_communication_manager.cpp
@@ -229,8 +296,6 @@ target_sources(XRay.Game
   console_commands_mp.cpp
   console_registrator_script.cpp
   cover_evaluators.cpp
-  cover_manager.cpp
-  cover_point_script.cpp
   cta_game_artefact.cpp
   cta_game_artefact_activation.cpp
   CustomDetector.cpp
@@ -243,12 +308,9 @@ target_sources(XRay.Game
   CustomZone.cpp
   CustomZone_script.cpp
   DamagableItem.cpp
-  damage_manager.cpp
   danger_cover_location.cpp
   danger_explosive.cpp
   danger_location.cpp
-  danger_manager.cpp
-  danger_object.cpp
   danger_object_location.cpp
   date_time.cpp
   DBG_Car.cpp
@@ -263,11 +325,6 @@ target_sources(XRay.Game
   DemoInfo_Loader.cpp
   DemoPLay_Control.cpp
   DestroyablePhysicsObject.cpp
-  detail_path_manager.cpp
-  detail_path_manager_smooth.cpp
-  doors_actor.cpp
-  doors_door.cpp
-  doors_manager.cpp
   Dosimeter.cpp
   double_shot_double_kill.cpp
   DummyArtifact.cpp
@@ -288,7 +345,6 @@ target_sources(XRay.Game
   ElectricBall.cpp
   EliteDetector.cpp
   encyclopedia_article.cpp
-  enemy_manager.cpp
   Entity.cpp
   EntityCondition.cpp
   entity_alive.cpp
@@ -376,7 +432,6 @@ target_sources(XRay.Game
   HitMarker.cpp
   hits_store.cpp
   hit_immunity.cpp
-  hit_memory_manager.cpp
   holder_custom.cpp
   holder_custom_script.cpp
   HUDCrosshair.cpp
@@ -427,7 +482,6 @@ target_sources(XRay.Game
   inventory_upgrade_property.cpp
   inventory_upgrade_root.cpp
   invincible_fury.cpp
-  item_manager.cpp
   key_binding_registrator_script.cpp
   killer_victim_velocity_angle.cpp
   kills_store.cpp
@@ -460,7 +514,6 @@ target_sources(XRay.Game
   Level_SLS_Save.cpp
   level_sounds.cpp
   Level_start.cpp
-  location_manager.cpp
   login_manager.cpp
   login_manager_script.cpp
   magic_box3.cpp
@@ -469,11 +522,8 @@ target_sources(XRay.Game
   map_location.cpp
   map_manager.cpp
   map_spot.cpp
-  material_manager.cpp
   medkit.cpp
   medkit_script.cpp
-  memory_manager.cpp
-  memory_space_script.cpp
   MercuryBall.cpp
   Message_Filter.cpp
   MilitaryOutfit.cpp
@@ -484,28 +534,12 @@ target_sources(XRay.Game
   monster_community.cpp
   MosquitoBald.cpp
   MosquitoBald_script.cpp
-  movement_manager.cpp
-  movement_manager_game.cpp
-  movement_manager_level.cpp
-  movement_manager_patrol.cpp
-  movement_manager_physic.cpp
   moving_bones_snd_player.cpp
-  moving_object.cpp
-  moving_objects.cpp
-  moving_objects_dynamic.cpp
-  moving_objects_dynamic_collision.cpp
-  moving_objects_static.cpp
   mpactor_dump_impl.cpp
   MPPlayersBag.cpp
   mp_config_sections.cpp
   Needles.cpp
   NoGravityZone.cpp
-  object_actions.cpp
-  object_handler.cpp
-  object_handler_planner.cpp
-  object_handler_planner_missile.cpp
-  object_handler_planner_weapon.cpp
-  object_property_evaluators.cpp
   obstacles_query.cpp
   ParticlesObject.cpp
   ParticlesPlayer.cpp
@@ -554,8 +588,6 @@ target_sources(XRay.Game
   profile_data_types_script.cpp
   profile_store.cpp
   profile_store_script.cpp
-  property_evaluator_script.cpp
-  property_storage_script.cpp
   purchase_list.cpp
   RadioactiveZone.cpp
   random32.cpp
@@ -567,7 +599,6 @@ target_sources(XRay.Game
   relation_registry.cpp
   relation_registry_actions.cpp
   relation_registry_fights.cpp
-  restricted_object.cpp
   restricted_object_obstacle.cpp
   rewarding_events_handlers.cpp
   rewarding_state_events.cpp
@@ -591,40 +622,9 @@ target_sources(XRay.Game
   server_entity_wrapper.cpp
   ShootingObject.cpp
   shootingObject_dump_impl.cpp
-  sight_action.cpp
-  sight_manager.cpp
-  sight_manager_target.cpp
   Silencer.cpp
   silent_shots.cpp
   SimpleDetector.cpp
-  smart_cover.cpp
-  smart_cover_action.cpp
-  smart_cover_animation_planner.cpp
-  smart_cover_animation_selector.cpp
-  smart_cover_default_behaviour_planner.cpp
-  smart_cover_description.cpp
-  smart_cover_detail.cpp
-  smart_cover_evaluators.cpp
-  smart_cover_loophole.cpp
-  smart_cover_loophole_planner_actions.cpp
-  smart_cover_object.cpp
-  smart_cover_object_script.cpp
-  smart_cover_planner_actions.cpp
-  smart_cover_planner_target_provider.cpp
-  smart_cover_planner_target_selector.cpp
-  smart_cover_storage.cpp
-  smart_cover_transition.cpp
-  smart_cover_transition_animation.cpp
-  sound_collection_storage.cpp
-  sound_memory_manager.cpp
-  sound_player.cpp
-  space_restriction.cpp
-  space_restriction_base.cpp
-  space_restriction_bridge.cpp
-  space_restriction_composition.cpp
-  space_restriction_holder.cpp
-  space_restriction_manager.cpp
-  space_restriction_shape.cpp
   space_restrictor.cpp
   space_restrictor_script.cpp
   Spectator.cpp
@@ -695,7 +695,6 @@ target_sources(XRay.Game
   stats_submitter.cpp
   stats_submitter_dsa_params.cpp
   steering_behaviour.cpp
-  step_manager.cpp
   string_table.cpp
   team_base_zone.cpp
   team_hierarchy_holder.cpp
@@ -711,9 +710,6 @@ target_sources(XRay.Game
   traffic_optimization.cpp
   trajectories.cpp
   UsableScriptObject.cpp
-  vision_client.cpp
-  visual_memory_manager.cpp
-  visual_memory_params.cpp
   wallmark_manager.cpp
   Weapon.cpp
   WeaponAK74.cpp
@@ -852,7 +848,6 @@ target_sources(XRay.Game
   ../xrServerEntities/object_type_traits.h
   ../xrServerEntities/pch_script.h
   ../xrServerEntities/PropertiesListTypes.h
-  ../xrServerEntities/restriction_space.h
   ../xrServerEntities/script_callStack.h
   ../xrServerEntities/script_debugger.h
   ../xrServerEntities/script_debugger_messages.h
@@ -910,26 +905,12 @@ target_sources(XRay.Game
   ../xrServerEntities/xrServer_Object_Base.h
   ../xrServerEntities/xrServer_script_macroses.h
   ../xrServerEntities/xrServer_Space.h
-  abstract_location_selector.h
-  abstract_location_selector_inline.h
-  abstract_path_manager.h
-  abstract_path_manager_inline.h
   account_manager.h
   account_manager_console.h
   accumulative_states.h
   action_base.h
   action_base_inline.h
   action_management_config.h
-  action_planner.h
-  action_planner_action.h
-  action_planner_action_inline.h
-  action_planner_action_script.h
-  action_planner_action_script_inline.h
-  action_planner_inline.h
-  action_planner_script.h
-  action_planner_script_inline.h
-  action_script_base.h
-  action_script_base_inline.h
   ActivatingCharCollisionDelay.h
   Actor.h
   ActorAnimation.h
@@ -969,12 +950,6 @@ target_sources(XRay.Game
   agent_member_manager_inline.h
   agent_memory_manager.h
   agent_memory_manager_inline.h
-  aimers_base.h
-  aimers_base_inline.h
-  aimers_bone.h
-  aimers_bone_inline.h
-  aimers_weapon.h
-  aimers_weapon_inline.h
   alife_abstract_registry.h
   alife_abstract_registry_inline.h
   alife_combat_manager.h
@@ -1096,21 +1071,13 @@ target_sources(XRay.Game
   client_spawn_manager_inline.h
   ClimableObject.h
   command_switch_counter.h
-  condition_state.h
-  condition_state_inline.h
   configs_common.h
   configs_dumper.h
   configs_dump_verifyer.h
   console_registrator.h
   controller_state_panic_inline.h
-  control_action.h
-  control_action_inline.h
   cover_evaluators.h
   cover_evaluators_inline.h
-  cover_manager.h
-  cover_manager_inline.h
-  cover_point.h
-  cover_point_inline.h
   cta_game_artefact.h
   cta_game_artefact_activation.h
   CustomDetector.h
@@ -1121,19 +1088,12 @@ target_sources(XRay.Game
   CustomRocket.h
   CustomZone.h
   DamagableItem.h
-  DamageSource.h
-  damage_manager.h
-  damage_manager_inline.h
   danger_cover_location.h
   danger_cover_location_inline.h
   danger_explosive.h
   danger_explosive_inline.h
   danger_location.h
   danger_location_inline.h
-  danger_manager.h
-  danger_manager_inline.h
-  danger_object.h
-  danger_object_inline.h
   danger_object_location.h
   danger_object_location_inline.h
   data_storage_binary_heap.h
@@ -1157,16 +1117,9 @@ target_sources(XRay.Game
   DemoInfo_Loader.h
   DemoPlay_Control.h
   DestroyablePhysicsObject.h
-  detail_path_builder.h
-  detail_path_manager.h
-  detail_path_manager_inline.h
-  detail_path_manager_space.h
   dijkstra.h
   dijkstra_inline.h
   doors.h
-  doors_actor.h
-  doors_door.h
-  doors_manager.h
   Dosimeter.h
   double_shot_double_kill.h
   DummyArtifact.h
@@ -1191,8 +1144,6 @@ target_sources(XRay.Game
   EliteDetector.h
   encyclopedia_article.h
   encyclopedia_article_defs.h
-  enemy_manager.h
-  enemy_manager_inline.h
   Entity.h
   EntityCondition.h
   entity_alive.h
@@ -1248,12 +1199,8 @@ target_sources(XRay.Game
   game_graph_inline.h
   game_level_cross_table.h
   game_level_cross_table_inline.h
-  game_location_selector.h
-  game_location_selector_inline.h
   game_news.h
   game_object_space.h
-  game_path_manager.h
-  game_path_manager_inline.h
   game_state_accumulator.h
   game_state_accumulator_inline.h
   game_sv_artefacthunt.h
@@ -1293,8 +1240,6 @@ target_sources(XRay.Game
   hits_store_inline.h
   hit_immunity.h
   hit_immunity_space.h
-  hit_memory_manager.h
-  hit_memory_manager_inline.h
   holder_custom.h
   HUDCrosshair.h
   HudItem.h
@@ -1355,7 +1300,6 @@ target_sources(XRay.Game
   inventory_upgrade_root.h
   inventory_upgrade_root_inline.h
   invincible_fury.h
-  item_manager.h
   key_binding_registrator.h
   killer_victim_velocity_angle.h
   kills_store.h
@@ -1373,12 +1317,7 @@ target_sources(XRay.Game
   level_location_selector_inline.h
   Level_network_Demo.h
   Level_network_map_sync.h
-  level_path_builder.h
-  level_path_manager.h
-  level_path_manager_inline.h
   level_sounds.h
-  location_manager.h
-  location_manager_inline.h
   login_manager.h
   magic_box3.h
   magic_box3_inline.h
@@ -1393,8 +1332,6 @@ target_sources(XRay.Game
   map_location_defs.h
   map_manager.h
   map_spot.h
-  material_manager.h
-  material_manager_inline.h
   medkit.h
   member_corpse.h
   member_corpse_inline.h
@@ -1402,10 +1339,6 @@ target_sources(XRay.Game
   member_enemy_inline.h
   member_order.h
   member_order_inline.h
-  memory_manager.h
-  memory_manager_inline.h
-  memory_space.h
-  memory_space_impl.h
   MercuryBall.h
   Message_Filter.h
   MilitaryOutfit.h
@@ -1415,16 +1348,7 @@ target_sources(XRay.Game
   mixed_delegate_unique_tags.h
   monster_community.h
   MosquitoBald.h
-  movement_manager.h
-  movement_manager_impl.h
-  movement_manager_inline.h
-  movement_manager_space.h
   moving_bones_snd_player.h
-  moving_object.h
-  moving_objects.h
-  moving_objects_impl.h
-  moving_objects_inline.h
-  moving_object_inline.h
   MPPlayersBag.h
   mp_config_sections.h
   mt_config.h
@@ -1433,26 +1357,12 @@ target_sources(XRay.Game
   NewZoomFlag.h
   new_sds.h
   NoGravityZone.h
-  object_actions.h
-  object_actions_inline.h
-  object_handler.h
-  object_handler_inline.h
-  object_handler_planner.h
-  object_handler_planner_impl.h
-  object_handler_planner_inline.h
-  object_handler_space.h
   object_manager.h
   object_manager_inline.h
-  object_property_evaluators.h
-  object_property_evaluators_inline.h
   obsolete_queue.h
   obsolete_queue_inline.h
   obstacles_query.h
   obstacles_query_inline.h
-  operator_abstract.h
-  operator_abstract_inline.h
-  operator_condition.h
-  operator_condition_inline.h
   ParticlesObject.h
   ParticlesPlayer.h
   particle_params.h
@@ -1484,9 +1394,6 @@ target_sources(XRay.Game
   path_manager_solver_inline.h
   patrol_path.h
   patrol_path_inline.h
-  patrol_path_manager.h
-  patrol_path_manager_inline.h
-  patrol_path_manager_space.h
   patrol_path_params.h
   patrol_path_params_inline.h
   patrol_path_storage.h
@@ -1541,18 +1448,8 @@ target_sources(XRay.Game
   PostprocessAnimator.h
   pp_effector_custom.h
   pp_effector_distance.h
-  problem_solver.h
-  problem_solver_inline.h
   profile_data_types.h
   profile_store.h
-  property_evaluator.h
-  property_evaluator_const.h
-  property_evaluator_const_inline.h
-  property_evaluator_inline.h
-  property_evaluator_member.h
-  property_evaluator_member_inline.h
-  property_storage.h
-  property_storage_inline.h
   purchase_list.h
   purchase_list_inline.h
   quadtree.h
@@ -1572,8 +1469,6 @@ target_sources(XRay.Game
   relation_registry.h
   relation_registry_defs.h
   relation_registry_inline.h
-  restricted_object.h
-  restricted_object_inline.h
   restricted_object_obstacle.h
   rewarding_events_handlers.h
   rewarding_state_events.h
@@ -1601,72 +1496,11 @@ target_sources(XRay.Game
   seniority_hierarchy_space.h
   server_entity_wrapper.h
   server_entity_wrapper_inline.h
-  setup_manager.h
-  setup_manager_inline.h
   ShootingObject.h
-  sight_action.h
-  sight_action_inline.h
-  sight_control_action.h
-  sight_control_action_inline.h
-  sight_manager.h
-  sight_manager_inline.h
-  sight_manager_space.h
   Silencer.h
   silent_shots.h
   SimpleDetector.h
-  smart_cover.h
-  smart_cover_action.h
-  smart_cover_action_inline.h
-  smart_cover_animation_planner.h
-  smart_cover_animation_planner_inline.h
-  smart_cover_animation_selector.h
-  smart_cover_animation_selector_inline.h
-  smart_cover_default_behaviour_planner.hpp
-  smart_cover_default_behaviour_planner_inline.hpp
-  smart_cover_description.h
-  smart_cover_description_inline.h
-  smart_cover_detail.h
-  smart_cover_evaluators.h
-  smart_cover_inline.h
-  smart_cover_loophole.h
-  smart_cover_loophole_inline.h
-  smart_cover_loophole_planner_actions.h
-  smart_cover_loophole_planner_actions_inline.h
-  smart_cover_object.h
-  smart_cover_object_inline.h
-  smart_cover_planner_actions.h
-  smart_cover_planner_actions_inline.h
-  smart_cover_planner_target_provider.h
-  smart_cover_planner_target_selector.h
-  smart_cover_planner_target_selector_inline.h
-  smart_cover_storage.h
-  smart_cover_transition.hpp
-  smart_cover_transition_animation.hpp
-  smart_cover_transition_animation_inline.hpp
   smart_zone.h
-  sound_collection_storage.h
-  sound_collection_storage_inline.h
-  sound_memory_manager.h
-  sound_memory_manager_inline.h
-  sound_player.h
-  sound_player_inline.h
-  sound_user_data_visitor.h
-  space_restriction.h
-  space_restriction_abstract.h
-  space_restriction_abstract_inline.h
-  space_restriction_base.h
-  space_restriction_base_inline.h
-  space_restriction_bridge.h
-  space_restriction_bridge_inline.h
-  space_restriction_composition.h
-  space_restriction_composition_inline.h
-  space_restriction_holder.h
-  space_restriction_holder_inline.h
-  space_restriction_inline.h
-  space_restriction_manager.h
-  space_restriction_manager_inline.h
-  space_restriction_shape.h
-  space_restriction_shape_inline.h
   space_restrictor.h
   space_restrictor_inline.h
   Spectator.h
@@ -1756,8 +1590,6 @@ target_sources(XRay.Game
   steering_behaviour_cohesion.h
   steering_behaviour_manager.h
   steering_behaviour_separation.h
-  step_manager.h
-  step_manager_defs.h
   string_table.h
   string_table_defs.h
   team_base_zone.h
@@ -1790,11 +1622,6 @@ target_sources(XRay.Game
   vertex_manager_hash_fixed_inline.h
   vertex_path.h
   vertex_path_inline.h
-  vision_client.h
-  vision_client_inline.h
-  visual_memory_manager.h
-  visual_memory_manager_inline.h
-  visual_memory_params.h
   wallmark_manager.h
   Weapon.h
   WeaponAK74.h
@@ -1878,7 +1705,6 @@ target_link_libraries(XRay.Game
   XRay.Collision
   XRay.Core
   XRay.Engine
-  XRay.Game.AI
   XRay.Game.Physics
   XRay.Game.Scripts
   XRay.Game.UI
@@ -1887,3 +1713,8 @@ target_link_libraries(XRay.Game
   XRay.Render
   XRay.Render.API
 )
+
+include(cmake/XRay.Game.AI.cmake)
+include(cmake/XRay.Game.Physics.cmake)
+include(cmake/XRay.Game.Scripts.cmake)
+include(cmake/XRay.Game.UI.cmake)

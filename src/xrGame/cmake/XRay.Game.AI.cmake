@@ -1,12 +1,4 @@
-add_library(XRay.Game.AI STATIC)
-
-set_property(
-  TARGET XRay.Game.AI
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_GAME}
-)
-
-target_sources(XRay.Game.AI PRIVATE
+add_xray_game_static(XRay.Game.AI
   ai/ai_monsters_misc.cpp
   ai/crow/ai_crow.cpp
   ai/monsters/ai_monster_bones.cpp
@@ -511,33 +503,5 @@ target_sources(XRay.Game.AI PRIVATE
   ai_space_inline.h
 )
 
-target_include_directories(XRay.Game.AI
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  PRIVATE
-  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
-)
-
-target_precompile_headers(XRay.Game.AI
-  PRIVATE
-  stdafx.h
-)
-
-target_compile_definitions(XRay.Game.AI
-  PUBLIC
-  XRGAME_EXPORTS
-)
-
-target_link_libraries(XRay.Game.AI
-  PRIVATE
-  DPlay
-  luabind
-  LuaJIT
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.NetServer
-  XRay.Physics
-  XRay.Render
-  XRay.Render.API
-)
+include(cmake/XRay.Game.AI.Components.cmake)
+include(cmake/XRay.Game.AI.Cover.cmake)
