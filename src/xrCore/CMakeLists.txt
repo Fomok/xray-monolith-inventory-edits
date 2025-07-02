@@ -1,18 +1,56 @@
-include(cmake/XRay.Core.Compression.LZ.cmake)
-include(cmake/XRay.Core.Compression.LZO.cmake)
-include(cmake/XRay.Core.Compression.PPMD.cmake)
-include(cmake/XRay.Core.Compression.RT.cmake)
-include(cmake/XRay.Core.Debug.cmake)
-include(cmake/XRay.Core.Debug.BlackBox.cmake)
-include(cmake/XRay.Core.FS.cmake)
-include(cmake/XRay.Core.IntrusivePointer.cmake)
-include(cmake/XRay.Core.Math.cmake)
-include(cmake/XRay.Core.MemoryManager.cmake)
-include(cmake/XRay.Core.MemoryMonitor.cmake)
-include(cmake/XRay.Core.OS.cmake)
-include(cmake/XRay.Core.Profiling.cmake)
-include(cmake/XRay.Core.SharedMemory.cmake)
-include(cmake/XRay.Core.Threading.cmake)
+macro(add_core_static NAME)
+  add_library(${NAME} STATIC)
+
+  target_sources(${NAME}
+    PRIVATE
+    ${ARGN}
+  )
+
+  target_include_directories(${NAME}
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+  target_precompile_headers(${NAME}
+    PRIVATE
+    stdafx.h
+  )
+
+  target_compile_definitions(${NAME}
+    PRIVATE
+    PURE_ALLOC
+    XRCORE_EXPORTS
+    PORTABLE_BUGSLAYERUTIL
+  )
+
+  target_link_libraries(${NAME}
+    PRIVATE
+    DXERR
+    optick
+    StackWalker
+    winmm
+    XRay.Render.API
+    XRay.Collision
+  )
+
+  target_link_libraries(XRay.Core PRIVATE ${NAME})
+endmacro()
+
+macro(add_core_interface NAME)
+  add_library(${NAME} INTERFACE)
+
+  target_sources(${NAME}
+    PRIVATE
+    ${ARGN}
+  )
+
+  target_include_directories(${NAME}
+    INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+  )
+
+  target_link_libraries(XRay.Core PRIVATE ${NAME})
+endmacro()
 
 add_library(XRay.Core STATIC)
 
@@ -62,19 +100,20 @@ target_link_libraries(XRay.Core
   winmm
   XRay.Render.API
   XRay.Collision
-  XRay.Core.Compression.LZ
-  XRay.Core.Compression.LZO
-  XRay.Core.Compression.PPMD
-  XRay.Core.Compression.RT
-  XRay.Core.Debug
-  XRay.Core.Debug.BlackBox
-  XRay.Core.FS
-  XRay.Core.IntrusivePointer
-  XRay.Core.Math
-  XRay.Core.MemoryManager
-  XRay.Core.MemoryMonitor
-  XRay.Core.OS
-  XRay.Core.Profiling
-  XRay.Core.SharedMemory
-  XRay.Core.Threading
 )
+
+include(cmake/XRay.Core.Compression.LZ.cmake)
+include(cmake/XRay.Core.Compression.LZO.cmake)
+include(cmake/XRay.Core.Compression.PPMD.cmake)
+include(cmake/XRay.Core.Compression.RT.cmake)
+include(cmake/XRay.Core.Debug.cmake)
+include(cmake/XRay.Core.Debug.BlackBox.cmake)
+include(cmake/XRay.Core.FS.cmake)
+include(cmake/XRay.Core.IntrusivePointer.cmake)
+include(cmake/XRay.Core.Math.cmake)
+include(cmake/XRay.Core.Memory.Manager.cmake)
+include(cmake/XRay.Core.Memory.Monitor.cmake)
+include(cmake/XRay.Core.Memory.Shared.cmake)
+include(cmake/XRay.Core.OS.cmake)
+include(cmake/XRay.Core.Profiling.cmake)
+include(cmake/XRay.Core.Threading.cmake)

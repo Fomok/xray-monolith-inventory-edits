@@ -1,8 +1,6 @@
 macro(add_xray_game_static NAME)
   add_library(${NAME} STATIC)
 
-  target_folder(${NAME} ${FOLDER_XRAY_GAME})
-
   target_sources(${NAME}
     PRIVATE
     ${ARGN}
@@ -47,8 +45,6 @@ endmacro()
 
 macro(add_xray_game_interface NAME)
   add_library(${NAME} INTERFACE)
-
-  target_folder(${NAME} ${FOLDER_XRAY_GAME})
 
   target_sources(${NAME}
     INTERFACE

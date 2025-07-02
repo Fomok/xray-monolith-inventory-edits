@@ -1,9 +1,4 @@
-add_library(XRay.Core.Compression.PPMD STATIC)
-
-target_folder(XRay.Core.Compression.PPMD ${FOLDER_XRAY_CORE})
-
-target_sources(XRay.Core.Compression.PPMD
-  PRIVATE
+add_core_static(XRay.Core.Compression.PPMD
   PPMd.h
   PPMdType.h
   
@@ -19,29 +14,4 @@ target_sources(XRay.Core.Compression.PPMD
   ppmd_compressor.h
 )
 
-target_include_directories(XRay.Core.Compression.PPMD
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Core.Compression.PPMD
-  PRIVATE
-  stdafx.h
-)
-
-target_compile_definitions(XRay.Core.Compression.PPMD
-  PRIVATE
-  PURE_ALLOC
-  XRCORE_EXPORTS
-  PORTABLE_BUGSLAYERUTIL
-)
-
-target_link_libraries(XRay.Core.Compression.PPMD
-  PRIVATE
-  DXERR
-  optick
-  StackWalker
-  winmm
-  XRay.Render.API
-  XRay.Collision
-)
+target_folder(XRay.Core.Compression.PPMD ${FOLDER_XRAY_CORE_COMPRESSION})

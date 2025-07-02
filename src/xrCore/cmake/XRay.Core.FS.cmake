@@ -1,8 +1,4 @@
-add_library(XRay.Core.FS STATIC)
-
-target_folder(XRay.Core.FS ${FOLDER_XRAY_CORE})
-
-target_sources(XRay.Core.FS
+add_core_static(XRay.Core.FS
   PRIVATE
   file_stream_reader.cpp
   
@@ -36,29 +32,4 @@ target_sources(XRay.Core.FS
   xr_ini.h
 )
 
-target_include_directories(XRay.Core.FS
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Core.FS
-  PRIVATE
-  stdafx.h
-)
-
-target_compile_definitions(XRay.Core.FS
-  PRIVATE
-  PURE_ALLOC
-  XRCORE_EXPORTS
-  PORTABLE_BUGSLAYERUTIL
-)
-
-target_link_libraries(XRay.Core.FS
-  PRIVATE
-  DXERR
-  optick
-  StackWalker
-  winmm
-  XRay.Render.API
-  XRay.Collision
-)
+target_folder(XRay.Core.FS ${FOLDER_XRAY_CORE})

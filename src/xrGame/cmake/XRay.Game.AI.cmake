@@ -503,5 +503,7 @@ add_xray_game_static(XRay.Game.AI
   ai_space_inline.h
 )
 
+target_folder(XRay.Game.AI ${FOLDER_XRAY_GAME_AI})
+
 include(cmake/XRay.Game.AI.Components.cmake)
 include(cmake/XRay.Game.AI.Cover.cmake)

@@ -1,8 +1,4 @@
-add_library(XRay.Core.Debug.BlackBox STATIC)
-
-target_folder(XRay.Core.Debug.BlackBox ${FOLDER_XRAY_CORE})
-
-target_sources(XRay.Core.Debug.BlackBox
+add_core_static(XRay.Core.Debug.BlackBox
   PRIVATE
   blackbox/BlackBoxUI.cpp
   blackbox/BSUFunctions.cpp
@@ -22,30 +18,5 @@ target_sources(XRay.Core.Debug.BlackBox
   blackbox/WarningsOff.h
   blackbox/WarningsOn.h
 )
+target_folder(XRay.Core.Debug.BlackBox ${FOLDER_XRAY_CORE_DEBUG})
 
-target_include_directories(XRay.Core.Debug.BlackBox
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Core.Debug.BlackBox
-  PRIVATE
-  stdafx.h
-)
-
-target_compile_definitions(XRay.Core.Debug.BlackBox
-  PRIVATE
-  PURE_ALLOC
-  XRCORE_EXPORTS
-  PORTABLE_BUGSLAYERUTIL
-)
-
-target_link_libraries(XRay.Core.Debug.BlackBox
-  PRIVATE
-  DXERR
-  optick
-  StackWalker
-  winmm
-  XRay.Render.API
-  XRay.Collision
-)

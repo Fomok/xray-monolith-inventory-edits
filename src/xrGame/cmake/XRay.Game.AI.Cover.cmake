@@ -56,3 +56,5 @@ add_xray_game_static(XRay.Game.AI.Cover
   cover_manager.h
   cover_manager_inline.h
 )
+
+target_folder(XRay.Game.AI.Cover ${FOLDER_XRAY_GAME_AI})

@@ -1,0 +1,23 @@
+add_core_static(XRay.Core.Memory.Manager
+  memory_allocation_stats.cpp
+  memory_usage.cpp
+  xrMemory.cpp
+  xrMemory_align.cpp
+  xrMemory_debug.cpp
+  xrMemory_POOL.cpp
+  xrMemory_pso_Copy.cpp
+  xrMemory_pso_Fill.cpp
+  xrMemory_pso_Fill32.cpp
+  xrMemory_subst_borland.cpp
+  xrMemory_subst_msvc.cpp
+  
+  xrMemory.h
+  xrMemory_align.h
+  xrMEMORY_POOL.h
+  xrMemory_pso.h
+  xrMemory_pure.h
+  xrMemory_subst_borland.h
+  xrMemory_subst_msvc.h
+)
+
+target_folder(XRay.Core.Memory.Manager ${FOLDER_XRAY_CORE_MEMORY})

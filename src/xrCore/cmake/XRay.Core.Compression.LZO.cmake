@@ -1,9 +1,5 @@
-add_library(XRay.Core.Compression.LZO STATIC)
 
-target_folder(XRay.Core.Compression.LZO ${FOLDER_XRAY_CORE})
-
-target_sources(XRay.Core.Compression.LZO
-  PRIVATE
+add_core_static(XRay.Core.Compression.LZO
   lzo_compressor.cpp
   rt_lzo1x_1.cpp
   rt_lzo1x_9x.cpp
@@ -23,30 +19,4 @@ target_sources(XRay.Core.Compression.LZO
   rt_lzo_ptr.h
   rt_miniacc.h
 )
-
-target_include_directories(XRay.Core.Compression.LZO
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Core.Compression.LZO
-  PRIVATE
-  stdafx.h
-)
-
-target_compile_definitions(XRay.Core.Compression.LZO
-  PRIVATE
-  PURE_ALLOC
-  XRCORE_EXPORTS
-  PORTABLE_BUGSLAYERUTIL
-)
-
-target_link_libraries(XRay.Core.Compression.LZO
-  PRIVATE
-  DXERR
-  optick
-  StackWalker
-  winmm
-  XRay.Render.API
-  XRay.Collision
-)
+target_folder(XRay.Core.Compression.LZO ${FOLDER_XRAY_CORE_COMPRESSION})

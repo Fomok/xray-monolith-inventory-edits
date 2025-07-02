@@ -1,8 +1,5 @@
-add_library(XRay.Core.Profiling INTERFACE)
-
-target_folder(XRay.Core.Profiling ${FOLDER_XRAY_CORE})
-
-target_sources(XRay.Core.Profiling
-  INTERFACE
+add_core_interface(XRay.Core.Profiling
   profiler.h
 )
+
+target_folder(XRay.Core.Profiling ${FOLDER_XRAY_CORE})

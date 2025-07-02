@@ -1,17 +1,27 @@
-add_xray_game_static(XRay.Game.AI.Components.Damage
+macro (add_components_static NAME)
+  add_xray_game_static(${NAME} ${ARGN})
+  target_folder(${NAME} ${FOLDER_XRAY_GAME_AI_COMPONENTS})
+endmacro()
+
+macro(add_components_interface NAME)
+  add_xray_game_interface(${NAME} ${ARGN})
+  target_folder(${NAME} ${FOLDER_XRAY_GAME_AI_COMPONENTS})
+endmacro()
+
+add_components_static(XRay.Game.AI.Components.Damage
   DamageSource.h
   damage_manager.cpp
   damage_manager.h
   damage_manager_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Action.Base
+add_components_static(XRay.Game.AI.Components.Action.Base
   action_base_script.cpp
   action_script_base.h
   action_script_base_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Action.Planner
+add_components_static(XRay.Game.AI.Components.Action.Planner
   action_planner_script.cpp
   action_planner_script.h
   action_planner_script_inline.h
@@ -19,7 +29,7 @@ add_xray_game_static(XRay.Game.AI.Components.Action.Planner
   action_planner_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Action.Planner.Action
+add_components_static(XRay.Game.AI.Components.Action.Planner.Action
   action_planner_action_script.cpp
   action_planner_action.h
   action_planner_action_inline.h
@@ -27,13 +37,13 @@ add_xray_game_static(XRay.Game.AI.Components.Action.Planner.Action
   action_planner_action_script_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.PropertyStorage
+add_components_static(XRay.Game.AI.Components.PropertyStorage
   property_storage_script.cpp
   property_storage.h
   property_storage_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.WorldPropertyEvaluator
+add_components_static(XRay.Game.AI.Components.WorldPropertyEvaluator
   property_evaluator_script.cpp
   property_evaluator.h
   property_evaluator_const.h
@@ -43,7 +53,7 @@ add_xray_game_static(XRay.Game.AI.Components.WorldPropertyEvaluator
   property_evaluator_member_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Danger
+add_components_static(XRay.Game.AI.Components.Danger
   danger_manager.cpp
   danger_object.cpp
 
@@ -53,18 +63,18 @@ add_xray_game_static(XRay.Game.AI.Components.Danger
   danger_object_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Enemy
+add_components_static(XRay.Game.AI.Components.Enemy
   enemy_manager.cpp
   enemy_manager.h
   enemy_manager_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Item
+add_components_static(XRay.Game.AI.Components.Item
   item_manager.cpp
   item_manager.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Doors
+add_components_static(XRay.Game.AI.Components.Doors
   doors_actor.cpp
   doors_door.cpp
   doors_manager.cpp
@@ -73,13 +83,13 @@ add_xray_game_static(XRay.Game.AI.Components.Doors
   doors_manager.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Material
+add_components_static(XRay.Game.AI.Components.Material
   material_manager.cpp
   material_manager.h
   material_manager_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Memory
+add_components_static(XRay.Game.AI.Components.Memory
   memory_manager.cpp
   memory_manager.h
   memory_manager_inline.h
@@ -89,20 +99,20 @@ add_xray_game_static(XRay.Game.AI.Components.Memory
   memory_space_impl.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Memory.Hit
+add_components_static(XRay.Game.AI.Components.Memory.Hit
   hit_memory_manager.cpp
   hit_memory_manager.h
   hit_memory_manager_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Memory.Sound
+add_components_static(XRay.Game.AI.Components.Memory.Sound
   sound_memory_manager.cpp
   sound_memory_manager.h
   sound_memory_manager_inline.h
   sound_user_data_visitor.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Memory.Visual
+add_components_static(XRay.Game.AI.Components.Memory.Visual
   vision_client.cpp
   vision_client.h
   vision_client_inline.h
@@ -115,7 +125,7 @@ add_xray_game_static(XRay.Game.AI.Components.Memory.Visual
   visual_memory_manager_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Movement
+add_components_static(XRay.Game.AI.Components.Movement
   location_manager.cpp
   location_manager.h
   location_manager_inline.h
@@ -163,7 +173,7 @@ add_xray_game_static(XRay.Game.AI.Components.Movement
   movement_manager_space.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.MovingObjects
+add_components_static(XRay.Game.AI.Components.MovingObjects
   moving_object.cpp
   moving_objects.cpp
   moving_objects_dynamic.cpp
@@ -177,7 +187,7 @@ add_xray_game_static(XRay.Game.AI.Components.MovingObjects
   moving_object_inline.h
 )
 
-add_xray_game_interface(XRay.Game.AI.Components.ProblemSolver
+add_components_interface(XRay.Game.AI.Components.ProblemSolver
   condition_state.h
   condition_state_inline.h
 
@@ -191,12 +201,12 @@ add_xray_game_interface(XRay.Game.AI.Components.ProblemSolver
   problem_solver_inline.h
 )
 
-add_xray_game_interface(XRay.Game.AI.Components.SetupManager
+add_components_interface(XRay.Game.AI.Components.SetupManager
   setup_manager.h
   setup_manager_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.ObjectHandler
+add_components_static(XRay.Game.AI.Components.ObjectHandler
   object_actions.cpp
   object_actions.h
   object_actions_inline.h
@@ -218,7 +228,7 @@ add_xray_game_static(XRay.Game.AI.Components.ObjectHandler
   object_handler_space.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Sight
+add_components_static(XRay.Game.AI.Components.Sight
   aimers_base.cpp
   aimers_base.h
   aimers_base_inline.h
@@ -247,7 +257,7 @@ add_xray_game_static(XRay.Game.AI.Components.Sight
   sight_manager_space.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Sound
+add_components_static(XRay.Game.AI.Components.Sound
   sound_collection_storage.cpp
   sound_collection_storage.h
   sound_collection_storage_inline.h
@@ -257,7 +267,7 @@ add_xray_game_static(XRay.Game.AI.Components.Sound
   sound_player_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.SpaceRestriction
+add_components_static(XRay.Game.AI.Components.SpaceRestriction
   ../xrServerEntities/restriction_space.h
 
   space_restriction.cpp
@@ -286,7 +296,7 @@ add_xray_game_static(XRay.Game.AI.Components.SpaceRestriction
   space_restriction_shape_inline.h
 )
 
-add_xray_game_static(XRay.Game.AI.Components.Step
+add_components_static(XRay.Game.AI.Components.Step
   step_manager.cpp
   step_manager.h
   step_manager_defs.h
