@@ -1,3 +1,5 @@
+include(cmake/XRay.Particles.API.cmake)
+
 add_library(XRay.Particles STATIC)
 
 set_property(
@@ -10,21 +12,6 @@ target_sources(XRay.Particles
   PRIVATE
   psystem.h
   stdafx.h
-  
-  noise.cpp
-  particle_actions.cpp
-  particle_actions_collection.cpp
-  particle_actions_collection_io.cpp
-  particle_core.cpp
-  particle_effect.cpp
-  particle_manager.cpp
-  
-  noise.h
-  particle_actions.h
-  particle_actions_collection.h
-  particle_core.h
-  particle_effect.h
-  particle_manager.h
 )
 
 target_include_directories(XRay.Particles
@@ -41,4 +28,5 @@ target_link_libraries(XRay.Particles
   tbb
   XRay.Core
   XRay.CPUPipe
+  XRay.Particles.API
 )
