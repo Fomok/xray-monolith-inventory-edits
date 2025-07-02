@@ -1,6 +1,6 @@
 include(cmake/XRay.Particles.API.cmake)
 
-add_library(XRay.Particles STATIC)
+add_library(XRay.Particles INTERFACE)
 
 set_property(
   TARGET XRay.Particles
@@ -9,24 +9,12 @@ set_property(
 )
 
 target_sources(XRay.Particles
-  PRIVATE
+  INTERFACE
   psystem.h
   stdafx.h
 )
 
-target_include_directories(XRay.Particles
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Particles
-  PRIVATE stdafx.h
-)
-
 target_link_libraries(XRay.Particles
-  PRIVATE
-  tbb
-  XRay.Core
-  XRay.CPUPipe
+  INTERFACE
   XRay.Particles.API
 )
