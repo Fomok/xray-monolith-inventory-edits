@@ -11,14 +11,12 @@ set_property(
 target_sources(XRay.XMLParser
   PRIVATE
   xrXMLParser.cpp
-  
-  stdafx.h
   xrXMLParser.h
 )
 
 target_precompile_headers(XRay.XMLParser
   PRIVATE
-  stdafx.h
+  ../xrCore/xrCore.h
 )
 
 target_include_directories(XRay.XMLParser
@@ -33,5 +31,5 @@ target_compile_definitions(XRay.XMLParser
 
 target_link_libraries(XRay.XMLParser
   PRIVATE
-  XRay.XMLParser.TinyXML
+  TinyXML
 )

@@ -1,12 +1,12 @@
-add_library(XRay.XMLParser.TinyXML STATIC)
+add_library(TinyXML STATIC)
 
 set_property(
-  TARGET XRay.XMLParser.TinyXML
+  TARGET TinyXML
   PROPERTY FOLDER
-  ${FOLDER_XRAY_XML_PARSER}
+  ${FOLDER_EXTERNAL}
 )
 
-target_sources(XRay.XMLParser.TinyXML
+target_sources(TinyXML
   PRIVATE
   tinyxml.cpp
   tinyxmlerror.cpp
@@ -15,17 +15,17 @@ target_sources(XRay.XMLParser.TinyXML
   tinyxml.h
 )
 
-target_precompile_headers(XRay.XMLParser.TinyXML
+target_precompile_headers(TinyXML
   PRIVATE
   stdafx.h
 )
 
-target_include_directories(XRay.XMLParser.TinyXML
+target_include_directories(TinyXML
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_compile_definitions(XRay.XMLParser.TinyXML
+target_compile_definitions(TinyXML
   PRIVATE
   XRXMLPARSER_EXPORTS
 )
