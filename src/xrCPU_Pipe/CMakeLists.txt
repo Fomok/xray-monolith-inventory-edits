@@ -1,10 +1,6 @@
 add_library(XRay.CPUPipe STATIC)
 
-set_property(
-  TARGET XRay.CPUPipe
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CPU_PIPE}
-)
+target_folder(XRay.CPUPipe ${FOLDER_XRAY_CPU_PIPE})
 
 target_sources(XRay.CPUPipe
   PRIVATE

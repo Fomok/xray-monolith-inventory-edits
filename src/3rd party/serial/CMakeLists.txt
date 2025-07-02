@@ -1,10 +1,6 @@
 add_library(serial INTERFACE)
 
-set_property(
-  TARGET serial
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(serial ${FOLDER_EXTERNAL})
 
 target_sources(serial
   PRIVATE

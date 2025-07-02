@@ -1,10 +1,6 @@
 add_library(ogg STATIC)
 
-set_property(
-  TARGET ogg
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(ogg ${FOLDER_SDK})
 
 target_sources(ogg PRIVATE
   src/bitwise.c

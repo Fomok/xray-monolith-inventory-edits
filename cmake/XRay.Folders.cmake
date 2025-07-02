@@ -25,3 +25,11 @@ set(FOLDER_RENDER X-Ray/Render)
 set(FOLDER_GAMEDATA X-Ray/Gamedata)
 set(FOLDER_ENGINE X-Ray/Engine)
 set(FOLDER_RELEASE Release)
+
+macro(target_folder TARGET FOLDER)
+  set_property(
+    TARGET ${TARGET}
+    PROPERTY FOLDER
+    ${FOLDER}
+  )
+endmacro()

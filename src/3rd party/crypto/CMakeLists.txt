@@ -1,10 +1,6 @@
 add_library(crypto STATIC)
 
-set_property(
-  TARGET crypto
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(crypto ${FOLDER_EXTERNAL})
 
 target_sources(crypto PRIVATE
   crypto.cpp

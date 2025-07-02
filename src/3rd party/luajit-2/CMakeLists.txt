@@ -1,10 +1,6 @@
 add_custom_target(luajit-2)
 
-set_property(
-  TARGET luajit-2
-  PROPERTY FOLDER
-  ${FOLDER_LUA}
-)
+target_folder(luajit-2 ${FOLDER_LUA})
 
 target_sources(luajit-2 PRIVATE
   src/lib_aux.c      

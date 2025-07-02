@@ -1,10 +1,6 @@
 add_library(XRay.Physics STATIC)
 
-set_property(
-  TARGET XRay.Physics
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_PHYSICS}
-)
+target_folder(XRay.Physics ${FOLDER_XRAY_PHYSICS})
 
 target_sources(XRay.Physics PRIVATE
   ../xrServerEntities/PHNetState.cpp

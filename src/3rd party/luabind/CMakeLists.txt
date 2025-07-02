@@ -1,10 +1,6 @@
 add_library(luabind STATIC)
 
-set_property(
-  TARGET luabind
-  PROPERTY FOLDER
-  ${FOLDER_LUA}
-)
+target_folder(luabind ${FOLDER_LUA})
 
 target_sources(luabind PRIVATE
   luabind_memory.cpp

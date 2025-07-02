@@ -1,10 +1,6 @@
 add_library(tbb INTERFACE)
 
-set_property(
-  TARGET tbb
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(tbb ${FOLDER_EXTERNAL})
 
 target_sources(tbb
   PRIVATE

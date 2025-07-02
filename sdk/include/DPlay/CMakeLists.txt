@@ -1,10 +1,5 @@
 add_library(DPlay INTERFACE)
-
-set_property(
-  TARGET DPlay
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(DPlay ${FOLDER_SDK})
 
 target_sources(DPlay
   PRIVATE

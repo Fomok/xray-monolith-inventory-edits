@@ -1,10 +1,6 @@
 add_custom_target(XRay.Render.DX10)
 
-set_property(
-  TARGET XRay.Render.DX10
-  PROPERTY FOLDER
-  ${FOLDER_RENDER}
-)
+target_folder(XRay.Render.DX10 ${FOLDER_RENDER})
 
 target_sources(XRay.Render.DX10
   PRIVATE

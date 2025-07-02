@@ -1,10 +1,6 @@
 add_library(XRay.Sound.Environment STATIC)
 
-set_property(
-  TARGET XRay.Sound.Environment
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_SOUND}
-)
+target_folder(XRay.Sound.Environment ${FOLDER_XRAY_SOUND})
 
 target_sources(XRay.Sound.Environment
   PRIVATE

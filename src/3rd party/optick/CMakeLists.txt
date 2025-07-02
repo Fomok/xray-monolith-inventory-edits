@@ -1,10 +1,6 @@
 add_library(optick STATIC)
 
-set_property(
-  TARGET optick
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(optick ${FOLDER_EXTERNAL})
 
 target_sources(optick
   PRIVATE

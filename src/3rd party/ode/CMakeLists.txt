@@ -6,11 +6,7 @@ option(
 
 add_library(ode STATIC)
 
-set_property(
-  TARGET ode
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(ode ${FOLDER_EXTERNAL})
 
 target_sources(ode PRIVATE
   ode/src/array.cpp

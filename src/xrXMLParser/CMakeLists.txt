@@ -2,11 +2,7 @@ include(cmake/XRay.XMLParser.TinyXML.cmake)
 
 add_library(XRay.XMLParser STATIC)
 
-set_property(
-  TARGET XRay.XMLParser
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_XML_PARSER}
-)
+target_folder(XRay.XMLParser ${FOLDER_XRAY_XML_PARSER})
 
 target_sources(XRay.XMLParser
   PRIVATE

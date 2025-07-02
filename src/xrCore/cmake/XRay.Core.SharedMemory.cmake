@@ -1,10 +1,6 @@
 add_library(XRay.Core.SharedMemory STATIC)
 
-set_property(
-  TARGET XRay.Core.SharedMemory
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.SharedMemory ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.SharedMemory
   PRIVATE

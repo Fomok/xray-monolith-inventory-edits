@@ -79,11 +79,7 @@ else()
     add_library(LuaJIT SHARED)
 endif()
 
-set_property(
-  TARGET LuaJIT
-  PROPERTY FOLDER
-  ${FOLDER_LUA}
-)
+target_folder(LuaJIT ${FOLDER_LUA})
 
 if(MSVC)
   set(CCOPT_OPT_PREFIX /)
@@ -377,11 +373,7 @@ add_custom_command(OUTPUT ${BUILDVM_ARCH}
 
 add_custom_target(buildvm_arch)
 
-set_property(
-  TARGET buildvm_arch
-  PROPERTY FOLDER
-  ${FOLDER_LUA_BUILD}
-)
+target_folder(buildvm_arch ${FOLDER_LUA_BUILD})
 
 target_sources(buildvm_arch
   PRIVATE

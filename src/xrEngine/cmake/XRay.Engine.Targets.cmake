@@ -4,11 +4,7 @@ include_guard()
 macro(add_engine_target name)
   add_executable(${name} WIN32)
 
-  set_property(
-    TARGET ${name}
-    PROPERTY FOLDER
-    ${FOLDER_ENGINE}
-  )
+  target_folder(${name} ${FOLDER_ENGINE})
 
   target_sources(${name}
     PRIVATE
@@ -51,11 +47,7 @@ macro(add_engine_target name)
   set(PDB_ZIP ${name}_pdb.zip)
   add_custom_target(${name}-PDB)
 
-  set_property(
-    TARGET ${name}-PDB
-    PROPERTY FOLDER
-    ${FOLDER_RELEASE}
-  )
+  target_folder(${name}-PDB ${FOLDER_RELEASE})
 
   target_sources(${name}-PDB
     PRIVATE

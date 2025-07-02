@@ -1,10 +1,6 @@
 add_library(TinyXML STATIC)
 
-set_property(
-  TARGET TinyXML
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(TinyXML ${FOLDER_EXTERNAL})
 
 target_sources(TinyXML
   PRIVATE

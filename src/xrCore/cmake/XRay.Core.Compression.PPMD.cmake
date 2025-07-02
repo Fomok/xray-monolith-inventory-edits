@@ -1,10 +1,6 @@
 add_library(XRay.Core.Compression.PPMD STATIC)
 
-set_property(
-  TARGET XRay.Core.Compression.PPMD
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.Compression.PPMD ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.Compression.PPMD
   PRIVATE

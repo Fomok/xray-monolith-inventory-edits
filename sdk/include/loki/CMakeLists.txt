@@ -1,10 +1,6 @@
 add_library(loki INTERFACE)
 
-set_property(
-  TARGET loki
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(loki ${FOLDER_SDK})
 
 target_sources(loki
   PRIVATE

@@ -1,10 +1,6 @@
 add_library(XRay.Core.Debug STATIC)
 
-set_property(
-  TARGET XRay.Core.Debug
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.Debug ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.Debug
   PRIVATE

@@ -1,10 +1,6 @@
 add_library(XRay.Core.MemoryManager STATIC)
 
-set_property(
-  TARGET XRay.Core.MemoryManager
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.MemoryManager ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.MemoryManager
   PRIVATE

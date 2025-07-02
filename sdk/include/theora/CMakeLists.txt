@@ -1,10 +1,6 @@
 add_library(theora STATIC)
 
-set_property(
-  TARGET theora
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(theora ${FOLDER_SDK})
 
 target_sources(theora PRIVATE
   lib/analyze.c

@@ -1,10 +1,6 @@
 add_library(XRay.Particles.API STATIC)
 
-set_property(
-  TARGET XRay.Particles.API
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_PARTICLES}
-)
+target_folder(XRay.Particles.API ${FOLDER_XRAY_PARTICLES})
 
 target_sources(XRay.Particles.API
   PRIVATE

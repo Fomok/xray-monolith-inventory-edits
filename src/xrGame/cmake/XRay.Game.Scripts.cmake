@@ -1,10 +1,6 @@
 add_library(XRay.Game.Scripts STATIC)
 
-set_property(
-  TARGET XRay.Game.Scripts
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_GAME}
-)
+target_folder(XRay.Game.Scripts ${FOLDER_XRAY_GAME})
 
 target_sources(XRay.Game.Scripts PRIVATE
   script_abstract_action.cpp

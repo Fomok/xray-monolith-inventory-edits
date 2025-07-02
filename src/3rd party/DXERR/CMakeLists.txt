@@ -1,10 +1,6 @@
 add_library(DXERR STATIC)
 
-set_property(
-  TARGET DXERR
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(DXERR ${FOLDER_EXTERNAL})
 
 target_sources(DXERR PRIVATE
   dxerr.h

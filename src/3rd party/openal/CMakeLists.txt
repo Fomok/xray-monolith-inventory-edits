@@ -1,10 +1,6 @@
 add_library(OpenAL32 STATIC)
 
-set_property(
-  TARGET OpenAL32
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(OpenAL32 ${FOLDER_EXTERNAL})
 
 target_sources(OpenAL32 PRIVATE
   OpenAL-Windows/Router/al.cpp

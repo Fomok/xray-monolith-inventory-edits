@@ -1,10 +1,6 @@
 add_library(XRay.Core.FS STATIC)
 
-set_property(
-  TARGET XRay.Core.FS
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.FS ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.FS
   PRIVATE

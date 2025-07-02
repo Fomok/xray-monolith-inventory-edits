@@ -1,10 +1,6 @@
 add_library(XRay.Render INTERFACE)
 
-set_property(
-  TARGET XRay.Render
-  PROPERTY FOLDER
-  ${FOLDER_RENDER}
-)
+target_folder(XRay.Render ${FOLDER_RENDER})
 
 target_sources(XRay.Render
   PRIVATE

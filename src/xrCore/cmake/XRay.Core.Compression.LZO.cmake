@@ -1,10 +1,6 @@
 add_library(XRay.Core.Compression.LZO STATIC)
 
-set_property(
-  TARGET XRay.Core.Compression.LZO
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.Compression.LZO ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.Compression.LZO
   PRIVATE

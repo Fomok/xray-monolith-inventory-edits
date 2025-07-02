@@ -1,10 +1,6 @@
 add_library(XRay.Render.R2 STATIC)
 
-set_property(
-  TARGET XRay.Render.R2
-  PROPERTY FOLDER
-  ${FOLDER_RENDER}
-)
+target_folder(XRay.Render.R2 ${FOLDER_RENDER})
 
 target_sources(XRay.Render.R2
   PRIVATE

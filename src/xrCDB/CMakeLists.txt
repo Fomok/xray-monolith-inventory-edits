@@ -3,11 +3,7 @@ include(cmake/XRay.Collision.Opcode.cmake)
 
 add_library(XRay.Collision STATIC)
 
-set_property(
-  TARGET XRay.Collision
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_COLLISION}
-)
+target_folder(XRay.Collision ${FOLDER_XRAY_COLLISION})
 
 target_sources(XRay.Collision
   PRIVATE

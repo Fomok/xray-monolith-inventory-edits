@@ -1,11 +1,7 @@
 macro(add_xray_game_static NAME)
   add_library(${NAME} STATIC)
 
-  set_property(
-    TARGET ${NAME}
-    PROPERTY FOLDER
-    ${FOLDER_XRAY_GAME}
-  )
+  target_folder(${NAME} ${FOLDER_XRAY_GAME})
 
   target_sources(${NAME}
     PRIVATE
@@ -52,11 +48,7 @@ endmacro()
 macro(add_xray_game_interface NAME)
   add_library(${NAME} INTERFACE)
 
-  set_property(
-    TARGET ${NAME}
-    PROPERTY FOLDER
-    ${FOLDER_XRAY_GAME}
-  )
+  target_folder(${NAME} ${FOLDER_XRAY_GAME})
 
   target_sources(${NAME}
     INTERFACE
@@ -77,11 +69,7 @@ endmacro()
 
 add_library(XRay.Game STATIC)
 
-set_property(
-  TARGET XRay.Game
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_GAME}
-)
+target_folder(XRay.Game ${FOLDER_XRAY_GAME})
 
 target_sources(XRay.Game
   PRIVATE

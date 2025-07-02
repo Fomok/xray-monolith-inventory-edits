@@ -187,11 +187,7 @@ set(XR_ENGINE_SOURCES
 
 add_library(XRay.Engine INTERFACE)
 
-set_property(
-  TARGET XRay.Engine
-  PROPERTY FOLDER
-  ${FOLDER_ENGINE}
-)
+target_folder(XRay.Engine ${FOLDER_ENGINE})
 
 target_sources(XRay.Engine
   PRIVATE

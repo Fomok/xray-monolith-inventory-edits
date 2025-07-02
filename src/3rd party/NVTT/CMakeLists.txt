@@ -1,10 +1,6 @@
 add_library(NVTT STATIC)
 
-set_property(
-  TARGET NVTT
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(NVTT ${FOLDER_EXTERNAL})
 
 target_sources(NVTT PRIVATE
   src/nvcore/Debug.cpp

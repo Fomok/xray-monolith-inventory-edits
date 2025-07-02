@@ -1,10 +1,6 @@
 add_library(XRay.Render.R3 STATIC)
 
-set_property(
-  TARGET XRay.Render.R3
-  PROPERTY FOLDER
-  ${FOLDER_RENDER}
-)
+target_folder(XRay.Render.R3 ${FOLDER_RENDER})
 
 target_sources(XRay.Render.R3 PRIVATE
   ../xrRenderDX10/3DFluid/dx103DFluidBlenders.cpp

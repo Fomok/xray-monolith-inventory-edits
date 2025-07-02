@@ -1,10 +1,5 @@
 add_library(boost INTERFACE)
-
-set_property(
-  TARGET boost
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(boost ${FOLDER_SDK})
 
 target_sources(boost
   PRIVATE

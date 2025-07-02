@@ -1,10 +1,6 @@
 add_library(XRay.Game.UI STATIC)
 
-set_property(
-  TARGET XRay.Game.UI
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_GAME}
-)
+target_folder(XRay.Game.UI ${FOLDER_XRAY_GAME})
 
 target_sources(XRay.Game.UI PRIVATE
   UIAchivementsIndicator.cpp

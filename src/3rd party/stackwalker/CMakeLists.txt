@@ -1,10 +1,6 @@
 add_library(StackWalker INTERFACE)
 
-set_property(
-  TARGET StackWalker
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(StackWalker ${FOLDER_EXTERNAL})
 
 target_sources(StackWalker
   PRIVATE

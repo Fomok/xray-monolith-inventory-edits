@@ -1,10 +1,6 @@
 add_library(XRay.Core.Debug.BlackBox STATIC)
 
-set_property(
-  TARGET XRay.Core.Debug.BlackBox
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.Debug.BlackBox ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.Debug.BlackBox
   PRIVATE

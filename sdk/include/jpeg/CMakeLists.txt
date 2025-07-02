@@ -1,10 +1,6 @@
 add_library(jpeg STATIC)
 
-set_property(
-  TARGET jpeg
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(jpeg ${FOLDER_SDK})
 
 target_sources(jpeg PRIVATE
   ansi2knr.c

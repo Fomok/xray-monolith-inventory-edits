@@ -2,11 +2,7 @@ include(cmake/XRay.Particles.API.cmake)
 
 add_library(XRay.Particles INTERFACE)
 
-set_property(
-  TARGET XRay.Particles
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_PARTICLES}
-)
+target_folder(XRay.Particles ${FOLDER_XRAY_PARTICLES})
 
 target_sources(XRay.Particles
   INTERFACE

@@ -1,10 +1,6 @@
 add_library(XRay.Collision.Engine STATIC)
 
-set_property(
-  TARGET XRay.Collision.Engine
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_COLLISION}
-)
+target_folder(XRay.Collision.Engine ${FOLDER_XRAY_COLLISION})
 
 target_sources(XRay.Collision.Engine
   PRIVATE

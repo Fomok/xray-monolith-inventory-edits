@@ -1,10 +1,6 @@
 add_library(XRay.Sound.Cache STATIC)
 
-set_property(
-  TARGET XRay.Sound.Cache
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_SOUND}
-)
+target_folder(XRay.Sound.Cache ${FOLDER_XRAY_SOUND})
 
 target_sources(XRay.Sound.Cache
   PRIVATE

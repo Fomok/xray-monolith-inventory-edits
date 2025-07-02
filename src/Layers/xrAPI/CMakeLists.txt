@@ -1,10 +1,6 @@
 add_library(XRay.Render.API STATIC)
 
-set_property(
-  TARGET XRay.Render.API
-  PROPERTY FOLDER
-  ${FOLDER_RENDER}
-)
+target_folder(XRay.Render.API ${FOLDER_RENDER})
 
 target_sources(XRay.Render.API
   PRIVATE

@@ -1,10 +1,6 @@
 add_library(XRay.NetServer STATIC)
 
-set_property(
-  TARGET XRay.NetServer
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_NET_SERVER}
-)
+target_folder(XRay.NetServer ${FOLDER_XRAY_NET_SERVER})
 
 target_sources(XRay.NetServer PRIVATE
   ip_filter.cpp

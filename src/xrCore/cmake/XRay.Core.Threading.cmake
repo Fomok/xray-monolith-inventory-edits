@@ -1,10 +1,6 @@
 add_library(XRay.Core.Threading STATIC)
 
-set_property(
-  TARGET XRay.Core.Threading
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.Threading ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.Threading
   PRIVATE

@@ -1,10 +1,6 @@
 add_library(XRay.Core.Math STATIC)
 
-set_property(
-  TARGET XRay.Core.Math
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.Math ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.Math
   PRIVATE

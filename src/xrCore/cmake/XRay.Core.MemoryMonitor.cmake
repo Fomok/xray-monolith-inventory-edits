@@ -1,10 +1,6 @@
 add_library(XRay.Core.MemoryMonitor STATIC)
 
-set_property(
-  TARGET XRay.Core.MemoryMonitor
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core.MemoryMonitor ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core.MemoryMonitor
   PRIVATE

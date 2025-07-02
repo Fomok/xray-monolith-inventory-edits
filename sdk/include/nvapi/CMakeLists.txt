@@ -1,10 +1,6 @@
 add_library(NVAPI INTERFACE)
 
-set_property(
-  TARGET NVAPI
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(NVAPI ${FOLDER_SDK})
 
 target_sources(NVAPI
   PRIVATE

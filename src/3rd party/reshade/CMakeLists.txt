@@ -1,10 +1,6 @@
 add_library(reshade INTERFACE)
 
-set_property(
-  TARGET reshade
-  PROPERTY FOLDER
-  ${FOLDER_EXTERNAL}
-)
+target_folder(reshade ${FOLDER_EXTERNAL})
 
 target_include_directories(reshade
   INTERFACE

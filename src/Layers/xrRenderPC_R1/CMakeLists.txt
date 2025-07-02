@@ -1,10 +1,6 @@
 add_library(XRay.Render.R1 STATIC)
 
-set_property(
-  TARGET XRay.Render.R1
-  PROPERTY FOLDER
-  ${FOLDER_RENDER}
-)
+target_folder(XRay.Render.R1 ${FOLDER_RENDER})
 
 target_sources(XRay.Render.R1 PRIVATE
   ../xrRenderDX9/dx9r_constants_cache.cpp

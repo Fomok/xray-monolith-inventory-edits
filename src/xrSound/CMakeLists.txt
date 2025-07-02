@@ -7,11 +7,7 @@ include(cmake/XRay.Sound.Target.cmake)
 
 add_library(XRay.Sound STATIC)
 
-set_property(
-  TARGET XRay.Sound
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_SOUND}
-)
+target_folder(XRay.Sound ${FOLDER_XRAY_SOUND})
 
 target_sources(XRay.Sound PRIVATE
   guids.cpp

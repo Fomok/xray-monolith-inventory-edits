@@ -1,10 +1,6 @@
 add_library(XRay.Collision.Opcode STATIC)
 
-set_property(
-  TARGET XRay.Collision.Opcode
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_COLLISION}
-)
+target_folder(XRay.Collision.Opcode ${FOLDER_XRAY_COLLISION})
 
 target_sources(XRay.Collision.Opcode
   PRIVATE

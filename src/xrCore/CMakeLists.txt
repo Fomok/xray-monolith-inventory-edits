@@ -16,11 +16,7 @@ include(cmake/XRay.Core.Threading.cmake)
 
 add_library(XRay.Core STATIC)
 
-set_property(
-  TARGET XRay.Core
-  PROPERTY FOLDER
-  ${FOLDER_XRAY_CORE}
-)
+target_folder(XRay.Core ${FOLDER_XRAY_CORE})
 
 target_sources(XRay.Core
   PRIVATE
