@@ -1,12 +1,12 @@
-add_library(xrRender_R1 STATIC)
+add_library(XRay.Render.R1 STATIC)
 
 set_property(
-  TARGET xrRender_R1
+  TARGET XRay.Render.R1
   PROPERTY FOLDER
   ${FOLDER_RENDER}
 )
 
-target_sources(xrRender_R1 PRIVATE
+target_sources(XRay.Render.R1 PRIVATE
   ../xrRenderDX9/dx9r_constants_cache.cpp
   ../xrRender/Animation.cpp
   ../xrRender/blenders/Blender.cpp
@@ -295,21 +295,21 @@ target_sources(xrRender_R1 PRIVATE
   stdafx.h
 )
 
-target_precompile_headers(xrRender_R1
+target_precompile_headers(XRay.Render.R1
   PRIVATE stdafx.h
 )
 
-target_include_directories(xrRender_R1
+target_include_directories(XRay.Render.R1
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_compile_definitions(xrRender_R1
+target_compile_definitions(XRay.Render.R1
   PRIVATE
   XRRENDER_R1_EXPORTS
 )
 
-target_link_libraries(xrRender_R1
+target_link_libraries(XRay.Render.R1
   PRIVATE
   dxsdk
   imgui
@@ -318,10 +318,10 @@ target_link_libraries(xrRender_R1
   LuaJIT
   NVAPI
   tbb
-  xrAPI
-  xrCDB
-  xrCore
-  xrCPU_Pipe
-  xrEngine
-  xrRender
+  XRay.CDB
+  XRay.Core
+  XRay.CPUPipe
+  XRay.Engine
+  XRay.Render
+  XRay.Render.API
 )

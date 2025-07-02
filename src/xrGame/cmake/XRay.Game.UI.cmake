@@ -1,12 +1,12 @@
-add_library(xrGame.UI STATIC)
+add_library(XRay.Game.UI STATIC)
 
 set_property(
-  TARGET xrGame.UI
+  TARGET XRay.Game.UI
   PROPERTY FOLDER
   ${FOLDER_XRAY_GAME}
 )
 
-target_sources(xrGame.UI PRIVATE
+target_sources(XRay.Game.UI PRIVATE
   UIAchivementsIndicator.cpp
   UICursor.cpp
   UIDialogHolder.cpp
@@ -362,34 +362,34 @@ target_sources(xrGame.UI PRIVATE
   ui_defs.h
 )
 
-target_include_directories(xrGame.UI
+target_include_directories(XRay.Game.UI
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   PRIVATE
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 )
 
-target_precompile_headers(xrGame.UI
+target_precompile_headers(XRay.Game.UI
   PRIVATE
   stdafx.h
 )
 
-target_compile_definitions(xrGame.UI
+target_compile_definitions(XRay.Game.UI
   PUBLIC
   XRGAME_EXPORTS
 )
 
-target_link_libraries(xrGame.UI
+target_link_libraries(XRay.Game.UI
   PRIVATE
   CxImage
   DPlay
   luabind
   LuaJIT
-  xrAPI
-  xrCDB
-  xrCore
-  xrEngine
-  xrNetServer
-  xrPhysics
-  xrRender
+  XRay.CDB
+  XRay.Core
+  XRay.Engine
+  XRay.NetServer
+  XRay.Physics
+  XRay.Render
+  XRay.Render.API
 )

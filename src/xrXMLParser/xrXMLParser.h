@@ -2,19 +2,10 @@
 #define xrXMLParserH
 #pragma once
 
-
-#ifdef XRXMLPARSER_EXPORTS
 #define XRXMLPARSER_API
-//__declspec(dllexport)
-#else
-	#define XRXMLPARSER_API
-//__declspec(dllimport)
-	#pragma comment			(lib,"xrXMLParser.lib")
-#endif
 
 const LPCSTR CONFIG_PATH = "$game_config$";
 const LPCSTR UI_PATH = "ui";
-
 
 #include "tinyxml.h"
 
@@ -33,7 +24,7 @@ public:
 	void Load(LPCSTR path_alias, LPCSTR path, LPCSTR xml_filename);
 	void LoadFromString(LPCSTR xml_string);
 
-	//чтение элементов
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	LPCSTR Read(LPCSTR path, int index, LPCSTR default_str_val);
 	LPCSTR Read(XML_NODE* start_node, LPCSTR path, int index, LPCSTR default_str_val);
 	LPCSTR Read(XML_NODE* node, LPCSTR default_str_val);
@@ -62,21 +53,21 @@ public:
 	XML_NODE* SearchForAttribute(LPCSTR path, int index, LPCSTR tag_name, LPCSTR attrib, LPCSTR attrib_value_pattern);
 	XML_NODE* SearchForAttribute(XML_NODE* start_node, LPCSTR tag_name, LPCSTR attrib, LPCSTR attrib_value_pattern);
 
-	//возвращает количество узлов с заданым именем
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 	int GetNodesNum(LPCSTR path, int index, LPCSTR tag_name);
 	int GetNodesNum(XML_NODE* node, LPCSTR tag_name);
 
 
 #ifdef DEBUG // debug & mixed
-	//проверка того, что аттрибуты у тегов уникальны
-	//(если не NULL, то уникальность нарушена и возврашается имя 
-	//повторяющегося атрибута)
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+	//(пїЅпїЅпїЅпїЅ пїЅпїЅ NULL, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ 
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 	LPCSTR				CheckUniqueAttrib		(XML_NODE* start_node, LPCSTR tag_name, LPCSTR attrib_name);
 #endif
 
-	//переместиться по XML дереву 
-	//путь задается в форме PARENT:CHILD:CHIDLS_CHILD
-	//node_index - номер, если узлов с одним именем несколько
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ XML пїЅпїЅпїЅпїЅпїЅпїЅ 
+	//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ PARENT:CHILD:CHIDLS_CHILD
+	//node_index - пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	XML_NODE* NavigateToNode(LPCSTR path, int node_index = 0);
 	XML_NODE* NavigateToNode(XML_NODE* start_node, LPCSTR path, int node_index = 0);
 	XML_NODE* NavigateToNodeWithAttribute(LPCSTR tag_name, LPCSTR attrib_name, LPCSTR attrib_value);
@@ -91,7 +82,7 @@ protected:
 	XML_NODE* m_pLocalRoot;
 
 #ifdef DEBUG // debug & mixed
-	//буфферный вектор для проверки уникальность аттрибутов
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	xr_vector<shared_str> m_AttribValues;
 #endif
 public:

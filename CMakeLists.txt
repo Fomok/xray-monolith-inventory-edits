@@ -68,9 +68,6 @@ add_subdirectory(sdk)
 # Setup engine sources
 add_subdirectory(src)
 
-# Setup executable targets
-include(XRay.Targets)
-
 # Set visual studio startup project
 set_property(
   DIRECTORY ${CMAKE_SOURCE_DIR}

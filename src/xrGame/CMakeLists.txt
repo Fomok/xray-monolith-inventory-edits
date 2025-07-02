@@ -1,19 +1,17 @@
-## xrGame
-
 include(cmake/XRay.Game.AI.cmake)
 include(cmake/XRay.Game.Physics.cmake)
 include(cmake/XRay.Game.Scripts.cmake)
 include(cmake/XRay.Game.UI.cmake)
 
-add_library(xrGame STATIC)
+add_library(XRay.Game STATIC)
 
 set_property(
-  TARGET xrGame
+  TARGET XRay.Game
   PROPERTY FOLDER
   ${FOLDER_XRAY_GAME}
 )
 
-target_sources(xrGame
+target_sources(XRay.Game
   PRIVATE
   ../xrServerEntities/alife_human_brain.cpp
   ../xrServerEntities/alife_monster_brain.cpp
@@ -1851,24 +1849,24 @@ target_sources(xrGame
   ZudaArtifact.h
 )
 
-target_include_directories(xrGame
+target_include_directories(XRay.Game
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   PRIVATE
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 )
 
-target_precompile_headers(xrGame
+target_precompile_headers(XRay.Game
   PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
 )
 
-target_compile_definitions(xrGame
+target_compile_definitions(XRay.Game
   PUBLIC
   XRGAME_EXPORTS
 )
 
-target_link_libraries(xrGame
+target_link_libraries(XRay.Game
   PRIVATE
   crypto
   CxImage
@@ -1877,15 +1875,15 @@ target_link_libraries(xrGame
   luabind
   LuaJIT
   ode
-  xrAPI
-  xrCDB
-  xrCore
-  xrEngine
-  xrGame.AI
-  xrGame.Physics
-  xrGame.Scripts
-  xrGame.UI
-  xrNetServer
-  xrPhysics
-  xrRender
+  XRay.CDB
+  XRay.Core
+  XRay.Engine
+  XRay.Game.AI
+  XRay.Game.Physics
+  XRay.Game.Scripts
+  XRay.Game.UI
+  XRay.NetServer
+  XRay.Physics
+  XRay.Render
+  XRay.Render.API
 )

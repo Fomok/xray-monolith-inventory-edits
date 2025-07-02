@@ -18,8 +18,6 @@
 #include "../xrsound/sound.h"
 //#include "../xrengine/IGame_Level.h"
 
-#pragma comment( lib, "xrCore.lib"	)
-
 #include "xrPhysics.h"
 
 #include "../Layers/xrAPI/xrAPI.h"

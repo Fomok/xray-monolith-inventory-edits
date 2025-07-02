@@ -1,12 +1,12 @@
-add_library(xrParticles STATIC)
+add_library(XRay.Particles STATIC)
 
 set_property(
-  TARGET xrParticles
+  TARGET XRay.Particles
   PROPERTY FOLDER
   ${FOLDER_XRAY_PARTICLES}
 )
 
-target_sources(xrParticles
+target_sources(XRay.Particles
   PRIVATE
   psystem.h
   stdafx.h
@@ -27,18 +27,18 @@ target_sources(xrParticles
   particle_manager.h
 )
 
-target_include_directories(xrParticles
+target_include_directories(XRay.Particles
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrParticles
+target_precompile_headers(XRay.Particles
   PRIVATE stdafx.h
 )
 
-target_link_libraries(xrParticles
+target_link_libraries(XRay.Particles
   PRIVATE
   tbb
-  xrCore
-  xrCPU_Pipe
+  XRay.Core
+  XRay.CPUPipe
 )

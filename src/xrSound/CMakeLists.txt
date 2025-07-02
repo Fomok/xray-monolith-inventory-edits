@@ -1,12 +1,12 @@
-add_library(xrSound STATIC)
+add_library(XRay.Sound STATIC)
 
 set_property(
-  TARGET xrSound
+  TARGET XRay.Sound
   PROPERTY FOLDER
   ${FOLDER_XRAY_SOUND}
 )
 
-target_sources(xrSound PRIVATE
+target_sources(XRay.Sound PRIVATE
   guids.cpp
   OpenALDeviceList.cpp
   sound.cpp
@@ -41,19 +41,19 @@ target_sources(xrSound PRIVATE
   stdafx.h
 )
 
-target_precompile_headers(xrSound PRIVATE stdafx.h)
+target_precompile_headers(XRay.Sound PRIVATE stdafx.h)
 
-target_include_directories(xrSound
+target_include_directories(XRay.Sound
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_compile_definitions(xrSound
+target_compile_definitions(XRay.Sound
   PRIVATE
   XRSOUND_EXPORTS
 )
 
-target_link_libraries(xrSound
+target_link_libraries(XRay.Sound
   PRIVATE
   dxsdk
   dxguid
@@ -63,7 +63,7 @@ target_link_libraries(xrSound
   vorbisfile
   OpenAL32
   tbb
-  xrAPI
-  xrCore
-  xrRender
+  XRay.Core
+  XRay.Render
+  XRay.Render.API
 )

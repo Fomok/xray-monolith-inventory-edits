@@ -1,12 +1,12 @@
-add_library(xrGame.Scripts STATIC)
+add_library(XRay.Game.Scripts STATIC)
 
 set_property(
-  TARGET xrGame.Scripts
+  TARGET XRay.Game.Scripts
   PROPERTY FOLDER
   ${FOLDER_XRAY_GAME}
 )
 
-target_sources(xrGame.Scripts PRIVATE
+target_sources(XRay.Game.Scripts PRIVATE
   script_abstract_action.cpp
   script_action_condition.cpp
   script_action_condition_script.cpp
@@ -146,35 +146,35 @@ target_sources(xrGame.Scripts PRIVATE
   script_world_state.h
 )
 
-target_include_directories(xrGame.Scripts
+target_include_directories(XRay.Game.Scripts
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   PRIVATE
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 )
 
-target_compile_definitions(xrGame.Scripts
+target_compile_definitions(XRay.Game.Scripts
   PRIVATE
   XRGAME_EXPORTS
 )
 
-target_precompile_headers(xrGame.Scripts
+target_precompile_headers(XRay.Game.Scripts
   PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
 )
 
-target_link_libraries(xrGame.Scripts
+target_link_libraries(XRay.Game.Scripts
   PRIVATE
   DPlay
   imgui
   luabind
   LuaJIT
-  xrAPI
-  xrCDB
-  xrCore
-  xrEngine
-  xrRender
-  xrPhysics
-  xrSound
-  xrNetServer
+  XRay.CDB
+  XRay.Core
+  XRay.Engine
+  XRay.Render
+  XRay.Render.API
+  XRay.Physics
+  XRay.Sound
+  XRay.NetServer
 )

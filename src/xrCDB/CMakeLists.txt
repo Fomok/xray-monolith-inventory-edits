@@ -1,15 +1,15 @@
 include(cmake/XRay.CDB.Engine.cmake)
 include(cmake/XRay.CDB.Opcode.cmake)
 
-add_library(xrCDB STATIC)
+add_library(XRay.CDB STATIC)
 
 set_property(
-  TARGET xrCDB
+  TARGET XRay.CDB
   PROPERTY FOLDER
   ${FOLDER_XRAY_CDB}
 )
 
-target_sources(xrCDB
+target_sources(XRay.CDB
   PRIVATE
   #cl_raypick.cpp
   Frustum.cpp
@@ -24,25 +24,25 @@ target_sources(xrCDB
   xrCDB.h
 )
 
-target_include_directories(xrCDB
+target_include_directories(XRay.CDB
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrCDB
+target_precompile_headers(XRay.CDB
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(xrCDB
+target_compile_definitions(XRay.CDB
   PRIVATE
   XRCDB_EXPORTS
 )
 
-target_link_libraries(xrCDB
+target_link_libraries(XRay.CDB
   PRIVATE
-  xrAPI
-  xrCore
-  xrCDB.Engine
-  xrCDB.Opcode
-  xrRender
+  XRay.Core
+  XRay.CDB.Engine
+  XRay.CDB.Opcode
+  XRay.Render
+  XRay.Render.API
 )

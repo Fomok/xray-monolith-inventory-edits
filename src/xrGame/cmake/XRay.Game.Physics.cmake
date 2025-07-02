@@ -1,12 +1,12 @@
-add_library(xrGame.Physics STATIC)
+add_library(XRay.Game.Physics STATIC)
 
 set_property(
-  TARGET xrGame.Physics
+  TARGET XRay.Game.Physics
   PROPERTY FOLDER
   ${FOLDER_XRAY_GAME}
 )
 
-target_sources(xrGame.Physics PRIVATE
+target_sources(XRay.Game.Physics PRIVATE
   ../xrServerEntities/PHNetState.cpp
   PHCollisionDamageReceiver.cpp
   PHCommander.cpp
@@ -50,35 +50,35 @@ target_sources(xrGame.Physics PRIVATE
   PHSoundPlayer.h
 )
 
-target_include_directories(xrGame.Physics
+target_include_directories(XRay.Game.Physics
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   PRIVATE
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 )
 
-target_compile_definitions(xrGame.Physics
+target_compile_definitions(XRay.Game.Physics
   PRIVATE
   XRGAME_EXPORTS
 )
 
-target_precompile_headers(xrGame.Physics
+target_precompile_headers(XRay.Game.Physics
   PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
 )
 
-target_link_libraries(xrGame.Physics
+target_link_libraries(XRay.Game.Physics
   PRIVATE
   DPlay
   imgui
   luabind
   LuaJIT
-  xrAPI
-  xrCDB
-  xrCore
-  xrEngine
-  xrRender
-  xrPhysics
-  xrSound
-  xrNetServer
+  XRay.CDB
+  XRay.Core
+  XRay.Engine
+  XRay.Render
+  XRay.Render.API
+  XRay.Physics
+  XRay.Sound
+  XRay.NetServer
 )

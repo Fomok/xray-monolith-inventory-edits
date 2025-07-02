@@ -1,12 +1,12 @@
-add_library(xrGame.AI STATIC)
+add_library(XRay.Game.AI STATIC)
 
 set_property(
-  TARGET xrGame.AI
+  TARGET XRay.Game.AI
   PROPERTY FOLDER
   ${FOLDER_XRAY_GAME}
 )
 
-target_sources(xrGame.AI PRIVATE
+target_sources(XRay.Game.AI PRIVATE
   ai/ai_monsters_misc.cpp
   ai/crow/ai_crow.cpp
   ai/monsters/ai_monster_bones.cpp
@@ -511,33 +511,33 @@ target_sources(xrGame.AI PRIVATE
   ai_space_inline.h
 )
 
-target_include_directories(xrGame.AI
+target_include_directories(XRay.Game.AI
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   PRIVATE
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 )
 
-target_precompile_headers(xrGame.AI
+target_precompile_headers(XRay.Game.AI
   PRIVATE
   stdafx.h
 )
 
-target_compile_definitions(xrGame.AI
+target_compile_definitions(XRay.Game.AI
   PUBLIC
   XRGAME_EXPORTS
 )
 
-target_link_libraries(xrGame.AI
+target_link_libraries(XRay.Game.AI
   PRIVATE
   DPlay
   luabind
   LuaJIT
-  xrAPI
-  xrCDB
-  xrCore
-  xrEngine
-  xrNetServer
-  xrPhysics
-  xrRender
+  XRay.CDB
+  XRay.Core
+  XRay.Engine
+  XRay.NetServer
+  XRay.Physics
+  XRay.Render
+  XRay.Render.API
 )

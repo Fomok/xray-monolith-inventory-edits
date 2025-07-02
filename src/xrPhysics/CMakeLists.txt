@@ -1,12 +1,12 @@
-add_library(xrPhysics STATIC)
+add_library(XRay.Physics STATIC)
 
 set_property(
-  TARGET xrPhysics
+  TARGET XRay.Physics
   PROPERTY FOLDER
   ${FOLDER_XRAY_PHYSICS}
 )
 
-target_sources(xrPhysics PRIVATE
+target_sources(XRay.Physics PRIVATE
   ../xrServerEntities/PHNetState.cpp
   ActorCameraCollision.cpp
   collisiondamagereceiver.cpp
@@ -161,22 +161,22 @@ target_sources(xrPhysics PRIVATE
   xrPhysics.h
 )
 
-target_precompile_headers(xrPhysics
+target_precompile_headers(XRay.Physics
   PRIVATE stdafx.h
 )
 
-target_include_directories(xrPhysics
+target_include_directories(XRay.Physics
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(xrPhysics
+target_link_libraries(XRay.Physics
   PRIVATE
   loki
   ode
   tbb
-  xrAPI
-  xrCDB
-  xrEngine
-  xrRender
+  XRay.CDB
+  XRay.Engine
+  XRay.Render
+  XRay.Render.API
 )

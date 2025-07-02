@@ -1,12 +1,12 @@
-add_library(xrRender INTERFACE)
+add_library(XRay.Render INTERFACE)
 
 set_property(
-  TARGET xrRender
+  TARGET XRay.Render
   PROPERTY FOLDER
   ${FOLDER_RENDER}
 )
 
-target_sources(xrRender
+target_sources(XRay.Render
   PRIVATE
   blenders/Blender.cpp
   blenders/Blender.h
@@ -286,7 +286,7 @@ target_sources(xrRender
   xrStripify.h
 )
 
-target_include_directories(xrRender
+target_include_directories(XRay.Render
   INTERFACE
   ${CMAKE_CURRENT_SOURCE_DIR}
 )

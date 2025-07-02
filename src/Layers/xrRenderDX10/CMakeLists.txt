@@ -1,12 +1,12 @@
-add_custom_target(xrRenderDX10)
+add_custom_target(XRay.Render.DX10)
 
 set_property(
-  TARGET xrRenderDX10
+  TARGET XRay.Render.DX10
   PROPERTY FOLDER
   ${FOLDER_RENDER}
 )
 
-target_sources(xrRenderDX10
+target_sources(XRay.Render.DX10
   PRIVATE
 
   3DFluid/dx103DFluidBlenders.cpp

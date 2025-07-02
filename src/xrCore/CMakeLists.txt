@@ -1,12 +1,12 @@
-add_library(xrCore STATIC)
+add_library(XRay.Core STATIC)
 
 set_property(
-  TARGET xrCore
+  TARGET XRay.Core
   PROPERTY FOLDER
   ${FOLDER_XRAY_CORE}
 )
 
-target_sources(xrCore
+target_sources(XRay.Core
   PRIVATE
   LzHuf.cpp
   lzhuf.h
@@ -227,29 +227,29 @@ target_sources(xrCore
   xrCore.rc
 )
 
-target_include_directories(xrCore
+target_include_directories(XRay.Core
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrCore
+target_precompile_headers(XRay.Core
   PRIVATE
   stdafx.h
 )
 
-target_compile_definitions(xrCore
+target_compile_definitions(XRay.Core
   PRIVATE
   PURE_ALLOC
   XRCORE_EXPORTS
   PORTABLE_BUGSLAYERUTIL
 )
 
-target_link_libraries(xrCore
+target_link_libraries(XRay.Core
   PRIVATE
   DXERR
   optick
   StackWalker
   winmm
-  xrAPI
-  xrCDB
+  XRay.Render.API
+  XRay.CDB
 )

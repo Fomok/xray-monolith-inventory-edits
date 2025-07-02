@@ -1,12 +1,12 @@
-add_library(xrNetServer STATIC)
+add_library(XRay.NetServer STATIC)
 
 set_property(
-  TARGET xrNetServer
+  TARGET XRay.NetServer
   PROPERTY FOLDER
   ${FOLDER_XRAY_NET_SERVER}
 )
 
-target_sources(xrNetServer PRIVATE
+target_sources(XRay.NetServer PRIVATE
   ip_filter.cpp
   NET_AuthCheck.cpp
   NET_Client.cpp
@@ -28,19 +28,19 @@ target_sources(xrNetServer PRIVATE
   stdafx.h
 )
 
-target_include_directories(xrNetServer
+target_include_directories(XRay.NetServer
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrNetServer
+target_precompile_headers(XRay.NetServer
   PRIVATE stdafx.h
 )
 
-target_link_libraries(xrNetServer
+target_link_libraries(XRay.NetServer
   PRIVATE
   DPlay
   DXERR
   Ws2_32
-  xrCore
+  XRay.Core
 )

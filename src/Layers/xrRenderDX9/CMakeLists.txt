@@ -1,12 +1,12 @@
-add_custom_target(xrRenderDX9)
+add_custom_target(XRay.Render.DX9)
 
 set_property(
-  TARGET xrRenderDX9
+  TARGET XRay.Render.DX9
   PROPERTY FOLDER
   ${FOLDER_RENDER}
 )
 
-target_sources(xrRenderDX9
+target_sources(XRay.Render.DX9
   PRIVATE
   dx9R_Backend_Runtime.h
   dx9r_constants_cache.cpp

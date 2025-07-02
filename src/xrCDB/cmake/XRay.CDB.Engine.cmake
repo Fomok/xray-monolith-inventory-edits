@@ -1,12 +1,12 @@
-add_library(xrCDB.Engine STATIC)
+add_library(XRay.CDB.Engine STATIC)
 
 set_property(
-  TARGET xrCDB.Engine
+  TARGET XRay.CDB.Engine
   PROPERTY FOLDER
   ${FOLDER_XRAY_CDB}
 )
 
-target_sources(xrCDB.Engine
+target_sources(XRay.CDB.Engine
   PRIVATE
   ISpatial.cpp
   ISpatial_q_box.cpp
@@ -24,23 +24,23 @@ target_sources(xrCDB.Engine
   xr_collide_defs.h
 )
 
-target_include_directories(xrCDB.Engine
+target_include_directories(XRay.CDB.Engine
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrCDB.Engine
+target_precompile_headers(XRay.CDB.Engine
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(xrCDB.Engine
+target_compile_definitions(XRay.CDB.Engine
   PRIVATE
   XRCDB_EXPORTS
 )
 
-target_link_libraries(xrCDB.Engine
+target_link_libraries(XRay.CDB.Engine
   PRIVATE
-  xrAPI
-  xrCore
-  xrRender
+  XRay.Render.API
+  XRay.Core
+  XRay.Render
 )

@@ -1,12 +1,12 @@
-add_library(xrRender_R3 STATIC)
+add_library(XRay.Render.R3 STATIC)
 
 set_property(
-  TARGET xrRender_R3
+  TARGET XRay.Render.R3
   PROPERTY FOLDER
   ${FOLDER_RENDER}
 )
 
-target_sources(xrRender_R3 PRIVATE
+target_sources(XRay.Render.R3 PRIVATE
   ../xrRenderDX10/3DFluid/dx103DFluidBlenders.cpp
   ../xrRenderDX10/3DFluid/dx103DFluidData.cpp
   ../xrRenderDX10/3DFluid/dx103DFluidEmitters.cpp
@@ -414,28 +414,28 @@ target_sources(xrRender_R3 PRIVATE
   stdafx.h
 )
 
-target_precompile_headers(xrRender_R3
+target_precompile_headers(XRay.Render.R3
   PRIVATE stdafx.h
 )
 
-target_include_directories(xrRender_R3
+target_include_directories(XRay.Render.R3
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_compile_options(xrRender_R3
+target_compile_options(XRay.Render.R3
   PRIVATE
   # Increase preallocated stack size by 10%
   /Zm110
 )
 
-target_compile_definitions(xrRender_R3
+target_compile_definitions(XRay.Render.R3
   PRIVATE
   USE_DX10
   XRRENDER_R3_EXPORTS
 )
 
-target_link_libraries(xrRender_R3
+target_link_libraries(XRay.Render.R3
   PRIVATE
   dxgi
   dxsdk
@@ -445,9 +445,9 @@ target_link_libraries(xrRender_R3
   LuaJIT
   NVAPI
   tbb
-  xrAPI
-  xrCDB
-  xrCore
-  xrEngine
-  xrRender
+  XRay.CDB
+  XRay.Core
+  XRay.Engine
+  XRay.Render
+  XRay.Render.API
 )

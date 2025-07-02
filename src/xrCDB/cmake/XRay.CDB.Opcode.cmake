@@ -1,12 +1,12 @@
-add_library(xrCDB.Opcode STATIC)
+add_library(XRay.CDB.Opcode STATIC)
 
 set_property(
-  TARGET xrCDB.Opcode
+  TARGET XRay.CDB.Opcode
   PROPERTY FOLDER
   ${FOLDER_XRAY_CDB}
 )
 
-target_sources(xrCDB.Opcode
+target_sources(XRay.CDB.Opcode
   PRIVATE
 
   Opcode.cpp
@@ -74,23 +74,23 @@ target_sources(xrCDB.Opcode
   OPC_VolumeCollider.h
 )
 
-target_include_directories(xrCDB.Opcode
+target_include_directories(XRay.CDB.Opcode
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(xrCDB.Opcode
+target_precompile_headers(XRay.CDB.Opcode
   PRIVATE stdafx.h
 )
 
-target_compile_definitions(xrCDB.Opcode
+target_compile_definitions(XRay.CDB.Opcode
   PRIVATE
   XRCDB_EXPORTS
 )
 
-target_link_libraries(xrCDB.Opcode
+target_link_libraries(XRay.CDB.Opcode
   PRIVATE
-  xrAPI
-  xrCore
-  xrRender
+  XRay.Render.API
+  XRay.Core
+  XRay.Render
 )
