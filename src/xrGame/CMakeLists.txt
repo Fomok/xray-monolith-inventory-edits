@@ -2397,7 +2397,6 @@ target_include_directories(xrGame
 target_precompile_headers(xrGame
   PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
-  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
 )
 
 target_compile_definitions(xrGame
@@ -2406,16 +2405,21 @@ target_compile_definitions(xrGame
 )
 
 target_link_libraries(xrGame
-  PUBLIC
+  PRIVATE
   crypto
   CxImage
   loki
+  lua-extensions
   luabind
+  LuaJIT
   ode
+  xrAPI
+  xrCDB
   xrCore
   xrEngine
   xrNetServer
   xrPhysics
+  xrRender
   xrScripts
   xrUI
 )
@@ -2804,11 +2808,18 @@ target_compile_definitions(xrUI
 )
 
 target_link_libraries(xrUI
-  PUBLIC
+  PRIVATE
   CxImage
+  DPlay
   luabind
+  LuaJIT
+  xrAPI
+  xrCDB
+  xrCore
+  xrEngine
   xrNetServer
   xrPhysics
+  xrRender
 )
 
 ## xrScripts
@@ -2976,15 +2987,18 @@ target_compile_definitions(xrScripts
 target_precompile_headers(xrScripts
   PRIVATE
   $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
-  $<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
+  #$<$<COMPILE_LANGUAGE:CXX>:../xrServerEntities/pch_script.h>
 )
 
 target_link_libraries(xrScripts
-  PUBLIC
+  PRIVATE
   DPlay
+  imgui
   luabind
+  LuaJIT
   xrAPI
   xrCDB
+  xrCore
   xrEngine
   xrRender
   xrPhysics

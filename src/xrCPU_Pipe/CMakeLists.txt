@@ -37,6 +37,8 @@ target_precompile_headers(xrCPU_Pipe
 )
 
 target_link_libraries(xrCPU_Pipe
-  PUBLIC
+  PRIVATE
+  xrAPI
   xrCDB
+  xrRender
 )

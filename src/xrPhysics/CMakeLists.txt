@@ -171,7 +171,7 @@ target_include_directories(xrPhysics
 )
 
 target_link_libraries(xrPhysics
-  PUBLIC
+  PRIVATE
   loki
   ode
   tbb

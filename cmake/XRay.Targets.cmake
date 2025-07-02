@@ -224,22 +224,28 @@ macro(add_engine_target name)
   )
 
   target_compile_definitions(${name}
-    PUBLIC
+    PRIVATE
     ENGINE_BUILD
   )
 
   target_link_libraries(${name}
-    PUBLIC
+    PRIVATE
     discord
     dinput8
+    dxsdk
+    DPlay
     icu
     imgui
-    lua-extensions
+    luabind
+    LuaJIT
     ReShadeCompat
     Vfw32
+    xrAPI
+    xrCDB
     xrCore
     xrGame
     xrParticles
+    xrRender
     xrSound
     xrXMLParser
   )

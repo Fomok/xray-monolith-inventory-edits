@@ -105,7 +105,7 @@ target_include_directories(xrCDB
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_precompile_headers(ReShadeCompat
+target_precompile_headers(xrCDB
   PRIVATE stdafx.h
 )
 
@@ -115,6 +115,8 @@ target_compile_definitions(xrCDB
 )
 
 target_link_libraries(xrCDB
-  PUBLIC
+  PRIVATE
+  xrAPI
   xrCore
+  xrRender
 )

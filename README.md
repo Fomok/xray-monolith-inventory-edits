@@ -271,6 +271,10 @@ Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_
    - `Project Outline` -> `Build All Projects` icon to build all targets
 
 ## Changelog
+**2025.07.01**
+* `hanging_lamp_ignore_match_configuration` cvar to circumvent the SSS23 + HF crash, related to https://github.com/themrdemonized/xray-monolith/issues/273
+* Fix https://github.com/themrdemonized/xray-monolith/issues/276
+
 **2025.06.30**
 * Disable printing DLTX `!` warnings by default, toggle it with `print_dltx_warnings 1` cvar
 * Lua GC step increased to 300

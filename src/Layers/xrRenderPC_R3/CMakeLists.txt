@@ -436,15 +436,17 @@ target_compile_definitions(xrRender_R3
 )
 
 target_link_libraries(xrRender_R3
-  PUBLIC
+  PRIVATE
   dxgi
   dxsdk
   imgui
   loki
   luabind
+  LuaJIT
   NVAPI
   tbb
   xrAPI
+  xrCDB
   xrCore
   xrEngine
   xrRender

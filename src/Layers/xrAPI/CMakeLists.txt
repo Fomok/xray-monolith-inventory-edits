@@ -23,6 +23,6 @@ target_precompile_headers(xrAPI
 )
 
 target_link_libraries(xrAPI
-  PUBLIC
+  PRIVATE
   xrRender
 )

@@ -223,7 +223,7 @@ target_sources(xrCore
   client_id.h
   robin_hood.h
 
-  #resource.h
+  resource.h
   xrCore.rc
 )
 
@@ -235,7 +235,6 @@ target_include_directories(xrCore
 target_precompile_headers(xrCore
   PRIVATE
   stdafx.h
-  blackbox/stdafx_.h
 )
 
 target_compile_definitions(xrCore
@@ -246,7 +245,7 @@ target_compile_definitions(xrCore
 )
 
 target_link_libraries(xrCore
-  PUBLIC
+  PRIVATE
   DXERR
   optick
   StackWalker

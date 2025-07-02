@@ -139,9 +139,20 @@ target_include_directories(tbb
   ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-find_library(LIBRARY_TBB tbb HINT ${XRAY_SDK_LIB})
+add_library(tbb_shared SHARED IMPORTED)
+set_property(
+  TARGET tbb_shared
+  PROPERTY IMPORTED_LOCATION
+  ${CMAKE_SOURCE_DIR}/sdk/binaries/tbb.dll
+)
+set_property(
+  TARGET tbb_shared
+  PROPERTY
+  IMPORTED_IMPLIB
+  ${CMAKE_SOURCE_DIR}/sdk/libraries/x64.old/tbb.lib
+)
 
 target_link_libraries(tbb
   INTERFACE
-  ${LIBRARY_TBB}
+  tbb_shared
 )
