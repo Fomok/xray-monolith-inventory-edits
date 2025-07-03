@@ -10,12 +10,29 @@ dx10ShaderResourceStateCache::dx10ShaderResourceStateCache()
 
 void dx10ShaderResourceStateCache::ResetDeviceState()
 {
-	ZeroMemory(m_PSViews, sizeof(m_PSViews));
-	ZeroMemory(m_GSViews, sizeof(m_GSViews));
-	ZeroMemory(m_VSViews, sizeof(m_VSViews));
+	if(mem_initialized)
+	{
+		ZeroMemory(m_PSViews, sizeof(m_PSViews));
+		ZeroMemory(m_GSViews, sizeof(m_GSViews));
+		ZeroMemory(m_VSViews, sizeof(m_VSViews));
+	}
+	else
+	{
+		memset(m_PSViews, 0, sizeof(m_PSViews));
+		memset(m_GSViews, 0, sizeof(m_GSViews));
+		memset(m_VSViews, 0, sizeof(m_VSViews));
+	}
 #ifdef USE_DX11
-	ZeroMemory(m_HSViews, sizeof(m_HSViews));
-	ZeroMemory(m_DSViews, sizeof(m_DSViews));
+	if(mem_initialized)
+	{
+		ZeroMemory(m_HSViews, sizeof(m_HSViews));
+		ZeroMemory(m_DSViews, sizeof(m_DSViews));
+	}
+	else
+	{
+		memset(m_HSViews, 0, sizeof(m_HSViews));
+		memset(m_DSViews, 0, sizeof(m_DSViews));
+	}
 #endif
 
 	m_uiMinPSView = 0xFFFFFFFF;
