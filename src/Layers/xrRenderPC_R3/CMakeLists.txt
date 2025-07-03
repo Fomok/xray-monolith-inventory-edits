@@ -426,6 +426,8 @@ target_compile_options(XRay.Render.R3
 )
 
 target_compile_definitions(XRay.Render.R3
+  PUBLIC
+  STATIC_RENDERER_R3
   PRIVATE
   USE_DX10
   XRRENDER_R3_EXPORTS

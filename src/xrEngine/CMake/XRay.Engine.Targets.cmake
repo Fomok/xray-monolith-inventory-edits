@@ -1,7 +1,7 @@
 include_guard()
 
 # Add an XRay.Engine target with the given name
-macro(add_engine_target name)
+macro(add_engine_target_impl name)
   add_executable(${name} WIN32)
 
   target_folder(${name} ${FOLDER_ENGINE})
@@ -65,14 +65,6 @@ macro(add_engine_target name)
   add_dependencies(${name}-PDB ${name})
 endmacro()
 
-macro(configure_engine_target TARGET DEFINE LINK)
-  target_compile_definitions(${TARGET}
-    PRIVATE
-    ${DEFINE}
-  )
-  target_link_libraries(${TARGET} PRIVATE ${LINK})
-endmacro()
-
 # Enable AVX for the given target
 macro(enable_avx TARGET)
   if(MSVC)
@@ -80,31 +72,18 @@ macro(enable_avx TARGET)
   endif()
 endmacro()
 
+# Add a target with the given renderer, and an AVX variant
+macro(add_engine_target TARGET RENDERER)
+  add_engine_target_impl(${TARGET})
+  target_link_libraries(${TARGET} PRIVATE ${RENDERER})
+
+  add_engine_target_impl(${TARGET}AVX)
+  enable_avx(${TARGET}AVX)
+  target_link_libraries(${TARGET}AVX PRIVATE ${RENDERER})
+endmacro()
+
 # Setup executable targets
-add_engine_target(AnomalyDX8)
-configure_engine_target(AnomalyDX8 STATIC_RENDERER_R1 XRay.Render.R1)
-
-add_engine_target(AnomalyDX8AVX)
-enable_avx(AnomalyDX8AVX)
-configure_engine_target(AnomalyDX8AVX STATIC_RENDERER_R1 XRay.Render.R1)
-
-add_engine_target(AnomalyDX9)
-configure_engine_target(AnomalyDX9 STATIC_RENDERER_R2 XRay.Render.R2)
-
-add_engine_target(AnomalyDX9AVX)
-enable_avx(AnomalyDX9AVX)
-configure_engine_target(AnomalyDX9AVX STATIC_RENDERER_R2 XRay.Render.R2)
-
-add_engine_target(AnomalyDX10)
-configure_engine_target(AnomalyDX10 STATIC_RENDERER_R3 XRay.Render.R3)
-
-add_engine_target(AnomalyDX10AVX)
-enable_avx(AnomalyDX10AVX)
-configure_engine_target(AnomalyDX10AVX STATIC_RENDERER_R3 XRay.Render.R3)
-
-add_engine_target(AnomalyDX11)
-configure_engine_target(AnomalyDX11 STATIC_RENDERER_R4 XRay.Render.R4)
-
-add_engine_target(AnomalyDX11AVX)
-enable_avx(AnomalyDX11AVX)
-configure_engine_target(AnomalyDX11AVX STATIC_RENDERER_R4 XRay.Render.R4)
+add_engine_target(AnomalyDX8 XRay.Render.R1)
+add_engine_target(AnomalyDX9 XRay.Render.R2)
+add_engine_target(AnomalyDX10 XRay.Render.R3)
+add_engine_target(AnomalyDX11 XRay.Render.R4)

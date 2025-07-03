@@ -373,6 +373,8 @@ target_include_directories(XRay.Render.R2
 )
 
 target_compile_definitions(XRay.Render.R2
+  PUBLIC
+  STATIC_RENDERER_R2
   PRIVATE
   XRRENDER_R2_EXPORTS
 )

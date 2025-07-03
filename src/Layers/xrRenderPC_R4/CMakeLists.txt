@@ -446,6 +446,8 @@ target_compile_options(XRay.Render.R4
 )
 
 target_compile_definitions(XRay.Render.R4
+  PUBLIC
+  STATIC_RENDERER_R4
   PRIVATE
   USE_DX11
   XRRENDER_R4_EXPORTS
