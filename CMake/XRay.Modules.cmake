@@ -39,9 +39,6 @@ function(add_module NAME)
   list(JOIN FOLDER "/" FOLDER)
   string(REPLACE "XRay" "X-Ray" FOLDER ${FOLDER})
 
-  message("${NAME} ARG_CHILD_OF ${ARG_CHILD_OF}")
-  message("${NAME} FOLDER ${FOLDER}")
-
   set_target_properties(${NAME}
     PROPERTIES FOLDER
     ${FOLDER}
