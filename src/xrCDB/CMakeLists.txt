@@ -1,3 +1,1 @@
-include(cmake/XRay.Collision.cmake)
-include(cmake/XRay.Collision.Engine.cmake)
-include(cmake/XRay.Collision.Opcode.cmake)
+add_cmake_directory(XRay.Collision)

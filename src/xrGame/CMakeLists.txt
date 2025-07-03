@@ -1,7 +1,1 @@
-include(cmake/XRay.Game.cmake)
-include(cmake/XRay.Game.AI.cmake)
-include(cmake/XRay.Game.AI.Components.cmake)
-include(cmake/XRay.Game.AI.Cover.cmake)
-include(cmake/XRay.Game.Physics.cmake)
-include(cmake/XRay.Game.Scripts.cmake)
-include(cmake/XRay.Game.UI.cmake)
+add_cmake_directory(XRay.Game)
