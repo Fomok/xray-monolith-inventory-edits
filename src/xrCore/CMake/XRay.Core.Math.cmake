@@ -1,5 +1,5 @@
 add_module(XRay.Core.Math
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
   
   SOURCES
   cpuid.cpp

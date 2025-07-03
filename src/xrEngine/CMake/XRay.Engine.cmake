@@ -186,6 +186,8 @@ set(XR_ENGINE_SOURCES
 )
 
 add_module(XRay.Engine
+  PARENT
+  
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 )
 

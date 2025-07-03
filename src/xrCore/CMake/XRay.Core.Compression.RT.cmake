@@ -1,5 +1,5 @@
 add_module(XRay.Core.Compression.RT
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
   
   SOURCES
   rt_compressor.cpp

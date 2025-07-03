@@ -1,4 +1,6 @@
 add_module(XRay.Sound
+  PARENT
+  
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   PRECOMPILES stdafx.h

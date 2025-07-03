@@ -1,3 +1,9 @@
+# Add ./CMake to the module path and include NAME
+macro(add_cmake_directory NAME)
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+  include(${NAME})
+endmacro()
+
 # Add a library with the given NAME, and the following optional keyword parameters:
 # SOURCES
 # INCLUDES
@@ -7,8 +13,8 @@
 function(add_module NAME)
   # Parse keyword arguments
   cmake_parse_arguments(PARSE_ARGV 1 ARG
-    ""
-    "PARENT"
+    "PARENT;LEAF"
+    "CHILD_OF"
     "SOURCES;INCLUDES;PRECOMPILES;DEFINES;LINKS"
   )
 
@@ -27,9 +33,14 @@ function(add_module NAME)
 
   # Convert our module name into a folder path and apply it
   string(REPLACE "." ";" FOLDER ${NAME})
-  list(POP_BACK FOLDER)
+  if(NOT ARG_PARENT AND NOT ARG_LEAF)
+    list(POP_BACK FOLDER)
+  endif()
   list(JOIN FOLDER "/" FOLDER)
   string(REPLACE "XRay" "X-Ray" FOLDER ${FOLDER})
+
+  message("${NAME} ARG_CHILD_OF ${ARG_CHILD_OF}")
+  message("${NAME} FOLDER ${FOLDER}")
 
   set_target_properties(${NAME}
     PROPERTIES FOLDER
@@ -60,7 +71,7 @@ function(add_module NAME)
   target_include_directories(${NAME}
     ${TYPE_PUBLIC}
     ${ARG_INCLUDES}
-    ${${ARG_PARENT}_INCLUDES}
+    ${${ARG_CHILD_OF}_INCLUDES}
   )
 
   # If we have sources...
@@ -70,7 +81,7 @@ function(add_module NAME)
     target_precompile_headers(${NAME}
       PRIVATE
       ${ARG_PRECOMPILES}
-      ${${ARG_PARENT}_PRECOMPILES}
+      ${${ARG_CHILD_OF}_PRECOMPILES}
     )
 
     # Compose compile definitions
@@ -78,7 +89,7 @@ function(add_module NAME)
     target_compile_definitions(${NAME}
       PRIVATE
       ${ARG_DEFINES}
-      ${${ARG_PARENT}_DEFINES}
+      ${${ARG_CHILD_OF}_DEFINES}
     )
   endif()
 
@@ -87,11 +98,11 @@ function(add_module NAME)
   target_link_libraries(${NAME}
     ${TYPE_PRIVATE}
     ${ARG_LINKS}
-    ${${ARG_PARENT}_LINKS}
+    ${${ARG_CHILD_OF}_LINKS}
   )
 
   # If we have a parent, link it to this module
-  if(DEFINED ARG_PARENT)
-    target_link_libraries(${ARG_PARENT} ${${ARG_PARENT}_TYPE_PRIVATE} ${NAME})
+  if(DEFINED ARG_CHILD_OF)
+    target_link_libraries(${ARG_CHILD_OF} ${${ARG_CHILD_OF}_TYPE_PRIVATE} ${NAME})
   endif()
 endfunction()

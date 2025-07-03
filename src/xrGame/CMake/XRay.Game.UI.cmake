@@ -1,5 +1,5 @@
 add_module(XRay.Game.UI
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   UIAchivementsIndicator.cpp

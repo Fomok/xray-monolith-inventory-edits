@@ -1,5 +1,5 @@
 add_module(XRay.Core.Profiling
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
   
   SOURCES
   profiler.h

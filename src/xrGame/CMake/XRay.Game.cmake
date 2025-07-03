@@ -1,4 +1,6 @@
 add_module(XRay.Game
+  PARENT
+
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
@@ -1616,8 +1618,6 @@ add_module(XRay.Game
 )
 
 include(XRay.Game.AI)
-include(XRay.Game.AI.Components)
-include(XRay.Game.AI.Cover)
 include(XRay.Game.Physics)
 include(XRay.Game.Scripts)
 include(XRay.Game.UI)

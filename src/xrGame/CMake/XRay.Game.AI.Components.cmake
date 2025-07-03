@@ -1,5 +1,5 @@
 add_module(XRay.Game.AI.Components.Damage
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   DamageSource.h
@@ -9,7 +9,7 @@ add_module(XRay.Game.AI.Components.Damage
 )
 
 add_module(XRay.Game.AI.Components.Action.Base
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   action_base_script.cpp
@@ -18,7 +18,7 @@ add_module(XRay.Game.AI.Components.Action.Base
 )
 
 add_module(XRay.Game.AI.Components.Action.Planner
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   action_planner_script.cpp
@@ -29,7 +29,7 @@ add_module(XRay.Game.AI.Components.Action.Planner
 )
 
 add_module(XRay.Game.AI.Components.Action.Planner.Action
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   action_planner_action_script.cpp
@@ -40,7 +40,7 @@ add_module(XRay.Game.AI.Components.Action.Planner.Action
 )
 
 add_module(XRay.Game.AI.Components.PropertyStorage
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   property_storage_script.cpp
@@ -49,7 +49,7 @@ add_module(XRay.Game.AI.Components.PropertyStorage
 )
 
 add_module(XRay.Game.AI.Components.WorldPropertyEvaluator
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   property_evaluator_script.cpp
@@ -62,7 +62,7 @@ add_module(XRay.Game.AI.Components.WorldPropertyEvaluator
 )
 
 add_module(XRay.Game.AI.Components.Danger
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   danger_manager.cpp
@@ -75,7 +75,7 @@ add_module(XRay.Game.AI.Components.Danger
 )
 
 add_module(XRay.Game.AI.Components.Enemy
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   enemy_manager.cpp
@@ -84,7 +84,7 @@ add_module(XRay.Game.AI.Components.Enemy
 )
 
 add_module(XRay.Game.AI.Components.Item
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   item_manager.cpp
@@ -92,7 +92,7 @@ add_module(XRay.Game.AI.Components.Item
 )
 
 add_module(XRay.Game.AI.Components.Doors
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   doors_actor.cpp
@@ -104,7 +104,7 @@ add_module(XRay.Game.AI.Components.Doors
 )
 
 add_module(XRay.Game.AI.Components.Material
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   material_manager.cpp
@@ -113,7 +113,7 @@ add_module(XRay.Game.AI.Components.Material
 )
 
 add_module(XRay.Game.AI.Components.Memory
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   memory_manager.cpp
@@ -126,7 +126,7 @@ add_module(XRay.Game.AI.Components.Memory
 )
 
 add_module(XRay.Game.AI.Components.Memory.Hit
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   hit_memory_manager.cpp
@@ -135,7 +135,7 @@ add_module(XRay.Game.AI.Components.Memory.Hit
 )
 
 add_module(XRay.Game.AI.Components.Memory.Sound
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   sound_memory_manager.cpp
@@ -145,7 +145,7 @@ add_module(XRay.Game.AI.Components.Memory.Sound
 )
 
 add_module(XRay.Game.AI.Components.Memory.Visual
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   vision_client.cpp
@@ -161,7 +161,7 @@ add_module(XRay.Game.AI.Components.Memory.Visual
 )
 
 add_module(XRay.Game.AI.Components.Movement
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   location_manager.cpp
@@ -212,7 +212,7 @@ add_module(XRay.Game.AI.Components.Movement
 )
 
 add_module(XRay.Game.AI.Components.MovingObjects
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   moving_object.cpp
@@ -229,7 +229,7 @@ add_module(XRay.Game.AI.Components.MovingObjects
 )
 
 add_module(XRay.Game.AI.Components.ProblemSolver
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   condition_state.h
@@ -246,7 +246,7 @@ add_module(XRay.Game.AI.Components.ProblemSolver
 )
 
 add_module(XRay.Game.AI.Components.SetupManager
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   setup_manager.h
@@ -254,7 +254,7 @@ add_module(XRay.Game.AI.Components.SetupManager
 )
 
 add_module(XRay.Game.AI.Components.ObjectHandler
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   object_actions.cpp
@@ -279,7 +279,7 @@ add_module(XRay.Game.AI.Components.ObjectHandler
 )
 
 add_module(XRay.Game.AI.Components.Sight
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   aimers_base.cpp
@@ -311,7 +311,7 @@ add_module(XRay.Game.AI.Components.Sight
 )
 
 add_module(XRay.Game.AI.Components.Sound
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   sound_collection_storage.cpp
@@ -324,7 +324,7 @@ add_module(XRay.Game.AI.Components.Sound
 )
 
 add_module(XRay.Game.AI.Components.SpaceRestriction
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   ../xrServerEntities/restriction_space.h
@@ -356,7 +356,7 @@ add_module(XRay.Game.AI.Components.SpaceRestriction
 )
 
 add_module(XRay.Game.AI.Components.Step
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   step_manager.cpp

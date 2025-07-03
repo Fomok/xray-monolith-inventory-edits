@@ -1,5 +1,5 @@
 add_module(XRay.Particles.API
-  PARENT XRay.Particles
+  CHILD_OF XRay.Particles
 
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 

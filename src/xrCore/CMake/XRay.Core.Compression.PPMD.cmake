@@ -1,5 +1,5 @@
 add_module(XRay.Core.Compression.PPMD
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
   
   SOURCES
   PPMd.h

@@ -1,5 +1,5 @@
 add_module(X-Ray.Core.Threading
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
 
   SOURCES
   Lock.cpp

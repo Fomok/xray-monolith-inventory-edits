@@ -1,5 +1,5 @@
 add_module(XRay.Core.Memory.Shared
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
 
   SOURCES
   crc32.cpp

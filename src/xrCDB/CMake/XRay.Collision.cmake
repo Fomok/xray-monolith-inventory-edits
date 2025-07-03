@@ -1,4 +1,6 @@
 add_module(XRay.Collision
+  PARENT
+  
   SOURCES
   #cl_raypick.cpp
   Frustum.cpp

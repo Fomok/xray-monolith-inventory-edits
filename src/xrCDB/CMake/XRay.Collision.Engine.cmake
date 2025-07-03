@@ -1,5 +1,5 @@
 add_module(XRay.Collision.Engine
-  PARENT XRay.Collision
+  CHILD_OF XRay.Collision
 
   SOURCES
   ISpatial.cpp

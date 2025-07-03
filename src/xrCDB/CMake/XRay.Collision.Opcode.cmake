@@ -1,5 +1,5 @@
 add_module(XRay.Collision.Opcode
-  PARENT XRay.Collision
+  CHILD_OF XRay.Collision
 
   SOURCES
   Opcode.cpp

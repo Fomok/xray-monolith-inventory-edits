@@ -1,5 +1,6 @@
 add_module(XRay.Core.Debug
-  PARENT XRay.Core
+  PARENT
+  CHILD_OF XRay.Core
   
   SOURCES
   #xrDebug.cpp

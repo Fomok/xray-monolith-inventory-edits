@@ -1,5 +1,5 @@
 add_module(XRay.Game.Physics PRIVATE
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   ../xrServerEntities/PHNetState.cpp

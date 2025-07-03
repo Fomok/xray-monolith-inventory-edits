@@ -1,5 +1,5 @@
 add_module(XRay.Core.OS
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
   
   SOURCES
   os_clipboard.cpp

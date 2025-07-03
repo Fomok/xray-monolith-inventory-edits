@@ -1,5 +1,5 @@
 add_module(XRay.Game.AI.Cover
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   cover_point_script.cpp

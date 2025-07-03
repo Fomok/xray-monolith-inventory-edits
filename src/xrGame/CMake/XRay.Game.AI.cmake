@@ -1,5 +1,6 @@
 add_module(XRay.Game.AI
-  PARENT XRay.Game
+  PARENT
+  CHILD_OF XRay.Game
   
   SOURCES
   ai/ai_monsters_misc.cpp
@@ -505,3 +506,6 @@ add_module(XRay.Game.AI
   ai_space.h
   ai_space_inline.h
 )
+
+include(XRay.Game.AI.Components)
+include(XRay.Game.AI.Cover)

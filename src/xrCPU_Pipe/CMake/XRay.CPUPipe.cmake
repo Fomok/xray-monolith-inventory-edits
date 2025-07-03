@@ -1,4 +1,6 @@
 add_module(XRay.CPUPipe
+  PARENT
+
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   PRECOMPILES stdafx.h
@@ -14,14 +16,14 @@ add_module(XRay.CPUPipe
 )
 
 add_module(XRay.CPUPipe.PLC
-  PARENT XRay.CPUPipe
+  CHILD_OF XRay.CPUPipe
 
   SOURCES
   PLC.cpp
 )
 
 add_module(XRay.CPUPipe.Resources
-  PARENT XRay.CPUPipe
+  CHILD_OF XRay.CPUPipe
 
   SOURCES
   resource.h
@@ -29,7 +31,7 @@ add_module(XRay.CPUPipe.Resources
 )
 
 add_module(XRay.CPUPipe.Skinning
-  PARENT XRay.CPUPipe
+  CHILD_OF XRay.CPUPipe
 
   SOURCES
   xrSkin2W.cpp
@@ -38,7 +40,7 @@ add_module(XRay.CPUPipe.Skinning
 )
 
 add_module(XRay.CPUPipe.TTAPI
-  PARENT XRay.CPUPipe
+  CHILD_OF XRay.CPUPipe
 
   SOURCES
   ttapi.cpp

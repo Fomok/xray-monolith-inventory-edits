@@ -1,5 +1,5 @@
 add_module(XRay.Game.Scripts
-  PARENT XRay.Game
+  CHILD_OF XRay.Game
 
   SOURCES
   script_abstract_action.cpp

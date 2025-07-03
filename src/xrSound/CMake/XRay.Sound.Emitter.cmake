@@ -1,5 +1,5 @@
 add_module(XRay.Sound.Emitter
-  PARENT XRay.Sound
+  CHILD_OF XRay.Sound
 
   SOURCES
   SoundRender_Emitter.cpp

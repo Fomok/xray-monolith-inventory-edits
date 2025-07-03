@@ -1,5 +1,5 @@
 add_module(XRay.Core.IntrusivePointer
-  PARENT XRay.Core
+  CHILD_OF XRay.Core
   
   SOURCES
   intrusive_ptr.h
