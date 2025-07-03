@@ -13,3 +13,6 @@ set(CMAKE_CONFIGURATION_TYPES
   # Release build with PDB debug info
   RelWithDebInfo
 )
+
+LIST(JOIN CMAKE_CONFIGURATION_TYPES ", " BUILD_PRESETS)
+message(STATUS "Build Presets: ${BUILD_PRESETS}")

@@ -19,23 +19,29 @@ macro(add_engine_pdb_impl name)
   add_dependencies(${name}-PDB ${name})
 endmacro()
 
-# Add an XRay.Engine target with the given name
-macro(add_engine_target_impl name)
-endmacro()
-
 # Add a target with the given renderer, and an AVX variant
-macro(add_engine_target NAME)
+function(add_engine_target NAME)
   add_executable(${NAME} WIN32)
-  string(REPLACE "." "" ${NAME}_OUTPUT_NAME ${NAME})
+
+  if(${XRAY_AVX})
+    set(${NAME}_NAME_EXECUTABLE ${NAME}.AVX)
+  else()
+    set(${NAME}_NAME_EXECUTABLE ${NAME})
+  endif()
+
+  string(REPLACE "." "" ${NAME}_NAME_OUTPUT ${${NAME}_NAME_EXECUTABLE})
   set_target_properties(${NAME}
     PROPERTIES OUTPUT_NAME
-    ${${NAME}_OUTPUT_NAME}
+    ${${NAME}_NAME_OUTPUT}
   )
   target_folder(${NAME} ${FOLDER_EXECUTABLES})
-  target_link_libraries(${NAME} PRIVATE XRay.Engine.Main)
-  target_link_libraries(${NAME} PRIVATE ${ARGN})
+  target_link_libraries(${NAME}
+    PRIVATE
+    XRay.Engine.Main
+    ${ARGN}
+  )
   add_engine_pdb_impl(${NAME})
-endmacro()
+endfunction()
 
 # Setup executable targets
 add_engine_target(
@@ -53,4 +59,11 @@ add_engine_target(
 add_engine_target(
   Anomaly.DX11
   XRay.Render.R4
+)
+
+# Set visual studio startup project
+set_property(
+  DIRECTORY ${CMAKE_SOURCE_DIR}
+  PROPERTY VS_STARTUP_PROJECT
+  Anomaly.DX11
 )
