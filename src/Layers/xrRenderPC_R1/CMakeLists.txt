@@ -1,8 +1,28 @@
-add_library(XRay.Render.R1 STATIC)
+add_module(XRay.Render.R1
+  PRECOMPILES stdafx.h
 
-target_folder(XRay.Render.R1 ${FOLDER_RENDER})
+  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
-target_sources(XRay.Render.R1 PRIVATE
+  DEFINES
+  STATIC_RENDERER_R1
+  XRRENDER_R1_EXPORTS
+
+  LINKS
+  dxsdk
+  imgui
+  loki
+  luabind
+  LuaJIT
+  NVAPI
+  tbb
+  XRay.Collision
+  XRay.Core
+  XRay.CPUPipe
+  XRay.Engine
+  XRay.Render
+  XRay.Render.API
+
+  SOURCES
   ../xrRenderDX9/dx9r_constants_cache.cpp
   ../xrRender/Animation.cpp
   ../xrRender/blenders/Blender.cpp
@@ -289,37 +309,4 @@ target_sources(XRay.Render.R1 PRIVATE
   LightProjector.h
   LightShadows.h
   stdafx.h
-)
-
-target_precompile_headers(XRay.Render.R1
-  PRIVATE stdafx.h
-)
-
-target_include_directories(XRay.Render.R1
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_compile_definitions(XRay.Render.R1
-  PUBLIC
-  STATIC_RENDERER_R1
-  PRIVATE
-  XRRENDER_R1_EXPORTS
-)
-
-target_link_libraries(XRay.Render.R1
-  PRIVATE
-  dxsdk
-  imgui
-  loki
-  luabind
-  LuaJIT
-  NVAPI
-  tbb
-  XRay.Collision
-  XRay.Core
-  XRay.CPUPipe
-  XRay.Engine
-  XRay.Render
-  XRay.Render.API
 )

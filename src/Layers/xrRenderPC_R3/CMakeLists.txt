@@ -1,8 +1,29 @@
-add_library(XRay.Render.R3 STATIC)
+add_module(XRay.Render.R3
+  PRECOMPILES stdafx.h
 
-target_folder(XRay.Render.R3 ${FOLDER_RENDER})
+  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
-target_sources(XRay.Render.R3 PRIVATE
+  DEFINES
+  STATIC_RENDERER_R3
+  USE_DX10
+  XRRENDER_R3_EXPORTS
+
+  LINKS
+  dxgi
+  dxsdk
+  imgui
+  loki
+  luabind
+  LuaJIT
+  NVAPI
+  tbb
+  XRay.Collision
+  XRay.Core
+  XRay.Engine
+  XRay.Render
+  XRay.Render.API
+
+  SOURCES
   ../xrRenderDX10/3DFluid/dx103DFluidBlenders.cpp
   ../xrRenderDX10/3DFluid/dx103DFluidData.cpp
   ../xrRenderDX10/3DFluid/dx103DFluidEmitters.cpp
@@ -410,42 +431,8 @@ target_sources(XRay.Render.R3 PRIVATE
   stdafx.h
 )
 
-target_precompile_headers(XRay.Render.R3
-  PRIVATE stdafx.h
-)
-
-target_include_directories(XRay.Render.R3
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
 target_compile_options(XRay.Render.R3
   PRIVATE
   # Increase preallocated stack size by 10%
   /Zm110
-)
-
-target_compile_definitions(XRay.Render.R3
-  PUBLIC
-  STATIC_RENDERER_R3
-  PRIVATE
-  USE_DX10
-  XRRENDER_R3_EXPORTS
-)
-
-target_link_libraries(XRay.Render.R3
-  PRIVATE
-  dxgi
-  dxsdk
-  imgui
-  loki
-  luabind
-  LuaJIT
-  NVAPI
-  tbb
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.Render
-  XRay.Render.API
 )

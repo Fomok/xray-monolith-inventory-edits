@@ -1,9 +1,8 @@
-add_library(XRay.Render INTERFACE)
-
-target_folder(XRay.Render ${FOLDER_RENDER})
-
-target_sources(XRay.Render
-  PRIVATE
+add_module(XRay.Render
+  PARENT
+  TYPE INTERFACE
+  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  SOURCES
   blenders/Blender.cpp
   blenders/Blender.h
   blenders/Blender_CLSID.h
@@ -280,9 +279,4 @@ target_sources(XRay.Render
   xrRender_console.h
   xrStripify.cpp
   xrStripify.h
-)
-
-target_include_directories(XRay.Render
-  INTERFACE
-  ${CMAKE_CURRENT_SOURCE_DIR}
 )

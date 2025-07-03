@@ -1,10 +1,7 @@
-add_custom_target(XRay.Render.DX10)
-
-target_folder(XRay.Render.DX10 ${FOLDER_RENDER})
-
-target_sources(XRay.Render.DX10
-  PRIVATE
-
+add_module(XRay.Render.DX10
+  TYPE INTERFACE
+  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  SOURCES
   3DFluid/dx103DFluidBlenders.cpp
   3DFluid/dx103DFluidBlenders.h
   3DFluid/dx103DFluidData.cpp

@@ -14,7 +14,7 @@ function(add_module NAME)
   # Parse keyword arguments
   cmake_parse_arguments(PARSE_ARGV 1 ARG
     "PARENT;LEAF"
-    "CHILD_OF"
+    "TYPE;CHILD_OF"
     "SOURCES;INCLUDES;PRECOMPILES;DEFINES;LINKS"
   )
 
@@ -25,11 +25,26 @@ function(add_module NAME)
   endif()
   
   # If we have sources, this is a STATIC module, otherwise INTERFACE
-  set(TYPE INTERFACE)
-  if(HAS_SOURCES)
-    set(TYPE STATIC)
+  if(NOT DEFINED ARG_TYPE)
+    if(HAS_SOURCES)
+      set(ARG_TYPE STATIC)
+    else()
+      set(ARG_TYPE INTERFACE)
+    endif()
   endif()
-  add_library(${NAME} ${TYPE})
+
+  if(ARG_TYPE STREQUAL INTERFACE)
+    set(TYPE_PUBLIC INTERFACE)
+    set(TYPE_PRIVATE INTERFACE)
+  else()
+    set(TYPE_PUBLIC PUBLIC)
+    set(TYPE_PRIVATE PRIVATE)
+  endif()
+
+  set(${NAME}_TYPE_PUBLIC ${TYPE_PUBLIC} PARENT_SCOPE)
+  set(${NAME}_TYPE_PRIVATE ${TYPE_PRIVATE} PARENT_SCOPE)
+
+  add_library(${NAME} ${ARG_TYPE})
 
   # Convert our module name into a folder path and apply it
   string(REPLACE "." ";" FOLDER ${NAME})
@@ -44,20 +59,6 @@ function(add_module NAME)
     ${FOLDER}
   )
 
-  # Define a public-or-interface variable based on sources
-  set(TYPE_PUBLIC INTERFACE)
-  if(${HAS_SOURCES})
-    set(TYPE_PUBLIC PUBLIC)
-  endif()
-  set(${NAME}_TYPE_PUBLIC ${TYPE_PUBLIC} PARENT_SCOPE)
-
-  # Define a private-or-interface variable based on sources
-  set(TYPE_PRIVATE INTERFACE)
-  if(${HAS_SOURCES})
-    set(TYPE_PRIVATE PRIVATE)
-  endif()
-  set(${NAME}_TYPE_PRIVATE ${TYPE_PRIVATE} PARENT_SCOPE)
-
   target_sources(${NAME}
     PRIVATE
     ${ARG_SOURCES}
@@ -71,24 +72,21 @@ function(add_module NAME)
     ${${ARG_CHILD_OF}_INCLUDES}
   )
 
-  # If we have sources...
-  if(${HAS_SOURCES})
-    # Compose precompiled headers
-    set(${NAME}_PRECOMPILES ${ARG_PRECOMPILES} PARENT_SCOPE)
-    target_precompile_headers(${NAME}
-      PRIVATE
-      ${ARG_PRECOMPILES}
-      ${${ARG_CHILD_OF}_PRECOMPILES}
-    )
+  # Compose precompiled headers
+  set(${NAME}_PRECOMPILES ${ARG_PRECOMPILES} PARENT_SCOPE)
+  target_precompile_headers(${NAME}
+    ${TYPE_PRIVATE}
+    ${ARG_PRECOMPILES}
+    ${${ARG_CHILD_OF}_PRECOMPILES}
+  )
 
-    # Compose compile definitions
-    set(${NAME}_DEFINES ${ARG_DEFINES} PARENT_SCOPE)
-    target_compile_definitions(${NAME}
-      PRIVATE
-      ${ARG_DEFINES}
-      ${${ARG_CHILD_OF}_DEFINES}
-    )
-  endif()
+  # Compose compile definitions
+  set(${NAME}_DEFINES ${ARG_DEFINES} PARENT_SCOPE)
+  target_compile_definitions(${NAME}
+    ${TYPE_PUBLIC}
+    ${ARG_DEFINES}
+    ${${ARG_CHILD_OF}_DEFINES}
+  )
 
   # Compose linked libraries
   set(${NAME}_LINKS ${ARG_LINKS} PARENT_SCOPE)

@@ -1,4 +1,33 @@
-set(XR_ENGINE_SOURCES
+add_module(XRay.Engine
+  PARENT
+  
+  PRECOMPILES stdafx.h
+  
+  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+
+  DEFINES ENGINE_BUILD
+
+  LINKS
+  discord
+  dinput8
+  dxsdk
+  DPlay
+  icu
+  imgui
+  luabind
+  LuaJIT
+  ReShadeCompat
+  Vfw32
+  XRay.Collision
+  XRay.Core
+  XRay.Game
+  XRay.Particles
+  XRay.Render
+  XRay.Render.API
+  XRay.Sound
+  XRay.XMLParser
+
+  SOURCES
   ai_script_lua_debug.cpp
   ai_script_lua_extension.cpp
   bone.cpp
@@ -18,7 +47,6 @@ set(XR_ENGINE_SOURCES
   Effector.cpp
   EffectorPP.cpp
   Engine.cpp
-  EngineAPI.cpp
   Envelope.cpp
   Environment.cpp
   Environment_misc.cpp
@@ -84,7 +112,6 @@ set(XR_ENGINE_SOURCES
   xr_ioc_cmd.cpp
   xr_object.cpp
   xr_object_list.cpp
-  x_ray.cpp
   _scripting.cpp
 
   ai_script_lua_extension.h
@@ -104,7 +131,6 @@ set(XR_ENGINE_SOURCES
   Effector.h
   EffectorPP.h
   Engine.h
-  EngineAPI.h
   EnnumerateVertices.h
   envelope.h
   Environment.h
@@ -178,22 +204,8 @@ set(XR_ENGINE_SOURCES
   xr_ioc_cmd.h
   xr_object.h
   xr_object_list.h
-  x_ray.h
   _d3d_extensions.h
-
-  resource.rc
-  dpi-aware.manifest
 )
 
-add_module(XRay.Engine
-  PARENT
-  
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_sources(XRay.Engine
-  PRIVATE
-  ${XR_ENGINE_SOURCES}
-)
-
+include(XRay.Engine.Main)
 include(XRay.Engine.Targets)

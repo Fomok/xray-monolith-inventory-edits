@@ -1,24 +1,9 @@
-add_library(XRay.Render.API STATIC)
-
-target_folder(XRay.Render.API ${FOLDER_RENDER})
-
-target_sources(XRay.Render.API
-  PRIVATE
+add_module(XRay.Render.API
+  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  PRECOMPILES stdafx.h
+  LINKS XRay.Render
+  SOURCES
   xrAPI.cpp
   stdafx.h
   xrAPI.h
-)
-
-target_include_directories(XRay.Render.API
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Render.API
-  PRIVATE stdafx.h
-)
-
-target_link_libraries(XRay.Render.API
-  PRIVATE
-  XRay.Render
 )
