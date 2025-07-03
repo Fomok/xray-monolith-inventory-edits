@@ -1,9 +1,7 @@
-add_library(XRay.Collision.Engine STATIC)
+add_module(XRay.Collision.Engine
+  PARENT XRay.Collision
 
-target_folder(XRay.Collision.Engine ${FOLDER_XRAY_COLLISION})
-
-target_sources(XRay.Collision.Engine
-  PRIVATE
+  SOURCES
   ISpatial.cpp
   ISpatial_q_box.cpp
   ISpatial_q_frustum.cpp
@@ -18,25 +16,4 @@ target_sources(XRay.Collision.Engine
   ISpatial.h
   xr_area.h
   xr_collide_defs.h
-)
-
-target_include_directories(XRay.Collision.Engine
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Collision.Engine
-  PRIVATE stdafx.h
-)
-
-target_compile_definitions(XRay.Collision.Engine
-  PRIVATE
-  XRCDB_EXPORTS
-)
-
-target_link_libraries(XRay.Collision.Engine
-  PRIVATE
-  XRay.Render.API
-  XRay.Core
-  XRay.Render
 )

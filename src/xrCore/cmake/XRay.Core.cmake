@@ -1,7 +1,7 @@
 add_module(XRay.Core
-  PCH stdafx.h
+  PRECOMPILES stdafx.h
 
-  DEFS
+  DEFINES
   PURE_ALLOC
   XRCORE_EXPORTS
   PORTABLE_BUGSLAYERUTIL
@@ -9,7 +9,7 @@ add_module(XRay.Core
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
-  LIBS
+  LINKS
   DXERR
   optick
   StackWalker

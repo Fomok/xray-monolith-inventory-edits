@@ -1,4 +1,3 @@
-
 add_module(XRay.Core.Compression.LZO
   PARENT XRay.Core
   

@@ -1,8 +1,7 @@
-add_library(XRay.Game.UI STATIC)
+add_module(XRay.Game.UI
+  PARENT XRay.Game
 
-target_folder(XRay.Game.UI ${FOLDER_XRAY_GAME})
-
-target_sources(XRay.Game.UI PRIVATE
+  SOURCES
   UIAchivementsIndicator.cpp
   UICursor.cpp
   UIDialogHolder.cpp

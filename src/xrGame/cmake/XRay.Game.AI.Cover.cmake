@@ -1,4 +1,7 @@
-add_xray_game_static(XRay.Game.AI.Cover
+add_module(XRay.Game.AI.Cover
+  PARENT XRay.Game
+
+  SOURCES
   cover_point_script.cpp
   cover_point.h
   cover_point_inline.h
@@ -56,5 +59,3 @@ add_xray_game_static(XRay.Game.AI.Cover
   cover_manager.h
   cover_manager_inline.h
 )
-
-target_folder(XRay.Game.AI.Cover ${FOLDER_XRAY_GAME_AI})

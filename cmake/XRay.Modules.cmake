@@ -1,39 +1,51 @@
+# Add a library with the given NAME, and the following optional keyword parameters:
+# SOURCES
+# INCLUDES
+# PRECOMPILES
+# DEFINES
+# LINKS
 function(add_module NAME)
+  # Parse keyword arguments
+  cmake_parse_arguments(PARSE_ARGV 1 ARG
+    ""
+    "PARENT"
+    "SOURCES;INCLUDES;PRECOMPILES;DEFINES;LINKS"
+  )
+
+  # Determine whether we have any C or CPP sources
+  set(HAS_SOURCES false)
+  if(ARG_SOURCES MATCHES "\\.cpp" OR ARG_SOURCES MATCHES "\\.c")
+    set(HAS_SOURCES true)
+  endif()
+  
+  # If we have sources, this is a STATIC module, otherwise INTERFACE
+  set(TYPE INTERFACE)
+  if(HAS_SOURCES)
+    set(TYPE STATIC)
+  endif()
+  add_library(${NAME} ${TYPE})
+
+  # Convert our module name into a folder path and apply it
   string(REPLACE "." ";" FOLDER ${NAME})
   list(POP_BACK FOLDER)
   list(JOIN FOLDER "/" FOLDER)
   string(REPLACE "XRay" "X-Ray" FOLDER ${FOLDER})
-  
-  cmake_parse_arguments(PARSE_ARGV 1 ARG
-    ""
-    "PARENT"
-    "SOURCES;INCLUDES;PCH;DEFS;LIBS"
-  )
-
-  set(IS_INTERFACE true)
-  if(ARG_SOURCES MATCHES ".cpp" OR ARG_SOURCES MATCHES ".c")
-    set(IS_INTERFACE false)
-  endif()
-  
-  set(TYPE STATIC)
-  if(IS_INTERFACE)
-    set(TYPE INTERFACE)
-  endif()
-  add_library(${NAME} ${TYPE})
 
   set_target_properties(${NAME}
     PROPERTIES FOLDER
     ${FOLDER}
   )
 
-  set(TYPE_PUBLIC PUBLIC)
-  if(${IS_INTERFACE})
-    set(TYPE_PUBLIC INTERFACE)
+  # Define a public-or-interface variable based on sources
+  set(TYPE_PUBLIC INTERFACE)
+  if(${HAS_SOURCES})
+    set(TYPE_PUBLIC PUBLIC)
   endif()
 
-  set(TYPE_PRIVATE PRIVATE)
-  if(${IS_INTERFACE})
-    set(TYPE_PRIVATE INTERFACE)
+  # Define a private-or-interface variable based on sources
+  set(TYPE_PRIVATE INTERFACE)
+  if(${HAS_SOURCES})
+    set(TYPE_PRIVATE PRIVATE)
   endif()
 
   target_sources(${NAME}
@@ -41,6 +53,7 @@ function(add_module NAME)
     ${ARG_SOURCES}
   )
 
+  # Compose includes
   set(${NAME}_INCLUDES ${ARG_INCLUDES} PARENT_SCOPE)
   target_include_directories(${NAME}
     ${TYPE_PUBLIC}
@@ -48,30 +61,36 @@ function(add_module NAME)
     ${${ARG_PARENT}_INCLUDES}
   )
 
-  if(NOT ${IS_INTERFACE})
-    set(${NAME}_PCH ${ARG_PCH} PARENT_SCOPE)
+  # If we have sources...
+  if(${HAS_SOURCES})
+    # Compose precompiled headers
+    set(${NAME}_PRECOMPILES ${ARG_PRECOMPILES} PARENT_SCOPE)
     target_precompile_headers(${NAME}
       PRIVATE
-      ${ARG_PCH}
-      ${${ARG_PARENT}_PCH}
+      ${ARG_PRECOMPILES}
+      ${${ARG_PARENT}_PRECOMPILES}
     )
 
-    set(${NAME}_DEFS ${ARG_DEFS} PARENT_SCOPE)
+    # Compose compile definitions
+    set(${NAME}_DEFINES ${ARG_DEFINES} PARENT_SCOPE)
     target_compile_definitions(${NAME}
       PRIVATE
-      ${ARG_DEFS}
-      ${${ARG_PARENT}_DEFS}
+      ${ARG_DEFINES}
+      ${${ARG_PARENT}_DEFINES}
     )
   endif()
 
-  set(${NAME}_LIBS ${ARG_LIBS} PARENT_SCOPE)
+  # Compose linked libraries
+  set(${NAME}_LINKS ${ARG_LINKS} PARENT_SCOPE)
   target_link_libraries(${NAME}
     ${TYPE_PRIVATE}
-    ${ARG_LIBS}
-    ${${ARG_PARENT}_LIBS}
+    ${ARG_LINKS}
+    ${${ARG_PARENT}_LINKS}
   )
 
+  # If we have a parent, link it to this module
   if(DEFINED ARG_PARENT)
+    message("Linking ${NAME} from ${ARG_PARENT}")
     target_link_libraries(${ARG_PARENT} PRIVATE ${NAME})
   endif()
 endfunction()

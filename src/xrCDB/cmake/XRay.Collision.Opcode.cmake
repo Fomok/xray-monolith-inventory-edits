@@ -1,10 +1,7 @@
-add_library(XRay.Collision.Opcode STATIC)
+add_module(XRay.Collision.Opcode
+  PARENT XRay.Collision
 
-target_folder(XRay.Collision.Opcode ${FOLDER_XRAY_COLLISION})
-
-target_sources(XRay.Collision.Opcode
-  PRIVATE
-
+  SOURCES
   Opcode.cpp
   OPC_AABB.cpp
   OPC_AABBCollider.cpp
@@ -68,25 +65,4 @@ target_sources(XRay.Collision.Opcode
   OPC_TriTriOverlap.h
   OPC_Types.h
   OPC_VolumeCollider.h
-)
-
-target_include_directories(XRay.Collision.Opcode
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.Collision.Opcode
-  PRIVATE stdafx.h
-)
-
-target_compile_definitions(XRay.Collision.Opcode
-  PRIVATE
-  XRCDB_EXPORTS
-)
-
-target_link_libraries(XRay.Collision.Opcode
-  PRIVATE
-  XRay.Render.API
-  XRay.Core
-  XRay.Render
 )

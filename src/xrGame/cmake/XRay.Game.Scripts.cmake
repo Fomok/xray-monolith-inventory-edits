@@ -1,8 +1,7 @@
-add_library(XRay.Game.Scripts STATIC)
+add_module(XRay.Game.Scripts
+  PARENT XRay.Game
 
-target_folder(XRay.Game.Scripts ${FOLDER_XRAY_GAME})
-
-target_sources(XRay.Game.Scripts PRIVATE
+  SOURCES
   script_abstract_action.cpp
   script_action_condition.cpp
   script_action_condition_script.cpp

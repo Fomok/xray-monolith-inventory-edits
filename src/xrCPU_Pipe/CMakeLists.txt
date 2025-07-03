@@ -1,9 +1,14 @@
-add_library(XRay.CPUPipe STATIC)
+add_module(XRay.CPUPipe
+  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
-target_folder(XRay.CPUPipe ${FOLDER_XRAY_CPU_PIPE})
+  PRECOMPILES stdafx.h
 
-target_sources(XRay.CPUPipe
-  PRIVATE
+  LINKS
+  XRay.Render.API
+  XRay.Collision
+  XRay.Render
+
+  SOURCES
   xrCPU_Pipe.cpp
   
   StdAfx.h
@@ -21,20 +26,4 @@ target_sources(XRay.CPUPipe
   ttapi.cpp
   
   ttapi.h
-)
-
-target_include_directories(XRay.CPUPipe
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_precompile_headers(XRay.CPUPipe
-  PRIVATE stdafx.h
-)
-
-target_link_libraries(XRay.CPUPipe
-  PRIVATE
-  XRay.Render.API
-  XRay.Collision
-  XRay.Render
 )
