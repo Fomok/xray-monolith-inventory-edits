@@ -1,3 +1,12 @@
+# Given a CMake module name, add ./CMake to the module path and include it
+macro(add_cmake_directory NAME)
+  # Update module path
+  list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
+
+  # Hand off to CMake directory
+  include(${NAME})
+endmacro()
+
 # Add a library with the given NAME, and the following optional keyword parameters:
 # SOURCES
 # INCLUDES
