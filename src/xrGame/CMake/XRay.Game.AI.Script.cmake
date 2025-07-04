@@ -1,4 +1,4 @@
-add_module(XRay.Game.Script.UNORGANIZED
+add_module(XRay.Game.AI.Script.UNORGANIZED
   TYPE STATIC
   
   SOURCES
@@ -20,43 +20,44 @@ add_module(XRay.Game.Script.UNORGANIZED
   script_attachment_manager.h
 )
 
-add_module(XRay.Game.Script
+add_module(XRay.Game.AI.Script
+  TYPE STATIC
   SOURCES
   ../xrServerEntities/script_export_macroses.h
   ../xrServerEntities/script_export_space.h
   ../xrServerEntities/script_space_forward.h
 )
 
-add_module(XRay.Game.Script.LuaStudio
+add_module(XRay.Game.AI.Script.LuaStudio
   SOURCES
   ../xrServerEntities/lua_studio.h
   ../xrServerEntities/lua_studio.cpp
 )
 
-add_module(XRay.Game.Script.Classes
+add_module(XRay.Game.AI.Script.Classes
   SOURCES
   script_bind_macroses.h
 )
 
-add_module(XRay.Game.Script.Classes.BaseClient
+add_module(XRay.Game.AI.Script.Classes.BaseClient
   SOURCES
   base_client_classes.h
   base_client_classes_wrappers.h
 )
 
-add_module(XRay.Game.Script.Classes.Console
+add_module(XRay.Game.AI.Script.Classes.Console
   SOURCES
   console_registrator_script.cpp
   console_registrator.h
 )
 
-add_module(XRay.Game.Script.Classes.KeyBindings
+add_module(XRay.Game.AI.Script.Classes.KeyBindings
   SOURCES
   key_binding_registrator_script.cpp
   key_binding_registrator.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Animation
+add_module(XRay.Game.AI.Script.Classes.Actions.Animation
   SOURCES
   script_animation_action_script.cpp
   script_animation_action.cpp
@@ -64,14 +65,14 @@ add_module(XRay.Game.Script.Classes.Actions.Animation
   script_animation_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Abstract
+add_module(XRay.Game.AI.Script.Classes.Actions.Abstract
   SOURCES
   script_abstract_action.cpp
   script_abstract_action.h
   script_abstract_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Condition
+add_module(XRay.Game.AI.Script.Classes.Actions.Condition
   SOURCES
   script_action_condition_script.cpp
   script_action_condition.cpp
@@ -79,7 +80,7 @@ add_module(XRay.Game.Script.Classes.Actions.Condition
   script_action_condition_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Entity
+add_module(XRay.Game.AI.Script.Classes.Actions.Entity
   SOURCES
   script_entity_action_script.cpp
   script_entity_action.cpp
@@ -87,7 +88,7 @@ add_module(XRay.Game.Script.Classes.Actions.Entity
   script_entity_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Monster
+add_module(XRay.Game.AI.Script.Classes.Actions.Monster
   SOURCES
   script_monster_action.cpp
   script_monster_action_script.cpp
@@ -95,7 +96,7 @@ add_module(XRay.Game.Script.Classes.Actions.Monster
   script_monster_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Movement
+add_module(XRay.Game.AI.Script.Classes.Actions.Movement
   SOURCES
   script_movement_action_script.cpp
   script_movement_action.cpp
@@ -103,7 +104,7 @@ add_module(XRay.Game.Script.Classes.Actions.Movement
   script_movement_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Movement.Params
+add_module(XRay.Game.AI.Script.Classes.Actions.Movement.Params
   SOURCES
   patrol_path_params_script.cpp
   patrol_path_params.cpp
@@ -111,7 +112,7 @@ add_module(XRay.Game.Script.Classes.Actions.Movement.Params
   patrol_path_params_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Object
+add_module(XRay.Game.AI.Script.Classes.Actions.Object
   SOURCES
   script_object_action_script.cpp
   script_object_action.cpp
@@ -119,7 +120,7 @@ add_module(XRay.Game.Script.Classes.Actions.Object
   script_object_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Particle
+add_module(XRay.Game.AI.Script.Classes.Actions.Particle
   SOURCES
   script_particle_action_script.cpp
   script_particle_action.cpp
@@ -127,7 +128,7 @@ add_module(XRay.Game.Script.Classes.Actions.Particle
   script_particle_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Particle.Params
+add_module(XRay.Game.AI.Script.Classes.Actions.Particle.Params
   SOURCES
   particle_params_script.cpp
   particle_params.cpp
@@ -135,7 +136,7 @@ add_module(XRay.Game.Script.Classes.Actions.Particle.Params
   particle_params_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Sound
+add_module(XRay.Game.AI.Script.Classes.Actions.Sound
   SOURCES
   script_sound_action_script.cpp
   script_sound_action.cpp
@@ -143,7 +144,7 @@ add_module(XRay.Game.Script.Classes.Actions.Sound
   script_sound_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Actions.Watch
+add_module(XRay.Game.AI.Script.Classes.Actions.Watch
   SOURCES
   script_watch_action_script.cpp
   script_watch_action.cpp
@@ -151,20 +152,20 @@ add_module(XRay.Game.Script.Classes.Actions.Watch
   script_watch_action_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.BinderObject
+add_module(XRay.Game.AI.Script.Classes.BinderObject
   SOURCES
   script_binder_object_wrapper.cpp
   script_binder_object_wrapper.h
 )
 
-add_module(XRay.Game.Script.Classes.BinderObject.Wrapper
+add_module(XRay.Game.AI.Script.Classes.BinderObject.Wrapper
   SOURCES
   script_binder_object_script.cpp
   script_binder_object.cpp
   script_binder_object.h
 )
 
-add_module(XRay.Game.Script.Classes.CallbackEx
+add_module(XRay.Game.AI.Script.Classes.CallbackEx
   SOURCES
   script_callback_ex.h
   script_callback_ex_generators.h
@@ -173,7 +174,7 @@ add_module(XRay.Game.Script.Classes.CallbackEx
   script_callback_ex_void.h
 )
 
-add_module(XRay.Game.Script.Classes.Effector
+add_module(XRay.Game.AI.Script.Classes.Effector
   SOURCES
   script_effector.cpp
   script_effector_script.cpp
@@ -181,44 +182,44 @@ add_module(XRay.Game.Script.Classes.Effector
   script_effector_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Effector.Wrapper
+add_module(XRay.Game.AI.Script.Classes.Effector.Wrapper
   SOURCES
   script_effector_wrapper.cpp
   script_effector_wrapper.h
   script_effector_wrapper_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Fcolor
+add_module(XRay.Game.AI.Script.Classes.Fcolor
   SOURCES
   ../xrServerEntities/script_fcolor_script.cpp
   ../xrServerEntities/script_fcolor.h
 )
 
-add_module(XRay.Game.Script.Classes.Flags
+add_module(XRay.Game.AI.Script.Classes.Flags
   SOURCES
   ../xrServerEntities/script_flags_script.cpp
   ../xrServerEntities/script_flags.h
 )
 
-add_module(XRay.Game.Script.Classes.Fmatrix
+add_module(XRay.Game.AI.Script.Classes.Fmatrix
   SOURCES
   ../xrServerEntities/script_fmatrix_script.cpp
   ../xrServerEntities/script_fmatrix.h
 )
 
-add_module(XRay.Game.Script.Classes.FS
+add_module(XRay.Game.AI.Script.Classes.FS
   SOURCES
   fs_registrator_script.cpp
   fs_registrator.h
 )
 
-add_module(XRay.Game.Script.Classes.Fvector
+add_module(XRay.Game.AI.Script.Classes.Fvector
   SOURCES
   ../xrServerEntities/script_fvector_script.cpp
   ../xrServerEntities/script_fvector.h
 )
 
-add_module(XRay.Game.Script.Classes.GameObject
+add_module(XRay.Game.AI.Script.Classes.GameObject
   SOURCES
   script_game_object.cpp
   script_game_object2.cpp
@@ -237,7 +238,7 @@ add_module(XRay.Game.Script.Classes.GameObject
   script_game_object_impl.h
 )
 
-add_module(XRay.Game.Script.Classes.Hit
+add_module(XRay.Game.AI.Script.Classes.Hit
   SOURCES
   script_hit_script.cpp
   script_hit.cpp
@@ -245,7 +246,7 @@ add_module(XRay.Game.Script.Classes.Hit
   script_hit_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.IniFile
+add_module(XRay.Game.AI.Script.Classes.IniFile
   SOURCES
   ../xrServerEntities/script_ini_file_script.cpp
   ../xrServerEntities/script_ini_file.cpp
@@ -253,7 +254,7 @@ add_module(XRay.Game.Script.Classes.IniFile
   ../xrServerEntities/script_ini_file_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.IniFile.TokenList
+add_module(XRay.Game.AI.Script.Classes.IniFile.TokenList
   SOURCES
   ../xrServerEntities/script_token_list_script.cpp
   ../xrServerEntities/script_token_list.cpp
@@ -261,32 +262,32 @@ add_module(XRay.Game.Script.Classes.IniFile.TokenList
   ../xrServerEntities/script_token_list_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.IniFile.RTokenList
+add_module(XRay.Game.AI.Script.Classes.IniFile.RTokenList
   SOURCES
   ../xrServerEntities/script_rtoken_list_script.cpp
   ../xrServerEntities/script_rtoken_list.h
   ../xrServerEntities/script_rtoken_list_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.LAnim
+add_module(XRay.Game.AI.Script.Classes.LAnim
   SOURCES
   script_lanim.cpp
   script_lanim.h
 )
 
-add_module(XRay.Game.Script.Classes.MonsterHitInfo
+add_module(XRay.Game.AI.Script.Classes.MonsterHitInfo
   SOURCES
   script_monster_hit_info_script.cpp
   script_monster_hit_info.h
 )
 
-add_module(XRay.Game.Script.Classes.NetPacket
+add_module(XRay.Game.AI.Script.Classes.NetPacket
   SOURCES
   ../xrServerEntities/script_net_packet_script.cpp
   ../xrServerEntities/script_net_packet.h
 )
 
-add_module(XRay.Game.Script.Classes.Particles
+add_module(XRay.Game.AI.Script.Classes.Particles
   SOURCES
   script_particles_script.cpp
   script_particles.cpp
@@ -295,19 +296,19 @@ add_module(XRay.Game.Script.Classes.Particles
   script_particles_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.Reader
+add_module(XRay.Game.AI.Script.Classes.Reader
   SOURCES
   ../xrServerEntities/script_reader_script.cpp
   ../xrServerEntities/script_reader.h
 )
 
-add_module(XRay.Game.Script.Classes.RenderDevice
+add_module(XRay.Game.AI.Script.Classes.RenderDevice
   SOURCES
   script_render_device_script.cpp
   script_render_device.h
 )
 
-add_module(XRay.Game.Script.Classes.Sound
+add_module(XRay.Game.AI.Script.Classes.Sound
   SOURCES
   script_sound_script.cpp
   script_sound.cpp
@@ -315,19 +316,19 @@ add_module(XRay.Game.Script.Classes.Sound
   script_sound_inline.h
 )
 
-add_module(XRay.Game.Script.Classes.SoundInfo
+add_module(XRay.Game.AI.Script.Classes.SoundInfo
   SOURCES
   script_sound_info_script.cpp
   script_sound_info.h
 )
 
-add_module(XRay.Game.Script.Classes.SoundType
+add_module(XRay.Game.AI.Script.Classes.SoundType
   SOURCES
   ../xrServerEntities/script_sound_type_script.cpp
   ../xrServerEntities/script_sound_type.h
 )
 
-add_module(XRay.Game.Script.Classes.UI
+add_module(XRay.Game.AI.Script.Classes.UI
   SOURCES
   ui_export_script.cpp
 
@@ -337,7 +338,7 @@ add_module(XRay.Game.Script.Classes.UI
   script_ui_registrator.h
 )
 
-add_module(XRay.Game.Script.Debugger
+add_module(XRay.Game.AI.Script.Debugger
   SOURCES
   ../xrServerEntities/mslotutils.h
   ../xrServerEntities/script_debugger_messages.h
@@ -355,7 +356,7 @@ add_module(XRay.Game.Script.Debugger
   ../xrServerEntities/script_lua_helper.h
 )
 
-add_module(XRay.Game.Script.Engine
+add_module(XRay.Game.AI.Script.Engine
   SOURCES
   ../xrServerEntities/script_engine_script.cpp
   ../xrServerEntities/script_engine.cpp
@@ -369,14 +370,14 @@ add_module(XRay.Game.Script.Engine
   ../xrServerEntities/script_engine_export.h
 )
 
-add_module(XRay.Game.Script.Process
+add_module(XRay.Game.AI.Script.Process
   SOURCES
   ../xrServerEntities/script_process.cpp
   ../xrServerEntities/script_process.h
   ../xrServerEntities/script_process_inline.h
 )
 
-add_module(XRay.Game.Script.Storage
+add_module(XRay.Game.AI.Script.Storage
   SOURCES
   ../xrServerEntities/script_storage.cpp
   ../xrServerEntities/script_storage.h
@@ -384,14 +385,14 @@ add_module(XRay.Game.Script.Storage
   ../xrServerEntities/script_storage_space.h
 )
 
-add_module(XRay.Game.Script.Thread
+add_module(XRay.Game.AI.Script.Thread
   SOURCES
   ../xrServerEntities/script_thread.cpp
   ../xrServerEntities/script_thread.h
   ../xrServerEntities/script_thread_inline.h
 )
 
-add_module(XRay.Game.Script.Thread.StackTracker
+add_module(XRay.Game.AI.Script.Thread.StackTracker
   SOURCES
   ../xrServerEntities/script_stack_tracker.cpp
   ../xrServerEntities/script_stack_tracker.h

@@ -1,4 +1,6 @@
 add_module(XRay.Game.AI.Life
+  TYPE STATIC
+  
   SOURCES
   ../xrServerEntities/alife_space.cpp
   ../xrServerEntities/alife_space.h

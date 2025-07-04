@@ -563,7 +563,6 @@ add_module(XRay.Game
   ZudaArtifact.cpp
 
   ../xrCore/ChooseTypes.H
-  ../xrServerEntities/ai_sounds.h
   ../xrServerEntities/associative_vector.h
   ../xrServerEntities/associative_vector_compare_predicate.h
   ../xrServerEntities/associative_vector_compare_predicate_inline.h
@@ -907,7 +906,6 @@ add_module(XRay.Game
   moving_bones_snd_player.h
   MPPlayersBag.h
   mp_config_sections.h
-  mt_config.h
   Needles.h
   NET_Queue.h
   NewZoomFlag.h
@@ -1106,5 +1104,4 @@ add_module(XRay.Game
 
 include(XRay.Game.AI)
 include(XRay.Game.Physics)
-include(XRay.Game.Script)
 include(XRay.Game.UI)

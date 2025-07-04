@@ -11,8 +11,6 @@ add_module(XRay.Game.AI
   ai/weighted_random.cpp
   ai_obstacle.cpp
   AI_PhraseDialogManager.cpp
-  ai_sounds.cpp
-  ai_space.cpp
 
   ai/monsters/ai_monster_effector.h
   ai/trader/trader_animation.h
@@ -20,8 +18,8 @@ add_module(XRay.Game.AI
   ai_obstacle.h
   ai_obstacle_inline.h
   AI_PhraseDialogManager.h
-  ai_space.h
-  ai_space_inline.h
+  
+  mt_config.h
 )
 
 include(XRay.Game.AI.Components)
@@ -32,3 +30,6 @@ include(XRay.Game.AI.Group)
 include(XRay.Game.AI.Life)
 include(XRay.Game.AI.Monsters)
 include(XRay.Game.AI.Navigation)
+include(XRay.Game.AI.Script)
+include(XRay.Game.AI.Sound)
+include(XRay.Game.AI.Space)
