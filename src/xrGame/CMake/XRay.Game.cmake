@@ -12,6 +12,7 @@ add_module(XRay.Game
   LINKS
   crypto
   CxImage
+  imgui
   loki
   lua-extensions
   luabind
@@ -29,35 +30,11 @@ add_module(XRay.Game
   ../xrServerEntities/character_info.cpp
   ../xrServerEntities/gametype_chooser.cpp
   ../xrServerEntities/LevelGameDef.cpp
-  ../xrServerEntities/lua_studio.cpp
   ../xrServerEntities/object_factory.cpp
   ../xrServerEntities/object_factory_register.cpp
   ../xrServerEntities/object_factory_script.cpp
   ../xrServerEntities/object_item_script.cpp
   ../xrServerEntities/pch_script.cpp
-  ../xrServerEntities/script_callStack.cpp
-  ../xrServerEntities/script_debugger.cpp
-  ../xrServerEntities/script_debugger_threads.cpp
-  ../xrServerEntities/script_engine.cpp
-  ../xrServerEntities/script_engine_export.cpp
-  ../xrServerEntities/script_engine_script.cpp
-  ../xrServerEntities/script_fcolor_script.cpp
-  ../xrServerEntities/script_flags_script.cpp
-  ../xrServerEntities/script_fmatrix_script.cpp
-  ../xrServerEntities/script_fvector_script.cpp
-  ../xrServerEntities/script_ini_file.cpp
-  ../xrServerEntities/script_ini_file_script.cpp
-  ../xrServerEntities/script_lua_helper.cpp
-  ../xrServerEntities/script_net_packet_script.cpp
-  ../xrServerEntities/script_process.cpp
-  ../xrServerEntities/script_reader_script.cpp
-  ../xrServerEntities/script_rtoken_list_script.cpp
-  ../xrServerEntities/script_sound_type_script.cpp
-  ../xrServerEntities/script_stack_tracker.cpp
-  ../xrServerEntities/script_storage.cpp
-  ../xrServerEntities/script_thread.cpp
-  ../xrServerEntities/script_token_list.cpp
-  ../xrServerEntities/script_token_list_script.cpp
   ../xrServerEntities/smart_cast.cpp
   ../xrServerEntities/smart_cast_stats.cpp
   ../xrServerEntities/specific_character.cpp
@@ -175,7 +152,6 @@ add_module(XRay.Game
   configs_dump_verifyer.cpp
   console_commands.cpp
   console_commands_mp.cpp
-  console_registrator_script.cpp
   cta_game_artefact.cpp
   cta_game_artefact_activation.cpp
   CustomDetector.cpp
@@ -234,7 +210,6 @@ add_module(XRay.Game
   FoodItem.cpp
   FoodItem_script.cpp
   FryupZone.cpp
-  fs_registrator_script.cpp
   GalantineArtifact.cpp
   GameObject.cpp
   GamePersistent.cpp
@@ -342,7 +317,6 @@ add_module(XRay.Game
   inventory_owner_info.cpp
   inventory_quickswitch.cpp
   invincible_fury.cpp
-  key_binding_registrator_script.cpp
   killer_victim_velocity_angle.cpp
   kills_store.cpp
   Level.cpp
@@ -399,11 +373,7 @@ add_module(XRay.Game
   obstacles_query.cpp
   ParticlesObject.cpp
   ParticlesPlayer.cpp
-  particle_params.cpp
-  particle_params_script.cpp
   patrol_path_manager.cpp
-  patrol_path_params.cpp
-  patrol_path_params_script.cpp
   PDA.cpp
   Phrase.cpp
   PhraseDialog.cpp
@@ -465,7 +435,6 @@ add_module(XRay.Game
   screenshots_writer.cpp
   screenshot_manager.cpp
   screenshot_server.cpp
-  ScriptXMLInit.cpp
   searchlight.cpp
   secure_messaging.cpp
   seniority_hierarchy_holder.cpp
@@ -609,8 +578,6 @@ add_module(XRay.Game
   ../xrServerEntities/inventory_space.h
   ../xrServerEntities/ItemListTypes.h
   ../xrServerEntities/LevelGameDef.h
-  ../xrServerEntities/lua_studio.h
-  ../xrServerEntities/mslotutils.h
   ../xrServerEntities/object_broker.h
   ../xrServerEntities/object_cloner.h
   ../xrServerEntities/object_comparer.h
@@ -632,40 +599,6 @@ add_module(XRay.Game
   ../xrServerEntities/object_type_traits.h
   ../xrServerEntities/pch_script.h
   ../xrServerEntities/PropertiesListTypes.h
-  ../xrServerEntities/script_callStack.h
-  ../xrServerEntities/script_debugger.h
-  ../xrServerEntities/script_debugger_messages.h
-  ../xrServerEntities/script_debugger_threads.h
-  ../xrServerEntities/script_engine.h
-  ../xrServerEntities/script_engine_export.h
-  ../xrServerEntities/script_engine_inline.h
-  ../xrServerEntities/script_engine_space.h
-  ../xrServerEntities/script_export_macroses.h
-  ../xrServerEntities/script_export_space.h
-  ../xrServerEntities/script_fcolor.h
-  ../xrServerEntities/script_flags.h
-  ../xrServerEntities/script_fmatrix.h
-  ../xrServerEntities/script_fvector.h
-  ../xrServerEntities/script_ini_file.h
-  ../xrServerEntities/script_ini_file_inline.h
-  ../xrServerEntities/script_lua_helper.h
-  ../xrServerEntities/script_net_packet.h
-  ../xrServerEntities/script_process.h
-  ../xrServerEntities/script_process_inline.h
-  ../xrServerEntities/script_reader.h
-  ../xrServerEntities/script_rtoken_list.h
-  ../xrServerEntities/script_rtoken_list_inline.h
-  ../xrServerEntities/script_sound_type.h
-  ../xrServerEntities/script_space_forward.h
-  ../xrServerEntities/script_stack_tracker.h
-  ../xrServerEntities/script_stack_tracker_inline.h
-  ../xrServerEntities/script_storage.h
-  ../xrServerEntities/script_storage_inline.h
-  ../xrServerEntities/script_storage_space.h
-  ../xrServerEntities/script_thread.h
-  ../xrServerEntities/script_thread_inline.h
-  ../xrServerEntities/script_token_list.h
-  ../xrServerEntities/script_token_list_inline.h
   ../xrServerEntities/script_value_container.h
   ../xrServerEntities/script_value_container_impl.h
   ../xrServerEntities/ShapeData.h
@@ -692,8 +625,6 @@ add_module(XRay.Game
   account_manager.h
   account_manager_console.h
   accumulative_states.h
-  action_base.h
-  action_base_inline.h
   action_management_config.h
   ActivatingCharCollisionDelay.h
   Actor.h
@@ -734,8 +665,6 @@ add_module(XRay.Game
   autosave_manager.h
   autosave_manager_inline.h
   awards_store.h
-  base_client_classes.h
-  base_client_classes_wrappers.h
   BastArtifact.h
   best_scores_helper.h
   best_scores_store.h
@@ -773,7 +702,6 @@ add_module(XRay.Game
   configs_common.h
   configs_dumper.h
   configs_dump_verifyer.h
-  console_registrator.h
   controller_state_panic_inline.h
   cta_game_artefact.h
   cta_game_artefact_activation.h
@@ -832,7 +760,6 @@ add_module(XRay.Game
   Flashlight.h
   FoodItem.h
   FryupZone.h
-  fs_registrator.h
   GalantineArtifact.h
   GameObject.h
   GamePersistent.h
@@ -942,7 +869,6 @@ add_module(XRay.Game
   inventory_item_object_inline.h
   inventory_owner_inline.h
   invincible_fury.h
-  key_binding_registrator.h
   killer_victim_velocity_angle.h
   kills_store.h
   kills_store_inline.h
@@ -995,10 +921,6 @@ add_module(XRay.Game
   obstacles_query_inline.h
   ParticlesObject.h
   ParticlesPlayer.h
-  particle_params.h
-  particle_params_inline.h
-  patrol_path_params.h
-  patrol_path_params_inline.h
   PDA.h
   PdaMsg.h
   pda_space.h
@@ -1184,5 +1106,5 @@ add_module(XRay.Game
 
 include(XRay.Game.AI)
 include(XRay.Game.Physics)
-include(XRay.Game.Scripts)
+include(XRay.Game.Script)
 include(XRay.Game.UI)

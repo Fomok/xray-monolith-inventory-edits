@@ -525,6 +525,27 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Steal
   ai/monsters/states/monster_state_steal_inline.h
 )
 
+add_module(XRay.Game.AI.Monsters.Common.Script.Binder
+  SOURCES
+  script_binder.cpp
+  script_binder.h
+  script_binder_inline.h
+)
+
+add_module(XRay.Game.AI.Monsters.Common.Script.Entity
+  SOURCES
+  script_entity.cpp
+  script_entity.h
+  script_entity_inline.h
+  script_entity_space.h
+)
+
+add_module(XRay.Game.AI.Monsters.Common.Script.Object
+  SOURCES
+  script_object.cpp
+  script_object.h
+)
+
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Squad
   SOURCES
   ai/monsters/states/monster_state_squad_rest.h

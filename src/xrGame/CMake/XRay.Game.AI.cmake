@@ -1,6 +1,10 @@
 add_module(XRay.Game.AI
   TYPE STATIC
   
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
+  
   SOURCES
   ai/monsters/ai_monster_effector.cpp
   ai/trader/trader_animation.cpp

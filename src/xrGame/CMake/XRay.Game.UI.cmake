@@ -188,7 +188,6 @@ add_module(XRay.Game.UI
   ui/UI_IB_Static.cpp
   ui/xrUIXmlParser.cpp
   ui_base.cpp
-  ui_export_script.cpp
 
   UIAchivementsIndicator.h
   UICursor.h

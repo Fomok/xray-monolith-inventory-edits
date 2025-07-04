@@ -9,17 +9,43 @@ add_module(XRay.Game.AI.Components.Damage
 add_module(XRay.Game.AI.Components.Action.Base
   SOURCES
   action_base_script.cpp
+  action_base.h
+  action_base_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Action.Base.ActionScriptBase
+  SOURCES
   action_script_base.h
   action_script_base_inline.h
 )
 
+add_module(XRay.Game.AI.Components.Action.Base.ScriptActionWrapper
+  SOURCES
+  script_action_wrapper.cpp
+  script_action_wrapper.h
+  script_action_wrapper_inline.h
+)
+
 add_module(XRay.Game.AI.Components.Action.Planner
   SOURCES
+
   action_planner_script.cpp
-  action_planner_script.h
-  action_planner_script_inline.h
   action_planner.h
   action_planner_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Action.Planner.Script
+  SOURCES
+
+  action_planner_script.h
+  action_planner_script_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Action.Planner.ScriptActionPlannerWrapper
+  SOURCES
+  script_action_planner_wrapper.cpp
+  script_action_planner_wrapper.h
+  script_action_planner_wrapper_inline.h
 )
 
 add_module(XRay.Game.AI.Components.Action.Planner.Action
@@ -27,8 +53,19 @@ add_module(XRay.Game.AI.Components.Action.Planner.Action
   action_planner_action_script.cpp
   action_planner_action.h
   action_planner_action_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Action.Planner.Action.Script
+  SOURCES
   action_planner_action_script.h
   action_planner_action_script_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Action.Planner.Action.Wrapper
+  SOURCES
+  script_action_planner_action_wrapper.cpp
+  script_action_planner_action_wrapper.h
+  script_action_planner_action_wrapper_inline.h
 )
 
 add_module(XRay.Game.AI.Components.PropertyStorage
@@ -47,6 +84,13 @@ add_module(XRay.Game.AI.Components.WorldPropertyEvaluator
   property_evaluator_inline.h
   property_evaluator_member.h
   property_evaluator_member_inline.h
+)
+
+add_module(XRay.Game.AI.Components.WorldPropertyEvaluator.ScriptPropertyEvaluatorWrapper
+  SOURCES
+  script_property_evaluator_wrapper.cpp
+  script_property_evaluator_wrapper.h
+  script_property_evaluator_wrapper_inline.h
 )
 
 add_module(XRay.Game.AI.Components.Danger
@@ -196,17 +240,39 @@ add_module(XRay.Game.AI.Components.MovingObjects
 
 add_module(XRay.Game.AI.Components.ProblemSolver
   SOURCES
-  condition_state.h
-  condition_state_inline.h
-
-  operator_abstract.h
-  operator_abstract_inline.h
-
-  operator_condition.h
-  operator_condition_inline.h
-
   problem_solver.h
   problem_solver_inline.h
+)
+
+add_module(XRay.Game.AI.Components.ProblemSolver.Condition.State
+  SOURCES
+  condition_state.h
+  condition_state_inline.h
+)
+
+add_module(XRay.Game.AI.Components.ProblemSolver.Condition.State.ScriptWorldState
+  SOURCES
+  script_world_state_script.cpp
+  script_world_state.h
+)
+
+add_module(XRay.Game.AI.Components.ProblemSolver.Operator.Abstract
+  SOURCES
+  operator_abstract.h
+  operator_abstract_inline.h
+)
+
+add_module(XRay.Game.AI.Components.ProblemSolver.Operator.Condition
+  SOURCES
+  operator_condition.h
+  operator_condition_inline.h
+)
+
+add_module(XRay.Game.AI.Components.ProblemSolver.Operator.Condition.ScriptWorldProperty
+  SOURCES
+  script_world_property_script.cpp
+  script_world_property.h
+  script_world_property_inline.h
 )
 
 add_module(XRay.Game.AI.Components.SetupManager
