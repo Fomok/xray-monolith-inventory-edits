@@ -259,7 +259,6 @@ add_module(XRay.Game
   game_cl_mp_snd_messages.cpp
   game_cl_single.cpp
   game_cl_teamdeathmatch.cpp
-  game_graph_script.cpp
   game_news.cpp
   game_state_accumulator.cpp
   game_state_accumulator_state_register.cpp
@@ -353,10 +352,6 @@ add_module(XRay.Game
   level_changer.cpp
   level_debug.cpp
   Level_GameSpy_Funcs.cpp
-  level_graph.cpp
-  level_graph_debug.cpp
-  level_graph_debug2.cpp
-  level_graph_vertex.cpp
   Level_input.cpp
   Level_load.cpp
   level_map_locations.cpp
@@ -406,12 +401,9 @@ add_module(XRay.Game
   ParticlesPlayer.cpp
   particle_params.cpp
   particle_params_script.cpp
-  patrol_path.cpp
   patrol_path_manager.cpp
   patrol_path_params.cpp
   patrol_path_params_script.cpp
-  patrol_path_storage.cpp
-  patrol_point.cpp
   PDA.cpp
   Phrase.cpp
   PhraseDialog.cpp
@@ -613,7 +605,6 @@ add_module(XRay.Game
   ../xrCore/FastDelegate.h
   ../xrServerEntities/gametype_chooser.h
   ../xrServerEntities/game_base_space.h
-  ../xrServerEntities/game_graph_space.h
   ../xrServerEntities/InfoPortionDefs.h
   ../xrServerEntities/inventory_space.h
   ../xrServerEntities/ItemListTypes.h
@@ -743,8 +734,6 @@ add_module(XRay.Game
   autosave_manager.h
   autosave_manager_inline.h
   awards_store.h
-  a_star.h
-  a_star_inline.h
   base_client_classes.h
   base_client_classes_wrappers.h
   BastArtifact.h
@@ -758,8 +747,6 @@ add_module(XRay.Game
   bone_groups.h
   BottleItem.h
   BreakableObject.h
-  builder_allocator_constructor.h
-  builder_allocator_constructor_inline.h
   callback_info.h
   CameraEffector.h
   CameraFirstEye.h
@@ -796,15 +783,6 @@ add_module(XRay.Game
   CustomRocket.h
   CustomZone.h
   DamagableItem.h
-  data_storage_binary_heap.h
-  data_storage_binary_heap_inline.h
-  data_storage_bucket_list.h
-  data_storage_bucket_list_inline.h
-  data_storage_constructor.h
-  data_storage_double_linked_list.h
-  data_storage_double_linked_list_inline.h
-  data_storage_single_linked_list.h
-  data_storage_single_linked_list_inline.h
   date_time.h
   death_anims.h
   debug_make_final.hpp
@@ -815,8 +793,6 @@ add_module(XRay.Game
   DemoInfo_Loader.h
   DemoPlay_Control.h
   DestroyablePhysicsObject.h
-  dijkstra.h
-  dijkstra_inline.h
   doors.h
   Dosimeter.h
   double_shot_double_kill.h
@@ -824,8 +800,6 @@ add_module(XRay.Game
   DynamicHeightMap.h
   eatable_item.h
   eatable_item_object.h
-  edge_path.h
-  edge_path_inline.h
   EffectorBobbing.h
   EffectorFall.h
   EffectorShot.h
@@ -886,10 +860,6 @@ add_module(XRay.Game
   game_cl_teamdeathmatch.h
   game_cl_teamdeathmatch_snd_messages.h
   game_events_handler.h
-  game_graph.h
-  game_graph_inline.h
-  game_level_cross_table.h
-  game_level_cross_table_inline.h
   game_news.h
   game_object_space.h
   game_state_accumulator.h
@@ -907,13 +877,6 @@ add_module(XRay.Game
   game_sv_single.h
   game_sv_teamdeathmatch.h
   GlobalFeelTouch.hpp
-  graph_edge.h
-  graph_edge_inline.h
-  graph_engine.h
-  graph_engine_inline.h
-  graph_engine_space.h
-  graph_vertex.h
-  graph_vertex_inline.h
   GraviArtifact.h
   GraviZone.h
   Grenade.h
@@ -988,10 +951,6 @@ add_module(XRay.Game
   Level_Bullet_Manager.h
   level_changer.h
   level_debug.h
-  level_graph.h
-  level_graph_inline.h
-  level_graph_space.h
-  level_graph_vertex_inline.h
   level_location_selector.h
   level_location_selector_inline.h
   Level_network_Demo.h
@@ -1005,8 +964,6 @@ add_module(XRay.Game
   magic_minimize_nd.h
   magic_minimize_nd_inline.h
   MainMenu.h
-  manager_builder_allocator_constructor.h
-  manager_builder_allocator_constructor_inline.h
   map_location.h
   map_location_defs.h
   map_manager.h
@@ -1040,39 +997,8 @@ add_module(XRay.Game
   ParticlesPlayer.h
   particle_params.h
   particle_params_inline.h
-  path_manager.h
-  path_manager_game.h
-  path_manager_game_inline.h
-  path_manager_game_level.h
-  path_manager_game_level_inline.h
-  path_manager_game_vertex.h
-  path_manager_game_vertex_inline.h
-  path_manager_generic.h
-  path_manager_generic_inline.h
-  path_manager_level.h
-  path_manager_level_flooder.h
-  path_manager_level_flooder_inline.h
-  path_manager_level_inline.h
-  path_manager_level_nearest_vertex.h
-  path_manager_level_nearest_vertex_inline.h
-  path_manager_level_straight_line.h
-  path_manager_level_straight_line_inline.h
-  path_manager_params.h
-  path_manager_params_flooder.h
-  path_manager_params_game_level.h
-  path_manager_params_game_vertex.h
-  path_manager_params_nearest_vertex.h
-  path_manager_params_straight_line.h
-  path_manager_solver.h
-  path_manager_solver_inline.h
-  patrol_path.h
-  patrol_path_inline.h
   patrol_path_params.h
   patrol_path_params_inline.h
-  patrol_path_storage.h
-  patrol_path_storage_inline.h
-  patrol_point.h
-  patrol_point_inline.h
   PDA.h
   PdaMsg.h
   pda_space.h
@@ -1202,14 +1128,6 @@ add_module(XRay.Game
   trade_parameters_inline.h
   traffic_optimization.h
   UsableScriptObject.h
-  vertex_allocator_fixed.h
-  vertex_allocator_fixed_inline.h
-  vertex_manager_fixed.h
-  vertex_manager_fixed_inline.h
-  vertex_manager_hash_fixed.h
-  vertex_manager_hash_fixed_inline.h
-  vertex_path.h
-  vertex_path_inline.h
   wallmark_manager.h
   Weapon.h
   WeaponAK74.h

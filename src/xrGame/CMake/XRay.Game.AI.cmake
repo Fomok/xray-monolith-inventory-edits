@@ -1,4 +1,6 @@
 add_module(XRay.Game.AI
+  TYPE STATIC
+  
   SOURCES
   ai/monsters/ai_monster_effector.cpp
   ai/trader/trader_animation.cpp
@@ -11,9 +13,6 @@ add_module(XRay.Game.AI
   ai/monsters/ai_monster_effector.h
   ai/trader/trader_animation.h
   ai/weighted_random.h
-  ai_object_location.h
-  ai_object_location_impl.h
-  ai_object_location_inline.h
   ai_obstacle.h
   ai_obstacle_inline.h
   AI_PhraseDialogManager.h
@@ -28,3 +27,4 @@ include(XRay.Game.AI.Eval)
 include(XRay.Game.AI.Group)
 include(XRay.Game.AI.Life)
 include(XRay.Game.AI.Monsters)
+include(XRay.Game.AI.Navigation)
