@@ -55,18 +55,11 @@ function(add_module NAME)
   if(ARG_SOURCES MATCHES "\\.cpp" OR ARG_SOURCES MATCHES "\\.c")
     set(HAS_SOURCES true)
   endif()
-
-  # Cache pre-inference type
-  set(EXPLICIT_TYPE ${ARG_TYPE})
   
   # If type has not been set explicitly, infer...
   if(NOT DEFINED ARG_TYPE)
     # If we have sources, this is a STATIC module, otherwise INTERFACE
-    if(HAS_SOURCES)
-      set(ARG_TYPE STATIC)
-    else()
-      set(ARG_TYPE INTERFACE)
-    endif()
+    set(ARG_TYPE INTERFACE)
   endif()
 
   # If this is an interface module, override public and private semantics
@@ -94,9 +87,7 @@ function(add_module NAME)
 
   # Convert our module name into a folder path and apply it
   string(REPLACE "." ";" FOLDER ${NAME})
-  if(NOT PARENT)
-    list(POP_BACK FOLDER)
-  endif()
+  list(POP_BACK FOLDER)
   list(JOIN FOLDER "/" FOLDER)
   string(REPLACE "XRay" "X-Ray" FOLDER ${FOLDER})
 
@@ -122,6 +113,16 @@ function(add_module NAME)
     ${CMAKE_CURRENT_LIST_FILE}
   )
 
+  # If this is an interface with sources,
+  # expose them separately to ensure IDEs don't elide the module
+  if(ARG_TYPE STREQUAL INTERFACE AND HAS_SOURCES)  
+    target_sources(${NAME}
+      INTERFACE
+      ${ARG_SOURCES}
+      ${CMAKE_CURRENT_LIST_FILE}
+    )
+  endif()
+
   if(ARG_TYPE STREQUAL CUSTOM)
     return()
   endif()
@@ -137,10 +138,10 @@ function(add_module NAME)
   # Compose precompiled headers
   target_precompile_headers(${NAME}
     ${TYPE_PRIVATE}
-    ${ARG_PRECOMPILES}
+    $<$<COMPILE_LANGUAGE:CXX>:${ARG_PRECOMPILES}>
     ${${PARENT}_PRECOMPILES}
   )
-  set(${NAME}_PRECOMPILES "${ARG_PRECOMPILES};${${PARENT}_PRECOMPILES}" PARENT_SCOPE)
+  set(${NAME}_PRECOMPILES "$<$<COMPILE_LANGUAGE:CXX>:${ARG_PRECOMPILES}>;${${PARENT}_PRECOMPILES}" PARENT_SCOPE)
 
   # Compose compile definitions
   target_compile_definitions(${NAME}
