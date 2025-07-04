@@ -1,6 +1,4 @@
 add_module(XRay.Core.Debug.BlackBox
-  CHILD_OF XRay.Core
-  
   SOURCES
   blackbox/BlackBoxUI.cpp
   blackbox/BSUFunctions.cpp

@@ -1,7 +1,10 @@
 add_module(XRay.Render
-  PARENT
+  ROOT
+
   TYPE INTERFACE
+
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  
   SOURCES
   blenders/Blender.cpp
   blenders/Blender.h

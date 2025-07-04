@@ -1,6 +1,4 @@
 add_module(XRay.Game.AI.Monsters.Common.Base
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/basemonster/base_monster.cpp
   ai/monsters/basemonster/base_monster_anim.cpp
@@ -18,8 +16,6 @@ add_module(XRay.Game.AI.Monsters.Common.Base
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/ai_monster_defs.h
   ai/monsters/ai_monster_shared_data.h
@@ -44,47 +40,36 @@ add_module(XRay.Game.AI.Monsters.Common.Components
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Abilities.Controlled
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/controlled_entity.h
   ai/monsters/controlled_entity_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Abilities.EnergyHolder
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/energy_holder.cpp
   ai/monsters/energy_holder.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Abilities.Invisibility
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/invisibility.cpp
   ai/monsters/invisibility.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Abilities.PsyAura
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/psy_aura.cpp
   ai/monsters/psy_aura.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Ability.Scan
-  CHILD_OF XRay.Game
   SOURCES
   ai/monsters/scanning_ability.h
   ai/monsters/scanning_ability_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Abilities.Telekinesis
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/telekinesis.cpp
   ai/monsters/telekinesis.h
@@ -98,32 +83,24 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Abilities.Telekinesis
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.ActorController
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/controlled_actor.cpp
   ai/monsters/controlled_actor.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.AnomalyDetector
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/anomaly_detector.cpp
   ai/monsters/anomaly_detector.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Bones
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/ai_monster_bones.cpp
   ai/monsters/ai_monster_bones.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_combase.h
   ai/monsters/control_com_defs.h
@@ -136,8 +113,6 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Control
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Base.Animation
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_animation_base.cpp
   ai/monsters/control_animation_base_accel.cpp
@@ -147,24 +122,18 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Control.Base.Animation
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Base.Direction
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_direction_base.cpp
   ai/monsters/control_direction_base.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Base.Movement
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_movement_base.cpp
   ai/monsters/control_movement_base.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Base.PathBuilder
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_path_builder_base.cpp
   ai/monsters/control_path_builder_base_path.cpp
@@ -175,24 +144,18 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Control.Base.PathBuilder
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.CriticalWound
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_critical_wound.cpp
   ai/monsters/control_critical_wound.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.Jump
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_jump.cpp
   ai/monsters/control_jump.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.RotationJump
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_melee_jump.cpp
   ai/monsters/control_melee_jump.h
@@ -202,72 +165,54 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.RotationJump
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.RunAttack
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_run_attack.cpp
   ai/monsters/control_run_attack.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.Sequencer
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_sequencer.cpp
   ai/monsters/control_sequencer.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.Threaten
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_threaten.cpp
   ai/monsters/control_threaten.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.Custom.TripleAnimation
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/anim_triple.cpp
   ai/monsters/anim_triple.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.PureComs.Animation
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_animation.cpp
   ai/monsters/control_animation.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.PureComs.Direction
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_direction.cpp
   ai/monsters/control_direction.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.PureComs.Movement
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_movement.cpp
   ai/monsters/control_movement.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Control.PureComs.PathBuilder
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/control_path_builder.cpp
   ai/monsters/control_path_builder.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Cover
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/monster_cover_manager.cpp
   ai/monsters/monster_cover_manager.h
@@ -277,8 +222,6 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Cover
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.EventHandler
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/custom_events.h
 
@@ -288,16 +231,12 @@ add_module(XRay.Game.AI.Monsters.Common.Components.EventHandler
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Home
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/monster_home.cpp
   ai/monsters/monster_home.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.MeleeChecker
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/melee_checker.cpp
   ai/monsters/melee_checker.h
@@ -305,8 +244,6 @@ add_module(XRay.Game.AI.Monsters.Common.Components.MeleeChecker
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Memory
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/monster_corpse_memory.cpp
   ai/monsters/monster_corpse_memory.h
@@ -322,8 +259,6 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Memory
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Morale
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/monster_morale.cpp
   ai/monsters/monster_morale.h
@@ -331,16 +266,12 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Morale
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.MotionStats
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/ai_monster_motion_stats.cpp
   ai/monsters/ai_monster_motion_stats.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.Squad
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/ai_monster_squad_manager.cpp
   ai/monsters/ai_monster_squad_manager.h
@@ -353,8 +284,6 @@ add_module(XRay.Game.AI.Monsters.Common.Components.Squad
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Components.State
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/monster_state_manager.h
   ai/monsters/monster_state_manager_inline.h
@@ -365,8 +294,6 @@ add_module(XRay.Game.AI.Monsters.Common.Components.State
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Custom
-  CHILD_OF XRay.Game
-
   SOURCES
   CustomMonster.cpp
   CustomMonster_VCPU.cpp
@@ -375,8 +302,6 @@ add_module(XRay.Game.AI.Monsters.Common.Custom
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Miscallaneous
-  CHILD_OF XRay.Game
-
   SOURCES
   ai_monster_space.h
 
@@ -389,8 +314,6 @@ add_module(XRay.Game.AI.Monsters.Common.Miscallaneous
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.ALife
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_smart_terrain_task.h
   ai/monsters/states/monster_state_smart_terrain_task_graph_walk.h
@@ -399,8 +322,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.ALife
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Attack
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_attack.h
   ai/monsters/states/monster_state_attack_inline.h
@@ -415,8 +336,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Attack
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Camp
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_attack_camp.h
   ai/monsters/states/monster_state_attack_camp_inline.h
@@ -425,8 +344,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Camp
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Controlled
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_controlled.h
   ai/monsters/states/monster_state_controlled_attack.h
@@ -437,16 +354,12 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Controlled
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.DangerSound
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_hear_danger_sound.h
   ai/monsters/states/monster_state_hear_danger_sound_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Eat
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_eat.h
   ai/monsters/states/monster_state_eat_drag.h
@@ -457,8 +370,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Eat
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.FindEnemy
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_find_enemy.h
   ai/monsters/states/monster_state_find_enemy_angry.h
@@ -473,15 +384,11 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.FindEnemy
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.General
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/state_data.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.General.CustomAction
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/state_custom_action.h
   ai/monsters/states/state_custom_action_inline.h
@@ -490,24 +397,18 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.General.CustomAction
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.General.HideFromPoint
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/state_hide_from_point.h
   ai/monsters/states/state_hide_from_point_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.General.HitObject
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/state_hit_object.h
   ai/monsters/states/state_hit_object_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.General.Look
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/state_look_point.h
   ai/monsters/states/state_look_point_inline.h
@@ -516,8 +417,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.General.Look
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.General.Movement
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/state_move_around_point.h
   ai/monsters/states/state_move_around_point_inline.h
@@ -528,8 +427,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.General.Movement
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.General.Test
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/state_test_look_actor.h
   ai/monsters/states/state_test_look_actor_inline.h
@@ -538,7 +435,7 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.General.Test
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.GroupHome
-  CHILD_OF XRay.Game
+  SOURCES
   ai/monsters/group_states/state_adapter.h
   ai/monsters/group_states/group_state_attack.h
   ai/monsters/group_states/group_state_attack_inline.h
@@ -569,16 +466,12 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.GroupHome
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.HelpSound
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_help_sound.h
   ai/monsters/states/monster_state_help_sound_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Hitted
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_hitted.h
   ai/monsters/states/monster_state_hitted_hide.h
@@ -589,8 +482,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Hitted
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.HomePoint
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_home_point_attack.h
   ai/monsters/states/monster_state_home_point_attack_inline.h
@@ -601,16 +492,12 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.HomePoint
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.InterestingSound
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_hear_int_sound.h
   ai/monsters/states/monster_state_hear_int_sound_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Panic
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_panic.h
   ai/monsters/states/monster_state_panic_inline.h
@@ -619,8 +506,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Panic
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Rest
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_rest.h
   ai/monsters/states/monster_state_rest_fun.h
@@ -635,16 +520,12 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Rest
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Steal
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_steal.h
   ai/monsters/states/monster_state_steal_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Script.States.Squad
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/states/monster_state_squad_rest.h
   ai/monsters/states/monster_state_squad_rest_follow.h
@@ -653,8 +534,6 @@ add_module(XRay.Game.AI.Monsters.Common.Script.States.Squad
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Steering
-  CHILD_OF XRay.Game
-
   SOURCES
   steering_behaviour.cpp
   steering_behaviour.h
@@ -667,16 +546,12 @@ add_module(XRay.Game.AI.Monsters.Common.Steering
 )
 
 add_module(XRay.Game.AI.Monsters.Common.Trajectories
-  CHILD_OF XRay.Game
-
   SOURCES
   trajectories.cpp
   trajectories.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/stalker/ai_stalker.cpp
   ai/stalker/ai_stalker_script.cpp
@@ -687,8 +562,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_animation_callbacks.cpp
   stalker_animation_global.cpp
@@ -704,8 +577,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Storage
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_animation_data_storage.cpp
   stalker_animation_data_storage.h
@@ -713,24 +584,18 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Storage
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Storage.Data
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_animation_data.cpp
   stalker_animation_data.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Names
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_animation_names.cpp
   stalker_animation_names.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Pair
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_animation_pair.cpp
   stalker_animation_pair.h
@@ -738,8 +603,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Pair
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Script
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_animation_script.cpp
   stalker_animation_script.h
@@ -747,8 +610,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.Script
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.State
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_animation_state.cpp
   stalker_animation_state.h
@@ -756,8 +617,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Animation.State
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.CoverEvaluators
-  CHILD_OF XRay.Game
-
   SOURCES
   cover_evaluators.cpp
   cover_evaluators.h
@@ -765,8 +624,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.CoverEvaluators
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_decision_space.h
 
@@ -776,16 +633,12 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_base_action.cpp
   stalker_base_action.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.ALife
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_alife_actions.cpp
   stalker_alife_actions.h
@@ -798,8 +651,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.ALife
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Anomaly
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_anomaly_actions.cpp
   stalker_anomaly_actions.h
@@ -809,8 +660,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Anomaly
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.Actions
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_combat_action_base.cpp
   stalker_combat_action_base.h
@@ -820,8 +669,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.Acti
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.GetDistance
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_get_distance_actions.h
   stalker_get_distance_actions.cpp
@@ -831,8 +678,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.GetD
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.KillWounded
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_kill_wounded_actions.cpp
   stalker_kill_wounded_actions.h
@@ -842,8 +687,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.Kill
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.LowCoverPlanner
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_low_cover_actions.h
   stalker_low_cover_actions.cpp
@@ -853,8 +696,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.LowC
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.SearchPlanner
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_search_actions.cpp
   stalker_search_actions.h
@@ -864,8 +705,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.Sear
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_danger_planner.cpp
   stalker_danger_planner.h
@@ -873,8 +712,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.BySound
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_danger_by_sound_actions.cpp
   stalker_danger_by_sound_actions.h
@@ -884,8 +721,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.BySo
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.Grenade
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_danger_grenade_actions.cpp
   stalker_danger_grenade_actions.h
@@ -895,8 +730,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.Gren
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.InDirection
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_danger_in_direction_actions.cpp
   stalker_danger_in_direction_actions.h
@@ -906,8 +739,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.InDi
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.Unknown
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_danger_unknown_actions.cpp
   stalker_danger_unknown_actions.h
@@ -917,8 +748,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.Unkn
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Death
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_death_actions.cpp
   stalker_death_actions.h
@@ -928,8 +757,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Death
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Properties
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_property_evaluators.cpp
   stalker_property_evaluators.h
@@ -937,8 +764,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Properties
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Miscallaneous
-  CHILD_OF XRay.Game
-
   SOURCES
   ai_stalker_alife.cpp
   ai/stalker/ai_stalker_cover.cpp
@@ -951,15 +776,11 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Miscallaneous
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_movement_manager_space.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_movement_manager_base.cpp
   stalker_movement_manager_base.h
@@ -967,8 +788,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base.Params
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_movement_params.cpp
   stalker_movement_params.h
@@ -976,16 +795,12 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base.Params
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base.Restriction
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_movement_restriction.h
   stalker_movement_restriction_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base.VelocityCollection
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_velocity_collection.cpp
   stalker_velocity_collection.h
@@ -993,8 +808,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base.VelocityCollection
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base.VelocityHolder
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_velocity_holder.cpp
   stalker_velocity_holder.h
@@ -1002,8 +815,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Base.VelocityHolder
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_movement_manager_obstacles_path.cpp
   stalker_movement_manager_obstacles.cpp
@@ -1012,8 +823,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles.Avoiders.Dynamic
-  CHILD_OF XRay.Game
-
   SOURCES
   dynamic_obstacles_avoider.cpp
   dynamic_obstacles_avoider.h
@@ -1021,8 +830,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles.Avoiders.Dynam
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles.Avoiders.Static
-  CHILD_OF XRay.Game
-
   SOURCES
   static_obstacles_avoider.cpp
   static_obstacles_avoider.h
@@ -1030,24 +837,18 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles.Avoiders.Stati
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles.RefreshableQuery
-  CHILD_OF XRay.Game
-
   SOURCES
   refreshable_obstacles_query.h
   refreshable_obstacles_query_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.Obstacles.RestrictedObject
-  CHILD_OF XRay.Game
-
   SOURCES
   restricted_object_obstacle.cpp
   restricted_object_obstacle.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.SmartCovers
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_movement_manager_smart_cover.cpp
   stalker_movement_manager_smart_cover_fov_range.cpp
@@ -1057,8 +858,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Movement.SmartCovers
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Sound.Data.Visitor
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_sound_data_visitor.cpp
   stalker_sound_data_visitor.h
@@ -1066,8 +865,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Sound.Data.Visitor
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.Sound.Data
-  CHILD_OF XRay.Game
-
   SOURCES
   stalker_sound_data.cpp
   stalker_sound_data.h
@@ -1075,8 +872,6 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.Sound.Data
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Trader
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/trader/ai_trader_script.cpp
   ai/trader/ai_trader.cpp
@@ -1084,8 +879,6 @@ add_module(XRay.Game.AI.Monsters.Human.Trader
 )
 
 add_module(XRay.Game.AI.Monsters.Bloodsucker
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/bloodsucker/bloodsucker_script.cpp
 
@@ -1122,8 +915,6 @@ add_module(XRay.Game.AI.Monsters.Bloodsucker
 )
 
 add_module(XRay.Game.AI.Monsters.Boar
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/boar/boar.cpp
   ai/monsters/boar/boar_script.cpp
@@ -1133,8 +924,6 @@ add_module(XRay.Game.AI.Monsters.Boar
 )
 
 add_module(XRay.Game.AI.Monsters.Burer
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/burer/burer.cpp
   ai/monsters/burer/burer_fast_gravi.cpp
@@ -1160,8 +949,6 @@ add_module(XRay.Game.AI.Monsters.Burer
 )
 
 add_module(XRay.Game.AI.Monsters.Cat
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/cat/cat.cpp
   ai/monsters/cat/cat_script.cpp
@@ -1171,8 +958,6 @@ add_module(XRay.Game.AI.Monsters.Cat
 )
 
 add_module(XRay.Game.AI.Monsters.Chimera
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/chimera/chimera.cpp
   ai/monsters/chimera/chimera_script.cpp
@@ -1196,8 +981,6 @@ add_module(XRay.Game.AI.Monsters.Chimera
 )
 
 add_module(XRay.Game.AI.Monsters.Controller
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/controller/controller.cpp
   ai/monsters/controller/controller_animation.cpp
@@ -1234,8 +1017,6 @@ add_module(XRay.Game.AI.Monsters.Controller
 )
 
 add_module(XRay.Game.AI.Monsters.Crow
-  CHILD_OF XRay.Game
-
   SOURCES
   ai_crow_script.cpp
   ai/crow/ai_crow.cpp
@@ -1243,8 +1024,6 @@ add_module(XRay.Game.AI.Monsters.Crow
 )
 
 add_module(XRay.Game.AI.Monsters.Dog
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/dog/dog.cpp
   ai/monsters/dog/dog_script.cpp
@@ -1254,8 +1033,6 @@ add_module(XRay.Game.AI.Monsters.Dog
 )
 
 add_module(XRay.Game.AI.Monsters.PsyDog
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/pseudodog/psy_dog.cpp
   ai/monsters/pseudodog/psy_dog_aura.cpp
@@ -1270,8 +1047,6 @@ add_module(XRay.Game.AI.Monsters.PsyDog
 )
 
 add_module(XRay.Game.AI.Monsters.Flesh
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/flesh/flesh.cpp
   ai/monsters/flesh/flesh_script.cpp
@@ -1281,8 +1056,6 @@ add_module(XRay.Game.AI.Monsters.Flesh
 )
 
 add_module(XRay.Game.AI.Monsters.Fracture
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/fracture/fracture.cpp
   ai/monsters/fracture/fracture_script.cpp
@@ -1292,16 +1065,12 @@ add_module(XRay.Game.AI.Monsters.Fracture
 )
 
 add_module(XRay.Game.AI.Monsters.Phantom
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/phantom/phantom.cpp
   ai/phantom/phantom.h
 )
 
 add_module(XRay.Game.AI.Monsters.Poltergeist
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/poltergeist/poltergeist.cpp
   ai/monsters/poltergeist/poltergeist_ability.cpp
@@ -1319,8 +1088,6 @@ add_module(XRay.Game.AI.Monsters.Poltergeist
 )
 
 add_module(XRay.Game.AI.Monsters.PseudoDog
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/pseudodog/pseudodog.cpp
   ai/monsters/pseudodog/pseudodog_psi_effector.cpp
@@ -1332,8 +1099,6 @@ add_module(XRay.Game.AI.Monsters.PseudoDog
 )
 
 add_module(XRay.Game.AI.Monsters.PseudoGiant
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/pseudogigant/pseudogigant_script.cpp
   ai/monsters/pseudogigant/pseudogigant_state_manager.cpp
@@ -1345,8 +1110,6 @@ add_module(XRay.Game.AI.Monsters.PseudoGiant
 )
 
 add_module(XRay.Game.AI.Monsters.Rat
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/rats/ai_rat.cpp
   ai/monsters/rats/ai_rat_animations.cpp
@@ -1365,8 +1128,6 @@ add_module(XRay.Game.AI.Monsters.Rat
 )
 
 add_module(XRay.Game.AI.Monsters.Snork
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/snork/snork.cpp
   ai/monsters/snork/snork_jump.cpp
@@ -1378,8 +1139,6 @@ add_module(XRay.Game.AI.Monsters.Snork
 )
 
 add_module(XRay.Game.AI.Monsters.Tushkano
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/tushkano/tushkano.cpp
   ai/monsters/tushkano/tushkano_script.cpp
@@ -1389,8 +1148,6 @@ add_module(XRay.Game.AI.Monsters.Tushkano
 )
 
 add_module(XRay.Game.AI.Monsters.Zombie
-  CHILD_OF XRay.Game
-
   SOURCES
   ai/monsters/zombie/zombie.cpp
   ai/monsters/zombie/zombie_script.cpp

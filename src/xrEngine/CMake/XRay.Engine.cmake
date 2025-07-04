@@ -1,5 +1,5 @@
 add_module(XRay.Engine
-  PARENT
+  ROOT
   
   PRECOMPILES stdafx.h
   
@@ -44,15 +44,11 @@ add_module(XRay.Engine
 )
 
 add_module(XRay.Engine.Collision
-  CHILD_OF XRay.Engine
-
   SOURCES
   cl_intersect.h
 )
 
 add_module(XRay.Engine.Console
-  CHILD_OF XRay.Engine
-
   SOURCES
   XR_IOConsole.cpp
   XR_IOConsole_callback.cpp
@@ -65,8 +61,6 @@ add_module(XRay.Engine.Console
 )
 
 add_module(XRay.Engine.Core
-  CHILD_OF XRay.Engine
-
   SOURCES
   Engine.cpp
   Engine.h
@@ -78,24 +72,18 @@ add_module(XRay.Engine.Core
 )
 
 add_module(XRay.Engine.OpenAutomate
-  CHILD_OF XRay.Engine
-
   SOURCES
   xrSASH.cpp
   xrSASH.h
 )
 
 add_module(XRay.Engine.Noise
-  CHILD_OF XRay.Engine
-
   SOURCES
   perlin.cpp
   perlin.h
 )
 
 add_module(XRay.Engine.Scripting
-  CHILD_OF XRay.Engine
-
   SOURCES
   _scripting.cpp
   ai_script_lua_debug.cpp
@@ -106,8 +94,6 @@ add_module(XRay.Engine.Scripting
 )
 
 add_module(XRay.Engine.TextEditor
-  CHILD_OF XRay.Engine
-
   SOURCES
   edit_actions.cpp
   edit_actions.h

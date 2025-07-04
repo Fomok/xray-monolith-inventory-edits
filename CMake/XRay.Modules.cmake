@@ -13,8 +13,8 @@ endmacro()
 function(add_module NAME)
   # Parse keyword arguments
   cmake_parse_arguments(PARSE_ARGV 1 ARG
-    "PARENT;LEAF"
-    "TYPE;CHILD_OF"
+    "ROOT"
+    "TYPE"
     "SOURCES;INCLUDES;PRECOMPILES;DEFINES;LINKS"
   )
 
@@ -23,9 +23,15 @@ function(add_module NAME)
   if(ARG_SOURCES MATCHES "\\.cpp" OR ARG_SOURCES MATCHES "\\.c")
     set(HAS_SOURCES true)
   endif()
+
+  # Store a flag if this module is explicitly set as an interface
+  if(ARG_TYPE STREQUAL INTERFACE)
+    set(EXPLICIT_INTERFACE true)
+  endif()
   
-  # If we have sources, this is a STATIC module, otherwise INTERFACE
+  # If type has not been set explicitly, infer...
   if(NOT DEFINED ARG_TYPE)
+    # If we have sources, this is a STATIC module, otherwise INTERFACE
     if(HAS_SOURCES)
       set(ARG_TYPE STATIC)
     else()
@@ -33,6 +39,7 @@ function(add_module NAME)
     endif()
   endif()
 
+  # If this is an interface module, override public and private semantics
   if(ARG_TYPE STREQUAL INTERFACE)
     set(TYPE_PUBLIC INTERFACE)
     set(TYPE_PRIVATE INTERFACE)
@@ -41,14 +48,16 @@ function(add_module NAME)
     set(TYPE_PRIVATE PRIVATE)
   endif()
 
+  # Store semantics to parent scope for future reference
   set(${NAME}_TYPE_PUBLIC ${TYPE_PUBLIC} PARENT_SCOPE)
   set(${NAME}_TYPE_PRIVATE ${TYPE_PRIVATE} PARENT_SCOPE)
 
+  # Add our module
   add_library(${NAME} ${ARG_TYPE})
 
   # Convert our module name into a folder path and apply it
   string(REPLACE "." ";" FOLDER ${NAME})
-  if(NOT ARG_PARENT AND NOT ARG_LEAF)
+  if(NOT ARG_ROOT)
     list(POP_BACK FOLDER)
   endif()
   list(JOIN FOLDER "/" FOLDER)
@@ -61,6 +70,7 @@ function(add_module NAME)
 
   # Convert our module name into a binary output path and apply it
   set(COMPILE_OUTPUT_DIR ${CMAKE_BINARY_DIR}/Binaries/$<CONFIG>)
+
   set_target_properties(${NAME}
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
@@ -69,6 +79,18 @@ function(add_module NAME)
     PDB_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
     COMPILE_PDB_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
   )
+
+  # If we're not a root module, and aren't an explicit interface
+  if(NOT ARG_ROOT AND NOT EXPLICIT_INTERFACE)
+    # Decompose name into a path and fetch the first two segments
+    string(REPLACE "." ";" PATH ${NAME})
+    list(POP_FRONT PATH ROOT PARENT)
+    # If we have a parent...
+    if(PARENT)
+      # Set ARG_CHILD_OF to our parent's path
+      set(ARG_CHILD_OF ${ROOT}.${PARENT})
+    endif()
+  endif()
 
   # Compose sources
   target_sources(${NAME}

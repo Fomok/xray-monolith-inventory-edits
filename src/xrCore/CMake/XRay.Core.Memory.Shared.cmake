@@ -1,6 +1,4 @@
 add_module(XRay.Core.Memory.Shared
-  CHILD_OF XRay.Core
-
   SOURCES
   crc32.cpp
   mezz_stringbuffer.cpp

@@ -1,5 +1,5 @@
 add_module(XRay.Sound
-  PARENT
+  ROOT
   
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 

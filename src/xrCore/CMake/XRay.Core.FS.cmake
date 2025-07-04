@@ -1,6 +1,4 @@
 add_module(XRay.Core.FS
-  CHILD_OF XRay.Core
-  
   SOURCES
   file_stream_reader.cpp
   

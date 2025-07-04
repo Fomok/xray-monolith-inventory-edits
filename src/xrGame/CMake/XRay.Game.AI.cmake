@@ -1,7 +1,4 @@
 add_module(XRay.Game.AI
-  PARENT
-  CHILD_OF XRay.Game
-  
   SOURCES
   ai/monsters/ai_monster_effector.cpp
   ai/trader/trader_animation.cpp

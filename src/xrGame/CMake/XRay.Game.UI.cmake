@@ -1,6 +1,4 @@
 add_module(XRay.Game.UI
-  CHILD_OF XRay.Game
-
   SOURCES
   UIAchivementsIndicator.cpp
   UICursor.cpp

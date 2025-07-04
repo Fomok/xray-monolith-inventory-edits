@@ -1,6 +1,4 @@
 add_module(XRay.Game.AI.Debug
-  CHILD_OF XRay.Game
-
   SOURCES
   ai_debug_variables.cpp
   ai_debug.h

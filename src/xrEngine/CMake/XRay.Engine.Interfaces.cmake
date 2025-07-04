@@ -1,21 +1,15 @@
 add_module(XRay.Engine.Interfaces.Collidable
-  CHILD_OF XRay.Engine
-
   SOURCES
   ICollidable.cpp
   ICollidable.h
 )
 
 add_module(XRay.Engine.Interfaces.Particles
-  CHILD_OF XRay.Engine
-
   SOURCES
   psystem.h
 )
 
 add_module(XRay.Engine.Interfaces.ImGui
-  CHILD_OF XRay.Engine
-
   SOURCES
   imgui_base.cpp
   imgui_base_input.cpp
@@ -26,8 +20,6 @@ add_module(XRay.Engine.Interfaces.ImGui
 )
 
 add_module(XRay.Engine.Interfaces.Input
-  CHILD_OF XRay.Engine
-
   SOURCES
   IInputReceiver.cpp
   IInputReceiver.h
@@ -39,8 +31,6 @@ add_module(XRay.Engine.Interfaces.Input
 )
 
 add_module(XRay.Engine.Interfaces.Physics
-  CHILD_OF XRay.Engine
-
   SOURCES
   phdebug.cpp
   
@@ -51,8 +41,6 @@ add_module(XRay.Engine.Interfaces.Physics
 )
 
 add_module(XRay.Engine.Interfaces.Render
-  CHILD_OF XRay.Engine
-
   SOURCES
   IRenderable.cpp
   Render.cpp
@@ -61,8 +49,6 @@ add_module(XRay.Engine.Interfaces.Render
 )
 
 add_module(XRay.Engine.Interfaces.Scheduler
-  CHILD_OF XRay.Engine
-
   SOURCES
   ISheduled.cpp
   xrSheduler.cpp

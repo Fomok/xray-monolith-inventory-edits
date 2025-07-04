@@ -1,6 +1,4 @@
 add_module(XRay.Game.Physics PRIVATE
-  CHILD_OF XRay.Game
-
   SOURCES
   ../xrServerEntities/PHNetState.cpp
   PHCollisionDamageReceiver.cpp

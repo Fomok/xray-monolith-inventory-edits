@@ -1,6 +1,4 @@
 add_module(XRay.Core.Memory.Manager
-  CHILD_OF XRay.Core
-  
   SOURCES
   memory_allocation_stats.cpp
   memory_usage.cpp

@@ -1,6 +1,4 @@
 add_module(XRay.Engine.Game
-  CHILD_OF XRay.Engine
-
   SOURCES
   IGame_Level.cpp
   IGame_Level_check_textures.cpp
@@ -12,8 +10,6 @@ add_module(XRay.Engine.Game
 )
 
 add_module(XRay.Engine.Game.Objects
-  CHILD_OF XRay.Engine
-
   SOURCES
   IGame_ObjectPool.cpp
   IGame_ObjectPool.h
@@ -31,16 +27,12 @@ add_module(XRay.Engine.Game.Objects
 )
 
 add_module(XRay.Engine.Game.HUD
-  CHILD_OF XRay.Engine
-
   SOURCES
   CustomHUD.cpp
   CustomHUD.h
 )
 
 add_module(XRay.Engine.Game.Materials
-  CHILD_OF XRay.Engine
-  
   SOURCES
   GameMtlLib.cpp
   GameMtlLib_Engine.cpp
@@ -48,8 +40,6 @@ add_module(XRay.Engine.Game.Materials
 )
 
 add_module(XRay.Engine.Game.Feelers
-  CHILD_OF XRay.Engine
-  
   SOURCES
   Feel_Sound.h
 
@@ -61,8 +51,6 @@ add_module(XRay.Engine.Game.Feelers
 )
 
 add_module(XRay.Engine.Game.Environment
-  CHILD_OF XRay.Engine
-  
   SOURCES
   Environment_misc.cpp
   Environment_render.cpp
@@ -74,8 +62,6 @@ add_module(XRay.Engine.Game.Environment
 )
 
 add_module(XRay.Engine.Game.Environment.Effects
-  CHILD_OF XRay.Engine
-  
   SOURCES
   Rain.cpp
   Rain.h
@@ -88,8 +74,6 @@ add_module(XRay.Engine.Game.Environment.Effects
 )
 
 add_module(XRay.Engine.Game.Demo
-  CHILD_OF XRay.Engine
-  
   SOURCES
   FDemoPlay.cpp
   FDemoRecord.cpp
@@ -98,16 +82,12 @@ add_module(XRay.Engine.Game.Demo
 )
 
 add_module(XRay.Engine.Game.Debug
-  CHILD_OF XRay.Engine
-  
   SOURCES
   ObjectDump.cpp
   ObjectDump.h
 )
 
 add_module(XRay.Engine.Game.Collision
-  CHILD_OF XRay.Engine
-
   SOURCES
   cf_dynamic_mesh.cpp
   cf_dynamic_mesh.h
@@ -117,8 +97,6 @@ add_module(XRay.Engine.Game.Collision
 )
 
 add_module(XRay.Engine.Game.Cameras
-  CHILD_OF XRay.Engine
-
   SOURCES
   CameraBase.cpp
   CameraManager.cpp
@@ -133,8 +111,6 @@ add_module(XRay.Engine.Game.Cameras
 )
 
 add_module(XRay.Engine.Game.Animator
-  CHILD_OF XRay.Engine
-
   SOURCES
   bone.cpp
   bone.h

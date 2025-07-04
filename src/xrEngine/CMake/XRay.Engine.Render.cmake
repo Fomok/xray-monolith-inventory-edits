@@ -1,6 +1,4 @@
 add_module(XRay.Engine.Render.TextConsole
-  CHILD_OF XRay.Engine
-
   SOURCES
   Text_Console.cpp
   Text_Console_WndProc.cpp
@@ -8,8 +6,6 @@ add_module(XRay.Engine.Render.TextConsole
 )
 
 add_module(XRay.Engine.Render.Textures
-  CHILD_OF XRay.Engine
-
   SOURCES
   tntQAVI.cpp
   tntQAVI.h
@@ -27,16 +23,12 @@ add_module(XRay.Engine.Render.Textures
 )
 
 add_module(XRay.Engine.Render.Shaders
-  CHILD_OF XRay.Engine
-
   SOURCES
   Shader_xrLC.h
   WaveForm.h
 )
 
 add_module(XRay.Engine.Render.Fonts
-  CHILD_OF XRay.Engine
-
   SOURCES
   GameFont.cpp
   GameFont.h
@@ -46,39 +38,29 @@ add_module(XRay.Engine.Render.Fonts
 )
 
 add_module(XRay.Engine.Render.Lighting
-  CHILD_OF XRay.Engine
-
   SOURCES
   LightAnimLibrary.cpp
   LightAnimLibrary.h
 )
 
 add_module(XRay.Engine.Render.Particles
-  CHILD_OF XRay.Engine
-
   SOURCES
   PS_instance.cpp
   PS_instance.h
 )
 
 add_module(XRay.Engine.Render.Visibility
-  CHILD_OF XRay.Engine
-
   SOURCES
   vis_common.h
 )
 
 add_module(XRay.Engine.Render.Visuals
-  CHILD_OF XRay.Engine
-
   SOURCES
   fmesh.cpp
   Fmesh.h
 )
 
 add_module(XRay.Engine.Render.Visuals.Skeleton
-  CHILD_OF XRay.Engine
-
   SOURCES
   SkeletonMotions.cpp
   SkeletonMotionDefs.h
@@ -87,8 +69,6 @@ add_module(XRay.Engine.Render.Visuals.Skeleton
 )
 
 add_module(XRay.Engine.Render.Device
-  CHILD_OF XRay.Engine
-
   SOURCES
   device.cpp
   Device_create.cpp

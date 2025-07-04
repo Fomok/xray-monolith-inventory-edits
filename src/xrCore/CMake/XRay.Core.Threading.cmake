@@ -1,6 +1,4 @@
 add_module(XRay.Core.Threading
-  CHILD_OF XRay.Core
-
   SOURCES
   Lock.cpp
   ScopeLock.cpp

@@ -1,6 +1,4 @@
 add_module(XRay.Game.AI.Group.Agent
-  CHILD_OF XRay.Game
-
   SOURCES
   agent_manager.cpp
   agent_manager.h
@@ -9,8 +7,6 @@ add_module(XRay.Game.AI.Group.Agent
 )
 
 add_module(XRay.Game.AI.Group.Agent.Corpse
-  CHILD_OF XRay.Game
-
   SOURCES
   member_corpse.h
   member_corpse_inline.h
@@ -21,8 +17,6 @@ add_module(XRay.Game.AI.Group.Agent.Corpse
 )
 
 add_module(XRay.Game.AI.Group.Agent.Enemy
-  CHILD_OF XRay.Game
-
   SOURCES
   member_enemy.h
   member_enemy_inline.h
@@ -32,8 +26,6 @@ add_module(XRay.Game.AI.Group.Agent.Enemy
 )
 
 add_module(XRay.Game.AI.Group.Agent.Explosive
-  CHILD_OF XRay.Game
-
   SOURCES
   danger_explosive.cpp
   danger_explosive.h
@@ -45,8 +37,6 @@ add_module(XRay.Game.AI.Group.Agent.Explosive
 )
 
 add_module(XRay.Game.AI.Group.Agent.Location
-  CHILD_OF XRay.Game
-
   SOURCES
   danger_cover_location.cpp
   danger_cover_location.h
@@ -66,8 +56,6 @@ add_module(XRay.Game.AI.Group.Agent.Location
 )
 
 add_module(XRay.Game.AI.Group.Agent.Member
-  CHILD_OF XRay.Game
-
   SOURCES
   member_order.h
   member_order_inline.h
@@ -78,8 +66,6 @@ add_module(XRay.Game.AI.Group.Agent.Member
 )
 
 add_module(XRay.Game.AI.Group.Agent.Memory
-  CHILD_OF XRay.Game
-
   SOURCES
   agent_memory_manager.cpp
   agent_memory_manager.h
@@ -87,8 +73,6 @@ add_module(XRay.Game.AI.Group.Agent.Memory
 )
 
 add_module(XRay.Game.AI.Group.Agent.Planner
-  CHILD_OF XRay.Game
-
   SOURCES
   agent_manager_actions.cpp
   agent_manager_actions.h

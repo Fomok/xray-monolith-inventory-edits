@@ -1,6 +1,4 @@
 add_module(XRay.Game.AI.Eval
-  CHILD_OF XRay.Game
-
   SOURCES
   ef_pattern.cpp
   ef_primary.cpp

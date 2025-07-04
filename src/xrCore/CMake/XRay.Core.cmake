@@ -1,5 +1,5 @@
 add_module(XRay.Core
-  PARENT
+  ROOT
   
   PRECOMPILES stdafx.h
 

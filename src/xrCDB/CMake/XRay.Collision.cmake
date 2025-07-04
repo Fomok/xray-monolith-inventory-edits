@@ -1,5 +1,5 @@
 add_module(XRay.Collision
-  PARENT
+  ROOT
   
   SOURCES
   #cl_raypick.cpp

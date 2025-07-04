@@ -1,6 +1,4 @@
 add_module(XRay.Collision.Engine
-  CHILD_OF XRay.Collision
-
   SOURCES
   ISpatial.cpp
   ISpatial_q_box.cpp

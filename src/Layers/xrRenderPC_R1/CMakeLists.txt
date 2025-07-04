@@ -1,4 +1,6 @@
 add_module(XRay.Render.R1
+  ROOT
+
   PRECOMPILES stdafx.h
 
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}

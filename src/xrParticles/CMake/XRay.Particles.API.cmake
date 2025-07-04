@@ -1,6 +1,4 @@
 add_module(XRay.Particles.API
-  CHILD_OF XRay.Particles
-
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   PRECOMPILES stdafx.h

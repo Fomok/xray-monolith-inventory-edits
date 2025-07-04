@@ -1,5 +1,5 @@
 add_module(XRay.CPUPipe
-  PARENT
+  ROOT
 
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
@@ -16,23 +16,17 @@ add_module(XRay.CPUPipe
 )
 
 add_module(XRay.CPUPipe.PLC
-  CHILD_OF XRay.CPUPipe
-
   SOURCES
   PLC.cpp
 )
 
 add_module(XRay.CPUPipe.Resources
-  CHILD_OF XRay.CPUPipe
-
   SOURCES
   resource.h
   xrCPU_Pipe.rc
 )
 
 add_module(XRay.CPUPipe.Skinning
-  CHILD_OF XRay.CPUPipe
-
   SOURCES
   xrSkin2W.cpp
   xrSkin2W_SSE.cpp
@@ -40,8 +34,6 @@ add_module(XRay.CPUPipe.Skinning
 )
 
 add_module(XRay.CPUPipe.TTAPI
-  CHILD_OF XRay.CPUPipe
-
   SOURCES
   ttapi.cpp
   ttapi.h

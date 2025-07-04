@@ -1,6 +1,4 @@
 add_module(XRay.Sound.Core
-  CHILD_OF XRay.Sound
-  
   SOURCES
   SoundRender_Core.cpp
   SoundRender_CoreA.cpp

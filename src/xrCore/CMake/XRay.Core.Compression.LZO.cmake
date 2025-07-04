@@ -1,6 +1,4 @@
 add_module(XRay.Core.Compression.LZO
-  CHILD_OF XRay.Core
-  
   SOURCES
   lzo_compressor.cpp
   rt_lzo1x_1.cpp

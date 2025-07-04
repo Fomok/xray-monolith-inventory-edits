@@ -1,5 +1,5 @@
 add_module(XRay.Particles
-  PARENT
+  ROOT
   
   SOURCES
   psystem.h
