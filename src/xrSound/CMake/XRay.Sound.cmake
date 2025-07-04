@@ -1,6 +1,4 @@
 add_module(XRay.Sound
-  ROOT
-  
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   PRECOMPILES stdafx.h
@@ -18,7 +16,7 @@ add_module(XRay.Sound
   OpenAL32
   tbb
   XRay.Core
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

@@ -1,6 +1,4 @@
 add_module(XRay.Render.R3
-  ROOT
-
   PRECOMPILES stdafx.h
 
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
@@ -22,7 +20,7 @@ add_module(XRay.Render.R3
   XRay.Collision
   XRay.Core
   XRay.Engine
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

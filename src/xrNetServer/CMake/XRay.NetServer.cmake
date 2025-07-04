@@ -1,6 +1,4 @@
 add_module(XRay.NetServer
-  ROOT
-
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   PRECOMPILES stdafx.h

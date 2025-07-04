@@ -1,6 +1,4 @@
 add_module(XRay.Game
-  ROOT
-
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
@@ -22,7 +20,7 @@ add_module(XRay.Game
   XRay.Engine
   XRay.NetServer
   XRay.Physics
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

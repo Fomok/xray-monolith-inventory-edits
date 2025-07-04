@@ -1,8 +1,40 @@
+# Use a single directory for build artifacts
+set(COMPILE_OUTPUT_DIR ${CMAKE_BINARY_DIR}/Binaries/$<CONFIG>)
+
 # Add ./CMake to the module path and include NAME
 macro(add_cmake_directory NAME)
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
   include(${NAME})
 endmacro()
+
+function(find_parent TARGET OUT_VAR)
+  # Unset the output var to prevent leakage across runs
+  unset(${OUT_VAR})
+
+  # Create a segment list from our target name
+  string(REPLACE "." ";" PATH ${TARGET})
+
+  # Loop
+  while(true)
+    # Pop the last segment of our list
+    list(POP_BACK PATH SEG)
+
+    # If the list is empty, break
+    if(NOT SEG)
+      break()
+    endif()
+
+    # Join our shortened path into a name
+    list(JOIN PATH "." CAND)
+
+    # Test if it refers to a valid target
+    if(TARGET "${CAND}")
+      # If so, we've found our parent
+      set(${OUT_VAR} ${CAND})
+      return(PROPAGATE ${OUT_VAR})
+    endif()
+  endwhile()
+endfunction()
 
 # Add a library with the given NAME, and the following optional keyword parameters:
 # SOURCES
@@ -13,7 +45,7 @@ endmacro()
 function(add_module NAME)
   # Parse keyword arguments
   cmake_parse_arguments(PARSE_ARGV 1 ARG
-    "ROOT"
+    ""
     "TYPE"
     "SOURCES;INCLUDES;PRECOMPILES;DEFINES;LINKS"
   )
@@ -24,10 +56,8 @@ function(add_module NAME)
     set(HAS_SOURCES true)
   endif()
 
-  # Store a flag if this module is explicitly set as an interface
-  if(ARG_TYPE STREQUAL INTERFACE)
-    set(EXPLICIT_INTERFACE true)
-  endif()
+  # Cache pre-inference type
+  set(EXPLICIT_TYPE ${ARG_TYPE})
   
   # If type has not been set explicitly, infer...
   if(NOT DEFINED ARG_TYPE)
@@ -53,11 +83,18 @@ function(add_module NAME)
   set(${NAME}_TYPE_PRIVATE ${TYPE_PRIVATE} PARENT_SCOPE)
 
   # Add our module
-  add_library(${NAME} ${ARG_TYPE})
+  if(ARG_TYPE STREQUAL CUSTOM)
+    add_custom_target(${NAME})
+  else()
+    add_library(${NAME} ${ARG_TYPE})
+  endif()
+
+  # Find our parent module
+  find_parent(${NAME} PARENT)
 
   # Convert our module name into a folder path and apply it
   string(REPLACE "." ";" FOLDER ${NAME})
-  if(NOT ARG_ROOT)
+  if(NOT PARENT)
     list(POP_BACK FOLDER)
   endif()
   list(JOIN FOLDER "/" FOLDER)
@@ -68,9 +105,7 @@ function(add_module NAME)
     FOLDER ${FOLDER}
   )
 
-  # Convert our module name into a binary output path and apply it
-  set(COMPILE_OUTPUT_DIR ${CMAKE_BINARY_DIR}/Binaries/$<CONFIG>)
-
+  # Apply artifact output directories
   set_target_properties(${NAME}
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
@@ -80,58 +115,50 @@ function(add_module NAME)
     COMPILE_PDB_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
   )
 
-  # If we're not a root module, and aren't an explicit interface
-  if(NOT ARG_ROOT AND NOT EXPLICIT_INTERFACE)
-    # Decompose name into a path and fetch the first two segments
-    string(REPLACE "." ";" PATH ${NAME})
-    list(POP_FRONT PATH ROOT PARENT)
-    # If we have a parent...
-    if(PARENT)
-      # Set ARG_CHILD_OF to our parent's path
-      set(ARG_CHILD_OF ${ROOT}.${PARENT})
-    endif()
-  endif()
-
   # Compose sources
   target_sources(${NAME}
     PRIVATE
     ${ARG_SOURCES}
   )
 
+  if(ARG_TYPE STREQUAL CUSTOM)
+    return()
+  endif()
+
   # Compose includes
-  set(${NAME}_INCLUDES ${ARG_INCLUDES} PARENT_SCOPE)
   target_include_directories(${NAME}
     ${TYPE_PUBLIC}
     ${ARG_INCLUDES}
-    ${${ARG_CHILD_OF}_INCLUDES}
+    ${${PARENT}_INCLUDES}
   )
+  set(${NAME}_INCLUDES "${ARG_INCLUDES};${${PARENT}_INCLUDES}" PARENT_SCOPE)
 
   # Compose precompiled headers
-  set(${NAME}_PRECOMPILES ${ARG_PRECOMPILES} PARENT_SCOPE)
   target_precompile_headers(${NAME}
     ${TYPE_PRIVATE}
     ${ARG_PRECOMPILES}
-    ${${ARG_CHILD_OF}_PRECOMPILES}
+    ${${PARENT}_PRECOMPILES}
   )
+  set(${NAME}_PRECOMPILES "${ARG_PRECOMPILES};${${PARENT}_PRECOMPILES}" PARENT_SCOPE)
 
   # Compose compile definitions
-  set(${NAME}_DEFINES ${ARG_DEFINES} PARENT_SCOPE)
   target_compile_definitions(${NAME}
     ${TYPE_PUBLIC}
     ${ARG_DEFINES}
-    ${${ARG_CHILD_OF}_DEFINES}
+    ${${PARENT}_DEFINES}
   )
+  set(${NAME}_DEFINES "${ARG_DEFINES};${${PARENT}_DEFINES}" PARENT_SCOPE)
 
   # Compose linked libraries
-  set(${NAME}_LINKS ${ARG_LINKS} PARENT_SCOPE)
   target_link_libraries(${NAME}
     ${TYPE_PRIVATE}
     ${ARG_LINKS}
-    ${${ARG_CHILD_OF}_LINKS}
+    ${${PARENT}_LINKS}
   )
+  set(${NAME}_LINKS "${ARG_LINKS};${${PARENT}_LINKS}" PARENT_SCOPE)
 
   # If we have a parent, link it to this module
-  if(DEFINED ARG_CHILD_OF)
-    target_link_libraries(${ARG_CHILD_OF} ${${ARG_CHILD_OF}_TYPE_PRIVATE} ${NAME})
+  if(DEFINED PARENT)
+    target_link_libraries(${PARENT} ${${PARENT}_TYPE_PRIVATE} ${NAME})
   endif()
 endfunction()

@@ -1,6 +1,4 @@
-add_module(XRay.Render
-  ROOT
-
+add_module(XRay.Render.Common
   TYPE INTERFACE
 
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}

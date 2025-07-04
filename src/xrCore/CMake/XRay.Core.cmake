@@ -1,6 +1,4 @@
 add_module(XRay.Core
-  ROOT
-  
   PRECOMPILES stdafx.h
 
   DEFINES

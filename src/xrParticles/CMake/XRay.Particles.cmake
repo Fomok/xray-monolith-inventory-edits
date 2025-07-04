@@ -1,6 +1,4 @@
 add_module(XRay.Particles
-  ROOT
-  
   SOURCES
   psystem.h
   stdafx.h

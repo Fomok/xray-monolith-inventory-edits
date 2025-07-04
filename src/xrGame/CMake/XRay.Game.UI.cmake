@@ -383,6 +383,6 @@ target_link_libraries(XRay.Game.UI
   XRay.Engine
   XRay.NetServer
   XRay.Physics
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
 )

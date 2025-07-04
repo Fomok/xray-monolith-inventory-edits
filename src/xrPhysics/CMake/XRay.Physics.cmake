@@ -1,6 +1,4 @@
 add_module(XRay.Physics
-  ROOT
-
   PRECOMPILES stdafx.h
 
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
@@ -11,7 +9,7 @@ add_module(XRay.Physics
   tbb
   XRay.Collision
   XRay.Engine
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

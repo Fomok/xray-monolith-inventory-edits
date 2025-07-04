@@ -2,6 +2,8 @@ message(STATUS)
 message(STATUS "X-Ray Engine")
 message(STATUS "      Version: 1.6")
 
+cmake_policy(SET CMP0140 NEW)
+
 # Setup platform configurations
 include(XRay.Platform)
 

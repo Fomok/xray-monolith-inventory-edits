@@ -165,7 +165,7 @@ target_link_libraries(XRay.Game.Scripts
   XRay.Collision
   XRay.Core
   XRay.Engine
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
   XRay.Physics
   XRay.Sound

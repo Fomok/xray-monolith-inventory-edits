@@ -1,6 +1,4 @@
 add_module(XRay.Engine
-  ROOT
-  
   PRECOMPILES stdafx.h
   
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
@@ -22,7 +20,7 @@ add_module(XRay.Engine
   XRay.Core
   XRay.Game
   XRay.Particles
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
   XRay.Sound
   XRay.XMLParser

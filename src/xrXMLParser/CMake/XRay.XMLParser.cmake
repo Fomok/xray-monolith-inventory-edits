@@ -1,6 +1,4 @@
 add_module(XRay.XMLParser
-  ROOT
-
   PRECOMPILES stdafx.h
   
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}

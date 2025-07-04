@@ -1,6 +1,4 @@
 add_module(XRay.Collision
-  ROOT
-  
   SOURCES
   #cl_raypick.cpp
   Frustum.cpp
@@ -23,7 +21,7 @@ add_module(XRay.Collision
 
   LINKS
   XRay.Core
-  XRay.Render
+  XRay.Render.Common
   XRay.Render.API
 )
 

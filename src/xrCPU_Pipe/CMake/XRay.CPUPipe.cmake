@@ -1,6 +1,4 @@
 add_module(XRay.CPUPipe
-  ROOT
-
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   PRECOMPILES stdafx.h
@@ -8,7 +6,7 @@ add_module(XRay.CPUPipe
   LINKS
   XRay.Render.API
   XRay.Collision
-  XRay.Render
+  XRay.Render.Common
 
   SOURCES
   xrCPU_Pipe.cpp
