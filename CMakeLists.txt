@@ -26,6 +26,24 @@ message(STATUS)
 message(STATUS "S.T.A.L.K.E.R. Anomaly")
 message(STATUS "      Version: ${TODAY_DOTS}")
 
+add_custom_target(CMake)
+target_sources(CMake
+  PRIVATE
+  CMake/Today.cmake
+  CMake/XRay.AVX.cmake
+  CMake/XRay.cmake
+  CMake/XRay.Compiler.Clang.cmake
+  CMake/XRay.Compiler.Definitions.cmake
+  CMake/XRay.Compiler.MSVC.cmake
+  CMake/XRay.Configs.cmake
+  CMake/XRay.Folders.cmake
+  CMake/XRay.Linker.cmake
+  CMake/XRay.Modules.cmake
+  CMake/XRay.Paths.cmake
+  CMake/XRay.Platform.cmake
+  CMake/XRay.Win32.cmake
+)
+
 # Hand off to our XRay entrypoint
 include(XRay)
 

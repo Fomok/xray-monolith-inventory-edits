@@ -119,6 +119,7 @@ function(add_module NAME)
   target_sources(${NAME}
     PRIVATE
     ${ARG_SOURCES}
+    ${CMAKE_CURRENT_LIST_FILE}
   )
 
   if(ARG_TYPE STREQUAL CUSTOM)
