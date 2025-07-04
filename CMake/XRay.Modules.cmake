@@ -55,10 +55,22 @@ function(add_module NAME)
   string(REPLACE "XRay" "X-Ray" FOLDER ${FOLDER})
 
   set_target_properties(${NAME}
-    PROPERTIES FOLDER
-    ${FOLDER}
+    PROPERTIES
+    FOLDER ${FOLDER}
   )
 
+  # Convert our module name into a binary output path and apply it
+  set(COMPILE_OUTPUT_DIR ${CMAKE_BINARY_DIR}/Binaries/$<CONFIG>)
+  set_target_properties(${NAME}
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    PDB_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    COMPILE_PDB_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+  )
+
+  # Compose sources
   target_sources(${NAME}
     PRIVATE
     ${ARG_SOURCES}
