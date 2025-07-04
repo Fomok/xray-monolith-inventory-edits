@@ -1,4 +1,6 @@
 add_module(XRay.Game.UI
+  TYPE STATIC
+  
   SOURCES
   UIAchivementsIndicator.cpp
   UICursor.cpp

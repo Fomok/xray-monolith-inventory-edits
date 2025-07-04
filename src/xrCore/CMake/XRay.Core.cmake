@@ -1,4 +1,6 @@
 add_module(XRay.Core
+  TYPE STATIC
+  
   PRECOMPILES stdafx.h
 
   DEFINES

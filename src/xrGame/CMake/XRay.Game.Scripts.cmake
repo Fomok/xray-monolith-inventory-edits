@@ -1,4 +1,6 @@
 add_module(XRay.Game.Scripts
+  TYPE STATIC
+  
   SOURCES
   script_abstract_action.cpp
   script_action_condition.cpp
