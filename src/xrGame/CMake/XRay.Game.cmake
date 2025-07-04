@@ -26,9 +26,6 @@ add_module(XRay.Game
   XRay.Render.API
 
   SOURCES
-  ../xrServerEntities/alife_human_brain.cpp
-  ../xrServerEntities/alife_monster_brain.cpp
-  ../xrServerEntities/alife_space.cpp
   ../xrServerEntities/character_info.cpp
   ../xrServerEntities/gametype_chooser.cpp
   ../xrServerEntities/LevelGameDef.cpp
@@ -119,63 +116,6 @@ add_module(XRay.Game
   actor_statistic_mgr.cpp
   Actor_Weapon.cpp
   AdvancedDetector.cpp
-  agent_corpse_manager.cpp
-  agent_enemy_manager.cpp
-  agent_explosive_manager.cpp
-  agent_location_manager.cpp
-  agent_manager.cpp
-  agent_manager_actions.cpp
-  agent_manager_planner.cpp
-  agent_manager_properties.cpp
-  agent_member_manager.cpp
-  agent_memory_manager.cpp
-  alife_anomalous_zone.cpp
-  alife_combat_manager.cpp
-  alife_communication_manager.cpp
-  alife_creature_abstract.cpp
-  alife_dynamic_object.cpp
-  alife_graph_registry.cpp
-  alife_group_abstract.cpp
-  alife_group_registry.cpp
-  alife_human_abstract.cpp
-  alife_human_brain_script.cpp
-  alife_human_object_handler.cpp
-  alife_interaction_manager.cpp
-  alife_monster_abstract.cpp
-  alife_monster_base.cpp
-  alife_monster_brain_script.cpp
-  alife_monster_detail_path_manager.cpp
-  alife_monster_detail_path_manager_script.cpp
-  alife_monster_movement_manager.cpp
-  alife_monster_movement_manager_script.cpp
-  alife_monster_patrol_path_manager.cpp
-  alife_monster_patrol_path_manager_script.cpp
-  alife_object.cpp
-  alife_object_registry.cpp
-  alife_online_offline_group.cpp
-  alife_online_offline_group_brain.cpp
-  alife_registry_container.cpp
-  alife_schedule_registry.cpp
-  alife_simulator.cpp
-  alife_simulator_base.cpp
-  alife_simulator_base2.cpp
-  alife_simulator_header.cpp
-  alife_simulator_script.cpp
-  alife_smart_terrain_registry.cpp
-  alife_smart_terrain_task.cpp
-  alife_smart_terrain_task_script.cpp
-  alife_smart_zone.cpp
-  alife_spawn_registry.cpp
-  alife_spawn_registry_header.cpp
-  alife_spawn_registry_spawn.cpp
-  alife_storage_manager.cpp
-  alife_story_registry.cpp
-  alife_surge_manager.cpp
-  alife_switch_manager.cpp
-  alife_time_manager.cpp
-  alife_trader.cpp
-  alife_trader_abstract.cpp
-  alife_update_manager.cpp
   AmebaZone.cpp
   ammunition_groups.cpp
   animation_movement_controller.cpp
@@ -236,31 +176,22 @@ add_module(XRay.Game
   console_commands.cpp
   console_commands_mp.cpp
   console_registrator_script.cpp
-  cover_evaluators.cpp
   cta_game_artefact.cpp
   cta_game_artefact_activation.cpp
   CustomDetector.cpp
   CustomDevice.cpp
-  CustomMonster.cpp
-  CustomMonster_VCPU.cpp
   CustomOutfit.cpp
   CustomOutfit_script.cpp
   CustomRocket.cpp
   CustomZone.cpp
   CustomZone_script.cpp
   DamagableItem.cpp
-  danger_cover_location.cpp
-  danger_explosive.cpp
-  danger_location.cpp
-  danger_object_location.cpp
   date_time.cpp
   DBG_Car.cpp
-  dbg_draw_frustum.cpp
   death_anims.cpp
   death_anims_predicates.cpp
   #debug_make_final_test.cpp
   debug_renderer.cpp
-  debug_text_tree.cpp
   DelayedActionFuse.cpp
   DemoInfo.cpp
   DemoInfo_Loader.cpp
@@ -270,7 +201,6 @@ add_module(XRay.Game
   double_shot_double_kill.cpp
   DummyArtifact.cpp
   #DynamicHeightMap.cpp
-  dynamic_obstacles_avoider.cpp
   eatable_item.cpp
   eatable_item_object.cpp
   eatable_item_script.cpp
@@ -279,10 +209,6 @@ add_module(XRay.Game
   EffectorShot.cpp
   EffectorShotX.cpp
   EffectorZoomInertion.cpp
-  ef_pattern.cpp
-  ef_primary.cpp
-  ef_storage.cpp
-  ef_storage_script.cpp
   ElectricBall.cpp
   EliteDetector.cpp
   encyclopedia_article.cpp
@@ -416,12 +342,6 @@ add_module(XRay.Game
   inventory_item_upgrade.cpp
   inventory_owner_info.cpp
   inventory_quickswitch.cpp
-  inventory_upgrade.cpp
-  inventory_upgrade_base.cpp
-  inventory_upgrade_group.cpp
-  inventory_upgrade_manager.cpp
-  inventory_upgrade_property.cpp
-  inventory_upgrade_root.cpp
   invincible_fury.cpp
   key_binding_registrator_script.cpp
   killer_victim_velocity_angle.cpp
@@ -540,7 +460,6 @@ add_module(XRay.Game
   relation_registry.cpp
   relation_registry_actions.cpp
   relation_registry_fights.cpp
-  restricted_object_obstacle.cpp
   rewarding_events_handlers.cpp
   rewarding_state_events.cpp
   reward_event_generator.cpp
@@ -548,8 +467,6 @@ add_module(XRay.Game
   RGD5.cpp
   RocketLauncher.cpp
   RustyHairArtifact.cpp
-  saved_game_wrapper.cpp
-  saved_game_wrapper_script.cpp
   ScientificOutfit.cpp
   Scope.cpp
   screenshots_common.cpp
@@ -560,7 +477,6 @@ add_module(XRay.Game
   searchlight.cpp
   secure_messaging.cpp
   seniority_hierarchy_holder.cpp
-  server_entity_wrapper.cpp
   ShootingObject.cpp
   shootingObject_dump_impl.cpp
   Silencer.cpp
@@ -573,73 +489,16 @@ add_module(XRay.Game
   sprinter_stopper.cpp
   squad_hierarchy_holder.cpp
   stalkerOutfit.cpp
-  stalker_alife_actions.cpp
-  stalker_alife_planner.cpp
-  stalker_alife_task_actions.cpp
-  stalker_animation_callbacks.cpp
-  stalker_animation_data.cpp
-  stalker_animation_data_storage.cpp
-  stalker_animation_global.cpp
-  stalker_animation_head.cpp
-  stalker_animation_legs.cpp
-  stalker_animation_manager.cpp
-  stalker_animation_manager_debug.cpp
-  stalker_animation_manager_update.cpp
-  stalker_animation_names.cpp
-  stalker_animation_pair.cpp
-  stalker_animation_script.cpp
-  stalker_animation_state.cpp
-  stalker_animation_torso.cpp
-  stalker_anomaly_actions.cpp
-  stalker_anomaly_planner.cpp
-  stalker_base_action.cpp
-  stalker_combat_actions.cpp
-  stalker_combat_action_base.cpp
   stalker_combat_planner.cpp
-  stalker_danger_by_sound_actions.cpp
-  stalker_danger_by_sound_planner.cpp
-  stalker_danger_grenade_actions.cpp
-  stalker_danger_grenade_planner.cpp
-  stalker_danger_in_direction_actions.cpp
-  stalker_danger_in_direction_planner.cpp
-  stalker_danger_planner.cpp
   stalker_danger_property_evaluators.cpp
-  stalker_danger_unknown_actions.cpp
-  stalker_danger_unknown_planner.cpp
-  stalker_death_actions.cpp
-  stalker_death_planner.cpp
   stalker_flair.cpp
-  stalker_get_distance_actions.cpp
-  stalker_get_distance_planner.cpp
-  stalker_kill_wounded_actions.cpp
-  stalker_kill_wounded_planner.cpp
-  stalker_low_cover_actions.cpp
-  stalker_low_cover_planner.cpp
-  stalker_movement_manager_base.cpp
-  stalker_movement_manager_obstacles.cpp
-  stalker_movement_manager_obstacles_path.cpp
-  stalker_movement_manager_smart_cover.cpp
-  stalker_movement_manager_smart_cover_fov_range.cpp
-  stalker_movement_manager_smart_cover_loopholes.cpp
-  stalker_movement_params.cpp
-  stalker_planner.cpp
-  stalker_property_evaluators.cpp
-  stalker_search_actions.cpp
-  stalker_search_planner.cpp
-  stalker_sound_data.cpp
-  stalker_sound_data_visitor.cpp
-  stalker_velocity_collection.cpp
-  stalker_velocity_holder.cpp
   state_arguments_functions.cpp
   #static_cast_checked_test.cpp
-  static_obstacles_avoider.cpp
   stats_submitter.cpp
   stats_submitter_dsa_params.cpp
-  steering_behaviour.cpp
   string_table.cpp
   team_base_zone.cpp
   team_hierarchy_holder.cpp
-  TeleWhirlwind.cpp
   ThornArtifact.cpp
   Torch.cpp
   torch_script.cpp
@@ -649,7 +508,6 @@ add_module(XRay.Game
   trade2.cpp
   trade_parameters.cpp
   traffic_optimization.cpp
-  trajectories.cpp
   UsableScriptObject.cpp
   wallmark_manager.cpp
   Weapon.cpp
@@ -745,12 +603,6 @@ add_module(XRay.Game
 
   ../xrCore/ChooseTypes.H
   ../xrServerEntities/ai_sounds.h
-  ../xrServerEntities/alife_human_brain.h
-  ../xrServerEntities/alife_human_brain_inline.h
-  ../xrServerEntities/alife_monster_brain.h
-  ../xrServerEntities/alife_monster_brain_inline.h
-  ../xrServerEntities/alife_movement_manager_holder.h
-  ../xrServerEntities/alife_space.h
   ../xrServerEntities/associative_vector.h
   ../xrServerEntities/associative_vector_compare_predicate.h
   ../xrServerEntities/associative_vector_compare_predicate_inline.h
@@ -872,88 +724,7 @@ add_module(XRay.Game
   actor_statistic_defs.h
   actor_statistic_mgr.h
   AdvancedDetector.h
-  agent_corpse_manager.h
-  agent_corpse_manager_inline.h
-  agent_enemy_manager.h
   agent_enemy_manager_inline.h
-  agent_explosive_manager.h
-  agent_explosive_manager_inline.h
-  agent_location_manager.h
-  agent_location_manager_inline.h
-  agent_manager.h
-  agent_manager_actions.h
-  agent_manager_inline.h
-  agent_manager_planner.h
-  agent_manager_properties.h
-  agent_manager_properties_inline.h
-  agent_manager_space.h
-  agent_member_manager.h
-  agent_member_manager_inline.h
-  agent_memory_manager.h
-  agent_memory_manager_inline.h
-  alife_abstract_registry.h
-  alife_abstract_registry_inline.h
-  alife_combat_manager.h
-  alife_combat_manager_inline.h
-  alife_communication_manager.h
-  alife_communication_manager_inline.h
-  alife_communication_space.h
-  alife_graph_registry.h
-  alife_graph_registry_inline.h
-  alife_group_registry.h
-  alife_group_registry_inline.h
-  alife_human_brain_save.h
-  alife_human_object_handler.h
-  alife_human_object_handler_inline.h
-  alife_human_object_handler_save.h
-  alife_interaction_manager.h
-  alife_interaction_manager_inline.h
-  alife_level_registry.h
-  alife_level_registry_inline.h
-  alife_monster_detail_path_manager.h
-  alife_monster_detail_path_manager_inline.h
-  alife_monster_movement_manager.h
-  alife_monster_movement_manager_inline.h
-  alife_monster_patrol_path_manager.h
-  alife_monster_patrol_path_manager_inline.h
-  alife_object_registry.h
-  alife_object_registry_inline.h
-  alife_online_offline_group_brain.h
-  alife_online_offline_group_brain_inline.h
-  alife_registry_container.h
-  alife_registry_container_composition.h
-  alife_registry_container_inline.h
-  alife_registry_container_space.h
-  alife_registry_wrapper.h
-  alife_registry_wrappers.h
-  alife_schedule_registry.h
-  alife_schedule_registry_inline.h
-  alife_simulator.h
-  alife_simulator_base.h
-  alife_simulator_base_inline.h
-  alife_simulator_header.h
-  alife_simulator_header_inline.h
-  alife_simulator_inline.h
-  alife_smart_terrain_registry.h
-  alife_smart_terrain_registry_inline.h
-  alife_smart_terrain_task.h
-  alife_smart_terrain_task_inline.h
-  alife_spawn_registry.h
-  alife_spawn_registry_header.h
-  alife_spawn_registry_header_inline.h
-  alife_spawn_registry_inline.h
-  alife_storage_manager.h
-  alife_storage_manager_inline.h
-  alife_story_registry.h
-  alife_story_registry_inline.h
-  alife_surge_manager.h
-  alife_surge_manager_inline.h
-  alife_switch_manager.h
-  alife_switch_manager_inline.h
-  alife_time_manager.h
-  alife_time_manager_inline.h
-  alife_update_manager.h
-  alife_update_manager_inline.h
   AmebaZone.h
   ammunition_groups.h
   animation_movement_controller.h
@@ -1017,26 +788,14 @@ add_module(XRay.Game
   configs_dump_verifyer.h
   console_registrator.h
   controller_state_panic_inline.h
-  cover_evaluators.h
-  cover_evaluators_inline.h
   cta_game_artefact.h
   cta_game_artefact_activation.h
   CustomDetector.h
   CustomDevice.h
-  CustomMonster.h
-  CustomMonster_inline.h
   CustomOutfit.h
   CustomRocket.h
   CustomZone.h
   DamagableItem.h
-  danger_cover_location.h
-  danger_cover_location_inline.h
-  danger_explosive.h
-  danger_explosive_inline.h
-  danger_location.h
-  danger_location_inline.h
-  danger_object_location.h
-  danger_object_location_inline.h
   data_storage_binary_heap.h
   data_storage_binary_heap_inline.h
   data_storage_bucket_list.h
@@ -1051,8 +810,6 @@ add_module(XRay.Game
   debug_make_final.hpp
   debug_renderer.h
   debug_renderer_inline.h
-  debug_text_tree.h
-  debug_text_tree_inline.h
   DelayedActionFuse.h
   DemoInfo.h
   DemoInfo_Loader.h
@@ -1065,8 +822,6 @@ add_module(XRay.Game
   double_shot_double_kill.h
   DummyArtifact.h
   DynamicHeightMap.h
-  dynamic_obstacles_avoider.h
-  dynamic_obstacles_avoider_inline.h
   eatable_item.h
   eatable_item_object.h
   edge_path.h
@@ -1076,11 +831,6 @@ add_module(XRay.Game
   EffectorShot.h
   EffectorShotX.h
   EffectorZoomInertion.h
-  ef_base.h
-  ef_pattern.h
-  ef_primary.h
-  ef_storage.h
-  ef_storage_inline.h
   ElectricBall.h
   EliteDetector.h
   encyclopedia_article.h
@@ -1228,18 +978,6 @@ add_module(XRay.Game
   inventory_item_object.h
   inventory_item_object_inline.h
   inventory_owner_inline.h
-  inventory_upgrade.h
-  inventory_upgrade_base.h
-  inventory_upgrade_base_inline.h
-  inventory_upgrade_group.h
-  inventory_upgrade_group_inline.h
-  inventory_upgrade_inline.h
-  inventory_upgrade_manager.h
-  inventory_upgrade_manager_inline.h
-  inventory_upgrade_property.h
-  inventory_upgrade_property_inline.h
-  inventory_upgrade_root.h
-  inventory_upgrade_root_inline.h
   invincible_fury.h
   key_binding_registrator.h
   killer_victim_velocity_angle.h
@@ -1274,12 +1012,6 @@ add_module(XRay.Game
   map_manager.h
   map_spot.h
   medkit.h
-  member_corpse.h
-  member_corpse_inline.h
-  member_enemy.h
-  member_enemy_inline.h
-  member_order.h
-  member_order_inline.h
   MercuryBall.h
   Message_Filter.h
   MilitaryOutfit.h
@@ -1404,13 +1136,10 @@ add_module(XRay.Game
   rat_state_manager.h
   rat_state_manager_inline.h
   raypick.h
-  refreshable_obstacles_query.h
-  refreshable_obstacles_query_inline.h
   RegistryFuncs.h
   relation_registry.h
   relation_registry_defs.h
   relation_registry_inline.h
-  restricted_object_obstacle.h
   rewarding_events_handlers.h
   rewarding_state_events.h
   reward_event_generator.h
@@ -1420,10 +1149,6 @@ add_module(XRay.Game
   RGD5.h
   RocketLauncher.h
   RustyHairArtifact.h
-  safe_map_iterator.h
-  safe_map_iterator_inline.h
-  saved_game_wrapper.h
-  saved_game_wrapper_inline.h
   ScientificOutfit.h
   Scope.h
   screenshots_common.h
@@ -1435,8 +1160,6 @@ add_module(XRay.Game
   seniority_hierarchy_holder.h
   seniority_hierarchy_holder_inline.h
   seniority_hierarchy_space.h
-  server_entity_wrapper.h
-  server_entity_wrapper_inline.h
   ShootingObject.h
   Silencer.h
   silent_shots.h
@@ -1450,93 +1173,18 @@ add_module(XRay.Game
   squad_hierarchy_holder.h
   squad_hierarchy_holder_inline.h
   stalkerOutfit.h
-  stalker_alife_actions.h
-  stalker_alife_planner.h
-  stalker_alife_task_actions.h
-  stalker_animation_data.h
-  stalker_animation_data_storage.h
-  stalker_animation_data_storage_inline.h
-  stalker_animation_manager.h
-  stalker_animation_manager_impl.h
-  stalker_animation_manager_inline.h
-  stalker_animation_names.h
-  stalker_animation_pair.h
-  stalker_animation_pair_inline.h
-  stalker_animation_script.h
-  stalker_animation_script_inline.h
-  stalker_animation_state.h
-  stalker_animation_state_inline.h
-  stalker_anomaly_actions.h
-  stalker_anomaly_planner.h
-  stalker_base_action.h
-  stalker_combat_actions.h
-  stalker_combat_action_base.h
   stalker_combat_planner.h
-  stalker_danger_by_sound_actions.h
-  stalker_danger_by_sound_planner.h
-  stalker_danger_grenade_actions.h
-  stalker_danger_grenade_planner.h
-  stalker_danger_in_direction_actions.h
-  stalker_danger_in_direction_planner.h
-  stalker_danger_planner.h
-  stalker_danger_planner_inline.h
   stalker_danger_property_evaluators.h
-  stalker_danger_unknown_actions.h
-  stalker_danger_unknown_planner.h
-  stalker_death_actions.h
-  stalker_death_planner.h
-  stalker_decision_space.h
   stalker_flair.h
-  stalker_get_distance_actions.h
-  stalker_get_distance_planner.h
-  stalker_kill_wounded_actions.h
-  stalker_kill_wounded_planner.h
-  stalker_low_cover_actions.h
-  stalker_low_cover_planner.h
-  stalker_movement_manager_base.h
-  stalker_movement_manager_base_inline.h
-  stalker_movement_manager_obstacles.h
-  stalker_movement_manager_obstacles_inline.h
-  stalker_movement_manager_smart_cover.h
-  stalker_movement_manager_smart_cover_inline.h
-  stalker_movement_manager_space.h
-  stalker_movement_params.h
-  stalker_movement_params_inline.h
-  stalker_movement_restriction.h
-  stalker_movement_restriction_inline.h
-  stalker_planner.h
-  stalker_planner_inline.h
-  stalker_property_evaluators.h
-  stalker_property_evaluators_inline.h
-  stalker_search_actions.h
-  stalker_search_planner.h
-  stalker_sound_data.h
-  stalker_sound_data_inline.h
-  stalker_sound_data_visitor.h
-  stalker_sound_data_visitor_inline.h
-  stalker_velocity_collection.h
-  stalker_velocity_collection_inline.h
-  stalker_velocity_holder.h
-  stalker_velocity_holder_inline.h
   state_arguments_functions.h
   static_cast_checked.hpp
-  static_obstacles_avoider.h
-  static_obstacles_avoider_inline.h
   stats_submitter.h
   StdAfx.h
-  steering_behaviour.h
-  steering_behaviour_alignment.h
-  steering_behaviour_base.h
-  steering_behaviour_base_inline.h
-  steering_behaviour_cohesion.h
-  steering_behaviour_manager.h
-  steering_behaviour_separation.h
   string_table.h
   string_table_defs.h
   team_base_zone.h
   team_hierarchy_holder.h
   team_hierarchy_holder_inline.h
-  TeleWhirlwind.h
   ThornArtifact.h
   Torch.h
   TorridZone.h
@@ -1553,7 +1201,6 @@ add_module(XRay.Game
   trade_parameters.h
   trade_parameters_inline.h
   traffic_optimization.h
-  trajectories.h
   UsableScriptObject.h
   vertex_allocator_fixed.h
   vertex_allocator_fixed_inline.h
