@@ -1,4 +1,4 @@
-add_module(X-Ray.Core.Threading
+add_module(XRay.Core.Threading
   CHILD_OF XRay.Core
 
   SOURCES
