@@ -1,23 +1,23 @@
 include_guard()
 
 # Add an XRay.Engine PDB target with the given name
-macro(add_engine_pdb_impl name)
-  set(PDB_ZIP ${name}_pdb.zip)
-  add_custom_target(${name}-PDB)
+function(add_engine_pdb_target NAME)
+  set(PDB_ZIP ${NAME}_pdb.zip)
+  add_custom_target(${NAME}-PDB)
 
-  target_folder(${name}-PDB ${FOLDER_CI})
-  target_sources(${name}-PDB PRIVATE ${PDB_ZIP})
+  target_folder(${NAME}-PDB ${FOLDER_CI})
+  target_sources(${NAME}-PDB PRIVATE ${PDB_ZIP})
 
   add_custom_command(
       OUTPUT ${PDB_ZIP}
-      COMMAND ${CMAKE_COMMAND} -E tar "cf" "${PDB_ZIP}" --format=zip "$<TARGET_PDB_FILE:${name}>"
+      COMMAND ${CMAKE_COMMAND} -E tar "cf" "${PDB_ZIP}" --format=zip "$<TARGET_PDB_FILE:${NAME}>"
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-      COMMENT "Zip $<TARGET_PDB_FILE:${name}> to ${CMAKE_BINARY_DIR}/${PDB_ZIP}."
+      COMMENT "Zip $<TARGET_PDB_FILE:${NAME}> to ${CMAKE_BINARY_DIR}/${PDB_ZIP}."
       VERBATIM
   )
 
-  add_dependencies(${name}-PDB ${name})
-endmacro()
+  add_dependencies(${NAME}-PDB ${NAME})
+endfunction()
 
 # Add a target with the given renderer, and an AVX variant
 function(add_engine_target NAME)
@@ -40,7 +40,7 @@ function(add_engine_target NAME)
     XRay.Engine.Main
     ${ARGN}
   )
-  add_engine_pdb_impl(${NAME})
+  add_engine_pdb_target(${NAME})
 endfunction()
 
 # Setup executable targets
