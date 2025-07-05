@@ -247,7 +247,7 @@ void CControlManagerCustom::ta_deactivate()
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// Работа с последовательностями
+// пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 void CControlManagerCustom::seq_init()
 {
 	m_man->capture(this, ControlCom::eControlSequencer);
@@ -339,7 +339,7 @@ void CControlManagerCustom::load_jump_data(LPCSTR s1, LPCSTR s2, LPCSTR s3, LPCS
 	{
 		m_jump->setup_data().state_prepare_in_move.motion = skel_animated->ID_Cycle_Safe(s2);
 		VERIFY(m_jump->setup_data().state_prepare_in_move.motion);
-		m_jump->setup_data().flags.or(SControlJumpData::ePrepareInMove);
+		m_jump->setup_data().flags.flag_or(SControlJumpData::ePrepareInMove);
 	}
 	else m_jump->setup_data().state_prepare_in_move.motion.invalidate();
 
@@ -354,16 +354,16 @@ void CControlManagerCustom::load_jump_data(LPCSTR s1, LPCSTR s2, LPCSTR s3, LPCS
 	else
 	{
 		m_jump->setup_data().state_ground.motion.invalidate();
-		m_jump->setup_data().flags.or(SControlJumpData::eGroundSkip);
+		m_jump->setup_data().flags.flag_or(SControlJumpData::eGroundSkip);
 	}
 
 	if (!s1 && !s2)
 	{
-		m_jump->setup_data().flags.or(SControlJumpData::ePrepareSkip);
+		m_jump->setup_data().flags.flag_or(SControlJumpData::ePrepareSkip);
 	}
 
-	m_jump->setup_data().flags.or(SControlJumpData::eGlidePlayAnimOnce);
-	m_jump->setup_data().flags.or(SControlJumpData::eGlideOnPrepareFailed);
+	m_jump->setup_data().flags.flag_or(SControlJumpData::eGlidePlayAnimOnce);
+	m_jump->setup_data().flags.flag_or(SControlJumpData::eGlideOnPrepareFailed);
 
 	m_jump->setup_data().state_prepare_in_move.velocity_mask = vel_mask_prepare;
 	m_jump->setup_data().state_ground.velocity_mask = vel_mask_ground;
@@ -416,7 +416,7 @@ void CControlManagerCustom::jump(const Fvector& position)
 
 	ctrl_data->target_object = 0;
 	ctrl_data->target_position = position;
-	ctrl_data->flags.or(SControlJumpData::ePrepareSkip);
+	ctrl_data->flags.flag_or(SControlJumpData::ePrepareSkip);
 	ctrl_data->force_factor = -1.f;
 
 	m_man->activate(ControlCom::eControlJump);
@@ -526,7 +526,7 @@ void CControlManagerCustom::check_jump_over_physics()
 	{
 		const DetailPathManager::STravelPathPoint& travel_point = m_man->path_builder().detail().path()[i];
 
-		// получить список объектов вокруг врага
+		// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 		m_nearest.clear_not_free();
 		Level().ObjectSpace.GetNearest(m_nearest, travel_point.position, m_object->Radius(), NULL);
 
@@ -538,7 +538,7 @@ void CControlManagerCustom::check_jump_over_physics()
 
 			Fvector dir = Fvector().sub(travel_point.position, m_object->Position());
 
-			// проверка на  Field-Of-View
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ  Field-Of-View
 			float my_h = m_object->Direction().getH();
 			float h = dir.getH();
 
@@ -549,7 +549,7 @@ void CControlManagerCustom::check_jump_over_physics()
 
 			dir = Fvector().sub(obj->Position(), m_object->Position());
 
-			// вычислить целевую позицию для прыжка
+			// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 			Fvector target;
 			obj->Center(target);
 			target.y += obj->Radius();
