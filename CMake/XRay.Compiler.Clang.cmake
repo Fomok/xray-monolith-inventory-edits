@@ -6,7 +6,7 @@ set(XRAY_COMPILER_FLAGS
   -Wno-c++11-narrowing
   -Wno-invalid-token-paste
   -Wno-nonportable-include-path
-  -Wno-shift-negative_value
+  -Wno-shift-negative-value
 )
 
 set(XRAY_COMPILER_FLAGS_DEBUG
