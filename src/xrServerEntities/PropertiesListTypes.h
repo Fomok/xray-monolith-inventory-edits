@@ -572,8 +572,8 @@ public:
 public:
 	NumericValue(T* val): CustomValue<T>(val)
 	{
-		value = val;
-		init_value = *value;
+		CustomValue<T>::value = val;
+		CustomValue<T>::init_value = *CustomValue<T>::value;
 		dec = 0;
 	};
 
@@ -596,7 +596,7 @@ public:
 	{
 		xr_string draw_val;
 		if (!OnDrawText.empty()) OnDrawText(this, draw_val);
-		else draw_sprintf(draw_val, *value, dec);
+		else draw_sprintf(draw_val, *CustomValue<T>::value, dec);
 		return draw_val;
 	}
 };
