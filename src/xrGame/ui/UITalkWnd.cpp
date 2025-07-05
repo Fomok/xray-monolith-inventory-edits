@@ -63,14 +63,14 @@ void CUITalkWnd::InitTalkDialog()
 	m_pOurDialogManager = smart_cast<CPhraseDialogManager*>(m_pOurInvOwner);
 	m_pOthersDialogManager = smart_cast<CPhraseDialogManager*>(m_pOthersInvOwner);
 
-	//имена собеседников
+	//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	UITalkDialogWnd->UICharacterInfoLeft.InitCharacter(m_pOurInvOwner->object_id());
 	UITalkDialogWnd->UICharacterInfoRight.InitCharacter(m_pOthersInvOwner->object_id());
 
 	//.	UITalkDialogWnd->UIDialogFrame.UITitleText.SetText		(m_pOthersInvOwner->Name());
 	//.	UITalkDialogWnd->UIOurPhrasesFrame.UITitleText.SetText	(m_pOurInvOwner->Name());
 
-	//очистить лог сообщений
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	UITalkDialogWnd->ClearAll();
 
 	InitOthersStartDialog();
@@ -91,12 +91,12 @@ void CUITalkWnd::InitOthersStartDialog()
 		m_pCurrentDialog = m_pOthersDialogManager->AvailableDialogs().front();
 		m_pOthersDialogManager->InitDialog(m_pOurDialogManager, m_pCurrentDialog);
 
-		//сказать фразу
+		//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 		CStringTable stbl;
 		AddAnswer(m_pCurrentDialog->GetPhraseText("0"), m_pOthersInvOwner->Name());
 		m_pOthersDialogManager->SayPhrase(m_pCurrentDialog, "0");
 
-		//если диалог завершился, перейти в режим выбора темы
+		//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 		if (!m_pCurrentDialog || m_pCurrentDialog->IsFinished()) ToTopicMode();
 	}
 }
@@ -110,8 +110,8 @@ void CUITalkWnd::UpdateQuestions()
 {
 	UITalkDialogWnd->ClearQuestions();
 
-	//если нет активного диалога, то
-	//режима выбора темы
+	//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ
+	//пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 	if (!m_pCurrentDialog)
 	{
 		m_pOurDialogManager->UpdateAvailableDialogs(m_pOthersDialogManager);
@@ -127,15 +127,15 @@ void CUITalkWnd::UpdateQuestions()
 	{
 		if (m_pCurrentDialog->IsWeSpeaking(m_pOurDialogManager))
 		{
-			//если в списке допустимых фраз только одна фраза пустышка, то просто
-			//сказать (игрок сам не производит никаких действий)
+			//пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
 			if (!m_pCurrentDialog->PhraseList().empty() && m_pCurrentDialog->allIsDummy())
 			{
 				CPhrase* phrase = m_pCurrentDialog->PhraseList()[Random.randI(m_pCurrentDialog->PhraseList().size())];
 				SayPhrase(phrase->GetID());
 			};
 
-			//выбор доступных фраз из активного диалога
+			//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 			if (m_pCurrentDialog && !m_pCurrentDialog->allIsDummy())
 			{
 				int number = 0;
@@ -202,7 +202,7 @@ void UpdateCameraDirection(CGameObject* pTo)
 
 void CUITalkWnd::Update()
 {
-	//остановить разговор, если нужно
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 	if (g_actor && m_pActor && !m_pActor->IsTalking())
 	{
 		StopTalk();
@@ -278,7 +278,7 @@ void CUITalkWnd::AskQuestion()
 	if (m_bNeedToUpdateQuestions) return; //quick dblclick:(
 	shared_str phrase_id;
 
-	//игрок выбрал тему разговора
+	//пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	if (TopicMode())
 	{
 		if ((UITalkDialogWnd->m_ClickedQuestionID == "") ||
@@ -286,7 +286,7 @@ void CUITalkWnd::AskQuestion()
 		{
 			string128 s;
 			xr_sprintf(s, "ID = [%s] of selected question is out of range of available dialogs ",
-			           UITalkDialogWnd->m_ClickedQuestionID);
+			           UITalkDialogWnd->m_ClickedQuestionID.c_str());
 			VERIFY2(FALSE, s);
 		}
 
@@ -308,7 +308,7 @@ void CUITalkWnd::SayPhrase(const shared_str& phrase_id)
 {
 	AddAnswer(m_pCurrentDialog->GetPhraseText(phrase_id), m_pOurInvOwner->Name());
 	m_pOurDialogManager->SayPhrase(m_pCurrentDialog, phrase_id);
-	//если диалог завершился, перейти в режим выбора темы
+	//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 	if (m_pCurrentDialog->IsFinished()) ToTopicMode();
 }
 
@@ -322,7 +322,7 @@ void CUITalkWnd::AddQuestion(const shared_str& text, const shared_str& value, in
 
 void CUITalkWnd::AddAnswer(const shared_str& text, LPCSTR SpeakerName)
 {
-	//для пустой фразы вообще ничего не выводим
+	//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 	if (text.size() == 0)
 	{
 		return;
