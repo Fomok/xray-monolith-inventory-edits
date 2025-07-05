@@ -32,6 +32,7 @@ target_sources(CMake
   CMake/Today.cmake
   CMake/XRay.AVX.cmake
   CMake/XRay.cmake
+  CMake/XRay.Compiler.cmake
   CMake/XRay.Compiler.Clang.cmake
   CMake/XRay.Compiler.Definitions.cmake
   CMake/XRay.Compiler.MSVC.cmake
