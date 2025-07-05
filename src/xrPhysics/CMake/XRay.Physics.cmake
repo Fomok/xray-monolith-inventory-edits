@@ -15,57 +15,308 @@ add_module(XRay.Physics
   XRay.Render.API
 
   SOURCES
-  ../xrServerEntities/PHNetState.cpp
-  ActorCameraCollision.cpp
-  collisiondamagereceiver.cpp
   console_vars.cpp
-  dcylinder/dCylinder.cpp
-  debug_output.cpp
-  DisablingParams.cpp
-  dRayMotions.cpp
-  ElevatorState.cpp
-  ExtendedGeom.cpp
-  Geometry.cpp
-  GeometryBits.cpp
+  console_vars.h
+
+  PhysicsExternalCommon.cpp
+  PhysicsExternalCommon.h
+
+  ShellHit.cpp
+
+  xrPhysics.cpp
+  xrPhysics.h
+
+  DamageSource.h
+  ode_include.h
+  ode_redefine.h
+  PhysicsCommon.h
+)
+
+add_module(XRay.Physics.ActivationBox
+  SOURCES
   IActivationShape.cpp
-  MathUtils.cpp
-  MovementBoxDynamicActivate.cpp
-  params.cpp
+  IActivationShape.h
+
   PHActivationShape.cpp
+  PHActivationShape.h
+
+  SpaceUtils.h
+)
+
+add_module(XRay.Physics.Debug
+  SOURCES
+  debug_output.cpp
+  debug_output.h
+)
+
+add_module(XRay.Physics.Impact
+  SOURCES
+  PHImpact.h
+)
+
+add_module(XRay.Physics.Objects
+  SOURCES
+  PHDefs.h
+)
+
+add_module(XRay.Physics.Objects.BaseShell
+  SOURCES
+  IPhysicsShellHolder.h
+
+  PhysicsShell.cpp
+  PhysicsShell.h
+)
+
+add_module(XRay.Physics.Objects.BaseShell.PhysicsShellAnimator
+  SOURCES
+  PhysicsShellAnimator.cpp
+  PhysicsShellAnimator.h
+  PhysicsShellAnimatorBoneData.h
+)
+
+add_module(XRay.Physics.Objects.BodyEffectors
+  SOURCES
+  PHBaseBodyEffector.h
+
+  PHContactBodyEffector.cpp
+  PHContactBodyEffector.h
+)
+
+add_module(XRay.Physics.Objects.Breakable
+  SOURCES
+  PHFracture.cpp
+  PHFracture.h
+
+  PHJointDestroyInfo.cpp
+  PHJointDestroyInfo.h
+
+  PHShellSplitter.cpp
+  PHShellSplitter.h
+)
+
+add_module(XRay.Physics.Objects.CollideValidator
+  SOURCES
+  ICollideValidator.h
+
+  PHCollideValidator.cpp
+  PHCollideValidator.h
+)
+
+add_module(XRay.Physics.Objects.Disabling
+  SOURCES
+  DisablingParams.cpp
+  DisablingParams.h
+
+  PHDisabling.cpp
+  PHDisabling.h
+)
+
+add_module(XRay.Physics.Objects.Element
+  SOURCES
+  PHElement.cpp
+  PHElement.h
+
+  PHElementNetState.cpp
+  PHElementInline.h
+)
+
+add_module(XRay.Physics.Objects.Element.Geom
+  SOURCES
+  ExtendedGeom.cpp
+  ExtendedGeom.h
+
+  Geometry.cpp
+  Geometry.h
+
+  PHGeometryOwner.cpp
+  PHGeometryOwner.h
+)
+
+add_module(XRay.Physics.Objects.Joint
+  SOURCES
+  PHJoint.cpp
+  PHJoint.h
+)
+
+add_module(XRay.Physics.Objects.MoveStorage
+  SOURCES
+  PHMoveStorage.cpp
+  PHMoveStorage.h
+)
+
+add_module(XRay.Physics.Objects.PHIsland
+  SOURCES
+  PHIsland.cpp
+  PHIsland.h
+)
+
+add_module(XRay.Physics.Objects.PHNet
+  SOURCES
+  ../xrServerEntities/PHNetState.cpp
+  ../xrServerEntities/PHNetState.h
+)
+
+add_module(XRay.Physics.Objects.PHObject
+  SOURCES
+  PHObject.cpp
+  PHObject.h
+  PHUpdateObject.h
+)
+
+add_module(XRay.Physics.Objects.PhyMove.Character.Actor
+  SOURCES
   PHActorCharacter.cpp
+  PHActorCharacter.h
+  PHActorCharacterInline.h
+)
+
+add_module(XRay.Physics.Objects.PhyMove.Character.AI
+  SOURCES
   PHAICharacter.cpp
+  PHAICharacter.h
+)
+
+add_module(XRay.Physics.Objects.PhyMove.Character.Base
+  SOURCES
+  IColisiondamageInfo.h
+
+  MovementBoxDynamicActivate.cpp
+  MovementBoxDynamicActivate.h
+
+  PHCharacter.cpp
+  PHCharacter.h
+)
+
+add_module(XRay.Physics.Objects.PhyMove.Capture
+  SOURCES
+  IPHCapture.h
+
   PHCapture.cpp
   PHCaptureInit.cpp
-  PHCharacter.cpp
-  PHCollideValidator.cpp
-  PHContactBodyEffector.cpp
-  PHDisabling.cpp
-  PHDynamicData.cpp
-  PHElement.cpp
-  PHElementNetState.cpp
-  PHFracture.cpp
-  PHGeometryOwner.cpp
-  PHInterpolation.cpp
-  PHIsland.cpp
-  PHJoint.cpp
-  PHJointDestroyInfo.cpp
-  PHMoveStorage.cpp
-  PHObject.cpp
+  PHCapture.h
+)
+
+add_module(XRay.Physics.Objects.PhyMove.Character.Simple
+  SOURCES
+  IElevatorState.h
+
+  ElevatorState.cpp
+  ElevatorState.h
+  
+  iclimableobject.h
+
+  PHSimpleCharacter.cpp
+  PHSimpleCharacter.h
+  PHSimpleCharacterInline.h
+)
+
+add_module(XRay.Physics.Objects.Script
+  SOURCES
+  iphysics_scripted.h
+
+  physics_scripted.cpp
+  physics_scripted.h
+)
+
+add_module(XRay.Physics.Objects.Shell
+  SOURCES
   PHShell.cpp
+  PHShell.h
+
+  PHShellBuildJoint.h
+
   PHShellActivate.cpp
   PHShellNetState.cpp
-  PHShellSplitter.cpp
-  PHSimpleCharacter.cpp
+)
+
+add_module(XRay.Physics.Objects.SplittedShell
+  SOURCES
   PHSplitedShell.cpp
+  PHSplitedShell.h
+)
+
+add_module(XRay.Physics.Objects.StaticShell
+  SOURCES
+  IPHStaticGeomShell.h
   PHStaticGeomShell.cpp
+  PHStaticGeomShell.h
+)
+
+add_module(XRay.Physics.Objects.Utils
+  SOURCES
+  ph_valid_ode.h
+  
+  PHValideValues.h
+
   phvalide.cpp
+  phvalide.h
+)
+
+add_module(XRay.Physics.Objects.Utils.Interpolation
+  SOURCES
+  PHInterpolation.cpp
+  PHInterpolation.h
+)
+
+add_module(XRay.Physics.Objects.Utils.Math
+  SOURCES
+  CalculateTriangle.h
+
+  MathUtils.cpp
+  MathUtils.h
+  MathUtilsOde.h
+
+  matrix_utils.h
+
+  PHDynamicData.cpp
+  PHDynamicData.h
+)
+
+add_module(XRay.Physics.Objects.Utils.Storage
+  SOURCES
+  BlockAllocator.h
+  CycleConstStorage.h
+)
+
+add_module(XRay.Physics.Objects.World
+  SOURCES
+  IPHWorld.h
+
+  GeometryBits.cpp
+  GeometryBits.h
+
+  params.cpp
+  params.h
+
+  PHItemList.h
+
   PHWorld.cpp
+  PHWorld.h
+
   Physics.cpp
-  PhysicsExternalCommon.cpp
-  PhysicsShell.cpp
-  PhysicsShellAnimator.cpp
-  physics_scripted.cpp
-  ShellHit.cpp
+  Physics.h
+)
+
+add_module(XRay.Physics.CameraCollision
+  SOURCES
+  ActorCameraCollision.cpp
+  ActorCameraCollision.h
+)
+
+add_module(XRay.Physics.Colliders.Cylinder
+  SOURCES
+  dcylinder/dCylinder.cpp
+  dcylinder/dCylinder.h
+)
+
+add_module(XRay.Physics.Colliders.RayMotions
+  SOURCES
+  dRayMotions.cpp
+  dRayMotions.h
+)
+
+add_module(XRay.Physics.Colliders.Triangle
+  SOURCES
   #tri-colliderknoopc/dcTriListCollider.cpp
   tri-colliderknoopc/dSortTriPrimitive.cpp
   tri-colliderknoopc/dTriBox.cpp
@@ -73,86 +324,6 @@ add_module(XRay.Physics
   tri-colliderknoopc/dTriCylinder.cpp
   tri-colliderknoopc/dTriList.cpp
   tri-colliderknoopc/dTriSphere.cpp
-  xrPhysics.cpp
-
-  ../xrServerEntities/PHNetState.h
-  ActorCameraCollision.h
-  BlockAllocator.h
-  CalculateTriangle.h
-  console_vars.h
-  CycleConstStorage.h
-  DamageSource.h
-  dcylinder/dCylinder.h
-  debug_output.h
-  DisablingParams.h
-  dRayMotions.h
-  ElevatorState.h
-  ExtendedGeom.h
-  Geometry.h
-  GeometryBits.h
-  IActivationShape.h
-  iclimableobject.h
-  IColisiondamageInfo.h
-  ICollideValidator.h
-  icollisiondamagereceiver.h
-  IElevatorState.h
-  IPHCapture.h
-  IPHStaticGeomShell.h
-  IPHWorld.h
-  IPhysicsShellHolder.h
-  iphysics_scripted.h
-  MathUtils.h
-  MathUtilsOde.h
-  matrix_utils.h
-  MovementBoxDynamicActivate.h
-  ode_include.h
-  ode_redefine.h
-  params.h
-  PHActivationShape.h
-  PHActorCharacter.h
-  PHActorCharacterInline.h
-  PHAICharacter.h
-  PHBaseBodyEffector.h
-  PHCapture.h
-  PHCharacter.h
-  PHCollideValidator.h
-  PHContactBodyEffector.h
-  PHDefs.h
-  PHDisabling.h
-  PHDynamicData.h
-  PHElement.h
-  PHElementInline.h
-  PHFracture.h
-  PHGeometryOwner.h
-  PHImpact.h
-  PHInterpolation.h
-  PHIsland.h
-  PHItemList.h
-  PHJoint.h
-  PHJointDestroyInfo.h
-  PHMoveStorage.h
-  PHObject.h
-  PHShell.h
-  PHShellBuildJoint.h
-  PHShellSplitter.h
-  PHSimpleCharacter.h
-  PHSimpleCharacterInline.h
-  PHSplitedShell.h
-  PHStaticGeomShell.h
-  PHUpdateObject.h
-  phvalide.h
-  PHValideValues.h
-  PHWorld.h
-  Physics.h
-  PhysicsCommon.h
-  PhysicsExternalCommon.h
-  PhysicsShell.h
-  PhysicsShellAnimator.h
-  PhysicsShellAnimatorBoneData.h
-  physics_scripted.h
-  ph_valid_ode.h
-  SpaceUtils.h
-  stdafx.h
   tri-colliderknoopc/dcTriangle.h
   tri-colliderknoopc/dcTriListCollider.h
   tri-colliderknoopc/dSortTriPrimitive.h
@@ -166,5 +337,10 @@ add_module(XRay.Physics
   tri-colliderknoopc/dxTriList.h
   tri-colliderknoopc/TriPrimitiveCollideClassDef.h
   tri-colliderknoopc/__aabb_tri.h
-  xrPhysics.h
+)
+
+add_module(XRay.Physics.DamageReceiver
+  SOURCES
+  collisiondamagereceiver.cpp
+  icollisiondamagereceiver.h
 )
