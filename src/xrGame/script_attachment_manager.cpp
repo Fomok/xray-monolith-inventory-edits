@@ -422,7 +422,7 @@ script_attachment* script_attachment::GetChild(LPCSTR name)
 {
 	if (m_children.size())
 	{
-		auto& pair = m_children.find(name);
+		const auto& pair = m_children.find(name);
 		if (pair != m_children.end())
 			return pair->second;
 	}
@@ -432,7 +432,7 @@ script_attachment* script_attachment::GetChild(LPCSTR name)
 
 void script_attachment::RemoveChild(LPCSTR name, bool destroy)
 {
-	auto& pair = m_children.find(name);
+	const auto& pair = m_children.find(name);
 	if (pair == m_children.end())
 		return;
 
@@ -661,7 +661,7 @@ void script_attachment::SetName(LPCSTR name)
 		// Remove old instance from parent (without destroying it)
 		m_parent_object->remove_child(GetName(), false);
 
-		auto& pair = m_parent_object->GetAttachments()->find(name);
+		const auto& pair = m_parent_object->GetAttachments()->find(name);
 		if (pair != m_parent_object->GetAttachments()->end())
 		{
 			// Attachment with name exists, replace it
@@ -680,7 +680,7 @@ void script_attachment::SetName(LPCSTR name)
 		// Remove old instance from parent (without destroying it)
 		m_parent_attachment->RemoveChild(GetName(), false);
 
-		auto& pair = m_parent_attachment->m_children.find(name);
+		const auto& pair = m_parent_attachment->m_children.find(name);
 		if (pair != m_parent_attachment->m_children.end())
 		{
 			// Attachment with name exists, replace it
