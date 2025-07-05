@@ -76,9 +76,10 @@ inline CResourceManager::map_CS& CResourceManager::GetShaderMap() { return m_cs;
 template <typename T>
 inline T* CResourceManager::CreateShader(const char* name)
 {
-	ShaderTypeTraits<T>::MapType& sh_map = GetShaderMap<ShaderTypeTraits<T>::MapType>();
+	typedef typename ShaderTypeTraits<T>::MapType MapType;
+	MapType& sh_map = GetShaderMap<MapType>();
 	LPSTR N = LPSTR(name);
-	ShaderTypeTraits<T>::MapType::iterator I = sh_map.find(N);
+	MapType::iterator I = sh_map.find(N);
 
 	if (I != sh_map.end())
 		return I->second;
