@@ -62,7 +62,6 @@ add_module(XRay.Game
   account_manager.cpp
   account_manager_console.cpp
   account_manager_script.cpp
-  ActivatingCharCollisionDelay.cpp
   Actor.cpp
   ActorAnimation.cpp
   ActorBackpack.cpp
@@ -95,9 +94,7 @@ add_module(XRay.Game
   AdvancedDetector.cpp
   AmebaZone.cpp
   ammunition_groups.cpp
-  animation_movement_controller.cpp
   animation_script_callback.cpp
-  animation_utils.cpp
   antirad.cpp
   antirad_script.cpp
   Artefact.cpp
@@ -138,12 +135,9 @@ add_module(XRay.Game
   CarWheels.cpp
   car_memory.cpp
   cdkey_ban_list.cpp
-  CharacterPhysicsSupport.cpp
   character_community.cpp
-  character_hit_animations.cpp
   character_rank.cpp
   character_reputation.cpp
-  character_shell_control.cpp
   client_spawn_manager.cpp
   client_spawn_manager_script.cpp
   ClimableObject.cpp
@@ -161,11 +155,8 @@ add_module(XRay.Game
   CustomRocket.cpp
   CustomZone.cpp
   CustomZone_script.cpp
-  DamagableItem.cpp
   date_time.cpp
   DBG_Car.cpp
-  death_anims.cpp
-  death_anims_predicates.cpp
   #debug_make_final_test.cpp
   debug_renderer.cpp
   DelayedActionFuse.cpp
@@ -269,7 +260,6 @@ add_module(XRay.Game
   HelicopterMovementManager.cpp
   HelicopterWeapon.cpp
   helicopter_script.cpp
-  Hit.cpp
   HitMarker.cpp
   hits_store.cpp
   hit_immunity.cpp
@@ -282,29 +272,8 @@ add_module(XRay.Game
   HudSound.cpp
   HUDTarget.cpp
   hud_item_object.cpp
-  IKFoot.cpp
-  IKLimbscontroller.cpp
-  ik/aint.cxx
-  ik/Dof7control.cpp
-  ik/eqn.cxx
-  ik/eulersolver.cxx
-  ik/IKLimb.cpp
-  ik/jtlimits.cxx
-  ik/limb.cxx
-  ik/math3d.cpp
-  ik/mathTrig.cpp
-  ik_anim_state.cpp
-  ik_calculate_data.cpp
-  ik_dbg_matrix.cpp
-  ik_foot_collider.cpp
-  ik_limb_state.cpp
-  ik_object_shift.cpp
-  imotion_position.cpp
-  imotion_velocity.cpp
   InfoDocument.cpp
   InfoPortion.cpp
-  interactive_animation.cpp
-  interactive_motion.cpp
   Inventory.cpp
   InventoryBox.cpp
   InventoryBox_script.cpp
@@ -364,7 +333,6 @@ add_module(XRay.Game
   monster_community.cpp
   MosquitoBald.cpp
   MosquitoBald_script.cpp
-  moving_bones_snd_player.cpp
   mpactor_dump_impl.cpp
   MPPlayersBag.cpp
   mp_config_sections.cpp
@@ -402,7 +370,6 @@ add_module(XRay.Game
   player_state_skewer.cpp
   player_state_toughy.cpp
   player_team_win_score.cpp
-  poses_blending.cpp
   pose_extrapolation.cpp
   PostprocessAnimator.cpp
   pp_effector_custom.cpp
@@ -625,7 +592,6 @@ add_module(XRay.Game
   account_manager_console.h
   accumulative_states.h
   action_management_config.h
-  ActivatingCharCollisionDelay.h
   Actor.h
   ActorAnimation.h
   ActorBackpack.h
@@ -648,9 +614,7 @@ add_module(XRay.Game
   agent_enemy_manager_inline.h
   AmebaZone.h
   ammunition_groups.h
-  animation_movement_controller.h
   animation_script_callback.h
-  animation_utils.h
   anticheat_dumpable_object.h
   antirad.h
   Artefact.h
@@ -680,20 +644,15 @@ add_module(XRay.Game
   CameraFirstEye.h
   cameralook.h
   CameraRecoil.h
-  CaptureBoneCallback.h
   Car.h
   CarDamageParticles.h
   CarLights.h
   CarWeapon.h
   car_memory.h
   cdkey_ban_list.h
-  CharacterPhysicsSupport.h
   character_community.h
-  character_hit_animations.h
-  character_hit_animations_params.h
   character_rank.h
   character_reputation.h
-  character_shell_control.h
   client_spawn_manager.h
   client_spawn_manager_inline.h
   ClimableObject.h
@@ -709,9 +668,7 @@ add_module(XRay.Game
   CustomOutfit.h
   CustomRocket.h
   CustomZone.h
-  DamagableItem.h
   date_time.h
-  death_anims.h
   debug_make_final.hpp
   debug_renderer.h
   debug_renderer_inline.h
@@ -814,7 +771,6 @@ add_module(XRay.Game
   HangingLamp.h
   harvest_time.h
   helicopter.h
-  Hit.h
   HitMarker.h
   hits_store.h
   hits_store_inline.h
@@ -829,35 +785,10 @@ add_module(XRay.Game
   HUDTarget.h
   hud_item_object.h
   id_generator.h
-  IKFoot.h
-  IKFoot_inl.h
-  IKLimbscontroller.h
-  ik/aint.h
-  ik/Dof7control.h
-  ik/eqn.h
-  ik/eulersolver.h
-  ik/IKLimb.h
-  ik/jtlimits.h
-  ik/limb.h
-  ik/math3d.h
-  ik/mathTrig.h
-  ik_anim_state.h
-  ik_calculate_data.h
-  ik_calculate_state.h
-  ik_collide_data.h
-  ik_dbg_matrix.h
-  ik_foot_collider.h
-  ik_limb_state.h
-  ik_limb_state_predict.h
-  ik_object_shift.h
-  imotion_position.h
-  imotion_velocity.h
   InfoDocument.h
   InfoPortion.h
   ini_id_loader.h
   ini_table_loader.h
-  interactive_animation.h
-  interactive_motion.h
   Inventory.h
   InventoryBox.h
   InventoryOwner.h
@@ -903,7 +834,6 @@ add_module(XRay.Game
   mixed_delegate_unique_tags.h
   monster_community.h
   MosquitoBald.h
-  moving_bones_snd_player.h
   MPPlayersBag.h
   mp_config_sections.h
   Needles.h
@@ -929,18 +859,10 @@ add_module(XRay.Game
   PhraseDialog_script.h
   PhraseScript.h
   PhysicObject.h
-  PhysicsGamePars.h
   PhysicsShellHolder.h
   PhysicsSkeletonObject.h
-  physics_element_scripted.h
-  physics_game.h
-  physics_joint_scripted.h
-  physics_shell_animated.h
-  physics_shell_scripted.h
-  physics_world_scripted.h
   physic_item.h
   physic_item_inline.h
-  ph_shell_interface.h
   player_account.h
   player_hud.h
   player_name_modifyer.h
@@ -962,7 +884,6 @@ add_module(XRay.Game
   player_state_skewer.h
   player_state_toughy.h
   player_team_win_score.h
-  poses_blending.h
   pose_extrapolation.h
   PostprocessAnimator.h
   pp_effector_custom.h
@@ -1100,6 +1021,22 @@ add_module(XRay.Game
   ZoneVisual.h
   zone_effector.h
   ZudaArtifact.h
+
+  PHCollisionDamageReceiver.cpp
+  PHDestroyable.cpp
+  PHDestroyableNotificate.cpp
+  PHSkeleton.cpp
+  PhysicObject.cpp
+  PhysicObject_script.cpp
+  PhysicsShellHolder.cpp
+  PhysicsSkeletonObject.cpp
+  physic_item.cpp
+  
+  ../xrServerEntities/PHSynchronize.h
+  PHCollisionDamageReceiver.h
+  PHDestroyable.h
+  PHDestroyableNotificate.h
+  PHSkeleton.h
 )
 
 include(XRay.Game.AI)
