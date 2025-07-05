@@ -173,10 +173,10 @@ IC CConditionState<_world_property>&CConditionStateAbstract::operator-=(const CC
 TEMPLATE_SPECIALIZATION
 IC bool CConditionStateAbstract::includes(const CConditionState& condition) const
 {
-	xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+	auto I = conditions().begin();
+	auto E = conditions().end();
+	auto i = condition.conditions().begin();
+	auto e = condition.conditions().end();
 	for (; (I != E) && (i != e);)
 		if ((*I).condition() < (*i).condition())
 			++I;
