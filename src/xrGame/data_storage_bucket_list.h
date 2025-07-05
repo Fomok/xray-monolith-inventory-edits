@@ -34,12 +34,12 @@ struct CDataStorageBucketList
 		template <typename _T> class _vertex = CEmptyClassTemplate
 	>
 	class CDataStorage : public CDataStorageDoubleLinkedList<false>::CDataStorage<
-			_data_storage, BucketList<_vertex>::_vertex>
+			_data_storage, BucketList<_vertex>::template _vertex>
 	{
 	public:
 		typedef typename CDataStorageDoubleLinkedList<false>::CDataStorage<
 			_data_storage,
-			BucketList<_vertex>::_vertex
+			BucketList<_vertex>::template _vertex
 		> inherited;
 		typedef typename inherited::inherited_base inherited_base;
 		typedef typename inherited::CGraphVertex CGraphVertex;
