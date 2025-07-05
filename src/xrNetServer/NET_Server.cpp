@@ -470,7 +470,7 @@ HRESULT IPureServer::net_Handler(u32 dwMessageType, PVOID pMessage)
 		{
 			PDPNMSG_ENUM_HOSTS_QUERY msg = PDPNMSG_ENUM_HOSTS_QUERY(pMessage);
 			if (0 == msg->dwReceivedDataSize) return S_FALSE;
-			if (!stricmp((const char*)msg->pvReceivedData, "ToConnect")) return S_OK;
+			if (!_stricmp((const char*)msg->pvReceivedData, "ToConnect")) return S_OK;
 			if (*((const GUID*)msg->pvReceivedData) != NET_GUID) return S_FALSE;
 			if (!OnCL_QueryHost()) return S_FALSE;
 			return S_OK;
@@ -567,14 +567,14 @@ HRESULT IPureServer::net_Handler(u32 dwMessageType, PVOID pMessage)
 			if (GetBannedClient(HAddr))
 			{
 				msg->dwReplyDataSize = sizeof(NET_BANNED_STR);
-				msg->pvReplyData = NET_BANNED_STR;
+				msg->pvReplyData = (PVOID)NET_BANNED_STR;
 				return S_FALSE;
 			};
 			//first connected client is SV_Client so if it is NULL then this server client tries to connect ;)
 			if (SV_Client && !m_ip_filter.is_ip_present(HAddr.m_data.data))
 			{
 				msg->dwReplyDataSize = sizeof(NET_NOTFOR_SUBNET_STR);
-				msg->pvReplyData = NET_NOTFOR_SUBNET_STR;
+				msg->pvReplyData = (PVOID)NET_NOTFOR_SUBNET_STR;
 				return S_FALSE;
 			}
 		}
