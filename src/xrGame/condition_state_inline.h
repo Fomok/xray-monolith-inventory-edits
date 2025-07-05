@@ -43,7 +43,7 @@ IC void CConditionStateAbstract::add_condition_back(const COperatorCondition& co
 TEMPLATE_SPECIALIZATION
 IC void CConditionStateAbstract::add_condition(const COperatorCondition& condition)
 {
-	xr_vector<COperatorCondition>::iterator I = std::lower_bound(m_conditions.begin(), m_conditions.end(), condition);
+	auto I = std::lower_bound(m_conditions.begin(), m_conditions.end(), condition);
 	THROW((I == m_conditions.end()) || ((*I).condition() != condition.condition()));
 	if ((I == m_conditions.end()) || ((*I).condition() != condition.condition()))
 	{
@@ -130,10 +130,10 @@ IC bool CConditionStateAbstract::operator==(const CConditionState& condition) co
 {
 	if (hash_value() != condition.hash_value())
 		return (false);
-	xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+	auto I = conditions().begin();
+	auto E = conditions().end();
+	auto i = condition.conditions().begin();
+	auto e = condition.conditions().end();
 	for (; (I != E) && (i != e); ++I, ++i)
 		if (!(*I == *i))
 			return (false);
@@ -147,10 +147,10 @@ IC CConditionState<_world_property>&CConditionStateAbstract::operator-=(const CC
 {
 	m_hash = 0;
 	xr_vector<COperatorCondition> temp;
-	xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+	auto I = conditions().begin();
+	auto E = conditions().end();
+	auto i = condition.conditions().begin();
+	auto e = condition.conditions().end();
 	for (; (I != E) && (i != e);)
 		if ((*I).condition() < (*i).condition())
 			++I;

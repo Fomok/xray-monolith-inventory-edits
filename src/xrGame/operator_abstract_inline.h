@@ -109,12 +109,12 @@ TEMPLATE_SPECIALIZATION
 IC bool CAbstractOperator::applicable_reverse(const CSConditionState& condition, const CSConditionState& start,
                                               const CSConditionState& self_condition) const
 {
-	xr_vector<COperatorCondition>::const_iterator i = self_condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = self_condition.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator I = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = condition.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator J = start.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator EE = start.conditions().end();
+	auto i = self_condition.conditions().begin();
+	auto e = self_condition.conditions().end();
+	auto I = condition.conditions().begin();
+	auto E = condition.conditions().end();
+	auto J = start.conditions().begin();
+	auto EE = start.conditions().end();
 	for (; (I != E) && (i != e);)
 		if ((*I).condition() < (*i).condition())
 			++I;
@@ -162,12 +162,12 @@ IC bool CAbstractOperator::apply_reverse(const CSConditionState& condition, cons
 {
 	result.clear();
 	bool changed = false;
-	xr_vector<COperatorCondition>::const_iterator i = self_condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = self_condition.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator I = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = condition.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator J = start.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator EE = start.conditions().end();
+	auto i = self_condition.conditions().begin();
+	auto e = self_condition.conditions().end();
+	auto I = condition.conditions().begin();
+	auto E = condition.conditions().end();
+	auto J = start.conditions().begin();
+	auto EE = start.conditions().end();
 	for (; (I != E) && (i != e);)
 		if ((*I).condition() < (*i).condition())
 		{
@@ -237,12 +237,12 @@ template <typename T>
 IC bool CAbstractOperator::applicable(const CSConditionState& current, const CSConditionState& start,
                                       const CSConditionState& conditions, T& problem_solver) const
 {
-	xr_vector<COperatorCondition>::const_iterator I = current.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = current.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = conditions.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = conditions.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator II = start.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator EE = start.conditions().end();
+	auto I = current.conditions().begin();
+	auto E = current.conditions().end();
+	auto i = conditions.conditions().begin();
+	auto e = conditions.conditions().end();
+	auto II = start.conditions().begin();
+	auto EE = start.conditions().end();
 	for (; (I != E) && (i != e);)
 	{
 		if ((*I).condition() < (*i).condition())
@@ -302,12 +302,12 @@ IC const typename CAbstractOperator::CSConditionState&CAbstractOperator::apply(
 	T& problem_solver) const
 {
 	result.clear();
-	xr_vector<COperatorCondition>::const_iterator I = current.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = current.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = effects.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = effects.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator II = start.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator EE = start.conditions().end();
+	auto I = current.conditions().begin();
+	auto E = current.conditions().end();
+	auto i = effects.conditions().begin();
+	auto e = effects.conditions().end();
+	auto II = start.conditions().begin();
+	auto EE = start.conditions().end();
 	for (; (I != E) && (i != e);)
 	{
 		if ((*I).condition() < (*i).condition())
@@ -371,10 +371,10 @@ IC const typename CAbstractOperator::CSConditionState&CAbstractOperator::apply(
 	const CSConditionState& condition, const CSConditionState& self_condition, CSConditionState& result) const
 {
 	result.clear();
-	xr_vector<COperatorCondition>::const_iterator i = self_condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = self_condition.conditions().end();
-	xr_vector<COperatorCondition>::const_iterator I = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = condition.conditions().end();
+	auto i = self_condition.conditions().begin();
+	auto e = self_condition.conditions().end();
+	auto I = condition.conditions().begin();
+	auto E = condition.conditions().end();
 	for (; (I != E) && (i != e);)
 		if ((*I).condition() < (*i).condition())
 		{
@@ -422,10 +422,10 @@ IC typename CAbstractOperator::_edge_value_type CAbstractOperator::min_weight() 
 		return (m_min_weight);
 
 	m_min_weight = 0;
-	xr_vector<COperatorCondition>::const_iterator I = conditions().conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = conditions().conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = effects().conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = effects().conditions().end();
+	auto I = conditions().conditions().begin();
+	auto E = conditions().conditions().end();
+	auto i = effects().conditions().begin();
+	auto e = effects().conditions().end();
 	for (; (i != e) && (I != E);)
 	{
 		if ((*I).condition() < (*i).condition())

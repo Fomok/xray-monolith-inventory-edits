@@ -52,14 +52,14 @@ IC void CEdgePathBuilder::get_edge_path(xr_vector<_edge_type>& path, CGraphVerte
 
 	if (!reverse_order)
 	{
-		xr_vector<_edge_type>::reverse_iterator I = path.rbegin();
+		auto I = path.rbegin();
 		//xr_vector<_edge_type>::reverse_iterator	E = path.rend();
 		for (; t2->back(); t2 = t2->back(), ++I)
 			*I = t2->edge();
 	}
 	else
 	{
-		xr_vector<_edge_type>::iterator I = path.begin() + n;
+		auto I = path.begin() + n;
 		for (; t2->back(); t2 = t2->back(), ++I)
 			*I = t2->edge();
 	}
