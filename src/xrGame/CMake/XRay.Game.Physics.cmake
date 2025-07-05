@@ -18,8 +18,6 @@ add_module(XRay.Game.Physics
 )
 
 add_module(XRay.Game.Physics.AnimationMovementController
-  TYPE STATIC
-  
   SOURCES
   animation_movement_controller.cpp
   animation_movement_controller.h
@@ -29,8 +27,6 @@ add_module(XRay.Game.Physics.AnimationMovementController
 )
 
 add_module(XRay.Game.Physics.CharacterSupport
-  TYPE STATIC
-  
   SOURCES
   ActivatingCharCollisionDelay.cpp
   ActivatingCharCollisionDelay.h
@@ -46,8 +42,6 @@ add_module(XRay.Game.Physics.CharacterSupport
 )
 
 add_module(XRay.Game.Physics.CharacterSupport.Anims.Death
-  TYPE STATIC
-  
   SOURCES
   death_anims.cpp
   death_anims.h
@@ -56,8 +50,6 @@ add_module(XRay.Game.Physics.CharacterSupport.Anims.Death
 )
 
 add_module(XRay.Game.Physics.CharacterSupport.Anims.Hit
-  TYPE STATIC
-  
   SOURCES
   character_hit_animations.cpp
   character_hit_animations.h
@@ -65,8 +57,6 @@ add_module(XRay.Game.Physics.CharacterSupport.Anims.Hit
 )
 
 add_module(XRay.Game.Physics.CharacterSupport.Anims.Interactive
-  TYPE STATIC
-  
   SOURCES
   interactive_animation.cpp
   interactive_animation.h
@@ -76,8 +66,6 @@ add_module(XRay.Game.Physics.CharacterSupport.Anims.Interactive
 )
 
 add_module(XRay.Game.Physics.CharacterSupport.Motion.Interactive
-  TYPE STATIC
-  
   SOURCES
   interactive_motion.cpp
   interactive_motion.h
@@ -90,32 +78,24 @@ add_module(XRay.Game.Physics.CharacterSupport.Motion.Interactive
 )
 
 add_module(XRay.Game.Physics.DamageableItem
-  TYPE STATIC
-  
   SOURCES
   DamagableItem.cpp
   DamagableItem.h
 )
 
 add_module(XRay.Game.Physics.Debug
-  TYPE STATIC
-  
   SOURCES
   PHDebug.cpp
   PHDebug.h
 )
 
 add_module(XRay.Game.Physics.Hit
-  TYPE STATIC
-  
   SOURCES
   Hit.cpp
   Hit.h
 )
 
 add_module(XRay.Game.Physics.IK
-  TYPE STATIC
-  
   SOURCES
   ik/aint.cxx
   ik/Dof7control.cpp
@@ -161,8 +141,6 @@ add_module(XRay.Game.Physics.IK
 )
 
 add_module(XRay.Game.Physics.MovementControl
-  TYPE STATIC
-  
   SOURCES
   PHMovementControl.cpp
   PHMovementControl.h
@@ -173,8 +151,6 @@ add_module(XRay.Game.Physics.MovementControl
 )
 
 add_module(XRay.Game.Physics.PHCommander
-  TYPE STATIC
-  
   SOURCES
   PHCommander.cpp
   PHCommander.h
@@ -190,8 +166,6 @@ add_module(XRay.Game.Physics.PHCommander
 )
 
 add_module(XRay.Game.Physics.PhysicsSoundPlayer
-  TYPE STATIC
-  
   SOURCES
   moving_bones_snd_player.cpp
   moving_bones_snd_player.h
@@ -201,8 +175,6 @@ add_module(XRay.Game.Physics.PhysicsSoundPlayer
 )
 
 add_module(XRay.Game.Physics.Scripts
-  TYPE STATIC
-  
   SOURCES
   physics_element_scripted.cpp
   physics_element_scripted.h
