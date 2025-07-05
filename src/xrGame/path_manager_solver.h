@@ -41,7 +41,7 @@ class CPathManager<
 		_iteration_type
 	>
 {
-protected:
+public:
 	typedef CProblemSolver<T1, T2, T3, T4, T5, T6, T7, T8> _Graph;
 	typedef typename _Graph::_edge_type _edge_type;
 
