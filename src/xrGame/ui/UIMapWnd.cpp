@@ -558,7 +558,7 @@ Fvector2 CUIMapWnd::GetGlobalMapCoordsForMouse()
 
 	// Get absolute left top of the current area of the map
 	Fvector2 map_abs = { 0, 0 };
-	Fvector2& current_zoom = gm->GetCurrentZoom();
+	const Fvector2& current_zoom = gm->GetCurrentZoom();
 	gm->GetAbsolutePos(map_abs);
 	map_abs.sub(gm->WorkingArea().lt);
 	map_abs.div(current_zoom);
@@ -672,7 +672,7 @@ void CUIMapWnd::ActivatePropertiesBox(CUIWindow* w)
 
 				// perform ray cast to get actual position
 				collide::rq_result R;
-				CObject* ignore = Actor();
+				CObject* ignore = smart_cast<CObject*>(Actor());
 				Fbox lm_bv = g_pGameLevel->ObjectSpace.GetBoundingVolume();
 				Fvector start = { lm_real_mouse_pos.x, lm_bv.max.y, lm_real_mouse_pos.y };
 				Fvector dir = { 0, -1, 0 };
@@ -694,7 +694,9 @@ void CUIMapWnd::ActivatePropertiesBox(CUIWindow* w)
 			u32 current_gvid = 0;
 			float dist = FLT_MAX;
 			while (gg.valid_vertex_id(current_gvid)) {
+#ifdef _CPPUNWIND
 				try {
+#endif
 					auto vertex = gg.vertex(current_gvid);
 					if (!vertex) {
 						current_gvid++;
@@ -724,9 +726,11 @@ void CUIMapWnd::ActivatePropertiesBox(CUIWindow* w)
 							}
 						}
 					}
+#ifdef _CPPUNWIND
 				} catch (std::exception& e) {
 					Msg("![UIMapWnd.cpp] _G.COnRightClickMap %s", e.what());
 				}
+#endif
 				current_gvid++;
 			}
 
