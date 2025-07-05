@@ -168,10 +168,6 @@ add_module(XRay.Game.AI.Script.Classes.BinderObject.Wrapper
 add_module(XRay.Game.AI.Script.Classes.CallbackEx
   SOURCES
   script_callback_ex.h
-  script_callback_ex_generators.h
-  script_callback_ex_inline.h
-  script_callback_ex_nonvoid.h
-  script_callback_ex_void.h
 )
 
 add_module(XRay.Game.AI.Script.Classes.Effector
