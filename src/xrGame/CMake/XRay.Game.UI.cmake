@@ -1,37 +1,40 @@
 add_module(XRay.Game.UI
   TYPE STATIC
-  
+
   SOURCES
-  UIAchivementsIndicator.cpp
-  UICursor.cpp
   UIDialogHolder.cpp
+  UIDialogHolder.h
+
   UIDosimeter.cpp
-  UIGameAHunt.cpp
-  UIGameCTA.cpp
-  UIGameCustom.cpp
-  UIGameCustom_script.cpp
-  UIGameDM.cpp
-  UIGameMP.cpp
-  UIGameSP.cpp
-  UIGameTDM.cpp
-  UIPanelsClassFactory.cpp
-  UIPlayerItem.cpp
-  UIStaticItem.cpp
-  UITeamHeader.cpp
-  UITeamPanels.cpp
-  UITeamState.cpp
-  UIZoneMap.cpp
+  UIDosimeter.h
+
   ui/ArtefactDetectorUI.cpp
-  ui/map_hint.cpp
-  ui/MMSound.cpp
-  ui/Restrictions.cpp
-  ui/ServerList.cpp
-  ui/ServerList_GameSpy_func.cpp
-  ui/TeamInfo.cpp
-  ui/UI3tButton.cpp
-  ui/UIAchievements.cpp
-  ui/UIRankingsCoC.cpp
+  ui/ArtefactDetectorUI.h
+  
+  ui_base.cpp
+  ui_base.h
+  
+  ui_defs.h
+)
+
+add_module(XRay.Game.UI.Common.Debug.Fonts
+  SOURCES
+  #ui/UIDebugFonts.cpp
+  ui/UIDebugFonts.h
+)
+
+add_module(XRay.Game.UI.Common.ImGui
+  SOURCES
+  #script_imgui.h
+  #script_imgui_inline.h
+  #script_imgui_script.cpp
+)
+
+add_module(XRay.Game.UI.Common.Inventory
+  SOURCES
   ui/UIActorMenu.cpp
+  ui/UIActorMenu.h
+
   ui/UIActorMenuDeadBodySearch.cpp
   ui/UIActorMenuInitialize.cpp
   ui/UIActorMenuInventory.cpp
@@ -39,351 +42,738 @@ add_module(XRay.Game.UI
   ui/UIActorMenuUpgrade.cpp
   ui/UIActorMenu_action.cpp
   ui/UIActorMenu_script.cpp
+
   ui/UIActorStateInfo.cpp
-  ui/UIAnimatedStatic.cpp
-  ui/UIBoosterInfo.cpp
-  ui/UIBtnHint.cpp
-  ui/UIButton.cpp
-  ui/UIButton_script.cpp
-  ui/UIBuyWeaponTab.cpp
-  ui/UIBuyWndShared.cpp
-  ui/UICarPanel.cpp
-  ui/UICDkey.cpp
-  ui/UICellCustomItems.cpp
-  ui/UICellItem.cpp
-  ui/UICellItemFactory.cpp
-  ui/UIChangeMap.cpp
-  ui/ChangeWeatherDialog.cpp
-  ui/UICharacterInfo.cpp
-  ui/UIChatWnd.cpp
-  ui/UICheckButton.cpp
-  ui/UIComboBox.cpp
-  ui/UIComboBox_script.cpp
-  ui/UICustomEdit.cpp
-  ui/UICustomSpin.cpp
-  ui/UIDemoPlayControl.cpp
-  ui/UIDialogWnd.cpp
-  ui/UIDoubleProgressBar.cpp
-  ui/UIDragDropListEx.cpp
-  ui/UIDragDropReferenceList.cpp
-  ui/UIEditBox.cpp
-  ui/UIEditBoxEx.cpp
-  ui/UIEditBox_script.cpp
-  ui/UIEditKeyBind.cpp
-  ui/UIFixedScrollBar.cpp
-  ui/UIFrameLineWnd.cpp
-  ui/UIFrameWindow.cpp
-  ui/UIGameLog.cpp
-  ui/UIGameTutorial.cpp
-  ui/UIGameTutorialSimpleItem.cpp
-  ui/UIGameTutorialVideoItem.cpp
+  ui/UIActorStateInfo.h
+)
+
+add_module(XRay.Game.UI.Common.Inventory.Utilities
+  SOURCES
   ui/UIHelper.cpp
-  ui/UIHint.cpp
-  ui/UIHudstatesWnd.cpp
+  ui/UIHelper.h
+  
+  ui/UIInventoryUtilities.cpp
+  ui/UIInventoryUtilities.h
+)
+
+add_module(XRay.Game.UI.Common.Inventory.Window.Upgrade
+  SOURCES
+  ui/UIInventoryUpgradeWnd.h
   ui/UIInventoryUpgradeWnd.cpp
   ui/UIInventoryUpgradeWnd_add.cpp
-  ui/UIInventoryUtilities.cpp
+
   ui/UIInvUpgrade.cpp
+  ui/UIInvUpgrade.h
+
   ui/UIInvUpgradeInfo.cpp
+  ui/UIInvUpgradeInfo.h
+
   ui/UIInvUpgradeProperty.cpp
-  ui/UIItemInfo.cpp
-  ui/UIKeyBinding.cpp
-  ui/UIKickPlayer.cpp
-  ui/UILanimcontroller.cpp
-  ui/UILine.cpp
-  ui/UILines.cpp
-  ui/UIListBox.cpp
-  ui/UIListBoxItem.cpp
-  ui/UIListBoxItemMsgChain.cpp
-  ui/UIListBox_script.cpp
-  ui/UIListItemServer.cpp
-  ui/UILogsWnd.cpp
+  ui/UIInvUpgradeProperty.h
+)
+
+add_module(XRay.Game.UI.Common.MainIngame
+  SOURCES
+  ui/UICarPanel.cpp
+  ui/UICarPanel.h
+
+  ui/UIHudstatesWnd.cpp
+  ui/UIHudstatesWnd.h
+
   ui/UIMainIngameWnd.cpp
+  ui/UIMainIngameWnd.h
+
+  ui/UIMessagesWindow.cpp
+  ui/UIMessagesWindow.h
+
+  ui/UIMoneyIndicator.cpp
+  ui/UIMoneyIndicator.h
+
+  ui/UIMotionIcon.cpp
+  ui/UIMotionIcon.h
+
+  ui/UIPdaMsgListItem.cpp
+  ui/UIPdaMsgListItem.h
+
+  UIZoneMap.cpp
+  UIZoneMap.h
+)
+
+add_module(XRay.Game.UI.Common.MainMenu
+  SOURCES
+  MainMenu.cpp
+  MainMenu.h
+
+  ui/MMSound.cpp
+  ui/MMSound.h
+
+  ui/UIMMShniaga.cpp
+  ui/UIMMShniaga.h
+)
+
+add_module(XRay.Game.UI.Common.MainMenu.KeyBinding
+  SOURCES
+  ui/UIEditKeyBind.cpp
+  ui/UIEditKeyBind.h
+
+  ui/UIKeyBinding.cpp
+  ui/UIKeyBinding.h
+)
+
+add_module(XRay.Game.UI.Common.Options.ConsoleCommands
+  SOURCES
+  ui/UIOptConCom.cpp
+  ui/UIOptConCom.h
+)
+
+add_module(XRay.Game.UI.Common.Options.Item
+  SOURCES
+  ui/UIOptionsItem.cpp
+  ui/UIOptionsItem.h
+
+  ui/UIOptionsManager.cpp
+  ui/UIOptionsManager.h
+
+  ui/UIOptionsManagerScript.cpp
+  ui/UIOptionsManagerScript.h
+)
+
+add_module(XRay.Game.UI.Common.PDA
+  SOURCES
+  ui/UIPdaWnd.cpp
+  ui/UIPdaWnd.h
+)
+
+add_module(XRay.Game.UI.Common.PDA.Logs
+  SOURCES
+  ui/UILogsWnd.cpp
+  ui/UILogsWnd.h
+)
+
+add_module(XRay.Game.UI.Common.PDA.Logs.News
+  SOURCES
+  ui/UINewsItemWnd.cpp
+  ui/UINewsItemWnd.h
+)
+
+add_module(XRay.Game.UI.Common.PDA.Map
+  SOURCES
+  ui/map_hint.cpp
+  ui/map_hint.h
+
+  map_spot.cpp
+  map_spot.h
+
   ui/UIMap.cpp
-  ui/UIMapDesc.cpp
-  ui/UIMapInfo.cpp
-  ui/UIMapInfo_script.cpp
-  ui/UIMapLegend.cpp
-  ui/UIMapList.cpp
+  ui/UIMap.h
+
   ui/UIMapWnd.cpp
   ui/UIMapWnd2.cpp
+  ui/UIMapWnd.h
+
   ui/UIMapWndActions.cpp
-  ui/UIMessageBox.cpp
-  ui/UIMessageBoxEx.cpp
-  ui/UIMessageBox_script.cpp
-  ui/UIMessagesWindow.cpp
-  ui/UIMMShniaga.cpp
-  ui/UIMoneyIndicator.cpp
-  ui/UIMotionIcon.cpp
+  ui/UIMapWndActions.h
+  ui/UIMapWndActionsSpace.h
+)
+
+add_module(XRay.Game.UI.Common.PDA.Statistics
+  SOURCES
+  ui/UIAchievements.cpp
+  ui/UIAchievements.h
+
+  ui/UIRankingsCoC.cpp
+  ui/UIRankingsCoC.h
+
+  ui/UIRankingWnd.cpp
+  ui/UIRankingWnd.h
+)
+
+add_module(XRay.Game.UI.Common.PDA.Tasks
+    SOURCES
+  ui/UIMapLegend.cpp
+  ui/UIMapLegend.h
+
+  ui/UISecondTaskWnd.cpp
+  ui/UISecondTaskWnd.h
+
+  ui/UITaskWnd.cpp
+  ui/UITaskWnd.h
+)
+
+add_module(XRay.Game.UI.Common.Talk
+  SOURCES
+  ui/UITalkDialogWnd.cpp
+  ui/UITalkDialogWnd.h
+
+  ui/UITalkWnd.cpp
+  ui/UITalkWnd.h
+)
+
+add_module(XRay.Game.UI.ItemInfo
+  SOURCES
+  ui/ui_af_params.cpp
+  ui/ui_af_params.h
+
+  ui/UIBoosterInfo.cpp
+  ui/UIBoosterInfo.h
+
+  ui/UIItemInfo.cpp
+  ui/UIItemInfo.h
+  
+  ui/UIOutfitInfo.cpp
+  ui/UIOutfitInfo.h
+
+  ui/UIWpnParams.cpp
+  ui/UIWpnParams.h
+)
+
+add_module(XRay.Game.UI.ItemInfo.CharacterInfo
+  SOURCES
+  ui/UICharacterInfo.cpp
+  ui/UICharacterInfo.h
+)
+
+add_module(XRay.Game.UI.Cursor
+  SOURCES
+  HUDCrosshair.cpp
+  HUDCrosshair.h
+
+  HUDRecon.cpp
+  HUDRecon.h
+
+  HUDTarget.cpp
+  HUDTarget.h
+
+  UICursor.cpp
+  UICursor.h
+)
+
+add_module(XRay.Game.UI.GameTypes.ArtefactHunt
+  SOURCES
+  UIGameAHunt.cpp
+  UIGameAHunt.h
+)
+
+add_module(XRay.Game.UI.GameTypes.CaptureTheArtefact
+  SOURCES
+  UIGameCTA.cpp
+  UIGameCTA.h
+)
+
+add_module(XRay.Game.UI.GameTypes.Deathmatch
+  SOURCES
+  UIGameDM.cpp
+  UIGameDM.h
+
+  ui/UIRankIndicator.cpp
+  ui/UIRankIndicator.h
+
+  ui/UIVoteStatusWnd.cpp
+  ui/UIVoteStatusWnd.h
+)
+
+add_module(XRay.Game.UI.GameTypes.GameCustom
+  SOURCES
+  UIGameCustom.cpp
+  UIGameCustom_script.cpp
+  UIGameCustom.h
+
+  UIGameMP.cpp
+  UIGameMP.h
+)
+
+add_module(XRay.Game.UI.GameTypes.Single
+  SOURCES
+  UIGameSP.cpp
+  UIGameSP.h
+)
+
+add_module(XRay.Game.UI.GameTypes.TeamDeathmatch
+  SOURCES
+  UIGameTDM.cpp
+  UIGameTDM.h
+)
+
+add_module(XRay.Game.UI.HUD
+  SOURCES
+  HitMarker.cpp
+  HitMarker.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.Achievements
+  SOURCES
+  UIAchivementsIndicator.cpp
+  UIAchivementsIndicator.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.AdminMenu
+  SOURCES
   ui/UIMPAdminMenu.cpp
+  ui/UIMPAdminMenu.h
+
   ui/UIMPChangeMapAdm.cpp
-  ui/UIMpItemsStoreWnd.cpp
+  ui/UIMPChangeMapAdm.h
+
   ui/UIMPPlayersAdm.cpp
+  ui/UIMPPlayersAdm.h
+
   ui/UIMPServerAdm.cpp
+  ui/UIMPServerAdm.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.BuyWeaponWindow
+  SOURCES
+  ui/UIBuyWndBase.h
+
+  ui/UIBuyWndShared.cpp
+  ui/UIBuyWndShared.h
+
+  ui/UIMpItemsStoreWnd.cpp
+  ui/UIMpItemsStoreWnd.h
+
   ui/UIMpTradeWnd.cpp
+  ui/UIMpTradeWnd.h
+
   ui/UIMpTradeWnd_init.cpp
   ui/UIMpTradeWnd_items.cpp
   ui/UIMpTradeWnd_misc.cpp
   ui/UIMpTradeWnd_trade.cpp
   ui/UIMpTradeWnd_wpn.cpp
-  ui/UINewsItemWnd.cpp
-  ui/UIOptConCom.cpp
-  ui/UIOptionsItem.cpp
-  ui/UIOptionsManager.cpp
-  ui/UIOptionsManagerScript.cpp
-  ui/UIOutfitInfo.cpp
-  ui/UIPdaKillMessage.cpp
-  ui/UIPdaMsgListItem.cpp
-  ui/UIPdaWnd.cpp
-  ui/UIProgressBar.cpp
-  ui/UIProgressBar_script.cpp
-  ui/UIProgressShape.cpp
-  ui/UIPropertiesBox.cpp
-  ui/UIPropertiesBox_script.cpp
-  ui/UIRadioButton.cpp
-  ui/UIRankIndicator.cpp
-  ui/UIRankingWnd.cpp
-  ui/UIScriptWnd.cpp
-  ui/UIScriptWnd_script.cpp
-  ui/uiscriptwnd_script2.cpp
-  ui/UIScrollBar.cpp
-  ui/UIScrollBox.cpp
-  ui/UIScrollView.cpp
-  ui/UISecondTaskWnd.cpp
-  ui/UIServerInfo.cpp
-  ui/UISkinSelector.cpp
-  ui/UISpawnWnd.cpp
-  ui/UISpeechMenu.cpp
-  ui/UISpinNum.cpp
-  ui/UISpinText.cpp
-  ui/UIStatic.cpp
-  ui/UIStatic_script.cpp
-  ui/UIStatix.cpp
-  ui/UIStats.cpp
-  ui/UIStatsIcon.cpp
-  ui/UIStatsPlayerInfo.cpp
-  ui/UIStatsPlayerList.cpp
-  ui/UISubLine.cpp
-  ui/UITabButton.cpp
+)
+
+add_module(XRay.Game.UI.Multiplayer.BuyWeaponWindow.RankRestrictions
+  SOURCES
+  ui/Restrictions.cpp
+  ui/Restrictions.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.BuyWeaponWindow.Tab
+  SOURCES
+  ui/UIBuyWeaponTab.cpp
+  ui/UIBuyWeaponTab.h
+
   ui/UITabButtonMP.cpp
+  ui/UITabButtonMP.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.DemoPlayControl
+  SOURCES
+  ui/UIDemoPlayControl.cpp
+  ui/UIDemoPlayControl.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.HUD.Chat
+  SOURCES
+  ui/UIChatWnd.cpp
+  ui/UIChatWnd.h
+)
+
+
+add_module(XRay.Game.UI.Multiplayer.HUD.Common
+  SOURCES
+  ui/KillMessageStruct.h
+
+  ui/UIPdaKillMessage.cpp
+  ui/UIPdaKillMessage.h
+)
+
+
+add_module(XRay.Game.UI.Multiplayer.HUD.GameLog
+  SOURCES
+  ui/UIGameLog.cpp
+  ui/UIGameLog.h
+)
+
+
+add_module(XRay.Game.UI.Multiplayer.HUD.SpeechMenu
+  SOURCES
+  ui/UISpeechMenu.cpp
+  ui/UISpeechMenu.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.HUD.Stats
+  SOURCES
+  ui/UIStats.cpp
+  ui/UIStats.h
+
+  ui/UIStatsPlayerInfo.cpp
+  ui/UIStatsPlayerInfo.h
+
+  ui/UIStatsPlayerList.cpp
+  ui/UIStatsPlayerList.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.HUD.Stats.Icons
+  SOURCES
+  ui/UIStatsIcon.cpp
+  ui/UIStatsIcon.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.HUD.Stats.TeamStates
+  SOURCES
+  UIPanelsClassFactory.cpp
+  UIPanelsClassFactory.h
+
+  UIPlayerItem.cpp
+  UIPlayerItem.h
+
+  UITeamHeader.cpp
+  UITeamHeader.h
+
+  UITeamPanels.cpp
+  UITeamPanels.h
+  
+  UITeamState.cpp
+  UITeamState.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.MM-MP.CDKey
+  SOURCES
+  player_name_modifyer.cpp
+  player_name_modifyer.h
+
+  ui/UICDkey.cpp
+  ui/UICDkey.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.MM-MP.MapList
+  SOURCES
+  ui/UIMapList.cpp
+  ui/UIMapList.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.MM-MP.ServerList
+  SOURCES
+  ui/ServerList.cpp
+  ui/ServerList.h
+
+  ui/ServerList_GameSpy_func.cpp
+  
+  ui/UIListItemServer.cpp
+  ui/UIListItemServer.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.MM-MP.TeamInfo
+  SOURCES
+
+  ui/TeamInfo.cpp
+  ui/TeamInfo.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.TeamSkinInfo.MapDesc
+  SOURCES
+)
+
+add_module(XRay.Game.UI.Multiplayer.TeamSkinInfo.MapDesc.MapInfo
+  SOURCES
+  ui/UIMapInfo.cpp
+  ui/UIMapInfo_script.cpp
+  ui/UIMapInfo.h
+
+  ui/UIMapDesc.cpp
+  ui/UIMapDesc.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.TeamSkinInfo.ServerInfo
+  SOURCES
+  ui/UIServerInfo.cpp
+  ui/UIServerInfo.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.TeamSkinInfo.SkinSelector
+  SOURCES
+  ui/UISkinSelector.cpp
+  ui/UISkinSelector.h
+
+  ui/UIStatix.cpp
+  ui/UIStatix.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.TeamSkinInfo.Spawn
+  SOURCES
+  ui/UISpawnWnd.cpp
+  ui/UISpawnWnd.h
+)
+
+add_module(XRay.Game.UI.Multiplayer.Voting
+  SOURCES
+  ui/ChangeWeatherDialog.cpp
+  ui/ChangeWeatherDialog.hpp
+
+  ui/UIChangeMap.cpp
+  ui/UIChangeMap.h
+
+  ui/UIKickPlayer.cpp
+  ui/UIKickPlayer.h
+
+  ui/UITextVote.cpp
+  ui/UITextVote.h
+
+  ui/UIVote.cpp
+  ui/UIVote.h
+
+  ui/UIVotingcategory.cpp
+  ui/UIVotingcategory.h
+)
+
+add_module(XRay.Game.UI.Tutorial
+  SOURCES
+  ui/UIGameTutorial.cpp
+  ui/UIGameTutorialSimpleItem.cpp
+  ui/UIGameTutorialVideoItem.cpp
+  ui/UIGameTutorial.h
+)
+
+add_module(XRay.Game.UI.Windows
+  SOURCES
+  callback_info.h
+  ui/uiabstract.h
+
+  ui/UIMessages.h
+
+  ui/UIWndCallback.cpp
+  ui/UIWndCallback.h
+)
+
+add_module(XRay.Game.UI.Windows.Arrow
+  SOURCES
+  ui/ui_arrow.cpp
+  ui/ui_arrow.h
+)
+
+add_module(XRay.Game.UI.Windows.Buttons
+  SOURCES
+  ui/UI3tButton.cpp
+  ui/UI3tButton.h
+
+  ui/UIBtnHint.cpp
+  ui/UIBtnHint.h
+
+  ui/UIButton.cpp
+  ui/UIButton_script.cpp
+  ui/UIButton.h
+
+  ui/UICheckButton.cpp
+  ui/UICheckButton.h
+
+  ui/UIRadioButton.cpp
+  ui/UIRadioButton.h
+)
+
+add_module(XRay.Game.UI.Windows.ComboBox
+  SOURCES
+  ui/UIComboBox.cpp
+  ui/UIComboBox_script.cpp
+
+  ui/UIComboBox.h
+)
+
+add_module(XRay.Game.UI.Windows.DragDrop
+  SOURCES
+  ui/UICellCustomItems.cpp
+  ui/UICellCustomItems.h
+
+  ui/UICellItem.cpp
+  ui/UICellItem.h
+
+  ui/UICellItemFactory.cpp
+  ui/UICellItemFactory.h
+
+  ui/UIDragDropListEx.cpp
+  ui/UIDragDropListEx.h
+
+  ui/UIDragDropReferenceList.cpp
+  ui/UIDragDropReferenceList.h
+)
+
+add_module(XRay.Game.UI.Windows.EditBox
+  SOURCES
+  ui/UIEditBox_script.cpp
+
+  ui/UIEditBox.cpp
+  ui/UIEditBox.h
+
+  ui/UIEditBoxEx.cpp
+  ui/UIEditBoxEx.h
+)
+
+add_module(XRay.Game.UI.Windows.EditBox.Custom
+  SOURCES
+  ui/UICustomEdit.cpp
+  ui/UICustomEdit.h
+)
+
+add_module(XRay.Game.UI.Windows.Hint
+  SOURCES
+  ui/UIHint.cpp
+  ui/UIHint.h
+)
+
+add_module(XRay.Game.UI.Windows.InteractiveBackground
+  SOURCES
+  ui/UI_IB_Static.cpp
+  ui/UI_IB_Static.h
+
+  ui/UIInteractiveBackground.h
+)
+
+add_module(XRay.Game.UI.Windows.Lines
+  SOURCES
+  ui/UILine.cpp
+  ui/UILine.h
+  
+  ui/UILines.cpp
+  ui/UILines.h
+
+  ui/uilinestd.h
+
+  ui/UISubLine.cpp
+  ui/UISubLine.h
+)
+
+add_module(XRay.Game.UI.Windows.ListBox
+  SOURCES
+  ui/UIListBox_script.cpp
+  ui/UIListBox.cpp
+  ui/UIListBox.h
+
+  ui/UIListBoxItem.cpp
+  ui/UIListBoxItem.h
+
+  ui/UIListBoxItemMsgChain.cpp
+  ui/UIListBoxItemMsgChain.h
+)
+
+add_module(XRay.Game.UI.Windows.MessageBox
+  SOURCES
+  ui/UIMessageBox_script.cpp
+  ui/UIMessageBox.cpp
+  ui/UIMessageBox.h
+
+  ui/UIMessageBoxEx.cpp
+  ui/UIMessageBoxEx.h
+)
+
+add_module(XRay.Game.UI.Windows.ProgressBar
+  SOURCES
+  ui/UIDoubleProgressBar.cpp
+  ui/UIDoubleProgressBar.h
+
+  ui/UIProgressBar_script.cpp
+  ui/UIProgressBar.cpp
+  ui/UIProgressBar.h
+
+  ui/UIProgressShape.cpp
+  ui/UIProgressShape.h
+)
+
+add_module(XRay.Game.UI.Windows.PropertiesBox
+  SOURCES
+  ui/UIPropertiesBox_script.cpp
+  ui/UIPropertiesBox.cpp
+  ui/UIPropertiesBox.h
+)
+
+add_module(XRay.Game.UI.Windows.ScriptWindow
+  SOURCES
+  ui/UIScriptWnd.cpp
+  ui/UIScriptWnd.h
+
+  ui/UIScriptWnd_script.cpp
+  ui/uiscriptwnd_script.h
+
+  ui/uiscriptwnd_script2.cpp
+)
+
+add_module(XRay.Game.UI.Windows.ScrollBar
+  SOURCES
+  ui/UIFixedScrollBar.cpp
+  ui/UIFixedScrollBar.h
+
+  ui/UIScrollBar.cpp
+  ui/UIScrollBar.h
+
+  ui/UIScrollBox.cpp
+  ui/UIScrollBox.h
+)
+
+add_module(XRay.Game.UI.Windows.ScrollView
+  SOURCES
+  ui/UIScrollView.cpp
+  ui/UIScrollView.h
+)
+
+add_module(XRay.Game.UI.Windows.SpinBox
+  SOURCES
+  ui/UICustomSpin.cpp
+  ui/UICustomSpin.h
+
+  ui/UISpinNum.cpp
+  ui/UISpinNum.h
+
+  ui/UISpinText.cpp
+  ui/UISpinText.h
+)
+
+add_module(XRay.Game.UI.Windows.Static
+  SOURCES
+  ui/UIAnimatedStatic.cpp
+  ui/UIAnimatedStatic.h
+
+  ui/UILanimcontroller.cpp
+  ui/UILanimcontroller.h
+
+  ui/UIStatic_script.cpp
+  ui/UIStatic.cpp
+  ui/UIStatic.h
+
+  UIStaticItem.cpp
+  UIStaticItem.h
+)
+
+add_module(XRay.Game.UI.Windows.TabControl
+  SOURCES
+  ui/UITabButton.cpp
+  ui/UITabButton.h
+
   ui/UITabControl.cpp
   ui/UITabControl_script.cpp
-  ui/UITalkDialogWnd.cpp
-  ui/UITalkWnd.cpp
-  ui/UITaskWnd.cpp
-  ui/UITextureMaster.cpp
-  ui/UITextVote.cpp
-  ui/UITrackBar.cpp
-  ui/UITrackButton.cpp
-  ui/UIVote.cpp
-  ui/UIVoteStatusWnd.cpp
-  ui/UIVotingcategory.cpp
-  ui/UIWindow.cpp
-  ui/UIWindow_script.cpp
-  ui/UIWndCallback.cpp
-  ui/UIWpnParams.cpp
-  ui/UIXmlInit.cpp
-  ui/ui_af_params.cpp
-  ui/ui_arrow.cpp
-  ui/UI_IB_Static.cpp
-  ui/xrUIXmlParser.cpp
-  ui_base.cpp
-
-  UIAchivementsIndicator.h
-  UICursor.h
-  UIDialogHolder.h
-  UIDosimeter.h
-  UIGameAHunt.h
-  UIGameCTA.h
-  UIGameCustom.h
-  UIGameDM.h
-  UIGameMP.h
-  UIGameSP.h
-  UIGameTDM.h
-  UIPanelsClassFactory.h
-  UIPlayerItem.h
-  UIStaticItem.h
-  UITeamHeader.h
-  UITeamPanels.h
-  UITeamState.h
-  UIZoneMap.h
-  ui/ArtefactDetectorUI.h
-  ui/KillMessageStruct.h
-  ui/map_hint.h
-  ui/MMSound.h
-  ui/Restrictions.h
-  ui/ServerList.h
-  ui/TeamInfo.h
-  ui/UI3tButton.h
-  ui/uiabstract.h
-  ui/UIAchievements.h
-  ui/UIRankingsCoC.h
-  ui/UIActorMenu.h
-  ui/UIActorStateInfo.h
-  ui/UIAnimatedStatic.h
-  ui/UIBoosterInfo.h
-  ui/UIBtnHint.h
-  ui/UIButton.h
-  ui/UIBuyWeaponTab.h
-  ui/UIBuyWndBase.h
-  ui/UIBuyWndShared.h
-  ui/UICarPanel.h
-  ui/UICDkey.h
-  ui/UICellCustomItems.h
-  ui/UICellItem.h
-  ui/UICellItemFactory.h
-  ui/UIChangeMap.h
-  ui/ChangeWeatherDialog.hpp
-  ui/UICharacterInfo.h
-  ui/UIChatWnd.h
-  ui/UICheckButton.h
-  ui/UIComboBox.h
-  ui/UICustomEdit.h
-  ui/UICustomSpin.h
-  ui/UIDebugFonts.h
-  ui/UIDemoPlayControl.h
-  ui/UIDialogWnd.h
-  ui/UIDoubleProgressBar.h
-  ui/UIDragDropListEx.h
-  ui/UIDragDropReferenceList.h
-  ui/UIEditBox.h
-  ui/UIEditBoxEx.h
-  ui/UIEditKeyBind.h
-  ui/UIFixedScrollBar.h
-  ui/UIFrameLineWnd.h
-  ui/UIFrameWindow.h
-  ui/UIGameLog.h
-  ui/UIGameTutorial.h
-  ui/UIHelper.h
-  ui/UIHint.h
-  ui/UIHudstatesWnd.h
-  ui/UIInteractiveBackground.h
-  ui/UIInventoryUpgradeWnd.h
-  ui/UIInventoryUtilities.h
-  ui/UIInvUpgrade.h
-  ui/UIInvUpgradeInfo.h
-  ui/UIInvUpgradeProperty.h
-  ui/UIItemInfo.h
-  ui/UIKeyBinding.h
-  ui/UIKickPlayer.h
-  ui/UILanimcontroller.h
-  ui/UILine.h
-  ui/UILines.h
-  ui/uilinestd.h
-  ui/UIListBox.h
-  ui/UIListBoxItem.h
-  ui/UIListBoxItemMsgChain.h
-  ui/UIListItemServer.h
-  ui/UILogsWnd.h
-  ui/UIMainIngameWnd.h
-  ui/UIMap.h
-  ui/UIMapDesc.h
-  ui/UIMapInfo.h
-  ui/UIMapLegend.h
-  ui/UIMapList.h
-  ui/UIMapWnd.h
-  ui/UIMapWndActions.h
-  ui/UIMapWndActionsSpace.h
-  ui/UIMessageBox.h
-  ui/UIMessageBoxEx.h
-  ui/UIMessages.h
-  ui/UIMessagesWindow.h
-  ui/UIMMShniaga.h
-  ui/UIMoneyIndicator.h
-  ui/UIMotionIcon.h
-  ui/UIMPAdminMenu.h
-  ui/UIMPChangeMapAdm.h
-  ui/UIMpItemsStoreWnd.h
-  ui/UIMPPlayersAdm.h
-  ui/UIMPServerAdm.h
-  ui/UIMpTradeWnd.h
-  ui/UINewsItemWnd.h
-  ui/UIOptConCom.h
-  ui/UIOptionsItem.h
-  ui/UIOptionsManager.h
-  ui/UIOptionsManagerScript.h
-  ui/UIOutfitInfo.h
-  ui/UIPdaKillMessage.h
-  ui/UIPdaMsgListItem.h
-  ui/UIPdaWnd.h
-  ui/UIProgressBar.h
-  ui/UIProgressShape.h
-  ui/UIPropertiesBox.h
-  ui/UIRadioButton.h
-  ui/UIRankIndicator.h
-  ui/UIRankingWnd.h
-  ui/UIScriptWnd.h
-  ui/uiscriptwnd_script.h
-  ui/UIScrollBar.h
-  ui/UIScrollBox.h
-  ui/UIScrollView.h
-  ui/UISecondTaskWnd.h
-  ui/UIServerInfo.h
-  ui/UISkinSelector.h
-  ui/UISpawnWnd.h
-  ui/UISpeechMenu.h
-  ui/UISpinNum.h
-  ui/UISpinText.h
-  ui/UIStatic.h
-  ui/UIStatix.h
-  ui/UIStats.h
-  ui/UIStatsIcon.h
-  ui/UIStatsPlayerInfo.h
-  ui/UIStatsPlayerList.h
-  ui/UISubLine.h
-  ui/UITabButton.h
-  ui/UITabButtonMP.h
   ui/UITabControl.h
-  ui/UITalkDialogWnd.h
-  ui/UITalkWnd.h
-  ui/UITaskWnd.h
-  ui/UITextureMaster.h
-  ui/UITextVote.h
+)
+
+add_module(XRay.Game.UI.Windows.TrackBar
+  SOURCES
+  ui/UITrackBar.cpp
   ui/UITrackBar.h
+
+  ui/UITrackButton.cpp
   ui/UITrackButton.h
-  ui/UIVote.h
-  ui/UIVoteStatusWnd.h
-  ui/UIVotingcategory.h
+)
+
+add_module(XRay.Game.UI.Windows.Windows
+  SOURCES
+  ui/UIWindow_script.cpp
+  ui/UIWindow.cpp
   ui/UIWindow.h
-  ui/UIWndCallback.h
-  ui/UIWpnParams.h
+  
+  ui/UIDialogWnd.cpp
+  ui/UIDialogWnd.h
+
+  ui/UIFrameLineWnd.cpp
+  ui/UIFrameLineWnd.h
+
+  ui/UIFrameWindow.cpp
+  ui/UIFrameWindow.h
+)
+
+add_module(XRay.Game.UI.Windows.XML
+  SOURCES
+  ui/UITextureMaster.cpp
+  ui/UITextureMaster.h
+
+  ui/UIXmlInit.cpp
   ui/UIXmlInit.h
-  ui/ui_af_params.h
-  ui/ui_arrow.h
-  ui/UI_IB_Static.h
+
+  ui/xrUIXmlParser.cpp
   ui/xrUIXmlParser.h
-  ui_base.h
-  ui_defs.h
-)
-
-target_include_directories(XRay.Game.UI
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  PRIVATE
-  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
-)
-
-target_precompile_headers(XRay.Game.UI
-  PRIVATE
-  stdafx.h
-)
-
-target_compile_definitions(XRay.Game.UI
-  PUBLIC
-  XRGAME_EXPORTS
-)
-
-target_link_libraries(XRay.Game.UI
-  PRIVATE
-  CxImage
-  DPlay
-  luabind
-  LuaJIT
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.NetServer
-  XRay.Physics
-  XRay.Render.Common
-  XRay.Render.API
 )

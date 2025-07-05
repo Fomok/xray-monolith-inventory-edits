@@ -260,17 +260,13 @@ add_module(XRay.Game
   HelicopterMovementManager.cpp
   HelicopterWeapon.cpp
   helicopter_script.cpp
-  HitMarker.cpp
   hits_store.cpp
   hit_immunity.cpp
   holder_custom.cpp
   holder_custom_script.cpp
-  HUDCrosshair.cpp
   HudItem.cpp
   HUDManager.cpp
-  HUDRecon.cpp
   HudSound.cpp
-  HUDTarget.cpp
   hud_item_object.cpp
   InfoDocument.cpp
   InfoPortion.cpp
@@ -317,10 +313,8 @@ add_module(XRay.Game
   login_manager_script.cpp
   magic_box3.cpp
   magic_minimize_1d.cpp
-  MainMenu.cpp
   map_location.cpp
   map_manager.cpp
-  map_spot.cpp
   medkit.cpp
   medkit_script.cpp
   MercuryBall.cpp
@@ -352,7 +346,6 @@ add_module(XRay.Game
   player_hud.cpp
   player_hud_script.cpp
   player_hud_tune.cpp
-  player_name_modifyer.cpp
   player_spot_params.cpp
   player_state_achilles_heel.cpp
   player_state_ambassador.cpp
@@ -639,7 +632,6 @@ add_module(XRay.Game
   bone_groups.h
   BottleItem.h
   BreakableObject.h
-  callback_info.h
   CameraEffector.h
   CameraFirstEye.h
   cameralook.h
@@ -771,18 +763,14 @@ add_module(XRay.Game
   HangingLamp.h
   harvest_time.h
   helicopter.h
-  HitMarker.h
   hits_store.h
   hits_store_inline.h
   hit_immunity.h
   hit_immunity_space.h
   holder_custom.h
-  HUDCrosshair.h
   HudItem.h
   HUDManager.h
-  HUDRecon.h
   HudSound.h
-  HUDTarget.h
   hud_item_object.h
   id_generator.h
   InfoDocument.h
@@ -819,11 +807,9 @@ add_module(XRay.Game
   magic_minimize_1d_inline.h
   magic_minimize_nd.h
   magic_minimize_nd_inline.h
-  MainMenu.h
   map_location.h
   map_location_defs.h
   map_manager.h
-  map_spot.h
   medkit.h
   MercuryBall.h
   Message_Filter.h
@@ -865,7 +851,6 @@ add_module(XRay.Game
   physic_item_inline.h
   player_account.h
   player_hud.h
-  player_name_modifyer.h
   player_spot_params.h
   player_state_achilles_heel.h
   player_state_ambassador.h
