@@ -24,6 +24,7 @@ void matrix_transform(Fmatrix* self, Fvector* v)
 }
 
 #pragma optimize("s",on)
+template<>
 void CScriptFmatrix::script_register(lua_State* L)
 {
 	module(L)
