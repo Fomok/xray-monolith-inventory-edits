@@ -6,7 +6,7 @@ class ENGINE_API CObject;
 
 namespace Feel
 {
-	class ENGINE_API Touch : pure_relcase
+	class ENGINE_API Touch : public pure_relcase
 	{
 	public:
 		struct DenyTouch
