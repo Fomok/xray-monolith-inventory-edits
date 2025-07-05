@@ -41,7 +41,7 @@ bool item_pred(const CInifile::Item& x, LPCSTR val)
 }
 
 //------------------------------------------------------------------------------
-//Тело функций Inifile
+//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Inifile
 //------------------------------------------------------------------------------
 XRCORE_API BOOL _parse(LPSTR dest, LPCSTR src)
 {
@@ -419,7 +419,7 @@ void CInifile::Load(IReader* F, LPCSTR path
 				_splitpath_s(m_file_name, split_drive, split_drive.GetSize(), split_dir, split_dir.GetSize(), split_name, split_name.GetSize(), NULL, 0);
 
 				std::string FilePath = std::string(split_drive) + std::string(split_dir);
-				std::string FileName = split_name;
+				std::string FileName = split_name.GetBuffer();
 
 				//Collect all files that could potentially be confused as a root file by our mod files
 				FS_FileSet AmbiguousFiles;
@@ -666,7 +666,8 @@ void CInifile::Load(IReader* F, LPCSTR path
 					I.first = (name[0] ? name : NULL);
 					I.second = bIsDelete ? DLTX_DELETE.c_str() : (str2[0] ? str2.GetBuffer() : NULL);
 
-					auto fname = toLowerCaseCopy(trimCopy(getFilename(std::string(currentFileName))));
+					std::string currentFileNameString(currentFileName);
+					auto fname = toLowerCaseCopy(trimCopy(getFilename(currentFileNameString)));
 					// Remove .ltx part, unused for now
 					/*fname.pop_back();
 					fname.pop_back();
@@ -1192,13 +1193,13 @@ BOOL CInifile::section_exist(const shared_str& S) const { return section_exist(*
 //--------------------------------------------------------------------------------------
 CInifile::Sect& CInifile::r_section(LPCSTR S) const
 {
-	R_ASSERT(S && strlen(S),
+	R_ASSERT2(S && strlen(S),
 	         "Empty section (null\\'') passed into CInifile::r_section(). See info above ^, check your configs and 'call stack'.")
 	; //--#SM+#--
 
 	char section[256];
 	xr_strcpy(section, sizeof(section), S);
-	strlwr(section);
+	_strlwr(section);
 	RootCIt I = std::lower_bound(DATA.begin(), DATA.end(), section, sect_pred);
 	if (!(I != DATA.end() && xr_strcmp(*(*I)->Name, section) == 0))
 	{
@@ -1422,7 +1423,7 @@ BOOL CInifile::r_bool(LPCSTR S, LPCSTR L) const
 	char B[8];
 	strncpy_s(B, sizeof(B), C, 7);
 	B[7] = 0;
-	strlwr(B);
+	_strlwr(B);
 	return IsBOOL(B);
 }
 
@@ -1436,7 +1437,7 @@ int CInifile::r_token(LPCSTR S, LPCSTR L, const xr_token* token_list) const
 {
 	LPCSTR C = r_string(S, L);
 	for (int i = 0; token_list[i].name; i++)
-		if (!stricmp(C, token_list[i].name))
+		if (!_stricmp(C, token_list[i].name))
 			return token_list[i].id;
 	return 0;
 }
