@@ -11,8 +11,8 @@
 template <
 	typename _path_id_type,
 	typename _index_type,
-	u32 hash_size,
-	u32 fix_size
+	unsigned long hash_size,
+	unsigned long fix_size
 >
 struct CVertexManagerHashFixed
 {
