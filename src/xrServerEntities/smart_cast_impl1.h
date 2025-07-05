@@ -484,7 +484,8 @@ namespace SmartDynamicCast
 		template <bool base>
 		IC static T1* smart_cast(T2* p)
 		{
-			return (CSmartMatcher<T1, T2>::template smart_cast < get_conversion_sequence<T1, T2>::result > (p));
+			typedef typename get_conversion_sequence<T1, T2>::result result;
+			return CSmartMatcher<T1, T2>::template smart_cast<result>(p);
 		}
 
 		template <>
