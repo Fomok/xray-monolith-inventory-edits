@@ -7,6 +7,9 @@ set(XRAY_COMPILER_FLAGS
   -Wno-invalid-token-paste
   -Wno-nonportable-include-path
   -Wno-shift-negative-value
+  -Wno-address-of-temporary
+  
+  -DWIN32
 )
 
 set(XRAY_COMPILER_FLAGS_DEBUG
