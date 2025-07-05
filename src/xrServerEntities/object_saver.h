@@ -35,12 +35,12 @@ struct CSaver
 		template <bool pointer>
 		IC static void save_data(const T& data, M& stream, const P& p)
 		{
-			CHelper1<T>::save_data <
+			CHelper1<T>::template save_data<
 				object_type_traits::is_base_and_derived_or_same_from_template<
 					IPureSavableObject,
 					T
 				>::value
-				> (data, stream, p);
+			> (data, stream, p);
 		}
 
 		template <>
@@ -70,7 +70,7 @@ struct CSaver
 		template <bool a>
 		IC static void save_data(const T& data, M& stream, const P& p)
 		{
-			CHelper<T>::save_data < object_type_traits::is_pointer<T>::value > (data, stream, p);
+			CHelper<T>::template save_data<object_type_traits::is_pointer<T>::value>(data, stream, p);
 		}
 
 		template <>
@@ -188,7 +188,7 @@ struct CSaver
 	template <typename T>
 	IC static void save_data(const T& data, M& stream, const P& p)
 	{
-		CHelper4<T>::save_data < object_type_traits::is_stl_container<T>::value > (data, stream, p);
+		CHelper4<T>::template save_data<object_type_traits::is_stl_container<T>::value>(data, stream, p);
 	}
 };
 
