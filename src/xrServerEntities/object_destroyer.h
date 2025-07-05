@@ -102,8 +102,7 @@ struct CDestroyer
 		template <bool a>
 		IC static void delete_data(T& data)
 		{
-			CHelper1<T>::delete_data < object_type_traits::is_base_and_derived<IPureDestroyableObject, T>::value > (data
-			);
+			CHelper1<T>::template delete_data<object_type_traits::is_base_and_derived<IPureDestroyableObject, T>::value>(data);
 		}
 
 		template <>
@@ -134,7 +133,7 @@ struct CDestroyer
 		template <bool a>
 		IC static void delete_data(T& data)
 		{
-			CHelper2<T>::delete_data < object_type_traits::is_pointer<T>::value > (data);
+			CHelper2<T>::template delete_data<object_type_traits::is_pointer<T>::value> (data);
 		}
 
 		template <>
@@ -147,7 +146,7 @@ struct CDestroyer
 	template <typename T>
 	IC static void delete_data(T& data)
 	{
-		CHelper4<T>::delete_data < object_type_traits::is_stl_container<T>::value > (data);
+		CHelper4<T>::template delete_data<object_type_traits::is_stl_container<T>::value>(data);
 	}
 };
 
