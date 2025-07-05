@@ -514,12 +514,12 @@ void CALifeSimulator::script_register(lua_State* L)
 		.def("set_switch_distance", &CALifeSimulator::set_switch_distance)
 		//Alundaio: renamed to set_switch_distance from switch_distance
 		//Alundaio: extend alife simulator exports
-		.def("teleport_object", &teleport_object)
+		.def("teleport_object", &CALifeUpdateManager::teleport_object)
 		.def("iterate_info", &IterateInfo)
 		.def("clone_weapon", &try_to_clone_object)
 		.def("register", &reprocess_spawn)
 		.def("set_objects_per_update", &set_objects_per_update)
-		.def("set_process_time", &set_process_time)
+		.def("set_process_time", &CALifeUpdateManager::set_process_time)
 		.def("get_children", &get_children, return_stl_iterator)
 		//Alundaio: END
 
