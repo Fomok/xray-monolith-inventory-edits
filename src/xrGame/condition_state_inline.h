@@ -55,9 +55,9 @@ IC void CConditionStateAbstract::add_condition(const COperatorCondition& conditi
 TEMPLATE_SPECIALIZATION
 IC void CConditionStateAbstract::remove_condition(const typename COperatorCondition::_condition_type& condition)
 {
-	xr_vector<COperatorCondition>::iterator I = std::lower_bound(m_conditions.begin(), m_conditions.end(),
+	auto I = std::lower_bound(m_conditions.begin(), m_conditions.end(),
 	                                                             COperatorCondition(
-		                                                             condition, COperatorCondition::_value_type(0)));
+		                                                             condition, typename COperatorCondition::_value_type(0)));
 	THROW((I != m_conditions.end()) && ((*I).condition() == condition));
 	if ((I != m_conditions.end()) && ((*I).condition() == condition))
 	{
