@@ -14,6 +14,7 @@
 CPatrolPathParams::CPatrolPathParams(LPCSTR caPatrolPathToGo,
                                      const PatrolPathManager::EPatrolStartType tPatrolPathStart,
                                      const PatrolPathManager::EPatrolRouteType tPatrolPathStop, bool bRandom, u32 index)
+									 : m_dummy(Fvector())
 {
 	m_path_name = caPatrolPathToGo;
 	m_path = ai().patrol_paths().path(m_path_name, true);
