@@ -204,9 +204,11 @@ IC const typename CConditionStateAbstract::COperatorCondition*CConditionStateAbs
 {
 	auto I = std::lower_bound(
 		conditions().begin(), conditions().end(),
-	                                                                   COperatorCondition(
-		                                                                   condition,
-		                                                                   COperatorCondition::_value_type(0)));
+	    COperatorCondition(
+		    condition,
+		    typename COperatorCondition::_value_type(0)
+		)
+	);
 	if (I == m_conditions.end())
 		return (0);
 	else

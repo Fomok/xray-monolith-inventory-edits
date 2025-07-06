@@ -134,7 +134,7 @@ inline T* CResourceManager::CreateShader(const char* name)
 template <typename T>
 inline void CResourceManager::DestroyShader(const T* sh)
 {
-	ShaderTypeTraits<T>::MapType& sh_map = GetShaderMap<ShaderTypeTraits<T>::MapType>();
+	typedef typename ShaderTypeTraits<T>::MapType MapType;
 
 	if (0 == (sh->dwFlags & xr_resource_flagged::RF_REGISTERED))
 		return;
