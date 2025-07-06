@@ -51,6 +51,10 @@ typedef CObjectActionBase<CGameObject> CSObjectActionBase;
 template <typename _item_type>
 class CObjectActionMember : public CObjectActionBase<_item_type>
 {
+public:
+	using typename CObjectActionBase<_item_type>::_condition_type;
+	using typename CObjectActionBase<_item_type>::_value_type;
+
 protected:
 	typedef CObjectActionBase<_item_type> inherited;
 
