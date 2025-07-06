@@ -7,9 +7,9 @@ using namespace luabind;
 
 void BoosterForEach(CActorCondition* conditions, const ::luabind::functor<bool> &funct)
 {
-	CEntityCondition::BOOSTER_MAP& cur_booster_influences = conditions->GetCurBoosterInfluences();
-	CEntityCondition::BOOSTER_MAP::const_iterator it = cur_booster_influences.begin();
-	CEntityCondition::BOOSTER_MAP::const_iterator it_e = cur_booster_influences.end();
+	auto cur_booster_influences = conditions->GetCurBoosterInfluences();
+	auto it = cur_booster_influences.begin();
+	auto it_e = cur_booster_influences.end();
 	for (; it != it_e; ++it)
 	{
 		if (funct((*it).first, (*it).second.fBoostTime, (*it).second.fBoostValue) == true)
@@ -24,9 +24,9 @@ bool ApplyBooster_script(CActorCondition* cond, const SBooster& B, LPCSTR sect)
 
 void ClearAllBoosters(CActorCondition* conditions)
 {
-	CEntityCondition::BOOSTER_MAP& cur_booster_influences = conditions->GetCurBoosterInfluences();
-	CEntityCondition::BOOSTER_MAP::const_iterator it = cur_booster_influences.begin();
-	CEntityCondition::BOOSTER_MAP::const_iterator it_e = cur_booster_influences.end();
+	auto cur_booster_influences = conditions->GetCurBoosterInfluences();
+	auto it = cur_booster_influences.begin();
+	auto it_e = cur_booster_influences.end();
 	for (; it != it_e; ++it)
 	{
 		conditions->DisableBoostParameters((*it).second);

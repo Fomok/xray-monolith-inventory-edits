@@ -50,7 +50,7 @@ IC CSGraphVertex::~CVertex()
 TEMPLATE_SPECIALIZATION
 IC const typename CSGraphVertex::_edge_type*CSGraphVertex::edge(const _vertex_id_type& vertex_id) const
 {
-	EDGES::const_iterator I = std::find(edges().begin(), edges().end(), vertex_id);
+	auto I = std::find(edges().begin(), edges().end(), vertex_id);
 	if (m_edges.end() == I)
 		return (0);
 	return (&*I);
@@ -59,7 +59,7 @@ IC const typename CSGraphVertex::_edge_type*CSGraphVertex::edge(const _vertex_id
 TEMPLATE_SPECIALIZATION
 IC typename CSGraphVertex::_edge_type*CSGraphVertex::edge(const _vertex_id_type& vertex_id)
 {
-	EDGES::iterator I = std::find(m_edges.begin(), m_edges.end(), vertex_id);
+	auto I = std::find(m_edges.begin(), m_edges.end(), vertex_id);
 	if (m_edges.end() == I)
 		return (0);
 	return (&*I);

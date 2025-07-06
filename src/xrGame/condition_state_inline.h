@@ -85,10 +85,10 @@ TEMPLATE_SPECIALIZATION
 IC u8 CConditionStateAbstract::weight(const CConditionState& condition) const
 {
 	u8 result = 0;
-	xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+	auto I = conditions().begin();
+	auto E = conditions().end();
+	auto i = condition.conditions().begin();
+	auto e = condition.conditions().end();
 	for (; (I != E) && (i != e);)
 		if ((*I).condition() < (*i).condition())
 			++I;
@@ -107,10 +107,10 @@ IC u8 CConditionStateAbstract::weight(const CConditionState& condition) const
 TEMPLATE_SPECIALIZATION
 IC bool CConditionStateAbstract::operator<(const CConditionState& condition) const
 {
-	xr_vector<COperatorCondition>::const_iterator I = conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator E = conditions().end();
-	xr_vector<COperatorCondition>::const_iterator i = condition.conditions().begin();
-	xr_vector<COperatorCondition>::const_iterator e = condition.conditions().end();
+	auto I = conditions().begin();
+	auto E = conditions().end();
+	auto i = condition.conditions().begin();
+	auto e = condition.conditions().end();
 	for (; (I != E) && (i != e); ++I, ++i)
 		if (*I < *i)
 			return (true);
@@ -202,7 +202,8 @@ TEMPLATE_SPECIALIZATION
 IC const typename CConditionStateAbstract::COperatorCondition*CConditionStateAbstract::property(
 	const typename CConditionStateAbstract::COperatorCondition::_condition_type& condition) const
 {
-	xr_vector<COperatorCondition>::const_iterator I = std::lower_bound(conditions().begin(), conditions().end(),
+	auto I = std::lower_bound(
+		conditions().begin(), conditions().end(),
 	                                                                   COperatorCondition(
 		                                                                   condition,
 		                                                                   COperatorCondition::_value_type(0)));

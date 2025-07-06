@@ -140,7 +140,7 @@ inline void CResourceManager::DestroyShader(const T* sh)
 		return;
 
 	LPSTR N = LPSTR(*sh->cName);
-	typename ShaderTypeTraits<T>::MapType::iterator I = sh_map.find(N);
+	auto I = sh_map.find(N);
 
 	if (I != sh_map.end())
 	{
