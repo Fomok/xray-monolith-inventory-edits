@@ -880,7 +880,7 @@ script_attachment* CGameObject::get_attachment(LPCSTR name)
 {
 	if (m_script_attachments.size())
 	{
-		auto& att = m_script_attachments.find(name);
+		const auto& att = m_script_attachments.find(name);
 		if (att != m_script_attachments.end())
 			return att->second;
 	}
@@ -1077,7 +1077,7 @@ void CGameObject::DestroyObject()
 
 void CGameObject::shedule_Update(u32 dt)
 {
-	//уничтожить
+	//ГіГ­ГЁГ·ГІГ®Г¦ГЁГІГј
 	if (NeedToDestroyObject())
 	{
 #ifndef MASTER_GOLD
@@ -1098,7 +1098,7 @@ BOOL CGameObject::net_SaveRelevant()
 	return (CScriptBinder::net_SaveRelevant());
 }
 
-//игровое имя объекта
+//ГЁГЈГ°Г®ГўГ®ГҐ ГЁГ¬Гї Г®ГЎГєГҐГЄГІГ 
 LPCSTR CGameObject::Name() const
 {
 	return (*cName());
