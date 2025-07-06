@@ -8,6 +8,7 @@ set(XRAY_COMPILER_FLAGS
   -Wno-nonportable-include-path
   -Wno-shift-negative-value
   -Wno-address-of-temporary
+  -Wno-register
   
   -DWIN32
 )
