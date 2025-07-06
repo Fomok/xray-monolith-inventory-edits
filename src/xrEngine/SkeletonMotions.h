@@ -158,7 +158,7 @@ public:
 	bool StopAtEnd();
 };
 
-struct accel_str_pred : public std::function<bool(shared_str, shared_str)>
+struct accel_str_pred
 {
 	IC bool operator()(const shared_str& x, const shared_str& y) const { return xr_strcmp(x, y) < 0; }
 };

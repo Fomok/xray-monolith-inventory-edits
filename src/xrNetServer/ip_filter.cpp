@@ -15,7 +15,7 @@ ip_filter::~ip_filter()
 	}
 }
 
-struct subnet_comparator : public std::function<bool(subnet_item*, subnet_item*)>
+struct subnet_comparator
 {
 	bool operator()(subnet_item const* left, subnet_item const* right) const
 	{
@@ -23,7 +23,7 @@ struct subnet_comparator : public std::function<bool(subnet_item*, subnet_item*)
 	}
 };
 
-struct ip_searcher : public std::function<bool(subnet_item*, subnet_item*)>
+struct ip_searcher
 {
 	bool operator()(subnet_item const* left, subnet_item const* right) const
 	{

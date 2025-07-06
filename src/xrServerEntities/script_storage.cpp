@@ -148,7 +148,7 @@ u32 game_lua_memory_usage()
 #endif //!USE_DL_ALLOCATOR
 
 static LPVOID __cdecl luabind_allocator(
-	luabind::memory_allocation_function_parameter const,
+	::luabind::memory_allocation_function_parameter const,
 	void const* const pointer,
 	size_t const size
 )
@@ -179,8 +179,8 @@ static LPVOID __cdecl luabind_allocator(
 
 void setup_luabind_allocator()
 {
-	luabind::allocator = &luabind_allocator;
-	luabind::allocator_parameter = 0;
+	::luabind::allocator = &luabind_allocator;
+	::luabind::allocator_parameter = 0;
 }
 
 
@@ -1066,12 +1066,12 @@ bool CScriptStorage::object(LPCSTR namespace_name, LPCSTR identifier, int type)
 	return (result);
 }
 
-luabind::object CScriptStorage::name_space(LPCSTR namespace_name)
+::luabind::object CScriptStorage::name_space(LPCSTR namespace_name)
 {
 	string256 S1;
 	xr_strcpy(S1, namespace_name);
 	LPSTR S = S1;
-	luabind::object lua_namespace = luabind::get_globals(lua());
+	::luabind::object lua_namespace = ::luabind::get_globals(lua());
 	for (;;)
 	{
 		if (!xr_strlen(S))
