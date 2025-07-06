@@ -109,6 +109,7 @@ DECLARE_SCRIPT_REGISTER_FUNCTION
 
 
 #define DEFINE_MIXED_DELEGATE_SCRIPT(type, name_str) \
+    template<>\
 	void type::script_register(lua_State *L)\
 	{\
 		module(L)\
