@@ -1,3 +1,7 @@
+add_module(XRay.Game.AI.Monsters
+  TYPE STATIC
+)
+
 add_module(XRay.Game.AI.Monsters.Common.Base
   SOURCES
   ai/monsters/basemonster/base_monster.cpp

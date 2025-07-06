@@ -1,3 +1,7 @@
+add_module(XRay.Game.AI.Group
+  TYPE STATIC
+)
+
 add_module(XRay.Game.AI.Group.Agent
   SOURCES
   agent_manager.cpp

@@ -1,3 +1,7 @@
+add_module(XRay.Game.AI.Components
+  TYPE STATIC
+)
+
 add_module(XRay.Game.AI.Components.Damage
   SOURCES
   DamageSource.h

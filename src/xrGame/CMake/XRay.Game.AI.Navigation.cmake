@@ -1,3 +1,7 @@
+add_module(XRay.Game.AI.Navigation
+  TYPE STATIC
+)
+
 add_module(XRay.Game.AI.Navigation.GameGraph
   SOURCES
   ../xrServerEntities/game_graph_space.h
