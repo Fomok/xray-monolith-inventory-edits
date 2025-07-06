@@ -413,7 +413,6 @@ add_module(XRay.Game
   stalker_combat_planner.cpp
   stalker_danger_property_evaluators.cpp
   stalker_flair.cpp
-  state_arguments_functions.cpp
   #static_cast_checked_test.cpp
   stats_submitter.cpp
   stats_submitter_dsa_params.cpp
