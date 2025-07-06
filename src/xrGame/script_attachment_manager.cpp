@@ -701,7 +701,7 @@ const ::luabind::object& script_attachment::GetUserdata() const
 {
 	if (!m_userdata)
 	{
-		const_cast<::luabind::object*>(m_userdata) = xr_new<::luabind::object>();
+		m_userdata = xr_new<::luabind::object>();
 		*m_userdata = ::luabind::newtable(ai().script_engine().lua());
 	}
 	return *m_userdata;

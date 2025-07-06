@@ -75,7 +75,7 @@ private:
 	xr_map<shared_str, script_attachment*> m_children;
 	xr_map<u16, script_attachment_bone_cb*> m_bone_callbacks;
 
-	::luabind::object* m_userdata;
+	mutable ::luabind::object* m_userdata;
 
 	u32 m_last_upd_frame;
 
