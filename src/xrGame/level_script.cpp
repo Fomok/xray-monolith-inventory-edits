@@ -1748,10 +1748,10 @@ enum ETraceTarget {
 
 static SPickParam* get_pick(ETraceTarget tt)
 {
-	R_ASSERT(tt >= 0, tt < TT_MAX);
+	R_ASSERT(tt >= 0 && tt < TT_MAX);
 
 	const attachable_hud_item* item = NULL;
-	switch (tt)
+	switch(tt)
 	{
 	case TT_CAMERA:
 		return &HUD().GetPick();
