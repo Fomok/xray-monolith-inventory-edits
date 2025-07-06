@@ -154,6 +154,7 @@ private:
 
 public:
 	typedef allocator allocator_type;
+	typedef const T& const_reference;
 
 public:
 	xr_vector() : inherited()
