@@ -1325,18 +1325,20 @@ bool CWeaponMagazined::TryPlayAnimBore()
 
 void CWeaponMagazined::PlayAnimIdleSprint()
 {
-	iAmmoElapsed == 0 && HudAnimationExist("anm_idle_sprint_empty")
-		? PlayHUDMotion("anm_idle_sprint_empty", TRUE, NULL, GetState())
-		: inherited::PlayAnimIdleSprint();
+	if(iAmmoElapsed == 0 && HudAnimationExist("anm_idle_sprint_empty"))
+		PlayHUDMotion("anm_idle_sprint_empty", TRUE, NULL, GetState());
+	else
+		inherited::PlayAnimIdleSprint();
 }
 
 void CWeaponMagazined::PlayAnimIdleMoving()
 {
 	bool bAccelerated = isActorAccelerated(Actor()->MovingState(), IsZoomed());
 
-	iAmmoElapsed == 0 && HudAnimationExist("anm_idle_moving_empty")
-		? PlayHUDMotion("anm_idle_moving_empty", TRUE, NULL, GetState(), bAccelerated ? 1.f : .75f)
-		: inherited::PlayAnimIdleMoving();
+	if(iAmmoElapsed == 0 && HudAnimationExist("anm_idle_moving_empty"))
+		PlayHUDMotion("anm_idle_moving_empty", TRUE, NULL, GetState(), bAccelerated ? 1.f : .75f);
+	else
+		inherited::PlayAnimIdleMoving();
 }
 
 bool CWeaponMagazined::PlayAnimCrouchIdleMoving()
