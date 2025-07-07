@@ -86,7 +86,6 @@
     },
     {
       "name": "System.GNU",
-      "hidden": true,
       "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
@@ -96,7 +95,6 @@
     },
     {
       "name": "System.GNU.AVX",
-      "hidden": true,
       "inherits": "System.GNU",
       "cacheVariables": {
         "XRAY_AVX": true

@@ -1,0 +1,25 @@
+inputs:
+  toolchain:
+    required: true
+  target:
+    required: true
+  avx:
+    required: true
+  build-preset:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/upload-artifact@v4.6.0
+      env:
+        toolchain: ${{inputs.toolchain}}${{env.avx-segment}}
+        target: ${{inputs.target}}
+        build-preset: ${{inputs.build-preset}}
+        avx-name: ${{inputs.avx && 'AVX' || ''}}
+        avx-segment: ${{inputs.avx && '.AVX' || ''}}
+      with:
+        name: ${{env.targets}}${{env.avx-segment}}
+        path: ./_build/${{env.toolchain}}/Binaries/${{env.build-preset}}/${{env.target}}${{env.avx-name}}.exe
+        if-no-files-found: "error"
+        retention-days: 1

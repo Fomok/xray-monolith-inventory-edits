@@ -2,12 +2,12 @@ include_guard()
 
 # Add an XRay.Engine PDB target with the given name
 function(add_engine_pdb_target NAME)
-  if(MSVC)
-    set(PDB_ZIP ${NAME}_pdb.zip)
-    add_custom_target(${NAME}-PDB)
+  if(NOT CMAKE_CXX_COMPILER_ID MATCHES GNU)
+    set(PDB_ZIP ${NAME}.PDB.zip)
+    add_custom_target(${NAME}.PDB)
 
-    target_folder(${NAME}-PDB ${FOLDER_CI})
-    target_sources(${NAME}-PDB PRIVATE ${PDB_ZIP})
+    target_folder(${NAME}.PDB ${FOLDER_CI})
+    target_sources(${NAME}.PDB PRIVATE ${PDB_ZIP})
 
     add_custom_command(
         OUTPUT ${PDB_ZIP}
@@ -17,7 +17,7 @@ function(add_engine_pdb_target NAME)
         VERBATIM
     )
 
-    add_dependencies(${NAME}-PDB ${NAME})
+    add_dependencies(${NAME}.PDB ${NAME})
   endif()
 endfunction()
 

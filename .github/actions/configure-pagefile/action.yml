@@ -1,0 +1,6 @@
+runs:
+  using: composite
+  steps:
+    - uses: al-cheb/configure-pagefile-action@v1.3
+      with:
+        disk-root: "C:"
