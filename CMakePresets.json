@@ -71,11 +71,33 @@
     {
       "name": "System.Clang",
       "inherits": "Base",
-      "generator": "Ninja Multi-Config"
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_COMPILER": "clang"
+      }
     },
     {
       "name": "System.Clang.AVX",
       "inherits": "System.Clang",
+      "cacheVariables": {
+        "XRAY_AVX": true
+      }
+    },
+    {
+      "name": "System.GNU",
+      "hidden": true,
+      "inherits": "Base",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_C_COMPILER": "gcc"
+      }
+    },
+    {
+      "name": "System.GNU.AVX",
+      "hidden": true,
+      "inherits": "System.GNU",
       "cacheVariables": {
         "XRAY_AVX": true
       }
@@ -353,6 +375,68 @@
       "name": "System.Clang.AVX.RelWithDebInfo",
       "displayName": "RelWithDebInfo",
       "configurePreset": "System.Clang.AVX",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "System.GNU.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "System.GNU.Verified",
+      "displayName": "Verified",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "System.GNU.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "System.GNU.Release",
+      "displayName": "Release",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "System.GNU.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "System.GNU.AVX.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "System.GNU.AVX.Verified",
+      "displayName": "Verified",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "System.GNU.AVX.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "System.GNU.AVX.Release",
+      "displayName": "Release",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "System.GNU.AVX.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "System.GNU.AVX",
       "inherits": "Base.RelWithDebInfo"
     }
   ]
