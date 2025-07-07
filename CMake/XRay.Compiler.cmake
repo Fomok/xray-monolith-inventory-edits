@@ -20,7 +20,6 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES Clang)
   include(XRay.Compiler.Clang)
 else()
   include(XRay.Compiler.Unsupported)
-  message(FATAL_ERROR "Unsupported compiler")
 endif()
 
 # Normalize existing compiler flags
