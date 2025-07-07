@@ -117,7 +117,7 @@ DECLARE_SCRIPT_REGISTER_FUNCTION
 			class_<type>(name_str)\
 				.def(						constructor<>())\
 				.def(						constructor<type::lua_object_type, type::lua_function_type>())\
-				.def("bind",				&type::bind)\
+				.def("bind",				(void (type::*)(type::lua_object_type, type::lua_function_type))(&type::bind))\
 				.def("clear",				&type::clear)\
 		];\
 	};
