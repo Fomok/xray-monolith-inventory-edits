@@ -31,15 +31,10 @@ class engine_impl;
 
 #pragma pack(push,4)
 
-class IRenderDevice
-{
-public:
-	virtual CStatsPhysics* _BCL StatPhysics() = 0;
-	virtual void _BCL AddSeqFrame(pureFrame* f, bool mt) = 0;
-	virtual void _BCL RemoveSeqFrame(pureFrame* f) = 0;
-};
 
-class ENGINE_API CRenderDeviceData
+#pragma pack(pop)
+// refs
+class ENGINE_API CRenderDevice
 {
 public:
 	u32 dwWidth;
@@ -110,19 +105,7 @@ public:
 
 	HWND m_hWnd;
 	// CStats* Statistic;
-};
 
-class ENGINE_API CRenderDeviceBase :
-	public IRenderDevice,
-	public CRenderDeviceData
-{
-public:
-};
-
-#pragma pack(pop)
-// refs
-class ENGINE_API CRenderDevice : public CRenderDeviceBase
-{
 public:
 	class ENGINE_API CSecondVPParams //--#SM+#-- +SecondVP+
 	{
@@ -431,6 +414,8 @@ public:
 
 private:
 	void message_loop();
+
+public:
 	virtual void _BCL AddSeqFrame(pureFrame* f, bool mt);
 	virtual void _BCL RemoveSeqFrame(pureFrame* f);
 	virtual CStatsPhysics* _BCL StatPhysics() { return Statistic; }

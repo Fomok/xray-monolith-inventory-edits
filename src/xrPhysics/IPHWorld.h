@@ -48,9 +48,9 @@ public:
 extern "C" XRPHYSICS_API IPHWorld* __stdcall physics_world();
 class CObjectSpace;
 class CObjectList;
-class CRenderDeviceBase;
+class CRenderDevice;
 extern "C" XRPHYSICS_API void __stdcall create_physics_world(bool mt, CObjectSpace* os, CObjectList* lo,
-                                                             CRenderDeviceBase* dv);
+                                                             CRenderDevice* dv);
 extern "C" XRPHYSICS_API void __stdcall destroy_physics_world();
 class CGameMtlLibrary;
 extern "C" XRPHYSICS_API void __stdcall set_mtl_lib(CGameMtlLibrary* l);

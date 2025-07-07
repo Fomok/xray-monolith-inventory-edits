@@ -44,7 +44,7 @@ IPHWorld* __stdcall physics_world()
 	return ph_world;
 }
 
-void __stdcall create_physics_world(bool mt, CObjectSpace* os, CObjectList* lo, CRenderDeviceBase* dv)
+void __stdcall create_physics_world(bool mt, CObjectSpace* os, CObjectList* lo, CRenderDevice* dv)
 //IPHWorldUpdateCallbck &commander, 
 {
 	ph_world = xr_new<CPHWorld>(); //&commander
@@ -182,7 +182,7 @@ void CPHWorld::SetStep(float s)
 	}
 }
 
-void CPHWorld::Create(bool mt, CObjectSpace* os, CObjectList* lo, CRenderDeviceBase* dv)
+void CPHWorld::Create(bool mt, CObjectSpace* os, CObjectList* lo, CRenderDevice* dv)
 {
 	LoadParams();
 	dWorldID phWorld = 0;
@@ -280,7 +280,7 @@ void CPHWorld::SetGravity(float g)
 void CPHWorld::OnFrame()
 {
 	// Msg									("------------- physics: %d / %d",u32(Device.dwFrame),u32(m_steps_num));
-	//просчитать полет пуль
+	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
 	/*
 	Device.Statistic->TEST0.Begin		();
 	Level().BulletManager().Update		();

@@ -61,7 +61,7 @@ class CPHWorld : public pureFrame,
 	IPHWorldUpdateCallbck* m_update_callback;
 	CObjectSpace* m_object_space;
 	CObjectList* m_level_objects;
-	CRenderDeviceBase* m_device; ;
+	CRenderDevice* m_device;
 public:
 	xr_vector<ISpatial*> r_spatial;
 public:
@@ -90,7 +90,7 @@ public:
 
 	//IC	dSpaceID					GetSpace						()			{return Space;}	;
 	IC bool Exist() { return b_exist; }
-	void Create(bool mt, CObjectSpace* os, CObjectList* lo, CRenderDeviceBase* dv);
+	void Create(bool mt, CObjectSpace* os, CObjectList* lo, CRenderDevice* dv);
 	void SetGravity(float g);
 	IC float Gravity() { return m_gravity; }
 	void AddObject(CPHObject* object);
@@ -141,7 +141,7 @@ public:
 		return *m_level_objects;
 	}
 
-	CRenderDeviceBase& Device()
+	CRenderDevice& Device()
 	{
 		VERIFY(m_device);
 		return *m_device;
