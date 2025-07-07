@@ -36,7 +36,19 @@ function(add_engine_target NAME)
     PROPERTIES OUTPUT_NAME
     ${${NAME}_NAME_OUTPUT}
   )
+  
+  # Apply artifact output directories
+  set_target_properties(${NAME}
+    PROPERTIES
+    ARCHIVE_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    LIBRARY_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    RUNTIME_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    PDB_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+    COMPILE_PDB_OUTPUT_DIRECTORY ${COMPILE_OUTPUT_DIR}
+  )
+
   target_folder(${NAME} ${FOLDER_EXECUTABLES})
+
   target_link_libraries(${NAME}
     PRIVATE
     XRay.Engine.Main
