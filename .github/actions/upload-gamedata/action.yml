@@ -1,15 +1,8 @@
-inputs:
-  config-preset:
-    required: true
-  packed-gamedata:
-    required: true
-
 runs:
   using: composite
   steps:
-    - uses: actions/upload-artifact@v4.6.0
+    - name: Upload Gamedata
+      uses: ./.github/actions/upload-artifact
       with:
-        name: ${{env.packed-gamedata}}
-        path: ./_build/${{inputs.config-preset}}/gamedata/${{inputs.packed-gamedata}}
-        if-no-files-found: "error"
-        retention-days: 1
+        directory: gamedata
+        artifact: 00_modded_exes_gamedata.db0

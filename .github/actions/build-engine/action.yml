@@ -1,0 +1,8 @@
+runs:
+    using: composite
+
+    steps:
+    - name: XRay.Engine
+      uses: ./.github/actions/cmake
+      with:
+        target: XRay.Engine

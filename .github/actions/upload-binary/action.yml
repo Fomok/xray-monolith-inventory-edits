@@ -1,10 +1,10 @@
 inputs:
-  configure-preset:
-    required: true
   build-preset:
-    required: true
+    required: false
+    type: string
   target:
-    required: true
+    required: false
+    type: string
 
 runs:
   using: composite
@@ -21,12 +21,12 @@ runs:
           echo "avx-suffix=AVX" >> $GITHUB_ENV
         fi
 
-    - name: Upload PDB
+    - name: Upload Binary
       uses: ./.github/actions/upload-artifact
       env:
         build-preset: ${{inputs.build-preset || env.build-preset}}
         target: ${{inputs.target || env.target}}
       with:
         directory: binaries/${{env.build-preset}}
-        artifact: ${{env.target-short}}${{env.avx-suffix}}.pdb
-        name: ${{env.configure-preset}}.${{env.build-preset}}.${{env.target}}.PDB
+        artifact: ${{env.target-short}}${{env.avx-suffix}}.exe
+        name: ${{env.configure-preset}}.${{env.build-preset}}.${{env.target}}

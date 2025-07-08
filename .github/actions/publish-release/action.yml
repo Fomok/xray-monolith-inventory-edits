@@ -1,0 +1,24 @@
+inputs:
+  name:
+    type: string
+    required: true
+  token:
+    type: string
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - uses: softprops/action-gh-release@v2.3.2
+    with:
+      files: |
+        *.zip
+        pdb/*.zip
+      tag_name: ${{inputs.name}}
+      generate_release_notes: true
+      token: ${{inputs.token}}
+    
+  - name: Remove Artifacts
+    uses: c-hive/gha-remove-artifacts@v1.2.0
+    with:
+      age: "1 second"

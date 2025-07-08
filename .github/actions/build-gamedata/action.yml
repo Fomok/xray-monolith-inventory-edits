@@ -1,0 +1,7 @@
+runs:
+  using: composite
+  steps:
+    - name: Build Gamedata
+      uses: ./.github/actions/cmake
+      with:
+        target: Gamedata

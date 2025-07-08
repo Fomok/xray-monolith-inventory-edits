@@ -1,0 +1,28 @@
+inputs:
+  configure-preset:
+    required: false
+    type: string
+    
+  build-preset:
+    required: false
+    type: string
+
+runs:
+  using: composite
+  steps:
+  - name: Pack PDBs
+    shell: bash
+    run: |
+      mkdir pdb
+      ls
+      targets=(
+        Anomaly.DX8
+        Anomaly.DX9
+        Anomaly.DX10
+        Anomaly.DX11
+      )
+      for target in "${targets[@]}"; do
+        zip pdb/$target.PDB.zip ${{env.configure-preset}}.${{env.build-preset}}.$target.PDB/*.pdb
+        zip pdb/$target.AVX.PDB.zip ${{env.configure-preset}}.AVX.${{env.build-preset}}.$target.PDB/*.pdb
+      done
+      ls pdb

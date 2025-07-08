@@ -261,6 +261,17 @@ Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_
 6. Click `Generate`
 7. Click `Open Project`, or follow the instructions for your generator of choice
 
+#### Visual Studio Code
+1. Open VS Code
+2. Install the `C/C++ Extension Pack` from the `Extensions` tab
+   - Sets up language support, CMake support, themes
+3. `File` -> `Open Folder...`
+4. Select your `xray-monolith` directory
+5. Click the `CMake` tab
+6. Setup configuration and build presets via sidebar
+7. Build / Debug / Launch via sidebar
+   - `Project Outline` -> `Build All Projects` icon to build all targets
+
 #### Visual Studio 2022
 1. Open VS2022
 2. Select `Open a local folder`
@@ -272,16 +283,22 @@ Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_
 8. `Anomaly Project` -> `Targets` -> Right Click -> `Set as startup item` / `Build` / `Debug` / `Launch`
    - Right click `Anomaly Project` -> `Build All` to build all targets
 
-#### Visual Studio Code
-1. Open VS Code
-2. Install the `C/C++ Extension Pack` from the `Extensions` tab
-   - Sets up language support, CMake support, themes
-3. `File` -> `Open Folder...`
-4. Select your `xray-monolith` directory
-5. Click the `CMake` tab
-6. Setup configuration and build presets via sidebar
-7. Build / Debug / Launch via sidebar
-   - `Project Outline` -> `Build All Projects` icon to build all targets
+#### Buildbot
+GitHub Actions is set up to build Anomaly with a suite of compilers each time a commit is pushed.
+
+By default, this targets:
+- MSVC: `MSVS.MSVC.Ninja.AVX`
+- Clang: `System.Clang.AVX`
+
+With the `Verified` build preset, and `Anomaly.DX11` target.
+
+This behaviour can be customized by setting the following variables in your fork's
+`Anomaly.Development` environment via the settings page:
+
+- `CONFIGURE_PRESET_MSVC`
+- `CONFIGURE_PRESET_CLANG`
+- `BUILD_PRESET`
+- `TARGET`
 
 ## Changelog
 **2025.07.01**

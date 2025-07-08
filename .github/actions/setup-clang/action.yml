@@ -1,8 +1,0 @@
-
-runs:
-  using: composite
-  steps:
-    - uses: './.github/actions/configure-pagefile'
-    - uses: KyleMayes/install-llvm-action@v2
-      with:
-        version: "20.1.0"

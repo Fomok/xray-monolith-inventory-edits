@@ -1,0 +1,26 @@
+runs:
+  using: composite
+  steps:
+    - name: Interpolate names
+      shell: bash
+      run: |
+        ARTIFACT_IDS="${{env.packed-gamedata}}"
+        
+        targets=(
+          Anomaly.DX8
+          Anomaly.DX9
+          Anomaly.DX10
+          Anomaly.DX11
+        )
+        for target in "${targets[@]}"; do
+          ARTIFACT_IDS+=",${{env.configure-preset}}.${{env.build-preset}}.$target"
+          ARTIFACT_IDS+=",${{env.configure-preset}}.${{env.build-preset}}.$target.PDB"
+          ARTIFACT_IDS+=",${{env.configure-preset}}.AVX.${{env.build-preset}}.$target"
+          ARTIFACT_IDS+=",${{env.configure-preset}}.AVX.${{env.build-preset}}.$target.PDB"
+        done
+        echo "artifact-ids=$ARTIFACT_IDS" >> $GITHUB_ENV
+
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4.1.8
+      with:
+        artifact-ids: ${{env.artifact-ids}}

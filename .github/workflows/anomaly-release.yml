@@ -1,0 +1,122 @@
+name: Anomaly Release
+
+on:
+  push:
+    branches:
+      - "cmake"
+
+# Cancel previous run if a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: write-all
+
+env:
+  packed-gamedata: 00_modded_exes_gamedata.db0
+
+jobs:
+  anomaly:
+    name: Anomaly
+
+    runs-on: windows-latest
+    environment: Anomaly.Release
+
+    strategy:
+      matrix:
+        configure-preset:
+          - 'MSVS.MSVC.Ninja'
+          - 'MSVS.MSVC.Ninja.AVX'
+          - 'System.Clang'
+          - 'System.Clang.AVX'
+         #- 'System.GNU'
+         #- 'System.GNU.AVX'
+        target:
+          - 'Anomaly.DX8'
+          - 'Anomaly.DX9'
+          - 'Anomaly.DX10'
+          - 'Anomaly.DX11'
+
+    env:
+      configure-preset: ${{matrix.configure-preset}}
+      build-preset: 'RelWithDebInfo'
+      target: ${{matrix.target}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+
+    - name: Build Binary
+      uses: ./.github/actions/cmake
+    
+    - name: Upload Binary
+      uses: ./.github/actions/upload-binary
+    
+    - name: Upload PDB
+      uses: ./.github/actions/upload-pdb
+
+  gamedata:
+    name: Gamedata
+    runs-on: windows-latest
+    environment: Anomaly.Gamedata
+
+    env:
+      configure-preset: 'MSVS.MSVC.Ninja.AVX'
+      build-preset: 'RelWithDebInfo'
+      target: 'Gamedata'
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+    
+    - name: Build Gamedata
+      uses: ./.github/actions/build-gamedata
+    
+    - name: Upload Gamedata
+      uses: ./.github/actions/upload-gamedata
+
+  release:
+    needs: [
+      anomaly,
+      gamedata
+    ]
+    name: Release
+    runs-on: ubuntu-latest
+    env:
+      configure-preset: MSVS.MSVC.Ninja
+      build-preset: RelWithDebInfo
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Get Datetime
+      id: datetime
+      run: echo "::set-output name=today::$(date +'%-Y.%-m.%-d')"
+        
+    # Use the output from the `datetime` step
+    - name: Print Version
+      env:
+        VERSION: "${{steps.datetime.outputs.today}}"
+      run: echo "VERSION ${{steps.datetime.outputs.today}}"
+    
+    - name: Download Artifacts
+      uses: ./.github/actions/download-artifacts
+
+    - name: Pack Binaries
+      uses: ./.github/actions/pack-binaries
+      with:
+        name: STALKER-Anomaly-modded-exes_${{steps.datetime.outputs.today}}
+
+    - name: Pack PDBs
+      uses: ./.github/actions/pack-pdbs
+    
+    - name: Publish
+      uses: ./.github/actions/publish-release
+      with:
+        name: ${{steps.datetime.outputs.today}}
+        token: ${{secrets.GITHUB_TOKEN}}
