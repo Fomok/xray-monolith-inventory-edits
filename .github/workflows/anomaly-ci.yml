@@ -74,6 +74,7 @@ jobs:
         toolchain: ${{env.toolchain}}
         target: AnomalyDX8
         avx: ${{matrix.avx}}
+        build-preset: ${{env.build-preset}}
 
     - name: Pack DX8 PDB
       uses: './.github/actions/pack-pdb'
