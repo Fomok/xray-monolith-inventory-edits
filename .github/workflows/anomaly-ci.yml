@@ -72,7 +72,7 @@ jobs:
       uses: './.github/actions/upload-executable'
       with:
         toolchain: ${{env.toolchain}}
-        target: Anomaly.DX8
+        target: AnomalyDX8
         avx: ${{matrix.avx}}
 
     - name: Pack DX8 PDB
@@ -95,7 +95,7 @@ jobs:
       uses: './.github/actions/upload-executable'
       with:
         toolchain: ${{env.toolchain}}
-        target: Anomaly.DX9
+        target: AnomalyDX9
         avx: ${{matrix.avx}}
         build-preset: ${{env.build-preset}}
 
@@ -119,7 +119,7 @@ jobs:
       uses: './.github/actions/upload-executable'
       with:
         toolchain: ${{env.toolchain}}
-        target: Anomaly.DX10
+        target: AnomalyDX10
         avx: ${{matrix.avx}}
         build-preset: ${{env.build-preset}}
 
@@ -143,7 +143,7 @@ jobs:
       uses: './.github/actions/upload-executable'
       with:
         toolchain: ${{env.toolchain}}
-        target: Anomaly.DX11
+        target: AnomalyDX11
         avx: ${{matrix.avx}}
         build-preset: ${{env.build-preset}}
 
