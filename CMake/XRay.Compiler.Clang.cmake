@@ -16,15 +16,7 @@ set(XRAY_COMPILER_FLAGS
   -Wuninitialized
 )
 
+# Explicitly state when we're compiling for Win32
 if(WIN32)
-  # Explicitly state that we're compiling for Win32
-  set(XRAY_COMPILER_FLAGS "${XRAY_COMPILER_FLAGS};-DWIN32")
+  list(APPEND XRAY_COMPILER_FLAGS -DWIN32)
 endif()
-
-set(XRAY_COMPILER_FLAGS_DEBUG
-  -fexceptions
-)
-
-set(XRAY_COMPILER_FLAGS_RELEASE
-  -fno-exceptions
-)

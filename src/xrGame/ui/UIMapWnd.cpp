@@ -694,9 +694,7 @@ void CUIMapWnd::ActivatePropertiesBox(CUIWindow* w)
 			u32 current_gvid = 0;
 			float dist = FLT_MAX;
 			while (gg.valid_vertex_id(current_gvid)) {
-#ifdef _CPPUNWIND
 				try {
-#endif
 					auto vertex = gg.vertex(current_gvid);
 					if (!vertex) {
 						current_gvid++;
@@ -726,11 +724,9 @@ void CUIMapWnd::ActivatePropertiesBox(CUIWindow* w)
 							}
 						}
 					}
-#ifdef _CPPUNWIND
 				} catch (std::exception& e) {
 					Msg("![UIMapWnd.cpp] _G.COnRightClickMap %s", e.what());
 				}
-#endif
 				current_gvid++;
 			}
 
