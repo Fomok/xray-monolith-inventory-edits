@@ -436,5 +436,5 @@ add_module(XRay.Render.R3
 target_compile_options(XRay.Render.R3
   PRIVATE
   # Increase preallocated stack size by 10%
-  /Zm110
+  $<$<CXX_COMPILER_ID:MSVC>:/Zm110>
 )

@@ -452,3 +452,9 @@ add_module(XRay.Render.R4
   SMAP_Allocator.h
   stdafx.h
 )
+
+target_compile_options(XRay.Render.R4
+  PRIVATE
+  # Increase preallocated stack size by 13%
+  $<$<CXX_COMPILER_ID:MSVC>:/Zm113>
+)
