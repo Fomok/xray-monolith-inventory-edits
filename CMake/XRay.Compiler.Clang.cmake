@@ -9,9 +9,17 @@ set(XRAY_COMPILER_FLAGS
   -Wno-shift-negative-value
   -Wno-address-of-temporary
   -Wno-register
-  
-  -DWIN32
+
+  # Initialize to zero for MSVC equivalence
+  -ftrivial-auto-var-init=zero
+  # ...but warn about it
+  -Wuninitialized
 )
+
+if(WIN32)
+  # Explicitly state that we're compiling for Win32
+  set(XRAY_COMPILER_FLAGS "${XRAY_COMPILER_FLAGS};-DWIN32")
+endif()
 
 set(XRAY_COMPILER_FLAGS_DEBUG
   -fexceptions
