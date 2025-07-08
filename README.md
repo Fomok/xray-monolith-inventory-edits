@@ -191,9 +191,21 @@ For successful compilation, **the latest build tools with MFC and ATL libraries 
 
 #### Configure Presets
 
-`MSVC.MSBuild` - Original MSBuild toolchain. Slow.
+Each configure preset has a `<ConfigurePreset>.AVX` variant for building Anomaly with support for AVX instructions.
 
-`MSVC.Ninja` - New Ninja toolchain. Fast.
+##### Stable
+
+`MSVS.MSVC.MSBuild` - Old Visual C++ MSBuild toolchain. Slow, requires running inside the `vcvarsall.bat` environment, or an IDE with native support for it.
+
+`MSVS.MSVC.Ninja` - New Visual C++ Ninja toolchain. Fast, able to autolocate MSVC build tooling.
+
+##### Experimental
+
+`MSVS.Clang` - Build with Visual Studio's LLVM/Clang compiler. Requires clang support installed via the Visual Studio installer.
+
+`System.Clang` - Build with the LLVM/Clang compiler. Must be available in `PATH`.
+
+`System.GNU` - Build with the GNU Compiler Collection. Must be available in `PATH`.
 
 #### Build Presets
 
@@ -227,7 +239,7 @@ Anomaly executable with corresponding DirectX renderer and AVX instructions
 
 Pack individual executable PDB files into `_build/<ConfigurePreset>/AnomalyDX<VER><AVX>_pdb.zip`
 
-`X-Ray/Gamedata`
+`Gamedata`
 
 Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_exes_gamedata.db0`
 
