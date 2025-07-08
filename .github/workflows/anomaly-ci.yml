@@ -57,9 +57,9 @@ jobs:
 
     - name: Initialize Submodules
       uses: snickerbockers/submodules-init@v4
-
-    - name: Setup MSBuild
-      uses: './.github/actions/setup-msbuild'
+      
+    - name: Setup MSVC / MSBuild
+      uses: './.github/actions/setup-msvc-msbuild'
     
     - name: Build Executables
       uses: './.github/actions/build-executables'
@@ -89,8 +89,8 @@ jobs:
     - name: Initialize Submodules
       uses: snickerbockers/submodules-init@v4
       
-    - name: Setup MSBuild
-      uses: './.github/actions/setup-msbuild'
+    - name: Setup MSVC / Ninja
+      uses: './.github/actions/setup-msvc-ninja'
     
     - name: Build Executables
       uses: './.github/actions/build-executables'
