@@ -34,8 +34,10 @@
 #define restrict
 #endif
 
+#ifndef __clang__
 // Ignore gcc attributes.
 #define __attribute__(X)
+#endif
 
 #if !defined __FUNC__
 #define __FUNC__ __FUNCTION__ 
