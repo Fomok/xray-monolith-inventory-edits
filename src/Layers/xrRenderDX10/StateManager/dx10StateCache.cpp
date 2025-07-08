@@ -148,3 +148,15 @@ dx10StateCache< ID3DxxBlendState , D3D_BLEND_DESC >
 	}
 }
 */
+
+#ifdef USE_DX10
+template class dx10StateCache<ID3D10RasterizerState, D3D10_RASTERIZER_DESC>;
+template class dx10StateCache<ID3D10DepthStencilState, D3D10_DEPTH_STENCIL_DESC>;
+template class dx10StateCache<ID3D10BlendState, D3D10_BLEND_DESC>;
+#endif
+
+#ifdef USE_DX11
+template class dx10StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>;
+template class dx10StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC>;
+template class dx10StateCache<ID3D11BlendState, D3D11_BLEND_DESC>;
+#endif
