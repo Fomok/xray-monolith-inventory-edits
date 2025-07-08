@@ -37,7 +37,38 @@ jobs:
           config-preset: ${{env.default-config-preset}}
           packed-gamedata: ${{env.packed-gamedata}}
   
-  msvc:
+  msvc-msbuild:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        avx:
+          - true
+          - false
+    
+    name: MSVS.MSVC.MSBuild${{matrix.avx && '.AVX' || ''}}
+
+    env:
+      toolchain: MSVS.MSVC.MSBuild
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Initialize Submodules
+      uses: snickerbockers/submodules-init@v4
+
+    - name: Setup MSBuild
+      uses: './.github/actions/setup-msbuild'
+    
+    - name: Build Executables
+      uses: './.github/actions/build-executables'
+      with:
+        toolchain: ${{env.toolchain}}
+        avx: ${{matrix.avx}}
+        build-preset: ${{env.build-preset}}
+  
+  msvc-ninja:
     runs-on: windows-latest
 
     env:
@@ -228,7 +259,7 @@ jobs:
   release:
     needs: [
       pack-gamedata,
-      msvc
+      msvc-ninja
     ]
     name: Release
     runs-on: ubuntu-latest
