@@ -20,6 +20,6 @@ runs:
         avx-segment: ${{inputs.avx && '.AVX' || ''}}
       with:
         name: ${{env.targets}}${{env.avx-segment}}
-        path: ./_build/${{env.toolchain}}/Binaries/${{env.build-preset}}/${{env.target}}${{env.avx-name}}.exe
+        path: ${{github.workspace}}/_build/${{env.toolchain}}/Binaries/${{env.build-preset}}/${{env.target}}${{env.avx-name}}.exe
         if-no-files-found: "error"
         retention-days: 1
