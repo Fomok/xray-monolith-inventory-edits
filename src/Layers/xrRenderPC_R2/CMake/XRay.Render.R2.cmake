@@ -382,3 +382,15 @@ add_module(XRay.Render.R2
   SMAP_Allocator.h
   stdafx.h
 )
+
+set_source_files_properties(
+  ../xrRender/FLOD.cpp
+  ../xrRender/ResourceManager_Resources.cpp
+  ../xrRender/occRasterizer_core.cpp
+  ../xrRender/r_constants.cpp
+  ../xrRender/ParticleEffectActions.cpp
+  ../xrRender/ParticleEffectDef.cpp
+  ../xrRender/PSLibrary.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)

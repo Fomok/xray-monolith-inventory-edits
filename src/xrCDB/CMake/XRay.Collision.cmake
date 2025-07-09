@@ -27,5 +27,15 @@ add_module(XRay.Collision
   XRay.Render.API
 )
 
+set_source_files_properties(
+  ISpatial_q_frustum.cpp
+  ISpatial_q_ray.cpp
+  ISpatial_verify.cpp
+  OPC_OBBCollider.cpp
+  OPC_TreeCollider.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)
+
 include(XRay.Collision.Engine)
 include(XRay.Collision.Opcode)

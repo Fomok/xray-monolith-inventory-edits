@@ -1023,6 +1023,37 @@ add_module(XRay.Game
   PHSkeleton.h
 )
 
+set_source_files_properties(
+  ../xrServerEntities/script_engine_export.cpp
+  ../xrServerEntities/script_storage.cpp
+  ../xrServerEntities/xrServer_Objects_ALife_Items.cpp
+  HUDTarget.cpp
+  ik/limb.cxx
+  ik/mathTrig.cpp
+  raypick.cpp
+  level_script.cpp
+  smart_cover_description.cpp
+  smart_cover_loophole.cpp
+  smart_cover_object.cpp
+  smart_cover_storage.cpp
+  space_restriction_manager.cpp
+  game_state_accumulator_state_register.cpp
+  inventory_quickswitch.cpp
+  SimpleDetector.cpp
+  TeleWhirlwind.cpp
+  ai/monsters/bloodsucker/bloodsucker.cpp
+  ai/monsters/dog/dog_state_manager.cpp
+  PDA.cpp
+  cdkey_ban_list.cpp
+  game_sv_mp.cpp
+  patrol_path.cpp
+  string_table.cpp
+  stalker_animation_script.cpp
+  trade2.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)
+
 include(XRay.Game.AI)
 include(XRay.Game.Physics)
 include(XRay.Game.UI)

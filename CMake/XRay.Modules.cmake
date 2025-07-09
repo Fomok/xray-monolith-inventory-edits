@@ -94,6 +94,13 @@ function(add_module NAME)
   set_target_properties(${NAME}
     PROPERTIES
     FOLDER ${FOLDER}
+    UNITY_BUILD_MODE GROUP
+  )
+
+  set_source_files_properties(
+    ${ARG_SOURCES}
+    PROPERTIES
+    UNITY_GROUP ${NAME}
   )
 
   # Apply artifact output directories
@@ -164,3 +171,7 @@ function(add_module NAME)
     target_link_libraries(${PARENT} ${${PARENT}_TYPE_PRIVATE} ${NAME})
   endif()
 endfunction()
+
+if(CMAKE_UNITY_BUILD)
+  set(UNITY_BUILD_UNIQUE_ID true)
+endif()

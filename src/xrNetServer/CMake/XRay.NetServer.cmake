@@ -32,3 +32,9 @@ add_module(XRay.NetServer
   NET_Shared.h
   stdafx.h
 )
+
+set_source_files_properties(
+  NET_Server.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)

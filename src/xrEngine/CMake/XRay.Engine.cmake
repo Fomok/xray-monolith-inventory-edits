@@ -105,6 +105,12 @@ add_module(XRay.Engine.TextEditor
   line_edit_control.h
 )
 
+set_source_files_properties(
+  xrTheora_Surface.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)
+
 include(XRay.Engine.Interfaces)
 include(XRay.Engine.Render)
 include(XRay.Engine.Game)

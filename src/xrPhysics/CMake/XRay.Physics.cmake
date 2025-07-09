@@ -344,3 +344,18 @@ add_module(XRay.Physics.DamageReceiver
   collisiondamagereceiver.cpp
   icollisiondamagereceiver.h
 )
+
+set_source_files_properties(
+  CustomRocket.cpp
+  PHContactBodyEffector.cpp
+  PHElement.cpp
+  PHJoint.cpp
+  PHShell.cpp
+  PHActivationShape.cpp
+  PHShellActivate.cpp
+  PHWorld.cpp
+  Physics.cpp
+  ShellHit.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)

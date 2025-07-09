@@ -458,3 +458,14 @@ target_compile_options(XRay.Render.R4
   # Increase preallocated stack size by 13%
   $<$<CXX_COMPILER_ID:MSVC>:/Zm113>
 )
+
+set_source_files_properties(
+  ../xrRender/FLOD.cpp
+  ../xrRender/occRasterizer_core.cpp
+  ../xrRender/r_constants.cpp
+  ../xrRender/ParticleEffectActions.cpp
+  ../xrRender/ParticleEffectDef.cpp
+  ../xrRender/PSLibrary.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)

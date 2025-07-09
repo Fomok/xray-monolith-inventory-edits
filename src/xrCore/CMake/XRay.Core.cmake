@@ -37,6 +37,22 @@ add_module(XRay.Core
   xrCore.rc
 )
 
+set_source_files_properties(
+  lzo_compressor.cpp
+  rt_lzo1x_1.cpp
+  rt_lzo1x_9x.cpp
+  rt_lzo1x_d1.cpp
+  rt_lzo1x_d2.cpp
+  rt_lzo1x_d3.cpp
+  rt_lzo_init.cpp
+  xrCore.cpp
+  blackbox/TLHELPProcessInfo.cpp
+  Xr_ini.cpp
+  patrol_path.cpp
+  PROPERTIES
+  SKIP_UNITY_BUILD_INCLUSION true
+)
+
 include(XRay.Core.Compression.LZ)
 include(XRay.Core.Compression.LZO)
 include(XRay.Core.Compression.PPMD)
