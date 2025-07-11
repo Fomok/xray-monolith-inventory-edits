@@ -6,18 +6,8 @@ add_module(XRay.Game.AI
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
   
   SOURCES
-  ai/monsters/ai_monster_effector.cpp
   ai/trader/trader_animation.cpp
-  ai/weighted_random.cpp
-  ai_obstacle.cpp
-  AI_PhraseDialogManager.cpp
-
-  ai/monsters/ai_monster_effector.h
   ai/trader/trader_animation.h
-  ai/weighted_random.h
-  ai_obstacle.h
-  ai_obstacle_inline.h
-  AI_PhraseDialogManager.h
   
   mt_config.h
 )

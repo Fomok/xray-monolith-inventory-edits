@@ -27,6 +27,7 @@ add_module(XRay.Game.AI.Group.Agent.Enemy
   
   agent_enemy_manager.cpp
   agent_enemy_manager.h
+  agent_enemy_manager_inline.h
 )
 
 add_module(XRay.Game.AI.Group.Agent.Explosive

@@ -2,22 +2,11 @@ add_module(XRay.Game.AI.Script.UNORGANIZED
   TYPE STATIC
   
   SOURCES
-  script_wallmarks_manager.cpp
-  script_wallmarks_script.cpp
-  script_zone.cpp
-  script_zone_script.cpp
   script_imgui_script.cpp
-  script_light_script.cpp
-  script_attachment_manager.cpp
   script_attachment_script.cpp
 
-  script_wallmarks_manager.h
-  script_zone.h
   script_imgui.h
   script_imgui_inline.h
-  script_light_inline.h
-  script_light.h
-  script_attachment_manager.h
 )
 
 add_module(XRay.Game.AI.Script
@@ -41,6 +30,7 @@ add_module(XRay.Game.AI.Script.Classes
 
 add_module(XRay.Game.AI.Script.Classes.BaseClient
   SOURCES
+  base_client_classes_script.cpp
   base_client_classes.h
   base_client_classes_wrappers.h
 )

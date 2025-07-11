@@ -23,7 +23,6 @@ add_module(XRay.Render.Common
   ConsoleRender.h
   DebugRender.h
   DebugShader.h
-  DrawUtils.h
   EnvironmentRender.h
   FactoryPtr.h
   FontRender.h

@@ -72,6 +72,17 @@ add_module(XRay.Game.AI.Components.Action.Planner.Action.Wrapper
   script_action_planner_action_wrapper_inline.h
 )
 
+add_module(XRay.Game.AI.Components.DecisionManagement
+  SOURCES
+  wrapper_abstract.h
+  wrapper_abstract_inline.h
+)
+
+add_module(XRay.Game.AI.Components.DecisionManagement.ActionManagement
+  SOURCES
+  action_management_config.h
+)
+
 add_module(XRay.Game.AI.Components.PropertyStorage
   SOURCES
   property_storage_script.cpp
@@ -97,28 +108,10 @@ add_module(XRay.Game.AI.Components.WorldPropertyEvaluator.ScriptPropertyEvaluato
   script_property_evaluator_wrapper_inline.h
 )
 
-add_module(XRay.Game.AI.Components.Danger
+add_module(XRay.Game.AI.Components.Object
   SOURCES
-  danger_manager.cpp
-  danger_object.cpp
-
-  danger_manager.h
-  danger_manager_inline.h
-  danger_object.h
-  danger_object_inline.h
-)
-
-add_module(XRay.Game.AI.Components.Enemy
-  SOURCES
-  enemy_manager.cpp
-  enemy_manager.h
-  enemy_manager_inline.h
-)
-
-add_module(XRay.Game.AI.Components.Item
-  SOURCES
-  item_manager.cpp
-  item_manager.h
+  object_manager.h
+  object_manager_inline.h
 )
 
 add_module(XRay.Game.AI.Components.Doors
@@ -126,6 +119,7 @@ add_module(XRay.Game.AI.Components.Doors
   doors_actor.cpp
   doors_door.cpp
   doors_manager.cpp
+  doors.h
   doors_actor.h
   doors_door.h
   doors_manager.h
@@ -149,14 +143,47 @@ add_module(XRay.Game.AI.Components.Memory
   memory_space_impl.h
 )
 
-add_module(XRay.Game.AI.Components.Memory.Hit
+add_module(XRay.Game.AI.Components.Memory.Clusterized.Danger
+  SOURCES
+  danger_manager.cpp
+  danger_manager.h
+  danger_manager_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Memory.Clusterized.Danger.Object
+  SOURCES
+  danger_object.cpp
+  danger_object.h
+  danger_object_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Memory.Clusterized.Enemy
+  SOURCES
+  enemy_manager.cpp
+  enemy_manager.h
+  enemy_manager_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Memory.Clusterized.Item
+  SOURCES
+  item_manager.cpp
+  item_manager.h
+)
+
+add_module(XRay.Game.AI.Components.Memory.Clusterized.Object
+  SOURCES
+  object_manager.h
+  object_manager_inline.h
+)
+
+add_module(XRay.Game.AI.Components.Memory.Raw.Hit
   SOURCES
   hit_memory_manager.cpp
   hit_memory_manager.h
   hit_memory_manager_inline.h
 )
 
-add_module(XRay.Game.AI.Components.Memory.Sound
+add_module(XRay.Game.AI.Components.Memory.Raw.Sound
   SOURCES
   sound_memory_manager.cpp
   sound_memory_manager.h
@@ -164,7 +191,7 @@ add_module(XRay.Game.AI.Components.Memory.Sound
   sound_user_data_visitor.h
 )
 
-add_module(XRay.Game.AI.Components.Memory.Visual
+add_module(XRay.Game.AI.Components.Memory.Raw.Visual
   SOURCES
   vision_client.cpp
   vision_client.h
@@ -208,6 +235,7 @@ add_module(XRay.Game.AI.Components.Movement
   level_path_manager.h
   level_path_manager_inline.h
 
+  patrol_path_manager.cpp
   patrol_path_manager.h
   patrol_path_manager_inline.h
   patrol_path_manager_space.h
@@ -240,6 +268,13 @@ add_module(XRay.Game.AI.Components.MovingObjects
   moving_objects_impl.h
   moving_objects_inline.h
   moving_object_inline.h
+)
+
+add_module(XRay.Game.AI.Components.MovingObjects.ObstaclesQuery
+  SOURCES
+  obstacles_query.cpp
+  obstacles_query.h
+  obstacles_query_inline.h
 )
 
 add_module(XRay.Game.AI.Components.ProblemSolver

@@ -7,9 +7,6 @@ add_module(XRay.Game.UI
 
   UIDosimeter.cpp
   UIDosimeter.h
-
-  ui/ArtefactDetectorUI.cpp
-  ui/ArtefactDetectorUI.h
   
   ui_base.cpp
   ui_base.h
@@ -298,6 +295,9 @@ add_module(XRay.Game.UI.HUD
   SOURCES
   HitMarker.cpp
   HitMarker.h
+  
+  HUDManager.cpp
+  HUDManager.h
 )
 
 add_module(XRay.Game.UI.Multiplayer.Achievements

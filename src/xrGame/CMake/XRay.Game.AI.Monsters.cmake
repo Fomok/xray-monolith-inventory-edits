@@ -684,6 +684,12 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Anomaly
   stalker_anomaly_planner.h
 )
 
+add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat
+  SOURCES
+  stalker_combat_planner.cpp
+  stalker_combat_planner.h
+)
+
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Combat.Actions
   SOURCES
   stalker_combat_action_base.cpp
@@ -761,6 +767,12 @@ add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.InDi
 
   stalker_danger_in_direction_planner.cpp
   stalker_danger_in_direction_planner.h
+)
+
+add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.Properties
+  SOURCES
+  stalker_danger_property_evaluators.cpp
+  stalker_danger_property_evaluators.h
 )
 
 add_module(XRay.Game.AI.Monsters.Human.Stalker.DecisionMaker.Actions.Danger.Unknown
@@ -1037,6 +1049,7 @@ add_module(XRay.Game.AI.Monsters.Controller
   ai/monsters/controller/controller_state_control_hit_inline.h
   ai/monsters/controller/controller_state_manager.h
   ai/monsters/controller/controller_state_panic.h
+  controller_state_panic_inline.h
   ai/monsters/controller/controller_tube.h
   ai/monsters/controller/controller_tube_inline.h
 )
@@ -1150,6 +1163,26 @@ add_module(XRay.Game.AI.Monsters.Rat
   ai/monsters/rats/ai_rat_impl.h
   ai/monsters/rats/ai_rat_inline.h
   ai/monsters/rats/ai_rat_space.h
+)
+
+add_module(XRay.Game.AI.Monsters.Rat.StateManager
+  SOURCES
+  rat_state_manager.cpp
+  rat_state_manager.h
+  rat_state_manager_inline.h
+)
+
+add_module(XRay.Game.AI.Monsters.Rat.States
+  SOURCES
+  rat_states.cpp
+  rat_states.h
+)
+
+add_module(XRay.Game.AI.Monsters.Rat.States.Base
+  SOURCES
+  rat_state_base.cpp
+  rat_state_base.h
+  rat_state_base_inline.h
 )
 
 add_module(XRay.Game.AI.Monsters.Snork
