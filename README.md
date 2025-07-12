@@ -183,8 +183,7 @@ The original engine is used in S.T.A.L.K.E.R. Call of Pripyat game released by G
 
 1. Fork this xray-monolith
 2. Clone the fork onto your pc
-3. Run `git submodule init --recursive` to pull git submodules
-4. Select `all-in-one-vs2022-wpo` branch
+3. Select `cmake` branch
 
 ### Build
 

@@ -14,6 +14,8 @@ endif()
 
 include(Today)
 
+include(XRay.Git)
+
 # Define project
 project(
   Anomaly
