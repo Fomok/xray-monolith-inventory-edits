@@ -14,7 +14,6 @@ runs:
     shell: bash
     run: |
       mkdir pdb
-      ls
       targets=(
         Anomaly.DX8
         Anomaly.DX9
@@ -25,4 +24,3 @@ runs:
         zip pdb/$target.PDB.zip ${{env.configure-preset}}.${{env.build-preset}}.$target.PDB/*.pdb
         zip pdb/$target.AVX.PDB.zip ${{env.configure-preset}}.AVX.${{env.build-preset}}.$target.PDB/*.pdb
       done
-      ls pdb
