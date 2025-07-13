@@ -1,4 +1,4 @@
-name: Anomaly Development
+name: Development
 
 on:
   push:

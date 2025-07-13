@@ -1,4 +1,4 @@
-name: Anomaly Release
+name: Release
 
 on:
   push:
