@@ -143,7 +143,6 @@ add_module(XRay.Game.Core.Server.Games.Client.MP.AwardSystem
   rewarding_state_events.cpp
   rewarding_state_events.h
 
-  state_arguments_functions.cpp
   state_arguments_functions.h
 )
 
