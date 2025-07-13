@@ -13,16 +13,29 @@ concurrency:
 permissions: write-all
 
 jobs:
-  msvc:
-    name: MSVC
-
+  anomaly:
+    name: Anomaly
     runs-on: windows-latest
     environment: Anomaly.Development
-
-    env:
-      configure-preset: ${{vars.CONFIGURE_PRESET_MSVC || 'MSVS.MSVC.Ninja.AVX'}}
+    steps:
+      - run: echo "Building Anomaly"
+    outputs:
+      configure-preset-msvc: ${{vars.CONFIGURE_PRESET_MSVC || 'MSVS.MSVC.Ninja.AVX'}}
+      configure-preset-clang: ${{vars.CONFIGURE_PRESET_CLANG || 'System.Clang'}}
+      configure-preset-gnu: ${{vars.CONFIGURE_PRESET_GNU || 'System.GNU'}}
       build-preset: ${{vars.BUILD_PRESET || 'Verified'}}
       target: ${{vars.TARGET || 'Anomaly.DX11'}}
+
+  msvc:
+    name: MSVC
+    needs: anomaly
+
+    runs-on: windows-latest
+
+    env:
+      configure-preset: ${{needs.anomaly.outputs.configure-preset-msvc}}
+      build-preset: ${{needs.anomaly.outputs.build-preset}}
+      target: ${{needs.anomaly.outputs.target}}
 
     steps:
     - name: Checkout
@@ -42,14 +55,14 @@ jobs:
 
   clang:
     name: Clang
+    needs: anomaly
 
     runs-on: windows-latest
-    environment: Anomaly.Development
 
     env:
-      configure-preset: ${{vars.CONFIGURE_PRESET_CLANG || 'System.Clang.AVX'}}
-      build-preset: ${{vars.BUILD_PRESET || 'Verified'}}
-      target: ${{vars.TARGET || 'Anomaly.DX11'}}
+      configure-preset: ${{needs.anomaly.outputs.configure-preset-clang}}
+      build-preset: ${{needs.anomaly.outputs.build-preset}}
+      target: ${{needs.anomaly.outputs.target}}
 
     steps:
     - name: Checkout
@@ -69,16 +82,16 @@ jobs:
 
   gnu:
     name: GNU
+    needs: anomaly
 
     runs-on: windows-latest
-    environment: Anomaly.Development
 
     if: false
 
     env:
-      configure-preset: ${{vars.CONFIGURE_PRESET_GNU || 'System.GNU.AVX'}}
-      build-preset: ${{vars.BUILD_PRESET || 'Verified'}}
-      target: ${{vars.TARGET || 'Anomaly.DX11'}}
+      configure-preset: ${{needs.anomaly.outputs.configure-preset-gnu}}
+      build-preset: ${{needs.anomaly.outputs.build-preset}}
+      target: ${{needs.anomaly.outputs.target}}
 
     steps:
     - name: Checkout
@@ -98,8 +111,8 @@ jobs:
 
   gamedata:
     name: Gamedata
+    needs: anomaly
     runs-on: windows-latest
-    environment: Anomaly.Gamedata
 
     env:
       configure-preset: 'MSVS.MSVC.Ninja.AVX'

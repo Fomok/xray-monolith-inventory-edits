@@ -12,13 +12,20 @@ permissions: write-all
 
 env:
   packed-gamedata: 00_modded_exes_gamedata.db0
-    
+
 jobs:
   anomaly:
     name: Anomaly
-
     runs-on: windows-latest
     environment: Anomaly.PullRequest
+    steps:
+      - run: echo "Building Anomaly"
+
+  binaries:
+    name: Binaries
+
+    runs-on: windows-latest
+    needs: anomaly
 
     strategy:
       matrix:
@@ -58,8 +65,9 @@ jobs:
 
   gamedata:
     name: Gamedata
+    needs: anomaly
+    
     runs-on: windows-latest
-    environment: Anomaly.Gamedata
 
     env:
       configure-preset: 'MSVS.MSVC.Ninja.AVX'

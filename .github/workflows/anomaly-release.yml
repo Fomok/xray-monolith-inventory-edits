@@ -18,9 +18,16 @@ env:
 jobs:
   anomaly:
     name: Anomaly
-
     runs-on: windows-latest
     environment: Anomaly.Release
+    steps:
+      - run: echo "Building Anomaly"
+
+  binaries:
+    name: Binaries
+    needs: anomaly
+
+    runs-on: windows-latest
 
     strategy:
       matrix:
@@ -60,8 +67,8 @@ jobs:
 
   gamedata:
     name: Gamedata
+    needs: anomaly
     runs-on: windows-latest
-    environment: Anomaly.Gamedata
 
     env:
       configure-preset: 'MSVS.MSVC.Ninja.AVX'
@@ -83,7 +90,7 @@ jobs:
 
   release:
     needs: [
-      anomaly,
+      binaries,
       gamedata
     ]
     name: Release
