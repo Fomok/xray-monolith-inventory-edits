@@ -18,7 +18,7 @@ jobs:
     name: Anomaly
 
     runs-on: windows-latest
-    environment: Anomaly.Release
+    environment: Anomaly.PullRequest
 
     strategy:
       matrix:
