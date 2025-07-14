@@ -18,7 +18,7 @@ class dx10ConstantBuffer;
 class ECORE_API CResourceManager
 {
 private:
-	struct str_pred : public std::function<bool(char*, char*)>
+	struct str_pred
 	{
 		IC bool operator()(LPCSTR x, LPCSTR y) const
 		{

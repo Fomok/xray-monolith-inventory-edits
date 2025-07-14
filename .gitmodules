@@ -2,5 +2,5 @@
 	path = src/3rd party/optick-git
 	url = https://github.com/bombomby/optick.git
 [submodule "extern/WindowsToolchain"]
-	path = cmake/WindowsToolchain
+	path = CMake/WindowsToolchain
 	url = https://github.com/MarkSchofield/WindowsToolchain.git

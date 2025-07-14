@@ -18,7 +18,7 @@ class ECORE_API CModelPool
 private:
 	friend class CRender;
 
-	struct str_pred : public std::function<bool(const shared_str&, const shared_str&)>
+	struct str_pred
 	{
 		IC bool operator()(const shared_str& x, const shared_str& y) const
 		{

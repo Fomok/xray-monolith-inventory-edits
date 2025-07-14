@@ -12,8 +12,8 @@
 	template <\
 		typename _path_id_type,\
 		typename _index_type,\
-		u32		 hash_size,\
-		u32		 fix_size\
+		unsigned long hash_size,\
+		unsigned long fix_size\
 	>\
 	template <\
 		template <typename _T> class _vertex,\
@@ -78,7 +78,7 @@ IC void CHashFixedVertexManager::add_closed(CGraphVertex& vertex)
 }
 
 TEMPLATE_SPECIALIZATION
-IC typename CHashFixedVertexManager::_path_id_type CHashFixedVertexManager::current_path_id() const
+IC _path_id_type CHashFixedVertexManager::current_path_id() const
 {
 	return (m_current_path_id);
 }
@@ -129,7 +129,7 @@ IC typename CHashFixedVertexManager::CGraphVertex&CHashFixedVertexManager::get_n
 }
 
 TEMPLATE_SPECIALIZATION
-IC typename CHashFixedVertexManager::CGraphVertex&CHashFixedVertexManager::create_vertex(
+IC typename CHashFixedVertexManager::CGraphVertex& CHashFixedVertexManager::create_vertex(
 	CGraphVertex& vertex, const _index_type& vertex_id)
 {
 	// allocating new index node
@@ -154,7 +154,7 @@ IC typename CHashFixedVertexManager::CGraphVertex&CHashFixedVertexManager::creat
 	index_vertex->m_path_id = current_path_id();
 	vertex.index() = vertex_id;
 
-	u32 index = hash_index(vertex_id);
+	unsigned long index = CHashFixedVertexManager::hash_index(vertex_id);
 	CGraphIndexVertex* _vertex = m_hash[index];
 	if (!_vertex || (_vertex->m_path_id != current_path_id()) || (_vertex->m_hash != index))
 		_vertex = 0;

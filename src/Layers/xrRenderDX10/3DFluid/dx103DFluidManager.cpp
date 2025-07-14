@@ -78,7 +78,10 @@ dx103DFluidManager::dx103DFluidManager()
 	  m_fDecay(1.0f), m_pGrid(0), m_pRenderer(0),
 	  m_pObstaclesHandler(0)
 {
-	ZeroMemory(pRenderTargetViews, sizeof(pRenderTargetViews));
+	if(mem_initialized)
+		ZeroMemory(pRenderTargetViews, sizeof(pRenderTargetViews));
+	else
+		memset(pRenderTargetViews, 0, sizeof(pRenderTargetViews));
 
 	//RenderTargetFormats [RENDER_TARGET_VELOCITY0]	= DXGI_FORMAT_R16G16B16A16_FLOAT;
 	RenderTargetFormats[RENDER_TARGET_VELOCITY1] = DXGI_FORMAT_R16G16B16A16_FLOAT;

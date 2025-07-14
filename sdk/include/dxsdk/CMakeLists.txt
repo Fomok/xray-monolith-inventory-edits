@@ -1,10 +1,5 @@
 add_library(dxsdk INTERFACE)
-
-set_property(
-  TARGET dxsdk
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(dxsdk ${FOLDER_SDK})
 
 target_sources(dxsdk
   PRIVATE

@@ -173,7 +173,11 @@ namespace dx10StateUtils
 
 	void ResetDescription(D3D_RASTERIZER_DESC& desc)
 	{
-		ZeroMemory(&desc, sizeof(desc));
+		if (mem_initialized)
+			ZeroMemory(&desc, sizeof(desc));
+		else
+			memset(&desc, 0, sizeof(desc));
+
 		desc.FillMode = D3D_FILL_SOLID;
 		desc.CullMode = D3D_CULL_BACK;
 		desc.FrontCounterClockwise = FALSE;
@@ -191,7 +195,11 @@ namespace dx10StateUtils
 
 	void ResetDescription(D3D_DEPTH_STENCIL_DESC& desc)
 	{
-		ZeroMemory(&desc, sizeof(desc));
+		if(mem_initialized)
+			ZeroMemory(&desc, sizeof(desc));
+		else
+			memset(&desc, 0, sizeof(desc));
+		
 		desc.DepthEnable = TRUE;
 		desc.DepthWriteMask = D3D_DEPTH_WRITE_MASK_ALL;
 		desc.DepthFunc = D3D_COMPARISON_LESS;
@@ -221,7 +229,10 @@ namespace dx10StateUtils
 #ifdef USE_DX11
 	void ResetDescription(D3D_BLEND_DESC& desc)
 	{
-		ZeroMemory(&desc, sizeof(desc));
+		if(mem_initialized)
+			ZeroMemory(&desc, sizeof(desc));
+		else
+			memset(&desc, 0, sizeof(desc));
 
 		desc.AlphaToCoverageEnable = FALSE;
 		desc.IndependentBlendEnable = FALSE;
@@ -241,7 +252,10 @@ namespace dx10StateUtils
 #else
 	void ResetDescription(D3D_BLEND_DESC& desc)
 	{
-		ZeroMemory(&desc, sizeof(desc));
+		if(mem_initialized)
+			ZeroMemory(&desc, sizeof(desc));
+		else
+			memset(&desc, 0, sizeof(desc));
 
 		desc.AlphaToCoverageEnable = FALSE;
 		desc.SrcBlend = D3D_BLEND_ONE;

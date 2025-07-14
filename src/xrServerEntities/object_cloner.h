@@ -22,7 +22,8 @@ struct CCloner
 		template <>
 		IC static void clone<true>(const T& _1, T& _2)
 		{
-			_2 = xr_new<object_type_traits::remove_pointer<T>::type>(*_1);
+			typedef typename object_type_traits::remove_pointer<T>::type type;
+			_2 = xr_new<type>(*_1);
 			CCloner::clone(*_1, *_2);
 		}
 	};
@@ -168,7 +169,7 @@ struct CCloner
 		template <bool a>
 		IC static void clone(const T& _1, T& _2)
 		{
-			CHelper<T>::clone < object_type_traits::is_pointer<T>::value > (_1, _2);
+			CHelper<T>::template clone<object_type_traits::is_pointer<T>::value>(_1, _2);
 		}
 
 		template <>
@@ -181,7 +182,7 @@ struct CCloner
 	template <typename T>
 	IC static void clone(const T& _1, T& _2)
 	{
-		CHelper4<T>::clone < object_type_traits::is_stl_container<T>::value > (_1, _2);
+		CHelper4<T>::template clone<object_type_traits::is_stl_container<T>::value>(_1, _2);
 	}
 };
 

@@ -10,7 +10,7 @@ public:
 	dx10StateCache();
 	~dx10StateCache();
 
-	void ClearStateArray();
+	inline void ClearStateArray();
 
 	IDeviceState* GetState(SimulatorStates& state_code);
 	IDeviceState* GetState(StateDecs& desc);

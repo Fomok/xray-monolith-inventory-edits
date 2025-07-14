@@ -1,0 +1,32 @@
+inputs:
+  configure-preset:
+    required: true
+  build-preset:
+    required: true
+  target:
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Interpolate names
+      shell: bash
+      run: |
+        TARGET_SHORT="${{inputs.target || env.target}}"
+        TARGET_SHORT=${TARGET_SHORT//./}
+        echo "target-short=$TARGET_SHORT" >> $GITHUB_ENV
+        CONFIGURE_PRESET="${{inputs.configure-preset || env.configure-preset}}"
+        if [[ $CONFIGURE_PRESET == *.AVX ]]
+        then
+          echo "avx-suffix=AVX" >> $GITHUB_ENV
+        fi
+
+    - name: Upload PDB
+      uses: ./.github/actions/upload-artifact
+      env:
+        build-preset: ${{inputs.build-preset || env.build-preset}}
+        target: ${{inputs.target || env.target}}
+      with:
+        directory: binaries/${{env.build-preset}}
+        artifact: ${{env.target-short}}${{env.avx-suffix}}.pdb
+        name: ${{env.configure-preset}}.${{env.build-preset}}.${{env.target}}.PDB

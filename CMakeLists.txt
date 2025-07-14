@@ -1,8 +1,11 @@
 # Use minimum VS-supported CMake for broad IDE compatibility
 cmake_minimum_required(VERSION 3.20)
 
-# Update module path
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+message(STATUS "CMake")
+message(STATUS "      Version: ${CMAKE_VERSION}")
+message(STATUS "    Generator: ${CMAKE_GENERATOR}")
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
 # Configure Win32-specific before-project settings
 if (WIN32)
@@ -10,6 +13,8 @@ if (WIN32)
 endif()
 
 include(Today)
+
+include(XRay.Git)
 
 # Define project
 project(
@@ -19,42 +24,32 @@ project(
   LANGUAGES CXX C
 )
 
-# Default generator platform to x64,
-# as CMake doesn't populate it in case of default fallback (ex. via the GUI)
-if(NOT CMAKE_GENERATOR_PLATFORM)
-    set(CMAKE_GENERATOR_PLATFORM x64)
-endif()
+message(STATUS)
+message(STATUS "S.T.A.L.K.E.R. Anomaly")
+message(STATUS "      Version: ${TODAY_DOTS}")
 
-# Setup language standard and enforce it
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+add_custom_target(CMake)
+target_sources(CMake
+  PRIVATE
+  CMake/Today.cmake
+  CMake/XRay.AVX.cmake
+  CMake/XRay.cmake
+  CMake/XRay.Compiler.cmake
+  CMake/XRay.Compiler.Definitions.cmake
+  CMake/XRay.Compiler.MSVC.cmake
+  CMake/XRay.Compiler.Clang.cmake
+  CMake/XRay.Compiler.Unsupported.cmake
+  CMake/XRay.Configs.cmake
+  CMake/XRay.Folders.cmake
+  CMake/XRay.Linker.cmake
+  CMake/XRay.Modules.cmake
+  CMake/XRay.Paths.cmake
+  CMake/XRay.Platform.cmake
+  CMake/XRay.Win32.cmake
+)
 
-# Setup build configurations
-include(XRay.Configs)
-
-# Configure toolchain-specific settings
-if(${MSVC})
-  include(XRay.MSVC)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  include(XRay.Clang)
-else()
-  message(FATAL_ERROR "Unsupported compiler")
-endif()
-
-# Setup compiler
-include(XRay.Compiler)
-
-# Setup linker
-include(XRay.Linker)
-
-# Define paths
-include(XRay.Paths)
-
-# Configure IDE folders
-include(XRay.Folders)
-
-# Setup global compiler definitions
-include(XRay.Compiler.Definitions)
+# Hand off to our XRay entrypoint
+include(XRay)
 
 # Setup compressor
 add_subdirectory(compressor)
@@ -67,13 +62,3 @@ add_subdirectory(sdk)
 
 # Setup engine sources
 add_subdirectory(src)
-
-# Setup executable targets
-include(XRay.Targets)
-
-# Set visual studio startup project
-set_property(
-  DIRECTORY ${CMAKE_SOURCE_DIR}
-  PROPERTY VS_STARTUP_PROJECT
-  AnomalyDX11AVX
-)

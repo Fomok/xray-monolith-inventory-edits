@@ -1,0 +1,27 @@
+inputs:
+  configure-preset:
+    required: false
+    type: string
+  build-preset:
+    required: false
+    type: string
+  target:
+    required: false
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - uses: lukka/run-cmake@v10
+
+      env:
+        configure-preset: ${{inputs.configure-preset || env.configure-preset}}
+        build-preset: ${{inputs.build-preset || env.build-preset}}
+        target: ${{inputs.target || env.target}}
+        # Empty out VCPKG root var to prevent run-cmake from trying and failing to call it
+        VCPKG_ROOT:
+      
+      with:
+        configurePreset: ${{env.configure-preset}}
+        buildPreset: "${{env.configure-preset}}.${{env.build-preset}}"
+        buildPresetAdditionalArgs: "['--target ${{env.target}}']"

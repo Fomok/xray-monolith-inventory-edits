@@ -1,0 +1,41 @@
+runs:
+  using: composite
+
+  steps:
+    - name: Configure Pagefile
+      uses: al-cheb/configure-pagefile-action@v1.3
+      with:
+        disk-root: "C:"
+      
+    - name: Setup MSBuild
+      if: |
+        env.configure-preset == 'MSVS.MSVC.Ninja' ||
+        env.configure-preset == 'MSVS.MSVC.Ninja.AVX'
+      uses: microsoft/setup-msbuild@v1.3.1
+      with:
+        msbuild-architecture: x64
+      
+    - name: Setup MSVC
+      if: |
+        env.configure-preset == 'MSVS.MSVC.MSBuild' ||
+        env.configure-preset == 'MSVS.MSVC.MSBuild.AVX'
+      uses: TheMrMilchmann/setup-msvc-dev@v3
+      with:
+        arch: x64
+
+    - name: Cache Clang
+      if: env.configure-preset == 'System.Clang'
+      id: cache-clang
+      uses: actions/cache@v4
+      with:
+        path: ${{runner.os == 'Windows' && 'C:\Program Files\LLVM' || './llvm'}}
+        key: ${{runner.os}}.LLVM
+
+    - name: Setup Clang
+      if: |
+        env.configure-preset == 'System.Clang' &&
+        steps.cache-clang.outputs.cache-hit != 'true'
+      uses: KyleMayes/install-llvm-action@v2
+      with:
+        directory: ${{runner.os == 'Windows' && 'C:\Program Files\LLVM' || './llvm'}}
+        version: "20.1.0"

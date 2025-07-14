@@ -1,0 +1,88 @@
+name: Pull Request
+
+on:
+  - pull_request
+
+# Cancel previous run if a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: write-all
+
+env:
+  packed-gamedata: 00_modded_exes_gamedata.db0
+
+jobs:
+  anomaly:
+    name: Anomaly
+    runs-on: windows-latest
+    environment: Anomaly.PullRequest
+    steps:
+      - run: echo "Building Anomaly"
+
+  binaries:
+    name: Binaries
+
+    runs-on: windows-latest
+    needs: anomaly
+
+    strategy:
+      matrix:
+        configure-preset:
+          - 'MSVS.MSVC.Ninja'
+          - 'MSVS.MSVC.Ninja.AVX'
+          - 'System.Clang'
+          - 'System.Clang.AVX'
+         #- 'System.GNU'
+         #- 'System.GNU.AVX'
+        target:
+          - 'Anomaly.DX8'
+          - 'Anomaly.DX9'
+          - 'Anomaly.DX10'
+          - 'Anomaly.DX11'
+
+    env:
+      configure-preset: ${{matrix.configure-preset}}
+      build-preset: 'RelWithDebInfo'
+      target: ${{matrix.target}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+
+    - name: Build Binary
+      uses: ./.github/actions/cmake
+    
+    - name: Upload Binary
+      uses: ./.github/actions/upload-binary
+    
+    - name: Upload PDB
+      uses: ./.github/actions/upload-pdb
+
+  gamedata:
+    name: Gamedata
+    needs: anomaly
+    
+    runs-on: windows-latest
+
+    env:
+      configure-preset: 'MSVS.MSVC.Ninja.AVX'
+      build-preset: 'RelWithDebInfo'
+      target: 'Gamedata'
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+    
+    - name: Build Gamedata
+      uses: ./.github/actions/build-gamedata
+    
+    - name: Upload Gamedata
+      uses: ./.github/actions/upload-gamedata

@@ -2,11 +2,7 @@ option(ICU_STATIC "Link ICU libraries statically." Off)
 
 add_library(icu INTERFACE)
 
-set_property(
-  TARGET icu
-  PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
-)
+target_folder(icu ${FOLDER_EXTERNAL})
 
 target_sources(icu
   PRIVATE

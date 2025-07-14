@@ -1,0 +1,48 @@
+inputs:
+  configure-preset:
+    required: false
+    type: string
+    
+  build-preset:
+    required: false
+    type: string
+    
+  packed-gamedata:
+    required: false
+    type: string
+
+  name:
+    required: true
+    type: string
+
+runs:
+  using: composite
+  steps:
+  - name: Pack Binaries
+
+    env:
+      configure-preset: ${{inputs.configure-preset || env.configure-preset}}
+      build-preset: ${{inputs.build-preset || env.build-preset}}
+      packed-gamedata: ${{inputs.packed-gamedata || env.packed-gamedata}}
+
+    shell: bash
+    run: |
+      mkdir release
+      mkdir release/bin
+      mkdir release/db
+      mkdir release/db/mods
+
+      targets=(
+        Anomaly.DX8
+        Anomaly.DX9
+        Anomaly.DX10
+        Anomaly.DX11
+      )
+      for target in "${targets[@]}"; do
+        mv ${{env.configure-preset}}.${{env.build-preset}}.$target/*.exe release/bin
+        mv ${{env.configure-preset}}.AVX.${{env.build-preset}}.$target/*.exe release/bin
+      done
+
+      mv ${{env.packed-gamedata}}/*.db0 release/db/mods
+
+      zip -r "${{inputs.name}}.zip" release/*

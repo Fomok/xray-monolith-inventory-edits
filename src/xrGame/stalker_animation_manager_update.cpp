@@ -68,11 +68,13 @@ IC void CStalkerAnimationManager::play_script_impl()
 	script().animation(selected.animation());
 	if (selected.use_movement_controller())
 	{
-		script().target_matrix(selected.transform(object()));
+		const CAI_Stalker& stalker = object();
+		const CObject& obj = (CObject&)(stalker);
+		script().target_matrix(selected.transform(obj));
 		if (m_start_new_script_animation)
 		{
 			m_start_new_script_animation = false;
-			if (selected.has_transform() && object().animation_movement())
+			if (selected.has_transform() && stalker.animation_movement())
 				object().destroy_anim_mov_ctrl();
 		}
 	}

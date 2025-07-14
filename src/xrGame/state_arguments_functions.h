@@ -63,8 +63,8 @@ namespace award_system
 		}
 
 	private:
-		static ge_function<T> ge_function;
-		static le_function<T> le_function;
+		static inline ge_function<T> ge_function;
+		static inline le_function<T> le_function;
 	};
 
 	typedef binary_function<float> float_binary_function;

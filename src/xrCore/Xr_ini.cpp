@@ -41,7 +41,7 @@ bool item_pred(const CInifile::Item& x, LPCSTR val)
 }
 
 //------------------------------------------------------------------------------
-//Тело функций Inifile
+//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ Inifile
 //------------------------------------------------------------------------------
 XRCORE_API BOOL _parse(LPSTR dest, LPCSTR src)
 {
@@ -419,7 +419,7 @@ void CInifile::Load(IReader* F, LPCSTR path
 				_splitpath_s(m_file_name, split_drive, split_drive.GetSize(), split_dir, split_dir.GetSize(), split_name, split_name.GetSize(), NULL, 0);
 
 				std::string FilePath = std::string(split_drive) + std::string(split_dir);
-				std::string FileName = split_name;
+				std::string FileName = split_name.GetBuffer();
 
 				//Collect all files that could potentially be confused as a root file by our mod files
 				FS_FileSet AmbiguousFiles;
@@ -666,7 +666,8 @@ void CInifile::Load(IReader* F, LPCSTR path
 					I.first = (name[0] ? name : NULL);
 					I.second = bIsDelete ? DLTX_DELETE.c_str() : (str2[0] ? str2.GetBuffer() : NULL);
 
-					auto fname = toLowerCaseCopy(trimCopy(getFilename(std::string(currentFileName))));
+					std::string currentFileNameString(currentFileName);
+					auto fname = toLowerCaseCopy(trimCopy(getFilename(currentFileNameString)));
 					// Remove .ltx part, unused for now
 					/*fname.pop_back();
 					fname.pop_back();
@@ -836,11 +837,13 @@ void CInifile::Load(IReader* F, LPCSTR path
 		}
 
 		//Delete entries that are still marked DLTX_DELETE
+		xr_unordered_set<xr_string> deletedItems;
 		for (auto It = CurrentSect->Data.rbegin(); It != CurrentSect->Data.rend(); ++It)
 		{
 			if (IsStringDLTXDelete(It->second))
 			{
 				CurrentSect->Data.erase(It.base() - 1);
+				deletedItems.insert(It->first.c_str());
 			}
 		}
 
@@ -849,12 +852,19 @@ void CInifile::Load(IReader* F, LPCSTR path
 			for (auto It = OverrideModifyListData[std::string(CurrentSect->Name.c_str())].begin(); It != OverrideModifyListData[std::string(CurrentSect->Name.c_str())].end(); ++It) {
 				CInifile::Item &I = *It;
 
-				// If section exists with item list, split list and perform operation
+				// Get list mode operation (add or delete)
 				char dltx_listmode = I.first[0];
 				I.first = I.first.c_str() + 1;
 
+				// Find existing item list if exists
 				CInifile::SectIt_ sect_it = std::lower_bound(CurrentSect->Data.begin(), CurrentSect->Data.end(), *I.first, item_pred);
-				if (sect_it != CurrentSect->Data.end() && sect_it->first.equal(I.first)) {
+
+				// If item list doesn't exist and wasn't deleted by previous operation, insert as is
+				if (I.second != NULL && !deletedItems.contains(I.first.c_str()) && dltx_listmode == '>' && (sect_it == CurrentSect->Data.end() || !sect_it->first.equal(I.first))) {
+					CurrentSect->Data.insert(sect_it, I);	
+
+				// If item list exists, split existing list and perform operation
+				} else if (sect_it != CurrentSect->Data.end() && sect_it->first.equal(I.first)) {
 
 					//Msg("%s has dltx_listmode %s", I.first.c_str(), std::string(1, dltx_listmode).c_str());
 
@@ -926,7 +936,6 @@ void CInifile::Load(IReader* F, LPCSTR path
 				}
 			}
 		}
-		
 
 		//Pop from stack
 		auto LastElement = PreviousEvaluations->end();
@@ -1192,13 +1201,13 @@ BOOL CInifile::section_exist(const shared_str& S) const { return section_exist(*
 //--------------------------------------------------------------------------------------
 CInifile::Sect& CInifile::r_section(LPCSTR S) const
 {
-	R_ASSERT(S && strlen(S),
+	R_ASSERT2(S && strlen(S),
 	         "Empty section (null\\'') passed into CInifile::r_section(). See info above ^, check your configs and 'call stack'.")
 	; //--#SM+#--
 
 	char section[256];
 	xr_strcpy(section, sizeof(section), S);
-	strlwr(section);
+	_strlwr(section);
 	RootCIt I = std::lower_bound(DATA.begin(), DATA.end(), section, sect_pred);
 	if (!(I != DATA.end() && xr_strcmp(*(*I)->Name, section) == 0))
 	{
@@ -1422,7 +1431,7 @@ BOOL CInifile::r_bool(LPCSTR S, LPCSTR L) const
 	char B[8];
 	strncpy_s(B, sizeof(B), C, 7);
 	B[7] = 0;
-	strlwr(B);
+	_strlwr(B);
 	return IsBOOL(B);
 }
 
@@ -1436,7 +1445,7 @@ int CInifile::r_token(LPCSTR S, LPCSTR L, const xr_token* token_list) const
 {
 	LPCSTR C = r_string(S, L);
 	for (int i = 0; token_list[i].name; i++)
-		if (!stricmp(C, token_list[i].name))
+		if (!_stricmp(C, token_list[i].name))
 			return token_list[i].id;
 	return 0;
 }

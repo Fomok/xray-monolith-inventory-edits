@@ -159,8 +159,8 @@ template <typename T>
 void CMemoryManager::update(const xr_vector<T>& objects, bool add_enemies)
 {
 	squad_mask_type mask = m_stalker ? m_stalker->agent_manager().member().mask(m_stalker) : 0;
-	xr_vector<T>::const_iterator I = objects.begin();
-	xr_vector<T>::const_iterator E = objects.end();
+	auto I = objects.begin();
+	auto E = objects.end();
 	for (; I != E; ++I)
 	{
 		if (!(*I).m_enabled)
@@ -341,15 +341,15 @@ void CMemoryManager::on_restrictions_change()
 void CMemoryManager::make_object_visible_somewhen(const CEntityAlive* enemy)
 {
 	squad_mask_type mask = stalker().agent_manager().member().mask(&stalker());
-	MemorySpace::CVisibleObject* obj = visual().visible_object(enemy);
+	MemorySpace::CVisibleObject* obj = visual().visible_object((CGameObject*)enemy);
 	//	if (obj) {
 	//		Msg						("------------------------------------------------------");
 	//		Msg						("[%6d] make_object_visible_somewhen [%s] = %x",Device.dwTimeGlobal,*enemy->cName(),obj->m_squad_mask.get());
 	//	}
 	//	LogStackTrace				("-------------make_object_visible_somewhen-------------");
 	bool prev = obj ? obj->visible(mask) : false;
-	visual().add_visible_object(enemy, .001f, true);
-	MemorySpace::CVisibleObject* obj1 = object().memory().visual().visible_object(enemy);
+	visual().add_visible_object((CGameObject*)enemy, .001f, true);
+	MemorySpace::CVisibleObject* obj1 = object().memory().visual().visible_object((CGameObject*)enemy);
 	VERIFY(obj1);
 	//	if (obj1)
 	//		Msg						("[%6d] make_object_visible_somewhen [%s] = %x",Device.dwTimeGlobal,*enemy->cName(),obj1->m_squad_mask.get());

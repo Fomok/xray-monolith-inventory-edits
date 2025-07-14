@@ -1,0 +1,8 @@
+runs:
+  using: composite
+  steps:
+    - name: Upload Gamedata
+      uses: ./.github/actions/upload-artifact
+      with:
+        directory: gamedata
+        artifact: 00_modded_exes_gamedata.db0

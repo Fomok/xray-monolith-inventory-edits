@@ -49,6 +49,70 @@ void CSoundRender_Emitter::update(float dt)
 		m_current_state = stStopped;
 	}
 
+	// demonized: add preplay update, calculate delay based on distance and speed of sound
+	// Adaptation for user experience
+	// For distances < 30m (configurable via cvar), no delay
+	// Then gradually ramp up to delay calculated by math
+	// Starting at 90m, full delay kicks in
+	// Don't apply delay to already delayed sounds, they are most likely already handled in respective parts of code and scripts
+	if (need_preplay_update && m_current_state < stPlaying && starting_delay == 0.f)
+	{
+		if (_valid(p_source.position) && !p_source.position.similar(Fvector().set(0.f, 0.f, 0.f)) && owner_data && source() && source()->channels_num() == 1)
+		{
+			//Smooth Ramp Using Hermite(Smootherstep)
+			static auto CalculateSmoothSoundDelay = [](float distance, float speedOfSound, float rampStart, float rampRange)
+			{
+				if (distance <= rampStart)
+					return 0.0f;
+
+				float delay = distance / speedOfSound;
+
+				// Ramp factor from 0 to 1 between rampStart and rampStart + rampRange
+				float t = std::clamp((distance - rampStart) / rampRange, 0.0f, 1.0f);
+
+				// Smootherstep for smooth transition
+				float smoothT = t * t * t * (t * (t * 6 - 15) + 10);
+
+				return delay * smoothT;
+			};
+
+			float speedOfSound = 343.f;
+			float oldDelay = starting_delay;
+			auto oldState = m_current_state;
+			auto delay = CalculateSmoothSoundDelay(p_source.position.distance_to(SoundRender->listener_position()), speedOfSound, soundSmoothingParams::distanceBasedDelayMinDistance, 60);
+
+			// clamp delay in case of strange result
+			delay = std::clamp(delay, 0.f, 3.5f);
+
+			// apply cvar power
+			delay *= soundSmoothingParams::distanceBasedDelayPower;
+			if (delay > 0.f)
+			{
+				if (m_current_state == stStarting || m_current_state == stStartingLooped)
+				{
+					starting_delay = delay;
+					m_current_state = m_current_state == stStarting ? stStartingDelayed : stStartingLoopedDelayed;
+				}
+				else
+				{
+					starting_delay += delay;
+				}
+				need_preplay_update = false;
+				/*Msg("CSoundRender_Emitter::update, file %s, state %s, need_preplay_update, distance %.2f, old delay %.2f, delay %.2f",
+					owner_data && source() && source()->file_name() ? source()->file_name() : "null",
+					magic_enum::enum_name(oldState).data(),
+					p_source.position.distance_to(SoundRender->listener_position()),
+					oldDelay,
+					starting_delay
+				);*/
+			}
+		}
+	}
+	else
+	{
+		need_preplay_update = false;
+	}
+
 	switch (m_current_state)
 	{
 	case stStopped:

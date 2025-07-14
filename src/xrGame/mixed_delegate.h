@@ -20,8 +20,8 @@ public:
 
 	typedef fastdelegate::FastDelegate<R (Param1, Param2)> fastdelegate_type;
 	typedef CScriptCallbackEx<R> lua_delegate_type;
-	typedef luabind::object lua_object_type;
-	typedef luabind::functor<R> lua_function_type;
+	typedef ::luabind::object lua_object_type;
+	typedef ::luabind::functor<R> lua_function_type;
 
 	mixed_delegate()
 	{
@@ -109,6 +109,7 @@ DECLARE_SCRIPT_REGISTER_FUNCTION
 
 
 #define DEFINE_MIXED_DELEGATE_SCRIPT(type, name_str) \
+    template<>\
 	void type::script_register(lua_State *L)\
 	{\
 		module(L)\
@@ -116,7 +117,7 @@ DECLARE_SCRIPT_REGISTER_FUNCTION
 			class_<type>(name_str)\
 				.def(						constructor<>())\
 				.def(						constructor<type::lua_object_type, type::lua_function_type>())\
-				.def("bind",				&type::bind)\
+				.def("bind",				(void (type::*)(type::lua_object_type, type::lua_function_type))(&type::bind))\
 				.def("clear",				&type::clear)\
 		];\
 	};

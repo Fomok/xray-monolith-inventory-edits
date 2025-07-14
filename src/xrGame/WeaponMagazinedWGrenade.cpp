@@ -273,7 +273,7 @@ void CWeaponMagazinedWGrenade::SetAmmoElapsed2(int ammo_count)
 	};
 }
 
-void CWeaponMagazinedWGrenade::AmmoTypeForEach2(const luabind::functor<bool> &funct)
+void CWeaponMagazinedWGrenade::AmmoTypeForEach2(const ::luabind::functor<bool> &funct)
 {
 	for (u8 i = 0; i < u8(m_ammoTypes2.size()); ++i)
 	{
@@ -953,13 +953,21 @@ void CWeaponMagazinedWGrenade::PlayAnimShoot()
 void CWeaponMagazinedWGrenade::PlayAnimModeSwitch()
 {
 	if (m_bGrenadeMode)
-		iAmmoElapsed == 0 && HudAnimationExist("anm_switch_g_empty")
-		? PlayHUDMotion("anm_switch_g_empty", TRUE, this, eSwitch)
-		: HudAnimationExist("anm_switch_g") ? PlayHUDMotion("anm_switch_g", TRUE, this, eSwitch) : SwitchState(eSwitch);
+		if(iAmmoElapsed == 0 && HudAnimationExist("anm_switch_g_empty"))
+			PlayHUDMotion("anm_switch_g_empty", TRUE, this, eSwitch);
+		else
+			if(HudAnimationExist("anm_switch_g"))
+				PlayHUDMotion("anm_switch_g", TRUE, this, eSwitch);
+			else
+				SwitchState(eSwitch);
 	else
-		iAmmoElapsed == 0 && HudAnimationExist("anm_switch_empty")
-		? PlayHUDMotion("anm_switch_empty", TRUE, this, eSwitch)
-		: HudAnimationExist("anm_switch") ? PlayHUDMotion("anm_switch", TRUE, this, eSwitch) : SwitchState(eSwitch);
+		if(iAmmoElapsed == 0 && HudAnimationExist("anm_switch_empty"))
+			PlayHUDMotion("anm_switch_empty", TRUE, this, eSwitch);
+		else
+			if(HudAnimationExist("anm_switch"))
+				PlayHUDMotion("anm_switch", TRUE, this, eSwitch);
+			else
+				SwitchState(eSwitch);
 }
 
 bool CWeaponMagazinedWGrenade::TryPlayAnimBore()

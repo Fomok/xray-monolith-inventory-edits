@@ -12,11 +12,7 @@ separate_arguments(HOST_ACFLAGS)
 
 add_executable(minilua)
 
-set_property(
-  TARGET minilua
-  PROPERTY FOLDER
-  ${FOLDER_LUA}
-)
+target_folder(minilua ${FOLDER_LUA_BUILD})
 
 target_sources(minilua PRIVATE
   "${LUAJIT_DIR}/host/minilua.c"

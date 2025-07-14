@@ -1,7 +1,7 @@
 #ifndef BLOCK_ALLOCATOR_H
 #define BLOCK_ALLOCATOR_H
 
-template <class T, u32 block_size>
+template <class T, unsigned long block_size>
 class CBlockAllocator
 {
 	u32 block_count;
@@ -49,7 +49,7 @@ public:
 
 	IC void clear()
 	{
-		xr_vector<T*>::iterator i = blocks.begin(), e = blocks.end();
+		auto i = blocks.begin(), e = blocks.end();
 		for (; i != e; ++i) xr_free(*i);
 		blocks.clear();
 		init();

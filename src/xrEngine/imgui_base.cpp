@@ -268,7 +268,7 @@ namespace xr_imgui
             return nullptr;
 
         char* lowstring = xr_strdup(name);
-        auto& pair = ImFonts.find(xr_strlwr(lowstring));
+        const auto& pair = ImFonts.find(xr_strlwr(lowstring));
         xr_free(lowstring);
 
         if (pair != ImFonts.end())
@@ -329,8 +329,8 @@ namespace xr_imgui
 //-----------------------------------------------------------------------------
 // Custom font data (Hack-Regular.ttf)
 //-----------------------------------------------------------------------------
-// Hack work is © 2018 Source Foundry Authors. MIT License
-// Bitstream Vera Sans Mono © 2003 Bitstream, Inc. (with Reserved Font Names Bitstream and Vera).Bitstream Vera License.
+// Hack work is ï¿½ 2018 Source Foundry Authors. MIT License
+// Bitstream Vera Sans Mono ï¿½ 2003 Bitstream, Inc. (with Reserved Font Names Bitstream and Vera).Bitstream Vera License.
 // The font binaries are released under a license that permits unlimited print, desktop, web, and software embedding use for commercial and non - commercial applications.
 // MIT license (see https://github.com/source-foundry/Hack/blob/master/LICENSE.md)
 // Download and more information at https://github.com/source-foundry/Hack

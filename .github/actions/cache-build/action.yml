@@ -1,0 +1,19 @@
+inputs:
+  configure-preset:
+    required: false
+    type: string
+  build-preset:
+    required: false
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - name: Cache build directory
+      uses: actions/cache@v4
+      env:
+        configure-preset: ${{inputs.configure-preset || env.configure-preset}}
+        build-preset: ${{inputs.build-preset || env.build-preset}}
+      with:
+        path: './_build'
+        key: ${{runner.os}}.${{env.configure-preset}}.${{env.build-preset}}.build

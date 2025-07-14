@@ -496,7 +496,7 @@ void CWeapon::SetZoomType(u8 new_zoom_type)
     int previous_zoom_type = m_zoomtype;
     m_zoomtype = new_zoom_type;
 
-    luabind::functor<void> funct;
+    ::luabind::functor<void> funct;
     if (ai().script_engine().functor("_G.CWeapon_OnSwitchZoomType", funct))
     {
         funct(this->lua_game_object(), previous_zoom_type, m_zoomtype);
@@ -1084,7 +1084,7 @@ void CWeapon::net_Import(NET_Packet& P)
 	P.r_u8(wstate);
 
 	u8 Zoom;
-	P.r_u8((u8)Zoom);
+	P.r_u8(Zoom);
 
 	if (H_Parent() && H_Parent()->Remote())
 	{
@@ -2983,7 +2983,7 @@ float CWeapon::GetMagazineWeight(const decltype(CWeapon::m_magazine)& mag) const
 	return res;
 }
 
-void CWeapon::AmmoTypeForEach(const luabind::functor<bool> &funct)
+void CWeapon::AmmoTypeForEach(const ::luabind::functor<bool> &funct)
 {
 	for (u8 i = 0; i < u8(m_ammoTypes.size()); ++i)
 	{

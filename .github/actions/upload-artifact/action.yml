@@ -1,0 +1,27 @@
+inputs:
+  configure-preset:
+    required: false
+    type: string
+  directory:
+    required: false
+    type: string
+  artifact:
+    required: true
+    type: string
+  name:
+    required: false
+    type: string
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/upload-artifact@v4.6.0
+      
+      env:
+        configure-preset: ${{inputs.configure-preset || env.configure-preset}}
+
+      with:
+        name: ${{inputs.name || inputs.artifact}}
+        path: ./_build/${{env.configure-preset}}/${{inputs.directory}}/${{inputs.artifact}}
+        if-no-files-found: "error"
+        retention-days: 1

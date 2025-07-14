@@ -587,7 +587,7 @@ player_hud_motion* attachable_hud_item::find_motion(const shared_str& anm_name)
 	if (!anm)
 		anm = m_hand_motions->find_motion(anm_name);
 
-	R_ASSERT2(anm, make_string("model [%s] has no motion alias defined [%s]", m_sect_name.c_str(), anm_name).c_str())
+	R_ASSERT2(anm, make_string("model [%s] has no motion alias defined [%s]", m_sect_name.c_str(), anm_name.c_str()).c_str())
 	;
 	VERIFY2(anm->m_animations.size(),
 	        make_string("model [%s] has no motion defined in motion_alias [%s]", pSettings->r_string(m_sect_name,
@@ -1838,7 +1838,7 @@ void player_hud::OnMovementChanged(ACTOR_DEFS::EMoveCommand cmd)
 			m_attached_items[SCOPE_ATTACH_IDX]->m_parent_hud_item->OnMovementChanged(cmd);
 	}
 
-	luabind::functor<void> func;
+	::luabind::functor<void> func;
 	if (ai().script_engine().functor("_g.player_hud__OnMovementChanged", func))
 	{
 		func(cmd);
@@ -1849,21 +1849,21 @@ void player_hud::OnMovementChanged(ACTOR_DEFS::EMoveCommand cmd)
 
 bool nearwall_callback(int target, float ofs, const Fvector& dir, Fmatrix& mat)
 {
-	luabind::functor<void> on_nearwall;
+	::luabind::functor<void> on_nearwall;
 	if (!ai().script_engine().functor("_G.CActorHudOnNearWall", on_nearwall))
 	{
 		return false;
 	}
 
-	luabind::object table = luabind::newtable(ai().script_engine().lua());
+	::luabind::object table = ::luabind::newtable(ai().script_engine().lua());
 	table["target"] = target;
 	table["offset"] = ofs;
 	table["direction"] = dir;
 	table["matrix"] = mat;
 	table["override"] = false;
 	on_nearwall(table);
-	mat = luabind::object_cast<Fmatrix>(table["matrix"]);
-	return luabind::object_cast<bool>(table["override"]);
+	mat = ::luabind::object_cast<Fmatrix>(table["matrix"]);
+	return ::luabind::object_cast<bool>(table["override"]);
 }
 
 void update_nearwall(int target, const attachable_hud_item* item, Fmatrix& nearwall)

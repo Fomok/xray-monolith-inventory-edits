@@ -1,0 +1,133 @@
+name: Development
+
+on:
+  push:
+    branches-ignore:
+      - "cmake"
+
+# Cancel previous run if a new commit is pushed
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: write-all
+
+jobs:
+  anomaly:
+    name: Anomaly
+    runs-on: windows-latest
+    environment: Anomaly.Development
+    steps:
+      - run: echo "Building Anomaly"
+    outputs:
+      configure-preset-msvc: ${{vars.CONFIGURE_PRESET_MSVC || 'MSVS.MSVC.Ninja.AVX'}}
+      configure-preset-clang: ${{vars.CONFIGURE_PRESET_CLANG || 'System.Clang'}}
+      configure-preset-gnu: ${{vars.CONFIGURE_PRESET_GNU || 'System.GNU'}}
+      build-preset: ${{vars.BUILD_PRESET || 'Verified'}}
+      target: ${{vars.TARGET || 'Anomaly.DX11'}}
+
+  msvc:
+    name: MSVC
+    needs: anomaly
+
+    runs-on: windows-latest
+
+    env:
+      configure-preset: ${{needs.anomaly.outputs.configure-preset-msvc}}
+      build-preset: ${{needs.anomaly.outputs.build-preset}}
+      target: ${{needs.anomaly.outputs.target}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+    
+    - name: Build Binary
+      uses: ./.github/actions/cmake
+    
+    - name: Upload Binary
+      uses: ./.github/actions/upload-binary
+    
+    - name: Upload PDB
+      uses: ./.github/actions/upload-pdb
+
+  clang:
+    name: Clang
+    needs: anomaly
+
+    runs-on: windows-latest
+
+    env:
+      configure-preset: ${{needs.anomaly.outputs.configure-preset-clang}}
+      build-preset: ${{needs.anomaly.outputs.build-preset}}
+      target: ${{needs.anomaly.outputs.target}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+    
+    - name: Build Binary
+      uses: ./.github/actions/cmake
+    
+    - name: Upload Binary
+      uses: ./.github/actions/upload-binary
+    
+    - name: Upload PDB
+      uses: ./.github/actions/upload-pdb
+
+  gnu:
+    name: GNU
+    needs: anomaly
+
+    runs-on: windows-latest
+
+    if: false
+
+    env:
+      configure-preset: ${{needs.anomaly.outputs.configure-preset-gnu}}
+      build-preset: ${{needs.anomaly.outputs.build-preset}}
+      target: ${{needs.anomaly.outputs.target}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+    
+    - name: Build Binary
+      uses: ./.github/actions/cmake
+    
+    - name: Upload Binary
+      uses: ./.github/actions/upload-binary
+    
+    - name: Upload PDB
+      uses: ./.github/actions/upload-pdb
+
+  gamedata:
+    name: Gamedata
+    needs: anomaly
+    runs-on: windows-latest
+
+    env:
+      configure-preset: 'MSVS.MSVC.Ninja.AVX'
+      build-preset: 'Verified'
+      target: 'Gamedata'
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure build environment
+      uses: ./.github/actions/setup-env
+    
+    - name: Build Gamedata
+      uses: ./.github/actions/build-gamedata
+    
+    - name: Upload Gamedata
+      uses: ./.github/actions/upload-gamedata

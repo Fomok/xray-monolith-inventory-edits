@@ -484,7 +484,8 @@ namespace SmartDynamicCast
 		template <bool base>
 		IC static T1* smart_cast(T2* p)
 		{
-			return (CSmartMatcher<T1, T2>::smart_cast < get_conversion_sequence<T1, T2>::result > (p));
+			typedef typename get_conversion_sequence<T1, T2>::result result;
+			return CSmartMatcher<T1, T2>::template smart_cast<result>(p);
 		}
 
 		template <>
@@ -497,8 +498,10 @@ namespace SmartDynamicCast
 	template <typename T1, typename T2>
 	IC T1* smart_cast(T2* p)
 	{
-		return (CHelper1<T1, T2>::smart_cast < object_type_traits::is_base_and_derived<T1, T2>::value ||
-			object_type_traits::is_same<T1, T2>::value > (p));
+		return (CHelper1<T1, T2>::template smart_cast<
+			object_type_traits::is_base_and_derived<T1, T2>::value ||
+			object_type_traits::is_same<T1, T2>::value
+		>(p));
 	}
 
 	template <typename T2>
@@ -561,7 +564,7 @@ IC T1 smart_cast(T2* p)
 #endif
 	if (!p)
 		return (reinterpret_cast<T1>(p));
-	return (SmartDynamicCast::CHelper2<T2>::smart_cast < object_type_traits::remove_pointer<T1>::type > (p));
+	return (SmartDynamicCast::CHelper2<T2>::smart_cast<typename object_type_traits::remove_pointer<T1>::type>(p));
 }
 
 template <typename T1, typename T2>
@@ -576,7 +579,7 @@ IC T1 smart_cast(T2& p)
 #ifdef SMART_CAST_STATS_ALL
 	add_smart_cast_stats_all	(typeid(T2*).name(),typeid(object_type_traits::remove_reference<T1>::type*).name());
 #endif
-	return (*SmartDynamicCast::CHelper2<T2>::smart_cast < object_type_traits::remove_reference<T1>::type > (&p));
+	return (*SmartDynamicCast::CHelper2<T2>::template smart_cast<typename object_type_traits::remove_reference<T1>::type>(&p));
 }
 
 #ifdef XRGAME_EXPORTS

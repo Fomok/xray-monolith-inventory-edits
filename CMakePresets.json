@@ -12,7 +12,7 @@
       "installDir": "${sourceDir}/_build/install/${presetName}"
     },
     {
-      "name": "MSVC.MSBuild",
+      "name": "MSVS.MSVC.MSBuild",
       "inherits": "Base",
       "generator": "Visual Studio 17 2022",
       "condition": {
@@ -22,7 +22,14 @@
       }
     },
     {
-      "name": "MSVC.Ninja",
+      "name": "MSVS.MSVC.MSBuild.AVX",
+      "inherits": "MSVS.MSVC.MSBuild",
+      "cacheVariables": {
+        "XRAY_AVX": true
+      }
+    },
+    {
+      "name": "MSVS.MSVC.Ninja",
       "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
@@ -35,8 +42,14 @@
       }
     },
     {
-      "name": "Clang.Ninja",
-      "hidden": true,
+      "name": "MSVS.MSVC.Ninja.AVX",
+      "inherits": "MSVS.MSVC.Ninja",
+      "cacheVariables": {
+        "XRAY_AVX": true
+      }
+    },
+    {
+      "name": "MSVS.Clang",
       "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
@@ -46,6 +59,45 @@
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Windows"
+      }
+    },
+    {
+      "name": "MSVS.Clang.AVX",
+      "inherits": "MSVS.Clang",
+      "cacheVariables": {
+        "XRAY_AVX": true
+      }
+    },
+    {
+      "name": "System.Clang",
+      "inherits": "Base",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_C_COMPILER": "clang"
+      }
+    },
+    {
+      "name": "System.Clang.AVX",
+      "inherits": "System.Clang",
+      "cacheVariables": {
+        "XRAY_AVX": true
+      }
+    },
+    {
+      "name": "System.GNU",
+      "inherits": "Base",
+      "generator": "Ninja Multi-Config",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_C_COMPILER": "gcc"
+      }
+    },
+    {
+      "name": "System.GNU.AVX",
+      "inherits": "System.GNU",
+      "cacheVariables": {
+        "XRAY_AVX": true
       }
     }
   ],
@@ -76,96 +128,313 @@
       "configuration": "RelWithDebInfo"
     },
     {
-      "name": "MSVC.MSBuild.Debug",
+      "name": "MSVS.MSVC.MSBuild.Debug",
       "hidden": true,
       "displayName": "Debug",
-      "configurePreset": "MSVC.MSBuild",
+      "configurePreset": "MSVS.MSVC.MSBuild",
       "inherits": "Base.Debug"
     },
     {
-      "name": "MSVC.MSBuild.Verified",
+      "name": "MSVS.MSVC.MSBuild.Verified",
       "displayName": "Verified",
-      "configurePreset": "MSVC.MSBuild",
+      "configurePreset": "MSVS.MSVC.MSBuild",
       "inherits": "Base.Verified"
     },
     {
-      "name": "MSVC.MSBuild.Profiled",
+      "name": "MSVS.MSVC.MSBuild.Profiled",
       "displayName": "Profiled",
-      "configurePreset": "MSVC.MSBuild",
+      "configurePreset": "MSVS.MSVC.MSBuild",
       "inherits": "Base.Profiled"
     },
     {
-      "name": "MSVC.MSBuild.Release",
+      "name": "MSVS.MSVC.MSBuild.Release",
       "displayName": "Release",
-      "configurePreset": "MSVC.MSBuild",
+      "configurePreset": "MSVS.MSVC.MSBuild",
       "inherits": "Base.Release"
     },
     {
-      "name": "MSVC.MSBuild.RelWithDebInfo",
+      "name": "MSVS.MSVC.MSBuild.RelWithDebInfo",
       "displayName": "RelWithDebInfo",
-      "configurePreset": "MSVC.MSBuild",
+      "configurePreset": "MSVS.MSVC.MSBuild",
       "inherits": "Base.RelWithDebInfo"
     },
     {
-      "name": "MSVC.Ninja.Debug",
+      "name": "MSVS.MSVC.MSBuild.AVX.Debug",
       "hidden": true,
       "displayName": "Debug",
-      "configurePreset": "MSVC.Ninja",
+      "configurePreset": "MSVS.MSVC.MSBuild.AVX",
       "inherits": "Base.Debug"
     },
     {
-      "name": "MSVC.Ninja.Verified",
+      "name": "MSVS.MSVC.MSBuild.AVX.Verified",
       "displayName": "Verified",
-      "configurePreset": "MSVC.Ninja",
+      "configurePreset": "MSVS.MSVC.MSBuild.AVX",
       "inherits": "Base.Verified"
     },
     {
-      "name": "MSVC.Ninja.Profiled",
+      "name": "MSVS.MSVC.MSBuild.AVX.Profiled",
       "displayName": "Profiled",
-      "configurePreset": "MSVC.Ninja",
+      "configurePreset": "MSVS.MSVC.MSBuild.AVX",
       "inherits": "Base.Profiled"
     },
     {
-      "name": "MSVC.Ninja.Release",
+      "name": "MSVS.MSVC.MSBuild.AVX.Release",
       "displayName": "Release",
-      "configurePreset": "MSVC.Ninja",
+      "configurePreset": "MSVS.MSVC.MSBuild.AVX",
       "inherits": "Base.Release"
     },
     {
-      "name": "MSVC.Ninja.RelWithDebInfo",
+      "name": "MSVS.MSVC.MSBuild.AVX.RelWithDebInfo",
       "displayName": "RelWithDebInfo",
-      "configurePreset": "MSVC.Ninja",
+      "configurePreset": "MSVS.MSVC.MSBuild.AVX",
       "inherits": "Base.RelWithDebInfo"
     },
     {
-      "name": "Clang.Ninja.Debug",
+      "name": "MSVS.MSVC.Ninja.Debug",
       "hidden": true,
       "displayName": "Debug",
-      "configurePreset": "Clang.Ninja",
+      "configurePreset": "MSVS.MSVC.Ninja",
       "inherits": "Base.Debug"
     },
     {
-      "name": "Clang.Ninja.Verified",
+      "name": "MSVS.MSVC.Ninja.Verified",
       "displayName": "Verified",
-      "configurePreset": "Clang.Ninja",
+      "configurePreset": "MSVS.MSVC.Ninja",
       "inherits": "Base.Verified"
     },
     {
-      "name": "Clang.Ninja.Profiled",
+      "name": "MSVS.MSVC.Ninja.Profiled",
       "displayName": "Profiled",
-      "configurePreset": "Clang.Ninja",
+      "configurePreset": "MSVS.MSVC.Ninja",
       "inherits": "Base.Profiled"
     },
     {
-      "name": "Clang.Ninja.Release",
+      "name": "MSVS.MSVC.Ninja.Release",
       "displayName": "Release",
-      "configurePreset": "Clang.Ninja",
+      "configurePreset": "MSVS.MSVC.Ninja",
       "inherits": "Base.Release"
     },
     {
-      "name": "Clang.Ninja.RelWithDebInfo",
+      "name": "MSVS.MSVC.Ninja.RelWithDebInfo",
       "displayName": "RelWithDebInfo",
-      "configurePreset": "Clang.Ninja",
+      "configurePreset": "MSVS.MSVC.Ninja",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "MSVS.MSVC.Ninja.AVX.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "MSVS.MSVC.Ninja.AVX",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "MSVS.MSVC.Ninja.AVX.Verified",
+      "displayName": "Verified",
+      "configurePreset": "MSVS.MSVC.Ninja.AVX",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "MSVS.MSVC.Ninja.AVX.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "MSVS.MSVC.Ninja.AVX",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "MSVS.MSVC.Ninja.AVX.Release",
+      "displayName": "Release",
+      "configurePreset": "MSVS.MSVC.Ninja.AVX",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "MSVS.MSVC.Ninja.AVX.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "MSVS.MSVC.Ninja.AVX",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "MSVS.Clang.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "MSVS.Clang",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "MSVS.Clang.Verified",
+      "displayName": "Verified",
+      "configurePreset": "MSVS.Clang",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "MSVS.Clang.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "MSVS.Clang",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "MSVS.Clang.Release",
+      "displayName": "Release",
+      "configurePreset": "MSVS.Clang",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "MSVS.Clang.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "MSVS.Clang",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "MSVS.Clang.AVX.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "MSVS.Clang.AVX",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "MSVS.Clang.AVX.Verified",
+      "displayName": "Verified",
+      "configurePreset": "MSVS.Clang.AVX",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "MSVS.Clang.AVX.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "MSVS.Clang.AVX",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "MSVS.Clang.AVX.Release",
+      "displayName": "Release",
+      "configurePreset": "MSVS.Clang.AVX",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "MSVS.Clang.AVX.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "MSVS.Clang.AVX",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "System.Clang.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "System.Clang",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "System.Clang.Verified",
+      "displayName": "Verified",
+      "configurePreset": "System.Clang",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "System.Clang.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "System.Clang",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "System.Clang.Release",
+      "displayName": "Release",
+      "configurePreset": "System.Clang",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "System.Clang.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "System.Clang",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "System.Clang.AVX.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "System.Clang.AVX",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "System.Clang.AVX.Verified",
+      "displayName": "Verified",
+      "configurePreset": "System.Clang.AVX",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "System.Clang.AVX.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "System.Clang.AVX",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "System.Clang.AVX.Release",
+      "displayName": "Release",
+      "configurePreset": "System.Clang.AVX",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "System.Clang.AVX.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "System.Clang.AVX",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "System.GNU.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "System.GNU.Verified",
+      "displayName": "Verified",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "System.GNU.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "System.GNU.Release",
+      "displayName": "Release",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "System.GNU.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "System.GNU",
+      "inherits": "Base.RelWithDebInfo"
+    },
+    {
+      "name": "System.GNU.AVX.Debug",
+      "hidden": true,
+      "displayName": "Debug",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Debug"
+    },
+    {
+      "name": "System.GNU.AVX.Verified",
+      "displayName": "Verified",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Verified"
+    },
+    {
+      "name": "System.GNU.AVX.Profiled",
+      "displayName": "Profiled",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Profiled"
+    },
+    {
+      "name": "System.GNU.AVX.Release",
+      "displayName": "Release",
+      "configurePreset": "System.GNU.AVX",
+      "inherits": "Base.Release"
+    },
+    {
+      "name": "System.GNU.AVX.RelWithDebInfo",
+      "displayName": "RelWithDebInfo",
+      "configurePreset": "System.GNU.AVX",
       "inherits": "Base.RelWithDebInfo"
     }
   ]

@@ -26,13 +26,13 @@ void dxConsoleRender::OnRender(bool bGame)
 	u32 vOffset = 0;
 	//	TODO: DX10: Implement console background clearing for DX10
 	FVF::TL* verts = (FVF::TL*)RCache.Vertex.Lock(4, m_Geom->vb_stride, vOffset);
-	verts->set(R.x1, R.y2, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
+	verts->set((int)R.x1, (int)R.y2, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
 	verts++;
-	verts->set(R.x1, R.y1, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
+	verts->set((int)R.x1, (int)R.y1, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
 	verts++;
-	verts->set(R.x2, R.y2, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
+	verts->set((int)R.x2, (int)R.y2, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
 	verts++;
-	verts->set(R.x2, R.y1, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
+	verts->set((int)R.x2, (int)R.y1, D3DCOLOR_XRGB(32, 32, 32), 0, 0);
 	verts++;
 	RCache.Vertex.Unlock(4, m_Geom->vb_stride);
 

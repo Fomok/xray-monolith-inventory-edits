@@ -1,11 +1,7 @@
 # Vorbis
 add_library(vorbis STATIC)
 
-set_property(
-  TARGET vorbis
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(vorbis ${FOLDER_SDK})
 
 target_sources(vorbis PRIVATE
   lib/analysis.c
@@ -87,11 +83,7 @@ target_compile_definitions(vorbis
 # Vorbis File
 add_library(vorbisfile STATIC)
 
-set_property(
-  TARGET vorbisfile
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(vorbisfile ${FOLDER_SDK})
 
 target_sources(vorbisfile PRIVATE
   lib/vorbisfile.c

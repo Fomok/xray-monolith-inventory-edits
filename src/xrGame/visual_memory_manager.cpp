@@ -36,7 +36,7 @@
 //Alundaio
 #include "../../xrServerEntities/script_engine.h"
 #include "script_game_object.h"
-using namespace luabind; //Alundaio
+ //Alundaio
 //-Alundaio
 
 void SetActorVisibility(u16 who, float value);
@@ -172,7 +172,7 @@ void CVisualMemoryManager::reload(LPCSTR section)
 	}
 }
 
-IC const CVisionParameters& CVisualMemoryManager::current_state() const
+const CVisionParameters& CVisualMemoryManager::current_state() const
 {
 	if (m_stalker)
 	{
@@ -353,7 +353,7 @@ float CVisualMemoryManager::get_visible_value(const CGameObject* game_object, fl
 		return (current_state().m_visibility_threshold);
 
 	//Alundaio: hijack not_yet_visible_object to lua
-	luabind::functor<float> funct;
+	::luabind::functor<float> funct;
 	if (ai().script_engine().functor("visual_memory_manager.get_visible_value", funct))
 		return (funct(m_object ? m_object->lua_game_object() : 0, game_object ? game_object->lua_game_object() : 0,
 		              time_delta, current_state().m_time_quant, luminocity, current_state().m_velocity_factor,
@@ -672,7 +672,7 @@ CVisibleObject* CVisualMemoryManager::visible_object(const CGameObject* game_obj
 	return (&*I);
 }
 
-IC squad_mask_type CVisualMemoryManager::mask() const
+squad_mask_type CVisualMemoryManager::mask() const
 {
 	if (!m_stalker)
 		return (squad_mask_type(-1));

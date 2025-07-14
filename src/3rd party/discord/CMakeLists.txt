@@ -1,10 +1,6 @@
 add_library(discord INTERFACE)
 
-set_property(
-  TARGET discord
-  PROPERTY FOLDER
-  ${FOLDER_3RD_PARTY}
-)
+target_folder(discord ${FOLDER_EXTERNAL})
 
 target_sources(discord
   INTERFACE

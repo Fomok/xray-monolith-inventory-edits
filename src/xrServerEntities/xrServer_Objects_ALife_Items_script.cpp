@@ -29,8 +29,8 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
 		class_<CSE_ALifeInventoryItem>
 		("cse_alife_inventory_item")
 		//			.def(		constructor<LPCSTR>())
-		.def("has_upgrade", &has_upgrade)
-		.def("add_upgrade", &add_upgrade)
+		.def("has_upgrade", &CSE_ALifeInventoryItem::has_upgrade)
+		.def("add_upgrade", &CSE_ALifeInventoryItem::add_upgrade)
 	];
 }
 

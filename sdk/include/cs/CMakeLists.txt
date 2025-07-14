@@ -1,10 +1,5 @@
 add_library(cs INTERFACE)
-
-set_property(
-  TARGET cs
-  PROPERTY FOLDER
-  ${FOLDER_SDK}
-)
+target_folder(cs ${FOLDER_SDK})
 
 target_sources(cs
   PRIVATE

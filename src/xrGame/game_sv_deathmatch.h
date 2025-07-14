@@ -8,7 +8,7 @@
 
 class IClient;
 
-class game_sv_Deathmatch : public game_sv_mp, private pure_relcase
+class game_sv_Deathmatch : public game_sv_mp, public pure_relcase
 {
 	typedef game_sv_mp inherited;
 protected:
@@ -112,18 +112,18 @@ public:
 
 	virtual void OnEvent(NET_Packet& tNetPacket, u16 type, u32 time, ClientID sender);
 
-	virtual void OnTeamScore(u32 /**team/**/, bool); // команда выиграла
+	virtual void OnTeamScore(u32 /**team/**/, bool); // ГЄГ®Г¬Г Г­Г¤Г  ГўГ»ГЁГЈГ°Г Г«Г 
 	virtual void OnTeamsInDraw()
 	{
-	}; // ничья
+	}; // Г­ГЁГ·ГјГї
 
 	// Events
-	virtual void OnRoundStart(); // старт раунда
-	virtual void OnRoundEnd(); // round_end_reason							// конец раунда
+	virtual void OnRoundStart(); // Г±ГІГ Г°ГІ Г°Г ГіГ­Г¤Г 
+	virtual void OnRoundEnd(); // round_end_reason							// ГЄГ®Г­ГҐГ¶ Г°Г ГіГ­Г¤Г 
 	virtual void OnDelayedRoundEnd(ERoundEnd_Result reason);
 	virtual void OnDelayedTeamEliminated();
 
-	virtual void OnPlayerHitPlayer(u16 id_hitter, u16 id_hitted, NET_Packet& P); //игрок получил Hit
+	virtual void OnPlayerHitPlayer(u16 id_hitter, u16 id_hitted, NET_Packet& P); //ГЁГЈГ°Г®ГЄ ГЇГ®Г«ГіГ·ГЁГ« Hit
 	virtual void OnPlayerHitPlayer_Case(game_PlayerState* ps_hitter, game_PlayerState* ps_hitted, SHit* pHitS);
 
 	virtual BOOL OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);

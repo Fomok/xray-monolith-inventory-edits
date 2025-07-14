@@ -3,8 +3,10 @@
 #define SkeletonCustomH
 
 #include		"fhierrarhyvisual.h"
-#include		"bone.h"
-#include		"Kinematics.h"
+#include "IRenderable.h"
+#include <optional>
+#include "bone.h"
+#include "Kinematics.h"
 
 // consts
 extern xrCriticalSection UCalc_Mutex;
@@ -15,6 +17,7 @@ class CInifile;
 class CBoneData;
 struct SEnumVerticesCallback;
 
+class IRenderable;
 // MT-locker
 struct UCalc_mtlock
 {
@@ -120,6 +123,16 @@ public:
 
 public:
 	dxRender_Visual* m_lod;
+
+	IC bool canBeOptimized()
+	{
+		return renderableParent && renderableParent->canOptimizeCalculateBones();
+	}
+
+	IC auto getXForm()
+	{
+		return renderableParent ? std::optional<const Fmatrix>(renderableParent->renderable.xform) : std::nullopt;
+	}
 protected:
 	SkeletonWMVec wallmarks;
 	u32 wm_frame;

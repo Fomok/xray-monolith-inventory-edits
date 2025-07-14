@@ -159,10 +159,32 @@ The original engine is used in S.T.A.L.K.E.R. Call of Pripyat game released by G
 
   Above mentioned options are applicable only for scopes which have prescribed values in file scoperadii.script
 
-  * Added alternative zoom control (toggle with new_zoom_enable [on/off (default)]
+  * Added alternative zoom control (toggle with new_zoom_enable [on/off (default)])
     * Minimal zoom is equal to either mechanical zoom or the one prescribed in section min_scope_zoom_factor.
     * The step of zoom adjustment is more precise. Also, it's possible to adjust the step of zoom with the console command zoom_step_count [1.0, 10.0], this option is also applicable to the binoculars.
   * In the new version all implementations from fakelens.script have moved directly to the engine. fakelens.script remained as a layer between the engine and scopeRadii.script
+
+* Commits from IX-Ray Engine: https://github.com/ixray-team/ixray-1.6-stcop
+
+<!----><a name="script_debugger_instructions"></a>
+* Debug scripts with VSCode and LuaPanda, support by IX-Ray Platform
+  * To use it, you need to install VSCode and LuaPanda extension: https://marketplace.visualstudio.com/items?itemName=stuartwang.luapanda
+  * Open your `gamedata/scripts` folder in VSCode
+  * Download these files into your `gamedata/scripts/.vscode` folder:
+    * [`launch.json`](https://raw.githubusercontent.com/themrdemonized/xray-monolith/all-in-one-vs2022-wpo/gamedata/scripts/.vscode/launch.json)
+    * [`settings.json`](https://raw.githubusercontent.com/themrdemonized/xray-monolith/all-in-one-vs2022-wpo/gamedata/scripts/.vscode/settings.json)
+  * Download these files into your `gamedata/scripts` folder:
+    * [`LuaPanda.lua`](https://raw.githubusercontent.com/themrdemonized/xray-monolith/all-in-one-vs2022-wpo/gamedata/scripts/LuaPanda.lua)
+    * [`dynamic_callbacks.lua`](https://raw.githubusercontent.com/themrdemonized/xray-monolith/all-in-one-vs2022-wpo/gamedata/scripts/dynamic_callbacks.lua)
+    * [`global.lua`](https://raw.githubusercontent.com/themrdemonized/xray-monolith/all-in-one-vs2022-wpo/gamedata/scripts/global.lua)
+    * [`socket.lua`](https://raw.githubusercontent.com/themrdemonized/xray-monolith/all-in-one-vs2022-wpo/gamedata/scripts/socket.lua)
+  * In VSCode, go to `Run and Debug` section and start debugging or press F5 key
+  * Return to the game and open in-game console with `~`
+  * Type console command `lua_debug 1` in console and reload the save or start a new game
+  * Type console command `run_string debugger_attach()`. If you do everything correctly and engine is working properly too, you will get an entry breakpoint at `global.lua` file in VSCode.
+  * You have to re-enable the debugger every time you start a new game or load a save, so you have to type `run_string debugger_attach()` in console again.
+  * Debugger is working dynamically, so you can add/remove files from your VSCode folder and it will automatically update the list of files available for debugging.
+  * Debugger doesn't support workspace with multiple folders, so you HAVE to use "File" -> "Open Folder" to make debugger work
 
 * All settings can be edited from the game options in "Modded Exes" tab
 ![image](http://puu.sh/JC40Y/9315119150.jpg)
@@ -181,8 +203,7 @@ The original engine is used in S.T.A.L.K.E.R. Call of Pripyat game released by G
 
 1. Fork this xray-monolith
 2. Clone the fork onto your pc
-3. Run `git submodule init --recursive` to pull git submodules
-4. Select `all-in-one-vs2022-wpo` branch
+3. Select `cmake` branch
 
 ### Build
 
@@ -190,9 +211,21 @@ For successful compilation, **the latest build tools with MFC and ATL libraries 
 
 #### Configure Presets
 
-`MSVC.MSBuild` - Original MSBuild toolchain. Slow.
+Each configure preset has a `<ConfigurePreset>.AVX` variant for building Anomaly with support for AVX instructions.
 
-`MSVC.Ninja` - New Ninja toolchain. Fast.
+##### Stable
+
+`MSVS.MSVC.MSBuild` - Old Visual C++ MSBuild toolchain. Slow, requires running inside the `vcvarsall.bat` environment, or an IDE with native support for it.
+
+`MSVS.MSVC.Ninja` - New Visual C++ Ninja toolchain. Fast, able to autolocate MSVC build tooling.
+
+##### Experimental
+
+`MSVS.Clang` - Build with Visual Studio's LLVM/Clang compiler. Requires clang support installed via the Visual Studio installer.
+
+`System.Clang` - Build with the LLVM/Clang compiler. Must be available in `PATH`.
+
+`System.GNU` - Build with the GNU Compiler Collection. Must be available in `PATH`.
 
 #### Build Presets
 
@@ -226,7 +259,7 @@ Anomaly executable with corresponding DirectX renderer and AVX instructions
 
 Pack individual executable PDB files into `_build/<ConfigurePreset>/AnomalyDX<VER><AVX>_pdb.zip`
 
-`X-Ray/Gamedata`
+`Gamedata`
 
 Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_exes_gamedata.db0`
 
@@ -248,6 +281,17 @@ Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_
 6. Click `Generate`
 7. Click `Open Project`, or follow the instructions for your generator of choice
 
+#### Visual Studio Code
+1. Open VS Code
+2. Install the `C/C++ Extension Pack` from the `Extensions` tab
+   - Sets up language support, CMake support, themes
+3. `File` -> `Open Folder...`
+4. Select your `xray-monolith` directory
+5. Click the `CMake` tab
+6. Setup configuration and build presets via sidebar
+7. Build / Debug / Launch via sidebar
+   - `Project Outline` -> `Build All Projects` icon to build all targets
+
 #### Visual Studio 2022
 1. Open VS2022
 2. Select `Open a local folder`
@@ -259,16 +303,22 @@ Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_
 8. `Anomaly Project` -> `Targets` -> Right Click -> `Set as startup item` / `Build` / `Debug` / `Launch`
    - Right click `Anomaly Project` -> `Build All` to build all targets
 
-#### Visual Studio Code
-1. Open VS Code
-2. Install the `C/C++ Extension Pack` from the `Extensions` tab
-   - Sets up language support, CMake support, themes
-3. `File` -> `Open Folder...`
-4. Select your `xray-monolith` directory
-5. Click the `CMake` tab
-6. Setup configuration and build presets via sidebar
-7. Build / Debug / Launch via sidebar
-   - `Project Outline` -> `Build All Projects` icon to build all targets
+#### Buildbot
+GitHub Actions is set up to build Anomaly with a suite of compilers each time a commit is pushed.
+
+By default, this targets:
+- MSVC: `MSVS.MSVC.Ninja.AVX`
+- Clang: `System.Clang.AVX`
+
+With the `Verified` build preset, and `Anomaly.DX11` target.
+
+This behaviour can be customized by setting the following variables in your fork's
+`Anomaly.Development` environment via the settings page:
+
+- `CONFIGURE_PRESET_MSVC`
+- `CONFIGURE_PRESET_CLANG`
+- `BUILD_PRESET`
+- `TARGET`
 
 ## Changelog
 **2025.07.01**

@@ -11,14 +11,14 @@
 using namespace luabind;
 
 
-struct CUIListBoxItemWrapper : public CUIListBoxItem, public luabind::wrap_base
+struct CUIListBoxItemWrapper : public CUIListBoxItem, public ::luabind::wrap_base
 {
 	CUIListBoxItemWrapper(float h): CUIListBoxItem(h)
 	{
 	}
 };
 
-struct CUIListBoxItemMsgChainWrapper : public CUIListBoxItemMsgChain, public luabind::wrap_base
+struct CUIListBoxItemMsgChainWrapper : public CUIListBoxItemMsgChain, public ::luabind::wrap_base
 {
 	CUIListBoxItemMsgChainWrapper(float h) : CUIListBoxItemMsgChain(h)
 	{
@@ -70,7 +70,7 @@ void CUIListBox::script_register(lua_State* L)
 		class_<connect_error_cb>("connect_error_cb")
 		.def(constructor<>())
 		.def(constructor<connect_error_cb::lua_object_type, connect_error_cb::lua_function_type>())
-		.def("bind", &connect_error_cb::bind)
+		.def("bind", (void (connect_error_cb::*)(connect_error_cb::lua_object_type, connect_error_cb::lua_function_type))(&connect_error_cb::bind))
 		.def("clear", &connect_error_cb::clear),
 
 		class_<CServerList, CUIWindow>("CServerList")

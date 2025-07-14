@@ -7,11 +7,13 @@
 #include "dxRenderFactory.h"
 
 #define FACTORY_PTR_INSTANCIATE(Class) \
+    template<> \
 	inline void FactoryPtr<I##Class>::CreateObject(void) \
 { \
 	if (!RenderFactory) RenderFactory = &RenderFactoryImpl; \
 	m_pObject = RenderFactory->Create##Class(); \
 } \
+    template<> \
 	inline void FactoryPtr<I##Class>::DestroyObject(void) \
 { \
 	RenderFactory->Destroy##Class(m_pObject); \

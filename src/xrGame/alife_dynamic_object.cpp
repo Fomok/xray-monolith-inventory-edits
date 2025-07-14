@@ -46,7 +46,7 @@ void CSE_ALifeDynamicObject::on_before_register()
 
 void CSE_ALifeDynamicObject::on_unregister()
 {
-	luabind::functor<void> funct;
+	::luabind::functor<void> funct;
 	if (ai().script_engine().functor("_G.CSE_ALifeDynamicObject_on_unregister", funct))
 		funct((u16)ID);
 	Level().MapManager().OnObjectDestroyNotify(ID);
@@ -203,7 +203,7 @@ void CSE_ALifeInventoryBox::add_online(const bool& update_registries)
 		CSE_ALifeDynamicObject* l_tpALifeDynamicObject = ai().alife().objects().object(*I);
 		CSE_ALifeInventoryItem* l_tpALifeInventoryItem = smart_cast<CSE_ALifeInventoryItem*>(l_tpALifeDynamicObject);
 		R_ASSERT2(l_tpALifeInventoryItem, "Non inventory item object has parent?!");
-		l_tpALifeInventoryItem->base()->s_flags.or(M_SPAWN_UPDATE);
+		l_tpALifeInventoryItem->base()->s_flags.flag_or(M_SPAWN_UPDATE);
 		CSE_Abstract* l_tpAbstract = smart_cast<CSE_Abstract*>(l_tpALifeInventoryItem);
 		object->alife().server().entity_Destroy(l_tpAbstract);
 
@@ -225,7 +225,7 @@ void CSE_ALifeInventoryBox::add_online(const bool& update_registries)
 		l_tpALifeDynamicObject->o_Position = object->o_Position;
 		l_tpALifeDynamicObject->m_tNodeID = object->m_tNodeID;
 		object->alife().server().Process_spawn(tNetPacket, clientID,FALSE, l_tpALifeInventoryItem->base());
-		l_tpALifeDynamicObject->s_flags.and(u16(-1) ^ M_SPAWN_UPDATE);
+		l_tpALifeDynamicObject->s_flags.flag_and(u16(-1) ^ M_SPAWN_UPDATE);
 		l_tpALifeDynamicObject->m_bOnline = true;
 	}
 

@@ -51,7 +51,7 @@ public:
 	void LoadArchive(archive& A, LPCSTR entrypoint = NULL);
 
 private:
-	struct file_pred : public std::function<bool(file&, file&)>
+	struct file_pred
 	{
 		IC bool operator()(const file& x, const file& y) const
 		{

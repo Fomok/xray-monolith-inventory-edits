@@ -11,8 +11,8 @@
 template <
 	typename _path_id_type,
 	typename _index_type,
-	u32 hash_size,
-	u32 fix_size
+	unsigned long hash_size,
+	unsigned long fix_size
 >
 struct CVertexManagerHashFixed
 {
@@ -49,17 +49,15 @@ struct CVertexManagerHashFixed
 	};
 
 	template <
-		template <typename _T> class _vertex = CEmptyClassTemplate,
-		template <typename _T1, typename _T2> class _index_vertex = CEmptyClassTemplate2,
-		typename _data_storage = CBuilderAllocatorConstructor
+		template <typename _T> class _vertex,
+		template <typename _T1, typename _T2> class _index_vertex,
+		typename _data_storage
 	>
-	class CDataStorage : public _data_storage::template CDataStorage<VertexManager<_vertex>::_vertex>
+	class CDataStorage : public _data_storage::template CDataStorage<VertexManager<_vertex>::template _vertex>
 	{
 	public:
 		typedef typename _data_storage::template CDataStorage<
-			VertexManager<
-				_vertex
-			>::_vertex
+			VertexManager<_vertex>::template _vertex
 		> inherited;
 		typedef typename inherited::CGraphVertex CGraphVertex;
 		typedef typename CGraphVertex::_index_type _index_type;
