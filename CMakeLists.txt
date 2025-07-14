@@ -41,6 +41,7 @@ target_sources(CMake
   CMake/XRay.Compiler.Unsupported.cmake
   CMake/XRay.Configs.cmake
   CMake/XRay.Folders.cmake
+  CMake/XRay.Git.cmake
   CMake/XRay.Linker.cmake
   CMake/XRay.Modules.cmake
   CMake/XRay.Paths.cmake
