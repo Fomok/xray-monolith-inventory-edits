@@ -52,7 +52,7 @@
 #include "../../xrServerEntities/script_engine.h"
 
 using namespace StalkerSpace;
-using namespace luabind;
+
 
 static float const DANGER_DISTANCE = 3.f;
 static u32 const DANGER_INTERVAL = 120000;

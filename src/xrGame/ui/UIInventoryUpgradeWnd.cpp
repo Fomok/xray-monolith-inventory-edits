@@ -38,7 +38,7 @@
 #include "script_game_object.h" //Alundaio
 #include "ActorBackpack.h"
 
-using namespace luabind; //Alundaio
+ //Alundaio
 // -----
 
 const LPCSTR g_inventory_upgrade_xml = "inventory_upgrade.xml";

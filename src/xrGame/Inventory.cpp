@@ -30,7 +30,7 @@
 using namespace InventoryUtilities;
 //Alundaio
 #include "../../xrServerEntities/script_engine.h"
-using namespace luabind;
+
 //-Alundaio
 
 // what to block

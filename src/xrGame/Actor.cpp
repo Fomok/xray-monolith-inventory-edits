@@ -82,7 +82,7 @@
 #include "ActorBackpack.h"
 #include "script_hit.h"
 #include "../../xrServerEntities/script_engine.h"
-using namespace luabind;
+
 //-Alundaio
 
 //Rezy

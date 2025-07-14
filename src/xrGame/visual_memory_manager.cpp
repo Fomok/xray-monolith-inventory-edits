@@ -36,7 +36,7 @@
 //Alundaio
 #include "../../xrServerEntities/script_engine.h"
 #include "script_game_object.h"
-using namespace luabind; //Alundaio
+ //Alundaio
 //-Alundaio
 
 void SetActorVisibility(u16 who, float value);

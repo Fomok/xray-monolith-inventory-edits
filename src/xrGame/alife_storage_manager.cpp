@@ -33,7 +33,7 @@ extern XRCORE_API string_path g_bug_report_file;
 
 using namespace ALife;
 #ifdef ENGINE_LUA_ALIFE_STORAGE_MANAGER_CALLBACKS
-using namespace luabind; //Alundaio
+ //Alundaio
 #endif
 
 extern string_path g_last_saved_game;

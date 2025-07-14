@@ -36,7 +36,7 @@
 #include "../ActorBackpack.h"
 #include "../actor_defs.h"
 
-using namespace luabind; //Alundaio
+ //Alundaio
 
 void move_item_from_to(u16 from_id, u16 to_id, u16 what_id);
 

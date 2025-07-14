@@ -29,7 +29,7 @@
 #include "UIPropertiesBox.h"
 #include "UIMainIngameWnd.h"
 
-using namespace luabind; //Alundaio
+ //Alundaio
 
 bool CUIActorMenu::AllowItemDrops(EDDListType from, EDDListType to)
 {

@@ -60,7 +60,7 @@
 #include "ai_space.h"
 #include "ActorBackpack.h"
 
-//using namespace luabind;
+//
 //-Alundaio
 
 #include "Flashlight.h"

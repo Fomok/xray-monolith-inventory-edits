@@ -20,7 +20,7 @@
 #include "profiler.h"
 #include "sound_collection_storage.h"
 #include "object_broker.h"
-using namespace luabind;
+
 
 CSoundPlayer::CSoundPlayer(CObject* object)
 {

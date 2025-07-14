@@ -13,7 +13,7 @@
 
 #include "pch_script.h"
 
-using namespace luabind;
+
 
 class CScriptIniFile : public CInifile
 {

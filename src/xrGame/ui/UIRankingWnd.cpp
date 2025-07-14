@@ -30,7 +30,7 @@
 
 #define  PDA_RANKING_XML		"pda_ranking.xml"
 
-using namespace luabind;
+
 
 CUIRankingWnd::CUIRankingWnd()
 {

@@ -25,7 +25,7 @@
 
 using namespace ALife;
 #ifdef	ENGINE_LUA_ALIFE_UPDAGE_MANAGER_CALLBACKS
-using namespace luabind; //Alundaio
+ //Alundaio
 #endif
 
 extern string_path g_last_saved_game;

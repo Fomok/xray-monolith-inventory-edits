@@ -79,7 +79,10 @@ extern u64 g_qwEStartGameTime;
 ENGINE_API
 extern float psHUD_FOV_def;
 extern float psSqueezeVelocity;
+
+// Lua
 extern int psLUA_GCSTEP;
+extern BOOL lua_debug;
 
 float g_end_modif = 0.f;
 
@@ -159,6 +162,10 @@ extern BOOL alifeObjectHangingLampIgnoreMatchConfiguration;
 
 extern BOOL spawn_antifreeze;
 extern BOOL spawn_antifreeze_debug;
+
+extern float IK_CALC_DIST;
+extern float IK_ALWAYS_CALC_DIST;
+extern BOOL r_optimize_calculate_bones;
 
 extern CrosshairSettings g_crosshair_camera_near;
 extern CrosshairSettings g_crosshair_camera_far;
@@ -2424,6 +2431,7 @@ void CCC_RegisterCommands()
 
     // Moved lua_gcstep outside of DEBUG to allow for easier experimentation.
 	CMD4(CCC_Integer, "lua_gcstep", &psLUA_GCSTEP, 1, 1000);
+	CMD4(CCC_Integer, "lua_debug", &lua_debug, 0, 1);
 
 #ifdef DEBUG
 	CMD3(CCC_Mask, "ai_debug", &psAI_Flags, aiDebug);
@@ -2822,6 +2830,10 @@ void CCC_RegisterCommands()
 
 	CMD4(CCC_Integer, "spawn_antifreeze", &spawn_antifreeze, 0, 1);
 	CMD4(CCC_Integer, "spawn_antifreeze_debug", &spawn_antifreeze_debug, 0, 1);
+
+	CMD4(CCC_Float, "ik_calc_dist", &IK_CALC_DIST, 50, 150);
+	CMD4(CCC_Float, "ik_always_calc_dist", &IK_ALWAYS_CALC_DIST, 10, 50);
+	CMD4(CCC_Integer, "r__optimize_calculate_bones", &r_optimize_calculate_bones, 0, 1);
 
 	// demonized: Restores fun physics bugs like lift
 	CMD4(CCC_Integer, "fun_allowed", &fun_allowed, 0, 1);
