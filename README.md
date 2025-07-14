@@ -313,7 +313,6 @@ This behaviour can be customized by setting the following variables in your fork
 - `TARGET`
 
 ## Changelog
-## Changelog
 **2025.07.16**
 * Fixed crash due to not clearing pointer to deleted IRenderable in bones calculations
 
@@ -1537,4 +1536,3 @@ override = true
 
 * Exported distance_to_xz_sqr() function of Fvector
 * Redesigned duplicate section error, it will additionally print what file adds the section in the first place in addition to the file that has the duplicate
-
