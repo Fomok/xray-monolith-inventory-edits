@@ -425,7 +425,7 @@ add_module(XRay.Render.R1.Refactored.Execution3D.Shaders.Resources.DX9RShader
   ../xrRender/r_constants_cache.h
 )
 
-add_module(XRay.Render.R1.Refactored.Execution3D.Shaders.ShaderManager
+add_module(XRay.Render.R1.Refactored.Execution3D.Shaders.Manager
   SOURCES
   ../../xrEngine/ai_script_lua_debug.cpp
   ../../xrEngine/ai_script_lua_extension.cpp
