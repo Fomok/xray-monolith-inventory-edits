@@ -1,20 +1,15 @@
-add_module(XRay.Game.AI.Script.UNORGANIZED
-  TYPE STATIC
-  
-  SOURCES
-  script_imgui_script.cpp
-  script_attachment_script.cpp
-
-  script_imgui.h
-  script_imgui_inline.h
-)
-
 add_module(XRay.Game.AI.Script
   TYPE STATIC
   SOURCES
   ../xrServerEntities/script_export_macroses.h
   ../xrServerEntities/script_export_space.h
   ../xrServerEntities/script_space_forward.h
+  
+  script_imgui_script.cpp
+  script_attachment_script.cpp
+
+  script_imgui.h
+  script_imgui_inline.h
 )
 
 add_module(XRay.Game.AI.Script.LuaStudio
