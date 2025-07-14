@@ -1,3 +1,5 @@
+add_subdirectory(SDK)
+
 add_subdirectory(crypto)
 add_subdirectory(cximage)
 add_subdirectory(discord)
@@ -12,6 +14,7 @@ add_subdirectory(ode)
 add_subdirectory(openal)
 add_subdirectory(optick)
 add_subdirectory(reshade)
+add_subdirectory(ReShadeCompat)
 add_subdirectory(serial)
 add_subdirectory(stackwalker)
 add_subdirectory(tbb)
