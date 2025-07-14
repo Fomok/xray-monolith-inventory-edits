@@ -63,14 +63,14 @@ void CUITalkWnd::InitTalkDialog()
 	m_pOurDialogManager = smart_cast<CPhraseDialogManager*>(m_pOurInvOwner);
 	m_pOthersDialogManager = smart_cast<CPhraseDialogManager*>(m_pOthersInvOwner);
 
-	//����� ������������
+	//èìåíà ñîáåñåäíèêîâ
 	UITalkDialogWnd->UICharacterInfoLeft.InitCharacter(m_pOurInvOwner->object_id());
 	UITalkDialogWnd->UICharacterInfoRight.InitCharacter(m_pOthersInvOwner->object_id());
 
 	//.	UITalkDialogWnd->UIDialogFrame.UITitleText.SetText		(m_pOthersInvOwner->Name());
 	//.	UITalkDialogWnd->UIOurPhrasesFrame.UITitleText.SetText	(m_pOurInvOwner->Name());
 
-	//�������� ��� ���������
+	//î÷èñòèòü ëîã ñîîáùåíèé
 	UITalkDialogWnd->ClearAll();
 
 	InitOthersStartDialog();
@@ -91,12 +91,12 @@ void CUITalkWnd::InitOthersStartDialog()
 		m_pCurrentDialog = m_pOthersDialogManager->AvailableDialogs().front();
 		m_pOthersDialogManager->InitDialog(m_pOurDialogManager, m_pCurrentDialog);
 
-		//������� �����
+		//ñêàçàòü ôðàçó
 		CStringTable stbl;
 		AddAnswer(m_pCurrentDialog->GetPhraseText("0"), m_pOthersInvOwner->Name());
 		m_pOthersDialogManager->SayPhrase(m_pCurrentDialog, "0");
 
-		//���� ������ ����������, ������� � ����� ������ ����
+		//åñëè äèàëîã çàâåðøèëñÿ, ïåðåéòè â ðåæèì âûáîðà òåìû
 		if (!m_pCurrentDialog || m_pCurrentDialog->IsFinished()) ToTopicMode();
 	}
 }
@@ -110,8 +110,8 @@ void CUITalkWnd::UpdateQuestions()
 {
 	UITalkDialogWnd->ClearQuestions();
 
-	//���� ��� ��������� �������, ��
-	//������ ������ ����
+	//åñëè íåò àêòèâíîãî äèàëîãà, òî
+	//ðåæèìà âûáîðà òåìû
 	if (!m_pCurrentDialog)
 	{
 		m_pOurDialogManager->UpdateAvailableDialogs(m_pOthersDialogManager);
@@ -127,15 +127,15 @@ void CUITalkWnd::UpdateQuestions()
 	{
 		if (m_pCurrentDialog->IsWeSpeaking(m_pOurDialogManager))
 		{
-			//���� � ������ ���������� ���� ������ ���� ����� ��������, �� ������
-			//������� (����� ��� �� ���������� ������� ��������)
+			//åñëè â ñïèñêå äîïóñòèìûõ ôðàç òîëüêî îäíà ôðàçà ïóñòûøêà, òî ïðîñòî
+			//ñêàçàòü (èãðîê ñàì íå ïðîèçâîäèò íèêàêèõ äåéñòâèé)
 			if (!m_pCurrentDialog->PhraseList().empty() && m_pCurrentDialog->allIsDummy())
 			{
 				CPhrase* phrase = m_pCurrentDialog->PhraseList()[Random.randI(m_pCurrentDialog->PhraseList().size())];
 				SayPhrase(phrase->GetID());
 			};
 
-			//����� ��������� ���� �� ��������� �������
+			//âûáîð äîñòóïíûõ ôðàç èç àêòèâíîãî äèàëîãà
 			if (m_pCurrentDialog && !m_pCurrentDialog->allIsDummy())
 			{
 				int number = 0;
@@ -202,7 +202,7 @@ void UpdateCameraDirection(CGameObject* pTo)
 
 void CUITalkWnd::Update()
 {
-	//���������� ��������, ���� �����
+	//îñòàíîâèòü ðàçãîâîð, åñëè íóæíî
 	if (g_actor && m_pActor && !m_pActor->IsTalking())
 	{
 		StopTalk();
@@ -278,7 +278,7 @@ void CUITalkWnd::AskQuestion()
 	if (m_bNeedToUpdateQuestions) return; //quick dblclick:(
 	shared_str phrase_id;
 
-	//����� ������ ���� ���������
+	//èãðîê âûáðàë òåìó ðàçãîâîðà
 	if (TopicMode())
 	{
 		if ((UITalkDialogWnd->m_ClickedQuestionID == "") ||
@@ -308,7 +308,7 @@ void CUITalkWnd::SayPhrase(const shared_str& phrase_id)
 {
 	AddAnswer(m_pCurrentDialog->GetPhraseText(phrase_id), m_pOurInvOwner->Name());
 	m_pOurDialogManager->SayPhrase(m_pCurrentDialog, phrase_id);
-	//���� ������ ����������, ������� � ����� ������ ����
+	//åñëè äèàëîã çàâåðøèëñÿ, ïåðåéòè â ðåæèì âûáîðà òåìû
 	if (m_pCurrentDialog->IsFinished()) ToTopicMode();
 }
 
@@ -322,7 +322,7 @@ void CUITalkWnd::AddQuestion(const shared_str& text, const shared_str& value, in
 
 void CUITalkWnd::AddAnswer(const shared_str& text, LPCSTR SpeakerName)
 {
-	//��� ������ ����� ������ ������ �� �������
+	//äëÿ ïóñòîé ôðàçû âîîáùå íè÷åãî íå âûâîäèì
 	if (text.size() == 0)
 	{
 		return;

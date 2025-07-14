@@ -1,20 +1,20 @@
 ///////////////////////////////////////////////////////////////
 // ini_id_loader.h
-// ������������ �����, ������� ��������� �� ini ����� 
-// ������ � ���������� id, ����� ����������� ������� ����������
-// id ���������� index
+// òåìïëåéòîâûé êëàññ, êîòîðûé çàãðóæàåò èç ini ôàéëà 
+// ñòðîêó ñ òåêñòîâûìè id, ïîòîì ïðèñâàèâàåò êàæäîìó òåêñòîâîìó
+// id óíèêàëüíûé index
 ///////////////////////////////////////////////////////////////
 
 #pragma once
 
-//T_ID, T_INDEX -	��� ������� � id
+//T_ID, T_INDEX -	òèï èíäåêñà è id
 
-//ITEM_DATA		-	��������� � ������ id � index ���� T_ID � T_INDEX,
-//					����������� ����� ����������� � ����������� (T_INDEX index, T_ID id, LPCSTR r1, ..., LPCSTR rN)
-//					N = ITEM_REC_NUM - ����� ���. ���������� � ITEM_DATA 
+//ITEM_DATA		-	ñòðóêòóðà ñ ïîëÿìè id è index òèïà T_ID è T_INDEX,
+//					îáÿçàòåëüíî èìååò êîíñòðóêòîð ñ ïàðàìåòðàìè (T_INDEX index, T_ID id, LPCSTR r1, ..., LPCSTR rN)
+//					N = ITEM_REC_NUM - ÷èñëî äîï. ïàðàìåòðîâ â ITEM_DATA 
 
-//T_INIT		-	����� ��� ���������� ����������� InitIdToIndex
-//					������� ������������� section_name � line_name
+//T_INIT		-	êëàññ ãäå îïðåäåëåíà ñòàòè÷åñêàÿ InitIdToIndex
+//					ôóíêöèÿ èíèöèàëèçàöèè section_name è line_name
 
 #define TEMPLATE_SPECIALIZATION		template<u32 ITEM_REC_NUM, typename ITEM_DATA, typename T_ID, typename T_INDEX, typename T_INIT>
 #define CSINI_IdToIndex CIni_IdToIndex	<ITEM_REC_NUM, ITEM_DATA, T_ID, T_INDEX, T_INIT>
@@ -68,7 +68,7 @@ protected:
 		}
 	}
 
-	//��� ������ � ����� ������ ����� ����������� id
+	//èìÿ ñåêöèè è ëèíèè îòêóäà áóäóò çàãðóæàòüñÿ id
 	static LPCSTR section_name;
 	static LPCSTR line_name;
 
@@ -94,7 +94,7 @@ public:
 
 	static const T_INDEX GetMaxIndex() { return m_pItemDataVector->size() - 1; }
 
-	//�������� ����������� �������
+	//óäàëåíèå ñòàòè÷åêîãî ìàññèâà
 	static void DeleteIdToIndexData();
 };
 

@@ -8,13 +8,13 @@
 #endif // XRGAME_EXPORTS
 
 
-//T_ID    - ���������� ��������� ������������� (�������� id � XML �����)
-//T_INDEX - ���������� �������� ������ 
-//T_INIT -  ����� ��� ���������� ����������� InitXmlIdToIndex
-//          ������� ������������� file_str � tag_name
+//T_ID    - óíèêàëüíûé òåêñòîâûé èäåíòèôèêàòîð (àòòðèáóò id â XML ôàéëå)
+//T_INDEX - óíèêàëüíûé ÷èñëîâîé èíäåêñ 
+//T_INIT -  êëàññ ãäå îïðåäåëåíà ñòàòè÷åñêàÿ InitXmlIdToIndex
+//          ôóíêöèÿ èíèöèàëèçàöèè file_str è tag_name
 
-//��������� ������ ��������� id �������� 
-//���� � �������, ��� ���� ������� ���������
+//ñòðóêòóðà õðàíèò ñòðîêîâûé id ýëåìåíòà 
+//ôàéë è ïîçèöèþ, ãäå ýòîò ýëåìåíò íàõîäèòñÿ
 struct ITEM_DATA
 {
 	shared_str id;
@@ -39,10 +39,10 @@ private:
 	static T_VECTOR* m_pItemDataVector;
 
 protected:
-	//����� xml ������ (����������� �������) �� ������� 
-	//����������� �������� ���������
+	//èìåíà xml ôàéëîâ (ðàçäåëåííûõ çàïÿòîé) èç êîòîðûõ 
+	//ïðîèçâîäèòü çàãðóçêó ýëåìåíòîâ
 	static LPCSTR file_str;
-	//����� �����
+	//èìåíà òåãîâ
 	static LPCSTR tag_name;
 public:
 	CXML_IdToIndex();
@@ -67,7 +67,7 @@ public:
 
 	static const int GetMaxIndex() { return m_pItemDataVector->size() - 1; }
 
-	//�������� ����������� �������
+	//óäàëåíèå ñòàòè÷åêîãî ìàññèâà
 	static void DeleteIdToIndexData();
 };
 
@@ -162,7 +162,7 @@ void CSXML_IdToIndex::InitInternal()
 		xml_file_full += ".xml";
 		uiXml->Load(CONFIG_PATH, "gameplay", xml_file_full.c_str());
 
-		//����� ������
+		//îáùèé ñïèñîê
 		int items_num = uiXml->GetNodesNum(uiXml->GetRoot(), tag_name);
 
 		for (int i = 0; i < items_num; ++i)
@@ -174,7 +174,7 @@ void CSXML_IdToIndex::InitInternal()
 			R_ASSERT2(item_name, buf);
 
 
-			//����������� ID �� ������������
+			//ïðîâåðåòèòü ID íà óíèêàëüíîñòü
 			T_VECTOR::iterator t_it = m_pItemDataVector->begin();
 			for (; m_pItemDataVector->end() != t_it; ++t_it)
 			{

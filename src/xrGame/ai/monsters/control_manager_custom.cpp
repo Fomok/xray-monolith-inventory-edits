@@ -247,7 +247,7 @@ void CControlManagerCustom::ta_deactivate()
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-// ������ � ��������������������
+// Ðàáîòà ñ ïîñëåäîâàòåëüíîñòÿìè
 void CControlManagerCustom::seq_init()
 {
 	m_man->capture(this, ControlCom::eControlSequencer);
@@ -526,7 +526,7 @@ void CControlManagerCustom::check_jump_over_physics()
 	{
 		const DetailPathManager::STravelPathPoint& travel_point = m_man->path_builder().detail().path()[i];
 
-		// �������� ������ �������� ������ �����
+		// ïîëó÷èòü ñïèñîê îáúåêòîâ âîêðóã âðàãà
 		m_nearest.clear_not_free();
 		Level().ObjectSpace.GetNearest(m_nearest, travel_point.position, m_object->Radius(), NULL);
 
@@ -538,7 +538,7 @@ void CControlManagerCustom::check_jump_over_physics()
 
 			Fvector dir = Fvector().sub(travel_point.position, m_object->Position());
 
-			// �������� ��  Field-Of-View
+			// ïðîâåðêà íà  Field-Of-View
 			float my_h = m_object->Direction().getH();
 			float h = dir.getH();
 
@@ -549,7 +549,7 @@ void CControlManagerCustom::check_jump_over_physics()
 
 			dir = Fvector().sub(obj->Position(), m_object->Position());
 
-			// ��������� ������� ������� ��� ������
+			// âû÷èñëèòü öåëåâóþ ïîçèöèþ äëÿ ïðûæêà
 			Fvector target;
 			obj->Center(target);
 			target.y += obj->Radius();
