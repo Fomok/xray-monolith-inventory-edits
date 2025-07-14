@@ -34,5 +34,5 @@ target_sources(imgui
 target_include_directories(imgui
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  "${CMAKE_SOURCE_DIR}/src/3rd party"
+  "${CMAKE_SOURCE_DIR}/Extern"
 )

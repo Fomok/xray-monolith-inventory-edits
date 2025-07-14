@@ -219,9 +219,9 @@ if(${ICU_STATIC})
 else()
   add_library(icuuc SHARED IMPORTED)
   set_property(TARGET icuuc PROPERTY
-              IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/sdk/binaries/icuuc65.dll)
+              IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/Extern/SDK/binaries/icuuc65.dll)
   set_property(TARGET icuuc PROPERTY
-              IMPORTED_IMPLIB ${CMAKE_SOURCE_DIR}/sdk/libraries/x64.old/icuuc.lib)
+              IMPORTED_IMPLIB ${CMAKE_SOURCE_DIR}/Extern/SDK/libraries/x64.old/icuuc.lib)
 
   target_link_libraries(icu
     INTERFACE

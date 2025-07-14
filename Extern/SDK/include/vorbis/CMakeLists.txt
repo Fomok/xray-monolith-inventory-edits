@@ -72,7 +72,7 @@ target_sources(vorbis PRIVATE
 target_include_directories(vorbis
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/sdk/include
+  ${CMAKE_SOURCE_DIR}/Extern/SDK/include
 )
 
 target_compile_definitions(vorbis

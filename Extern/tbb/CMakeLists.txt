@@ -139,13 +139,13 @@ add_library(tbb_shared SHARED IMPORTED)
 set_property(
   TARGET tbb_shared
   PROPERTY IMPORTED_LOCATION
-  ${CMAKE_SOURCE_DIR}/sdk/binaries/tbb.dll
+  ${CMAKE_SOURCE_DIR}/Extern/SDK/binaries/tbb.dll
 )
 set_property(
   TARGET tbb_shared
   PROPERTY
   IMPORTED_IMPLIB
-  ${CMAKE_SOURCE_DIR}/sdk/libraries/x64.old/tbb.lib
+  ${CMAKE_SOURCE_DIR}/Extern/SDK/libraries/x64.old/tbb.lib
 )
 
 target_link_libraries(tbb
