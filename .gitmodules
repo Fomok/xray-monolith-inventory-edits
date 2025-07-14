@@ -1,6 +1,6 @@
 [submodule "src/3rd party/optick-git"]
-	path = src/3rd party/optick-git
+	path = Extern/optick-git
 	url = https://github.com/bombomby/optick.git
 [submodule "extern/WindowsToolchain"]
-	path = CMake/WindowsToolchain
+	path = Extern/WindowsToolchain
 	url = https://github.com/MarkSchofield/WindowsToolchain.git
