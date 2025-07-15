@@ -4,6 +4,7 @@ on:
   push:
     branches-ignore:
       - "cmake"
+  workflow_dispatch:
 
 # Cancel previous run if a new commit is pushed
 concurrency:

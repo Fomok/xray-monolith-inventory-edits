@@ -3,7 +3,8 @@ name: Release
 on:
   push:
     branches:
-      - "cmake"
+      - cmake
+  workflow_dispatch:
 
 # Cancel previous run if a new commit is pushed
 concurrency:
