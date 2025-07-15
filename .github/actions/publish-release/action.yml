@@ -17,7 +17,7 @@ runs:
       tag_name: ${{inputs.name}}
       generate_release_notes: true
       token: ${{inputs.token}}
-    
+
   - name: Remove Artifacts
     uses: c-hive/gha-remove-artifacts@v1.2.0
     with:

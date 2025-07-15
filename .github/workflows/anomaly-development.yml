@@ -168,7 +168,7 @@ jobs:
 
   # Checking jobs
   check-mixed-tabs:
-    name: Mixed Tabs
+    name: Mixed Spaces & Tabs
     needs: check
 
     runs-on: ubuntu-latest

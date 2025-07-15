@@ -5,7 +5,7 @@ runs:
       shell: bash
       run: |
         ARTIFACT_IDS="${{env.packed-gamedata}}"
-        
+
         targets=(
           Anomaly.DX8
           Anomaly.DX9

@@ -23,6 +23,6 @@ runs:
           echo
           echo Details:
           git diff --color=always --minimal
-          
+
           exit 1
         fi

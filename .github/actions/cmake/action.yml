@@ -20,7 +20,7 @@ runs:
         target: ${{inputs.target || env.target}}
         # Empty out VCPKG root var to prevent run-cmake from trying and failing to call it
         VCPKG_ROOT:
-      
+
       with:
         configurePreset: ${{env.configure-preset}}
         buildPreset: "${{env.configure-preset}}.${{env.build-preset}}"
