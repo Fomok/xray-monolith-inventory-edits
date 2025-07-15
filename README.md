@@ -263,23 +263,16 @@ Pack individual executable PDB files into `_build/<ConfigurePreset>/AnomalyDX<VE
 
 Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_exes_gamedata.db0`
 
-#### CMake (CLI)
-
-1. Ensure CMake is installed and added to your `PATH`
-2. Open a shell inside your `xray-monolith` directory
-3. Configure the `_build` directory with `cmake --preset <ConfigurePreset>`
-4. Build a target with `cmake --build --preset <BuildPreset> --target <TargetName>`
-   - Omitting the `--target` argument will build all targets
-
-#### CMake (GUI)
-
-1. Open the CMake GUI
-2. Set the `Where is the source code` field to your `xray-monolith` directory
-3. Set the `Preset` field to your Configure Preset of choice
-4. Click `Configure`
-5. Modify generation settings as desired in the resulting popup
-6. Click `Generate`
-7. Click `Open Project`, or follow the instructions for your generator of choice
+#### Visual Studio 2022
+1. Open VS2022
+2. Select `Open a local folder`
+3. Select your `xray-monolith` directory
+4. Wait for the project to load
+5. `Tools` -> `Options` -> `CMake` -> Untick `Enable unified build and configuration preset menu`
+6. Use dropdowns to select configuration and build presets
+7. `View` -> `CMake Targets`
+8. `Anomaly Project` -> `Targets` -> Right Click -> `Set as startup item` / `Build` / `Debug` / `Launch`
+   - Right click `Anomaly Project` -> `Build All` to build all targets
 
 #### Visual Studio Code
 1. Open VS Code
@@ -292,16 +285,23 @@ Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_
 7. Build / Debug / Launch via sidebar
    - `Project Outline` -> `Build All Projects` icon to build all targets
 
-#### Visual Studio 2022
-1. Open VS2022
-2. Select `Open a local folder`
-3. Select your `xray-monolith` directory
-4. Wait for the project to load
-5. `Tools` -> `Options` -> `CMake` -> Untick `Enable unified build and configuration preset menu`
-6. Use dropdowns to select configuration and build presets
-7. `View` -> `CMake Targets`
-8. `Anomaly Project` -> `Targets` -> Right Click -> `Set as startup item` / `Build` / `Debug` / `Launch`
-   - Right click `Anomaly Project` -> `Build All` to build all targets
+#### CMake (GUI)
+
+1. Open the CMake GUI
+2. Set the `Where is the source code` field to your `xray-monolith` directory
+3. Set the `Preset` field to your Configure Preset of choice
+4. Click `Configure`
+5. Modify generation settings as desired in the resulting popup
+6. Click `Generate`
+7. Click `Open Project`, or follow the instructions for your generator of choice
+
+#### CMake (CLI)
+
+1. Ensure CMake is installed and added to your `PATH`
+2. Open a shell inside your `xray-monolith` directory
+3. Configure the `_build` directory with `cmake --preset <ConfigurePreset>`
+4. Build a target with `cmake --build --preset <BuildPreset> --target <TargetName>`
+   - Omitting the `--target` argument will build all targets
 
 #### Buildbot
 GitHub Actions is set up to build Anomaly with a suite of compilers each time a commit is pushed.
