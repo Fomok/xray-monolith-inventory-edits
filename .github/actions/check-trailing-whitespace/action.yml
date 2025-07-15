@@ -1,0 +1,19 @@
+runs:
+  using: composite
+
+  steps:
+    - name: Install
+      shell: bash
+      run: sudo apt-get install moreutils
+
+    - name: Trailing whitespace
+      shell: bash
+      run: |
+        # Check for trailing whitespace
+        find . \( -path ./Extern -o -path ./sdk \) -prune -o -iregex '.*\.\(h\|hpp\|inl\|c\|cpp\|cs\|yaml\|yml\|md\|txt\|cmake\|sh\)' -type f -exec bash -c 'sed -i '' -e "s/[[:space:]]*$//" "$0"' {} \;
+    
+    - name: Report
+      uses: ./.github/actions/check-result
+      with:
+        message-ok: No files contain trailing whitespace
+        message-error: Contains trailing whitespace

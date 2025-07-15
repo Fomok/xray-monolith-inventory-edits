@@ -1,0 +1,19 @@
+runs:
+  using: composite
+
+  steps:
+    - name: Install
+      shell: bash
+      run: sudo apt-get install dos2unix recode
+
+    - name: UTF-8 Encoding
+      shell: bash
+      run: |
+        # Ensure files are UTF-8 encoded
+        find . \( -path ./Externals -o -path ./sdk \) -prune -o -iregex '.*\.\(h\|hpp\|inl\|c\|cpp\|yaml\|yml\|md\|txt\|cmake\|sh\)' -type f -exec bash -c 'recode UTF-8 "$0" 2> /dev/null' {} \;
+
+    - name: Report
+      uses: ./.github/actions/check-result
+      with:
+        message-ok: All files are UTF-8 encoded
+        message-error: Not UTF-8 encoded

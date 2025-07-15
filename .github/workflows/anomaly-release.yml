@@ -89,10 +89,50 @@ jobs:
     - name: Upload Gamedata
       uses: ./.github/actions/upload-gamedata
 
+  check-spacing:
+    name: Check Spacing
+    needs: anomaly
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Check
+      uses: ./.github/actions/check-spacing
+    
+    - name: Report
+      uses: ./.github/actions/check-result
+      with:
+        message-ok: Spacing OK
+        message-error: "Incorrect spacing"
+
+  check-encoding:
+    name: Check Encoding
+    needs: anomaly
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Check
+      uses: ./.github/actions/check-encoding
+    
+    - name: Report
+      uses: ./.github/actions/check-result
+      with:
+        message-ok: Encoding OK
+        message-error: "Incorrect encoding"
+
   release:
     needs: [
       binaries,
-      gamedata
+      gamedata,
+      check-spacing,
+      check-encoding
     ]
     name: Release
     runs-on: ubuntu-latest

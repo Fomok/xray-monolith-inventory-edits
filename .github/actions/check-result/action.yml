@@ -1,0 +1,28 @@
+inputs:
+  message-ok:
+    type: string
+    required: true
+
+  message-error:
+    type: string
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Report result
+      shell: bash
+      run: |
+        if [ -z "$(git status -s)" ]; then
+          echo "::notice::${{inputs.message-ok}}"
+        else
+          echo Affected files:
+          git status --short | sed "s/^ M /::error::${{inputs.message-error}}: /"
+
+          echo
+          echo Details:
+          git diff --color=always --minimal
+          
+          exit 1
+        fi

@@ -14,29 +14,45 @@ concurrency:
 permissions: write-all
 
 jobs:
+  # Entrypoint
   anomaly:
     name: Anomaly
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment: Anomaly.Development
     steps:
-      - run: echo "Building Anomaly"
+      - run: echo "Building Anomaly..."
     outputs:
       configure-preset-msvc: ${{vars.CONFIGURE_PRESET_MSVC || 'MSVS.MSVC.Ninja.AVX'}}
       configure-preset-clang: ${{vars.CONFIGURE_PRESET_CLANG || 'System.Clang'}}
       configure-preset-gnu: ${{vars.CONFIGURE_PRESET_GNU || 'System.GNU'}}
       build-preset: ${{vars.BUILD_PRESET || 'Verified'}}
       target: ${{vars.TARGET || 'Anomaly.DX11'}}
+  
+  # Compilation subcategory
+  compile:
+    name: Compile
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Compiling..."
+    outputs:
+      configure-preset-msvc: ${{needs.anomaly.outputs.configure-preset-msvc}}
+      configure-preset-clang: ${{needs.anomaly.outputs.configure-preset-clang}}
+      configure-preset-gnu: ${{needs.anomaly.outputs.configure-preset-gnu}}
+      build-preset: ${{needs.anomaly.outputs.build-preset}}
+      target: ${{needs.anomaly.outputs.target}}
 
+  # Compilation jobs
   msvc:
     name: MSVC
-    needs: anomaly
+    needs: compile
 
     runs-on: windows-latest
 
     env:
-      configure-preset: ${{needs.anomaly.outputs.configure-preset-msvc}}
-      build-preset: ${{needs.anomaly.outputs.build-preset}}
-      target: ${{needs.anomaly.outputs.target}}
+      configure-preset: ${{needs.compile.outputs.configure-preset-msvc}}
+      build-preset: ${{needs.compile.outputs.build-preset}}
+      target: ${{needs.compile.outputs.target}}
 
     steps:
     - name: Checkout
@@ -56,14 +72,14 @@ jobs:
 
   clang:
     name: Clang
-    needs: anomaly
+    needs: compile
 
     runs-on: windows-latest
 
     env:
-      configure-preset: ${{needs.anomaly.outputs.configure-preset-clang}}
-      build-preset: ${{needs.anomaly.outputs.build-preset}}
-      target: ${{needs.anomaly.outputs.target}}
+      configure-preset: ${{needs.compile.outputs.configure-preset-clang}}
+      build-preset: ${{needs.compile.outputs.build-preset}}
+      target: ${{needs.compile.outputs.target}}
 
     steps:
     - name: Checkout
@@ -83,16 +99,16 @@ jobs:
 
   gnu:
     name: GNU
-    needs: anomaly
+    needs: compile
 
     runs-on: windows-latest
 
     if: false
 
     env:
-      configure-preset: ${{needs.anomaly.outputs.configure-preset-gnu}}
-      build-preset: ${{needs.anomaly.outputs.build-preset}}
-      target: ${{needs.anomaly.outputs.target}}
+      configure-preset: ${{needs.compile.outputs.configure-preset-gnu}}
+      build-preset: ${{needs.compile.outputs.build-preset}}
+      target: ${{needs.compile.outputs.target}}
 
     steps:
     - name: Checkout
@@ -109,10 +125,19 @@ jobs:
     
     - name: Upload PDB
       uses: ./.github/actions/upload-pdb
+  
+  # Packing subcategory
+  pack:
+    name: Pack
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Packing..."
 
+  # Packing jobs
   gamedata:
     name: Gamedata
-    needs: anomaly
+    needs: pack
     runs-on: windows-latest
 
     env:
@@ -132,3 +157,76 @@ jobs:
     
     - name: Upload Gamedata
       uses: ./.github/actions/upload-gamedata
+  
+  # Checking subcategory
+  check:
+    name: Check
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Checking..."
+
+  # Checking jobs
+  check-mixed-tabs:
+    name: Mixed Tabs
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - uses: ./.github/actions/check-mixed-tabs
+
+  check-trailing-whitespace:
+    name: Trailing Whitespace
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Trailing Whitespace
+      uses: ./.github/actions/check-trailing-whitespace
+
+  check-terminating-newline:
+    name: Terminating Newline
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Newline Endings
+      uses: ./.github/actions/check-terminating-newline
+
+  check-utf8:
+    name: UTF-8 Encoding
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: UTF-8
+      uses: ./.github/actions/check-utf8
+
+  check-line-endings:
+    name: Line Endings
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Line Endings
+      uses: ./.github/actions/check-line-endings
