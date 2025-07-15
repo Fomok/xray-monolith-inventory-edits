@@ -10,3 +10,6 @@
 [submodule "Extern/DxErr-git"]
 	path = Extern/DxErr-git
 	url = https://github.com/rbeesley/DXErr.git
+[submodule "Extern/StackWalker-git"]
+	path = Extern/StackWalker-git
+	url = https://github.com/JochenKalmbach/StackWalker.git
