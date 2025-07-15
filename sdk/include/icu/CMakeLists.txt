@@ -2,7 +2,7 @@ option(ICU_STATIC "Link ICU libraries statically." Off)
 
 add_library(icu INTERFACE)
 
-target_folder(icu ${FOLDER_EXTERNAL})
+target_folder(icu ${FOLDER_SDK})
 
 target_sources(icu
   PRIVATE
