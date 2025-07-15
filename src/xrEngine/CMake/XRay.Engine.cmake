@@ -16,6 +16,7 @@ add_module(XRay.Engine
   imgui
   luabind
   LuaJIT
+  optick
   ReShadeCompat
   Vfw32
   XRay.Collision

@@ -202,3 +202,8 @@ target_compile_definitions(crypto
   PRIVATE
   CRYPTO_BUILD
 )
+
+target_link_libraries(crypto
+  PRIVATE
+  XRay.Core
+)

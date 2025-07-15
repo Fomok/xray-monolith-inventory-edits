@@ -18,6 +18,7 @@ add_module(XRay.Render.R4
   luabind
   LuaJIT
   NVAPI
+  optick
   tbb
   XRay.Collision
   XRay.Core

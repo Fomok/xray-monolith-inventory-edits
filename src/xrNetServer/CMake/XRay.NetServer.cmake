@@ -8,6 +8,7 @@ add_module(XRay.NetServer
   LINKS
   DPlay
   DXERR
+  optick
   Ws2_32
   XRay.Core
 

@@ -22,6 +22,7 @@ add_module(XRay.Collision
   DEFINES XRCDB_EXPORTS
 
   LINKS
+  optick
   XRay.Core
   XRay.Render.Common
   XRay.Render.API

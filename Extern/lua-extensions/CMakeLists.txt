@@ -56,4 +56,5 @@ target_include_directories(lua-extensions
 target_link_libraries(lua-extensions
   PRIVATE
   LuaJIT
+  XRay.Core
 )

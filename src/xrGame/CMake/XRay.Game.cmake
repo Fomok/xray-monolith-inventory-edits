@@ -18,6 +18,7 @@ add_module(XRay.Game
   luabind
   LuaJIT
   ode
+  optick
   XRay.Collision
   XRay.Core
   XRay.Engine

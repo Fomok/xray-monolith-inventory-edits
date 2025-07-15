@@ -9,7 +9,7 @@ target_sources(ReShadeCompat PRIVATE
 target_include_directories(ReShadeCompat
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  "${CMAKE_SOURCE_DIR}/src/Extern"
+  ${CMAKE_SOURCE_DIR}/Extern
 )
 
 target_precompile_headers(ReShadeCompat
