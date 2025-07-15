@@ -7,7 +7,6 @@
 # exclude binaries and temporary files
 _build/
 /src/*.tss
-/**/x64/
 **/.vs/
 *.pdb
 *.ilk

@@ -1,5 +1,3 @@
-add_subdirectory(SDK)
-
 add_subdirectory(crypto)
 add_subdirectory(cximage)
 add_subdirectory(discord)

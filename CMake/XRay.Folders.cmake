@@ -10,7 +10,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(FOLDER_LUA External/Lua)
 set(FOLDER_EXTERNAL External)
 set(FOLDER_LUA_BUILD External/Lua/Build)
-set(FOLDER_SDK External/SDK)
+set(FOLDER_SDK SDK)
 set(FOLDER_CI CI)
 set(FOLDER_EXECUTABLES Executables)
 

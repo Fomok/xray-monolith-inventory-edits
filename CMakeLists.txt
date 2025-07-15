@@ -52,7 +52,7 @@ target_sources(Build
 # Hand off to our XRay entrypoint
 include(XRay)
 
-# Setup SDK
+# Setup external libraries
 add_subdirectory(Extern)
 
 # Setup compressor
@@ -60,6 +60,9 @@ add_subdirectory(compressor)
 
 # Setup gamedata
 add_subdirectory(gamedata)
+
+# Setup SDK
+add_subdirectory(sdk)
 
 # Setup engine sources
 add_subdirectory(src)
