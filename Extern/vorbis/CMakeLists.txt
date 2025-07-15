@@ -1,7 +1,7 @@
 # Vorbis
 add_library(vorbis STATIC)
 
-target_folder(vorbis ${FOLDER_SDK})
+target_folder(vorbis ${FOLDER_EXTERNAL})
 
 target_sources(vorbis PRIVATE
   lib/analysis.c
@@ -72,7 +72,7 @@ target_sources(vorbis PRIVATE
 target_include_directories(vorbis
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/sdk/include
+  ${XRAY_EXTERNAL}
 )
 
 target_compile_definitions(vorbis
@@ -83,16 +83,15 @@ target_compile_definitions(vorbis
 # Vorbis File
 add_library(vorbisfile STATIC)
 
-target_folder(vorbisfile ${FOLDER_SDK})
+target_folder(vorbisfile ${FOLDER_EXTERNAL})
 
 target_sources(vorbisfile PRIVATE
   lib/vorbisfile.c
-
   vorbisfile.h
 )
 
 target_include_directories(vorbisfile
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${XRAY_SDK_INCLUDE}
+  ${XRAY_EXTERNAL}
 )

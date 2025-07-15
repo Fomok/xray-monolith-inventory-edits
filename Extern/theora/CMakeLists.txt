@@ -1,6 +1,6 @@
 add_library(theora STATIC)
 
-target_folder(theora ${FOLDER_SDK})
+target_folder(theora ${FOLDER_EXTERNAL})
 
 target_sources(theora PRIVATE
   lib/analyze.c
@@ -63,5 +63,5 @@ target_sources(theora PRIVATE
 target_include_directories(theora
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${XRAY_SDK_INCLUDE}
+  ${XRAY_EXTERNAL}
 )
