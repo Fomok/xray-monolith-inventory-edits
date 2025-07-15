@@ -1,6 +1,6 @@
 add_library(serial INTERFACE)
 
-target_folder(serial ${FOLDER_EXTERNAL})
+target_folder(serial ${FOLDER_SDK})
 
 target_sources(serial
   PRIVATE

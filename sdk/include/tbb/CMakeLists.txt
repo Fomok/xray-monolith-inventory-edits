@@ -1,6 +1,6 @@
 add_library(tbb INTERFACE)
 
-target_folder(tbb ${FOLDER_EXTERNAL})
+target_folder(tbb ${FOLDER_SDK})
 
 target_sources(tbb
   PRIVATE
