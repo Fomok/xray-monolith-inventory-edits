@@ -1,7 +1,7 @@
 add_subdirectory(crypto)
 add_subdirectory(cximage)
 add_subdirectory(discord)
-add_subdirectory(DXERR)
+add_subdirectory(DxErr)
 add_subdirectory(icu)
 add_subdirectory(imgui)
 add_subdirectory(luabind)

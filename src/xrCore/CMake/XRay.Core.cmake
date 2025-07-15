@@ -13,7 +13,7 @@ add_module(XRay.Core
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
-  DXERR
+  DxErr
   optick
   StackWalker
   winmm
