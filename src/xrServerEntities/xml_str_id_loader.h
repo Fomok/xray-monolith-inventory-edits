@@ -8,13 +8,13 @@
 #endif // XRGAME_EXPORTS
 
 
-//T_ID    - óíèêàëüíûé òåêñòîâûé èäåíòèôèêàòîð (àòòðèáóò id â XML ôàéëå)
-//T_INDEX - óíèêàëüíûé ÷èñëîâîé èíäåêñ 
-//T_INIT -  êëàññ ãäå îïðåäåëåíà ñòàòè÷åñêàÿ InitXmlIdToIndex
-//          ôóíêöèÿ èíèöèàëèçàöèè file_str è tag_name
+//T_ID    - уникальный текстовый идентификатор (аттрибут id в XML файле)
+//T_INDEX - уникальный числовой индекс 
+//T_INIT -  класс где определена статическая InitXmlIdToIndex
+//          функция инициализации file_str и tag_name
 
-//ñòðóêòóðà õðàíèò ñòðîêîâûé id ýëåìåíòà 
-//ôàéë è ïîçèöèþ, ãäå ýòîò ýëåìåíò íàõîäèòñÿ
+//структура хранит строковый id элемента 
+//файл и позицию, где этот элемент находится
 struct ITEM_DATA
 {
 	shared_str id;
@@ -39,10 +39,10 @@ private:
 	static T_VECTOR* m_pItemDataVector;
 
 protected:
-	//èìåíà xml ôàéëîâ (ðàçäåëåííûõ çàïÿòîé) èç êîòîðûõ 
-	//ïðîèçâîäèòü çàãðóçêó ýëåìåíòîâ
+	//имена xml файлов (разделенных запятой) из которых 
+	//производить загрузку элементов
 	static LPCSTR file_str;
-	//èìåíà òåãîâ
+	//имена тегов
 	static LPCSTR tag_name;
 public:
 	CXML_IdToIndex();
@@ -67,7 +67,7 @@ public:
 
 	static const int GetMaxIndex() { return m_pItemDataVector->size() - 1; }
 
-	//óäàëåíèå ñòàòè÷åêîãî ìàññèâà
+	//удаление статичекого массива
 	static void DeleteIdToIndexData();
 };
 
@@ -162,7 +162,7 @@ void CSXML_IdToIndex::InitInternal()
 		xml_file_full += ".xml";
 		uiXml->Load(CONFIG_PATH, "gameplay", xml_file_full.c_str());
 
-		//îáùèé ñïèñîê
+		//общий список
 		int items_num = uiXml->GetNodesNum(uiXml->GetRoot(), tag_name);
 
 		for (int i = 0; i < items_num; ++i)
@@ -174,7 +174,7 @@ void CSXML_IdToIndex::InitInternal()
 			R_ASSERT2(item_name, buf);
 
 
-			//ïðîâåðåòèòü ID íà óíèêàëüíîñòü
+			//проверетить ID на уникальность
 			T_VECTOR::iterator t_it = m_pItemDataVector->begin();
 			for (; m_pItemDataVector->end() != t_it; ++t_it)
 			{

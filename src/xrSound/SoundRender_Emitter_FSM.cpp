@@ -16,7 +16,7 @@ XRSOUND_API extern float psSoundCull;
 inline u32 calc_cursor(const float& fTimeStarted, float& fTime, const float& fTimeTotal, const WAVEFORMATEX& wfx)
 {
 	if (fTime < fTimeStarted)
-		fTime = fTimeStarted; // Àíäðþõà ïîñîâåòîâàë, àññåðò ÷òî íèæå âûëåòåë èç çà ïàóçû êàê òî õèòðî
+		fTime = fTimeStarted; // ÐÐ½Ð´Ñ€ÑŽÑ…Ð° Ð¿Ð¾ÑÐ¾Ð²ÐµÑ‚Ð¾Ð²Ð°Ð», Ð°ÑÑÐµÑ€Ñ‚ Ñ‡Ñ‚Ð¾ Ð½Ð¸Ð¶Ðµ Ð²Ñ‹Ð»ÐµÑ‚ÐµÐ» Ð¸Ð· Ð·Ð° Ð¿Ð°ÑƒÐ·Ñ‹ ÐºÐ°Ðº Ñ‚Ð¾ Ñ…Ð¸Ñ‚Ñ€Ð¾
 	R_ASSERT((fTime-fTimeStarted)>=0.0f);
 	while ((fTime - fTimeStarted) > fTimeTotal) //looped
 	{

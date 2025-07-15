@@ -140,7 +140,7 @@ void CLevel::IR_OnMouseMove(int dx, int dy)
     SetCursorPos(p.x, p.y);
 }
 
-// Îáðàáîòêà íàæàòèÿ êëàâèø
+// Обработка нажатия клавиш
 extern bool g_block_pause;
 extern bool g_block_all_except_movement;
 

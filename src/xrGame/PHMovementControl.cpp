@@ -1230,7 +1230,7 @@ BOOL CPHMovementControl::BorderTraceCallback(collide::rq_result& result, LPVOID 
 	}
 	else
 	{
-		//ïîëó÷èòü òðåóãîëüíèê è óçíàòü åãî ìàòåðèàë
+		//получить треугольник и узнать его материал
 		T = Level().ObjectSpace.GetStaticTris() + result.element;
 		mtl_idx = T->material;
 	}

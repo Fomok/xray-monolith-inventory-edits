@@ -40,9 +40,9 @@ void CSE_ALifeTraderAbstract::spawn_supplies()
 
 	if (m_SpecificCharacter.size())
 	{
-		//åñëè â custom data îáúåêòà åñòü
-		//ñåêöèÿ [dont_spawn_character_supplies]
-		//òî íå âûçûâàòü spawn èç selected_char.SupplySpawn()
+		//если в custom data объекта есть
+		//секция [dont_spawn_character_supplies]
+		//то не вызывать spawn из selected_char.SupplySpawn()
 		bool specific_character_supply = true;
 
 		if (xr_strlen(dynamic_object->m_ini_string))

@@ -24,7 +24,7 @@ public:
 	void Load(LPCSTR path_alias, LPCSTR path, LPCSTR xml_filename);
 	void LoadFromString(LPCSTR xml_string);
 
-	//÷òåíèå ýëåìåíòîâ
+	//чтение элементов
 	LPCSTR Read(LPCSTR path, int index, LPCSTR default_str_val);
 	LPCSTR Read(XML_NODE* start_node, LPCSTR path, int index, LPCSTR default_str_val);
 	LPCSTR Read(XML_NODE* node, LPCSTR default_str_val);
@@ -53,21 +53,21 @@ public:
 	XML_NODE* SearchForAttribute(LPCSTR path, int index, LPCSTR tag_name, LPCSTR attrib, LPCSTR attrib_value_pattern);
 	XML_NODE* SearchForAttribute(XML_NODE* start_node, LPCSTR tag_name, LPCSTR attrib, LPCSTR attrib_value_pattern);
 
-	//âîçâðàùàåò êîëè÷åñòâî óçëîâ ñ çàäàíûì èìåíåì
+	//возвращает количество узлов с заданым именем
 	int GetNodesNum(LPCSTR path, int index, LPCSTR tag_name);
 	int GetNodesNum(XML_NODE* node, LPCSTR tag_name);
 
 
 #ifdef DEBUG // debug & mixed
-	//ïðîâåðêà òîãî, ÷òî àòòðèáóòû ó òåãîâ óíèêàëüíû
-	//(åñëè íå NULL, òî óíèêàëüíîñòü íàðóøåíà è âîçâðàøàåòñÿ èìÿ 
-	//ïîâòîðÿþùåãîñÿ àòðèáóòà)
+	//проверка того, что аттрибуты у тегов уникальны
+	//(если не NULL, то уникальность нарушена и возврашается имя 
+	//повторяющегося атрибута)
 	LPCSTR				CheckUniqueAttrib		(XML_NODE* start_node, LPCSTR tag_name, LPCSTR attrib_name);
 #endif
 
-	//ïåðåìåñòèòüñÿ ïî XML äåðåâó 
-	//ïóòü çàäàåòñÿ â ôîðìå PARENT:CHILD:CHIDLS_CHILD
-	//node_index - íîìåð, åñëè óçëîâ ñ îäíèì èìåíåì íåñêîëüêî
+	//переместиться по XML дереву 
+	//путь задается в форме PARENT:CHILD:CHIDLS_CHILD
+	//node_index - номер, если узлов с одним именем несколько
 	XML_NODE* NavigateToNode(LPCSTR path, int node_index = 0);
 	XML_NODE* NavigateToNode(XML_NODE* start_node, LPCSTR path, int node_index = 0);
 	XML_NODE* NavigateToNodeWithAttribute(LPCSTR tag_name, LPCSTR attrib_name, LPCSTR attrib_value);
@@ -82,7 +82,7 @@ protected:
 	XML_NODE* m_pLocalRoot;
 
 #ifdef DEBUG // debug & mixed
-	//áóôôåðíûé âåêòîð äëÿ ïðîâåðêè óíèêàëüíîñòü àòòðèáóòîâ
+	//буфферный вектор для проверки уникальность аттрибутов
 	xr_vector<shared_str> m_AttribValues;
 #endif
 public:

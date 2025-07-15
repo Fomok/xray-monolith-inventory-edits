@@ -43,7 +43,7 @@ void CKinematics::CalculateBones(BOOL bForceExact)
 		bool visibleCheck = (dist < IK_ALWAYS_CALC_DIST * dist_k) || ::Render->ViewBase.testSphere_dirty(p, vis.sphere.R);
 		if (!visibleCheck)
 		{
-			bForceExact = false;
+			bForceExact = FALSE;
 			update_rate_k = _max(2.f, update_rate_k);
 
 			/*if (RDEVICE.dwTimeGlobal % 100 < 10)
@@ -55,7 +55,7 @@ void CKinematics::CalculateBones(BOOL bForceExact)
 		// distance check, perform when cvar is enabled and can be optimized
 		if (r_optimize_calculate_bones && canBeOptimized() && (dist > IK_CALC_DIST * dist_k))
 		{
-			bForceExact = false;
+			bForceExact = FALSE;
 
 			/*if (RDEVICE.dwTimeGlobal % 100 < 10)
 			{

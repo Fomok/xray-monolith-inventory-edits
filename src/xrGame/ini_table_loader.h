@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////
 // ini_table_loader.h
-// òåìïëåéòîâûé êëàññ, êîòîðûé çàãðóæàåò èç ini ôàéëà 
-// êâàäðàòíóþ òàáëèöó äëÿ ýëåìåíòîâ
+// темплейтовый класс, который загружает из ini файла 
+// квадратную таблицу для элементов
 ///////////////////////////////////////////////////////////////
 
 #pragma once
 
 
-//T_ITEM		-	òèï ýëåìåíòà òàáëèöû
+//T_ITEM		-	тип элемента таблицы
 //					
-//T_INI_LOADER	-	òèï êëàññà CIni_IdToIndex, 
-//					îòêóäà áóäåò áðàòüñÿ èíôîðìàöèÿ ðàçìåðàõ òàáëèöû
-//TABLE_INDEX		-	ïîðÿäêîâûé íîìåð òàáëèöû, íóæåí òîëüêî â òîì ñëó÷àå
-//					åñëè ìû õîòèì ñãåíåíðèðîâàòü íåñêîëüêî òàáëèö ñ îäèíàêîâûìè
-//					T_ITEM è T_INI_LOADER
+//T_INI_LOADER	-	тип класса CIni_IdToIndex, 
+//					откуда будет браться информация размерах таблицы
+//TABLE_INDEX		-	порядковый номер таблицы, нужен только в том случае
+//					если мы хотим сгененрировать несколько таблиц с одинаковыми
+//					T_ITEM и T_INI_LOADER
 
 
 #define TEMPLATE_SPECIALIZATION		template<typename T_ITEM, typename T_INI_LOADER, u16 TABLE_INDEX >
@@ -44,10 +44,10 @@ public:
 private:
 	ITEM_TABLE* m_pTable;
 	LPCSTR table_sect;
-	//øèðèíà òàáëèöû, åñëè -1 òî òàáëèöà äåëàåòñÿ êâàäðàòíîé (øèðèíà ðàâíà âûñîòå)
+	//ширина таблицы, если -1 то таблица делается квадратной (ширина равна высоте)
 	int table_width;
 
-	//ïåðîáðàçîâàíèå èç LPCSTR â T_ITEM
+	//перобразование из LPCSTR в T_ITEM
 
 	template <typename T_CONVERT_ITEM>
 	T_ITEM convert(LPCSTR)
@@ -73,7 +73,7 @@ private:
 TEMPLATE_SPECIALIZATION
 typename CSIni_Table::ITEM_TABLE* CSIni_Table::m_pTable = NULL;
 
-//èìÿ ñåêöèè òàáëèöû
+//имя секции таблицы
 TEMPLATE_SPECIALIZATION
 LPCSTR CSIni_Table::table_sect = NULL;
 TEMPLATE_SPECIALIZATION
