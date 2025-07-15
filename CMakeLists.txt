@@ -28,8 +28,8 @@ message(STATUS)
 message(STATUS "S.T.A.L.K.E.R. Anomaly")
 message(STATUS "      Version: ${TODAY_DOTS}")
 
-add_custom_target(CMake)
-target_sources(CMake
+add_custom_target(Build)
+target_sources(Build
   PRIVATE
   CMake/Today.cmake
   CMake/XRay.AVX.cmake
