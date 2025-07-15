@@ -1,6 +1,6 @@
 add_library(jpeg STATIC)
 
-target_folder(jpeg ${FOLDER_SDK})
+target_folder(jpeg ${FOLDER_EXTERNAL})
 
 target_sources(jpeg PRIVATE
   ansi2knr.c
@@ -91,5 +91,5 @@ target_sources(jpeg PRIVATE
 
 target_include_directories(jpeg
   PUBLIC
-  ${XRAY_SDK_INCLUDE}
+  ${XRAY_EXTERNAL}
 )
