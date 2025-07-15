@@ -21,12 +21,21 @@ jobs:
     environment: Anomaly.PullRequest
     steps:
       - run: echo "Building Anomaly"
+  
+  # Compilation subcategory
+  compile:
+    name: Compile
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Compiling..."
 
+  # Compilation jobs
   binaries:
     name: Binaries
 
     runs-on: windows-latest
-    needs: anomaly
+    needs: compile
 
     strategy:
       matrix:
@@ -63,10 +72,19 @@ jobs:
     
     - name: Upload PDB
       uses: ./.github/actions/upload-pdb
+  
+  # Packing subcategory
+  pack:
+    name: Pack
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Packing..."
 
+  # Packing jobs
   gamedata:
     name: Gamedata
-    needs: anomaly
+    needs: pack
     
     runs-on: windows-latest
 
@@ -87,10 +105,19 @@ jobs:
     
     - name: Upload Gamedata
       uses: ./.github/actions/upload-gamedata
+  
+  # Checking subcategory
+  check:
+    name: Check
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Checking..."
 
+  # Checking jobs
   check-spacing:
     name: Check Spacing
-    needs: anomaly
+    needs: check
 
     runs-on: ubuntu-latest
 
@@ -109,7 +136,7 @@ jobs:
 
   check-encoding:
     name: Check Style
-    needs: anomaly
+    needs: check
 
     runs-on: ubuntu-latest
 
