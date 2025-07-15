@@ -115,8 +115,8 @@ jobs:
       - run: echo "Checking..."
 
   # Checking jobs
-  check-spacing:
-    name: Check Spacing
+  check-mixed-tabs:
+    name: Mixed Spaces & Tabs
     needs: check
 
     runs-on: ubuntu-latest
@@ -125,17 +125,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Check Spacing
-      uses: ./.github/actions/check-spacing
-    
-    - name: Report Results
-      uses: ./.github/actions/check-result
-      with:
-        message-ok: Spacing OK
-        message-error: "Incorrect spacing"
+    - uses: ./.github/actions/check-mixed-tabs
 
-  check-encoding:
-    name: Check Style
+  check-trailing-whitespace:
+    name: Trailing Whitespace
     needs: check
 
     runs-on: ubuntu-latest
@@ -144,11 +137,44 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Check Encoding
-      uses: ./.github/actions/check-encoding
-    
-    - name: Report Results
-      uses: ./.github/actions/check-result
-      with:
-        message-ok: Encoding OK
-        message-error: "Incorrect encoding"
+    - name: Trailing Whitespace
+      uses: ./.github/actions/check-trailing-whitespace
+
+  check-terminating-newline:
+    name: Terminating Newline
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Newline Endings
+      uses: ./.github/actions/check-terminating-newline
+
+  check-utf8:
+    name: UTF-8 Encoding
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: UTF-8
+      uses: ./.github/actions/check-utf8
+
+  check-line-endings:
+    name: Line Endings
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Line Endings
+      uses: ./.github/actions/check-line-endings
