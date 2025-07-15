@@ -22,6 +22,7 @@ add_module(XRay.Collision
   DEFINES XRCDB_EXPORTS
 
   LINKS
+  OPCODE
   optick
   XRay.Core
   XRay.Render.Common
@@ -39,4 +40,3 @@ set_source_files_properties(
 )
 
 include(XRay.Collision.Engine)
-include(XRay.Collision.Opcode)
