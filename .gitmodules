@@ -4,3 +4,6 @@
 [submodule "extern/WindowsToolchain"]
 	path = Extern/WindowsToolchain
 	url = https://github.com/MarkSchofield/WindowsToolchain.git
+[submodule "Extern/cximage-git"]
+	path = Extern/cximage-git
+	url = https://github.com/minnyres/cximage.git

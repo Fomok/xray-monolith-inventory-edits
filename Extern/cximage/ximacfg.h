@@ -1,29 +1,6 @@
 #if !defined(__ximaCFG_h)
 #define __ximaCFG_h
 
-extern "C" void*	cxalloc(size_t size);
-extern "C" void		cxfree(void* ptr);
-extern "C" void*	cxrealloc(void* ptr, size_t size);
-
-#ifdef CXIMAGE_AS_SHARED_LIBRARY //must be defined in Release_Shared configuration
-
-#include "xrCore/xrCore.h"
-
-#ifdef DEBUG
-#include "xrCore/ftimer.h"
-#endif //#ifdef DEBUG
-
-#ifdef	CXIMAGE_BUILD
-#	define	CXIMAGE_API
-//__declspec(dllexport)
-#else
-#	define	CXIMAGE_API
-//__declspec(dllimport)
-#endif //#ifdef	CXIMAGE_BUILD
-#else  //if CXIMAGE_AS_SHARED_LIBRARY linking as static library ...
-#	define	CXIMAGE_API
-#endif //CXIMAGE_AS_SHARED_LIBRARY
-
 /////////////////////////////////////////////////////////////////////////////
 // CxImage supported features
 #define CXIMAGE_SUPPORT_ALPHA          1
@@ -36,6 +13,7 @@ extern "C" void*	cxrealloc(void* ptr, size_t size);
 #define CXIMAGE_SUPPORT_DECODE	1
 #define CXIMAGE_SUPPORT_ENCODE	1		//<vho><T.Peck>
 #define	CXIMAGE_SUPPORT_WINDOWS 1
+#define	CXIMAGE_SUPPORT_EXIF    1
 
 /////////////////////////////////////////////////////////////////////////////
 // CxImage supported formats
@@ -61,6 +39,7 @@ extern "C" void*	cxrealloc(void* ptr, size_t size);
 #define CXIMAGE_SUPPORT_MNG 0
 #define CXIMAGE_SUPPORT_SKA 0
 #define CXIMAGE_SUPPORT_RAW 0
+#define CXIMAGE_SUPPORT_PSD 0
 
 /////////////////////////////////////////////////////////////////////////////
 #define	CXIMAGE_MAX_MEMORY 268435456
