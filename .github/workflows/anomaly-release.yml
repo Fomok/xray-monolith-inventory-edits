@@ -17,16 +17,26 @@ env:
   packed-gamedata: 00_modded_exes_gamedata.db0
 
 jobs:
+  # Entrypoint
   anomaly:
     name: Anomaly
     runs-on: windows-latest
     environment: Anomaly.Release
     steps:
       - run: echo "Building Anomaly"
+  
+  # Compilation subcategory
+  compile:
+    name: Compile
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Compiling..."
 
+  # Compilation jobs
   binaries:
     name: Binaries
-    needs: anomaly
+    needs: compile
 
     runs-on: windows-latest
 
@@ -65,10 +75,19 @@ jobs:
     
     - name: Upload PDB
       uses: ./.github/actions/upload-pdb
+  
+  # Packing subcategory
+  pack:
+    name: Pack
+    needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Packing..."
 
+  # Packing jobs
   gamedata:
     name: Gamedata
-    needs: anomaly
+    needs: pack
     runs-on: windows-latest
 
     env:
@@ -88,10 +107,19 @@ jobs:
     
     - name: Upload Gamedata
       uses: ./.github/actions/upload-gamedata
-
-  check-spacing:
-    name: Check Spacing
+  
+  # Checking subcategory
+  check:
+    name: Check
     needs: anomaly
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Checking..."
+
+  # Checking jobs
+  check-mixed-tabs:
+    name: Mixed Spaces & Tabs
+    needs: check
 
     runs-on: ubuntu-latest
 
@@ -99,18 +127,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Check
-      uses: ./.github/actions/check-spacing
-    
-    - name: Report
-      uses: ./.github/actions/check-result
-      with:
-        message-ok: Spacing OK
-        message-error: "Incorrect spacing"
+    - uses: ./.github/actions/check-mixed-tabs
 
-  check-encoding:
-    name: Check Encoding
-    needs: anomaly
+  check-trailing-whitespace:
+    name: Trailing Whitespace
+    needs: check
 
     runs-on: ubuntu-latest
 
@@ -118,21 +139,58 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Check
-      uses: ./.github/actions/check-encoding
-    
-    - name: Report
-      uses: ./.github/actions/check-result
-      with:
-        message-ok: Encoding OK
-        message-error: "Incorrect encoding"
+    - name: Trailing Whitespace
+      uses: ./.github/actions/check-trailing-whitespace
 
+  check-terminating-newline:
+    name: Terminating Newline
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Newline Endings
+      uses: ./.github/actions/check-terminating-newline
+
+  check-utf8:
+    name: UTF-8 Encoding
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: UTF-8
+      uses: ./.github/actions/check-utf8
+
+  check-line-endings:
+    name: Line Endings
+    needs: check
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Line Endings
+      uses: ./.github/actions/check-line-endings
+
+  # Release job
   release:
     needs: [
       binaries,
       gamedata,
-      check-spacing,
-      check-encoding
+      check-mixed-tabs,
+      check-trailing-whitespace,
+      check-terminating-newline,
+      check-line-endings,
+      check-utf8
     ]
     name: Release
     runs-on: ubuntu-latest
