@@ -28,3 +28,6 @@
 [submodule "Extern/LuaPanda-git"]
 	path = Extern/LuaPanda-git
 	url = https://github.com/Tencent/LuaPanda.git
+[submodule "Extern/luafilesystem-git"]
+	path = Extern/luafilesystem-git
+	url = https://github.com/lunarmodules/luafilesystem

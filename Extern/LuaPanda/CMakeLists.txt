@@ -23,5 +23,4 @@ target_compile_definitions(LuaPanda
 target_link_libraries(LuaPanda
   PRIVATE
   LuaJIT
-  XRay.Core
 )

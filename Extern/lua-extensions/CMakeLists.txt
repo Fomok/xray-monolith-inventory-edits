@@ -4,11 +4,9 @@ target_folder(lua-extensions ${FOLDER_LUA})
 
 target_sources(lua-extensions PRIVATE
   base.cpp
-  lfs.c
   lmarshal.c
   script_additional_libs.cpp
 
-  lfs.h
   lmarshal.h
   script_additional_libs.h
 )
@@ -20,6 +18,7 @@ target_include_directories(lua-extensions
 
 target_link_libraries(lua-extensions
   PRIVATE
+  luafilesystem
   LuaPanda
   luasocket
   LuaJIT
