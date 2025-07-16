@@ -16,3 +16,6 @@
 [submodule "Extern/imgui-git"]
 	path = Extern/imgui-git
 	url = https://github.com/ocornut/imgui.git
+[submodule "Extern/IconFontCppHeaders"]
+	path = Extern/IconFontCppHeaders-git
+	url = https://github.com/juliettef/IconFontCppHeaders.git
