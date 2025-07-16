@@ -10,7 +10,6 @@ add_module(XRay.Game
   DEFINES XRGAME_EXPORTS
 
   LINKS
-  crypto
   CxImage
   imgui
   loki
@@ -21,6 +20,7 @@ add_module(XRay.Game
   optick
   XRay.Collision
   XRay.Core
+  XRay.Core.Crypto
   XRay.Engine
   XRay.NetServer
   XRay.Physics
