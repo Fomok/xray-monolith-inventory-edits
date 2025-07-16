@@ -1,11 +1,13 @@
 #include "build_config_defines.h"
 
 #include "lua.hpp"
-#include "luapanda.h"
 
 extern "C"{
     #include "lfs.h"
     #include "lmarshal.h"
+}
+
+extern "C" {
     #include "luasocket/socket.h"
     #include "luasocket/luasocket.h"
 }
@@ -46,6 +48,7 @@ lua_CFunction luaopen_socket_core_init() {
 	return luaopen_socket_core;
 }
 
+extern "C" void pdebug_init(lua_State* L);
 void pdebug_init_init(lua_State* L) {
     pdebug_init(L);
 }

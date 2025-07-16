@@ -25,3 +25,6 @@
 [submodule "Extern/luasocket"]
 	path = Extern/luasocket-git
 	url = https://github.com/lunarmodules/luasocket.git
+[submodule "Extern/LuaPanda-git"]
+	path = Extern/LuaPanda-git
+	url = https://github.com/Tencent/LuaPanda.git

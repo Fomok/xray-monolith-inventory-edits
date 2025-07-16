@@ -11,9 +11,6 @@ target_sources(lua-extensions PRIVATE
   lfs.h
   lmarshal.h
   script_additional_libs.h
-
-  luapanda.cpp
-  luapanda.h
 )
 
 target_include_directories(lua-extensions
@@ -23,6 +20,7 @@ target_include_directories(lua-extensions
 
 target_link_libraries(lua-extensions
   PRIVATE
+  LuaPanda
   luasocket
   LuaJIT
   XRay.Core
