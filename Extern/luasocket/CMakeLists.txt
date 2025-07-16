@@ -1,6 +1,6 @@
 add_library(luasocket STATIC)
 
-target_folder(luasocket ${FOLDER_LUA})
+target_folder(luasocket ${FOLDER_LUA_EXTENSIONS})
 
 set(LUASOCKET_DIR ../luasocket-git)
 

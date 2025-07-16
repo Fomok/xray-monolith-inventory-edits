@@ -1,6 +1,6 @@
 add_library(lua-marshal STATIC)
 
-target_folder(lua-marshal ${FOLDER_LUA})
+target_folder(lua-marshal ${FOLDER_LUA_EXTENSIONS})
 
 set(LUAMARSHAL_DIR ../lua-marshal-git)
 

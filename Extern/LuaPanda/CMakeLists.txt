@@ -1,6 +1,6 @@
 add_library(LuaPanda STATIC)
 
-target_folder(LuaPanda ${FOLDER_LUA})
+target_folder(LuaPanda ${FOLDER_LUA_EXTENSIONS})
 
 set(LUAPANDA_DIR ../LuaPanda-git)
 

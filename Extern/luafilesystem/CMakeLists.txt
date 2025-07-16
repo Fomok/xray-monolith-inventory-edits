@@ -1,6 +1,6 @@
 add_library(luafilesystem STATIC)
 
-target_folder(luafilesystem ${FOLDER_LUA})
+target_folder(luafilesystem ${FOLDER_LUA_EXTENSIONS})
 
 set(LUAFILESYSTEM_DIR ../luafilesystem-git)
 
