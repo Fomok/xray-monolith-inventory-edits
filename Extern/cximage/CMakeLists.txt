@@ -72,5 +72,5 @@ endif()
 
 target_link_libraries(CxImage
   PRIVATE
-  jpeg
+  libjpeg
 )

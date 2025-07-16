@@ -19,3 +19,6 @@
 [submodule "Extern/StackWalker-git"]
 	path = Extern/StackWalker-git
 	url = https://github.com/JochenKalmbach/StackWalker.git
+[submodule "Extern/libjpeg-git"]
+	path = Extern/libjpeg-git
+	url = https://github.com/kloper/libjpeg
