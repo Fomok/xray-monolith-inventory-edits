@@ -22,3 +22,6 @@
 [submodule "Extern/libjpeg-git"]
 	path = Extern/libjpeg-git
 	url = https://github.com/kloper/libjpeg
+[submodule "Extern/luasocket"]
+	path = Extern/luasocket-git
+	url = https://github.com/lunarmodules/luasocket.git
