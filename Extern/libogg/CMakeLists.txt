@@ -2,14 +2,19 @@ add_library(libogg STATIC)
 
 target_folder(libogg ${FOLDER_EXTERNAL})
 
-target_sources_sandboxed(libogg
-  DIRECTORY ogg
-  SOURCES
-  src/bitwise.c
-  src/framing.c
+set(LIBOGG_DIR ../libogg-git)
 
-  ogg.h
-  os_types.h
+target_sources_sandboxed(libogg
+  STRIP
+  ${LIBOGG_DIR}/src/
+  ${LIBOGG_DIR}/include/
+
+  SOURCES
+  ${LIBOGG_DIR}/src/bitwise.c
+  ${LIBOGG_DIR}/src/framing.c
+
+  ${LIBOGG_DIR}/include/ogg/ogg.h
+  ${LIBOGG_DIR}/include/ogg/os_types.h
 )
 
 target_include_directories(libogg

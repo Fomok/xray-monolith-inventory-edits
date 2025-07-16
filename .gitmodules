@@ -34,3 +34,6 @@
 [submodule "Extern/lua-marshal-git"]
 	path = Extern/lua-marshal-git
 	url = https://github.com/richardhundt/lua-marshal.git
+[submodule "Extern/libogg-git"]
+	path = Extern/libogg-git
+	url = https://github.com/gcp/libogg.git
