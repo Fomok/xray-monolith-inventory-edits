@@ -247,17 +247,9 @@ Optimized release build, long compiles, generate PDB files for debugging
 
 #### Targets
 
-`Targets/AnomalyDX<VER>`
+`Targets/Anomaly.DX<VER>`
 
 Anomaly executable with corresponding DirectX renderer
-
-`Targets/AnomalyDX<VER>AVX`
-
-Anomaly executable with corresponding DirectX renderer and AVX instructions
-
-`Release/AnomalyDX<VER><AVX>-PDB`
-
-Pack individual executable PDB files into `_build/<ConfigurePreset>/AnomalyDX<VER><AVX>_pdb.zip`
 
 `Gamedata`
 
