@@ -4,7 +4,6 @@
 
 extern "C"{
     #include "lfs.h"
-    #include "lmarshal.h"
 }
 
 extern "C" {
@@ -21,6 +20,7 @@ static const struct luaL_reg R[] =
 };
 
 //extern "C" __declspec(dllexport)
+extern "C" int luaopen_marshal(lua_State* L);
 int luaopen_lua_extensions(lua_State *L, bool IsDebug = false){
 
     open_additional_libs(L);
