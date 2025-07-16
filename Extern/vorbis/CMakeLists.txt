@@ -80,6 +80,11 @@ target_compile_definitions(vorbis
   ANALYSIS
 )
 
+target_link_libraries(vorbis
+  PRIVATE
+  libogg
+)
+
 # Vorbis File
 add_library(vorbisfile STATIC)
 
@@ -94,4 +99,9 @@ target_include_directories(vorbisfile
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${XRAY_EXTERNAL}
+)
+
+target_link_libraries(vorbisfile
+  PRIVATE
+  libogg
 )

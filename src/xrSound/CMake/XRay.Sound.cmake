@@ -11,7 +11,7 @@ add_module(XRay.Sound
   LINKS
   dxsdk
   dxguid
-  ogg
+  libogg
   theora
   vorbis
   vorbisfile

@@ -65,3 +65,8 @@ target_include_directories(theora
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${XRAY_EXTERNAL}
 )
+
+target_link_libraries(theora
+  PRIVATE
+  libogg
+)

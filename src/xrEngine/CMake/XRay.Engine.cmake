@@ -14,6 +14,7 @@ add_module(XRay.Engine
   DPlay
   icu
   imgui
+  libogg
   luabind
   LuaJIT
   optick
