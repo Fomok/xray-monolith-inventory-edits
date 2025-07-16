@@ -94,9 +94,6 @@ void CObject::cNameVisual_set(shared_str N)
 		if (new_k)
 			new_k->renderableParent = this;
 
-		if (old_k)
-			old_k->renderableParent = nullptr;
-
 		if (old_k && new_k)
 		{
 			new_k->SetUpdateCallback(old_k->GetUpdateCallback());
