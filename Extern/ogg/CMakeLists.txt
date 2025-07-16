@@ -2,7 +2,8 @@ add_library(ogg STATIC)
 
 target_folder(ogg ${FOLDER_EXTERNAL})
 
-target_sources(ogg PRIVATE
+target_sources(ogg
+  PRIVATE
   src/bitwise.c
   src/framing.c
 
@@ -11,7 +12,7 @@ target_sources(ogg PRIVATE
 )
 
 target_include_directories(ogg
-  PRIVATE
+  PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${XRAY_EXTERNAL}
 )

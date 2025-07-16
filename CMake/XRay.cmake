@@ -28,4 +28,7 @@ include(XRay.Folders)
 # Setup module definition machinery
 include(XRay.Modules)
 
+# Setup source utility machinery
+include(XRay.Sources)
+
 message(STATUS)

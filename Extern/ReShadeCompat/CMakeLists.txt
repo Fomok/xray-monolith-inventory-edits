@@ -22,3 +22,8 @@ target_compile_definitions(ReShadeCompat
   PURE_ALLOC
   XRCORE_EXPORTS
 )
+
+target_link_libraries(ReShadeCompat
+  PRIVATE
+  imgui
+)

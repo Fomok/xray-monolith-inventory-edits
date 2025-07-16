@@ -61,7 +61,7 @@ target_sources(theora PRIVATE
 )
 
 target_include_directories(theora
-  PRIVATE
+  PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${XRAY_EXTERNAL}
 )
