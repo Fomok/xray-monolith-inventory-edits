@@ -15,13 +15,13 @@ add_executable(buildvm)
 target_folder(buildvm ${FOLDER_LUA_BUILD})
 
 target_sources(buildvm PRIVATE
-    "${LUAJIT_DIR}/host/buildvm_asm.c"
-	"${LUAJIT_DIR}/host/buildvm_fold.c"
-	"${LUAJIT_DIR}/host/buildvm_lib.c"
-	#"${LUAJIT_DIR}/host/buildvm_libbc.h"
-	"${LUAJIT_DIR}/host/buildvm_peobj.c"
-	"${LUAJIT_DIR}/host/buildvm.c"
-	"${LUAJIT_DIR}/host/buildvm.h"
+    "${BUILDVM_LUAJIT_DIR}/host/buildvm_asm.c"
+	"${BUILDVM_LUAJIT_DIR}/host/buildvm_fold.c"
+	"${BUILDVM_LUAJIT_DIR}/host/buildvm_lib.c"
+	#"${BUILDVM_LUAJIT_DIR}/host/buildvm_libbc.h"
+	"${BUILDVM_LUAJIT_DIR}/host/buildvm_peobj.c"
+	"${BUILDVM_LUAJIT_DIR}/host/buildvm.c"
+	"${BUILDVM_LUAJIT_DIR}/host/buildvm.h"
 	"${BUILDVM_ARCH}"
 )
 
@@ -30,8 +30,8 @@ add_dependencies(buildvm buildvm_arch)
 target_include_directories(buildvm
 	PRIVATE
     ${HOST_INCLUDES}
-	${CMAKE_CURRENT_BINARY_DIR}/../..
-	${LUAJIT_DIR}
+	${BUILDVM_ARCH_DIR}
+	${BUILDVM_LUAJIT_DIR}
 )
 
 target_compile_options(buildvm

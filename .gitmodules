@@ -52,3 +52,6 @@
 [submodule "Extern/OpenAL-git"]
 	path = Extern/OpenAL-git
 	url = https://github.com/kcat/openal-soft.git
+[submodule "Extern/LuaJIT-git"]
+	path = Extern/LuaJIT-git
+	url = https://github.com/LuaJIT/LuaJIT.git

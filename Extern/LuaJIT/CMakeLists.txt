@@ -16,7 +16,7 @@ set(ABIVER 5.1)
 set(NODOTABIVER 51)
 
 set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk")
-set(LUAJIT_DIR "${CMAKE_SOURCE_DIR}/Extern/luajit-2/src" CACHE PATH "Location of luajit sources")
+set(LUAJIT_DIR "${CMAKE_SOURCE_DIR}/Extern/LuaJIT-git/src" CACHE PATH "Location of luajit sources")
 
 option(LUAJIT_BUILD_STATIC_LIB "Build as static library" ON)
 option(LUAJIT_BUILD_APP "Build application" OFF)
@@ -65,12 +65,6 @@ if (APPLE)
     set(ENV{SDKROOT} ${CMAKE_OSX_SYSROOT})
     set(ENV{MACOSX_DEPLOYMENT_TARGET} ${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
-
-# Clean unnecessary files in LuaJIT source directory
-execute_process(
-    COMMAND make clean
-    WORKING_DIRECTORY ${LUAJIT_DIR}
-)
 
 # TODO: check windows supports same target name for static and shared lib
 if (LUAJIT_BUILD_STATIC_LIB)
@@ -167,6 +161,7 @@ endif()
 
 # Populate INCLUDE
 set(CCINCLUDES "")
+set(HOST_INCLUDES ${CMAKE_CURRENT_SOURCE_DIR})
 cmake_path(CONVERT "${CMAKE_C_STANDARD_INCLUDE_DIRECTORIES}" TO_NATIVE_PATH_LIST CCOPT_INCLUDES)
 foreach(INC ${CCOPT_INCLUDES})
   list(APPEND CCINCLUDES ${CCOPT_OPT_PREFIX}I${INC})
@@ -380,6 +375,8 @@ target_sources(buildvm_arch
   ${BUILDVM_ARCH}
 )
 
+set(BUILDVM_ARCH_DIR ${CMAKE_CURRENT_BINARY_DIR})
+set(BUILDVM_LUAJIT_DIR ${CMAKE_CURRENT_BINARY_DIR}/LuaJIT)
 add_subdirectory("HostBuildTools/buildvm")
 
 list(APPEND LJLIB_C
@@ -435,21 +432,62 @@ target_sources(LuaJIT PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/lj_folddef.h"
 )
 
+# Patch `lj_def.h` to compile on clang
+file(READ ${LUAJIT_DIR}/lj_def.h LJ_DEF_H)
+string(REPLACE "_BitScanForward(uint32_t *, unsigned long)" "_BitScanForward(unsigned long *, unsigned long)" LJ_DEF_H "${LJ_DEF_H}")
+string(REPLACE "_BitScanReverse(uint32_t *, unsigned long)" "_BitScanReverse(unsigned long *, unsigned long)" LJ_DEF_H "${LJ_DEF_H}")
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/LuaJIT/lj_def.h "${LJ_DEF_H}")
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${LUAJIT_DIR}/lj_def.h)
+target_sources(LuaJIT PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/LuaJIT/lj_def.h")
+
 if (CMAKE_UNITY_BUILD)
     target_sources(LuaJIT PRIVATE "${LUAJIT_DIR}/ljamalg.c")
 else()
     # TODO: use lj_asm_ lj_emit lj_target?
-    target_sources(LuaJIT PRIVATE
+    target_sources_sandboxed(LuaJIT
+        DIRECTORY LuaJIT
+
+        STRIP
+        ${LUAJIT_DIR}/../
+        ${LUAJIT_DIR}/
+
+        SOURCES
         ${LJLIB_C}
+
+        luajit.h
+
+        lj_alloc.c
+
+        xr_alloc.c
+        xr_alloc.h
+
+        "${LUAJIT_DIR}/host/buildvm_asm.c"
+        "${LUAJIT_DIR}/host/buildvm_fold.c"
+        "${LUAJIT_DIR}/host/buildvm_lib.c"
+        #"${LUAJIT_DIR}/host/buildvm_libbc.h"
+        "${LUAJIT_DIR}/host/buildvm_peobj.c"
+        "${LUAJIT_DIR}/host/buildvm.c"
+        "${LUAJIT_DIR}/host/buildvm.h"
+            
+        "${LUAJIT_DIR}/../dynasm/dasm_arm.h"
+        "${LUAJIT_DIR}/../dynasm/dasm_ppc.h"
+        "${LUAJIT_DIR}/../dynasm/dasm_x86.h"
+        "${LUAJIT_DIR}/../dynasm/dasm_mips.h"
+        "${LUAJIT_DIR}/../dynasm/dasm_proto.h"
+
         "${LUAJIT_DIR}/lauxlib.h"
         "${LUAJIT_DIR}/lib_aux.c"
         "${LUAJIT_DIR}/lib_init.c"
-        "${LUAJIT_DIR}/lj_alloc.c"
         "${LUAJIT_DIR}/lj_alloc.h"
         "${LUAJIT_DIR}/lj_api.c"
         "${LUAJIT_DIR}/lj_asm.c"
         "${LUAJIT_DIR}/lj_asm.h"
+        "${LUAJIT_DIR}/lj_asm_arm.h"
+        "${LUAJIT_DIR}/lj_asm_ppc.h"
+        "${LUAJIT_DIR}/lj_asm_x86.h"
+        "${LUAJIT_DIR}/lj_asm_mips.h"
         #"${LUAJIT_DIR}/lj_assert.c"
+        "${LUAJIT_DIR}/lj_arch.h"
         "${LUAJIT_DIR}/lj_bc.c"
         "${LUAJIT_DIR}/lj_bc.h"
         "${LUAJIT_DIR}/lj_bcdump.h"
@@ -479,12 +517,15 @@ else()
         "${LUAJIT_DIR}/lj_ctype.h"
         "${LUAJIT_DIR}/lj_debug.c"
         "${LUAJIT_DIR}/lj_debug.h"
-        "${LUAJIT_DIR}/lj_def.h"
         "${LUAJIT_DIR}/lj_dispatch.c"
         "${LUAJIT_DIR}/lj_dispatch.h"
         "${LUAJIT_DIR}/lj_err.c"
         "${LUAJIT_DIR}/lj_err.h"
         "${LUAJIT_DIR}/lj_errmsg.h"
+        "${LUAJIT_DIR}/lj_emit_arm.h"
+        "${LUAJIT_DIR}/lj_emit_ppc.h"
+        "${LUAJIT_DIR}/lj_emit_x86.h"
+        "${LUAJIT_DIR}/lj_emit_mips.h"
         "${LUAJIT_DIR}/lj_ff.h"
         "${LUAJIT_DIR}/lj_ffrecord.c"
         "${LUAJIT_DIR}/lj_ffrecord.h"
@@ -496,6 +537,7 @@ else()
         "${LUAJIT_DIR}/lj_gdbjit.c"
         "${LUAJIT_DIR}/lj_gdbjit.h"
         "${LUAJIT_DIR}/lj_ir.c"
+        "${LUAJIT_DIR}/lj_ir.h"
         "${LUAJIT_DIR}/lj_ircall.h"
         "${LUAJIT_DIR}/lj_iropt.h"
         "${LUAJIT_DIR}/lj_jit.h"
@@ -538,6 +580,11 @@ else()
         "${LUAJIT_DIR}/lj_strscan.h"
         "${LUAJIT_DIR}/lj_tab.c"
         "${LUAJIT_DIR}/lj_tab.h"
+        "${LUAJIT_DIR}/lj_target.h"
+        "${LUAJIT_DIR}/lj_target_arm.h"
+        "${LUAJIT_DIR}/lj_target_ppc.h"
+        "${LUAJIT_DIR}/lj_target_x86.h"
+        "${LUAJIT_DIR}/lj_target_mips.h"
         "${LUAJIT_DIR}/lj_trace.c"
         "${LUAJIT_DIR}/lj_trace.h"
         "${LUAJIT_DIR}/lj_traceerr.h"
@@ -550,19 +597,15 @@ else()
         "${LUAJIT_DIR}/lua.h"
         "${LUAJIT_DIR}/lua.hpp"
         "${LUAJIT_DIR}/luaconf.h"
-        "${LUAJIT_DIR}/luajit.h"
         "${LUAJIT_DIR}/lualib.h"
-
-        "${LUAJIT_DIR}/xr_alloc.c"
     )
 endif()
 
 target_include_directories(LuaJIT
     PUBLIC
-    "${LUAJIT_DIR}"
-
-    PRIVATE
-    "${CMAKE_CURRENT_BINARY_DIR}"
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}/LuaJIT
 )
 
 target_link_libraries(LuaJIT

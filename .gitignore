@@ -19,13 +19,13 @@ lua51.lib
 luajit.exe
 
 # luajit generated files
-Extern/luajit-2/src/lj_bcdef.h
-Extern/luajit-2/src/lj_ffdef.h
-Extern/luajit-2/src/lj_folddef.h
-Extern/luajit-2/src/lj_libdef.h
-Extern/luajit-2/src/lj_recdef.h
-Extern/luajit-2/src/host/buildvm_arch.h
-Extern/luajit-2/src/jit/vmdef.lua
+Extern/LuaJIT/src/lj_bcdef.h
+Extern/LuaJIT/src/lj_ffdef.h
+Extern/LuaJIT/src/lj_folddef.h
+Extern/LuaJIT/src/lj_libdef.h
+Extern/LuaJIT/src/lj_recdef.h
+Extern/LuaJIT/src/host/buildvm_arch.h
+Extern/LuaJIT/src/jit/vmdef.lua
 
 # NVTT build files
 Extern/NVTT/NVTT/NVTT.log
