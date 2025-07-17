@@ -43,3 +43,6 @@
 [submodule "Extern/libvorbis-git"]
 	path = Extern/libvorbis-git
 	url = https://github.com/xiph/vorbis
+[submodule "Extern/reshade-git"]
+	path = Extern/reshade-git
+	url = https://github.com/crosire/reshade.git
