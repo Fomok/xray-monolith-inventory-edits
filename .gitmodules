@@ -49,3 +49,6 @@
 [submodule "sdk/include/reshade-git"]
 	path = sdk/include/reshade-git
 	url = https://github.com/crosire/reshade.git
+[submodule "Extern/OpenAL-git"]
+	path = Extern/OpenAL-git
+	url = https://github.com/kcat/openal-soft.git
