@@ -1,9 +1,11 @@
 # Vorbis
-add_library(vorbis STATIC)
+add_library(libvorbis STATIC)
 
-target_folder(vorbis ${FOLDER_EXTERNAL})
+target_folder(libvorbis ${FOLDER_EXTERNAL})
 
-target_sources(vorbis PRIVATE
+target_sources_sandboxed(libvorbis
+  DIRECTORY vorbis
+  SOURCES
   lib/analysis.c
   lib/bitrate.c
   lib/block.c
@@ -69,39 +71,39 @@ target_sources(vorbis PRIVATE
   lib/window.h
 )
 
-target_include_directories(vorbis
+target_include_directories(libvorbis
   PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${XRAY_EXTERNAL}
+  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_compile_definitions(vorbis
+target_compile_definitions(libvorbis
   PRIVATE
   ANALYSIS
 )
 
-target_link_libraries(vorbis
+target_link_libraries(libvorbis
   PRIVATE
   libogg
 )
 
 # Vorbis File
-add_library(vorbisfile STATIC)
+add_library(libvorbisfile STATIC)
 
-target_folder(vorbisfile ${FOLDER_EXTERNAL})
+target_folder(libvorbisfile ${FOLDER_EXTERNAL})
 
-target_sources(vorbisfile PRIVATE
+target_sources_sandboxed(libvorbisfile
+  DIRECTORY vorbis
+  SOURCES
   lib/vorbisfile.c
   vorbisfile.h
 )
 
-target_include_directories(vorbisfile
+target_include_directories(libvorbisfile
   PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${XRAY_EXTERNAL}
+  ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-target_link_libraries(vorbisfile
+target_link_libraries(libvorbisfile
   PRIVATE
   libogg
 )

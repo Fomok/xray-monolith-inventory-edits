@@ -13,8 +13,8 @@ add_module(XRay.Sound
   dxguid
   libogg
   libtheora
-  vorbis
-  vorbisfile
+  libvorbis
+  libvorbisfile
   OpenAL32
   tbb
   XRay.Core
