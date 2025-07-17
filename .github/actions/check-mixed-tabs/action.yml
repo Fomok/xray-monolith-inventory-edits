@@ -1,0 +1,19 @@
+runs:
+  using: composite
+
+  steps:
+    - name: Install
+      shell: bash
+      run: sudo apt-get install moreutils
+
+    - name: Mixed tabs and spaces
+      shell: bash
+      run: |
+        # Check for mixed tabs and spaces
+        find . \( -path ./Extern -o -path ./sdk \) -prune -o -iregex '.*\.\(cs\|yaml\|yml\|md\|txt\|cmake\|sh\)' -type f -exec bash -c 'expand -t 4 "$0" | sponge "$0"' {} \;
+
+    - name: Report
+      uses: ./.github/actions/check-result
+      with:
+        message-ok: All files are space-indented
+        message-error: Not space-indented

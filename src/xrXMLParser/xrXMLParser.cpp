@@ -116,7 +116,7 @@ void CXml::Load(LPCSTR path_alias, LPCSTR path, LPCSTR _xml_filename)
 	return Load(path_alias, str);
 }
 
-//������������� � �������� XML �����
+//инициализация и загрузка XML файла
 void CXml::Load(LPCSTR path, LPCSTR xml_filename)
 {
 	xr_strcpy(m_xml_file_name, xml_filename);
@@ -170,7 +170,7 @@ XML_NODE* CXml::NavigateToNode(XML_NODE* start_node, LPCSTR path, int node_index
 	char* token;
 	int tmp = 0;
 
-	//������� ���� �� ��������� �������
+	//разбить путь на отдельные подпути
 	token = strtok(buf_str, seps);
 
 	if (token != NULL)
@@ -333,12 +333,12 @@ LPCSTR CXml::ReadAttrib(XML_NODE* node, LPCSTR attrib, LPCSTR default_str_val)
 	else
 	{
 		/*
-				//����������� ������ ref_str, � �� 
-				//�� ������ ��������� ������ � return ������ ����� ���������
+				//обязательно делаем ref_str, а то 
+				//не сможем запомнить строку и return вернет левый указатель
 				shared_str result_str;
 		*/
 		LPCSTR result_str = NULL;
-		// ������� ���� �� ��������
+		// Кастаем ниже по иерархии
 
 		TiXmlElement* el = node->ToElement();
 
@@ -463,7 +463,7 @@ int CXml::GetNodesNum(XML_NODE* node, LPCSTR tag_name)
 	return result;
 }
 
-//���������� �������� �� ��� ��������
+//нахождение элемнета по его атрибуту
 XML_NODE* CXml::SearchForAttribute(LPCSTR path, int index, LPCSTR tag_name, LPCSTR attrib, LPCSTR attrib_value_pattern)
 {
 	XML_NODE* start_node = NavigateToNode(path, index);

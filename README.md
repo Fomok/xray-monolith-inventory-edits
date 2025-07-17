@@ -247,39 +247,24 @@ Optimized release build, long compiles, generate PDB files for debugging
 
 #### Targets
 
-`Targets/AnomalyDX<VER>`
+`Targets/Anomaly.DX<VER>`
 
 Anomaly executable with corresponding DirectX renderer
-
-`Targets/AnomalyDX<VER>AVX`
-
-Anomaly executable with corresponding DirectX renderer and AVX instructions
-
-`Release/AnomalyDX<VER><AVX>-PDB`
-
-Pack individual executable PDB files into `_build/<ConfigurePreset>/AnomalyDX<VER><AVX>_pdb.zip`
 
 `Gamedata`
 
 Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_exes_gamedata.db0`
 
-#### CMake (CLI)
-
-1. Ensure CMake is installed and added to your `PATH`
-2. Open a shell inside your `xray-monolith` directory
-3. Configure the `_build` directory with `cmake --preset <ConfigurePreset>`
-4. Build a target with `cmake --build --preset <BuildPreset> --target <TargetName>`
-   - Omitting the `--target` argument will build all targets
-
-#### CMake (GUI)
-
-1. Open the CMake GUI
-2. Set the `Where is the source code` field to your `xray-monolith` directory
-3. Set the `Preset` field to your Configure Preset of choice
-4. Click `Configure`
-5. Modify generation settings as desired in the resulting popup
-6. Click `Generate`
-7. Click `Open Project`, or follow the instructions for your generator of choice
+#### Visual Studio 2022
+1. Open VS2022
+2. Select `Open a local folder`
+3. Select your `xray-monolith` directory
+4. Wait for the project to load
+5. `Tools` -> `Options` -> `CMake` -> Untick `Enable unified build and configuration preset menu`
+6. Use dropdowns to select configuration and build presets
+7. `View` -> `CMake Targets`
+8. `Anomaly Project` -> `Targets` -> Right Click -> `Set as startup item` / `Build` / `Debug` / `Launch`
+   - Right click `Anomaly Project` -> `Build All` to build all targets
 
 #### Visual Studio Code
 1. Open VS Code
@@ -292,16 +277,23 @@ Pack `xray-monolith` gamedata into `_build/<ConfigurePreset>/gamedata/00_modded_
 7. Build / Debug / Launch via sidebar
    - `Project Outline` -> `Build All Projects` icon to build all targets
 
-#### Visual Studio 2022
-1. Open VS2022
-2. Select `Open a local folder`
-3. Select your `xray-monolith` directory
-4. Wait for the project to load
-5. `Tools` -> `Options` -> `CMake` -> Untick `Enable unified build and configuration preset menu`
-6. Use dropdowns to select configuration and build presets
-7. `View` -> `CMake Targets`
-8. `Anomaly Project` -> `Targets` -> Right Click -> `Set as startup item` / `Build` / `Debug` / `Launch`
-   - Right click `Anomaly Project` -> `Build All` to build all targets
+#### CMake (GUI)
+
+1. Open the CMake GUI
+2. Set the `Where is the source code` field to your `xray-monolith` directory
+3. Set the `Preset` field to your Configure Preset of choice
+4. Click `Configure`
+5. Modify generation settings as desired in the resulting popup
+6. Click `Generate`
+7. Click `Open Project`, or follow the instructions for your generator of choice
+
+#### CMake (CLI)
+
+1. Ensure CMake is installed and added to your `PATH`
+2. Open a shell inside your `xray-monolith` directory
+3. Configure the `_build` directory with `cmake --preset <ConfigurePreset>`
+4. Build a target with `cmake --build --preset <BuildPreset> --target <TargetName>`
+   - Omitting the `--target` argument will build all targets
 
 #### Buildbot
 GitHub Actions is set up to build Anomaly with a suite of compilers each time a commit is pushed.
@@ -321,6 +313,50 @@ This behaviour can be customized by setting the following variables in your fork
 - `TARGET`
 
 ## Changelog
+## Changelog
+**2025.07.16**
+* Fixed crash due to not clearing pointer to deleted IRenderable in bones calculations
+
+**2025.07.15**
+* Reducing updates of bones calculations instead of disabling them, fixes issues with T-posing corpses
+
+**2025.07.14**
+* DLTX: Allow DLTX's `>` to create the property if it doesn't exist (https://github.com/themrdemonized/xray-monolith/issues/289)
+* Optimizations:
+  * Skeleton models outside of view frustum won't have bones calculations, less CPU load
+  * Additionally `r__optimize_calculate_bones` cvar allows to disable calculations for far away objects (default enabled)
+  * `ik_calc_dist` acts as a distance, over which calculations stop (default 100)
+  * `ik_always_calc_dist` is a distance, under which models will perform calculations even when not in frustum (default 20)
+  * In heavily populated maps with loads of entities expect around 2ms less frame time if you are bound by CPU
+* Sound:
+  * Added distance based delay according to the normal 343m/s speed of sound. Console variables to tweak:
+    * `snd_distance_based_delay_power` controls the delay strength. 0 will disable delay. Default 1
+    * `snd_distance_based_delay_min_distance` controls minimum distance in meters to start noticing the delay. Default 50
+  * Added optional pitch variation to sounds. Every time the sound is played it will have slightly different pitch. `snd_pitch_variation_power` controls the variation strength. Default 0
+
+**2025.07.12**
+* lulnope: expose `memory_remove_links` to lua scripts
+
+**2025.07.08**
+* Spawn antifreeze: fixed issue related to bolts, introduced in previous version: https://github.com/themrdemonized/xray-monolith/issues/287
+* SaloEater: Debug scripts with luapanda (https://github.com/themrdemonized/xray-monolith/pull/251)
+
+**2025.07.06**
+* Spawn antifreeze:
+  * Added `mod_system_spawn_antifreeze_ignore.ltx` file, lines in that file are sections that won't be processed by antifreeze. Partially addresses issue https://github.com/themrdemonized/xray-monolith/issues/283
+  * Fixed CTD on a possible condition when trying to spawn child items while parent is already destroyed and not exists in ALife, fixes issue https://github.com/themrdemonized/xray-monolith/issues/284
+* Replaced all occurences of `luabind` to `::luabind`
+* Migrated projects to C++17 standard
+
+**2025.07.05**
+* Ascii1457: SSS 23.2 Update
+
+**2025.07.03**
+* Ascii1457: SSS 23.1 Update
+
+**2025.07.02**
+* Spawn Antifreeze: Don't prefetch helicopters, might fix issue https://github.com/themrdemonized/xray-monolith/issues/278
+
 **2025.07.01**
 * `hanging_lamp_ignore_match_configuration` cvar to circumvent the SSS23 + HF crash, related to https://github.com/themrdemonized/xray-monolith/issues/273
 * Fix https://github.com/themrdemonized/xray-monolith/issues/276

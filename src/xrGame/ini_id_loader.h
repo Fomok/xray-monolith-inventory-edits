@@ -1,20 +1,20 @@
 ///////////////////////////////////////////////////////////////
 // ini_id_loader.h
-// ������������ �����, ������� ��������� �� ini ����� 
-// ������ � ���������� id, ����� ����������� ������� ����������
-// id ���������� index
+// темплейтовый класс, который загружает из ini файла 
+// строку с текстовыми id, потом присваивает каждому текстовому
+// id уникальный index
 ///////////////////////////////////////////////////////////////
 
 #pragma once
 
-//T_ID, T_INDEX -	��� ������� � id
+//T_ID, T_INDEX -	тип индекса и id
 
-//ITEM_DATA		-	��������� � ������ id � index ���� T_ID � T_INDEX,
-//					����������� ����� ����������� � ����������� (T_INDEX index, T_ID id, LPCSTR r1, ..., LPCSTR rN)
-//					N = ITEM_REC_NUM - ����� ���. ���������� � ITEM_DATA 
+//ITEM_DATA		-	структура с полями id и index типа T_ID и T_INDEX,
+//					обязательно имеет конструктор с параметрами (T_INDEX index, T_ID id, LPCSTR r1, ..., LPCSTR rN)
+//					N = ITEM_REC_NUM - число доп. параметров в ITEM_DATA 
 
-//T_INIT		-	����� ��� ���������� ����������� InitIdToIndex
-//					������� ������������� section_name � line_name
+//T_INIT		-	класс где определена статическая InitIdToIndex
+//					функция инициализации section_name и line_name
 
 #define TEMPLATE_SPECIALIZATION		template<u32 ITEM_REC_NUM, typename ITEM_DATA, typename T_ID, typename T_INDEX, typename T_INIT>
 #define CSINI_IdToIndex CIni_IdToIndex	<ITEM_REC_NUM, ITEM_DATA, T_ID, T_INDEX, T_INIT>
@@ -68,7 +68,7 @@ protected:
 		}
 	}
 
-	//��� ������ � ����� ������ ����� ����������� id
+	//имя секции и линии откуда будут загружаться id
 	static LPCSTR section_name;
 	static LPCSTR line_name;
 
@@ -94,7 +94,7 @@ public:
 
 	static const T_INDEX GetMaxIndex() { return m_pItemDataVector->size() - 1; }
 
-	//�������� ����������� �������
+	//удаление статичекого массива
 	static void DeleteIdToIndexData();
 };
 

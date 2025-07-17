@@ -6,7 +6,7 @@ inputs:
   build-preset:
     required: false
     type: string
-    
+
   packed-gamedata:
     required: false
     type: string

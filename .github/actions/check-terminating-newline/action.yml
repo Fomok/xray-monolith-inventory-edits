@@ -1,0 +1,19 @@
+runs:
+  using: composite
+
+  steps:
+    - name: Install
+      shell: bash
+      run: sudo apt-get install moreutils
+
+    - name: Newline ending
+      shell: bash
+      run: |
+        # Check files end with a newline
+        find . \( -path ./Extern -o -path ./sdk \) -prune -o -iregex '.*\.\(h\|hpp\|inl\|c\|cpp\|cs\|yaml\|yml\|md\|txt\|cmake\|sh\)' -type f -exec bash -c 'tail -c1 < "$0" | read -r _ || echo >> "$0"' {} \;
+
+    - name: Report
+      uses: ./.github/actions/check-result
+      with:
+        message-ok: All files contain a terminating newline
+        message-error: Missing terminating newline
