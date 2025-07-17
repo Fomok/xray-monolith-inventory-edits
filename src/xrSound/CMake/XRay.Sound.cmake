@@ -15,7 +15,7 @@ add_module(XRay.Sound
   libtheora
   libvorbis
   libvorbisfile
-  OpenAL32
+  OpenAL
   tbb
   XRay.Core
   XRay.Render.Common
