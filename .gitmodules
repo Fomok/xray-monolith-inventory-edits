@@ -37,3 +37,6 @@
 [submodule "Extern/libogg-git"]
 	path = Extern/libogg-git
 	url = https://github.com/gcp/libogg.git
+[submodule "Extern/libtheora-git"]
+	path = Extern/libtheora-git
+	url = https://github.com/xiph/theora.git
