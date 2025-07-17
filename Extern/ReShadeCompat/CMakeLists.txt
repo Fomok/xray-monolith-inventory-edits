@@ -26,4 +26,5 @@ target_compile_definitions(ReShadeCompat
 target_link_libraries(ReShadeCompat
   PRIVATE
   imgui
+  reshade
 )

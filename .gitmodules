@@ -44,5 +44,8 @@
 	path = Extern/libvorbis-git
 	url = https://github.com/xiph/vorbis
 [submodule "Extern/reshade-git"]
-	path = Extern/reshade-git
+	path = sdk/include/reshade-git
+	url = https://github.com/crosire/reshade.git
+[submodule "sdk/include/reshade-git"]
+	path = sdk/include/reshade-git
 	url = https://github.com/crosire/reshade.git
