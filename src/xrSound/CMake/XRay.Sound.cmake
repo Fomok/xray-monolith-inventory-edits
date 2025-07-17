@@ -12,7 +12,7 @@ add_module(XRay.Sound
   dxsdk
   dxguid
   libogg
-  theora
+  libtheora
   vorbis
   vorbisfile
   OpenAL32

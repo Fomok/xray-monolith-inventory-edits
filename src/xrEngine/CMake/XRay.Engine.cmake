@@ -15,10 +15,10 @@ add_module(XRay.Engine
   icu
   imgui
   libogg
+  libtheora
   luabind
   LuaJIT
   optick
-  theora
   ReShadeCompat
   Vfw32
   XRay.Collision

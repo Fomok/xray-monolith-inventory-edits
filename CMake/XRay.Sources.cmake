@@ -22,10 +22,10 @@ function(target_sources_sandboxed TARGET)
       set(DEST "${ARG_DIRECTORY}/${DEST}")
     endif()
 
-    message(DEBUG "Copying ${SOURCE} to ${DEST}")
+    message("Copying ${SOURCE} to ${DEST}")
     configure_file(${SOURCE} ${DEST} COPYONLY)
 
-    message(DEBUG "Adding target source: ${CMAKE_CURRENT_BINARY_DIR}/${DEST}")
+    message("Adding target source: ${CMAKE_CURRENT_BINARY_DIR}/${DEST}")
     target_sources(${TARGET} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/${DEST}")
   endforeach()
 endfunction()
