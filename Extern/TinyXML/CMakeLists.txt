@@ -30,4 +30,5 @@ target_compile_definitions(TinyXML
 target_link_libraries(TinyXML
   PRIVATE
   XRay.Core
+  XRay.XMLParser
 )
