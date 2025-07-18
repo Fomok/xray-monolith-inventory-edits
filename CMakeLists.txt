@@ -53,7 +53,7 @@ target_sources(Build
 include(XRay)
 
 # Setup external libraries
-add_subdirectory(Extern)
+add_subdirectory(Externals)
 
 # Setup compressor
 add_subdirectory(compressor)

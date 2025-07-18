@@ -19,16 +19,13 @@ lua51.lib
 luajit.exe
 
 # luajit generated files
-Extern/LuaJIT/src/lj_bcdef.h
-Extern/LuaJIT/src/lj_ffdef.h
-Extern/LuaJIT/src/lj_folddef.h
-Extern/LuaJIT/src/lj_libdef.h
-Extern/LuaJIT/src/lj_recdef.h
-Extern/LuaJIT/src/host/buildvm_arch.h
-Extern/LuaJIT/src/jit/vmdef.lua
-
-# NVTT build files
-Extern/NVTT/NVTT/NVTT.log
+Externals/LuaJIT/src/lj_bcdef.h
+Externals/LuaJIT/src/lj_ffdef.h
+Externals/LuaJIT/src/lj_folddef.h
+Externals/LuaJIT/src/lj_libdef.h
+Externals/LuaJIT/src/lj_recdef.h
+Externals/LuaJIT/src/host/buildvm_arch.h
+Externals/LuaJIT/src/jit/vmdef.lua
 
 # emacs temp file
 \#*\#

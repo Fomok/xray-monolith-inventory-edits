@@ -33,7 +33,7 @@
       "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Extern/WindowsToolchain/Windows.MSVC.toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Externals/WindowsToolchain/Windows.MSVC.toolchain.cmake"
       },
       "condition": {
         "type": "equals",
@@ -53,7 +53,7 @@
       "inherits": "Base",
       "generator": "Ninja Multi-Config",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Extern/WindowsToolchain/Windows.Clang.toolchain.cmake"
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/Externals/WindowsToolchain/Windows.Clang.toolchain.cmake"
       },
       "condition": {
         "type": "equals",

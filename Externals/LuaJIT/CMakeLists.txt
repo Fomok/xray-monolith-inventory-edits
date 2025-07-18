@@ -16,7 +16,7 @@ set(ABIVER 5.1)
 set(NODOTABIVER 51)
 
 set(CMAKE_OSX_SYSROOT "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk")
-set(LUAJIT_DIR "${CMAKE_SOURCE_DIR}/Extern/LuaJIT-git/src" CACHE PATH "Location of luajit sources")
+set(LUAJIT_DIR "${CMAKE_SOURCE_DIR}/Externals/LuaJIT-git/src" CACHE PATH "Location of luajit sources")
 
 option(LUAJIT_BUILD_STATIC_LIB "Build as static library" ON)
 option(LUAJIT_BUILD_APP "Build application" OFF)
