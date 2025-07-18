@@ -16,7 +16,7 @@ runs:
   using: composite
   steps:
     - uses: actions/upload-artifact@v4.6.0
-      
+
       env:
         configure-preset: ${{inputs.configure-preset || env.configure-preset}}
 

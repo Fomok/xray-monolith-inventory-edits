@@ -1,0 +1,96 @@
+name: Format Code
+
+on:
+  workflow_dispatch:
+
+# Cancel previous run if re-triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: write-all
+
+jobs:
+  check-utf8:
+    name: UTF-8 Encoding
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{github.ref}}
+
+    - name: UTF-8
+      uses: ./.github/actions/check-utf8
+      with:
+        commit: true
+
+  check-mixed-tabs:
+    name: Mixed Spaces & Tabs
+    needs: check-utf8
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{github.ref}}
+
+    - uses: ./.github/actions/check-mixed-tabs
+      with:
+        commit: true
+
+  check-trailing-whitespace:
+    name: Trailing Whitespace
+    needs: check-mixed-tabs
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{github.ref}}
+
+    - name: Trailing Whitespace
+      uses: ./.github/actions/check-trailing-whitespace
+      with:
+        commit: true
+
+  check-line-endings:
+    name: Line Endings
+    needs: check-trailing-whitespace
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{github.ref}}
+
+    - name: Line Endings
+      uses: ./.github/actions/check-line-endings
+      with:
+        commit: true
+
+
+  check-terminating-newline:
+    name: Terminating Newlines
+    needs: check-line-endings
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{github.ref}}
+
+    - name: Newline Endings
+      uses: ./.github/actions/check-terminating-newline
+      with:
+        commit: true

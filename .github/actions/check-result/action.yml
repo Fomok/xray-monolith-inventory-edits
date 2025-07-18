@@ -6,7 +6,7 @@ inputs:
   message-error:
     type: string
     required: true
-  
+
   warning:
     type: bool
     required: false
@@ -15,13 +15,14 @@ inputs:
 runs:
   using: composite
 
-  env:
-    message-ok: ${{inputs.message-ok || env.message-ok}}
-    message-error: ${{inputs.message-error || env.message-error}}
-    warning: ${{inputs.warning && 'warning' || 'error'}}
-
   steps:
     - name: Report result
+
+      env:
+        message-ok: ${{inputs.message-ok || env.message-ok}}
+        message-error: ${{inputs.message-error || env.message-error}}
+        warning: ${{inputs.warning && 'warning' || 'error'}}
+
       shell: bash
       run: |
         if [ -z "$(git status -s)" ]; then

@@ -24,7 +24,7 @@ jobs:
     environment: Anomaly.Release
     steps:
       - run: echo "Building Anomaly"
-  
+
   # Compilation subcategory
   compile:
     name: Compile
@@ -69,13 +69,13 @@ jobs:
 
     - name: Build Binary
       uses: ./.github/actions/cmake
-    
+
     - name: Upload Binary
       uses: ./.github/actions/upload-binary
-    
+
     - name: Upload PDB
       uses: ./.github/actions/upload-pdb
-  
+
   # Packing subcategory
   pack:
     name: Pack
@@ -94,20 +94,20 @@ jobs:
       configure-preset: 'MSVS.MSVC.Ninja.AVX'
       build-preset: 'RelWithDebInfo'
       target: 'Gamedata'
-      
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Configure build environment
       uses: ./.github/actions/setup-env
-    
+
     - name: Build Gamedata
       uses: ./.github/actions/build-gamedata
-    
+
     - name: Upload Gamedata
       uses: ./.github/actions/upload-gamedata
-  
+
   # Checking subcategory
   check:
     name: Check
@@ -199,17 +199,17 @@ jobs:
       build-preset: RelWithDebInfo
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Get Datetime
       id: datetime
       run: echo "::set-output name=today::$(date +'%-Y.%-m.%-d')"
-        
+
     # Use the output from the `datetime` step
     - name: Print Version
       env:
         VERSION: "${{steps.datetime.outputs.today}}"
       run: echo "VERSION ${{steps.datetime.outputs.today}}"
-    
+
     - name: Download Artifacts
       uses: ./.github/actions/download-artifacts
 
@@ -220,7 +220,7 @@ jobs:
 
     - name: Pack PDBs
       uses: ./.github/actions/pack-pdbs
-    
+
     - name: Publish
       uses: ./.github/actions/publish-release
       with:

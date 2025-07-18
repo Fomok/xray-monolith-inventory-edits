@@ -1,10 +1,22 @@
+inputs:
+  commit:
+    type: boolean
+    required: false
+    default: false
+
+outputs:
+  commit-hash:
+    value: ${{steps.commit.outputs.commit_hash || github.ref}}
+
 runs:
   using: composite
 
   steps:
     - name: Install
-      shell: bash
-      run: sudo apt-get install dos2unix recode
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: recode
+        version: 1.0
 
     - name: UTF-8 Encoding
       shell: bash
@@ -17,3 +29,12 @@ runs:
       with:
         message-ok: All files are UTF-8 encoded
         message-error: Not UTF-8 encoded
+
+    - name: Commit
+      id: commit
+      if: ${{inputs.commit}}
+      uses: stefanzweifel/git-auto-commit-action@v6
+      with:
+        file_pattern: ":!.github/"
+        commit_message: Fix UTF-8 encoding
+
