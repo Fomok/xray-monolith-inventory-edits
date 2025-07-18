@@ -4,15 +4,21 @@ target_folder(luafilesystem ${FOLDER_LUA_EXTENSIONS})
 
 set(LUAFILESYSTEM_DIR ../luafilesystem-git)
 
-target_sources(luafilesystem
-  PRIVATE
+target_sources_sandboxed(luafilesystem
+  DIRECTORY luafilesystem
+
+  STRIP
+  ${LUAFILESYSTEM_DIR}/src/
+
+  SOURCES
   ${LUAFILESYSTEM_DIR}/src/lfs.c
   ${LUAFILESYSTEM_DIR}/src/lfs.h
 )
 
 target_include_directories(luafilesystem
   PUBLIC
-  ${LUAFILESYSTEM_DIR}/src
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/luafilesystem
 )
 
 target_link_libraries(luafilesystem
