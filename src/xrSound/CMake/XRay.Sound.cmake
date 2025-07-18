@@ -18,7 +18,6 @@ add_module(XRay.Sound
   OpenAL
   tbb
   XRay.Core
-  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

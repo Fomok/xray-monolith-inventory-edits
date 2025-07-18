@@ -160,7 +160,7 @@ function(add_module NAME)
 
   # Compose linked libraries
   target_link_libraries(${NAME}
-    ${TYPE_PRIVATE}
+    ${TYPE_PUBLIC}
     ${ARG_LINKS}
     ${${PARENT}_LINKS}
   )

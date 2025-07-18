@@ -25,7 +25,6 @@ add_module(XRay.Collision
   OPCODE
   optick
   XRay.Core
-  XRay.Render.Common
   XRay.Render.API
 )
 

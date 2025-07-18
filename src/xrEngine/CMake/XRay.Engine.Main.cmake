@@ -27,5 +27,4 @@ target_link_libraries(XRay.Engine.Main
   XRay.Core
   XRay.Engine
   XRay.Render.API
-  XRay.Render.Common
 )

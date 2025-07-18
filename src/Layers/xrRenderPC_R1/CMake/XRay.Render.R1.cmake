@@ -17,12 +17,12 @@ add_module(XRay.Render.R1
   LuaJIT
   NVAPI
   optick
+  ReShadeCompat
   tbb
   XRay.Collision
   XRay.Core
   XRay.CPUPipe
   XRay.Engine
-  XRay.Render.Common
   XRay.Render.API
   
   SOURCES

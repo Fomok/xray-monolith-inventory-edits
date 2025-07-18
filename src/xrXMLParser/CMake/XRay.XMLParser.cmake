@@ -11,8 +11,8 @@ add_module(XRay.XMLParser
   XRXMLPARSER_EXPORTS
 
   LINKS
-  XRay.Core
   TinyXML
+  XRay.Core
   
   SOURCES
   xrXMLParser.cpp
