@@ -2,62 +2,45 @@ add_library(CxImage STATIC)
 
 target_folder(CxImage ${FOLDER_EXTERNAL})
 
-# Sandbox sources into the compilation directory to prevent inclusion of stdint.h, ximacfg.h
-configure_file(../cximage-git/CxImage/ximaenc.cpp ximaenc.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximaexif.cpp ximaexif.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/xImage.cpp xImage.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximainfo.cpp ximainfo.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximaint.cpp ximaint.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximajpg.cpp ximajpg.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximalpha.cpp ximalpha.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximatran.cpp ximatran.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximalyr.cpp ximalyr.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximapal.cpp ximapal.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximasel.cpp ximasel.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/ximath.cpp ximath.cpp COPYONLY)
-configure_file(../cximage-git/CxImage/xmemfile.cpp xmemfile.cpp COPYONLY)
+set(CXIMAGE_DIR ../CxImage-git/CxImage)
 
-configure_file(../cximage-git/CxImage/xfile.h xfile.h COPYONLY)
-configure_file(../cximage-git/CxImage/ximadef.h ximadef.h COPYONLY)
-configure_file(../cximage-git/CxImage/ximage.h ximage.h COPYONLY)
-configure_file(../cximage-git/CxImage/ximaiter.h ximaiter.h COPYONLY)
-configure_file(../cximage-git/CxImage/ximajpg.h ximajpg.h COPYONLY)
-configure_file(../cximage-git/CxImage/ximath.h ximath.h COPYONLY)
-configure_file(../cximage-git/CxImage/xiofile.h xiofile.h COPYONLY)
-configure_file(../cximage-git/CxImage/xmemfile.h xmemfile.h COPYONLY)
+target_sources_sandboxed(CxImage
+  DIRECTORY CxImage
 
-target_sources(CxImage
-  PRIVATE
-  ${CMAKE_CURRENT_BINARY_DIR}/ximaenc.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximaexif.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/xImage.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximainfo.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximaint.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximajpg.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximalpha.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximatran.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximalyr.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximapal.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximasel.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/ximath.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/xmemfile.cpp
+  STRIP
+  ${CXIMAGE_DIR}/
 
-  ${CMAKE_CURRENT_BINARY_DIR}/xfile.h
-  ${CMAKE_CURRENT_BINARY_DIR}/ximadef.h
-  ${CMAKE_CURRENT_BINARY_DIR}/ximage.h
-  ${CMAKE_CURRENT_BINARY_DIR}/ximaiter.h
-  ${CMAKE_CURRENT_BINARY_DIR}/ximajpg.h
-  ${CMAKE_CURRENT_BINARY_DIR}/ximath.h
-  ${CMAKE_CURRENT_BINARY_DIR}/xiofile.h
-  ${CMAKE_CURRENT_BINARY_DIR}/xmemfile.h
-
+  SOURCES
   ximacfg.h
+
+  ${CXIMAGE_DIR}/ximaenc.cpp
+  ${CXIMAGE_DIR}/ximaexif.cpp
+  ${CXIMAGE_DIR}/xImage.cpp
+  ${CXIMAGE_DIR}/ximainfo.cpp
+  ${CXIMAGE_DIR}/ximaint.cpp
+  ${CXIMAGE_DIR}/ximajpg.cpp
+  ${CXIMAGE_DIR}/ximalpha.cpp
+  ${CXIMAGE_DIR}/ximatran.cpp
+  ${CXIMAGE_DIR}/ximalyr.cpp
+  ${CXIMAGE_DIR}/ximapal.cpp
+  ${CXIMAGE_DIR}/ximasel.cpp
+  ${CXIMAGE_DIR}/ximath.cpp
+  ${CXIMAGE_DIR}/xmemfile.cpp
+
+  ${CXIMAGE_DIR}/xfile.h
+  ${CXIMAGE_DIR}/ximadef.h
+  ${CXIMAGE_DIR}/ximage.h
+  ${CXIMAGE_DIR}/ximaiter.h
+  ${CXIMAGE_DIR}/ximajpg.h
+  ${CXIMAGE_DIR}/ximath.h
+  ${CXIMAGE_DIR}/xiofile.h
+  ${CXIMAGE_DIR}/xmemfile.h
 )
 
 target_include_directories(CxImage
   PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/CxImage
   PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/../cximage-git/jasper/include
   ${CMAKE_CURRENT_SOURCE_DIR}/../cximage-git/zlib
