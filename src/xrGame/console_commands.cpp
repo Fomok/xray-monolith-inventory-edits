@@ -158,6 +158,7 @@ extern int g_nearwall_trace;
 extern BOOL drawPickupItemNames;
 extern BOOL fun_allowed;
 extern BOOL progressiveStaminaCost;
+extern BOOL NPCsLookAtActor;
 
 extern BOOL alifeObjectHangingLampIgnoreMatchConfiguration;
 
@@ -2837,6 +2838,7 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer, "r__optimize_calculate_bones", &r_optimize_calculate_bones, 0, 1);
 
 	CMD4(CCC_Integer, "g_progressive_stamina_cost", &progressiveStaminaCost, 0, 1);
+	CMD4(CCC_Integer, "g_npcs_look_at_actor", &NPCsLookAtActor, 0, 1);
 
 	// demonized: Restores fun physics bugs like lift
 	CMD4(CCC_Integer, "fun_allowed", &fun_allowed, 0, 1);

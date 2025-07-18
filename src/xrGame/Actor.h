@@ -527,12 +527,13 @@ public:
 	// Получение, и запись смещения для гранат
 	Fvector GetMissileOffset() const;
 	void SetMissileOffset(const Fvector& vNewOffset);
+
+	int m_head;
 protected:
 	//косточки используемые при стрельбе
 	int m_r_hand;
 	int m_l_finger1;
 	int m_r_finger2;
-	int m_head;
 	int m_eye_left;
 	int m_eye_right;
 
