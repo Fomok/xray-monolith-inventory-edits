@@ -1,4 +1,3 @@
-#include "stdafx.h"
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #pragma warning(disable: 4047)
 HINSTANCE hInstance = (HINSTANCE)&__ImageBase;
