@@ -6,19 +6,29 @@ inputs:
   message-error:
     type: string
     required: true
+  
+  warning:
+    type: bool
+    required: false
+    default: true
 
 runs:
   using: composite
+
+  env:
+    message-ok: ${{inputs.message-ok || env.message-ok}}
+    message-error: ${{inputs.message-error || env.message-error}}
+    warning: ${{inputs.warning && 'warning' || 'error'}}
 
   steps:
     - name: Report result
       shell: bash
       run: |
         if [ -z "$(git status -s)" ]; then
-          echo "::notice::${{inputs.message-ok}}"
+          echo "::notice::${{env.message-ok}}"
         else
           echo Affected files:
-          git status --short | sed "s/^ M /::warning::${{inputs.message-error}}: /"
+          git status --short | sed "s/^ M /::${{env.warning}}::${{env.message-error}}: /"
 
           echo
           echo Details:
