@@ -2,17 +2,23 @@ add_library(LuaPanda STATIC)
 
 target_folder(LuaPanda ${FOLDER_LUA_EXTENSIONS})
 
-set(LUAPANDA_DIR ../LuaPanda-git)
+set(LUAPANDA_DIR ../LuaPanda-git/Debugger/debugger_lib)
 
-target_sources(LuaPanda
-  PRIVATE
-  ${LUAPANDA_DIR}/Debugger/debugger_lib/libpdebug.cpp
-  ${LUAPANDA_DIR}/Debugger/debugger_lib/libpdebug.h
+target_sources_sandboxed(LuaPanda
+  DIRECTORY LuaPanda
+
+  STRIP
+  ${LUAPANDA_DIR}/
+
+  SOURCES
+  ${LUAPANDA_DIR}/libpdebug.cpp
+  ${LUAPANDA_DIR}/libpdebug.h
 )
 
 target_include_directories(LuaPanda
   PUBLIC
-  ${LUAPANDA_DIR}/Debugger/debugger_lib
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/LuaPanda
 )
 
 target_compile_definitions(LuaPanda
