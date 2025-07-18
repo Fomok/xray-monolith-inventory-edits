@@ -145,7 +145,7 @@ function(add_module NAME)
   # Compose precompiled headers
   target_precompile_headers(${NAME}
     ${TYPE_PRIVATE}
-    $<$<COMPILE_LANGUAGE:CXX>:${ARG_PRECOMPILES}>
+    ${ARG_PRECOMPILES}
     ${${PARENT}_PRECOMPILES}
   )
   set(${NAME}_PRECOMPILES "$<$<COMPILE_LANGUAGE:CXX>:${ARG_PRECOMPILES}>;${${PARENT}_PRECOMPILES}" PARENT_SCOPE)
