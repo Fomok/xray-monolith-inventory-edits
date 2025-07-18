@@ -9,8 +9,21 @@ target_precompile_headers(OPCODE
     ../../src/xrCDB/StdAfx.h
 )
 
-target_sources(OPCODE
+target_include_directories(OPCODE
+  PUBLIC
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/OPCODE
   PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/xrCDB/
+)
+
+target_sources_sandboxed(OPCODE
+  DIRECTORY OPCODE
+
+  STRIP
+  ${OPCODE_DIR}/
+  
+  SOURCES
   ${OPCODE_DIR}/Opcode.cpp
   ${OPCODE_DIR}/Opcode.h
 
@@ -96,11 +109,4 @@ target_sources(OPCODE
   ${OPCODE_DIR}/OPC_TriBoxOverlap.h
   ${OPCODE_DIR}/OPC_TriTriOverlap.h
   ${OPCODE_DIR}/OPC_Types.h
-)
-
-target_include_directories(OPCODE
-  PUBLIC
-  ${OPCODE_DIR}
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/xrCDB/
 )
