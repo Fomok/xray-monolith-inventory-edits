@@ -13,7 +13,8 @@ target_sources(TinyXML
 
 target_precompile_headers(TinyXML
   PRIVATE
-  stdafx.h
+  <xrCore.h>
+  <xrXMLParser.h>
 )
 
 target_include_directories(TinyXML
@@ -24,4 +25,9 @@ target_include_directories(TinyXML
 target_compile_definitions(TinyXML
   PRIVATE
   XRXMLPARSER_EXPORTS
+)
+
+target_link_libraries(TinyXML
+  PRIVATE
+  XRay.Core
 )
