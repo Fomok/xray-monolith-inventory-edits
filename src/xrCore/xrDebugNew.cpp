@@ -84,7 +84,7 @@ namespace crash_saving
 // demonized: print stack trace
 #include <Windows.h>
 #include "mezz_stringbuffer.h"
-#include "../3rd party/stackwalker/include/StackWalker.h"
+#include "StackWalker.h"
 class xr_StackWalker : public StackWalker {
 public:
     xr_StackWalker() : StackWalker(StackWalker::StackWalkOptions::RetrieveSymbol

@@ -11,14 +11,13 @@ add_module(XRay.Sound
   LINKS
   dxsdk
   dxguid
-  ogg
-  theora
-  vorbis
-  vorbisfile
-  OpenAL32
+  libogg
+  libtheora
+  libvorbis
+  libvorbisfile
+  OpenAL
   tbb
   XRay.Core
-  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

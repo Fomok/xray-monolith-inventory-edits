@@ -11,7 +11,6 @@ add_module(XRay.Physics
   tbb
   XRay.Collision
   XRay.Engine
-  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

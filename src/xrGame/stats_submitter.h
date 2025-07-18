@@ -4,7 +4,7 @@
 #include <boost/noncopyable.hpp>
 #include "profile_data_types.h"
 #include "gsc_dsigned_ltx.h"
-#include "../3rd party/crypto/crypto.h"
+#include "crypto.h"
 
 class CGameSpy_Full;
 

@@ -1,8 +1,6 @@
 add_module(XRay.Render.Common
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
-  PRECOMPILES stdafx.h
-  
   SOURCES
   #blenders/Blender.cpp
   blenders/Blender.h

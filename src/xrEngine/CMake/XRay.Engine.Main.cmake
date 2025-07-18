@@ -21,9 +21,10 @@ target_link_libraries(XRay.Engine.Main
   discord
   DPlay
   icu
+  LuaPanda
+  optick
 
   XRay.Core
   XRay.Engine
   XRay.Render.API
-  XRay.Render.Common
 )

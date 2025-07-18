@@ -1,6 +1,57 @@
-[submodule "src/3rd party/optick-git"]
-	path = src/3rd party/optick-git
-	url = https://github.com/bombomby/optick.git
-[submodule "extern/WindowsToolchain"]
-	path = CMake/WindowsToolchain
+[submodule "Externals/WindowsToolchain"]
+	path = Externals/WindowsToolchain
 	url = https://github.com/MarkSchofield/WindowsToolchain.git
+[submodule "Externals/cximage-git"]
+	path = Externals/cximage-git
+	url = https://github.com/minnyres/cximage.git
+[submodule "Externals/DxErr-git"]
+	path = Externals/DxErr-git
+	url = https://github.com/rbeesley/DxErr.git
+[submodule "Externals/IconFontCppHeaders-git"]
+	path = Externals/IconFontCppHeaders-git
+	url = https://github.com/juliettef/IconFontCppHeaders.git
+[submodule "Externals/imgui-git"]
+	path = Externals/imgui-git
+	url = https://github.com/ocornut/imgui.git
+[submodule "Externals/libjpeg-git"]
+	path = Externals/libjpeg-git
+	url = https://github.com/kloper/libjpeg
+[submodule "Externals/libogg-git"]
+	path = Externals/libogg-git
+	url = https://github.com/gcp/libogg.git
+[submodule "Externals/libtheora-git"]
+	path = Externals/libtheora-git
+	url = https://github.com/xiph/theora.git
+[submodule "Externals/libvorbis-git"]
+	path = Externals/libvorbis-git
+	url = https://github.com/xiph/vorbis.git
+[submodule "Externals/luafilesystem-git"]
+	path = Externals/luafilesystem-git
+	url = https://github.com/lunarmodules/luafilesystem
+[submodule "Externals/LuaJIT-git"]
+	path = Externals/LuaJIT-git
+	url = https://github.com/LuaJIT/LuaJIT.git
+[submodule "Externals/lua-marshal-git"]
+	path = Externals/lua-marshal-git
+	url = https://github.com/richardhundt/lua-marshal.git
+[submodule "Externals/LuaPanda-git"]
+	path = Externals/LuaPanda-git
+	url = https://github.com/Tencent/LuaPanda.git
+[submodule "Externals/luasocket-git"]
+	path = Externals/luasocket-git
+	url = https://github.com/lunarmodules/luasocket.git
+[submodule "Externals/OpenAL-git"]
+	path = Externals/OpenAL-git
+	url = https://github.com/kcat/openal-soft.git
+[submodule "src/3rd party/optick-git"]
+	path = Externals/optick-git
+	url = https://github.com/bombomby/optick.git
+[submodule "sdk/include/reshade-git"]
+	path = sdk/include/reshade-git
+	url = https://github.com/crosire/reshade.git
+[submodule "Externals/StackWalker-git"]
+	path = Externals/StackWalker-git
+	url = https://github.com/JochenKalmbach/StackWalker.git
+[submodule "Externals/optick-git"]
+	path = Externals/optick-git
+	url = https://github.com/bombomby/optick.git

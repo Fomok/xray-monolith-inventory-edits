@@ -58,12 +58,6 @@ add_module(XRay.Game.Core.Common.NETShared.SecureMessages
   SOURCES
   secure_messaging.cpp
   secure_messaging.h
-
-  xr_dsa_signer.cpp
-  xr_dsa_signer.h
-
-  xr_dsa_verifyer.cpp
-  xr_dsa_verifyer.h
 )
 
 add_module(XRay.Game.Core.Common.ObjectBroker

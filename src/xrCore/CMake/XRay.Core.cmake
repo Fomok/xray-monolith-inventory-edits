@@ -9,10 +9,11 @@ add_module(XRay.Core
   PORTABLE_BUGSLAYERUTIL
 
   INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}/..
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
-  DXERR
+  DxErr
   optick
   StackWalker
   winmm
@@ -57,6 +58,7 @@ include(XRay.Core.Compression.LZ)
 include(XRay.Core.Compression.LZO)
 include(XRay.Core.Compression.PPMD)
 include(XRay.Core.Compression.RT)
+include(XRay.Core.Crypto)
 include(XRay.Core.Debug)
 include(XRay.Core.Debug.BlackBox)
 include(XRay.Core.FS)

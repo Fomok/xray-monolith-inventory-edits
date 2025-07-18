@@ -52,6 +52,9 @@ target_sources(Build
 # Hand off to our XRay entrypoint
 include(XRay)
 
+# Setup external libraries
+add_subdirectory(Externals)
+
 # Setup compressor
 add_subdirectory(compressor)
 

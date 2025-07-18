@@ -16,11 +16,12 @@ add_module(XRay.Render.R2
   luabind
   LuaJIT
   NVAPI
+  optick
+  ReShadeCompat
   tbb
   XRay.Collision
   XRay.Core
   XRay.Engine
-  XRay.Render.Common
   XRay.Render.API
 
   SOURCES

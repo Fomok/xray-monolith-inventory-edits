@@ -1,5 +1,3 @@
-add_subdirectory("3rd party")
-add_subdirectory("ReShadeCompat")
 add_subdirectory("Layers")
 
 add_subdirectory("xrCDB")

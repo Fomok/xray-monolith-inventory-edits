@@ -8,7 +8,6 @@ add_module(XRay.CPUPipe
   LINKS
   XRay.Render.API
   XRay.Collision
-  XRay.Render.Common
 
   SOURCES
   xrCPU_Pipe.cpp

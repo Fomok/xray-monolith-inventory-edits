@@ -5,26 +5,18 @@ add_module(XRay.Game
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 
-  PRECOMPILES $<$<COMPILE_LANGUAGE:CXX>:stdafx.h>
+  PRECOMPILES stdafx.h
   
   DEFINES XRGAME_EXPORTS
 
   LINKS
-  crypto
   CxImage
-  imgui
-  loki
-  lua-extensions
-  luabind
-  LuaJIT
-  ode
   XRay.Collision
   XRay.Core
+  XRay.Core.Crypto
   XRay.Engine
   XRay.NetServer
   XRay.Physics
-  XRay.Render.Common
-  XRay.Render.API
 
   SOURCES
   xrGame.cpp

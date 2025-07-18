@@ -1,6 +1,9 @@
 add_module(XRay.Game.UI
   TYPE STATIC
 
+  LINKS
+  TinyXML
+
   SOURCES
   UIDialogHolder.cpp
   UIDialogHolder.h

@@ -1,5 +1,9 @@
 add_module(XRay.Game.AI.Script
   TYPE STATIC
+
+  LINKS
+  lua-extensions
+
   SOURCES
   ../xrServerEntities/script_export_macroses.h
   ../xrServerEntities/script_export_space.h

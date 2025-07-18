@@ -10,19 +10,15 @@ add_module(XRay.Engine
   LINKS
   discord
   dinput8
-  dxsdk
-  DPlay
-  icu
   imgui
-  luabind
   LuaJIT
-  ReShadeCompat
+  luabind
+  
   Vfw32
   XRay.Collision
   XRay.Core
   XRay.Game
   XRay.Particles
-  XRay.Render.Common
   XRay.Render.API
   XRay.Sound
   XRay.XMLParser
