@@ -303,12 +303,18 @@ body_state = {
 	move.stand,
 }
 --]]
-local csbs_flags = {}
 AddScriptCallback("npc_on_combat_set_body_state")
 function _G.CAI_Stalker__CombatSetBodyState(npc,world_operator,body_state)
-	csbs_flags.body_state = body_state
+	local csbs_flags = {body_state = body_state}
 	SendScriptCallback("npc_on_combat_set_body_state",npc,world_operator,body_state,csbs_flags)
 	return csbs_flags.body_state
+end
+
+AddScriptCallback("npc_on_before_look_at_actor")
+_G.CNPCBeforeLookAtActor = function(npc, distance)
+	local flags = {ret_value = true}
+	SendScriptCallback("npc_on_before_look_at_actor", npc, distance)
+	return flags.ret_value
 end
 
 -- actor_on_task_callback

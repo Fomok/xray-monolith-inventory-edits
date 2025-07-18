@@ -313,6 +313,20 @@ This behaviour can be customized by setting the following variables in your fork
 - `TARGET`
 
 ## Changelog
+**2025.07.19**
+* Optimizations
+  * Updates to weapon sound positions moved to separate frame, can be toggled with `mt_update_weapon_sounds` cvar, default on. Slight performance gain depending on the amount of weapon game objects
+  * Calculating bones optimization will be engaged only after fully loading the level
+* Gameplay
+  * Optional progressive stamina drain, stamina usage linearly depends on current weight instead of hard cutoff point, cvar `g_progressive_stamina_cost`, default off
+  * Fix crows AI fly target position (https://github.com/ixray-team/ixray-1.6-stcop/commit/4e7de9844c1906749bb519f9c6ce350f42f02dea)
+  * NPCs will turn their heads to look at actor when upclose (https://github.com/ixray-team/ixray-1.6-stcop/commit/e55a85f0d5b719e3cd9ce23ca7976b0ca2124b08)
+    * cvar `g_npcs_look_at_actor` to enable the feature, default on
+    * cvar `g_npcs_look_at_actor_min_distance` to control minimum distance when they start to look, default 3.5
+    * callback `npc_on_before_look_at_actor` to control the behaviour of npcs
+* Fixed https://github.com/themrdemonized/xray-monolith/issues/296
+* VodoXleb: Fix `_G.get_object_squad` error (https://github.com/themrdemonized/xray-monolith/pull/299)
+
 **2025.07.16**
 * Fixed crash due to not clearing pointer to deleted IRenderable in bones calculations
 
