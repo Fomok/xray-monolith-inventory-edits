@@ -436,7 +436,7 @@ target_sources(LuaJIT PRIVATE
 file(READ ${LUAJIT_DIR}/lj_def.h LJ_DEF_H)
 string(REPLACE "_BitScanForward(uint32_t *, unsigned long)" "_BitScanForward(unsigned long *, unsigned long)" LJ_DEF_H "${LJ_DEF_H}")
 string(REPLACE "_BitScanReverse(uint32_t *, unsigned long)" "_BitScanReverse(unsigned long *, unsigned long)" LJ_DEF_H "${LJ_DEF_H}")
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/LuaJIT/lj_def.h "${LJ_DEF_H}")
+file(GENERATE OUTPUT LuaJIT/lj_def.h CONTENT "${LJ_DEF_H}")
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${LUAJIT_DIR}/lj_def.h)
 target_sources(LuaJIT PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/LuaJIT/lj_def.h")
 
