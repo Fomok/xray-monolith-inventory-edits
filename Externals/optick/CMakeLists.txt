@@ -2,6 +2,11 @@ add_library(optick STATIC)
 
 target_folder(optick ${FOLDER_EXTERNAL})
 
+target_compile_options(optick
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4530>
+)
+
 target_compile_definitions(optick
   PUBLIC
   OPTICK_ENABLE_GPU=0
