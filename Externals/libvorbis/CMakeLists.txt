@@ -89,9 +89,20 @@ target_include_directories(libvorbis
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+target_compile_options(libvorbis
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4305>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4457>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-include>
+)
+
 target_compile_definitions(libvorbis
   PRIVATE
   ANALYSIS
+  _CRT_SECURE_NO_WARNINGS
 )
 
 target_link_libraries(libvorbis
@@ -119,6 +130,11 @@ target_sources_sandboxed(libvorbisfile
 target_include_directories(libvorbisfile
   PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+target_compile_definitions(libvorbisfile
+  PRIVATE
+  _CRT_SECURE_NO_WARNINGS
 )
 
 target_link_libraries(libvorbisfile
