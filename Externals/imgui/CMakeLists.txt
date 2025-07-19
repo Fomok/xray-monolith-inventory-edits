@@ -11,6 +11,12 @@ target_compile_definitions(imgui
   IMGUI_DEFINE_MATH_OPERATORS
 )
 
+target_compile_options(imgui
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4005>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-macro-redefined>
+)
+
 target_include_directories(imgui
   PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}
