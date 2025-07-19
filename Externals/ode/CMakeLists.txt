@@ -95,6 +95,24 @@ target_include_directories(ode
   ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+target_compile_options(ode
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4189>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4245>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4457>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4505>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4702>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-writable-strings>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-extra-tokens>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-undefined-bool-conversion>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-null-dereference>
+)
+
 if(ODE_DOUBLE_PRECISION)
   target_compile_definitions(ode PUBLIC dDOUBLE)
 else()
