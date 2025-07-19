@@ -20,3 +20,8 @@ target_include_directories(StackWalker
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/StackWalker
 )
+
+target_compile_options(StackWalker
+  PRIVATE
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-switch>
+)
