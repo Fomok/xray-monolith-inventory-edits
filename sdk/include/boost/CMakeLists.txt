@@ -1810,3 +1810,8 @@ target_include_directories(boost
   INTERFACE
   ${XRAY_SDK_INCLUDE}
 )
+
+target_compile_options(boost
+  INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+)
