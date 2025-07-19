@@ -117,6 +117,14 @@ target_precompile_headers(luabind
   pch.h
 )
 
+target_compile_options(luabind
+  PUBLIC
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-extra-qualification>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-unqualified-friend>
+)
+
 target_compile_definitions(luabind
   PRIVATE
   LUABIND_BUILDING
