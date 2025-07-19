@@ -103,3 +103,28 @@ target_include_directories(libjpeg
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/libjpeg
 )
+
+target_compile_options(libjpeg
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4005>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4013>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4127>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4131>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4701>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4702>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4703>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4996>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-declarations>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-non-prototype>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-incompatible-library-redeclaration>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-macro-redefined>
+)
+
+target_compile_definitions(libjpeg
+  PRIVATE
+  _CRT_SECURE_NO_WARNINGS
+)
