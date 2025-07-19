@@ -21,6 +21,11 @@ target_include_directories(luafilesystem
   ${CMAKE_CURRENT_BINARY_DIR}/luafilesystem
 )
 
+target_compile_definitions(luafilesystem
+  PRIVATE
+  _CRT_SECURE_NO_WARNINGS
+)
+
 target_link_libraries(luafilesystem
   PRIVATE
   LuaJIT
