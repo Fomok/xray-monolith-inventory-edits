@@ -132,6 +132,14 @@ target_include_directories(libvorbisfile
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+target_compile_options(libvorbisfile
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4457>
+)
+
 target_compile_definitions(libvorbisfile
   PRIVATE
   _CRT_SECURE_NO_WARNINGS
