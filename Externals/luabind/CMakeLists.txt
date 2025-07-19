@@ -131,7 +131,8 @@ target_compile_definitions(luabind
 )
 
 target_link_libraries(luabind
+  PUBLIC
+  boost
   PRIVATE
   LuaJIT
-  boost
 )
