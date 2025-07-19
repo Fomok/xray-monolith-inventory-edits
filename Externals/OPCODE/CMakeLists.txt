@@ -9,6 +9,12 @@ target_precompile_headers(OPCODE
     ../../src/xrCDB/StdAfx.h
 )
 
+target_compile_options(OPCODE
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-value>
+)
+
 target_include_directories(OPCODE
   PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}
