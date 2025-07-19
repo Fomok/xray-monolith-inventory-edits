@@ -135,12 +135,19 @@ target_include_directories(tbb
   ${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
+target_compile_options(tbb
+  INTERFACE
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-include>
+)
+
 add_library(tbb_shared SHARED IMPORTED)
+
 set_property(
   TARGET tbb_shared
   PROPERTY IMPORTED_LOCATION
   ${CMAKE_SOURCE_DIR}/sdk/binaries/tbb.dll
 )
+
 set_property(
   TARGET tbb_shared
   PROPERTY
