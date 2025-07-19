@@ -32,3 +32,10 @@ target_include_directories(DxErr
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/DxErr
 )
+
+target_compile_options(DxErr
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4313>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4474>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4477>
+)
