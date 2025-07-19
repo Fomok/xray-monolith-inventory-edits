@@ -47,6 +47,17 @@ target_include_directories(luasocket
   ${CMAKE_CURRENT_BINARY_DIR}
 )
 
+target_compile_options(luasocket
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+)
+
+target_compile_definitions(luasocket
+  PRIVATE
+  _WINSOCK_DEPRECATED_NO_WARNINGS
+  _CRT_SECURE_NO_WARNINGS
+)
+
 target_link_libraries(luasocket
   PRIVATE
   LuaJIT
