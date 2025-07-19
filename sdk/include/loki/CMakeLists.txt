@@ -31,6 +31,11 @@ target_sources(loki
   Visitor.h
 )
 
+target_compile_options(loki
+  INTERFACE
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-template-shadow>
+)
+
 target_include_directories(loki
   INTERFACE
   ${XRAY_SDK_INCLUDE}
