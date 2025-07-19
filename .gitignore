@@ -1,8 +1,9 @@
-# exclude all dot files except .gitignore
+# exclude all dot files except those we need to track
 .*
 !.gitignore
 !.gitattributes
 !.github
+!.clang-format
 
 # exclude binaries and temporary files
 _build/

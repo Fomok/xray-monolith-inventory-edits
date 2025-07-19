@@ -27,7 +27,7 @@ jobs:
       configure-preset-gnu: ${{vars.CONFIGURE_PRESET_GNU || 'System.GNU'}}
       build-preset: ${{vars.BUILD_PRESET || 'Verified'}}
       target: ${{vars.TARGET || 'Anomaly.DX11'}}
-  
+
   # Compilation subcategory
   compile:
     name: Compile
@@ -60,13 +60,13 @@ jobs:
 
     - name: Configure build environment
       uses: ./.github/actions/setup-env
-    
+
     - name: Build Binary
       uses: ./.github/actions/cmake
-    
+
     - name: Upload Binary
       uses: ./.github/actions/upload-binary
-    
+
     - name: Upload PDB
       uses: ./.github/actions/upload-pdb
 
@@ -87,13 +87,13 @@ jobs:
 
     - name: Configure build environment
       uses: ./.github/actions/setup-env
-    
+
     - name: Build Binary
       uses: ./.github/actions/cmake
-    
+
     - name: Upload Binary
       uses: ./.github/actions/upload-binary
-    
+
     - name: Upload PDB
       uses: ./.github/actions/upload-pdb
 
@@ -116,16 +116,16 @@ jobs:
 
     - name: Configure build environment
       uses: ./.github/actions/setup-env
-    
+
     - name: Build Binary
       uses: ./.github/actions/cmake
-    
+
     - name: Upload Binary
       uses: ./.github/actions/upload-binary
-    
+
     - name: Upload PDB
       uses: ./.github/actions/upload-pdb
-  
+
   # Packing subcategory
   pack:
     name: Pack
@@ -144,20 +144,20 @@ jobs:
       configure-preset: 'MSVS.MSVC.Ninja.AVX'
       build-preset: 'Verified'
       target: 'Gamedata'
-      
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Configure build environment
       uses: ./.github/actions/setup-env
-    
+
     - name: Build Gamedata
       uses: ./.github/actions/build-gamedata
-    
+
     - name: Upload Gamedata
       uses: ./.github/actions/upload-gamedata
-  
+
   # Checking subcategory
   check:
     name: Check
