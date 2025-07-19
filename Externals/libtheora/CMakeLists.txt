@@ -89,6 +89,24 @@ target_sources_sandboxed(libtheora
   ${LIBTHEORA_DIR}/lib/quant.h
 )
 
+target_compile_options(libtheora
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4018>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4132>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4245>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4334>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4389>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4554>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4700>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4701>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-parentheses>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-shift-op-parentheses>
+)
+
 target_include_directories(libtheora
   PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}
