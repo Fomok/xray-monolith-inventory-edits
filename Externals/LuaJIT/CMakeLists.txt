@@ -89,7 +89,7 @@ else()
     set(CCOPT_OPT_LEVEL O2)
 endif()
 
-set(CCOPT "${CMAKE_C_FLAGS} ${CCOPT_OPT_PREFIX}${CCOPT_OPT_LEVEL}")
+set(CCOPT "${CMAKE_C_FLAGS}")
 
 if (NOT MSVC)
   if (USE_ADDRESS_SANITIZER)
