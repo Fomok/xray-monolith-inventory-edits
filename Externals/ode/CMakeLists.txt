@@ -96,6 +96,8 @@ target_include_directories(ode
 )
 
 target_compile_options(ode
+  PUBLIC
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-writable-strings>
   PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4189>
@@ -107,7 +109,6 @@ target_compile_options(ode
   $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4505>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4702>
-  $<$<CXX_COMPILER_ID:Clang>:-Wno-writable-strings>
   $<$<CXX_COMPILER_ID:Clang>:-Wno-extra-tokens>
   $<$<CXX_COMPILER_ID:Clang>:-Wno-undefined-bool-conversion>
   $<$<CXX_COMPILER_ID:Clang>:-Wno-null-dereference>
