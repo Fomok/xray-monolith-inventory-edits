@@ -34,6 +34,9 @@ target_include_directories(DxErr
 )
 
 target_compile_options(DxErr
+  PUBLIC
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4005>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-macro-redefined>
   PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/wd4313>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4474>
