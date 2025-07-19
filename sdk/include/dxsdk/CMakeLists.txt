@@ -32,6 +32,11 @@ target_include_directories(dxsdk
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+target_compile_options(dxsdk
+  INTERFACE
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-new-returns-null>
+)
+
 find_library(LIBRARY_D3D9 d3d9 HINTS ${XRAY_SDK_LIB})
 find_library(LIBRARY_D3DX9 d3dx9 HINTS ${XRAY_SDK_LIB})
 find_library(LIBRARY_D3D10 d3d10 HINTS ${XRAY_SDK_LIB})
