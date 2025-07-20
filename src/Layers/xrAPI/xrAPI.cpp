@@ -1,7 +1,6 @@
 // xrAPI.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
 #include "xrAPI.h"
 
 #include "dxRenderFactory.h"
