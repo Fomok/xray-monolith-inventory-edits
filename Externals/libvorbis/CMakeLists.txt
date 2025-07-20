@@ -91,6 +91,7 @@ target_include_directories(libvorbis
 
 target_compile_options(libvorbis
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4305>
@@ -134,6 +135,7 @@ target_include_directories(libvorbisfile
 
 target_compile_options(libvorbisfile
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
