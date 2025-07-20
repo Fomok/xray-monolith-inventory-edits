@@ -1,11 +1,38 @@
+set(EDITOR_BUILD Off)
+
 add_module(XRay.Sound
   TYPE STATIC
   
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
-  PRECOMPILES stdafx.h
+  PRECOMPILES
+  [["xrCore.h"]]
+  [["xrCDB.h"]]
+
+  [["mmsystem.h"]]
+  [["mmreg.h"]]
+
+  [["vorbis/codec.h"]]
+  [["vorbis/vorbisfile.h"]]
+
+  sound.h
+  resource.h
 
   DEFINES
+  # mmsystem.h
+  MMNOSOUND
+  MMNOMIDI
+  MMNOAUX
+  MMNOMIXER
+  MMNOJOY
+
+  # mmreg.h
+  NOMMIDS
+  NONEWRIFFF
+  NOJPEGDIB
+  NONEWIC
+  NOBITMAP
+
   XRSOUND_EXPORTS
 
   LINKS
@@ -18,6 +45,7 @@ add_module(XRay.Sound
   OpenAL
   tbb
   XRay.Core
+  XRay.Collision
   XRay.Render.API
 
   SOURCES
@@ -29,8 +57,16 @@ add_module(XRay.Sound
   OpenALDeviceList.h
   Sound.h
   SoundRender.h
-  stdafx.h
+
+  resource.h
 )
+
+if(EDITOR_BUILD)
+  target_precompile_headers(XRay.Sound
+    PRIVATE
+    ETools.h
+  )
+endif()
 
 include(XRay.Sound.Cache)
 include(XRay.Sound.Core)
