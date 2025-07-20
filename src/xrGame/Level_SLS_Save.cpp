@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../xrEngine/xrLevel.h"
 #include "Level.h"
 #include "xrserver.h"

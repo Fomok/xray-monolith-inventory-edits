@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xr_area.h"
 #include "frustum.h"
 

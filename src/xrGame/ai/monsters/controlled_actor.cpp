@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "controlled_actor.h"
 #include "../../actor.h"
 #include "../../../xrEngine/CameraBase.h"

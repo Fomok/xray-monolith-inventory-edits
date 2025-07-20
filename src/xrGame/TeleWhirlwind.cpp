@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "telewhirlwind.h"
 #include "../xrphysics/PhysicsShell.h"
 #include "PhysicsShellHolder.h"

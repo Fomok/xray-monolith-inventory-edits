@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIListBox.h"
 #include "UIListBoxItem.h"
 #include "UIScrollBar.h"

@@ -5,7 +5,6 @@
 //	Description : UI Helper class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "StdAfx.h"
 #include "UIHelper.h"
 #include "UIXmlInit.h"
 

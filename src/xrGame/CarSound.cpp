@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #ifdef DEBUG
 #include "PHDebug.h"
 #endif

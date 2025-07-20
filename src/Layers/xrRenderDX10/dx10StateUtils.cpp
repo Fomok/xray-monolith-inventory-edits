@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx10StateUtils.h"
 
 #include "../xrRender/Utils/dxHashHelper.h"

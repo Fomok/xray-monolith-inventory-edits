@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "../../xrEngine/render.h"
 #include "../../xrEngine/irenderable.h"

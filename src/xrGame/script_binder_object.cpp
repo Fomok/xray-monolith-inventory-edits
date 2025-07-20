@@ -6,7 +6,6 @@
 //	Description : Script object binder
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "script_binder_object.h"
 #include "script_game_object.h"
 

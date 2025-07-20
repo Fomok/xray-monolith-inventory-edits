@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIMpItemsStoreWnd.h"
 #include "UIXmlInit.h"
 #include "UITabButtonMP.h"

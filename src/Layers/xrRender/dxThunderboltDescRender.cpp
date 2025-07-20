@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxThunderboltDescRender.h"
 
 void dxThunderboltDescRender::Copy(IThunderboltDescRender& _in)

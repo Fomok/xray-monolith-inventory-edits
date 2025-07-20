@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Physics.h"
 #include "PHShell.h"
 #include "PHShellSplitter.h"

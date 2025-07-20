@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "string_table.h"
 
 #include "ui/xrUIXmlParser.h"

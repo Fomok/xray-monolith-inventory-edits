@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "DynamicHeightMap.h"
 #include "../xrEngine/cl_intersect.h"
 

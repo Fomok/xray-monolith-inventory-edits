@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 
 IC bool SortLights(light* i, light* j)

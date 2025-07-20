@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #pragma hdrstop
 
 #include "rt_lzo1x.h"

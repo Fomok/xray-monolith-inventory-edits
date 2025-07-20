@@ -3,7 +3,6 @@
 //	Last updated: 13/08/2015
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 
 #include "customoutfit.h"
 #include "PhysicsShell.h"

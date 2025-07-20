@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "script_debugger_threads.h"
 #include "ai_space.h"
 #include "script_process.h"

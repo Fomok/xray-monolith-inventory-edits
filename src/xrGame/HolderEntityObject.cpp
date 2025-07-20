@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HolderEntityObject.h"
 #include "Kinematics.h"
 #include "PhysicsShell.h"

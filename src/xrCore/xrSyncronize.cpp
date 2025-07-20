@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #ifdef PROFILE_CRITICAL_SECTIONS
 static add_profile_portion_callback add_profile_portion = 0;

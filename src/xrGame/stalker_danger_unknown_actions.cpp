@@ -6,7 +6,6 @@
 //	Description : Stalker danger unknown actions classes
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_danger_unknown_actions.h"
 #include "ai/stalker/ai_stalker.h"
 #include "script_game_object.h"

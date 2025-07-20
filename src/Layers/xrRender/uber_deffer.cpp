@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "uber_deffer.h"
 void fix_texture_name(LPSTR fn);
 

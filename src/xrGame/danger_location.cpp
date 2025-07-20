@@ -6,7 +6,6 @@
 //	Description : Danger location
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "danger_location.h"
 
 bool CDangerLocation::useful() const

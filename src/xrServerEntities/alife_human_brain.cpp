@@ -6,7 +6,6 @@
 //	Description : ALife human brain class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_human_brain.h"
 #include "object_broker.h"
 #include "xrServer_Objects_ALife_Monsters.h"

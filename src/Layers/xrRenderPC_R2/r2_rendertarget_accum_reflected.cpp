@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 void CRenderTarget::accum_reflected(light* L)
 {

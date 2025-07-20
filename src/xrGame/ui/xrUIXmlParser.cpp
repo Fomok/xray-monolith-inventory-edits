@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xrUIXmlParser.h"
 
 #ifdef XRGAME_EXPORTS

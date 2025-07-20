@@ -3,7 +3,6 @@
 //	Last updated: 13/08/2015
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "UICellItem.h"
 #include "uicursor.h"
 #include "../inventory_item.h"

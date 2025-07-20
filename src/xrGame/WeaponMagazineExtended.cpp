@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "WeaponMagazined.h"
 #include "WeaponMagazinedWGrenade.h"
 

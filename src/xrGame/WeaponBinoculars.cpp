@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "WeaponBinoculars.h"
 
 #include "xr_level_controller.h"

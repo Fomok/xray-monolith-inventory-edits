@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../xrCDB/frustum.h"
 #include "xr_ioconsole.h"
 #include "xr_input.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "monster_home.h"
 #include "BaseMonster/base_monster.h"
 #include "../../ai_space.h"

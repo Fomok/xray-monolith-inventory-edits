@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "r__sector.h"
 #include "../../xrEngine/xrLevel.h"
 #include "../../xrEngine/xr_object.h"

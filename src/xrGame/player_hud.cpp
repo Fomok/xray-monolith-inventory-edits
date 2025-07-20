@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "player_hud.h"
+﻿#include "player_hud.h"
 #include "HudItem.h"
 #include "ui_base.h"
 #include "actor.h"

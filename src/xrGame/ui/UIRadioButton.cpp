@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include ".\uiradiobutton.h"
 #include "UILines.h"
 

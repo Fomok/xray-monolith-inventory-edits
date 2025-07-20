@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "r4.h"
 #include "../xrRender/fbasicvisual.h"
 #include "../../xrEngine/xr_object.h"

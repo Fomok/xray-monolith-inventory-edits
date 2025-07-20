@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "dxApplicationRender.h"
 #include "../../xrEngine/GameFont.h"

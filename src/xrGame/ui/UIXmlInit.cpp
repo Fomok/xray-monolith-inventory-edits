@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIXmlInit.h"
 #include "../level.h"
 #include "../string_table.h"

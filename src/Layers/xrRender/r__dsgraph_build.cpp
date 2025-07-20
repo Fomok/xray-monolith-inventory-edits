@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-
+﻿
 #include "fhierrarhyvisual.h"
 #include "SkeletonCustom.h"
 #include "../../xrEngine/fmesh.h"

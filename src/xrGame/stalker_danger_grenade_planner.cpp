@@ -6,7 +6,6 @@
 //	Description : Stalker danger grenade planner class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_danger_grenade_planner.h"
 #include "ai/stalker/ai_stalker.h"
 #include "script_game_object.h"

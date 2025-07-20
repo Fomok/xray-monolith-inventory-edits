@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "igame_persistent.h"
 #include "irenderable.h"
 #include "FBasicVisual.h"

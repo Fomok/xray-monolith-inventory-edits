@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIPdaWnd.h"
 #include "../Pda.h"
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ParticlesObject.h"
 #include "gamemtllib.h"
 #include "level.h"

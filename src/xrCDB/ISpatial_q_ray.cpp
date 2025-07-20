@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ISpatial.h"
 #pragma warning(push)
 #pragma warning(disable:4995)

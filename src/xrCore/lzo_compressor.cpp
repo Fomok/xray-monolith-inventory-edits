@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "lzo_compressor.h"
 
 int lzo_compress_dict(const lzo_bytep in, lzo_uint in_len,

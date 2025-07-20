@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "boar.h"
 #include "boar_state_manager.h"
 

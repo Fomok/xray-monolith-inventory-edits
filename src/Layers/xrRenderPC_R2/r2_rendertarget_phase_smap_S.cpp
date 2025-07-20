@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 void CRenderTarget::phase_smap_spot_clear()
 {

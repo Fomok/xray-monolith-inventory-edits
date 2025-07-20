@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "./dx10RainBlender.h"
 
 void CBlender_rain::Compile(CBlender_Compile& C)

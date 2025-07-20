@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "BoneProtections.h"
 #include "Kinematics.h"
 #include "bone.h"

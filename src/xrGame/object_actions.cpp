@@ -6,7 +6,6 @@
 //	Description : Object actions
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "object_actions.h"
 #include "inventory.h"
 #include "ai/stalker/ai_stalker.h"

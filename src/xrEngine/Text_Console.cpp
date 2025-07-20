@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Text_Console.h"
 #include "line_editor.h"
 

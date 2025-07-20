@@ -6,7 +6,6 @@
 //	Description : ALife smart terrain registry
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_smart_terrain_registry.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 

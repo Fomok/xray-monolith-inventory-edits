@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../xrRender/du_cone.h"
 
 //extern Fvector du_cone_vertices[DU_CONE_NUMVERTEX];

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxLensFlareRender.h"
 #include "../../xrEngine/xr_efflensflare.h"
 #include "../../xrEngine/iGame_persistent.h"

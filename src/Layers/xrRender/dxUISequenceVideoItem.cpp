@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxUISequenceVideoItem.h"
 
 dxUISequenceVideoItem::dxUISequenceVideoItem()

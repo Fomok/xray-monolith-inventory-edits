@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "double_shot_double_kill.h"
 #include "game_base.h"
 #include "level.h"

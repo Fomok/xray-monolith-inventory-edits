@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIStatsIcon.h"
 #include "UITextureMaster.h"
 #include "UIInventoryUtilities.h"

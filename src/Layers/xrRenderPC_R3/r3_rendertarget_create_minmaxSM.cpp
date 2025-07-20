@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 void CRenderTarget::create_minmax_SM()
 {

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "actor_mp_server.h"
 
 CSE_ActorMP::CSE_ActorMP(LPCSTR section) :

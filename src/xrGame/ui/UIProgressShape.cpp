@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIProgressShape.h"
 
 #include "UIStatic.h"

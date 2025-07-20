@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xrtheora_stream.h"
 
 #ifdef _EDITOR

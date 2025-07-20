@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "player_spot_params.h"
 #include "game_base.h"
 #include "game_cl_capture_the_artefact.h"

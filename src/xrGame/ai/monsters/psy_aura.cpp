@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "psy_aura.h"
 #include "BaseMonster/base_monster.h"
 

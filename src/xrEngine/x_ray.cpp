@@ -5,7 +5,6 @@
 // Oles - Oles Shishkovtsov
 // AlexMX - Alexander Maksimchuk
 //-----------------------------------------------------------------------------
-#include "stdafx.h"
 #include "igame_level.h"
 #include "igame_persistent.h"
 

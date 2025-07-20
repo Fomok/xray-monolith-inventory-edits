@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "rewarding_state_events.h"
 #include "game_state_accumulator.h"
 #include "profile_data_types.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #ifdef DEBUG_MEMORY_MANAGER
 # pragma warning(push)

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "game_cl_capture_the_artefact.h"
 
 #include "level.h"

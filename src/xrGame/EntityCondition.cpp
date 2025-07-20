@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "entitycondition.h"
 #include "inventoryowner.h"
 #include "customoutfit.h"

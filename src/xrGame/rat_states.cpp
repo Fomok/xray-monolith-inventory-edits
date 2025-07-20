@@ -7,7 +7,6 @@
 //	Description : rat states classes
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "rat_states.h"
 #include "ai/monsters/rats/ai_rat.h"
 #include "ai/monsters/ai_monster_squad_manager.h"

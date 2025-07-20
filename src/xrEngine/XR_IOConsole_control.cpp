@@ -5,7 +5,6 @@
 // Description : Console`s control-functions class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "XR_IOConsole.h"
 
 

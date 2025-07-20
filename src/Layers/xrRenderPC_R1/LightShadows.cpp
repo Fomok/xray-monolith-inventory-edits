@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "LightShadows.h"
 #include "../xrRender/LightTrack.h"
 #include "../../xrEngine/xr_object.h"

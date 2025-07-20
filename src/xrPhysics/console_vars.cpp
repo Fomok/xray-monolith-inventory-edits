@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "console_vars.h"
 
 #include "physicscommon.h"

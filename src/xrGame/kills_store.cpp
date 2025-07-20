@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "kills_store.h"
 #include "../xrServerEntities/object_broker.h"
 

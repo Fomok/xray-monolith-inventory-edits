@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "fstaticrender_rendertarget.h"
 #include "../../xrEngine/IGame_Persistent.h"
 

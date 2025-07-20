@@ -6,7 +6,6 @@
 //	Description : ALife smart terrain task
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_smart_terrain_task.h"
 #include "ai_space.h"
 #include "patrol_path_storage.h"

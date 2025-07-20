@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ammunition_groups.h"
 #include "ui/UIBuyWndShared.h"
 #include "../xrCore/xr_ini.h"

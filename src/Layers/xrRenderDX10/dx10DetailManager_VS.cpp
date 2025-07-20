@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../xrRender/DetailManager.h"
 
 #include "../../xrEngine/igame_persistent.h"

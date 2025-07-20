@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx10SamplerStateCache.h"
 
 #include "../dx10StateUtils.h"

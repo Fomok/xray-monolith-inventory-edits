@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #pragma hdrstop
 
 #ifdef __BORLANDC__

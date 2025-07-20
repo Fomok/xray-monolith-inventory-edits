@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #pragma hdrstop
 
 const float S_distance = 48;

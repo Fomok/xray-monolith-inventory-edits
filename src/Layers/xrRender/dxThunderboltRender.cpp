@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxThunderboltRender.h"
 
 #include "../../xrEngine/thunderbolt.h"

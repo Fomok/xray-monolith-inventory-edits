@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIMapList.h"
 #include "UIListBox.h"
 #include "UIFrameWindow.h"

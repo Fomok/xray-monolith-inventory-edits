@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "poltergeist.h"
 #include "../../../../xrServerEntities/xrmessages.h"
 #include "../../../ai_object_location.h"

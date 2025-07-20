@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ui_base.h"
 #include "UIDosimeter.h"
 #include "HUDManager.h"

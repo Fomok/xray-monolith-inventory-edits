@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIFrameLineWnd.h"
 #include "UITextureMaster.h"
 

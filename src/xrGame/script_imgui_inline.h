@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "imgui/imgui.h"
 
 static bool ugly_hack = false;

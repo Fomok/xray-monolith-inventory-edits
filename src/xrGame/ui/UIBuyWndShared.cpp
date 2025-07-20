@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIBuyWndShared.h"
 #include "UIMPTradeWnd.h"
 

@@ -5,7 +5,6 @@
 //	Copyright (C) GSC Game World - 2009
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "CSCompiler.h"
 #include "ComputeShader.h"
 #include "..\xrRender\dxRenderDeviceRender.h"

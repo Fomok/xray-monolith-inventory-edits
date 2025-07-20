@@ -1,4 +1,3 @@
-#include "stdafx.h"
 //#include "../../xrEngine/xr_effgamma.h"
 #include "xr_effgamma.h"
 #include "dxRenderDeviceRender.h"

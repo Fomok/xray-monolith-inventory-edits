@@ -2,7 +2,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "stdafx.h"
 #include "application_manager.h"
 
 #include "core.h"

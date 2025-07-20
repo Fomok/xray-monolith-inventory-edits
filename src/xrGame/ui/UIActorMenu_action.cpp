@@ -5,7 +5,6 @@
 //	Description : UI ActorMenu actions implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "UIActorMenu.h"
 #include "UIActorStateInfo.h"
 #include "../actor.h"

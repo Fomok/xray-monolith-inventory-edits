@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "player_state_ambassador.h"
 #include "game_cl_base.h"
 #include "game_state_accumulator.h"

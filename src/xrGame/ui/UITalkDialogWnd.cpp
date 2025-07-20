@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UITalkDialogWnd.h"
 
 #include "xrUIXmlParser.h"

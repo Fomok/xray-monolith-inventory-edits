@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "control_critical_wound.h"
 #include "BaseMonster/base_monster.h"
 #include "control_animation_base.h"

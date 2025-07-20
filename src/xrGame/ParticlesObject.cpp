@@ -1,7 +1,6 @@
 //----------------------------------------------------
 // file: PSObject.cpp
 //----------------------------------------------------
-#include "stdafx.h"
 #pragma hdrstop
 
 #include "ParticlesObject.h"

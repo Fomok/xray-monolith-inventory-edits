@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "Actor.h"
+﻿#include "Actor.h"
 #include "../xrEngine/CameraBase.h"
 #ifdef DEBUG
 #include "PHDebug.h"

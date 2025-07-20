@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIServerInfo.h"
 
 #include "UIStatic.h"

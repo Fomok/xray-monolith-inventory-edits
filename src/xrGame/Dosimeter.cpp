@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Dosimeter.h"
 #include "UIDosimeter.h"
 

@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "_d3d_extensions.h"
 #include "xrLevel.h"
 #include "igame_persistent.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "pseudodog.h"
 #include "pseudodog_state_manager.h"
 

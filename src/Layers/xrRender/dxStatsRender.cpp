@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxStatsRender.h"
 #include "../../xrEngine/GameFont.h"
 #include "dxRenderDeviceRender.h"

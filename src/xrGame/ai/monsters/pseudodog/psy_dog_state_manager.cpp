@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "psy_dog.h"
 #include "psy_dog_state_manager.h"
 #include "../../../actor.h"

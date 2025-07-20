@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 LPCSTR modify_player_name(LPCSTR src_name, string256& dest)
 {

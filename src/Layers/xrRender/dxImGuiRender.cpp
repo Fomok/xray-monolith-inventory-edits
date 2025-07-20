@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxImGuiRender.h"
 
 #include <imgui.h>

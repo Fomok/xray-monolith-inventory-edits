@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "../xrRender/du_sphere.h"
 

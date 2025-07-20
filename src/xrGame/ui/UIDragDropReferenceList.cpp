@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIDragDropReferenceList.h"
 #include "UICellItem.h"
 #include "UICellItemFactory.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "profile_store.h"
 #include "MainMenu.h"
 #include "login_manager.h"

@@ -6,7 +6,6 @@
 //	Description : XRay Script effector class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "script_effector.h"
 #include "actor.h"
 #include "ActorEffector.h"

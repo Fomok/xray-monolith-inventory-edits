@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xrSASH.h"
 
 #include "xr_ioconsole.h"

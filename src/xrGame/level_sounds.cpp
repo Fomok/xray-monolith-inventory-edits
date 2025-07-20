@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include <random>
 #include <algorithm>
 #pragma hdrstop

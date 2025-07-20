@@ -1,5 +1,4 @@
 #pragma once
-#include "StdAfx.h"
 #include "LevelDebugScript.h"
 #include "Level.h"
 #include "debug_renderer.h"

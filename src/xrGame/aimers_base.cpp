@@ -6,7 +6,6 @@
 //	Description : aimers base class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "aimers_base.h"
 #include "gameobject.h"
 #include "kinematics.h"

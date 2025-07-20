@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx10ConstantBuffer.h"
 
 #include "dx10BufferUtils.h"

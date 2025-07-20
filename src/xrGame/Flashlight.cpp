@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Flashlight.h"
 #include "inventory.h"
 #include "player_hud.h"

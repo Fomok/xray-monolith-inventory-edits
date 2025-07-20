@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #ifdef DEBUG
 ECORE_API BOOL bDebug = FALSE;

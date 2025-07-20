@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 
 #include "MMSound.h"
 #include "xrUIXmlParser.h"

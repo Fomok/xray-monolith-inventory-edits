@@ -2,7 +2,6 @@
 // file: FileSystem.cpp
 //----------------------------------------------------
 
-#include "stdafx.h"
 #pragma hdrstop
 
 #include "cderr.h"

@@ -6,7 +6,6 @@
 //	Description : obstacles avoider
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "static_obstacles_avoider.h"
 #include "ai_space.h"
 #include "moving_objects.h"

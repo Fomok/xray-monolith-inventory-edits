@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "customdevice.h"
+﻿#include "customdevice.h"
 #include "inventory.h"
 #include "actor.h"
 #include "player_hud.h"

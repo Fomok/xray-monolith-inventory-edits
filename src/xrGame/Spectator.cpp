@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "spectator.h"
 #include "effectorfall.h"
 #include "CameraLook.h"

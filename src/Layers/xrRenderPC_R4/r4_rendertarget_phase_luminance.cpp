@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #pragma pack(push,4)
 struct v_build

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "searchlight.h"
 #include "LightAnimLibrary.h"
 #include "script_entity_action.h"

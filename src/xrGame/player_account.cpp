@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "player_account.h"
 #include "MainMenu.h"
 #include "login_manager.h"

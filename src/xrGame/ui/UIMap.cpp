@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../level.h"
 #include "../map_location.h"
 #include "../map_manager.h"

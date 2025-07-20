@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "igame_level.h"
 #include "fdemoplay.h"
 #include "xr_ioconsole.h"

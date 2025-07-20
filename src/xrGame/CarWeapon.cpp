@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "CarWeapon.h"
 #include "PhysicsShell.h"
 #include "PhysicsShellHolder.h"

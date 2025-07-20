@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "LevelGameDef.h"
 #include "script_process.h"
 #include "xrServer_Objects_ALife_Monsters.h"

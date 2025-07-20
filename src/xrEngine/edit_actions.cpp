@@ -5,7 +5,6 @@
 // Description : edit actions chars class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "edit_actions.h"
 #include "line_edit_control.h"
 #include "xr_input.h"

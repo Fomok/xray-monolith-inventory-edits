@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "WallmarksEngine.h"
 
 #include "../../xrEngine/xr_object.h"

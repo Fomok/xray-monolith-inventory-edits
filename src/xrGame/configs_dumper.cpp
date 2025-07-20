@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "configs_dumper.h"
 #include "configs_common.h"
 #include "../xrCore/ppmd_compressor.h"

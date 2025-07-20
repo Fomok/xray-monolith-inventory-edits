@@ -5,7 +5,6 @@
 // Description : Console`s callback functions class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "XR_IOConsole.h"
 
 #include "line_editor.h"

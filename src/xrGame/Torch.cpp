@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "torch.h"
 #include "entity.h"
 #include "actor.h"

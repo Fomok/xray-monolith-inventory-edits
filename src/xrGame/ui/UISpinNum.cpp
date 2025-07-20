@@ -4,7 +4,6 @@
 // author:		Serge Vynnychenko
 //
 
-#include "StdAfx.h"
 #include "UISpinNum.h"
 #include "UILines.h"
 

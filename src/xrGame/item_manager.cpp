@@ -6,7 +6,6 @@
 //	Description : Item manager
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "item_manager.h"
 #include "inventory_item.h"
 #include "custommonster.h"

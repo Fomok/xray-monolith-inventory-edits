@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "dTriCollideK.h"
 #include "dxTriList.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #pragma hdrstop
 
 #include "../xrRender/uber_deffer.h"

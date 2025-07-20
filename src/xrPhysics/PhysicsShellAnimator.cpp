@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "PhysicsShellAnimator.h"
 #include "PhysicsShellAnimatorBoneData.h"
 #include "KinematicsAnimated.h"

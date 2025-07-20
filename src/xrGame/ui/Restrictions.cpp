@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "Restrictions.h"
 #ifdef DEBUG

@@ -6,7 +6,6 @@
 //	Description : Level graph debug functions
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 
 #ifdef DEBUG
 #ifndef AI_COMPILER

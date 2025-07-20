@@ -6,7 +6,6 @@
 //	Description : Restricted object
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "restricted_object.h"
 #include "space_restriction_manager.h"
 #include "xrServer_Objects_ALife_Monsters.h"

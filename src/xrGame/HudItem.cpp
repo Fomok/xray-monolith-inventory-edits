@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "HudItem.h"
+﻿#include "HudItem.h"
 #include "physic_item.h"
 #include "actor.h"
 #include "actoreffector.h"

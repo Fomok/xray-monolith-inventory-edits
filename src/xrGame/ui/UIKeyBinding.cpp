@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIKeyBinding.h"
 #include "UIXmlInit.h"
 #include "xrUIXmlParser.h"

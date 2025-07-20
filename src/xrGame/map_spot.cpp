@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "map_spot.h"
 #include "map_location.h"
 

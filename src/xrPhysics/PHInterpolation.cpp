@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PHInterpolation.h"
 #include "PHDynamicData.h"
 #include "Physics.h"

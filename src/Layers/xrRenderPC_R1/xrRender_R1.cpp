@@ -1,7 +1,6 @@
 // xrRender_R1.cpp : Defines the entry point for the DLL application.
 //
 
-#include "stdafx.h"
 #include "../xrRender/dxRenderFactory.h"
 #include "../xrRender/dxUIRender.h"
 #include "../xrRender/dxDebugRender.h"

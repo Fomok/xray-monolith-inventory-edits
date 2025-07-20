@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../xrEngine/xr_ioconsole.h"
 #include "../xrEngine/xr_ioc_cmd.h"
 #include "level.h"

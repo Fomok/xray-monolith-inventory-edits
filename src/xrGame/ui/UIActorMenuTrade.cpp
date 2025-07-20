@@ -1,5 +1,4 @@
-//#include "stdafx.h"
-#include "pch_script.h"
+//#include "pch_script.h"
 #include "UIActorMenu.h"
 #include "UI3tButton.h"
 #include "UIDragDropListEx.h"

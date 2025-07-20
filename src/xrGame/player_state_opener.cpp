@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "player_state_opener.h"
 #include "game_cl_base.h"
 #include "level.h"

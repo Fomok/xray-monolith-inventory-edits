@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "raypick.h"
 #include "level.h"
 

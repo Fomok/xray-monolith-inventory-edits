@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "animation_utils.h"
 #include "Kinematics.h"

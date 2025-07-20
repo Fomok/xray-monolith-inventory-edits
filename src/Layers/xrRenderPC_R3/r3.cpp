@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "r3.h"
+﻿#include "r3.h"
 #include "../xrRender/fbasicvisual.h"
 #include "../../xrEngine/xr_object.h"
 #include "../../xrEngine/CustomHUD.h"

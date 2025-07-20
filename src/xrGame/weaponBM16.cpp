@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "weaponBM16.h"
 #include "entity.h"
 #include "Actor.h"

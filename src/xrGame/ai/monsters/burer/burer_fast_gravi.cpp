@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "burer_fast_gravi.h"
 #include "burer.h"
 #include "../control_animation_base.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "uicursor.h"
 
 #include "ui/UIStatic.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx10State.h"
 
 //#include "dx10RSManager.h"

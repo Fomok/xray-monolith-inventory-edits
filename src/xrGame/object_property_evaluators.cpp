@@ -6,7 +6,6 @@
 //	Description : Object property evaluators
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "object_property_evaluators.h"
 #include "weapon.h"
 #include "ai/stalker/ai_stalker.h"

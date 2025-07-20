@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xr_dsa_verifyer.h"
 
 xr_dsa_verifyer::xr_dsa_verifyer(u8 const p_number[crypto::xr_dsa::public_key_length],

@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UISpeechMenu.h"
 #include "UIScrollView.h"
 #include "UIStatic.h"

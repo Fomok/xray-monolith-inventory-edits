@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIPdaKillMessage.h"
 #include "UIInventoryUtilities.h"
 #include "UIShader.h"

@@ -6,7 +6,6 @@
 //	Description : Detail path manager
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "detail_path_manager.h"
 #include "ai_space.h"
 #include "ai_object_location.h"

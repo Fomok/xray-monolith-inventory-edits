@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "faster_than_bullets_time.h"
 #include "hits_store.h"
 #include "game_state_accumulator.h"

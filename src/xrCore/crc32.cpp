@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #pragma hdrstop
 
 static BOOL crc32_ready = FALSE;

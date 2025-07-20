@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "artefact.h"
 #include "../xrphysics/PhysicsShell.h"
 #include "PhysicsShellHolder.h"

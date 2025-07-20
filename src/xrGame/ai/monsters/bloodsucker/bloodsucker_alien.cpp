@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "bloodsucker_alien.h"
 #include "bloodsucker.h"
 #include "../../../level.h"

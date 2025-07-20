@@ -6,7 +6,6 @@
 //	Description : Sight manager
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "sight_manager.h"
 #include "ai/stalker/ai_stalker.h"
 #include "stalker_movement_manager_smart_cover.h"

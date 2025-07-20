@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ArtefactDetectorUI.h"
 #include "UIXmlInit.h"
 #include "xrUIXmlParser.h"

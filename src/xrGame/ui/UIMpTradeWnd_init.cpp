@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIMpTradeWnd.h"
 
 #include "UIXmlInit.h"

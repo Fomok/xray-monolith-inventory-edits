@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UILanimController.h"
 #include "../../xrEngine/LightAnimLibrary.h"
 

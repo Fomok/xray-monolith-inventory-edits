@@ -6,7 +6,6 @@
 //	Description : Agent member manager
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "agent_member_manager.h"
 #include "ai/stalker/ai_stalker.h"
 #include "object_broker.h"

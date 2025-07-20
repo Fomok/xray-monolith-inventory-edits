@@ -4,7 +4,6 @@
 //	Copyright (C) GSC Game World - 2009
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stats_manager.h"
 
 #ifdef _EDITOR

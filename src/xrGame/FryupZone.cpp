@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "FryupZone.h"
 
 CFryupZone::CFryupZone()

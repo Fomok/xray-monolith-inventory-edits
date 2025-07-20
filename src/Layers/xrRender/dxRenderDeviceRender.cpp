@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxRenderDeviceRender.h"
 
 #include "ResourceManager.h"

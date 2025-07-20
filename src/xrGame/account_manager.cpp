@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "account_manager.h"
 
 #include "MainMenu.h"	   //for accesssing to login_manager, if there's deleting profile

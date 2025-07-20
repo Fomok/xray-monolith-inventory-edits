@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xrtheora_surface.h"
 #include "xrtheora_stream.h"
 

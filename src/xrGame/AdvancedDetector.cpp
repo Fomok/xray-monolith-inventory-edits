@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "AdvancedDetector.h"
 #include "ui/ArtefactDetectorUI.h"
 #include "Kinematics.h"

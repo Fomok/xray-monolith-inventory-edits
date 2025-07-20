@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxWallMarkArray.h"
 
 #include "dxUIShader.h"

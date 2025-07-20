@@ -6,7 +6,6 @@
 //	Description : Script movement action class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "script_movement_action.h"
 #include "script_game_object.h"
 #include "detail_path_manager_space.h"

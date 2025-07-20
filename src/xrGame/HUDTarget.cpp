@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HUDTarget.h"
 
 #include "player_hud.h"

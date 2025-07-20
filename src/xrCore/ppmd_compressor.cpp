@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ppmd_compressor.h"
 #include "ppmd.h"
 

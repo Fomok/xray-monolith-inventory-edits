@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "NET_Common.h"
 

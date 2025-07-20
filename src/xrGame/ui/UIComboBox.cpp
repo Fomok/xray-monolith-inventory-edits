@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIComboBox.h"
 #include "UITextureMaster.h"
 #include "UIScrollBar.h"

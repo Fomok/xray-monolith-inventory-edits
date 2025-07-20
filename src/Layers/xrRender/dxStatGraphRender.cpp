@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxStatGraphRender.h"
 
 void dxStatGraphRender::Copy(IStatGraphRender& _in)

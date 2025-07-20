@@ -4,7 +4,6 @@
 // между собой
 ///////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "PhraseDialogManager.h"
 #include "PhraseDialog.h"
 

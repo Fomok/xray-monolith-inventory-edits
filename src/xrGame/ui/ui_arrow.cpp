@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "ui_arrow.h"
 #include "UIXmlInit.h"

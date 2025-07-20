@@ -1,7 +1,6 @@
 // HW.cpp: implementation of the CHW class.
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #pragma hdrstop
 
 #pragma warning(disable:4995)

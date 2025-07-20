@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIXmlInit.h"
 #include "UI3tButton.h"
 #include "UIProgressBar.h"

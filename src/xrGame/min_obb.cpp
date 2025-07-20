@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "magic_box3.h"
 #include "magic_minimize_nd.h"
 

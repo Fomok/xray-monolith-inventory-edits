@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../../xrEngine/fmesh.h"
 #include "flod.h"
 

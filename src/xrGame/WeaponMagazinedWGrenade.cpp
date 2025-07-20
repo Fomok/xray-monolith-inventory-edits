@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "weaponmagazinedwgrenade.h"
 #include "entity.h"
 #include "ParticlesObject.h"

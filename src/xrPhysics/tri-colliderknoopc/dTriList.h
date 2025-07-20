@@ -1,5 +1,4 @@
-//#include "stdafx.h"
-//#include "ode_include.h"
+////#include "ode_include.h"
 #include "ode/common.h"
 
 /* Class ID */

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ColorMapManager.h"
 
 #include "dxRenderDeviceRender.h"

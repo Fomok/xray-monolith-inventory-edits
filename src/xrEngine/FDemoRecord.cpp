@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "igame_level.h"
 #include "x_ray.h"
 

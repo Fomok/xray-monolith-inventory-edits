@@ -3,7 +3,6 @@
 //	Last updated: 13/08/2015
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "ActorHelmet.h"
 #include "Actor.h"
 #include "Inventory.h"

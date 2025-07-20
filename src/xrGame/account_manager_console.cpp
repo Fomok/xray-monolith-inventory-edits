@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "account_manager_console.h"
 #include "account_manager.h"
 #include "login_manager.h"

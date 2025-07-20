@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "EliteDetector.h"
 #include "player_hud.h"
 #include "UIRender.h"

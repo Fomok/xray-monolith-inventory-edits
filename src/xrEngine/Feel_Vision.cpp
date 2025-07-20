@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "feel_vision.h"
 #include "render.h"
 #include "xr_object.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxRenderFactory.h"
 
 #include "dxStatGraphRender.h"

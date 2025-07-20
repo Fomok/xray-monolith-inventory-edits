@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxEnvironmentRender.h"
 
 #include "dxRenderDeviceRender.h"

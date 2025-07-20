@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIMainIngameWnd.h"
 #include "UIMotionIcon.h"
 #include "UIXmlInit.h"

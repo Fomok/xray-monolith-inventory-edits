@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "filetransfer_node.h"
 #include "Level.h"
 #include "xrServer.h"

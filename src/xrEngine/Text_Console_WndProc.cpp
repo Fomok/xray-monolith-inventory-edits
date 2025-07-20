@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Text_Console.h"
 
 LRESULT CALLBACK TextConsole_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

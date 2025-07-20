@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "WeaponAutomaticShotgun.h"
 #include "entity.h"
 #include "ParticlesObject.h"

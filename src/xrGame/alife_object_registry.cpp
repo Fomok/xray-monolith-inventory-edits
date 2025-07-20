@@ -6,7 +6,6 @@
 //	Description : ALife object registry
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_object_registry.h"
 #include "ai_debug.h"
 

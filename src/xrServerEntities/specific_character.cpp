@@ -1,5 +1,4 @@
-﻿#include "stdafx.h"
-#include "specific_character.h"
+﻿#include "specific_character.h"
 
 #ifdef  XRGAME_EXPORTS
 #include "PhraseDialog.h"

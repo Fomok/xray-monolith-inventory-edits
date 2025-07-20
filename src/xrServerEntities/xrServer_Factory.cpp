@@ -6,7 +6,6 @@
 //	Description : Server objects factory
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "object_factory.h"
 
 CSE_Abstract* F_entity_Create(LPCSTR section)

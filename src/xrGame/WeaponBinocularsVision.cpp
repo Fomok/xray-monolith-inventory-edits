@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "WeaponBinocularsVision.h"
 #include "WeaponBinoculars.h"
 #include "ui\UIFrameWindow.h"

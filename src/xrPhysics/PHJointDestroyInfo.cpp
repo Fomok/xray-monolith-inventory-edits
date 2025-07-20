@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PHJointDestroyInfo.h"
 #include "PhysicsCommon.h"
 #include "mathutilsode.h"

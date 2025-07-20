@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../../xrEngine/cl_intersect.h"
 #include "../xrRender/du_cone.h"
 

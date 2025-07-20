@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "./dx10MSAABlender.h"
 
 void CBlender_msaa::Compile(CBlender_Compile& C)

@@ -6,7 +6,6 @@
 //	Description : Agent manager
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "agent_manager.h"
 #include "agent_corpse_manager.h"
 #include "agent_enemy_manager.h"

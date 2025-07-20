@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "flod.h"
 
 #ifdef _EDITOR
