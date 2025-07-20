@@ -2,10 +2,11 @@ add_module(XRay.XMLParser
   TYPE STATIC
   
   PRECOMPILES
-  <xrCore.h>
+  [["xrCore.h"]]
   xrXMLParser.h
   
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
   XRXMLPARSER_EXPORTS
