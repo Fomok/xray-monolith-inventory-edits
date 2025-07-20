@@ -48,6 +48,7 @@ target_include_directories(CxImage
 
 target_compile_options(CxImage
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4324>
