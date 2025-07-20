@@ -603,13 +603,13 @@ void CActor::cam_Update(float dt, float fFOV)
 			IKinematics* k = Visual()->dcast_PKinematics();
 
 			// Get eye bone position
-			CBoneInstance& eyeBone = k->LL_GetBoneInstance(m_eye_right);
+			CBoneInstance& eyeBone = k->LL_GetBoneInstance((u16)m_eye_right);
 			Fmatrix matrix = Fidentity;
 			matrix.mul_43(XFORM(), eyeBone.mTransform);
 			Fvector camPos = (matrix.c);
 
 			// Get head bone direction, works better for first person death
-			CBoneInstance& headBone = k->LL_GetBoneInstance(m_head);
+			CBoneInstance& headBone = k->LL_GetBoneInstance((u16)m_head);
 			Fmatrix matrixDir = Fidentity;
 			Fvector camDir;
 			matrixDir.mul_43(XFORM(), headBone.mTransform);
@@ -634,13 +634,13 @@ void CActor::cam_Update(float dt, float fFOV)
 			dir.setHP(camDir.x, camDir.y);
 			Fvector::generate_orthonormal_basis_normalized(dir, dirUp, dirRight);
 
-			camPos.mad(dir, -0.04 + offsetZ);
+			camPos.mad(dir, -0.04f + offsetZ);
 			camPos.mad(dirUp, offsetY);
-			camPos.mad(dirRight, -0.01 + offsetX);
+			camPos.mad(dirRight, -0.01f + offsetX);
 
 			m_FPCam->m_HPB.set(camDir);
 			m_FPCam->m_Position.set(camPos);
-			_viewport_near = VIEWPORT_NEAR - 0.08 + viewportNearOffset;
+			_viewport_near = VIEWPORT_NEAR - 0.08f + viewportNearOffset;
 			//Cameras().ApplyDevice(_viewport_near);
 		}
 	}

@@ -414,7 +414,7 @@ static u32 clampU(u32 x, u32 a, u32 b)
 
 float CEntity::GetHotness() {
 	if (heat_vision_cooldown && (AlreadyDie() || !g_Alive())) 
-		return 1.0f - (float)clampU(Device.dwTimeGlobal - m_level_death_time, 0, heat_vision_cooldown_time) / heat_vision_cooldown_time;
+		return 1.0f - (float)clampU(Device.dwTimeGlobal - m_level_death_time, 0, (u32)heat_vision_cooldown_time) / heat_vision_cooldown_time;
 	return 1.0f;
 }
 

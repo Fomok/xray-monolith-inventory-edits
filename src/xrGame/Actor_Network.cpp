@@ -1835,7 +1835,6 @@ void CActor::OnCriticalHitHealthLoss()
 {
 	if (GameID() == eGameIDSingle || !OnServer()) return;
 
-	CObject* pLastHitter = Level().Objects.net_Find(m_iLastHitterID);
 	CObject* pLastHittingWeapon = Level().Objects.net_Find(m_iLastHittingWeaponID);
 
 #ifdef DEBUG

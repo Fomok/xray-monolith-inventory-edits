@@ -36,7 +36,6 @@ void ClearAllBoosters(CActorCondition* conditions)
 
 void WoundForEach(CActorCondition* conditions, const ::luabind::functor<bool> &funct)
 {
-	CEntityCondition::WOUND_VECTOR const& cur_wounds = conditions->wounds();
 	CEntityCondition::WOUND_VECTOR::const_iterator it = conditions->wounds().begin();
 	CEntityCondition::WOUND_VECTOR::const_iterator it_e = conditions->wounds().end();
 	for (; it != it_e ; ++it)

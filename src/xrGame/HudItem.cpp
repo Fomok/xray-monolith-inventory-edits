@@ -755,7 +755,7 @@ u32 CHudItem::PlayHUDMotion(shared_str M, BOOL bMixIn, CHudItem* W, u32 state, f
 		if (g_end_modif != 0.f)
 			end_modifier = g_end_modif;
 
-		m_dwMotionEndTm -= end_modifier * 1000;
+		m_dwMotionEndTm -= (u32)end_modifier * 1000;
 	}
 	else
 		m_bStopAtEndAnimIsRunning = false;
@@ -1129,7 +1129,7 @@ void CHudItem::Ray(SPickParam& pp)
 		else
 		{
 			// Move to the intersection point
-			pn.defs.start.add(Fvector().mul(pn.defs.dir, pn.result.range * 0.99));
+			pn.defs.start.add(Fvector().mul(pn.defs.dir, pn.result.range * 0.99f));
 
 			// Trace to the camera
 			pn.defs.dir = Fvector().sub(Device.vCameraPosition, pn.defs.start);
@@ -1138,7 +1138,7 @@ void CHudItem::Ray(SPickParam& pp)
 			HUD().DoPick(pn);
 
 			// Move to the intersection point and trace to the barrel
-			pp.defs.start.add(pn.defs.start, Fvector().mul(pn.defs.dir, pn.result.range * 0.99));
+			pp.defs.start.add(pn.defs.start, Fvector().mul(pn.defs.dir, pn.result.range * 0.99f));
 			pp.defs.dir.sub(matrix.c, pp.defs.start);
 			pp.defs.range = pp.defs.dir.magnitude();
 			pp.defs.dir.normalize();

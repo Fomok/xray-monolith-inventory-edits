@@ -199,7 +199,6 @@ void TargetCrosshair::Update(const SPickParam& pp, bool is_far)
 	);
 
 	// Modulate color alpha
-	DWORD alpha_mask = 0xff000000;
 	color_crosshair = subst_alpha(color_crosshair, u8(iFloor(255.f * opacity)));
 	crosshair.SetColor(color_crosshair);
 

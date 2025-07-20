@@ -72,10 +72,10 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 			{
 				if (IsGameTypeSingle())
 				{
-					NET_Packet P;
-					u_EventGen(P, GE_OWNERSHIP_REJECT, ID());
-					P.w_u16(u16(Obj->ID()));
-					u_EventSend(P);
+					NET_Packet packet;
+					u_EventGen(packet, GE_OWNERSHIP_REJECT, ID());
+					packet.w_u16(u16(Obj->ID()));
+					u_EventSend(packet);
 				}
 				else
 				{

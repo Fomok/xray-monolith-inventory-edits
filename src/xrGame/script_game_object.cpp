@@ -1232,7 +1232,7 @@ void set_shader_tex(IRenderVisual* vis, int id, LPCSTR shader, LPCSTR texture)
 
 	id--;
 
-	if (id >= 0 && children->size() > id)
+	if (id >= 0 && children->size() > (u32)id)
 		children->at(id)->SetShaderTexture(shader, texture);
 }
 
@@ -1257,7 +1257,7 @@ void reset_shader_tex(IRenderVisual* vis, int id)
 
 	id--;
 
-	if (id >= 0 && children->size() > id)
+	if (id >= 0 && children->size() > (u32)id)
 		children->at(id)->ResetShaderTexture();
 }
 

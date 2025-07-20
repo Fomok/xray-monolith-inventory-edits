@@ -336,15 +336,15 @@ void CWeapon::UpdateZoomParams() {
 			if (m_modular_attachments) {
 				m_zoom_params.m_bUseDynamicZoom = READ_IF_EXISTS(pSettings, r_bool, GetScopeName(), "scope_dynamic_zoom", false);
 				m_zoom_params.m_fMinBaseZoomFactor = READ_IF_EXISTS(pSettings, r_float, GetScopeName(), "min_scope_zoom_factor", 200.0f);
-				stepCount = READ_IF_EXISTS(pSettings, r_float, GetScopeName(), "zoom_step_count", 0);
+				stepCount = (u32)READ_IF_EXISTS(pSettings, r_float, GetScopeName(), "zoom_step_count", 0);
 			}
 		} else
 		{
 			m_zoom_params.m_fScopeZoomFactor = m_zoom_params.m_fBaseZoomFactor / zoom_multiple;
 		}
 		if (stepCount == 0)
-			stepCount = READ_IF_EXISTS(pSettings, r_float, cNameSect(), "zoom_step_count", 0);
-		m_zoom_params.m_fZoomStepCount = stepCount;
+			stepCount = (u32)READ_IF_EXISTS(pSettings, r_float, cNameSect(), "zoom_step_count", 0);
+		m_zoom_params.m_fZoomStepCount = (float)stepCount;
 	}
 
 	if (IsZoomed()) {
@@ -950,7 +950,7 @@ void NewGetZoomData(const float scope_factor, const float zoom_step_count, float
 	float def_fov = float(g_fov);
 	float delta_factor_total = def_fov - scope_factor;
 	VERIFY(delta_factor_total > 0);
-	float loc_min_zoom_factor = ((atan(tan(def_fov * (0.5 * PI / 180)) / g_ironsights_factor) / (0.5 * PI / 180)) / 0.75f) * (scope_radius > 0.0 ? scope_scrollpower : 1);
+	float loc_min_zoom_factor = ((atan(tan(def_fov * (0.5f * PI / 180)) / g_ironsights_factor) / (0.5f * PI / 180)) / 0.75f) * (scope_radius > 0.f ? scope_scrollpower : 1);
 
 	if (min_zoom < loc_min_zoom_factor) {
 		min_zoom_factor = min_zoom;
@@ -992,7 +992,7 @@ BOOL CWeapon::net_Spawn(CSE_Abstract* DC)
 	
 	if (m_modular_attachments && m_cur_scope == 0 && (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonScope) != 0 && m_scopes.size() > 1)
 	{
-		m_cur_scope = ::Random.randI(1, m_scopes.size());
+		m_cur_scope = (u8)::Random.randI(1, m_scopes.size());
 		CWeaponMagazined* wm = smart_cast<CWeaponMagazined*>(this);
 		if (wm)
 		{

@@ -67,10 +67,10 @@ void player_hud_motion_container::load(IKinematicsAnimated* model, const shared_
 				pm->m_additional_name = str_item;
 
 				_GetItem(anm.c_str(), 2, str_item);
-				pm->m_anim_speed = atof(str_item);
+				pm->m_anim_speed = (float)atof(str_item);
 
 				_GetItem(anm.c_str(), 3, str_item);
-				pm->m_anim_end = atof(str_item);
+				pm->m_anim_end = (float)atof(str_item);
 			}
 
 			//and load all motions for it
@@ -639,7 +639,7 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 
 		u16 pc = ka->partitions().count();
 		for (u16 pid = 0; pid < pc; ++pid)
-			CBlend* B = ka->PlayCycle(pid, M2, (!!bMixIn && bMixIn2), 0, 0, 0, speed);
+			ka->PlayCycle(pid, M2, (!!bMixIn && bMixIn2), 0, 0, 0, speed);
 
 		m_model->CalculateBones_Invalidate();
 	}
@@ -721,9 +721,9 @@ player_hud::player_hud()
 			_GetItem(layer_def, 0, tmp);
 			anm->Load(tmp);
 			_GetItem(layer_def, 1, tmp);
-			anm->anm->Speed() = (atof(tmp) ? atof(tmp) : 1.f);
+			anm->anm->Speed() = (atof(tmp) ? (float)atof(tmp) : 1.f);
 			_GetItem(layer_def, 2, tmp);
-			anm->m_power = (atof(tmp) ? atof(tmp) : 1.f);
+			anm->m_power = (atof(tmp) ? (float)atof(tmp) : 1.f);
 		}
 
 		m_movement_layers.push_back(anm);
@@ -1472,7 +1472,7 @@ u32 player_hud::anim_play(u16 part, const MotionID& M, BOOL bMixIn, const CMotio
 	if (override_part != u16(-1))
 		part_id = override_part;
 	
-	play_blend(this, part_id, M, bMixIn, speed);
+	play_blend(this, (u8)part_id, M, bMixIn, speed);
 
 	return motion_length(M, md, speed);
 }
@@ -1596,7 +1596,7 @@ u32 player_hud::script_anim_play(u8 hand, LPCSTR section, LPCSTR anm_name, bool 
 
 		u16 pc = script_anim_item_model->partitions().count();
 		for (u16 pid = 0; pid < pc; ++pid)
-			CBlend* B = script_anim_item_model->PlayCycle(pid, M2, bMixIn, 0, 0, 0, speed);
+			script_anim_item_model->PlayCycle(pid, M2, bMixIn, 0, 0, 0, speed);
 
 		script_anim_item_model->dcast_PKinematics()->CalculateBones_Invalidate();
 	}
@@ -1963,7 +1963,6 @@ void player_hud::OnFrame()
 
 		if (m_attached_items[SCOPE_ATTACH_IDX])
 		{
-			CHudItem* parent = m_attached_items[SCOPE_ATTACH_IDX]->m_parent_hud_item;
 			m_attached_items[SCOPE_ATTACH_IDX]->m_item_transform.mulB_43(nearwall_0);
 		}
 	}

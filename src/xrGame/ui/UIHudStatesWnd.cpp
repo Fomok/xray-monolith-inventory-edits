@@ -474,7 +474,7 @@ void CUIHudStatesWnd::UpdateZones()
 	if (Device.dwFrame == dwLastFrame)
 		return;
 
-	dwLastFrame = Device.dwFrame;
+	dwLastFrame = (float)Device.dwFrame;
 
 	//float actor_radia = m_actor->conditions().GetRadiation() * m_actor_radia_factor;
 	//m_radia_hit = _max( m_zone_cur_power[it_rad], actor_radia );

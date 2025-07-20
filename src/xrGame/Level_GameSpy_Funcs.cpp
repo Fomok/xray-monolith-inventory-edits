@@ -12,7 +12,6 @@ void CLevel::OnGameSpyChallenge(NET_Packet* P)
 	Msg("xrGS::CDKey::Level : Responding on Challenge");
 #endif // #ifndef MASTER_GOLD
 
-	u8 Reauth = P->r_u8();
 	string64 ChallengeStr;
 	P->r_stringZ(ChallengeStr);
 

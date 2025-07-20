@@ -319,9 +319,9 @@ void set_box(LPCSTR section, CPHMovementControl& mc, u32 box_num)
 	Fvector vBOX_center, vBOX_size;
 	// m_PhysicMovementControl: BOX
 	string64 buff, buff1;
-	strconcat(sizeof(buff), buff, "ph_box", itoa(box_num, buff1, 10), "_center");
+	strconcat(sizeof(buff), buff, "ph_box", _itoa(box_num, buff1, 10), "_center");
 	vBOX_center = pSettings->r_fvector3(section, buff);
-	strconcat(sizeof(buff), buff, "ph_box", itoa(box_num, buff1, 10), "_size");
+	strconcat(sizeof(buff), buff, "ph_box", _itoa(box_num, buff1, 10), "_size");
 	vBOX_size = pSettings->r_fvector3(section, buff);
 	vBOX_size.y += cammera_into_collision_shift / 2.f;
 	bb.set(vBOX_center, vBOX_center);
@@ -335,10 +335,10 @@ void set_box_y_offset(LPCSTR section, CPHMovementControl& mc, u32 box_num, float
 	Fvector vBOX_center, vBOX_size;
 	// m_PhysicMovementControl: BOX
 	string64 buff, buff1;
-	strconcat(sizeof(buff), buff, "ph_box", itoa(box_num, buff1, 10), "_center");
+	strconcat(sizeof(buff), buff, "ph_box", _itoa(box_num, buff1, 10), "_center");
 	vBOX_center = pSettings->r_fvector3(section, buff);
 	vBOX_center.y = offset;
-	strconcat(sizeof(buff), buff, "ph_box", itoa(box_num, buff1, 10), "_size");
+	strconcat(sizeof(buff), buff, "ph_box", _itoa(box_num, buff1, 10), "_size");
 	vBOX_size = pSettings->r_fvector3(section, buff);
 	vBOX_size.y += (cammera_into_collision_shift / 2.f) + offset;
 	bb.set(vBOX_center, vBOX_center);
@@ -1099,7 +1099,7 @@ float CActor::currentFOV()
 	)
 	{
 		if (pWeapon->GetZoomFactor() == 0)
-			return atan(tan(g_fov * (0.5 * PI / 180)) / g_ironsights_factor) / (0.5 * PI / 180);
+			return atan(tan(g_fov * (0.5f * PI / 180)) / g_ironsights_factor) / (0.5f * PI / 180);
 		else
 			return pWeapon->GetZoomFactor() * (0.75f);
 	}
@@ -1276,7 +1276,7 @@ void CActor::UpdateCL()
 
 		if (!isGodmode)
 		{
-			int disc_cur_health = roundf(GetfHealth() * 100);
+			int disc_cur_health = (int)roundf(GetfHealth() * 100);
 			if (disc_cur_health <= 0)
 				discord_gameinfo.health = NULL;
 			else
@@ -1318,7 +1318,7 @@ void CActor::UpdateCL()
 			if (g_pGameLevel && g_pGameLevel->name() != NULL)
 			{
 				snprintf(discord_gameinfo.level_name, 128, xr_ToUTF8(*CStringTable().translate(g_pGameLevel->name())));
-				srand(time(0));
+				srand((unsigned int)time(0));
 				int level_icon_id = rand() % 3 + 1;
 				discord_gameinfo.level_icon_index = level_icon_id;
 				discord_gameinfo.level = g_pGameLevel->name().c_str();
@@ -2079,7 +2079,7 @@ void CActor::RenderIndicator(Fvector dpos, float r1, float r2, const ui_shader& 
 
 	Fmatrix M;
 	Visual()->dcast_PKinematics()->CalculateBones();
-	M.mul(XFORM(), Visual()->dcast_PKinematics()->LL_GetTransform(m_head));
+	M.mul(XFORM(), Visual()->dcast_PKinematics()->LL_GetTransform((u16)m_head));
 
 	Fvector pos = M.c;
 	pos.add(dpos);
@@ -2131,7 +2131,7 @@ void CActor::RenderText(LPCSTR Text, Fvector dpos, float* pdup, u32 color)
 	Fmatrix M;
 	Visual()->dcast_PKinematics()->CalculateBones();
 	smart_cast<IKinematics*>(Visual())->CalculateBones();
-	M.mul(XFORM(), Visual()->dcast_PKinematics()->LL_GetTransform(m_head));
+	M.mul(XFORM(), Visual()->dcast_PKinematics()->LL_GetTransform((u16)m_head));
 	//------------------------------------------------
 	Fvector v0, v1;
 	v0.set(M.c);

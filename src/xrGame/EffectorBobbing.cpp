@@ -115,7 +115,7 @@ BOOL CEffectorBobbing::ProcessCam(SCamEffectorInfo& info)
 }
 
 // demonized: First Person Death (Cam Effector, can be used in scripts any time to set custom position and direction)
-CFPCamEffector::CFPCamEffector() : CEffectorCam(eCEUser, INT_MAX) {
+CFPCamEffector::CFPCamEffector() : CEffectorCam(eCEUser, INFINITY) {
 	m_Camera.identity();
 	m_Camera.setHPB(0, 0, 0);
 	m_HPB.set(0, 0, 0);
@@ -129,8 +129,8 @@ int firstPersonDeathPositionSmoothing = 6;
 int firstPersonDeathDirectionSmoothing = 12;
 
 void CFPCamEffector::ema(Fvector &current, Fvector &target, unsigned int steps) {
-	float smoothing_alpha = 2.0 / (steps + 1);
-	float delta = Device.dwTimeDelta;
+	float smoothing_alpha = 2.0f / (steps + 1);
+	float delta = (float)Device.dwTimeDelta;
 
 	if (fis_zero(current.x) && fis_zero(current.y) && fis_zero(current.z)) {
 		current.x = target.x;

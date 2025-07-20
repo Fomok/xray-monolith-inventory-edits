@@ -204,7 +204,7 @@ CSpaceRestriction::CBaseRestrictionPtr CSpaceRestriction::merge(CBaseRestriction
 	RESTRICTIONS::const_iterator I = temp_restrictions.begin();
 	RESTRICTIONS::const_iterator E = temp_restrictions.end();
 	for (; I != E; ++I)
-		temp = strconcat(strlen(S), S, *temp, ",", *(*I)->name()); //SizeOf to strlen because S is LPSTR pointer
+		temp = strconcat((int)strlen(S), S, *temp, ",", *(*I)->name()); //SizeOf to strlen because S is LPSTR pointer
 
 	xr_free(S);
 

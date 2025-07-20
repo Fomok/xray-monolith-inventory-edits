@@ -585,11 +585,11 @@ void CUIActorMenu::OnBtnPerformTradeBuy(CUIWindow* w, void* d)
 
 	if (xr_strcmp(m_sort_kinds[current_sort_mode()], "s_all"))
 	{
-		for (int i = 0; i < m_sort_buttons.size(); i++)
+		for (u32 i = 0; i < m_sort_buttons.size(); i++)
 		{
 			if (0 == xr_strcmp(m_sort_kinds[i], "s_all"))
 			{
-				for (int ii = 0; ii < m_sort_buttons.size(); ii++)
+				for (u32 ii = 0; ii < m_sort_buttons.size(); ii++)
 				{
 					m_sort_buttons.at(ii)->Enable(true);
 				}
@@ -648,11 +648,11 @@ void CUIActorMenu::OnBtnPerformTradeSell(CUIWindow* w, void* d)
 
 	if (xr_strcmp(m_sort_kinds[current_sort_mode()], "s_all"))
 	{
-		for (int i = 0; i < m_sort_buttons.size(); i++)
+		for (u32 i = 0; i < m_sort_buttons.size(); i++)
 		{
 			if (0 == xr_strcmp(m_sort_kinds[i], "s_all"))
 			{
-				for (int ii = 0; ii < m_sort_buttons.size(); ii++)
+				for (u32 ii = 0; ii < m_sort_buttons.size(); ii++)
 				{
 					m_sort_buttons.at(ii)->Enable(true);
 				}

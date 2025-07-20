@@ -482,6 +482,8 @@ bool CUIPdaWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 		if (!pda)
 			return inherited::OnKeyboardAction(dik, keyboard_action);
 
-		return pda->Action(get_binded_action(dik), keyboard_action == WINDOW_KEY_PRESSED ? CMD_START : CMD_STOP);
+		return pda->Action((u16)get_binded_action(dik), keyboard_action == WINDOW_KEY_PRESSED ? CMD_START : CMD_STOP);
 	}
+
+	return false;
 }

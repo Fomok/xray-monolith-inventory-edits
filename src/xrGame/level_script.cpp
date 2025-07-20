@@ -1176,7 +1176,7 @@ void set_weather_value_numric(LPCSTR name, float val)
 	else if (0 == xr_strcmp(name, "bloom_sky_intensity"))
 		E.bloom_sky_intensity = val;
 	else
-		Msg("~xrGame\level_script.cpp (set_weather_value_numric) | [%s] is not a valid numric weather parameter to set", name);
+		Msg("~xrGame/level_script.cpp (set_weather_value_numeric) | [%s] is not a valid numeric weather parameter to set", name);
 }
 
 Fvector3 get_weather_value_vector(LPCSTR name)
@@ -1232,7 +1232,7 @@ void set_weather_value_vector(LPCSTR name, float x, float y, float z, float w = 
 	else if (0 == xr_strcmp(name, "hemisphere_color"))
 		E.hemi_color.set(x, y, z, w);
 	else
-		Msg("~xrGame\level_script.cpp (set_weather_value_vector) | [%s] is not a valid vector weather parameter to set", name);
+		Msg("~xrGame/level_script.cpp (set_weather_value_vector) | [%s] is not a valid vector weather parameter to set", name);
 }
 
 LPCSTR get_weather_value_string(LPCSTR name)
@@ -1291,7 +1291,7 @@ void set_weather_value_string(LPCSTR name, LPCSTR newval)
 		E.env_ambient = environment()->AppendEnvAmb(newval);
 	}
 	else
-		Msg("~xrGame\level_script.cpp (set_weather_value_string) | [%s] is not a valid string weather parameter to set", name);
+		Msg("~xrGame/level_script.cpp (set_weather_value_string) | [%s] is not a valid string weather parameter to set", name);
 }
 
 void pause_weather(bool b_pause)
@@ -1326,7 +1326,7 @@ void boost_weather_value(LPCSTR name, float value)
 	else if (0 == xr_strcmp(name, "sun_color"))
 		environment()->env_boost.sun_color = value;
 	else
-		Msg("~xrGame\level_script.cpp (boost_weather_value)| [%s] is not a valid weather parameter to boost", name);
+		Msg("~xrGame/level_script.cpp (boost_weather_value)| [%s] is not a valid weather parameter to boost", name);
 }
 
 void boost_weather_reset()
@@ -1457,7 +1457,7 @@ void StopHudMotion()
 
 float MotionLength(LPCSTR section, LPCSTR name, float speed)
 {
-	return g_player_hud->motion_length_script(section, name, speed);
+	return (float)g_player_hud->motion_length_script(section, name, speed);
 }
 
 bool AllowHudMotion()
@@ -1654,7 +1654,7 @@ void ui2world(Fvector2 pos, bool allow_offscreen, Fvector& res, u16& obj_id)
 		mProjectAdjugate._43 = -m._11*m._22*m._43 - m._12*m._23*m._41 - m._13*m._21*m._42 + m._13*m._22*m._41 + m._12*m._21*m._43 + m._11*m._23*m._42;
 		mProjectAdjugate._44 = m._11*m._22*m._33 + m._12*m._23*m._31 + m._13*m._21*m._32 - m._13*m._22*m._31 - m._12*m._21*m._33 - m._11*m._23*m._32;
 
-		mProjectDet = 1.0 / mProjectDet;
+		mProjectDet = 1.f / mProjectDet;
 		mProjectAdjugate.mul(mProjectDet);
 		mProject.set(mProjectAdjugate);
 	}
@@ -1666,7 +1666,7 @@ void ui2world(Fvector2 pos, bool allow_offscreen, Fvector& res, u16& obj_id)
 		auto x = res.x;
 		auto y = res.y;
 		auto z = res.z;
-		float w = 1.0 / (e[0][3] * x + e[1][3] * y + e[2][3] * z + e[3][3]);
+		float w = 1.f / (e[0][3] * x + e[1][3] * y + e[2][3] * z + e[3][3]);
 
 		res.x = (e[0][0] * x + e[1][0] * y + e[2][0] * z + e[3][0]) * w;
 		res.y = (e[0][1] * x + e[1][1] * y + e[2][1] * z + e[3][1]) * w;
@@ -2008,7 +2008,7 @@ CScriptIniFile* GetVisualUserdata(LPCSTR visual)
 
 	VERIFY(xr_strlen(visual) < sizeof(low_name));
 	xr_strcpy(low_name, visual);
-	strlwr(low_name);
+	_strlwr(low_name);
 
 	if (strext(low_name)) *strext(low_name) = 0;
 	xr_strcat(low_name, sizeof(low_name), ".ogf");
