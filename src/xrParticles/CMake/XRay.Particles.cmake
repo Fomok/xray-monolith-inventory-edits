@@ -1,18 +1,20 @@
 add_module(XRay.Particles
   TYPE STATIC
   
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
-
-  PRECOMPILES stdafx.h
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
   tbb
   XRay.Core
   XRay.CPUPipe
 
+  PRECOMPILES
+  [["xrCore.h"]]
+  psystem.h
+
   SOURCES
   psystem.h
-  stdafx.h
 
   noise.cpp
   particle_actions.cpp
