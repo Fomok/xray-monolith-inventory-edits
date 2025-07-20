@@ -39,19 +39,19 @@ option(LUA_USE_ASSERT "Turn on assertions for the whole LuaJIT VM. This signific
 #option(LUAJIT_DEBUG "Generate debug information" OFF)
 
 if (WIN32)
-    option(LUA_BUILD_WLUA "Build wluajit interpreter for no-console applications." ON)
+  option(LUA_BUILD_WLUA "Build wluajit interpreter for no-console applications." ON)
 elseif (APPLE)
-    option(LUA_USE_POSIX "Use POSIX functionality." ON)
-    option(LUA_USE_DLOPEN "Use dynamic linker to load modules." ON)
+  option(LUA_USE_POSIX "Use POSIX functionality." ON)
+  option(LUA_USE_DLOPEN "Use dynamic linker to load modules." ON)
 else()
-    option(LUA_USE_POSIX "Use POSIX functionality." ON)
+  option(LUA_USE_POSIX "Use POSIX functionality." ON)
 
-    # OpenBSD has dl as a part of libc
-    # NetBSD includes dl functions automatically
-    if (NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" AND NOT CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
-        # This option only links dl and doesn't change anything other from that.
-        option(LUA_USE_DLOPEN "Use dynamic linker to load modules." ON)
-    endif()
+  # OpenBSD has dl as a part of libc
+  # NetBSD includes dl functions automatically
+  if (NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD" AND NOT CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
+    # This option only links dl and doesn't change anything other from that.
+    option(LUA_USE_DLOPEN "Use dynamic linker to load modules." ON)
+  endif()
 endif()
 
 # TODO: check if we need luaconf.h
@@ -62,15 +62,15 @@ set(LUA_CPATH "LUA_CPATH" CACHE STRING "Environment variable to use as package.c
 set(LUA_INIT "LUA_INIT" CACHE STRING "Environment variable for initial script")
 
 if (APPLE)
-    set(ENV{SDKROOT} ${CMAKE_OSX_SYSROOT})
-    set(ENV{MACOSX_DEPLOYMENT_TARGET} ${CMAKE_OSX_DEPLOYMENT_TARGET})
+  set(ENV{SDKROOT} ${CMAKE_OSX_SYSROOT})
+  set(ENV{MACOSX_DEPLOYMENT_TARGET} ${CMAKE_OSX_DEPLOYMENT_TARGET})
 endif()
 
 # TODO: check windows supports same target name for static and shared lib
 if (LUAJIT_BUILD_STATIC_LIB)
-    add_library(LuaJIT STATIC)
+  add_library(LuaJIT STATIC)
 else()
-    add_library(LuaJIT SHARED)
+  add_library(LuaJIT SHARED)
 endif()
 
 target_folder(LuaJIT ${FOLDER_LUA})
@@ -83,19 +83,19 @@ endif()
 
 # Compiler options
 if (PROJECT_PLATFORM_E2K)
-    # O3 on E2K mcst-lcc approximately equal to O2 at X86/ARM gcc
-    set(CCOPT_OPT_LEVEL O3)
+  # O3 on E2K mcst-lcc approximately equal to O2 at X86/ARM gcc
+  set(CCOPT_OPT_LEVEL O3)
 else()
-    set(CCOPT_OPT_LEVEL O2)
+  set(CCOPT_OPT_LEVEL O2)
 endif()
 
-set(CCOPT "${CMAKE_C_FLAGS} ${CCOPT_OPT_PREFIX}${CCOPT_OPT_LEVEL}")
+set(CCOPT "${CMAKE_C_FLAGS}")
 
 if (NOT MSVC)
   if (USE_ADDRESS_SANITIZER)
-      set(CCOPT "${CCOPT} -fno-stack-protector")
+    set(CCOPT "${CCOPT} -fno-stack-protector")
   else()
-      set(CCOPT "${CCOPT} -fomit-frame-pointer -fno-stack-protector")
+    set(CCOPT "${CCOPT} -fomit-frame-pointer -fno-stack-protector")
   endif()
 endif()
 
@@ -103,49 +103,47 @@ set(CCOPT "${CCOPT} ${CCOPT_OPT_PREFIX}D_FILE_OFFSET_BITS=64 ${CCOPT_OPT_PREFIX}
 
 string(REPLACE " " ";" CCOPT "${CCOPT}")
 
-if (NOT MSVC)
-  add_compile_options(
-    -Wdeclaration-after-statement
-    -Wredundant-decls
-    -Wshadow
-    -Wpointer-arith
-  )
-endif()
+add_compile_options(
+  $<$<CXX_COMPILER_ID:Clang>:-Wdeclaration-after-statement>
+  $<$<CXX_COMPILER_ID:Clang>:-Wredundant-decls>
+  $<$<CXX_COMPILER_ID:Clang>:-Wredundant-decls>
+  $<$<CXX_COMPILER_ID:Clang>:-Wpointer-arith>
+)
 
 if (LUAJIT_DISABLE_FFI)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_FFI")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_FFI")
 endif()
 
 if (LUAJIT_ENABLE_LUA52COMPAT)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_ENABLE_LUA52COMPAT")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_ENABLE_LUA52COMPAT")
 endif()
 
 if (LUAJIT_DISABLE_JIT)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_JIT")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_JIT")
 endif()
 
 if (LUAJIT_DISABLE_GC64)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_GC64")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_DISABLE_GC64")
 endif()
 
 if (LUAJIT_USE_SYSMALLOC)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_SYSMALLOC")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_SYSMALLOC")
 endif()
 
 if (LUAJIT_USE_VALGRIND)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_VALGRIND")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_VALGRIND")
 endif()
 
 if (LUAJIT_USE_GDBJIT)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_GDBJIT")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUAJIT_USE_GDBJIT")
 endif()
 
 if (LUA_USE_APICHECK)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUA_USE_APICHECK")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUA_USE_APICHECK")
 endif()
 
 if (LUA_USE_ASSERT)
-    list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUA_USE_ASSERT")
+  list(APPEND XCFLAGS "${CCOPT_OPT_PREFIX}DLUA_USE_ASSERT")
 endif()
 
 set(CCOPTIONS "${CCOPT};${XCFLAGS}")
@@ -154,9 +152,9 @@ target_compile_options(LuaJIT PRIVATE ${CCOPTIONS})
 
 # Account for disparity in platform compiler arguments
 if(MSVC)
-    set(TESTARCH_ARGS /Zc:preprocessor /PD /EP /E lj_arch.h)
+  set(TESTARCH_ARGS /Zc:preprocessor /PD /EP /E lj_arch.h)
 else()
-    set(TESTARCH_ARGS -dM -E lj_arch.h)
+  set(TESTARCH_ARGS -dM -E lj_arch.h)
 endif()
 
 # Populate INCLUDE
@@ -170,47 +168,47 @@ endforeach()
 
 # Run luajit's architecture analyzer
 execute_process(
-    COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} ${CCINCLUDES} ${TESTARCH_ARGS}
-    WORKING_DIRECTORY "${LUAJIT_DIR}"
-    RESULT_VARIABLE TESTARCH_RESULT
-    OUTPUT_VARIABLE TESTARCH_OUTPUT
-    ERROR_VARIABLE TESTARCH_ERROR
+  COMMAND ${CMAKE_C_COMPILER} ${CCOPTIONS} ${CCINCLUDES} ${TESTARCH_ARGS}
+  WORKING_DIRECTORY "${LUAJIT_DIR}"
+  RESULT_VARIABLE TESTARCH_RESULT
+  OUTPUT_VARIABLE TESTARCH_OUTPUT
+  ERROR_VARIABLE TESTARCH_ERROR
 )
 
 # If the error code is non-zero, print the error
 if(${TESTARCH_RESULT})
-    message("TESTARCH_ERROR=${TESTARCH_ERROR}")
+  message("TESTARCH_ERROR=${TESTARCH_ERROR}")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_X64")
-    set(TARGET_LJARCH "x64")
+  set(TARGET_LJARCH "x64")
 elseif ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_X86")
-    set(TARGET_LJARCH "x86")
-    string(APPEND TARGET_XCFLAGS " -march=i686 -msse -msse2 -mfpmath=sse")
+  set(TARGET_LJARCH "x86")
+  string(APPEND TARGET_XCFLAGS " -march=i686 -msse -msse2 -mfpmath=sse")
 elseif ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_ARM64")
-    set(TARGET_LJARCH "arm64")
-    if ("${TESTARCH_OUTPUT}" MATCHES "__AARCH64EB__")
-        set(TARGET_ARCH "-D__AARCH64EB__=1")
-    endif()
+  set(TARGET_LJARCH "arm64")
+  if ("${TESTARCH_OUTPUT}" MATCHES "__AARCH64EB__")
+    set(TARGET_ARCH "-D__AARCH64EB__=1")
+  endif()
 elseif ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_ARM")
-    set(TARGET_LJARCH "arm")
+  set(TARGET_LJARCH "arm")
 elseif ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_PPC")
-    set(TARGET_LJARCH "ppc")
+  set(TARGET_LJARCH "ppc")
 elseif ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_MIPS")
-    if ("${TESTARCH_OUTPUT}" MATCHES "MIPSEL")
-        set(TARGET_ARCH "-D__MIPSEL__=1")
-    endif()
-    if ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_MIPS64")
-        set(TARGET_LJARCH "mips64")
-    else()
-        set(TARGET_LJARCH "mips")
-    endif()
+  if ("${TESTARCH_OUTPUT}" MATCHES "MIPSEL")
+    set(TARGET_ARCH "-D__MIPSEL__=1")
+  endif()
+  if ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_MIPS64")
+    set(TARGET_LJARCH "mips64")
+  else()
+    set(TARGET_LJARCH "mips")
+  endif()
 elseif ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_E2K")
-    set(TARGET_LJARCH "e2k")
-    string(APPEND TARGET_XCFLAGS " -fexceptions")
+  set(TARGET_LJARCH "e2k")
+  string(APPEND TARGET_XCFLAGS " -fexceptions")
 else()
-    message("${TESTARCH_OUTPUT}")
-    message(FATAL_ERROR "Unsupported luajit target architecture (see output above)")
+  message("${TESTARCH_OUTPUT}")
+  message(FATAL_ERROR "Unsupported luajit target architecture (see output above)")
 endif()
 
 string(APPEND TARGET_ARCH "-DLUAJIT_TARGET=LUAJIT_ARCH_${TARGET_LJARCH}")
@@ -219,39 +217,39 @@ string(APPEND TARGET_ARCH "-DLUAJIT_TARGET=LUAJIT_ARCH_${TARGET_LJARCH}")
 # TODO: use TARGET_STRIP flags?
 
 if (WIN32)
-    #string(APPEND TARGET_STRIP "--strip-unneeded")
+  #string(APPEND TARGET_STRIP "--strip-unneeded")
 
-    if (NOT MSVC)
-        target_link_options(LuaJIT
-            PRIVATE
-            " -shared -Wl,--out-implib,libluajit-${ABIVER}.dll.a"
-        )
-    endif()
+  if (NOT MSVC)
+    target_link_options(LuaJIT
+      PRIVATE
+      " -shared -Wl,--out-implib,libluajit-${ABIVER}.dll.a"
+    )
+  endif()
 
-    if (NOT LUAJIT_BUILD_STATIC_LIB)
-        string(APPEND HOST_XCFLAGS " -DLUA_BUILD_AS_DLL")
-    endif()
+  if (NOT LUAJIT_BUILD_STATIC_LIB)
+    string(APPEND HOST_XCFLAGS " -DLUA_BUILD_AS_DLL")
+  endif()
 
-    set(LJVM_MODE peobj)
+  set(LJVM_MODE peobj)
 elseif (APPLE)
-    if (CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "")
-        message(FATAL_ERROR "Missing export MACOSX_DEPLOYMENT_TARGET=XX.YY")
-    endif()
+  if (CMAKE_OSX_DEPLOYMENT_TARGET STREQUAL "")
+    message(FATAL_ERROR "Missing export MACOSX_DEPLOYMENT_TARGET=XX.YY")
+  endif()
 
-    #string(APPEND TARGET_STRIP "-x")
-    # XXX: doesn't compile with Apple Clang
-    #string(APPEND TARGET_XSHLDFLAGS " -dynamiclib -single_module -undefined dynamic_lookup -fPIC")
-    #string(APPEND TARGET_XSHLDFLAGS " -install_name ${TARGET_DYLIBPATH} -compatibility_version ${MAJVER}.${MINVER} -current_version ${MAJVER}.${MINVER}.${RELVER}")
+  #string(APPEND TARGET_STRIP "-x")
+  # XXX: doesn't compile with Apple Clang
+  #string(APPEND TARGET_XSHLDFLAGS " -dynamiclib -single_module -undefined dynamic_lookup -fPIC")
+  #string(APPEND TARGET_XSHLDFLAGS " -install_name ${TARGET_DYLIBPATH} -compatibility_version ${MAJVER}.${MINVER} -current_version ${MAJVER}.${MINVER}.${RELVER}")
 
-    if (${TARGET_LJARCH} STREQUAL "x64")
-        string(APPEND TARGET_XLDFLAGS " -pagezero_size 10000 -image_base 100000000 -image_base 7fff04c4a000")
-    elseif (${TARGET_LJARCH} STREQUAL "arm64")
-        string(APPEND TARGET_XCFLAGS " -fno-omit-frame-pointer")
-    endif()
+  if (${TARGET_LJARCH} STREQUAL "x64")
+    string(APPEND TARGET_XLDFLAGS " -pagezero_size 10000 -image_base 100000000 -image_base 7fff04c4a000")
+  elseif (${TARGET_LJARCH} STREQUAL "arm64")
+    string(APPEND TARGET_XCFLAGS " -fno-omit-frame-pointer")
+  endif()
 
-    set(LJVM_MODE machasm)
+  set(LJVM_MODE machasm)
 else()
-    set(LJVM_MODE elfasm)
+  set(LJVM_MODE elfasm)
 endif()
 
 # TODO: add HOST_SYS != TARGET_SYS code (lines 354-372 in Makefile)
@@ -262,84 +260,84 @@ endif()
 # NOTE: Defines in DASM_FLAGS should contain a space after -D for minilua to work
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_LE 1")
-    list(APPEND DASM_FLAGS "-D ENDIAN_LE")
+  list(APPEND DASM_FLAGS "-D ENDIAN_LE")
 else()
-    list(APPEND DASM_FLAGS "-D ENDIAN_BE")
+  list(APPEND DASM_FLAGS "-D ENDIAN_BE")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_BITS 64")
-    list(APPEND DASM_FLAGS "-D P64")
+  list(APPEND DASM_FLAGS "-D P64")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_HASJIT 1")
-    list(APPEND DASM_FLAGS "-D JIT")
+  list(APPEND DASM_FLAGS "-D JIT")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_HASFFI 1")
-    list(APPEND DASM_FLAGS "-D FFI")
+  list(APPEND DASM_FLAGS "-D FFI")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_DUALNUM 1")
-    list(APPEND DASM_FLAGS "-D DUALNUM")
+  list(APPEND DASM_FLAGS "-D DUALNUM")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_HASFPU 1")
-    list(APPEND DASM_FLAGS "-D FPU")
-    list(APPEND TARGET_ARCH "-DLJ_ARCH_HASFPU=1")
+  list(APPEND DASM_FLAGS "-D FPU")
+  list(APPEND TARGET_ARCH "-DLJ_ARCH_HASFPU=1")
 else()
-    list(APPEND TARGET_ARCH "-DLJ_ARCH_HASFPU=0")
+  list(APPEND TARGET_ARCH "-DLJ_ARCH_HASFPU=0")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ABI_SOFTFP 1")
-    list(APPEND TARGET_ARCH "-DLJ_ABI_SOFTFP=1")
+  list(APPEND TARGET_ARCH "-DLJ_ABI_SOFTFP=1")
 else()
-    list(APPEND DASM_FLAGS "-D HFABI")
-    list(APPEND TARGET_ARCH "-DLJ_ABI_SOFTFP=0")
+  list(APPEND DASM_FLAGS "-D HFABI")
+  list(APPEND TARGET_ARCH "-DLJ_ABI_SOFTFP=0")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_NO_UNWIND 1")
-    list(APPEND DASM_FLAGS "-D NO_UNWIND")
-    list(APPEND TARGET_ARCH "-DLUAJIT_NO_UNWIND")
+  list(APPEND DASM_FLAGS "-D NO_UNWIND")
+  list(APPEND TARGET_ARCH "-DLUAJIT_NO_UNWIND")
 endif()
 
 if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_VERSION")
-    string(REGEX MATCH "LJ_ARCH_VERSION ([0-9]+)$" _ "${TESTARCH_OUTPUT}")
-    list(APPEND DASM_FLAGS "-D VER=${CMAKE_MATCH_1}")
+  string(REGEX MATCH "LJ_ARCH_VERSION ([0-9]+)$" _ "${TESTARCH_OUTPUT}")
+  list(APPEND DASM_FLAGS "-D VER=${CMAKE_MATCH_1}")
 else()
-    list(APPEND DASM_FLAGS "-D VER=")
+  list(APPEND DASM_FLAGS "-D VER=")
 endif()
 
 set(DASM_ARCH ${TARGET_LJARCH})
 
 if (WIN32)
-    list(APPEND DASM_FLAGS "-D WIN")
+  list(APPEND DASM_FLAGS "-D WIN")
 endif()
 
 if (TARGET_LJARCH STREQUAL "x64")
-    if (NOT "${TESTARCH_OUTPUT}" MATCHES "LJ_FR2 1")
-        set(DASM_ARCH "x86")
-    endif()
+  if (NOT "${TESTARCH_OUTPUT}" MATCHES "LJ_FR2 1")
+    set(DASM_ARCH "x86")
+  endif()
 elseif (TARGET_LJARCH STREQUAL "arm")
-    if (APPLE)
-        list(APPEND DASM_FLAGS "-D IOS")
-    endif()
+  if (APPLE)
+    list(APPEND DASM_FLAGS "-D IOS")
+  endif()
 elseif ("${TESTARCH_OUTPUT}" MATCHES "LJ_TARGET_MIPSR6")
-    list(APPEND DASM_FLAGS "-D MIPSR6")
+  list(APPEND DASM_FLAGS "-D MIPSR6")
 endif()
 
 if (TARGET_LJARCH STREQUAL "ppc")
-    if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_SQRT 1")
-        list(APPEND DASM_FLAGS "-D SQRT")
-    endif()
-    if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_ROUND 1")
-        list(APPEND DASM_FLAGS "-D ROUND")
-    endif()
-    if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_PPC32ON64 1")
-        list(APPEND DASM_FLAGS "-D GPR64")
-    endif()
-    if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_PPC64")
-        set(DASM_ARCH "ppc64")
-    endif()
+  if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_SQRT 1")
+    list(APPEND DASM_FLAGS "-D SQRT")
+  endif()
+  if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_ROUND 1")
+    list(APPEND DASM_FLAGS "-D ROUND")
+  endif()
+  if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_PPC32ON64 1")
+    list(APPEND DASM_FLAGS "-D GPR64")
+  endif()
+  if ("${TESTARCH_OUTPUT}" MATCHES "LJ_ARCH_PPC64")
+    set(DASM_ARCH "ppc64")
+  endif()
 endif()
 
 set(HOST_ACFLAGS "${CMAKE_C_FLAGS} ${CCOPTIONS} ${TARGET_ARCH}")
@@ -351,8 +349,8 @@ separate_arguments(DASM_FLAGS)
 separate_arguments(TARGET_XCFLAGS)
 
 target_compile_options(LuaJIT
-    PRIVATE
-    ${TARGET_XCFLAGS}
+  PRIVATE
+  ${TARGET_XCFLAGS}
 )
 
 set(DASM_DASC "${LUAJIT_DIR}/vm_${DASM_ARCH}.dasc")
@@ -362,8 +360,8 @@ set(BUILDVM_ARCH "${CMAKE_CURRENT_BINARY_DIR}/buildvm_arch.h")
 add_subdirectory("HostBuildTools/minilua")
 
 add_custom_command(OUTPUT ${BUILDVM_ARCH}
-    COMMAND $<TARGET_FILE:minilua> ${DASM} ${DASM_FLAGS} -o ${BUILDVM_ARCH} ${DASM_DASC}
-    VERBATIM
+  COMMAND $<TARGET_FILE:minilua> ${DASM} ${DASM_FLAGS} -o ${BUILDVM_ARCH} ${DASM_DASC}
+  VERBATIM
 )
 
 add_custom_target(buildvm_arch)
@@ -380,40 +378,40 @@ set(BUILDVM_LUAJIT_DIR ${CMAKE_CURRENT_BINARY_DIR}/LuaJIT)
 add_subdirectory("HostBuildTools/buildvm")
 
 list(APPEND LJLIB_C
-    "${LUAJIT_DIR}/lib_base.c"
-    "${LUAJIT_DIR}/lib_bit.c"
-    "${LUAJIT_DIR}/lib_debug.c"
-    "${LUAJIT_DIR}/lib_ffi.c"
-    "${LUAJIT_DIR}/lib_io.c"
-    "${LUAJIT_DIR}/lib_jit.c"
-    "${LUAJIT_DIR}/lib_math.c"
-    "${LUAJIT_DIR}/lib_os.c"
-    "${LUAJIT_DIR}/lib_string.c"
-    "${LUAJIT_DIR}/lib_table.c"
+  "${LUAJIT_DIR}/lib_base.c"
+  "${LUAJIT_DIR}/lib_bit.c"
+  "${LUAJIT_DIR}/lib_debug.c"
+  "${LUAJIT_DIR}/lib_ffi.c"
+  "${LUAJIT_DIR}/lib_io.c"
+  "${LUAJIT_DIR}/lib_jit.c"
+  "${LUAJIT_DIR}/lib_math.c"
+  "${LUAJIT_DIR}/lib_os.c"
+  "${LUAJIT_DIR}/lib_string.c"
+  "${LUAJIT_DIR}/lib_table.c"
 )
 
 if (LUA_USE_RELATIVE_LOADLIB)
-    list(APPEND LJLIB_C "${LUAJIT_DIR}/lib_package_rel.c")
+  list(APPEND LJLIB_C "${LUAJIT_DIR}/lib_package_rel.c")
 else()
-    list(APPEND LJLIB_C "${LUAJIT_DIR}/lib_package.c")
+  list(APPEND LJLIB_C "${LUAJIT_DIR}/lib_package.c")
 endif()
 
 macro(add_buildvm_target target mode)
-    add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${target}
-        COMMAND $<TARGET_FILE:buildvm> ARGS -m ${mode} -o ${CMAKE_CURRENT_BINARY_DIR}/${target} ${ARGN}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        DEPENDS buildvm ${ARGN}
-    )
+  add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${target}
+    COMMAND $<TARGET_FILE:buildvm> ARGS -m ${mode} -o ${CMAKE_CURRENT_BINARY_DIR}/${target} ${ARGN}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDS buildvm ${ARGN}
+  )
 endmacro()
 
 if (WIN32)
-    add_buildvm_target(lj_vm.obj peobj)
-    set(LJ_VM_SRC "${CMAKE_CURRENT_BINARY_DIR}/lj_vm.obj")
+  add_buildvm_target(lj_vm.obj peobj)
+  set(LJ_VM_SRC "${CMAKE_CURRENT_BINARY_DIR}/lj_vm.obj")
 else()
-    add_buildvm_target(lj_vm.S ${LJVM_MODE})
-    set(LJ_VM_SRC "${CMAKE_CURRENT_BINARY_DIR}/lj_vm.S")
-    set_source_files_properties("${LJ_VM_SRC}" PROPERTIES LANGUAGE CXX)
+  add_buildvm_target(lj_vm.S ${LJVM_MODE})
+  set(LJ_VM_SRC "${CMAKE_CURRENT_BINARY_DIR}/lj_vm.S")
+  set_source_files_properties("${LJ_VM_SRC}" PROPERTIES LANGUAGE CXX)
 endif()
 
 add_buildvm_target("lj_bcdef.h" "bcdef" ${LJLIB_C})
@@ -424,12 +422,12 @@ add_buildvm_target("lj_folddef.h" "folddef" "${LUAJIT_DIR}/lj_opt_fold.c")
 add_buildvm_target("jit/vmdef.lua" "libvm" ${LJLIB_C})
 
 target_sources(LuaJIT PRIVATE
-    "${LJ_VM_SRC}"
-    "${CMAKE_CURRENT_BINARY_DIR}/lj_ffdef.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/lj_bcdef.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/lj_libdef.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/lj_recdef.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/lj_folddef.h"
+  "${LJ_VM_SRC}"
+  "${CMAKE_CURRENT_BINARY_DIR}/lj_ffdef.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/lj_bcdef.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/lj_libdef.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/lj_recdef.h"
+  "${CMAKE_CURRENT_BINARY_DIR}/lj_folddef.h"
 )
 
 # Patch `lj_def.h` to compile on clang
@@ -441,222 +439,238 @@ set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${LUAJIT_DIR}/lj_
 target_sources(LuaJIT PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/LuaJIT/lj_def.h")
 
 if (CMAKE_UNITY_BUILD)
-    target_sources(LuaJIT PRIVATE "${LUAJIT_DIR}/ljamalg.c")
+  target_sources(LuaJIT PRIVATE "${LUAJIT_DIR}/ljamalg.c")
 else()
-    # TODO: use lj_asm_ lj_emit lj_target?
-    target_sources_sandboxed(LuaJIT
-        DIRECTORY LuaJIT
+  # TODO: use lj_asm_ lj_emit lj_target?
+  target_sources_sandboxed(LuaJIT
+    DIRECTORY LuaJIT
 
-        STRIP
-        ${LUAJIT_DIR}/../
-        ${LUAJIT_DIR}/
+    STRIP
+    ${LUAJIT_DIR}/../
+    ${LUAJIT_DIR}/
 
-        SOURCES
-        ${LJLIB_C}
+    SOURCES
+    ${LJLIB_C}
 
-        luajit.h
+    luajit.h
 
-        lj_alloc.c
+    lj_alloc.c
 
-        xr_alloc.c
-        xr_alloc.h
+    xr_alloc.c
+    xr_alloc.h
 
-        "${LUAJIT_DIR}/host/buildvm_asm.c"
-        "${LUAJIT_DIR}/host/buildvm_fold.c"
-        "${LUAJIT_DIR}/host/buildvm_lib.c"
-        #"${LUAJIT_DIR}/host/buildvm_libbc.h"
-        "${LUAJIT_DIR}/host/buildvm_peobj.c"
-        "${LUAJIT_DIR}/host/buildvm.c"
-        "${LUAJIT_DIR}/host/buildvm.h"
-            
-        "${LUAJIT_DIR}/../dynasm/dasm_arm.h"
-        "${LUAJIT_DIR}/../dynasm/dasm_ppc.h"
-        "${LUAJIT_DIR}/../dynasm/dasm_x86.h"
-        "${LUAJIT_DIR}/../dynasm/dasm_mips.h"
-        "${LUAJIT_DIR}/../dynasm/dasm_proto.h"
+    "${LUAJIT_DIR}/host/buildvm_asm.c"
+    "${LUAJIT_DIR}/host/buildvm_fold.c"
+    "${LUAJIT_DIR}/host/buildvm_lib.c"
+    #"${LUAJIT_DIR}/host/buildvm_libbc.h"
+    "${LUAJIT_DIR}/host/buildvm_peobj.c"
+    "${LUAJIT_DIR}/host/buildvm.c"
+    "${LUAJIT_DIR}/host/buildvm.h"
+      
+    "${LUAJIT_DIR}/../dynasm/dasm_arm.h"
+    "${LUAJIT_DIR}/../dynasm/dasm_ppc.h"
+    "${LUAJIT_DIR}/../dynasm/dasm_x86.h"
+    "${LUAJIT_DIR}/../dynasm/dasm_mips.h"
+    "${LUAJIT_DIR}/../dynasm/dasm_proto.h"
 
-        "${LUAJIT_DIR}/lauxlib.h"
-        "${LUAJIT_DIR}/lib_aux.c"
-        "${LUAJIT_DIR}/lib_init.c"
-        "${LUAJIT_DIR}/lj_alloc.h"
-        "${LUAJIT_DIR}/lj_api.c"
-        "${LUAJIT_DIR}/lj_asm.c"
-        "${LUAJIT_DIR}/lj_asm.h"
-        "${LUAJIT_DIR}/lj_asm_arm.h"
-        "${LUAJIT_DIR}/lj_asm_ppc.h"
-        "${LUAJIT_DIR}/lj_asm_x86.h"
-        "${LUAJIT_DIR}/lj_asm_mips.h"
-        #"${LUAJIT_DIR}/lj_assert.c"
-        "${LUAJIT_DIR}/lj_arch.h"
-        "${LUAJIT_DIR}/lj_bc.c"
-        "${LUAJIT_DIR}/lj_bc.h"
-        "${LUAJIT_DIR}/lj_bcdump.h"
-        "${LUAJIT_DIR}/lj_bcread.c"
-        "${LUAJIT_DIR}/lj_bcwrite.c"
-        #"${LUAJIT_DIR}/lj_buf.c"
-        #"${LUAJIT_DIR}/lj_buf.h"
-        "${LUAJIT_DIR}/lj_carith.c"
-        "${LUAJIT_DIR}/lj_carith.h"
-        "${LUAJIT_DIR}/lj_ccall.c"
-        "${LUAJIT_DIR}/lj_ccall.h"
-        "${LUAJIT_DIR}/lj_ccallback.c"
-        "${LUAJIT_DIR}/lj_ccallback.h"
-        "${LUAJIT_DIR}/lj_cconv.c"
-        "${LUAJIT_DIR}/lj_cconv.h"
-        "${LUAJIT_DIR}/lj_cdata.c"
-        "${LUAJIT_DIR}/lj_cdata.h"
-        "${LUAJIT_DIR}/lj_char.c"
-        "${LUAJIT_DIR}/lj_char.h"
-        "${LUAJIT_DIR}/lj_clib.c"
-        "${LUAJIT_DIR}/lj_clib.h"
-        "${LUAJIT_DIR}/lj_cparse.c"
-        "${LUAJIT_DIR}/lj_cparse.h"
-        "${LUAJIT_DIR}/lj_crecord.c"
-        "${LUAJIT_DIR}/lj_crecord.h"
-        "${LUAJIT_DIR}/lj_ctype.c"
-        "${LUAJIT_DIR}/lj_ctype.h"
-        "${LUAJIT_DIR}/lj_debug.c"
-        "${LUAJIT_DIR}/lj_debug.h"
-        "${LUAJIT_DIR}/lj_dispatch.c"
-        "${LUAJIT_DIR}/lj_dispatch.h"
-        "${LUAJIT_DIR}/lj_err.c"
-        "${LUAJIT_DIR}/lj_err.h"
-        "${LUAJIT_DIR}/lj_errmsg.h"
-        "${LUAJIT_DIR}/lj_emit_arm.h"
-        "${LUAJIT_DIR}/lj_emit_ppc.h"
-        "${LUAJIT_DIR}/lj_emit_x86.h"
-        "${LUAJIT_DIR}/lj_emit_mips.h"
-        "${LUAJIT_DIR}/lj_ff.h"
-        "${LUAJIT_DIR}/lj_ffrecord.c"
-        "${LUAJIT_DIR}/lj_ffrecord.h"
-        "${LUAJIT_DIR}/lj_frame.h"
-        "${LUAJIT_DIR}/lj_func.c"
-        "${LUAJIT_DIR}/lj_func.h"
-        "${LUAJIT_DIR}/lj_gc.c"
-        "${LUAJIT_DIR}/lj_gc.h"
-        "${LUAJIT_DIR}/lj_gdbjit.c"
-        "${LUAJIT_DIR}/lj_gdbjit.h"
-        "${LUAJIT_DIR}/lj_ir.c"
-        "${LUAJIT_DIR}/lj_ir.h"
-        "${LUAJIT_DIR}/lj_ircall.h"
-        "${LUAJIT_DIR}/lj_iropt.h"
-        "${LUAJIT_DIR}/lj_jit.h"
-        "${LUAJIT_DIR}/lj_lex.c"
-        "${LUAJIT_DIR}/lj_lex.h"
-        "${LUAJIT_DIR}/lj_lib.c"
-        "${LUAJIT_DIR}/lj_lib.h"
-        "${LUAJIT_DIR}/lj_load.c"
-        "${LUAJIT_DIR}/lj_mcode.c"
-        "${LUAJIT_DIR}/lj_mcode.h"
-        "${LUAJIT_DIR}/lj_meta.c"
-        "${LUAJIT_DIR}/lj_meta.h"
-        "${LUAJIT_DIR}/lj_obj.c"
-        "${LUAJIT_DIR}/lj_obj.h"
-        "${LUAJIT_DIR}/lj_opt_dce.c"
-        "${LUAJIT_DIR}/lj_opt_fold.c"
-        "${LUAJIT_DIR}/lj_opt_loop.c"
-        "${LUAJIT_DIR}/lj_opt_mem.c"
-        "${LUAJIT_DIR}/lj_opt_narrow.c"
-        "${LUAJIT_DIR}/lj_opt_sink.c"
-        "${LUAJIT_DIR}/lj_opt_split.c"
-        "${LUAJIT_DIR}/lj_parse.c"
-        "${LUAJIT_DIR}/lj_parse.h"
-        #"${LUAJIT_DIR}/lj_prng.c"
-        #"${LUAJIT_DIR}/lj_prng.h"
-        #"${LUAJIT_DIR}/lj_profile.c"
-        #"${LUAJIT_DIR}/lj_profile.h"
-        "${LUAJIT_DIR}/lj_record.c"
-        "${LUAJIT_DIR}/lj_record.h"
-        "${LUAJIT_DIR}/lj_snap.c"
-        "${LUAJIT_DIR}/lj_snap.h"
-        "${LUAJIT_DIR}/lj_state.c"
-        "${LUAJIT_DIR}/lj_state.h"
-        "${LUAJIT_DIR}/lj_str.c"
-        "${LUAJIT_DIR}/lj_str.h"
-        #"${LUAJIT_DIR}/lj_strfmt.c"
-        #"${LUAJIT_DIR}/lj_strfmt.h"
-        #"${LUAJIT_DIR}/lj_strfmt_num.c"
-        "${LUAJIT_DIR}/lj_strscan.c"
-        "${LUAJIT_DIR}/lj_strscan.h"
-        "${LUAJIT_DIR}/lj_tab.c"
-        "${LUAJIT_DIR}/lj_tab.h"
-        "${LUAJIT_DIR}/lj_target.h"
-        "${LUAJIT_DIR}/lj_target_arm.h"
-        "${LUAJIT_DIR}/lj_target_ppc.h"
-        "${LUAJIT_DIR}/lj_target_x86.h"
-        "${LUAJIT_DIR}/lj_target_mips.h"
-        "${LUAJIT_DIR}/lj_trace.c"
-        "${LUAJIT_DIR}/lj_trace.h"
-        "${LUAJIT_DIR}/lj_traceerr.h"
-        "${LUAJIT_DIR}/lj_udata.c"
-        "${LUAJIT_DIR}/lj_udata.h"
-        "${LUAJIT_DIR}/lj_vm.h"
-        "${LUAJIT_DIR}/lj_vmevent.c"
-        "${LUAJIT_DIR}/lj_vmevent.h"
-        "${LUAJIT_DIR}/lj_vmmath.c"
-        "${LUAJIT_DIR}/lua.h"
-        "${LUAJIT_DIR}/lua.hpp"
-        "${LUAJIT_DIR}/luaconf.h"
-        "${LUAJIT_DIR}/lualib.h"
-    )
-endif()
-
-target_include_directories(LuaJIT
-    PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}/LuaJIT
-)
-
-target_link_libraries(LuaJIT
-    PRIVATE
-    $<$<BOOL:${LUA_USE_POSIX}>:m>
-    $<$<BOOL:${LUA_USE_DLOPEN}>:dl>
-)
-
-if (NOT MSVC)
-  target_compile_options(LuaJIT
-      PRIVATE
-      -Wno-comment
+    "${LUAJIT_DIR}/lauxlib.h"
+    "${LUAJIT_DIR}/lib_aux.c"
+    "${LUAJIT_DIR}/lib_init.c"
+    "${LUAJIT_DIR}/lj_alloc.h"
+    "${LUAJIT_DIR}/lj_api.c"
+    "${LUAJIT_DIR}/lj_asm.c"
+    "${LUAJIT_DIR}/lj_asm.h"
+    "${LUAJIT_DIR}/lj_asm_arm.h"
+    "${LUAJIT_DIR}/lj_asm_ppc.h"
+    "${LUAJIT_DIR}/lj_asm_x86.h"
+    "${LUAJIT_DIR}/lj_asm_mips.h"
+    #"${LUAJIT_DIR}/lj_assert.c"
+    "${LUAJIT_DIR}/lj_arch.h"
+    "${LUAJIT_DIR}/lj_bc.c"
+    "${LUAJIT_DIR}/lj_bc.h"
+    "${LUAJIT_DIR}/lj_bcdump.h"
+    "${LUAJIT_DIR}/lj_bcread.c"
+    "${LUAJIT_DIR}/lj_bcwrite.c"
+    #"${LUAJIT_DIR}/lj_buf.c"
+    #"${LUAJIT_DIR}/lj_buf.h"
+    "${LUAJIT_DIR}/lj_carith.c"
+    "${LUAJIT_DIR}/lj_carith.h"
+    "${LUAJIT_DIR}/lj_ccall.c"
+    "${LUAJIT_DIR}/lj_ccall.h"
+    "${LUAJIT_DIR}/lj_ccallback.c"
+    "${LUAJIT_DIR}/lj_ccallback.h"
+    "${LUAJIT_DIR}/lj_cconv.c"
+    "${LUAJIT_DIR}/lj_cconv.h"
+    "${LUAJIT_DIR}/lj_cdata.c"
+    "${LUAJIT_DIR}/lj_cdata.h"
+    "${LUAJIT_DIR}/lj_char.c"
+    "${LUAJIT_DIR}/lj_char.h"
+    "${LUAJIT_DIR}/lj_clib.c"
+    "${LUAJIT_DIR}/lj_clib.h"
+    "${LUAJIT_DIR}/lj_cparse.c"
+    "${LUAJIT_DIR}/lj_cparse.h"
+    "${LUAJIT_DIR}/lj_crecord.c"
+    "${LUAJIT_DIR}/lj_crecord.h"
+    "${LUAJIT_DIR}/lj_ctype.c"
+    "${LUAJIT_DIR}/lj_ctype.h"
+    "${LUAJIT_DIR}/lj_debug.c"
+    "${LUAJIT_DIR}/lj_debug.h"
+    "${LUAJIT_DIR}/lj_dispatch.c"
+    "${LUAJIT_DIR}/lj_dispatch.h"
+    "${LUAJIT_DIR}/lj_err.c"
+    "${LUAJIT_DIR}/lj_err.h"
+    "${LUAJIT_DIR}/lj_errmsg.h"
+    "${LUAJIT_DIR}/lj_emit_arm.h"
+    "${LUAJIT_DIR}/lj_emit_ppc.h"
+    "${LUAJIT_DIR}/lj_emit_x86.h"
+    "${LUAJIT_DIR}/lj_emit_mips.h"
+    "${LUAJIT_DIR}/lj_ff.h"
+    "${LUAJIT_DIR}/lj_ffrecord.c"
+    "${LUAJIT_DIR}/lj_ffrecord.h"
+    "${LUAJIT_DIR}/lj_frame.h"
+    "${LUAJIT_DIR}/lj_func.c"
+    "${LUAJIT_DIR}/lj_func.h"
+    "${LUAJIT_DIR}/lj_gc.c"
+    "${LUAJIT_DIR}/lj_gc.h"
+    "${LUAJIT_DIR}/lj_gdbjit.c"
+    "${LUAJIT_DIR}/lj_gdbjit.h"
+    "${LUAJIT_DIR}/lj_ir.c"
+    "${LUAJIT_DIR}/lj_ir.h"
+    "${LUAJIT_DIR}/lj_ircall.h"
+    "${LUAJIT_DIR}/lj_iropt.h"
+    "${LUAJIT_DIR}/lj_jit.h"
+    "${LUAJIT_DIR}/lj_lex.c"
+    "${LUAJIT_DIR}/lj_lex.h"
+    "${LUAJIT_DIR}/lj_lib.c"
+    "${LUAJIT_DIR}/lj_lib.h"
+    "${LUAJIT_DIR}/lj_load.c"
+    "${LUAJIT_DIR}/lj_mcode.c"
+    "${LUAJIT_DIR}/lj_mcode.h"
+    "${LUAJIT_DIR}/lj_meta.c"
+    "${LUAJIT_DIR}/lj_meta.h"
+    "${LUAJIT_DIR}/lj_obj.c"
+    "${LUAJIT_DIR}/lj_obj.h"
+    "${LUAJIT_DIR}/lj_opt_dce.c"
+    "${LUAJIT_DIR}/lj_opt_fold.c"
+    "${LUAJIT_DIR}/lj_opt_loop.c"
+    "${LUAJIT_DIR}/lj_opt_mem.c"
+    "${LUAJIT_DIR}/lj_opt_narrow.c"
+    "${LUAJIT_DIR}/lj_opt_sink.c"
+    "${LUAJIT_DIR}/lj_opt_split.c"
+    "${LUAJIT_DIR}/lj_parse.c"
+    "${LUAJIT_DIR}/lj_parse.h"
+    #"${LUAJIT_DIR}/lj_prng.c"
+    #"${LUAJIT_DIR}/lj_prng.h"
+    #"${LUAJIT_DIR}/lj_profile.c"
+    #"${LUAJIT_DIR}/lj_profile.h"
+    "${LUAJIT_DIR}/lj_record.c"
+    "${LUAJIT_DIR}/lj_record.h"
+    "${LUAJIT_DIR}/lj_snap.c"
+    "${LUAJIT_DIR}/lj_snap.h"
+    "${LUAJIT_DIR}/lj_state.c"
+    "${LUAJIT_DIR}/lj_state.h"
+    "${LUAJIT_DIR}/lj_str.c"
+    "${LUAJIT_DIR}/lj_str.h"
+    #"${LUAJIT_DIR}/lj_strfmt.c"
+    #"${LUAJIT_DIR}/lj_strfmt.h"
+    #"${LUAJIT_DIR}/lj_strfmt_num.c"
+    "${LUAJIT_DIR}/lj_strscan.c"
+    "${LUAJIT_DIR}/lj_strscan.h"
+    "${LUAJIT_DIR}/lj_tab.c"
+    "${LUAJIT_DIR}/lj_tab.h"
+    "${LUAJIT_DIR}/lj_target.h"
+    "${LUAJIT_DIR}/lj_target_arm.h"
+    "${LUAJIT_DIR}/lj_target_ppc.h"
+    "${LUAJIT_DIR}/lj_target_x86.h"
+    "${LUAJIT_DIR}/lj_target_mips.h"
+    "${LUAJIT_DIR}/lj_trace.c"
+    "${LUAJIT_DIR}/lj_trace.h"
+    "${LUAJIT_DIR}/lj_traceerr.h"
+    "${LUAJIT_DIR}/lj_udata.c"
+    "${LUAJIT_DIR}/lj_udata.h"
+    "${LUAJIT_DIR}/lj_vm.h"
+    "${LUAJIT_DIR}/lj_vmevent.c"
+    "${LUAJIT_DIR}/lj_vmevent.h"
+    "${LUAJIT_DIR}/lj_vmmath.c"
+    "${LUAJIT_DIR}/lua.h"
+    "${LUAJIT_DIR}/lua.hpp"
+    "${LUAJIT_DIR}/luaconf.h"
+    "${LUAJIT_DIR}/lualib.h"
   )
 endif()
 
+target_include_directories(LuaJIT
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/LuaJIT
+)
+
+target_link_libraries(LuaJIT
+  PRIVATE
+  $<$<BOOL:${LUA_USE_POSIX}>:m>
+  $<$<BOOL:${LUA_USE_DLOPEN}>:dl>
+)
+
+target_compile_options(LuaJIT
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4057>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4127>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4189>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4232>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4310>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4389>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4701>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4702>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd5287>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-comment>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-incompatible-pointer-types>
+)
+
+target_compile_definitions(LuaJIT
+  PRIVATE
+  _CRT_SECURE_NO_WARNINGS
+)
+
 set_target_properties(LuaJIT PROPERTIES
-    PREFIX ""
-    UNITY_BUILD OFF
+  PREFIX ""
+  UNITY_BUILD OFF
 )
 
 install(
-    TARGETS LuaJIT LIBRARY
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  TARGETS LuaJIT LIBRARY
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
 
 if (LUAJIT_BUILD_APP)
-    add_executable(luajit
-        ${LUAJIT_DIR}/luajit.c
-    )
+  add_executable(luajit
+    ${LUAJIT_DIR}/luajit.c
+  )
 
-    target_link_libraries(luajit
-        PRIVATE
-        LuaJIT
-    )
+  target_link_libraries(luajit
+    PRIVATE
+    LuaJIT
+  )
 
-    target_link_options(luajit
-        PRIVATE
-        ${TARGET_XLDFLAGS}
-    )
+  target_link_options(luajit
+    PRIVATE
+    ${TARGET_XLDFLAGS}
+  )
 
-    # On Windows build a no-console variant also
-    if (LUA_BUILD_WLUA)
-        # TODO: check if it works
-        add_executable(wluajit WIN32
-            "${LUAJIT_DIR}/wmain.c"
-            "${LUAJIT_DIR}/luajit.c"
-            "${LUAJIT_DIR}/luajit.rc"
-        )
-        target_link_libraries(wluajit
-            PRIVATE
-            LuaJIT
-        )
-    endif()
+  # On Windows build a no-console variant also
+  if (LUA_BUILD_WLUA)
+    # TODO: check if it works
+    add_executable(wluajit WIN32
+      "${LUAJIT_DIR}/wmain.c"
+      "${LUAJIT_DIR}/luajit.c"
+      "${LUAJIT_DIR}/luajit.rc"
+    )
+    target_link_libraries(wluajit
+      PRIVATE
+      LuaJIT
+    )
+  endif()
 endif()

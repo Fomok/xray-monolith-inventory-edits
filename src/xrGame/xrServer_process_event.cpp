@@ -184,7 +184,7 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_DIE:
 		{
 			// Parse message
-			u16 id_dest = destination, id_src;
+			u16 id_src;
 			P.r_u16(id_src);
 
 

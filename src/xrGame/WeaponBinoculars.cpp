@@ -144,7 +144,7 @@ void GetZoomData(const float scope_factor, const float zoom_step_count, float mi
 	min_zoom_factor = def_fov - delta_factor_total * min_zoom_k;
 	if (min_zoom_factor > min_zoom_setting)
 		min_zoom_factor = min_zoom_setting;
-	float steps = zoom_step_count ? zoom_step_count : 3.0;
+	float steps = zoom_step_count ? zoom_step_count : 3.0f;
 	delta = (min_zoom_factor - scope_factor) / steps;
 	if (useNewZoomDeltaAlgorithm)
 		newGetZoomDelta(scope_factor, delta, min_zoom_factor, steps);

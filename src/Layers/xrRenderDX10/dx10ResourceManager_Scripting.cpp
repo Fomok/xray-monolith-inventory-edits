@@ -265,6 +265,7 @@ void LuaError(lua_State* L)
 #endif // PURE_ALLOC
 
 #ifndef USE_DL_ALLOCATOR
+/*
 static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize)
 {
 	(void)ud;
@@ -281,6 +282,7 @@ static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize)
 		return Memory.mem_realloc(ptr, nsize);
 #endif // DEBUG_MEMORY_MANAGER
 }
+*/
 #else // USE_DL_ALLOCATOR
 
 #ifdef USE_ARENA_ALLOCATOR

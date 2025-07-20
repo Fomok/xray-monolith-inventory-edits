@@ -134,7 +134,7 @@ void CParticleEffect::OnFrame(u32 frame_dt)
 		int StepCount = 0;
 		u32 uDT_STEP = m_Def->GetUStep();
 		float fDT_STEP = m_Def->GetFStep();
-		if (m_MemDT >= uDT_STEP)
+		if ((u32)m_MemDT >= uDT_STEP)
 		{
 			// allow maximum of three steps (99ms) to avoid slowdown after loading
 			// it will really skip updates at less than 10fps, which is unplayable
@@ -452,7 +452,7 @@ void ParticleRenderStream(FVF::LIT* pv, u32 count, PAPI::Particle * particles, C
 	float sina = 0.0f, cosa = 0.0f;
 	// Xottab_DUTY: changed angle to be float instead of DWORD
 	// But it must be 0xFFFFFFFF or otherwise some particles won't play
-	float angle = 0xFFFFFFFF;
+	float angle = (float)0xFFFFFFFF;
 
 
 	for (u32 i = 0; i != count; ++i)

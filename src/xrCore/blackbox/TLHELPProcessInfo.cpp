@@ -282,7 +282,7 @@ DWORD __stdcall TLHELPGetModuleFileNameEx(DWORD dwPID,
 			// Is this the one?
 			if (hModule == stME32.hModule)
 			{
-				DWORD dwLen = _tcslen(stME32.szExePath);
+				DWORD dwLen = (DWORD)_tcslen(stME32.szExePath);
 				if (dwLen > nSize)
 				{
 					_tcsncpy(szFilename,

@@ -11,7 +11,7 @@ CSoundRender_Source* CSoundRender_Core::i_create_source(LPCSTR name)
 	// Search
 	string256 id;
 	xr_strcpy(id, name);
-	strlwr(id);
+	_strlwr(id);
 	if (strext(id)) *strext(id) = 0;
 	auto it = s_sources.find(id);
 	if (it != s_sources.end())

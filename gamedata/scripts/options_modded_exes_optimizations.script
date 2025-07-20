@@ -3,7 +3,6 @@
 -- Import smart constructors
 options_builder.import_into(this)
 
--- Shader scopes
 PAGE = page {
 	{ id = "optimizations" },
 	list_bool { id = "spawn_antifreeze" },
@@ -24,6 +23,7 @@ PAGE = page {
 
 	line{},
 	
+	list_bool { id = "mt_update_weapon_sounds" },
 	track {
 		id = "lua_gcstep",
 		def = 400,

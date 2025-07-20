@@ -47,7 +47,7 @@ IC char* xr_strcpy(char* strDestination, const char* strSource)
 
 IC char* _strlwr_s(char* strDestination, size_t sizeInBytes)
 {
-    return strlwr(strDestination);
+    return _strlwr(strDestination);
 }
 
 IC char* xr_strcat(char* strDestination, size_t sizeInBytes, const char* strSource)
@@ -88,7 +88,7 @@ IC LPCSTR get_token_name(xr_token* tokens, int key)
 IC int get_token_id(xr_token* tokens, LPCSTR key)
 {
 	for (int k = 0; tokens[k].name; k++)
-		if (stricmp(tokens[k].name, key) == 0)
+		if (_stricmp(tokens[k].name, key) == 0)
 			return tokens[k].id;
 	return -1;
 }
@@ -196,7 +196,7 @@ IC u32 xr_strlen(const char* S)
 
 IC char* xr_strlwr(char* S)
 {
-	return strlwr(S);
+	return _strlwr(S);
 }
 
 #ifdef BREAK_AT_STRCMP
@@ -273,7 +273,7 @@ inline int __cdecl xr_sprintf(char (&destination)[count], LPCSTR format_string, 
 }
 #endif // #ifndef MASTER_GOLD
 
-# pragma deprecated( strcpy, strcpy_s, sprintf, sprintf_s, strcat, strcat_s )
+//# pragma deprecated( strcpy, strcpy_s, sprintf, sprintf_s, strcat, strcat_s )
 
 template <int count>
 inline errno_t xr_strcpy(char (&destination)[count], LPCSTR source)

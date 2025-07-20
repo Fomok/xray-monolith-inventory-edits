@@ -55,7 +55,7 @@ namespace award_system
 
 		STRCONCAT(section_name,
 		          section_name_prefix,
-		          itoa(reward_index, tmp_dst_buff, 10));
+		          _itoa(reward_index, tmp_dst_buff, 10));
 
 		while (rewards_config.section_exist(section_name))
 		{
@@ -63,7 +63,7 @@ namespace award_system
 			++reward_index;
 			STRCONCAT(section_name,
 			          section_name_prefix,
-			          itoa(reward_index, tmp_dst_buff, 10));
+			          _itoa(reward_index, tmp_dst_buff, 10));
 		}
 
 		FS.r_close(tmp_reader);

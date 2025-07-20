@@ -29,7 +29,7 @@ void dxDebugRender::Render()
 			RCache.set_Shader(dxRenderDeviceRender::Instance().m_WireShader);
 			RCache.set_c("tfactor", float(color_get_R(color)) / 255.f, float(color_get_G(color)) / 255.f, float(color_get_B(color)) / 255.f, float(color_get_A(color)) / 255.f);
 #endif
-			RCache.dbg_Draw(D3DPT_LINELIST, &vert_vec.front(), vert_vec.size(), &ind_vec.front(), ind_vec.size() / 2);
+			RCache.dbg_Draw(D3DPT_LINELIST, &vert_vec.front(), (int)vert_vec.size(), &ind_vec.front(), (int)ind_vec.size() / 2);
 		}
 
 		m_line_vertices_hud.clear();
@@ -55,7 +55,7 @@ void dxDebugRender::Render()
 		RCache.set_Shader(dxRenderDeviceRender::Instance().m_WireShader);
 		RCache.set_c("tfactor", float(color_get_R(color)) / 255.f, float(color_get_G(color)) / 255.f, float(color_get_B(color)) / 255.f, float(color_get_A(color)) / 255.f);
 #endif
-		RCache.dbg_Draw(D3DPT_LINELIST, &vert_vec.front(), vert_vec.size(), &ind_vec.front(), ind_vec.size() / 2);
+		RCache.dbg_Draw(D3DPT_LINELIST, &vert_vec.front(), (int)vert_vec.size(), &ind_vec.front(), (int)ind_vec.size() / 2);
 	}
 
 	m_line_vertices.clear();
@@ -67,18 +67,18 @@ void dxDebugRender::add_lines(Fvector const* vertices, u32 const& vertex_count, 
 	size_t all_verts_count{}, all_inds_count{};
 	for (auto& m_vert : m_line_vertices)
 	{
-		const u32& color = m_vert.first;
+		const u32& vertColor = m_vert.first;
 		const std::vector<FVF::L>& vert_vec = m_vert.second;
 		all_verts_count += vert_vec.size();
-		all_inds_count += m_line_indices.at(color).size();
+		all_inds_count += m_line_indices.at(vertColor).size();
 	}
 
 	for (auto& m_vert : m_line_vertices_hud)
 	{
-		const u32& color = m_vert.first;
+		const u32& vertColor = m_vert.first;
 		const std::vector<FVF::L>& vert_vec = m_vert.second;
 		all_verts_count += vert_vec.size();
-		all_inds_count += m_line_indices_hud.at(color).size();
+		all_inds_count += m_line_indices_hud.at(vertColor).size();
 	}
 
 	if (((all_verts_count + vertex_count) >= u16(-1)) || ((all_inds_count + 2 * pair_count) >= u16(-1)))
@@ -93,7 +93,7 @@ void dxDebugRender::add_lines(Fvector const* vertices, u32 const& vertex_count, 
 	auto I = ind_vec.begin() + indices_size, E = ind_vec.end();
 	const u16* J = pairs;
 	for (; I != E; ++I, ++J)
-		*I = vertices_size + *J;
+		*I = (unsigned short)vertices_size + *J;
 
 	vert_vec.resize(vertices_size + vertex_count);
 	auto i = vert_vec.begin() + vertices_size, e = vert_vec.end();

@@ -294,8 +294,13 @@ namespace xr_imgui
         FontConfig.OversampleH = READ_IF_EXISTS(config, r_u8, "font", "oversampleh", 2);
         FontConfig.OversampleV = READ_IF_EXISTS(config, r_u8, "font", "oversamplev", 1);
         FontConfig.PixelSnapH = READ_IF_EXISTS(config, r_bool, "font", "pixelsnaph", false);
-        FontConfig.GlyphExtraSpacing = *(ImVec2*)&READ_IF_EXISTS(config, r_fvector2, "font", "glyphextraspacing", Fvector2().set(0, 0));
-        FontConfig.GlyphOffset = *(ImVec2*)&READ_IF_EXISTS(config, r_fvector2, "font", "glyphoffset", Fvector2().set(0, 0));
+
+        auto glyphExtraSpacing = READ_IF_EXISTS(config, r_fvector2, "font", "glyphextraspacing", Fvector2().set(0, 0));
+        FontConfig.GlyphExtraSpacing = *(ImVec2*)&glyphExtraSpacing;
+        
+        auto glyphOffset = READ_IF_EXISTS(config, r_fvector2, "font", "glyphoffset", Fvector2().set(0, 0));
+        FontConfig.GlyphOffset = *(ImVec2*)&glyphOffset;
+
         FontConfig.EllipsisChar = READ_IF_EXISTS(config, r_u16, "font", "ellipsischar", 0);
         FontConfig.SizePixels = READ_IF_EXISTS(config, r_float, "font", "sizepixels", xrImGuiFontSize);
         FontConfig.GlyphMinAdvanceX = READ_IF_EXISTS(config, r_float, "font", "glyphminadvancex", 0.f);

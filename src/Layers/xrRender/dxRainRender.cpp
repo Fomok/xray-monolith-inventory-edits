@@ -79,7 +79,7 @@ void dxRainRender::Render(CEffect_Rain& owner)
 		_drop_width = ps_ssfx_rain_1.y;
 		_drop_speed = ps_ssfx_rain_1.z;
 		_splash_SH = SH_Splash;
-		rain_max_particles = ps_ssfx_rain_drops_setup.x;
+		rain_max_particles = (int)ps_ssfx_rain_drops_setup.x;
 		rain_radius = ps_ssfx_rain_drops_setup.y;
 	}
 #endif
@@ -87,7 +87,7 @@ void dxRainRender::Render(CEffect_Rain& owner)
 	u32 desired_items = iFloor(0.01f * (1.f + factor * 99.0f) * float(rain_max_particles));
 
 	// Get to the desired items
-	if (current_items < desired_items)
+	if ((u32)current_items < desired_items)
 		current_items += desired_items - current_items;
 
 	// visual
@@ -97,10 +97,10 @@ void dxRainRender::Render(CEffect_Rain& owner)
 
 	// born _new_ if needed
 	float b_radius_wrap_sqr = _sqr((rain_radius * 1.5f));
-	if (owner.items.size() < current_items)
+	if (owner.items.size() < (u32)current_items)
 	{
 		// owner.items.reserve		(desired_items);
-		while (owner.items.size() < current_items)
+		while (owner.items.size() < (u32)current_items)
 		{
 			CEffect_Rain::Item one;
 			owner.Born(one, rain_radius, _drop_speed);
@@ -120,7 +120,7 @@ void dxRainRender::Render(CEffect_Rain& owner)
 	FVF::LIT* verts = (FVF::LIT *)RCache.Vertex.Lock(desired_items * 4, hGeom_Rain->vb_stride, vOffset);
 	FVF::LIT* start = verts;
 	const Fvector& vEye = Device.vCameraPosition;
-	for (u32 I = 0; I < current_items; I++)
+	for (u32 I = 0; I < (u32)current_items; I++)
 	{
 		// physics and time control
 		CEffect_Rain::Item& one = owner.items[I];
@@ -128,12 +128,12 @@ void dxRainRender::Render(CEffect_Rain& owner)
 		if (one.dwTime_Hit < Device.dwTimeGlobal) 
 		{
 			owner.Hit(one.Phit);
-			if (current_items > desired_items) current_items--; // Hit something
+			if ((u32)current_items > desired_items) current_items--; // Hit something
 		}
 		if (one.dwTime_Life < Device.dwTimeGlobal)
 		{
 			owner.Born(one, rain_radius, _drop_speed);
-			if (current_items > desired_items) current_items--; // Out of life ( invalidated, never hit something, etc. )
+			if ((u32)current_items > desired_items) current_items--; // Out of life ( invalidated, never hit something, etc. )
 		}
 
 		// последняя дельта ??

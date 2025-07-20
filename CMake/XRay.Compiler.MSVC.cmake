@@ -12,8 +12,8 @@ set(XRAY_COMPILER_FLAGS
     /fp:precise
     # Enable multi-process compilation
     /MP
-    # Don't treat warnings as errors
-    /WX-
+    # Treat warnings as errors
+    /WX
     # Use full paths in diagnostic messages
     /FC
     # Store debug information in PDB
@@ -22,6 +22,8 @@ set(XRAY_COMPILER_FLAGS
     /MD
     # Use full paths in diagnostics
     /FC
+    # Suppress 'Use /EHsc' warning
+    /wd4530
 )
 
 # Debug flags
@@ -75,6 +77,10 @@ set(XRAY_LINKER_FLAGS
     /DYNAMICBASE:NO
     # Allow larger PDBs
     /PDBPAGESIZE:16384
+    # Treat warnings as errors
+    /WX
+    # Disable multiply-defined symbol warnings (libjpeg / cximage)
+    /ignore:4099
 )
 
 # Debug linker options

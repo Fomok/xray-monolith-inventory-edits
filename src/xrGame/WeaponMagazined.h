@@ -36,7 +36,7 @@ protected:
 	bool m_needReload;
 	// General
 	//кадр момента пересчета UpdateSounds
-	u32 dwUpdateSounds_Frame;
+	u32 dwUpdateSounds_Frame = 0;
 protected:
 	virtual void OnMagazineEmpty();
 
@@ -62,6 +62,8 @@ protected:
 	virtual void OnStateSwitch(u32 S, u32 oldState);
 
 	virtual void UpdateSounds();
+	virtual void UpdateSoundsPositionsImpl();
+	void __stdcall UpdateSoundsPositions();
 
 	bool TryReload();
 
@@ -197,7 +199,7 @@ public:
 
 	virtual void SetFireMode(int mode)
 	{
-		if (mode >= m_aFireModes.size()) mode = 0;
+		if ((u32)mode >= m_aFireModes.size()) mode = 0;
 		m_iCurFireMode = mode;
 		SetQueueSize(GetCurrentFireMode());
 	};

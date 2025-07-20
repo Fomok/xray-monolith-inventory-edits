@@ -282,7 +282,6 @@ CUIStatic* CUIInventoryCellItem::InitLayer(CUIStatic* s, LPCSTR section, Fvector
 //-Alundaio
 void CUIInventoryCellItem::Update()
 {
-	bool b = Heading();
 	inherited::Update();
 
 	inherited::UpdateConditionProgressBar(); //Alundaio

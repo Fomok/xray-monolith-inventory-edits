@@ -19,7 +19,7 @@
 #include "xr_collide_defs.h"
 #include "xr_collide_form.h"
 #include "weapon.h"
-#include "ik/math3d.h"
+#include "IKAN/math3d.h"
 #include "actor.h"
 #include "ai/monsters/basemonster/base_monster.h"
 #include "script_game_object.h"

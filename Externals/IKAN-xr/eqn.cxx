@@ -29,7 +29,6 @@
   MODIFICATIONS.
 
  */
-#include "stdafx.h"
 #include "eqn.h"
 
 

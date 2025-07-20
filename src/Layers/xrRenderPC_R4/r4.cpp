@@ -1032,7 +1032,7 @@ static HRESULT create_shader(
 	u32 const buffer_size,
 	LPCSTR const file_name,
 	void*& result,
-	bool const disasm
+	bool const doDisasm
 )
 {
 	HRESULT _result = E_FAIL;
@@ -1200,22 +1200,22 @@ static HRESULT create_shader(
 		//	}
 	else if (pTarget[0] == 'c')
 	{
-		_result = create_shader(pTarget, buffer, buffer_size, file_name, (SCS*&)result, disasm);
+		_result = create_shader(pTarget, buffer, buffer_size, file_name, (SCS*&)result, doDisasm);
 	}
 	else if (pTarget[0] == 'h')
 	{
-		_result = create_shader(pTarget, buffer, buffer_size, file_name, (SHS*&)result, disasm);
+		_result = create_shader(pTarget, buffer, buffer_size, file_name, (SHS*&)result, doDisasm);
 	}
 	else if (pTarget[0] == 'd')
 	{
-		_result = create_shader(pTarget, buffer, buffer_size, file_name, (SDS*&)result, disasm);
+		_result = create_shader(pTarget, buffer, buffer_size, file_name, (SDS*&)result, doDisasm);
 	}
 	else
 	{
 		NODEFAULT;
 	}
 
-	if (disasm)
+	if (doDisasm)
 	{
 		ID3DBlob* disasm = 0;
 		D3DDisassemble(buffer, buffer_size, FALSE, 0, &disasm);

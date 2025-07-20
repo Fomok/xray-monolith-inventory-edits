@@ -1071,13 +1071,13 @@ void CScriptGameObject::set_color_animator(LPCSTR name, bool bFlicker, int flick
 	CTorch* torch = smart_cast<CTorch*>(&object());
 	if (torch)
 	{
-		torch->SetLanim(name, bFlicker, flickerChance, flickerDelay, framerate);
+		torch->SetLanim(name, bFlicker, flickerChance, flickerDelay, (float)framerate);
 		return;
 	}
 
 	CFlashlight* flashlight = smart_cast<CFlashlight*>(&object());
 	if (flashlight)
-		flashlight->SetLanim(name, bFlicker, flickerChance, flickerDelay, framerate);
+		flashlight->SetLanim(name, bFlicker, flickerChance, flickerDelay, (float)framerate);
 }
 
 void CScriptGameObject::reset_color_animator()
@@ -1693,7 +1693,7 @@ void CScriptGameObject::SetBoneVisible(LPCSTR bone_name, bool bVisibility, bool 
 	if (bone_id == BI_NONE)
 		return;
 
-	if (bVisibility != k->LL_GetBoneVisible(bone_id))
+	if (bVisibility != (bool)k->LL_GetBoneVisible(bone_id))
 		k->LL_SetBoneVisible(bone_id, bVisibility, bRecursive);
 
 	return;
@@ -1898,7 +1898,7 @@ u8 CScriptGameObject::GetRestrictionType()
 	if (restr)
 		return restr->m_space_restrictor_type;
 
-	return (-1);
+	return 0;
 }
 
 void CScriptGameObject::SetRestrictionType(u8 typ)

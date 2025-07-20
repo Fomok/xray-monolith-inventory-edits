@@ -46,12 +46,26 @@ target_include_directories(CxImage
   ${CMAKE_CURRENT_SOURCE_DIR}/../cximage-git/zlib
 )
 
-if(MSVC)
-  target_compile_definitions(CxImage
-    PUBLIC
-    JAS_WIN_MSVC_BUILD
-  )
-endif()
+target_compile_options(CxImage
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4324>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4457>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4611>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4702>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4996>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd5033>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-switch>
+)
+
+target_compile_definitions(CxImage
+  PUBLIC
+  $<$<CXX_COMPILER_ID:MSVC>:JAS_WIN_MSVC_BUILD>
+  _CRT_SECURE_NO_WARNINGS
+)
 
 target_link_libraries(CxImage
   PRIVATE

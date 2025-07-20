@@ -72,7 +72,7 @@ extern ENGINE_API BOOL	g_bootComplete;
 extern CUISequencer* g_tutorial;
 extern CUISequencer* g_tutorial2;
 
-float g_cl_lvInterp = 0.1;
+float g_cl_lvInterp = 0.1f;
 u32 lvInterpSteps = 0;
 
 #ifdef SPAWN_ANTIFREEZE

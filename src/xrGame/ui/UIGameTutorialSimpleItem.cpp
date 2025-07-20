@@ -87,13 +87,13 @@ void CUISequenceSimpleItem::Load(CUIXml* xml, int idx)
 
 	int actions_count = xml->GetNodesNum(0, 0, "action");
 	m_actions.resize(actions_count);
-	for (int idx = 0; idx < actions_count; ++idx)
+	for (int i = 0; i < actions_count; ++i)
 	{
-		SActionItem& itm = m_actions[idx];
-		LPCSTR str = xml->ReadAttrib("action", idx, "id");
+		SActionItem& itm = m_actions[i];
+		LPCSTR str = xml->ReadAttrib("action", i, "id");
 		itm.m_action = action_name_to_id(str);
-		itm.m_bfinalize = !!xml->ReadAttribInt("action", idx, "finalize", FALSE);
-		itm.m_functor = xml->Read(xml->GetLocalRoot(), "action", idx, "");
+		itm.m_bfinalize = !!xml->ReadAttribInt("action", i, "finalize", FALSE);
+		itm.m_functor = xml->Read(xml->GetLocalRoot(), "action", i, "");
 	}
 
 	//ui-components
@@ -248,19 +248,19 @@ void CUISequenceSimpleItem::Start()
 	{
 		CUIGameSP* ui_game_sp = smart_cast<CUIGameSP*>(CurrentGameUI());
 
-		if (!stricmp(m_pda_section, "pda_tasks"))
+		if (!_stricmp(m_pda_section, "pda_tasks"))
 		{
 			ui_game_sp->GetPdaMenu().SetActiveSubdialog("eptTasks");
 		}
-		else if (!stricmp(m_pda_section, "pda_ranking"))
+		else if (!_stricmp(m_pda_section, "pda_ranking"))
 		{
 			ui_game_sp->GetPdaMenu().SetActiveSubdialog("eptRanking");
 		}
-		else if (!stricmp(m_pda_section, "pda_logs"))
+		else if (!_stricmp(m_pda_section, "pda_logs"))
 		{
 			ui_game_sp->GetPdaMenu().SetActiveSubdialog("eptLogs");
 		}
-		else if (!stricmp(m_pda_section, "pda_show_second_task_wnd"))
+		else if (!_stricmp(m_pda_section, "pda_show_second_task_wnd"))
 		{
 			ui_game_sp->GetPdaMenu().Show_SecondTaskWnd(true);
 		}

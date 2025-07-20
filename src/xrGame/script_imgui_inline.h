@@ -47,12 +47,14 @@ IC void ImGui_SetNextWindowScroll(Fvector2& scroll)
 
 IC Fvector2 ImGui_GetWindowPos()
 {
-	return *(Fvector2*)&ImGui::GetWindowPos();
+	ImVec2 v = ImGui::GetWindowPos();
+	return *(Fvector2*)&v;
 }
 
 IC Fvector2 ImGui_GetWindowSize()
 {
-	return *(Fvector2*)&ImGui::GetWindowSize();
+	ImVec2 v = ImGui::GetWindowSize();
+	return *(Fvector2*)&v;
 }
 
 IC void ImGui_SetWindowPos(Fvector2& pos, ImGuiCond cond = 0)
@@ -82,7 +84,8 @@ IC void ImGui_SetScrollFromPosY(float pos)
 
 IC Fvector2 ImGui_GetCursorScreenPos()
 {
-	return *(Fvector2*)&ImGui::GetCursorScreenPos();
+	ImVec2 iv = ImGui::GetCursorScreenPos();
+	return *(Fvector2*)&iv;
 }
 
 IC void ImGui_SetCursorScreenPos(Fvector2& pos)
@@ -92,12 +95,14 @@ IC void ImGui_SetCursorScreenPos(Fvector2& pos)
 
 IC Fvector2 ImGui_GetContentRegionAvail()
 {
-	return *(Fvector2*)&ImGui::GetContentRegionAvail();
+	ImVec2 v = ImGui::GetContentRegionAvail();
+	return *(Fvector2*)&v;
 }
 
 IC Fvector2 ImGui_GetCursorPos()
 {
-	return *(Fvector2*)&ImGui::GetCursorPos();
+	ImVec2 v = ImGui::GetCursorPos();
+	return *(Fvector2*)&v;
 }
 
 IC void ImGui_SetCursorPos(Fvector2& pos)
@@ -107,7 +112,8 @@ IC void ImGui_SetCursorPos(Fvector2& pos)
 
 IC Fvector2 ImGui_GetCursorStartPos()
 {
-	return *(Fvector2*)&ImGui::GetCursorStartPos();
+	ImVec2 v = ImGui::GetCursorStartPos();
+	return *(Fvector2*)&v;
 }
 
 IC void ImGui_SameLine()
@@ -343,17 +349,20 @@ IC void ImGui_PushClipRect(Fvector2 min, Fvector2 max, bool intersect)
 
 IC Fvector2 ImGui_GetItemRectMin()
 {
-	return *(Fvector2*)&ImGui::GetItemRectMin();
+	ImVec2 v = ImGui::GetItemRectMin();
+	return *(Fvector2*)&v;
 }
 
 IC Fvector2 ImGui_GetItemRectMax()
 {
-	return *(Fvector2*)&ImGui::GetItemRectMax();
+	ImVec2 v = ImGui::GetItemRectMax();
+	return *(Fvector2*)&v;
 }
 
 IC Fvector2 ImGui_GetItemRectSize()
 {
-	return *(Fvector2*)&ImGui::GetItemRectSize();
+	ImVec2 v = ImGui::GetItemRectSize();
+	return *(Fvector2*)&v;
 }
 
 IC bool ImGui_IsKeyPressed(ImGuiKey key)
@@ -373,7 +382,8 @@ IC bool ImGui_Shortcut(ImGuiKeyChord keys)
 
 IC Fvector2 ImGui_CalcTextSize(LPCSTR text, bool hide_after_double_hash = false, float wrap_width = -1.f)
 {
-	return *(Fvector2*)&ImGui::CalcTextSize(text, 0, hide_after_double_hash, wrap_width);
+	ImVec2 v = ImGui::GetItemRectSize();
+	return *(Fvector2*)&v;
 }
 
 IC bool ImGui_IsMouseHoveringRect(Fvector2 min, Fvector2 max)
@@ -393,17 +403,20 @@ IC bool ImGui_IsMousePosValid(Fvector2 pos = {0,0})
 
 IC Fvector2 ImGui_GetMousePos()
 {
-	return *(Fvector2*)&ImGui::GetMousePos();
+	ImVec2 v = ImGui::GetMousePos();
+	return *(Fvector2*)&v;
 }
 
 IC Fvector2 ImGui_GetMousePosOnOpeningCurrentPopup()
 {
-	return *(Fvector2*)&ImGui::GetMousePosOnOpeningCurrentPopup();
+	ImVec2 v = ImGui::GetMousePosOnOpeningCurrentPopup();
+	return *(Fvector2*)&v;
 }
 
 IC Fvector2 ImGui_GetMouseDragDelta(ImGuiMouseButton button = 0, float lock_treshold = -1.f)
 {
-	return *(Fvector2*)&ImGui::GetMouseDragDelta(button, lock_treshold);
+	ImVec2 v = ImGui::GetMouseDragDelta(button, lock_treshold);
+	return *(Fvector2*)&v;
 }
 
 IC LPCSTR ImGui_GetClipboardText()

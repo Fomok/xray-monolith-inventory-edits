@@ -237,7 +237,7 @@ public:
 			accVelocity.set(0.f, 0.f, 0.f);
 
 			// demonized: add pitch variation
-			pitch_variation = 0.02 * Random.randF(-1.f, 1.f) * soundSmoothingParams::pitchVariationPower;
+			pitch_variation = 0.02f * Random.randF(-1.f, 1.f) * soundSmoothingParams::pitchVariationPower;
 		}
 
 private:
@@ -279,7 +279,7 @@ public:
 	IC virtual void update_velocity(const float dt)
 	{
 		float a = soundSmoothingParams::getTimeDeltaSmoothing();
-		int p = soundSmoothingParams::power;
+		int p = (int)soundSmoothingParams::power;
 		accVelocity.x = soundSmoothingParams::getSmoothedValue(curVelocity.x * p / dt, accVelocity.x, a);
 		accVelocity.y = soundSmoothingParams::getSmoothedValue(curVelocity.y * p / dt, accVelocity.y, a);
 		accVelocity.z = soundSmoothingParams::getSmoothedValue(curVelocity.z * p / dt, accVelocity.z, a);

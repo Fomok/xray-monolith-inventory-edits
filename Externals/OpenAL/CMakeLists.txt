@@ -251,12 +251,21 @@ target_compile_definitions(OpenAL
   AL_API=
   NOMINMAX
   RESTRICT=__restrict
+  PRIVATE
+  _CRT_SECURE_NO_WARNINGS
 )
 
 target_compile_options(OpenAL
   PRIVATE
   # Enable standards-conformance mode on MSVC
   $<$<CXX_COMPILER_ID:MSVC>:/permissive->
+  # Suppress compiler warnings
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4065>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4127>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4324>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd5030>
 )
 
 target_include_directories(OpenAL

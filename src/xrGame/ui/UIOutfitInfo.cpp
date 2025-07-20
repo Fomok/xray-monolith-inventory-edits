@@ -76,7 +76,7 @@ void CUIOutfitImmunity::InitFromXml(CUIXml& xml_doc, LPCSTR base_str, u32 hit_ty
 
 	strconcat(sizeof(buf), buf, base_str, ":", immunity_names[hit_type], ":static_value");
 	m_value.SetVisible(false);
-	m_value.SetTextOffset(UI().is_widescreen() ? 208 : 262, 0);
+	m_value.SetTextOffset(UI().is_widescreen() ? 208.f : 262.f, 0);
 	m_value.SetTextColor(color_argb(255, 170, 170, 170));
 
 	m_magnitude = xml_doc.ReadAttribFlt(buf, 0, "magnitude", 1.0f);

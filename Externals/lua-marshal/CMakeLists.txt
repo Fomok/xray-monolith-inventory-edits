@@ -25,6 +25,15 @@ target_sources(lua-marshal
   ${CMAKE_CURRENT_BINARY_DIR}/lmarshal.c
 )
 
+target_compile_options(lua-marshal
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4018>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4108>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+)
+
 target_link_libraries(lua-marshal
   PRIVATE
   LuaJIT

@@ -298,7 +298,7 @@ void CWeaponKnife::UpdateCL()
 
 	dwUpdateSounds_Frame = Device.dwFrame;
 
-	Fvector P = get_LastFP();
+	auto& P = get_LastFP();
 
 	m_sounds.SetPosition("sndShow", P);
 	m_sounds.SetPosition("sndHide", P);
@@ -749,13 +749,13 @@ void CWeaponKnife::make_hit_sort_vectors(Fvector& basis_hit_specific, float& max
 	{
 		//basis_hit_specific1.set(-1.f, 0.f, 0.f);
 		basis_hit_specific.set(0.f, 1.f, 0.f);
-		max_dist = 0.2;
+		max_dist = 0.2f;
 	}
 	else // if (m_eHitType == m_eHitType_2)
 	{
 		//basis_hit_specific1.set(0.f, -1.f, 0.f);
 		basis_hit_specific.set(1.f, 0.f, 0.f);
-		max_dist = 0.1;
+		max_dist = 0.1f;
 	}
 }
 

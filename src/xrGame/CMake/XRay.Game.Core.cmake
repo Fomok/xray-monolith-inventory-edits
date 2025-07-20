@@ -1,5 +1,10 @@
 add_module(XRay.Game.Core
   TYPE STATIC
+
+  LINKS
+  IKAN
+
+  SOURCES
   ../xrServerEntities/pch_script.cpp
   ../xrServerEntities/pch_script.h
 )

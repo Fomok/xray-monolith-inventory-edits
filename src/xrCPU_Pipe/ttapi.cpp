@@ -116,7 +116,7 @@ DWORD ttapi_Init(_processor_info* ID)
 
 	SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
 
-	DWORD i, dwNumIter;
+	DWORD dwNumIter;
 	volatile DWORD dwDummy = 1;
 	LARGE_INTEGER liFrequency, liStart, liEnd;
 
@@ -126,7 +126,7 @@ DWORD ttapi_Init(_processor_info* ID)
 	dwNumIter = 100000000;
 
 	QueryPerformanceCounter(&liStart);
-	for (i = 0; i < dwNumIter; ++i)
+	for (DWORD i = 0; i < dwNumIter; ++i)
 	{
 		if (dwDummy == 0)
 			goto process1;
@@ -143,7 +143,7 @@ process1:
 	dwNumIter = 10000000;
 
 	QueryPerformanceCounter(&liStart);
-	for (i = 0; i < dwNumIter; ++i)
+	for (DWORD i = 0; i < dwNumIter; ++i)
 	{
 		if (dwDummy == 0)
 			goto process2;

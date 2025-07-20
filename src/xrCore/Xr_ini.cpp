@@ -344,16 +344,15 @@ void CInifile::Load(IReader* F, LPCSTR path
 			return std::regex_match(InputString, std::regex(PatternString));
 		};
 
-		const auto loadFile = [&, LTXLoad](const string_path _fn, const string_path inc_path, const string_path name)
+		const auto loadFile = [&, LTXLoad](std::string _fn, std::string inc_path, std::string name)
 		{
-			if (!allow_include_func || allow_include_func(_fn))
+			if (!allow_include_func || allow_include_func(_fn.c_str()))
 			{
-				IReader* I = FS.r_open(_fn);
-				R_ASSERT3(I, "Can't find include file:", name);
+				IReader* I = FS.r_open(_fn.c_str());
+				R_ASSERT3(I, "Can't find include file:", name.c_str());
 
-				strcpy(currentFileName, name);
-
-				LTXLoad(I, inc_path, OutputData, ParentDataMap, bOverridesOnly, false);
+				name = currentFileName;
+				LTXLoad(I, inc_path.c_str(), OutputData, ParentDataMap, bOverridesOnly, false);
 
 				FS.r_close(I);
 			}
@@ -553,7 +552,7 @@ void CInifile::Load(IReader* F, LPCSTR path
 				std::string SecName = std::string(str).substr(SectionNameStartPos, strchr(str, ']') - str - SectionNameStartPos).c_str();
 				for (auto i = SecName.begin(); i != SecName.end(); ++i)
 				{
-					*i = tolower(*i);
+					*i = (char)tolower(*i);
 				}
 				Msg("[DLTX] [%s] Encountered %s, mark section to delete", m_file_name, str.GetBuffer());
 				SectionsToDelete.insert(SecName);
@@ -569,7 +568,7 @@ void CInifile::Load(IReader* F, LPCSTR path
 				std::string SecName = std::string(str).substr(SectionNameStartPos, strchr(str, ']') - str - SectionNameStartPos).c_str();
 				for (auto i = SecName.begin(); i != SecName.end(); ++i)
 				{
-					*i = tolower(*i);
+					*i = (char)tolower(*i);
 				}
 				
 				if (isOverrideSection(str)) { //Used to detect bad or unintended overrides
@@ -769,6 +768,8 @@ void CInifile::Load(IReader* F, LPCSTR path
 						case InsertType::Base:			return false;
 						case InsertType::Parent:		return IsStringDLTXDelete(sect_it->second);
 						}
+
+						_STL_UNREACHABLE;
 					}();
 
 					if (bShouldInsert)
@@ -807,13 +808,13 @@ void CInifile::Load(IReader* F, LPCSTR path
 		InsertData(&BaseData, true);
 
 		//Insert variables from parents
-		for (auto It = BaseParents->rbegin(); It != BaseParents->rend(); ++It)
+		for (auto BaseParentIt = BaseParents->rbegin(); BaseParentIt != BaseParents->rend(); ++BaseParentIt)
 		{
-			std::string ParentSectionName = *(It.base() - 1);
+			std::string ParentSectionName = *(BaseParentIt.base() - 1);
 
-			for (auto It = PreviousEvaluations->begin(); It != PreviousEvaluations->end(); ++It)
+			for (auto PrevEvalIt = PreviousEvaluations->begin(); PrevEvalIt != PreviousEvaluations->end(); ++PrevEvalIt)
 			{
-				if (ParentSectionName == *It)
+				if (ParentSectionName == *PrevEvalIt)
 				{
 					Debug.fatal(DEBUG_INFO, "Section '%s' has cyclical dependencies. Ensure that sections with parents don't inherit in a loop. Check this file and its DLTX mods: %s, mod file %s", ParentSectionName.c_str(), m_file_name, currentFileName);
 				}
@@ -894,7 +895,7 @@ void CInifile::Load(IReader* F, LPCSTR path
 						auto find_and_store_index = [](const std::vector<std::string> &items_vec, const std::string item, int &vec_index) {
 							auto it = std::find(items_vec.begin(), items_vec.end(), item);
 							if (it != items_vec.end()) {
-								vec_index = it - items_vec.begin();
+								vec_index = (int)(it - items_vec.begin());
 								return true;
 							}
 							else {

@@ -277,9 +277,9 @@ void CLocatorAPI::Register(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real
 			desc.size_real = 0;
 			desc.size_compressed = 0;
 			desc.modif = u32(-1);
-			std::pair<files_it, bool> I = m_files.insert(desc);
+			std::pair<files_it, bool> it = m_files.insert(desc);
 
-			R_ASSERT(I.second);
+			R_ASSERT(it.second);
 		}
 		xr_strcpy(temp, sizeof(temp), path);
 		if (xr_strlen(temp)) temp[xr_strlen(temp) - 1] = 0;
@@ -344,7 +344,7 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint)
 	if (A.header)
 	{
 		shared_str read_path = A.header->r_string("header", "entry_point");
-		if (0 == stricmp(read_path.c_str(), "gamedata"))
+		if (0 == _stricmp(read_path.c_str(), "gamedata"))
 		{
 			read_path = "$fs_root$";
 			PathPairIt P = pathes.find(read_path.c_str());

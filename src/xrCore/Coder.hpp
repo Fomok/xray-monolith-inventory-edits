@@ -73,7 +73,7 @@ namespace ppmd
 	{
 		while ((low ^ (low + range)) < TOP
 			|| range < BOT
-			&& ((range = -low & (BOT - 1)), 1)
+			&& ((range = low & (BOT - 1)), 1)
 		)
 		{
 			_PPMD_E_PUTC(low >> 24, stream);
@@ -125,7 +125,7 @@ namespace ppmd
 	{
 		while ((low ^ (low + range)) < TOP
 			|| range < BOT
-			&& ((range = -low & (BOT - 1)), 1)
+			&& ((range = low & (BOT - 1)), 1)
 		)
 		{
 			code = (code << 8) | _PPMD_D_GETC(stream);

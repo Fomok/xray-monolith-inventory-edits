@@ -747,7 +747,7 @@ CScriptGameObject* CScriptGameObject::get_talking_npc() {
 
 	::luabind::object staticChildren = ::luabind::newtable(ai().script_engine().lua());
 
-	for (int i = 0; i < zoomTextureWndList.size(); i++) {
+	for (u32 i = 0; i < zoomTextureWndList.size(); i++) {
 		CUIStatic* staticWnd = smart_cast<CUIStatic*>(zoomTextureWndList[i]);
 		if (!staticWnd) {
 			ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,

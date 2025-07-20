@@ -183,7 +183,7 @@ void CDetailManager::hw_Render()
 	//	Update timer
 	//	Can't use RDEVICE.fTimeDelta since it is smoothed! Don't know why, but smoothed value looks more choppy!
 	float fDelta = RDEVICE.fTimeGlobal - m_global_time_old;
-	if ((fDelta < 0) || (fDelta > 1)) fDelta = 0.03;
+	if ((fDelta < 0) || (fDelta > 1)) fDelta = 0.03f;
 	m_global_time_old = RDEVICE.fTimeGlobal;
 
 	m_time_rot_1 += (PI_MUL_2 * fDelta / swing_current.rot1);

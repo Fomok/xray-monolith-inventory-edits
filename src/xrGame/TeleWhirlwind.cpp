@@ -51,22 +51,22 @@ void CTeleWhirlwind::Load(LPCSTR section)
 
 	if (pSettings->line_exist(section, "tele_height_fixed"))
 	{
-		m_bHeightFixed = pSettings->r_bool(section, "tele_height_fixed");
+		m_bHeightFixed = (boolean)pSettings->r_bool(section, "tele_height_fixed");
 	}
 
 	if (pSettings->line_exist(section, "tele_time"))
 	{
-		m_fTeleTime = pSettings->r_u32(section, "tele_time");
+		m_fTeleTime = (float)pSettings->r_u32(section, "tele_time");
 	}
 
 	if (pSettings->line_exist(section, "tele_rotate_speed"))
 	{
-		m_fTeleRotateSpeed = pSettings->r_u32(section, "tele_rotate_speed");
+		m_fTeleRotateSpeed = (u16)pSettings->r_u32(section, "tele_rotate_speed");
 	}
 
 	if (pSettings->line_exist(section, "spawn_skeleton"))
 	{
-		m_bSpawnSkeleton = pSettings->r_bool(section, "spawn_skeleton");
+		m_bSpawnSkeleton = (boolean)pSettings->r_bool(section, "spawn_skeleton");
 	}
 
 	m_pTearingSound.create(pSettings->r_string(section, "body_tearing_sound"), st_Effect, sg_SourceType);
@@ -205,7 +205,7 @@ bool CTeleWhirlwindObject::destroy_object(const Fvector dir, float val)
 			D->Destroy(m_pTelekinesis->GetOwnerID());
 			if (IsGameTypeSingle())
 			{
-				for (auto& object : D->m_destroyed_obj_visual_names)
+				for (u32 i = 0; i < D->m_destroyed_obj_visual_names.size(); ++i)
 				{
 					m_pTelekinesis->AddImpact(dir, val * 10.f);
 				}
@@ -501,8 +501,8 @@ void CTeleTrampolinObject::raise(float step)
 	float diff = peakHeight - currentHeight;
 
 	u32 rotateSpeed = m_pTelekinesis->GetTeleRotateSpeed();
-	float timeRaisePassed = Device.dwTimeGlobal - time_raise_started;
-	float angularVelocity = clampF(timeRaisePassed * rotateSpeed, 0.f, rotateSpeed);
+	float timeRaisePassed = (float)Device.dwTimeGlobal - time_raise_started;
+	float angularVelocity = clampF(timeRaisePassed * rotateSpeed, 0.f, (float)rotateSpeed);
 
 	maxE->set_AngularVel(Fvector().set(0, angularVelocity, 0));
 
@@ -569,7 +569,7 @@ bool CTeleTrampolinObject::destroy_object(const Fvector dir, float val)
 
 		if (IsGameTypeSingle())
 		{
-			for (auto& object : D->m_destroyed_obj_visual_names)
+			for (u32 i = 0; i < D->m_destroyed_obj_visual_names.size(); ++i)
 			{
 				m_pTelekinesis->AddImpact(dir, val * 10.f);
 			}

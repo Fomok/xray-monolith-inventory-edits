@@ -9,6 +9,24 @@ target_include_directories(OpenSSL
   ${CMAKE_CURRENT_SOURCE_DIR}/openssl
 )
 
+target_compile_options(OpenSSL
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4005>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4311>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4996>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-deprecated-declarations>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-macro-redefined>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-pointer-to-int-cast>
+)
+
+target_compile_definitions(OpenSSL
+  PRIVATE
+  _CRT_SECURE_NO_WARNINGS
+)
+
 target_sources(OpenSSL
   PRIVATE
   src/asn1_lib.c

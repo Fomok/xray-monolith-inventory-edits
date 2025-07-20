@@ -498,7 +498,6 @@ void CActor::g_cl_Orientate(u32 mstate_rl, float dt)
 		}
 		else
 		{
-			CCameraBase* C = cam_Active();
 			r_torso.yaw = angle_lerp(cam_Active()->GetWorldYaw(), -old_torso_yaw, freelook_cam_control);
 			float old_pitch = cam_Active()->GetWorldPitch();
 			float new_pitch = old_pitch > 0.f ? old_pitch * .6f : old_pitch *.8f;

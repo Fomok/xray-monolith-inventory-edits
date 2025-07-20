@@ -242,7 +242,7 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags)
 		// Bone
 		u16 ID = u16(bones->size());
 		data->r_stringZ(buf, sizeof(buf));
-		strlwr(buf);
+		_strlwr(buf);
 		CBoneData* pBone = CreateBoneData(ID);
 		pBone->name = shared_str(buf);
 		pBone->child_faces.resize(children.size());
@@ -252,7 +252,7 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags)
 
 		// It's parent
 		data->r_stringZ(buf, sizeof(buf));
-		strlwr(buf);
+		_strlwr(buf);
 		L_parents.push_back(buf);
 
 		data->r(&pBone->obb, sizeof(Fobb));
@@ -563,7 +563,7 @@ void CKinematics::LL_SetBonesVisible(u64 mask)
 			bone_instances[bone_id].mTransformHidden = bone_instances[bone_id].mTransform;
 			bone_instances[bone_id].mTransform.scale(0.f, 0.f, 0.f);
 
-			u16 parent_id = LL_GetData(bone_id).GetParentID();
+			u16 parent_id = LL_GetData((u16)bone_id).GetParentID();
 			if (parent_id < LL_BoneCount() && parent_id != BI_NONE)
 				bone_instances[bone_id].mTransform.c = LL_GetBoneInstance(parent_id).mTransform.c;
 

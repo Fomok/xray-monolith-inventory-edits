@@ -29,7 +29,6 @@
   MODIFICATIONS.
 
  */
-#include "StdAfx.h"
 #include "dof7control.h"
 #include "mathTrig.h"
 

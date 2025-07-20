@@ -478,7 +478,7 @@ u32 script_attachment::PlayMotion(LPCSTR name, bool mixin, float speed)
 
 	u16 pc = k->partitions().count();
 	for (u16 pid = 0; pid < pc; ++pid)
-		CBlend* B = k->PlayCycle(pid, M2, mixin, 0, 0, 0, speed);
+		k->PlayCycle(pid, M2, mixin, 0, 0, 0, speed);
 
 	const CMotionDef* md;
 	u32 length = motion_length(M2, md, speed);
@@ -991,7 +991,7 @@ void script_attachment::SetShaderTexture(int id, LPCSTR shader, LPCSTR texture)
 
 	id--;
 
-	if (id >= 0 && children->size() > id)
+	if (id >= 0 && children->size() > (u32)id)
 		children->at(id)->SetShaderTexture(shader, texture);
 }
 
@@ -1017,6 +1017,6 @@ void script_attachment::ResetShaderTexture(int id)
 
 	id--;
 
-	if (id >= 0 && children->size() > id)
+	if (id >= 0 && children->size() > (u32)id)
 		children->at(id)->ResetShaderTexture();
 }

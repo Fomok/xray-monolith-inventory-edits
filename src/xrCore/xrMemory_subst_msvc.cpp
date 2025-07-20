@@ -224,15 +224,15 @@ void* xrMemory::mem_realloc(void* P, size_t size
 #ifdef DEBUG_MEMORY_MANAGER
     if (mem_initialized) debug_cs.Enter();
 #endif // DEBUG_MEMORY_MANAGER
-	u32 p_current = get_header(P);
+	u32 i_current = get_header(P);
 	// Igor: Reserve 1 byte for xrMemory header
-	u32 p_new = get_pool(1 + size + (debug_mode ? 4 : 0));
+	u32 i_new = get_pool(1 + size + (debug_mode ? 4 : 0));
 	//u32 p_new = get_pool (size+(debug_mode?4:0));
 	u32 p_mode;
 
-	if (mem_generic == p_current)
+	if (mem_generic == i_current)
 	{
-		if (p_new < p_current) p_mode = 2;
+		if (i_new < i_current) p_mode = 2;
 		else p_mode = 0;
 	}
 	else p_mode = 1;
@@ -266,8 +266,8 @@ void* xrMemory::mem_realloc(void* P, size_t size
 	else if (1 == p_mode)
 	{
 		// pooled realloc
-		R_ASSERT2(p_current < mem_pools_count, "Memory corruption");
-		u32 s_current = mem_pools[p_current].get_element();
+		R_ASSERT2(i_current < mem_pools_count, "Memory corruption");
+		u32 s_current = mem_pools[i_current].get_element();
 		u32 s_dest = (u32)size;
 		void* p_old = P;
 

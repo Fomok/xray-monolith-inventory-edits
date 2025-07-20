@@ -499,7 +499,7 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 			ColorizeItem(itm, !CanMoveToPartner(*itb));
 	}
 
-	for (int i = 0; i < m_sort_kinds.size(); i++)
+	for (u32 i = 0; i < m_sort_kinds.size(); i++)
 	{
 		if (0 == xr_strcmp(m_sort_kinds[i], "s_all"))
 			m_sort_buttons.at(i)->Enable(false);
@@ -515,8 +515,6 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 void CUIActorMenu::FilterActorBagList(int mode)
 {
 	m_pInventoryBagList->ClearAll(true);
-
-	CUIDragDropListEx* templist = NULL;
 
 	TIItemContainer ruck_list;
 	ruck_list = m_pActorInvOwner->inventory().m_ruck;
@@ -565,7 +563,7 @@ void CUIActorMenu::sort_button_callback(CUIWindow* w, void* d)
 		return;
 
 	xr_string buttonName = w->WindowName().c_str();
-	int buttonNum = atoi(buttonName.substr(16, 99).c_str());
+	u32 buttonNum = atoi(buttonName.substr(16, 99).c_str());
 
 	if (buttonNum > m_sort_buttons.size())
 		return;
@@ -578,18 +576,20 @@ void CUIActorMenu::sort_button_callback(CUIWindow* w, void* d)
 
 int CUIActorMenu::current_sort_mode()
 {
-	for (int i = 0; i < m_sort_buttons.size(); i++)
+	for (u32 i = 0; i < m_sort_buttons.size(); i++)
 	{
 		if (!m_sort_buttons.at(i)->IsEnabled())
 		{
 			return i;
 		}
 	}
+
+	return -1;
 }
 
 void CUIActorMenu::SelectInventoryTab(int tab)
 {
-	for (int i = 0; i < m_sort_buttons.size(); i++)
+	for (u32 i = 0; i < m_sort_buttons.size(); i++)
 	{
 		m_sort_buttons.at(i)->Enable(true);
 	}
@@ -1806,8 +1806,8 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
 		}
 	case INVENTORY_DROP_ACTION:
 		{
-			void* d = m_UIPropertiesBox->GetClickedItem()->GetData();
-			if (d == (void*)33)
+			void* data = m_UIPropertiesBox->GetClickedItem()->GetData();
+			if (data == (void*)33)
 			{
 				DropAllCurrentItem();
 			}

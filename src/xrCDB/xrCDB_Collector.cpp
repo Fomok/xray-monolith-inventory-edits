@@ -162,23 +162,24 @@ namespace CDB
 		dest.assign(edge_count, u32(-1));
 
 		{
-			edge *I = edges, *J;
-			edge* E = edges + edge_count;
-			for (; I != E; ++I)
+			edge *ea = edges;
+			edge *eb;
+			edge* ec = edges + edge_count;
+			for (; ea != ec; ++ea)
 			{
-				if (I + 1 == E)
+				if (ea + 1 == ec)
 					continue;
 
-				J = I + 1;
+				eb = ea + 1;
 
-				if ((*I).vertex_id0 != (*J).vertex_id0)
+				if ((*ea).vertex_id0 != (*eb).vertex_id0)
 					continue;
 
-				if ((*I).vertex_id1 != (*J).vertex_id1)
+				if ((*ea).vertex_id1 != (*eb).vertex_id1)
 					continue;
 
-				dest[(*I).face_id * 3 + (*I).edge_id] = (*J).face_id;
-				dest[(*J).face_id * 3 + (*J).edge_id] = (*I).face_id;
+				dest[(*ea).face_id * 3 + (*ea).edge_id] = (*eb).face_id;
+				dest[(*eb).face_id * 3 + (*eb).edge_id] = (*ea).face_id;
 			}
 		}
 #	if 0

@@ -45,7 +45,7 @@ void CBlender_LaEmB::Compile(CBlender_Compile& C)
 {
 	IBlender::Compile(C);
 
-	BOOL bConstant = (0 != stricmp(oT2_const, "$null"));
+	BOOL bConstant = (0 != _stricmp(oT2_const, "$null"));
 	if (C.bEditor)
 	{
 		if (bConstant) compile_EDc(C);

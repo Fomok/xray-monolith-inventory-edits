@@ -1056,7 +1056,7 @@ void game_sv_mp::OnVoteStart(LPCSTR VoteCommand, ClientID sender)
 	m_bVotingReal = false;
 	while (votecommands[i].command)
 	{
-		if (!stricmp(votecommands[i].name, CommandName))
+		if (!_stricmp(votecommands[i].name, CommandName))
 		{
 			m_bVotingReal = true;
 			if (!IsVotingEnabled(votecommands[i].flag))
@@ -1077,7 +1077,7 @@ void game_sv_mp::OnVoteStart(LPCSTR VoteCommand, ClientID sender)
 	m_uVoteStartTime = CurTime;
 	if (m_bVotingReal)
 	{
-		if (!stricmp(votecommands[i].name, "changeweather"))
+		if (!_stricmp(votecommands[i].name, "changeweather"))
 		{
 			string256 WeatherTime = "", WeatherName = "";
 			sscanf(CommandParams, "%255s %255s", WeatherName, WeatherTime);
@@ -1085,13 +1085,13 @@ void game_sv_mp::OnVoteStart(LPCSTR VoteCommand, ClientID sender)
 			m_pVoteCommand.printf("%s %s", votecommands[i].command, WeatherTime);
 			xr_sprintf(resVoteCommand, "%s %s", votecommands[i].name, WeatherName);
 		}
-		else if (!stricmp(votecommands[i].name, "changemap"))
+		else if (!_stricmp(votecommands[i].name, "changemap"))
 		{
 			string256 LevelName;
 			string256 LevelVersion;
 			sscanf_s(CommandParams, "%255s %255s",
-			         LevelName, sizeof(LevelName),
-			         LevelVersion, sizeof(LevelVersion)
+			         LevelName, (unsigned int)sizeof(LevelName),
+			         LevelVersion, (unsigned int)sizeof(LevelVersion)
 			);
 #ifdef DEBUG
 			Msg("--- Starting vote for changing level to: %s[%s]", LevelName, LevelVersion);
@@ -1109,7 +1109,7 @@ void game_sv_mp::OnVoteStart(LPCSTR VoteCommand, ClientID sender)
 			           LevelVersion
 			);
 		}
-		else if (!stricmp(votecommands[i].name, "kick"))
+		else if (!_stricmp(votecommands[i].name, "kick"))
 		{
 			SearcherClientByName tmp_predicate(CommandParams);
 			IClient* tmp_client = m_server->FindClient(tmp_predicate);
@@ -1123,7 +1123,7 @@ void game_sv_mp::OnVoteStart(LPCSTR VoteCommand, ClientID sender)
 			}
 			xr_strcpy(resVoteCommand, VoteCommand);
 		}
-		else if (!stricmp(votecommands[i].name, "ban"))
+		else if (!_stricmp(votecommands[i].name, "ban"))
 		{
 			string256 tmp_victim_name;
 			s32 ban_time = ExcludeBanTimeFromVoteStr(CommandParams, tmp_victim_name, sizeof(tmp_victim_name));
@@ -1368,7 +1368,7 @@ void game_sv_mp::SetPlayersDefItems(game_PlayerState* ps)
 	char tmp[5];
 	for (int i = 1; i <= ps->rank; i++)
 	{
-		strconcat(sizeof(RankStr), RankStr, "rank_", itoa(i, tmp, 10));
+		strconcat(sizeof(RankStr), RankStr, "rank_", _itoa(i, tmp, 10));
 		if (!pSettings->section_exist(RankStr)) continue;
 		for (u32 it = 0; it < ps->pItemList.size(); it++)
 		{
@@ -1453,8 +1453,6 @@ void game_sv_mp::OnPlayerKilled(NET_Packet P)
 
 	if (!ps_killed)
 	{
-		CEntity* entity = smart_cast<CEntity*>(Level().Objects.net_Find(KilledID));
-
 #ifndef MASTER_GOLD
 		Msg("! ERROR:  killed entity is null ! (entitty [%d][%s]), killer id [%d][%s], Frame [%d]",
 			KilledID, entity ? entity->cName().c_str() : "unknown",
@@ -2328,11 +2326,11 @@ void game_sv_mp::OnPlayerChangeName(NET_Packet& P, ClientID sender)
 	{
 		Msg("Player \"%s\" try to change name on \"%s\" at public server.", ps->getName(), NewName);
 
-		NET_Packet P;
-		GenerateGameMessage(P);
-		P.w_u32(GAME_EVENT_SERVER_STRING_MESSAGE);
-		P.w_stringZ("Server is public. Can\'t change player name!");
-		m_server->SendTo(sender, P);
+		NET_Packet packet;
+		GenerateGameMessage(packet);
+		packet.w_u32(GAME_EVENT_SERVER_STRING_MESSAGE);
+		packet.w_stringZ("Server is public. Can\'t change player name!");
+		m_server->SendTo(sender, packet);
 		return;
 	}
 
@@ -2343,15 +2341,15 @@ void game_sv_mp::OnPlayerChangeName(NET_Packet& P, ClientID sender)
 
 	if (pClient->owner)
 	{
-		NET_Packet P;
-		GenerateGameMessage(P);
-		P.w_u32(GAME_EVENT_PLAYER_NAME);
-		P.w_u16(pClient->owner->ID);
-		P.w_s16(ps->team);
-		P.w_stringZ(old_name.c_str());
-		P.w_stringZ(ps->getName());
+		NET_Packet packet;
+		GenerateGameMessage(packet);
+		packet.w_u32(GAME_EVENT_PLAYER_NAME);
+		packet.w_u16(pClient->owner->ID);
+		packet.w_s16(ps->team);
+		packet.w_stringZ(old_name.c_str());
+		packet.w_stringZ(ps->getName());
 		//---------------------------------------------------
-		real_sender tmp_functor(m_server, &P);
+		real_sender tmp_functor(m_server, &packet);
 		m_server->ForEachClientDoSender(tmp_functor);
 		//---------------------------------------------------
 		pClient->owner->set_name_replace(ps->getName());

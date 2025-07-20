@@ -252,7 +252,7 @@ void CWeaponMagazinedWGrenade::PerformSwitchGL()
 
 void CWeaponMagazinedWGrenade::SetAmmoElapsed2(int ammo_count)
 {
-	iAmmoElapsed2 = ammo_count;
+	iAmmoElapsed2 = (u8)ammo_count;
 
 	u32 uAmmo = u32(iAmmoElapsed2);
 
@@ -1009,10 +1009,10 @@ bool CWeaponMagazinedWGrenade::TryPlayAnimBore()
 	return false;
 }
 
-void CWeaponMagazinedWGrenade::UpdateSounds()
+void CWeaponMagazinedWGrenade::UpdateSoundsPositionsImpl()
 {
-	inherited::UpdateSounds();
-	Fvector P = get_LastFP();
+	inherited::UpdateSoundsPositionsImpl();
+	auto& P = get_LastFP();
 	m_sounds.SetPosition("sndShotG", P);
 	m_sounds.SetPosition("sndReloadG", P);
 	m_sounds.SetPosition("sndSwitch", P);
@@ -1088,9 +1088,6 @@ bool CWeaponMagazinedWGrenade::IsNecessaryItem(const shared_str& item_sect)
 
 u8 CWeaponMagazinedWGrenade::GetCurrentHudOffsetIdx()
 {
-	bool b_aiming = ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor <= 1.f) ||
-		(!IsZoomed() && m_zoom_params.m_fZoomRotationFactor > 0.f));
-
 	if (Actor()->is_safemode())
 		return 4;
 	else if (!IsZoomed())

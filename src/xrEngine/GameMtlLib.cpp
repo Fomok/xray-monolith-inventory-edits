@@ -164,7 +164,7 @@ void CGameMtlLibrary::Load()
 			if (materialsLtx->line_exist(M->m_Name, "flag_injurious"))			M->Flags.set(SGameMtl::flInjurious, materialsLtx->r_bool(M->m_Name, "flag_injurious"));
 			if (materialsLtx->line_exist(M->m_Name, "flag_shootable"))			M->Flags.set(SGameMtl::flShootable, materialsLtx->r_bool(M->m_Name, "flag_shootable"));
 			if (materialsLtx->line_exist(M->m_Name, "flag_transparent"))		M->Flags.set(SGameMtl::flTransparent, materialsLtx->r_bool(M->m_Name, "flag_transparent"));
-			if (materialsLtx->line_exist(M->m_Name, "flag_slowdown"))			M->Flags.set(SGameMtl::flSlowDown, materialsLtx->r_bool(M->m_Name, "flag_slowdown"));
+			if (materialsLtx->line_exist(M->m_Name, "flag_slowdown"))			M->Flags.set((u32)SGameMtl::flSlowDown, materialsLtx->r_bool(M->m_Name, "flag_slowdown"));
 
 			if (materialsLtx->line_exist(M->m_Name, "friction"))				M->fPHFriction = materialsLtx->r_float(M->m_Name, "friction");
 			if (materialsLtx->line_exist(M->m_Name, "damping"))					M->fPHDamping = materialsLtx->r_float(M->m_Name, "damping");

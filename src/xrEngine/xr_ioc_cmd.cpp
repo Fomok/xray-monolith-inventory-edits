@@ -340,7 +340,7 @@ class CCC_Start : public IConsole_Command
 	{
 		string4096 out;
 		xr_strcpy(out, sizeof(out), str);
-		strlwr(str);
+		_strlwr(str);
 
 		LPCSTR name_str = "name=";
 		LPCSTR name1 = strstr(str, name_str);
@@ -384,7 +384,7 @@ public:
 		parse(op_client, args, "client"); // 2. client
 		parse(op_demo, args, "demo"); // 3. demo
 
-		strlwr(op_server);
+		_strlwr(op_server);
 		protect_Name_strlwr(op_client);
 
 		if (!op_client[0] && strstr(op_server, "single"))
@@ -718,7 +718,7 @@ public:
 		// 4 - r3
 		LPCSTR renderer_name = "";
 		for (int i = 0; vid_quality_token[i].name; i++)
-			if (i == renderer_value)
+			if ((u32)i == renderer_value)
 				renderer_name = vid_quality_token[i].name;
 
 		bool isR2 = strcmp("renderer_r2a", renderer_name) == 0;
@@ -942,7 +942,7 @@ float scope_brightness = 1.0f;
 float scope_radius = 0.f;
 float scope_fog_radius = 1.25f;
 float scope_fog_sharp = 4.0f;
-int scope_2dtexactive = 0.0;
+int scope_2dtexactive = 0;
 Fvector3 ssfx_wetness_multiplier = Fvector3().set(1.0f, 0.3f, 0.0f);
 
 void CCC_Register()

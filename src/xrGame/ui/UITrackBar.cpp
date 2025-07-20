@@ -191,7 +191,7 @@ void CUITrackBar::SetFValue(float f)
 	if (m_b_is_float)
 		m_f_val = f;
 	else
-		m_f_val = iFloor(f);
+		m_f_val = (float)iFloor(f);
 	
 	UpdatePos();
 }
