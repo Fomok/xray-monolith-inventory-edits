@@ -4,6 +4,8 @@
 
 //---------------------------------------------------------------------------
 
+#pragma pack(push, 8)
+
 class ListItem
 {
 	friend class CListHelper;
@@ -53,4 +55,5 @@ public:
 
 DEFINE_VECTOR(ListItem*, ListItemsVec, ListItemsIt);
 //---------------------------------------------------------------------------
+#pragma pack(pop)
 #endif

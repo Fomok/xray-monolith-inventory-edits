@@ -10,7 +10,7 @@
 #	include "ElTree.hpp"
 #endif
 
-#pragma pack( push,1 )
+#pragma pack(push, 8)
 
 //---------------------------------------------------------------------------
 enum EPropType
