@@ -2,20 +2,18 @@
 #define xrstringH
 #pragma once
 
-#pragma pack(push,4)
+#pragma pack(push,8)
 //////////////////////////////////////////////////////////////////////////
 typedef const char* str_c;
 
 //////////////////////////////////////////////////////////////////////////
-#pragma warning(push)
-#pragma warning(disable : 4200)
 struct XRCORE_API str_value
 {
 	u32 dwReference;
 	u32 dwLength;
 	u32 dwCRC;
 	str_value* next;
-	char value[];
+	char value[1];
 };
 
 struct XRCORE_API str_value_cmp
@@ -28,8 +26,6 @@ struct XRCORE_API str_hash_function
 {
 	IC u32 operator ()(str_value const* const value) const { return value->dwCRC; };
 };
-
-#pragma warning(pop)
 
 struct str_container_impl;
 class IWriter;

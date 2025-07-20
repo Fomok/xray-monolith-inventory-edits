@@ -178,7 +178,7 @@ int _cpuid(_processor_info* pinfo)
 
 	// All logical processors
 	pinfo->n_threads = logicalProcessorCount;
-	pinfo->affinity_mask = pa_mask_save;
+	pinfo->affinity_mask = (unsigned int)pa_mask_save;
 	pinfo->n_cores = processorCoreCount;
 
 	return pinfo->feature;
