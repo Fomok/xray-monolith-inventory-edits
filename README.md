@@ -313,6 +313,10 @@ This behaviour can be customized by setting the following variables in your fork
 - `TARGET`
 
 ## Changelog
+**2025.07.20**
+* Fixed flickering bones when using `mt_update_weapon_sounds`
+* VodoXleb: Callback for GAME path build fail (https://github.com/themrdemonized/xray-monolith/pull/301)
+
 **2025.07.19**
 * Optimizations
   * Updates to weapon sound positions moved to separate frame, can be toggled with `mt_update_weapon_sounds` cvar, default on. Slight performance gain depending on the amount of weapon game objects
