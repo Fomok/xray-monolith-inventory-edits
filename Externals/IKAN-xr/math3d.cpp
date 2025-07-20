@@ -29,7 +29,6 @@
   MODIFICATIONS.
 
  */
-#include "StdAfx.h"
 #include "math3d.h"
 
 #ifndef JACK

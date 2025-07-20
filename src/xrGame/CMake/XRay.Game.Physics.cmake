@@ -97,15 +97,7 @@ add_module(XRay.Game.Physics.Hit
 
 add_module(XRay.Game.Physics.IK
   SOURCES
-  ik/aint.cxx
-  ik/Dof7control.cpp
-  ik/eqn.cxx
-  ik/eulersolver.cxx
   ik/IKLimb.cpp
-  ik/jtlimits.cxx
-  ik/limb.cxx
-  ik/math3d.cpp
-  ik/mathTrig.cpp
   ik_anim_state.cpp
   ik_calculate_data.cpp
   ik_dbg_matrix.cpp
@@ -113,15 +105,7 @@ add_module(XRay.Game.Physics.IK
   ik_limb_state.cpp
   ik_object_shift.cpp
 
-  ik/aint.h
-  ik/Dof7control.h
-  ik/eqn.h
-  ik/eulersolver.h
   ik/IKLimb.h
-  ik/jtlimits.h
-  ik/limb.h
-  ik/math3d.h
-  ik/mathTrig.h
   ik_anim_state.h
   ik_calculate_data.h
   ik_calculate_state.h

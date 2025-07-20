@@ -31,7 +31,6 @@
  */
 
 
-#include "stdafx.h"
 #include "aint.h"
 #include "jtlimits.h"
 

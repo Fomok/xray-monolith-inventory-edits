@@ -11,6 +11,7 @@ add_module(XRay.Game
 
   LINKS
   CxImage
+  IKAN
   XRay.Collision
   XRay.Core
   XRay.Core.Crypto
