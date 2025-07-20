@@ -39,9 +39,9 @@ imotion_position::imotion_position():
 {
 };
 
+#ifdef	DEBUG
 static void interactive_motion_diag(LPCSTR message, const CBlend& b, CPhysicsShell* s, float time_left)
 {
-#ifdef	DEBUG
 	if(!death_anim_debug)
 		return;
 	const MotionID & m = b.motionID;
@@ -53,8 +53,8 @@ static void interactive_motion_diag(LPCSTR message, const CBlend& b, CPhysicsShe
 	VERIFY( O );
 	LPCSTR motion_name = KA->LL_MotionDefName_dbg( m ).first;
 	Msg( "death anims - interactive_motion:- %s, motion: %s, blend time %f , total blend time %f , time left: %f , obj: %s, model:  %s ", message, motion_name, b.timeCurrent, b.timeTotal, time_left, O->cName().c_str(), O->cNameVisual().c_str());
-#endif
 }
+#endif
 
 void imotion_position::interactive_motion_diagnostic(LPCSTR message)
 {

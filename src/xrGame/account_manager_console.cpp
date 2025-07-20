@@ -108,6 +108,7 @@ void CCC_GameSpyLogout::Execute(LPCSTR args)
 	//tmp_lmngr->logout();
 }
 
+/*
 static char const* print_time(time_t const& src_time, string64& dest_time)
 {
 	tm* tmp_tm = _localtime64(&src_time);
@@ -122,6 +123,7 @@ static char const* print_time(time_t const& src_time, string64& dest_time)
 	);
 	return dest_time;
 }
+*/
 
 void CCC_GameSpyPrintProfile::Execute(LPCSTR args)
 {

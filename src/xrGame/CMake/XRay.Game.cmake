@@ -5,9 +5,27 @@ add_module(XRay.Game
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 
-  PRECOMPILES stdafx.h
+  PRECOMPILES
+  ../xrEngine/stdafx.h
+
+  [["DPlay/dplay8.h"]]
+
+  ../build_config_defines.h
+
+  macros.h
+
+  [["gamefont.h"]]
+  [["xr_object.h"]]
+  [["igame_level.h"]]
+  [["xrPhysics.h"]]
+  [["smart_cast.h"]]
   
-  DEFINES XRGAME_EXPORTS
+  DEFINES
+  GP_EMAIL_LEN=128
+  GP_NICK_LEN=32
+  GP_UNIQUENICK_LEN=32
+  GP_PASSWORD_LEN=32
+  XRGAME_EXPORTS
 
   LINKS
   CxImage
