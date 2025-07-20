@@ -16,6 +16,11 @@ target_sources(XRay.Engine.Main
   dpi-aware.manifest
 )
 
+target_precompile_headers(XRay.Engine.Main
+  INTERFACE
+  stdafx.h
+)
+
 target_link_libraries(XRay.Engine.Main
   INTERFACE
   discord
