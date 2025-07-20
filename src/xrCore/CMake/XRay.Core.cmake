@@ -1,16 +1,18 @@
 add_module(XRay.Core
   TYPE STATIC
-  
-  PRECOMPILES stdafx.h
+
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}/..
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
   PURE_ALLOC
   XRCORE_EXPORTS
   PORTABLE_BUGSLAYERUTIL
-
-  INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}/..
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  
+  PRECOMPILES
+  xrCore.h
+  xrCore_platform.h
 
   LINKS
   DxErr
@@ -26,7 +28,6 @@ add_module(XRay.Core
   xrCore.cpp
   
   FTimer.h
-  stdafx.h
   xrCore.h
   xrCore_platform.h
   
