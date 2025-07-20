@@ -22,6 +22,8 @@ set(XRAY_COMPILER_FLAGS
     /MD
     # Use full paths in diagnostics
     /FC
+    # Suppress 'Use /EHsc' warning
+    /wd4530
 )
 
 # Debug flags

@@ -265,7 +265,6 @@ target_compile_options(OpenAL
   $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4324>
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4530>
   $<$<CXX_COMPILER_ID:MSVC>:/wd5030>
 )
 
