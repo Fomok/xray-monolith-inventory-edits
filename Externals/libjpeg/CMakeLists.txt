@@ -106,6 +106,7 @@ target_include_directories(libjpeg
 
 target_compile_options(libjpeg
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4005>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4013>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
