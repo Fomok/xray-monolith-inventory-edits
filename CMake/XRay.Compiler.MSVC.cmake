@@ -79,6 +79,8 @@ set(XRAY_LINKER_FLAGS
     /PDBPAGESIZE:16384
     # Treat warnings as errors
     /WX
+    # Disable multiply-defined symbol warnings (libjpeg / cximage)
+    /ignore:4099
 )
 
 # Debug linker options
