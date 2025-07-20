@@ -1,9 +1,8 @@
 add_module(XRay.Physics
   TYPE STATIC
-  
-  PRECOMPILES stdafx.h
 
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
   loki
@@ -12,6 +11,19 @@ add_module(XRay.Physics
   XRay.Collision
   XRay.Engine
   XRay.Render.API
+  XRay.Sound
+
+  PRECOMPILES
+  [["xrCore.h"]]
+  [["xrCDB.h"]]
+  [["sound.h"]]
+  [["xrAPI.h"]]
+
+  $<$<CONFIG:DEBUG>:[["d3d9types.h"]]>
+
+  xrPhysics.h
+  smart_cast.h
+  gm_library.h
 
   SOURCES
   console_vars.cpp
@@ -30,6 +42,7 @@ add_module(XRay.Physics
   ode_redefine.h
   PhysicsCommon.h
 )
+
 
 add_module(XRay.Physics.ActivationBox
   SOURCES
