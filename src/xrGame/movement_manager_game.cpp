@@ -22,7 +22,7 @@
 #include "level_path_builder.h"
 #include "detail_path_builder.h"
 #include "mt_config.h"
-#include "../../script_game_object.h"
+#include "script_game_object.h"
 
 void CMovementManager::show_game_path_info()
 {

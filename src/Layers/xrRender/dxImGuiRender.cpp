@@ -19,7 +19,7 @@ void dxImGuiRender::Copy(IImGuiRender& _in)
 void dxImGuiRender::SetState(ImDrawData* data)
 {
 #if defined(USE_DX11) || defined(USE_DX10)
-    D3D_VIEWPORT VP = { 0, 0, (UINT)data->DisplaySize.x, (UINT)data->DisplaySize.y, 0, 1.f };
+    D3D_VIEWPORT VP = { 0, 0, (FLOAT)data->DisplaySize.x, (FLOAT)data->DisplaySize.y, 0, 1.f };
 #if defined(USE_DX11)
     HW.pContext->RSSetViewports(1, &VP);
 #else
