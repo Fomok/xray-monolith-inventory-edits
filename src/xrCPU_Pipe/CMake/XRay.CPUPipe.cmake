@@ -3,11 +3,29 @@ add_module(XRay.CPUPipe
   
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
-  PRECOMPILES stdafx.h
-
   LINKS
+  XRay.Core
+  XRay.Engine
   XRay.Render.API
   XRay.Collision
+
+  DEFINES
+  $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0501>
+  WIN32_LEAN_AND_MEAN
+  RENDER=1
+
+  PRECOMPILES
+  [["windows.h"]]
+  [["stdio.h"]]
+  [["intrin.h"]]
+
+  [["xrCore.h"]]
+  [["SkeletonXVertRender.h"]]
+
+  engine.h
+
+  xrCPU_Pipe.h
+  ttapi.h
 
   SOURCES
   xrCPU_Pipe.cpp
