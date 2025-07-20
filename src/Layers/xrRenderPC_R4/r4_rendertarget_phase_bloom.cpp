@@ -544,5 +544,5 @@ void CRenderTarget::phase_ssfx_bloom()
 
 
 	// Restore Viewport
-	set_viewport_size(HW.pContext, Device.dwWidth, Device.dwHeight);
+	set_viewport_size(HW.pContext, (float)Device.dwWidth, (float)Device.dwHeight);
 }
