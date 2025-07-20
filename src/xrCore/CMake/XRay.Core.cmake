@@ -14,6 +14,7 @@ add_module(XRay.Core
 
   LINKS
   DxErr
+  LZO
   optick
   StackWalker
   winmm
