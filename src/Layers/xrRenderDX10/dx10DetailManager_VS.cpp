@@ -7,7 +7,7 @@
 #include "../xrRenderDX10/dx10BufferUtils.h"
 
 // Vars to store wind prev frame data ( Motion vectors )
-static u32 prev_frame = -1;
+static u32 prev_frame = 0;
 static float prev_time = 0;
 static Fvector4	prev_dir1 = { 0, 0, 0 }, prev_dir2 = { 0, 0, 0 };
 
@@ -73,7 +73,7 @@ void CDetailManager::hw_Render()
 	//	Update timer
 	//	Can't use Device.fTimeDelta since it is smoothed! Don't know why, but smoothed value looks more choppy!
 	float fDelta = Device.fTimeGlobal - m_global_time_old;
-	if ((fDelta < 0) || (fDelta > 1)) fDelta = 0.03;
+	if ((fDelta < 0) || (fDelta > 1)) fDelta = 0.03f;
 	m_global_time_old = Device.fTimeGlobal;
 
 	m_time_rot_1 += (PI_MUL_2 * fDelta / swing_current.rot1);
@@ -159,7 +159,7 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 	// Grass benders data
 	IGame_Persistent::grass_data& GData = g_pGamePersistent->grass_shader_data;
 	Fvector4 player_pos = { 0, 0, 0, 0 };
-	int BendersQty = _min(16, ps_ssfx_grass_interactive.y + 1);
+	int BendersQty = _min(16, (s32)ps_ssfx_grass_interactive.y + 1);
 
 	// Add Player?
 	if (ps_ssfx_grass_interactive.x > 0)
