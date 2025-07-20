@@ -568,7 +568,7 @@ void CEnvironment::OnFrame()
 	float WindVel = _max(CurrentEnv->wind_velocity, ps_ssfx_wind_trees.w * 1000);
 
 	// Limit min at 200 to avoid slow-mo at extremly low speed.
-	WindVel = _max(WindVel, 200) * 0.001f;
+	WindVel = _max((s32)WindVel, 200) * 0.001f;
 
 	float WindDir = -CurrentEnv->wind_direction + PI_DIV_2;
 	Fvector2 WDir = { _cos(WindDir), _sin(WindDir) };
@@ -632,7 +632,7 @@ void CEnvironment::OnFrame()
 void CEnvironment::calculate_config_sun_dir()
 {
 	float current_time = fGameTime / (DAY_LENGTH / 24);
-	int weather_time = floor(current_time);
+	int weather_time = (int)floor(current_time);
 	float s_weight = current_time - weather_time;
 
 	float real_sun_alt, real_sun_long;

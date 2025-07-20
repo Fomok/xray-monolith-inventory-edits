@@ -386,7 +386,7 @@ void IGame_Persistent::GrassBendersUpdate(u16 id, u8& data_idx, u32& data_frame,
 
 	CFrustum& view_frust = ::Render->ViewBase;
 	u32 mask = 0xff;
-	float rad = data_idx == NULL ? 1.0 : std::max(1.0f, grass_shader_data.radius_curr[data_idx] + 0.5f);
+	float rad = data_idx == NULL ? 1.0f : std::max(1.0f, grass_shader_data.radius_curr[data_idx] + 0.5f);
 
 	// In view frustum?
 	if (!view_frust.testSphere(position, rad, mask))
@@ -431,7 +431,7 @@ void IGame_Persistent::GrassBendersAddExplosion(u16 id, Fvector position, Fvecto
 		if (grass_shader_data.anim[idx] != BENDER_ANIM_EXPLOSION)
 		{
 			// Add 99 to the ID to avoid conflicts between explosions and basic benders happening at the same time with the same ID.
-			GrassBendersSet(idx, id + 99, position, dir, fade, speed, intensity, radius, BENDER_ANIM_EXPLOSION, true);
+			GrassBendersSet((u8)idx, id + 99, position, dir, fade, speed, intensity, radius, BENDER_ANIM_EXPLOSION, true);
 			grass_shader_data.str_target[idx] = intensity;
 			break;
 		}
@@ -457,7 +457,7 @@ void IGame_Persistent::GrassBendersAddShot(u16 id, Fvector position, Fvector3 di
 		if (grass_shader_data.id[idx] == id)
 		{
 			float currentSTR = grass_shader_data.str[idx];
-			GrassBendersSet(idx, id, position, dir, fade, speed, currentSTR, radius, BENDER_ANIM_EXPLOSION, false);
+			GrassBendersSet((u8)idx, id, position, dir, fade, speed, currentSTR, radius, BENDER_ANIM_EXPLOSION, false);
 			grass_shader_data.str_target[idx] += intensity;
 			AddAt = -1;
 			break;
@@ -473,7 +473,7 @@ void IGame_Persistent::GrassBendersAddShot(u16 id, Fvector position, Fvector3 di
 	// We got an available index... Add bender at AddAt
 	if (AddAt != -1)
 	{
-		GrassBendersSet(AddAt, id, position, dir, fade, speed, 0.001f, radius, BENDER_ANIM_EXPLOSION, true);
+		GrassBendersSet((u8)AddAt, id, position, dir, fade, speed, 0.001f, radius, BENDER_ANIM_EXPLOSION, true);
 		grass_shader_data.str_target[AddAt] = intensity;
 	}
 }
@@ -513,7 +513,7 @@ void IGame_Persistent::GrassBendersUpdateAnimations()
 
 				// Remove Bender
 				if (grass_shader_data.str[idx] < 0.0f)
-					GrassBendersReset(idx);
+					GrassBendersReset((u8)idx);
 			}
 			break;
 
@@ -537,7 +537,7 @@ void IGame_Persistent::GrassBendersUpdateAnimations()
 				grass_shader_data.time[idx] += Device.fTimeDelta * grass_shader_data.speed[idx];
 
 				// Perlin Noise
-				float curve = clampr(PerlinNoise1D->GetContinious(grass_shader_data.time[idx]) + 0.5f, 0.f, 1.f) * -1.0;
+				float curve = clampr(PerlinNoise1D->GetContinious(grass_shader_data.time[idx]) + 0.5f, 0.f, 1.f) * -1.0f;
 
 				// Intensity using Perlin
 				grass_shader_data.str[idx] = curve * grass_shader_data.str_target[idx];
@@ -605,7 +605,7 @@ void IGame_Persistent::GrassBendersRemoveById(u16 id)
 	// Search by Object ID ( Used when removing benders CPHMovementControl::DestroyCharacter() )
 	for (int i = 1; i < ps_ssfx_grass_interactive.y + 1; i++)
 		if (grass_shader_data.id[i] == id)
-			GrassBendersReset(i);
+			GrassBendersReset((u8)i);
 }
 
 void IGame_Persistent::GrassBendersReset(u8 idx)
@@ -618,7 +618,7 @@ void IGame_Persistent::GrassBendersReset(u8 idx)
 void IGame_Persistent::GrassBendersSet(u8 idx, u16 id, Fvector position, Fvector3 dir, float fade, float speed, float intensity, float radius, GrassBenders_Anim anim, bool resetTime)
 {
 	// Set values
-	grass_shader_data.anim[idx] = anim;
+	grass_shader_data.anim[idx] = (s8)anim;
 	grass_shader_data.pos[idx] = position;
 	grass_shader_data.id[idx] = id;
 	grass_shader_data.radius[idx] = radius;

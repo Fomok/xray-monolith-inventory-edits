@@ -335,7 +335,7 @@ LPCSTR xr_ToUTF8(LPCSTR input, int max_length)
 	R_ASSERT3(conv_from, "[Discord RPC] Error creating UConverter!\n", std::to_string(errorCode).c_str());
 
 	std::vector<UChar> converted(strlen(input) * 2);
-	int32_t conv_len = ucnv_toUChars(conv_from, &converted[0], converted.size(), input, strlen(input), &errorCode);
+	int32_t conv_len = ucnv_toUChars(conv_from, &converted[0], (int32_t)converted.size(), input, (int32_t)strlen(input), &errorCode);
 	if (errorCode != U_ZERO_ERROR)
 	{
 		Msg("[Discord RPC] Failed to convert string! (%s)", std::to_string(errorCode).c_str());
@@ -352,7 +352,7 @@ LPCSTR xr_ToUTF8(LPCSTR input, int max_length)
 	g.resize(converted.size() * 4);
 
 	UConverter *conv_u8 = ucnv_open("UTF-8", &errorCode);
-	int32_t u8_len = ucnv_fromUChars(conv_u8, &g[0], g.size(), &converted[0], converted.size(), &errorCode);
+	int32_t u8_len = ucnv_fromUChars(conv_u8, &g[0], (int32_t)g.size(), &converted[0], (int32_t)converted.size(), &errorCode);
 	if (errorCode != U_ZERO_ERROR)
 	{
 		Msg("[Discord RPC] Failed to convert string! (%s)", std::to_string(errorCode).c_str());
@@ -1580,7 +1580,7 @@ void gen_logo_name(string_path& dest, LPCSTR level_name, int num)
 
 	string16 buff;
 	xr_strcat(dest, sizeof(dest), "_");
-	xr_strcat(dest, sizeof(dest), itoa(num + 1, buff, 10));
+	xr_strcat(dest, sizeof(dest), _itoa(num + 1, buff, 10));
 }
 
 void CApplication::Level_Set(u32 L)
@@ -1643,7 +1643,7 @@ int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
 		{
 			LPCSTR ln = A.header->r_string("header", "level_name");
 			LPCSTR lv = A.header->r_string("header", "level_ver");
-			if (0 == stricmp(ln, name) && 0 == stricmp(lv, ver))
+			if (0 == _stricmp(ln, name) && 0 == _stricmp(lv, ver))
 			{
 				FS.LoadArchive(A);
 				arch_res = true;
@@ -1658,7 +1658,7 @@ int CApplication::Level_ID(LPCSTR name, LPCSTR ver, bool bSet)
 	strconcat(sizeof(buffer), buffer, name, "\\");
 	for (u32 I = 0; I < Levels.size(); ++I)
 	{
-		if (0 == stricmp(buffer, Levels[I].folder))
+		if (0 == _stricmp(buffer, Levels[I].folder))
 		{
 			result = int(I);
 			break;
@@ -1689,7 +1689,7 @@ CInifile* CApplication::GetArchiveHeader(LPCSTR name, LPCSTR ver)
 
 		LPCSTR ln = A.header->r_string("header", "level_name");
 		LPCSTR lv = A.header->r_string("header", "level_ver");
-		if (0 == stricmp(ln, name) && 0 == stricmp(lv, ver))
+		if (0 == _stricmp(ln, name) && 0 == _stricmp(lv, ver))
 		{
 			return A.header;
 		}

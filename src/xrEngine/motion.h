@@ -79,7 +79,7 @@ public:
 		if (n)
 		{
 			xr_strcpy(tmp, n);
-			strlwr(tmp);
+			_strlwr(tmp);
 		}
 		name = tmp;
 	}

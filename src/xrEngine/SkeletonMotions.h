@@ -200,7 +200,7 @@ public:
 	u32 mem_usage() { return P[0]->mem_usage() * P.size(); }
 	void load(IKinematics* V, LPCSTR model_name);
 
-	u8 count() const { return P.size(); };
+	u8 count() const { return (u8)P.size(); };
 
 	CPartition()
 	{

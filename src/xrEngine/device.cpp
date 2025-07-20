@@ -308,7 +308,7 @@ void mt_FreezeThread(void *ptr) {
 		}
 		STOP_PROFILE;
 
-		Sleep(repeatcheck);
+		Sleep((DWORD)repeatcheck);
 	}
 }
 
@@ -385,7 +385,7 @@ void CRenderDevice::on_idle()
 	GData.prev_pos[0].set(Device.vCameraPosition.x, Device.vCameraPosition.y, Device.vCameraPosition.z, -1);
 	GData.prev_dir[0].set(0.0f, -99.0f, 0.0f, 1.0f);
 
-	for (int pBend = 1; pBend < _min(16, ps_ssfx_grass_interactive.y + 1); pBend++)
+	for (int pBend = 1; pBend < _min(16, (s32)ps_ssfx_grass_interactive.y + 1); pBend++)
 	{
 		GData.prev_pos[pBend].set(GData.pos[pBend].x, GData.pos[pBend].y, GData.pos[pBend].z, GData.radius_curr[pBend]);
 		GData.prev_dir[pBend].set(GData.dir[pBend].x, GData.dir[pBend].y, GData.dir[pBend].z, GData.str[pBend]);
