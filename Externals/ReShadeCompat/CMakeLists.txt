@@ -13,6 +13,11 @@ target_precompile_headers(ReShadeCompat
   <reshade/reshade.hpp>
 )
 
+target_compile_options(ReShadeCompat
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
+)
+
 target_compile_definitions(ReShadeCompat
   PRIVATE
   PURE_ALLOC
