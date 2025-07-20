@@ -38,6 +38,7 @@ target_compile_options(DxErr
   $<$<CXX_COMPILER_ID:MSVC>:/wd4005>
   $<$<CXX_COMPILER_ID:Clang>:-Wno-macro-redefined>
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4313>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4474>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4477>
