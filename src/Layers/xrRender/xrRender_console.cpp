@@ -351,7 +351,7 @@ float ps_r2_img_gamma = 1.0f; // r2-only
 float ps_r2_img_saturation = 1.0f; // r2-only
 Fvector ps_r2_img_cg = {.0f, .0f, .0f}; // r2-only
 
-Fvector4 ps_pp_bloom_thresh = { .7, .8f, .9f, .0f };
+Fvector4 ps_pp_bloom_thresh = { .7f, .8f, .9f, .0f };
 Fvector4 ps_pp_bloom_weight = { .33f, .33f, .33f, .0f };
 
 //debug
@@ -384,7 +384,7 @@ Fvector4 ps_s3ds_param_4 = { 0, 0, 0, 0 };
 float hud_fov_aim_factor = 0;
 
 // Screen Space Shaders Stuff
-Fvector4 ps_ssfx_floravariation = { 0.025, 0.1, 0.025, 0.05 }; // Grass Int, Grass Freq, Foliage Int, Foliage Freq ( 0.025, 0.1, 0.03, 0.05 )
+Fvector4 ps_ssfx_floravariation = { 0.025f, 0.1f, 0.025f, 0.05f }; // Grass Int, Grass Freq, Foliage Int, Foliage Freq ( 0.025, 0.1, 0.03, 0.05 )
 Fvector4 ps_ssfx_motionblur = { 6, 0, 0, 0 }; // Samples, Intensity, Only HUD, -
 Fvector4 ps_ssfx_taa = { 1, 0.5f, 0.6f, 0 }; // Enable, Jitter, Sharpness, -
 Fvector4 ps_ssfx_fog = { 8, 1.3f, 0.1f, 0 }; // Height, Density, SunColor, -
@@ -1237,18 +1237,18 @@ void xrRender_initconsole()
 
     CMD4(CCC_Float,   "r4_hdr10_whitepoint_nits", &ps_r4_hdr10_whitepoint_nits,  10.0f, 10000.0f);
     CMD4(CCC_Float,   "r4_hdr10_ui_nits", 		  &ps_r4_hdr10_ui_nits, 	     10.0f, 10000.0f);
-    CMD4(CCC_Float,   "r4_hdr10_pda_intensity",   &ps_r4_hdr10_pda_intensity,      0.1, 2);
+    CMD4(CCC_Float,   "r4_hdr10_pda_intensity",   &ps_r4_hdr10_pda_intensity,      0.1f, 2);
 	CMD4(CCC_Integer, "r4_hdr10_on", 			  &ps_r4_hdr10_on, 				     0, 1);
     CMD4(CCC_Integer, "r4_hdr10_colorspace",	  &ps_r4_hdr10_colorspace, 		     0, 2);
 
     CMD4(CCC_Integer, "r4_hdr10_tonemapper", 	  		&ps_r4_hdr10_tonemapper,      	      0, 8);
 	CMD4(CCC_Integer, "r4_hdr10_tonemap_mode",    		&ps_r4_hdr10_tonemap_mode,    	      0, 1);
-	CMD4(CCC_Float,   "r4_hdr10_exposure",        		&ps_r4_hdr10_exposure, 		  	    0.1, 30);
+	CMD4(CCC_Float,   "r4_hdr10_exposure",        		&ps_r4_hdr10_exposure, 		  	  0.1f, 30);
 	CMD4(CCC_Float,   "r4_hdr10_contrast",        		&ps_r4_hdr10_contrast, 		  	     -1, 1);
 	CMD4(CCC_Float,   "r4_hdr10_contrast_middle_gray",  &ps_r4_hdr10_contrast_middle_gray,    0, 5);
 	CMD4(CCC_Float,   "r4_hdr10_saturation", 	  		&ps_r4_hdr10_saturation,      	     -1, 1);
 	CMD4(CCC_Float,   "r4_hdr10_brightness", 			&ps_r4_hdr10_brightness,			 -1, 1);
-	CMD4(CCC_Float,   "r4_hdr10_gamma",   			    &ps_r4_hdr10_gamma,					0.1, 5);
+	CMD4(CCC_Float,   "r4_hdr10_gamma",   			    &ps_r4_hdr10_gamma,				   0.1f, 5);
 	CMD4(CCC_Float,   "r4_hdr10_ui_saturation",         &ps_r4_hdr10_ui_saturation,          -1, 1);
 
 	CMD4(CCC_Integer, "r4_hdr10_bloom_on",          &ps_r4_hdr10_bloom_on,          0, 1);
@@ -1370,7 +1370,7 @@ void xrRender_initconsole()
 
 	CMD4(CCC_Vector4, "ssfx_water", &ps_ssfx_water, Fvector4().set(1, 0, 0, 0), Fvector4().set(8, 1, 1, 0));
 	CMD4(CCC_Vector3, "ssfx_water_quality", &ps_ssfx_water_quality, Fvector3().set(0, 0, 0), Fvector3().set(4, 3, 0));
-	CMD4(CCC_Vector4, "ssfx_water_setup1", &ps_ssfx_water_setup1, Fvector4().set(0, 0, 0, 0), Fvector4().set(2, 10, 1, 0.1));
+	CMD4(CCC_Vector4, "ssfx_water_setup1", &ps_ssfx_water_setup1, Fvector4().set(0, 0, 0, 0), Fvector4().set(2, 10, 1, 0.1f));
 	CMD4(CCC_Vector4, "ssfx_water_setup2", &ps_ssfx_water_setup2, Fvector4().set(0, 0, 0, 0), Fvector4().set(1, 10, 1, 1));
 
 	CMD4(CCC_Integer, "ssfx_ssr_quality", &ps_ssfx_ssr_quality, 0, 5);
@@ -1393,8 +1393,8 @@ void xrRender_initconsole()
 	CMD4(CCC_Vector4, "ssfx_florafixes_1", &ps_ssfx_florafixes_1, Fvector4().set(0.0, 0.0, 0.0, 0.0), Fvector4().set(1.0, 1.0, 1.0, 1.0));
 	CMD4(CCC_Vector4, "ssfx_florafixes_2", &ps_ssfx_florafixes_2, Fvector4().set(0.0, 0.0, 0.0, 0.0), Fvector4().set(10.0, 1.0, 1.0, 1.0));
 
-	CMD4(CCC_Vector4, "ssfx_wetsurfaces_1", &ps_ssfx_wetsurfaces_1, Fvector4().set(0.01, 0.01, 0.01, 0.01), Fvector4().set(2.0, 2.0, 2.0, 2.0));
-	CMD4(CCC_Vector4, "ssfx_wetsurfaces_2", &ps_ssfx_wetsurfaces_2, Fvector4().set(0.01, 0.01, 0.01, 0.01), Fvector4().set(2.0, 2.0, 2.0, 2.0));
+	CMD4(CCC_Vector4, "ssfx_wetsurfaces_1", &ps_ssfx_wetsurfaces_1, Fvector4().set(0.01f, 0.01f, 0.01f, 0.01f), Fvector4().set(2.0f, 2.0f, 2.0f, 2.0f));
+	CMD4(CCC_Vector4, "ssfx_wetsurfaces_2", &ps_ssfx_wetsurfaces_2, Fvector4().set(0.01f, 0.01f, 0.01f, 0.01f), Fvector4().set(2.0f, 2.0f, 2.0f, 2.0f));
 
 	CMD4(CCC_Integer, "ssfx_is_underground", &ps_ssfx_is_underground, 0, 1);
 	CMD4(CCC_Integer, "ssfx_gloss_method", &ps_ssfx_gloss_method, 0, 1);

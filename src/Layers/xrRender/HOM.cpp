@@ -98,7 +98,7 @@ void CHOM::Load()
 	// Create RASTER-triangles
 	m_pTris = xr_alloc<occTri>(u32(CL.getTS()));
 
-	tbb::parallel_for(tbb::blocked_range<u32>(0, CL.getTS()), [&](const auto& range)
+	tbb::parallel_for(tbb::blocked_range<u32>(0, (u32)CL.getTS()), [&](const auto& range)
 	{
 		for (u32 it = range.begin(); it != range.end(); ++it)
 		{

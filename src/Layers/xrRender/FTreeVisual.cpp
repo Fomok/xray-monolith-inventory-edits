@@ -193,7 +193,7 @@ void FTreeVisual::Render(float LOD)
 		// Grass benders data ( Player + Characters )
 		IGame_Persistent::grass_data& GData = g_pGamePersistent->grass_shader_data;
 		Fvector4 player_pos = { 0, 0, 0, 0 };
-		int BendersQty = _min(16, ps_ssfx_grass_interactive.y + 1);
+		int BendersQty = _min(16, (s32)ps_ssfx_grass_interactive.y + 1);
 
 		// Add Player?
 		if (ps_ssfx_grass_interactive.x > 0)

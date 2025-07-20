@@ -385,7 +385,7 @@ void CRenderTarget::phase_ssfx_volumetric_blur()
 
 		// Draw COLOR
 		RCache.set_Element(s_ssfx_volumetric_blur->E[b % 2]);
-		RCache.set_c("blur_setup", w / 8, h / 8, pixelsize[b], pixelscale[b]);
+		RCache.set_c("blur_setup", w / 8, h / 8, (float)pixelsize[b], pixelscale[b]);
 		RCache.set_Geometry(g_combine);
 		RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
 	}
@@ -524,10 +524,10 @@ void CRenderTarget::phase_ssfx_water_waves()
 
 	// Fill vertex buffer
 	FVF::TL* pv = (FVF::TL*)RCache.Vertex.Lock(4, g_combine->vb_stride, Offset);
-	pv->set(0, h, d_Z, d_W, C, p0.x, p1.y); pv++;
+	pv->set(0, (float)h, d_Z, d_W, C, p0.x, p1.y); pv++;
 	pv->set(0, 0, d_Z, d_W, C, p0.x, p0.y); pv++;
-	pv->set(w, h, d_Z, d_W, C, p1.x, p1.y); pv++;
-	pv->set(w, 0, d_Z, d_W, C, p1.x, p0.y); pv++;
+	pv->set((float)w, (float)h, d_Z, d_W, C, p1.x, p1.y); pv++;
+	pv->set((float)w, 0, d_Z, d_W, C, p1.x, p0.y); pv++;
 	RCache.Vertex.Unlock(4, g_combine->vb_stride);
 
 	// Draw COLOR
@@ -536,7 +536,7 @@ void CRenderTarget::phase_ssfx_water_waves()
 	RCache.set_Geometry(g_combine);
 	RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
 
-	set_viewport_size(HW.pContext, w, h);
+	set_viewport_size(HW.pContext, (float)w, (float)h);
 };
 
 void CRenderTarget::phase_ssfx_sss()
@@ -641,8 +641,8 @@ void CRenderTarget::phase_ssfx_sss_ext(light_Package& LP)
 
 	float d_Z = EPS_S;
 	float d_W = 1.0f;
-	float w = Device.dwWidth;
-	float h = Device.dwHeight;
+	float w = (float)Device.dwWidth;
+	float h = (float)Device.dwHeight;
 
 	Fvector2 p0, p1;
 	p0.set(0.0f, 0.0f);
@@ -731,7 +731,7 @@ void CRenderTarget::phase_ssfx_sss_ext(light_Package& LP)
 			// Sort Distance
 			std::sort(LightsSort.begin(), LightsSort.end(), SortLights);
 
-			for (int x = 0; x < LightsSort.size(); x++)
+			for (u32 x = 0; x < LightsSort.size(); x++)
 			{
 				light* L = LightsSort[x];
 
@@ -778,7 +778,7 @@ void CRenderTarget::phase_ssfx_sss_ext(light_Package& LP)
 
 				if (CheckPackage)
 				{
-					for (int x = 0; x < LightsSort.size(); x++)
+					for (u32 x = 0; x < LightsSort.size(); x++)
 					{
 						light* L = LightsSort[x];
 

@@ -49,7 +49,7 @@ CPEDef::~CPEDef()
 
 u32 CPEDef::GetUStep()
 {
-	return m_uStep * ps_particle_update_coeff;
+	return (u32)(m_uStep * ps_particle_update_coeff);
 }
 
 float CPEDef::GetFStep()

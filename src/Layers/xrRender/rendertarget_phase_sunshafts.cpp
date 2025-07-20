@@ -117,7 +117,7 @@ void CRenderTarget::phase_sunshafts()
 	pv++;
 	RCache.Vertex.Unlock(4, g_KD->vb_stride);
 
-	params.z = 0.7;
+	params.z = 0.7f;
 
 	// Draw COLOR
 	RCache.set_Element(s_sunshafts->E[2]);
@@ -150,7 +150,7 @@ void CRenderTarget::phase_sunshafts()
 	pv++;
 	RCache.Vertex.Unlock(4, g_KD->vb_stride);
 
-	params.z = 0.3;
+	params.z = 0.3f;
 
 	// Draw COLOR
 	RCache.set_Element(s_sunshafts->E[3]);

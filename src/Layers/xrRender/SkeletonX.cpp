@@ -58,9 +58,9 @@ void CSkeletonX::_Copy(CSkeletonX* B)
 //////////////////////////////////////////////////////////////////////
 void CSkeletonX::_Render(ref_geom& hGeom, u32 vCount, u32 iOffset, u32 pCount)
 {
+#ifdef USE_DX11 //
 	Fmatrix p_WV, p_WVP;
 
-#ifdef USE_DX11 //
 	if (RImplementation.o.ssfx_motionvectors)
 	{
 		if (Device.dwFrame > Parent->CurrentFrame)

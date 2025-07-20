@@ -371,7 +371,7 @@ static class markswitch_current : public R_constant_setup
 {
 	virtual void setup(R_constant* C)
 	{
-		RCache.set_c(C, ps_markswitch_current, 0, 0, 0);
+		RCache.set_c(C, (float)ps_markswitch_current, 0, 0, 0);
 	}
 }    markswitch_current;
 
@@ -379,7 +379,7 @@ static class markswitch_count : public R_constant_setup
 {
 	virtual void setup(R_constant* C)
 	{
-		RCache.set_c(C, ps_markswitch_count, 0, 0, 0);
+		RCache.set_c(C, (float)ps_markswitch_count, 0, 0, 0);
 	}
 }    markswitch_count;
 
@@ -458,7 +458,7 @@ static class cl_heatvision_steps : public R_constant_setup
 {
 	virtual void setup(R_constant* C)
 	{
-		RCache.set_c(C, ps_r2_heatvision, heat_vision_steps.x, heat_vision_steps.y, heat_vision_steps.z);
+		RCache.set_c(C, (float)ps_r2_heatvision, heat_vision_steps.x, heat_vision_steps.y, heat_vision_steps.z);
 	}
 } binder_heatvision_params1;
 
@@ -616,7 +616,7 @@ static class cl_screen_res : public R_constant_setup
 	}
 } binder_screen_res;
 
-static class cl_screen_params : public R_constant_setup
+class cl_screen_params : public R_constant_setup
 {
 	Fvector4 result;
 
@@ -689,7 +689,7 @@ static class cl_actor_params : public R_constant_setup
 		float actorBleeding = g_pGamePersistent->actor_data.bleeding;
 		int actorHelmet = g_pGamePersistent->actor_data.helmet;
 
-		RCache.set_c(C, actorHealth, actorStamina, actorBleeding, actorHelmet);
+		RCache.set_c(C, actorHealth, actorStamina, actorBleeding, (float)actorHelmet);
 	}
 } binder_actor_data;
 
@@ -920,7 +920,7 @@ static class ssfx_is_underground : public R_constant_setup
 {
 	virtual void setup(R_constant* C)
 	{
-		RCache.set_c(C, ps_ssfx_is_underground, 0, 0, 0);
+		RCache.set_c(C, (float)ps_ssfx_is_underground, 0, 0, 0);
 	}
 }    ssfx_is_underground;
 

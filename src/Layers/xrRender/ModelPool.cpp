@@ -240,7 +240,7 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data, bool assert
 	string_path low_name;
 	VERIFY(xr_strlen(name)<sizeof(low_name));
 	xr_strcpy(low_name, name);
-	strlwr(low_name);
+	_strlwr(low_name);
 	if (strext(low_name)) *strext(low_name) = 0;
 	
 	// 0. Search POOL
@@ -286,7 +286,7 @@ dxRender_Visual* CModelPool::CreateChild(LPCSTR name, IReader* data)
 	string256 low_name;
 	VERIFY(xr_strlen(name)<256);
 	xr_strcpy(low_name, name);
-	strlwr(low_name);
+	_strlwr(low_name);
 	if (strext(low_name)) *strext(low_name) = 0;
 
 	// 1. Search for already loaded model
