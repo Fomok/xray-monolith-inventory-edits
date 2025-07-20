@@ -916,7 +916,7 @@ static HRESULT create_shader(
 	u32 const buffer_size,
 	LPCSTR const file_name,
 	void*& result,
-	bool const disasm
+	bool const doDisasm
 )
 {
 	HRESULT _result = E_FAIL;
@@ -1047,7 +1047,7 @@ static HRESULT create_shader(
 		}
 	}
 
-	if (disasm)
+	if (doDisasm)
 	{
 		ID3DBlob* disasm = 0;
 		D3DDisassemble(buffer, buffer_size, FALSE, 0, &disasm);
