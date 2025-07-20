@@ -148,9 +148,9 @@ EFC_Visible CFrustum::testSAABB(Fvector& c, float r, const float* mM, u32& test_
 			if (_abs(cls) >= r) test_mask &= ~bit; // fully - no need to test this plane
 			else
 			{
-				EFC_Visible r = AABB_OverlapPlane(planes[i], mM);
-				if (fcvFully == r) test_mask &= ~bit; // fully - no need to test this plane
-				else if (fcvNone == r)
+				EFC_Visible vis = AABB_OverlapPlane(planes[i], mM);
+				if (fcvFully == vis) test_mask &= ~bit; // fully - no need to test this plane
+				else if (fcvNone == vis)
 				{
 					test_mask = 0;
 					return fcvNone;
@@ -344,9 +344,9 @@ sPoly* CFrustum::ClipPoly(sPoly& S, sPoly& D) const
 		// clip everything to this plane
 		cls[src->size()] = cls[0];
 		src->push_back((*src)[0]);
-		Fvector D;
+		Fvector dir;
 		float denum, t;
-		for (int j = 0; j < src->size() - 1; j++)
+		for (unsigned int j = 0; j < src->size() - 1; j++)
 		{
 			if ((*src)[j].similar((*src)[j + 1], EPS_S)) continue;
 
@@ -356,12 +356,12 @@ sPoly* CFrustum::ClipPoly(sPoly& S, sPoly& D) const
 				if (positive(cls[j + 1]))
 				{
 					// segment intersects plane
-					D.sub((*src)[j + 1], (*src)[j]);
-					denum = P.n.dotproduct(D);
+					dir.sub((*src)[j + 1], (*src)[j]);
+					denum = P.n.dotproduct(dir);
 					if (denum != 0)
 					{
 						t = -cls[j] / denum; //VERIFY(t<=1.f && t>=0);
-						dest->last().mad((*src)[j], D, t);
+						dest->last().mad((*src)[j], dir, t);
 						dest->inc();
 					}
 				}
@@ -373,12 +373,12 @@ sPoly* CFrustum::ClipPoly(sPoly& S, sPoly& D) const
 				{
 					// J+1  - inside
 					// segment intersects plane
-					D.sub((*src)[j + 1], (*src)[j]);
-					denum = P.n.dotproduct(D);
+					dir.sub((*src)[j + 1], (*src)[j]);
+					denum = P.n.dotproduct(dir);
 					if (denum != 0)
 					{
 						t = -cls[j] / denum; //VERIFY(t<=1.f && t>=0);
-						dest->last().mad((*src)[j], D, t);
+						dest->last().mad((*src)[j], dir, t);
 						dest->inc();
 					}
 				}
