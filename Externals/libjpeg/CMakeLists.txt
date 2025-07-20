@@ -124,6 +124,11 @@ target_compile_options(libjpeg
   $<$<CXX_COMPILER_ID:Clang>:-Wno-macro-redefined>
 )
 
+target_link_options(libjpeg
+  PUBLIC
+  $<$<CXX_COMPILER_ID:MSVC>:/ignore:4099>
+)
+
 target_compile_definitions(libjpeg
   PRIVATE
   _CRT_SECURE_NO_WARNINGS
