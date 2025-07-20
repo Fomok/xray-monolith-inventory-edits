@@ -270,9 +270,9 @@ float CSoundRender_Core::get_occlusion(Fvector& P, float R, Fvector* occ)
 			if (0 != geom_DB.r_count())
 			{
 				// cache polygon
-				const CDB::RESULT* R = geom_DB.r_begin();
+				const CDB::RESULT* res = geom_DB.r_begin();
 #endif
-				const CDB::TRI& T = geom_MODEL->get_tris()[R->id];
+				const CDB::TRI& T = geom_MODEL->get_tris()[res->id];
 				const Fvector* V = geom_MODEL->get_verts();
 				occ[0].set(V[T.verts[0]]);
 				occ[1].set(V[T.verts[1]]);
@@ -298,8 +298,8 @@ float CSoundRender_Core::get_occlusion(Fvector& P, float R, Fvector* occ)
 		{
 			for (u32 k = 0; k < r_cnt; k++)
 			{
-				CDB::RESULT* R = _B + k;
-				occ_value *= *(float*)&R->dummy;
+				CDB::RESULT* res = _B + k;
+				occ_value *= *(float*)&res->dummy;
 			}
 		}
 	}

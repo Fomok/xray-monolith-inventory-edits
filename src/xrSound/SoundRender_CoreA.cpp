@@ -11,7 +11,7 @@ namespace soundSmoothingParams {
 	float distanceBasedDelayPower = 1.f;
 	float distanceBasedDelayMinDistance = 50.f;
 	float pitchVariationPower = 0.f;
-	float power = 1.8;
+	float power = 1.8f;
 	int steps = 15;
 	float alpha = getAlpha();
 	IC float getAlpha() {
@@ -248,7 +248,7 @@ void CSoundRender_CoreA::update_listener(const Fvector& P, const Fvector& D, con
 	Listener.curVelocity.sub(P, Listener.position);
 
 	float a = soundSmoothingParams::getTimeDeltaSmoothing();
-	int p = soundSmoothingParams::power;
+	int p = (int)soundSmoothingParams::power;
 	Listener.accVelocity.x = soundSmoothingParams::getSmoothedValue(Listener.curVelocity.x * p / dt, Listener.accVelocity.x, a);
 	Listener.accVelocity.y = soundSmoothingParams::getSmoothedValue(Listener.curVelocity.y * p / dt, Listener.accVelocity.y, a);
 	Listener.accVelocity.z = soundSmoothingParams::getSmoothedValue(Listener.curVelocity.z * p / dt, Listener.accVelocity.z, a);
