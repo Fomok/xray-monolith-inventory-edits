@@ -9,10 +9,10 @@ add_module(XRay.Core
   PURE_ALLOC
   XRCORE_EXPORTS
   PORTABLE_BUGSLAYERUTIL
-  
-  PRECOMPILES
-  xrCore.h
-  xrCore_platform.h
+
+  DEPENDS
+  XRay.Render.API
+  XRay.Collision
 
   LINKS
   DxErr
@@ -20,8 +20,10 @@ add_module(XRay.Core
   optick
   StackWalker
   winmm
-  XRay.Render.API
-  XRay.Collision
+
+  PRECOMPILES
+  xrCore.h
+  xrCore_platform.h
 
   SOURCES
   FTimer.cpp
