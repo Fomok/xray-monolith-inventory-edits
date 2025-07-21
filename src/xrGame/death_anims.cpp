@@ -1,5 +1,3 @@
-#include	"stdafx.h"
-
 #include	"death_anims.h"
 
 #include "KinematicsAnimated.h"

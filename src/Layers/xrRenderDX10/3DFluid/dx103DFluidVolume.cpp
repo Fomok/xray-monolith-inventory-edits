@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx103DFluidVolume.h"
 
 #include "dx103DFluidManager.h"

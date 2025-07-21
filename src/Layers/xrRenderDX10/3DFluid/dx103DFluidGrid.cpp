@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx103DFluidGrid.h"
 
 #include "../dx10BufferUtils.h"

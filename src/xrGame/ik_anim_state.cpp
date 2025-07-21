@@ -1,5 +1,3 @@
-#include	"stdafx.h"
-
 #include	"ik_anim_state.h"
 
 #include	"KinematicsAnimated.h"

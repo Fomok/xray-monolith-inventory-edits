@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx103DFluidObstacles.h"
 
 #include "../../xrRender/dxRenderDeviceRender.h"

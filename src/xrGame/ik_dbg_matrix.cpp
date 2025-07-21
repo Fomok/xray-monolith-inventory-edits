@@ -1,5 +1,3 @@
-#include	"stdafx.h"
-
 #include	"ik_dbg_matrix.h"
 
 #include	"ik/iklimb.h"

@@ -1,4 +1,3 @@
-#include	"stdafx.h"
 #include	"ik_foot_collider.h"
 
 #include "gamemtllib.h"
