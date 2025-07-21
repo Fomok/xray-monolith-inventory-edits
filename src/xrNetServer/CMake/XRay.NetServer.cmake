@@ -4,18 +4,23 @@ add_module(XRay.NetServer
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
-  PRECOMPILES
-  [["xrCore.h"]]
-  [["DPlay/dplay8.h"]]
-  NET_Shared.h
-  macros.h
+  DEFINES
+  XRCORE_EXPORTS
+
+  DEPENDS
+  XRay.Core
 
   LINKS
   DPlay
   DxErr
   optick
   Ws2_32
-  XRay.Core
+
+  PRECOMPILES
+  [["xrCore.h"]]
+  [["DPlay/dplay8.h"]]
+  NET_Shared.h
+  macros.h
 
   SOURCES
   macros.h
