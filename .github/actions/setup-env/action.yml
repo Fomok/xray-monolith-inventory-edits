@@ -39,3 +39,11 @@ runs:
       with:
         directory: ${{runner.os == 'Windows' && 'C:\Program Files\LLVM' || './llvm'}}
         version: "20.1.0"
+    
+    - name: Setup CCache
+      if: |
+        env.build-preset == 'Debug' ||
+        env.build-preset == 'Verified'
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        max-size: "1G"

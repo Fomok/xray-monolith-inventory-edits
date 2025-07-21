@@ -16,8 +16,6 @@ set(XRAY_COMPILER_FLAGS
     /WX
     # Use full paths in diagnostic messages
     /FC
-    # Store debug information in PDB
-    /Zi
     # Use multi-threaded DLL
     /MD
     # Use full paths in diagnostics
@@ -28,6 +26,8 @@ set(XRAY_COMPILER_FLAGS
 
 # Debug flags
 set(XRAY_COMPILER_FLAGS_DEBUG
+    # Store debug information in object files
+    /Z7
     # Don't omit frame pointers
     /Oy-
     # Warning level 4
@@ -40,6 +40,8 @@ set(XRAY_COMPILER_FLAGS_DEBUG
 
 # Release flags
 set(XRAY_COMPILER_FLAGS_RELEASE
+    # Store debug information in PDB
+    /Zi
     # Aggressive function inlining
     /Ob3
     # Omit frame pointers

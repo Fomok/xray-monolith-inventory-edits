@@ -207,7 +207,7 @@ The original engine is used in S.T.A.L.K.E.R. Call of Pripyat game released by G
 
 ### Build
 
-For successful compilation, **the latest build tools with MFC and ATL libraries is required**
+For successful compilation, **the latest build tools with MFC and ATL libraries are required**.
 
 #### Configure Presets
 
@@ -232,6 +232,8 @@ Each configure preset has a `<ConfigurePreset>.AVX` variant for building Anomaly
 `<ConfigurePreset>.Verified`
 
 Unoptimized release build, fast compiles, additional console assertions, generate PDB files for debugging
+
+This preset supports [CCache](https://ccache.dev/), which will be used to speed up incremental rebuilds if available in `PATH`.
 
 `<ConfigurePreset>.Profiled`
 

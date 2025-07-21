@@ -7,6 +7,9 @@ message(STATUS "    Generator: ${CMAKE_GENERATOR}")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
+# Configure CCache
+include(XRay.CCache)
+
 # Configure Win32-specific before-project settings
 if (WIN32)
   include(XRay.Win32)
