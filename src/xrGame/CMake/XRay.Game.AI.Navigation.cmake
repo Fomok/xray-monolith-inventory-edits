@@ -2,6 +2,11 @@ add_module(XRay.Game.AI.Navigation
   TYPE STATIC
 )
 
+target_compile_options(XRay.Game.AI.Navigation
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+)
+
 add_module(XRay.Game.AI.Navigation.GameGraph
   SOURCES
   ../xrServerEntities/game_graph_space.h
