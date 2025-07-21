@@ -41,9 +41,10 @@ runs:
         version: "20.1.0"
     
     - name: Setup CCache
-      if: |
-        env.build-preset == 'Debug' ||
-        env.build-preset == 'Verified'
+      #if: |
+      #  env.build-preset == 'Debug' ||
+      #  env.build-preset == 'Verified'
+      if: false
       uses: hendrikmuhs/ccache-action@v1.2
       with:
         max-size: "1G"
