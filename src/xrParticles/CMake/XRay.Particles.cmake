@@ -4,10 +4,15 @@ add_module(XRay.Particles
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
-  LINKS
-  tbb
+  DEFINES
+  XRCORE_EXPORTS
+
+  DEPENDS
   XRay.Core
   XRay.CPUPipe
+
+  LINKS
+  tbb
 
   PRECOMPILES
   [["xrCore.h"]]
