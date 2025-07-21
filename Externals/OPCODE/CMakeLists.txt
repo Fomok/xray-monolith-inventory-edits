@@ -12,6 +12,8 @@ target_precompile_headers(OPCODE
 target_compile_options(OPCODE
   PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4995>
   $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-value>
 )
 
