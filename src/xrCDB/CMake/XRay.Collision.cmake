@@ -1,5 +1,24 @@
 add_module(XRay.Collision
   TYPE STATIC
+
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
+
+  DEFINES
+  XRCORE_EXPORTS
+  XRCDB_EXPORTS
+
+  DEPENDS
+  XRay.Core
+  XRay.Render.API
+  XRay.Render.Common
+
+  LINKS
+  OPCODE
+  optick
+
+  PRECOMPILES
+  stdafx.h
   
   SOURCES
   #cl_raypick.cpp
@@ -13,19 +32,6 @@ add_module(XRay.Collision
   Frustum.h
   StdAfx.h
   xrCDB.h
-
-  INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}
-
-  PRECOMPILES stdafx.h
-
-  DEFINES XRCDB_EXPORTS
-
-  LINKS
-  OPCODE
-  optick
-  XRay.Core
-  XRay.Render.API
 )
 
 target_compile_options(XRay.Collision
