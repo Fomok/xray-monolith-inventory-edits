@@ -28,6 +28,11 @@ add_module(XRay.Collision
   XRay.Render.API
 )
 
+target_compile_options(XRay.Collision
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+)
+
 set_source_files_properties(
   ISpatial_q_frustum.cpp
   ISpatial_q_ray.cpp
