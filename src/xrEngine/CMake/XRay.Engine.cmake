@@ -1,27 +1,36 @@
 add_module(XRay.Engine
   TYPE STATIC
   
-  PRECOMPILES stdafx.h
-  
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
-  DEFINES ENGINE_BUILD
+  DEFINES
+  ENGINE_BUILD
+  XRCORE_EXPORTS
 
-  LINKS
-  discord
-  dinput8
-  imgui
-  LuaJIT
-  luabind
-  
-  Vfw32
+  DEPENDS
   XRay.Collision
   XRay.Core
   XRay.Game
   XRay.Particles
+  XRay.Render.Common
   XRay.Render.API
   XRay.Sound
   XRay.XMLParser
+
+  LINKS
+  dxsdk
+  discord
+  dinput8
+  imgui
+  libogg
+  libtheora
+  LuaJIT
+  luabind
+  Vfw32
+  
+  PRECOMPILES
+  stdafx.h
 
   SOURCES
   defines.cpp
