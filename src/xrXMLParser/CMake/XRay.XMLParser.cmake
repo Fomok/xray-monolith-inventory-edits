@@ -9,11 +9,15 @@ add_module(XRay.XMLParser
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  XRCORE_EXPORTS
   XRXMLPARSER_EXPORTS
+
+  DEPENDS
+  XRay.Core
+  XRay.Render.Common
 
   LINKS
   TinyXML
-  XRay.Core
   
   SOURCES
   xrXMLParser.cpp
