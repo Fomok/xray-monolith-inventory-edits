@@ -13,7 +13,7 @@
 #define	pcstr			LPCSTR
 #define	pcvoid			void const*
 #define	sz_cmp			xr_strcmp
-#define	vector_class	::luabind::internal_vector
+#define	internal_vector	::luabind::internal_vector
 #define engine			lua_studio_engine
 
 inline pstr sz_cpy(pstr destination, const u32& size, pcstr source)
@@ -578,7 +578,7 @@ void engine::push_class_base(lua_State* const state, char const* const id)
 	VERIFY(class_rep);
 
 	typedef ::luabind::detail::class_rep::base_info base_info;
-	typedef vector_class<base_info> Bases;
+	typedef internal_vector<base_info> Bases;
 	Bases const& bases = class_rep->bases();
 	Bases::const_iterator I = bases.begin();
 	Bases::const_iterator E = bases.end();
@@ -675,8 +675,8 @@ void engine::fill_class_data(
 	{
 		string4096 type;
 		typedef ::luabind::detail::class_rep::base_info base_info;
-		vector_class<base_info>::const_iterator i = _class->bases().begin();
-		vector_class<base_info>::const_iterator e = _class->bases().end();
+		internal_vector<base_info>::const_iterator i = _class->bases().begin();
+		internal_vector<base_info>::const_iterator e = _class->bases().end();
 		for (; i != e; ++i)
 			value_to_expand.add_value(
 				(*i).base->name(),
