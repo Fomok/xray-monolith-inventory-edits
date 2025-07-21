@@ -40,6 +40,11 @@ add_module(XRay.Core
   xrCore.rc
 )
 
+target_compile_options(XRay.Core
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+)
+
 set_source_files_properties(
   lzo_compressor.cpp
   rt_lzo1x_1.cpp

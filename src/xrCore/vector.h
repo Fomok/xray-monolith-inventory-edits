@@ -123,7 +123,7 @@ inline float snapto(float value, float snap)
 template <class T>
 inline constexpr T _lerp(const T& _val_a, const T& _val_b, const float& _factor)
 {
-	return (_val_a * (1.0 - _factor)) + (_val_b * _factor);
+	return (_val_a * (1.0f - _factor)) + (_val_b * _factor);
 }
 
 template <class T>
