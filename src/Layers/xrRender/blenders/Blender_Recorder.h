@@ -8,7 +8,7 @@
 
 #include "..\tss.h"
 
-#pragma pack(push,4)
+#pragma pack(push,8)
 
 class CBlender_Compile
 {

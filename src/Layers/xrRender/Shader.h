@@ -20,7 +20,7 @@ class CBlender_Compile;
 class IBlender;
 #define	SHADER_PASSES_MAX		2
 
-#pragma pack(push,4)
+#pragma pack(push,8)
 
 //////////////////////////////////////////////////////////////////////////
 struct ECORE_API STextureList : public xr_resource_flagged, public xr_vector<std::pair<u32, ref_texture>>
