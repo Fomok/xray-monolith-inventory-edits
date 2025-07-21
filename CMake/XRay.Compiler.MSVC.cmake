@@ -82,6 +82,7 @@ set(XRAY_LINKER_FLAGS
     # Treat warnings as errors
     /WX
     # Disable multiply-defined symbol warnings (libjpeg / cximage)
+    /ignore:4006
     /ignore:4099
 )
 
