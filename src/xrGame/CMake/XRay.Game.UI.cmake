@@ -1,7 +1,23 @@
 add_module(XRay.Game.UI
   TYPE STATIC
 
+  DEFINES
+  XRCORE_EXPORTS
+
+  DEPENDS
+  XRay.Collision
+  XRay.Core.Crypto
+  XRay.Engine
+  XRay.Render.API
+  XRay.Render.Common
+  XRay.NetServer
+
   LINKS
+  luabind
+  LuaJIT
+  LZO
+  ode
+  OPCODE
   TinyXML
 
   SOURCES

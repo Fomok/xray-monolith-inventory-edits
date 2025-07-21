@@ -27,15 +27,19 @@ add_module(XRay.Game
   GP_PASSWORD_LEN=32
   XRGAME_EXPORTS
 
-  LINKS
-  CxImage
-  IKAN
+  DEPENDS
   XRay.Collision
   XRay.Core
   XRay.Core.Crypto
   XRay.Engine
   XRay.NetServer
   XRay.Physics
+  XRay.Render.API
+  
+  LINKS
+  DPlay
+  CxImage
+  IKAN
 
   SOURCES
   xrGame.cpp

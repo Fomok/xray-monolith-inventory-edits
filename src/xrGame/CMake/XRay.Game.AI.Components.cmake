@@ -1,5 +1,22 @@
 add_module(XRay.Game.AI.Components
   TYPE STATIC
+
+  DEFINES
+  XRCORE_EXPORTS
+
+  DEPENDS
+  XRay.Collision
+  XRay.Engine
+  XRay.NetServer
+  XRay.Render.Common
+  XRay.Render.API
+
+  LINKS
+  ode
+  luabind
+  LuaJIT
+  LZO
+  TinyXML
 )
 
 add_module(XRay.Game.AI.Components.Damage

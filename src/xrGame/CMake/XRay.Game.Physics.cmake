@@ -1,11 +1,29 @@
 add_module(XRay.Game.Physics
   TYPE STATIC
   
-  SOURCES
-  ph_shell_interface.h
+  DEFINES
+  XRCORE_EXPORTS
 
+  DEPENDS
+  XRay.Collision
+  XRay.Engine
+  XRay.NetServer
+  XRay.Render.Common
+  XRay.Render.API
+
+  LINKS
+  luabind
+  LuaJIT
+  LZO
+  OPCODE
+  ode
+  TinyXML
+  
+  SOURCES
   ../xrServerEntities/PHNetState.cpp
   ../xrServerEntities/PHNetState.h
+
+  ph_shell_interface.h
 
   PHShellCreator.cpp
   PHShellCreator.h

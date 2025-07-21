@@ -1,6 +1,23 @@
 add_module(XRay.Game.AI.Life
   TYPE STATIC
   
+  DEFINES
+  XRCORE_EXPORTS
+
+  DEPENDS
+  XRay.Collision
+  XRay.Engine
+  XRay.NetServer
+  XRay.Render.Common
+  XRay.Render.API
+
+  LINKS
+  ode
+  luabind
+  LuaJIT
+  LZO
+  TinyXML
+  
   SOURCES
   ../xrServerEntities/alife_space.cpp
   ../xrServerEntities/alife_space.h

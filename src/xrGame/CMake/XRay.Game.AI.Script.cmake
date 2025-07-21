@@ -1,7 +1,24 @@
 add_module(XRay.Game.AI.Script
   TYPE STATIC
 
+  DEFINES
+  XRCORE_EXPORTS
+
+  DEPENDS
+  XRay.Collision
+  XRay.Core.Crypto
+  XRay.Engine
+  XRay.NetServer
+  XRay.Render.Common
+  XRay.Render.API
+
   LINKS
+  ode
+  imgui
+  luabind
+  LuaJIT
+  LZO
+  TinyXML
   lua-extensions
 
   SOURCES

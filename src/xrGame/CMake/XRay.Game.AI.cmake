@@ -4,6 +4,12 @@ add_module(XRay.Game.AI
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
+
+  DEPENDS
+  XRay.Collision
+  XRay.Engine
+  XRay.Render.API
+  XRay.Render.Common
   
   SOURCES
   ai/trader/trader_animation.cpp
