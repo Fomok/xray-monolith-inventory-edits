@@ -47,7 +47,7 @@ function(add_module NAME)
   cmake_parse_arguments(PARSE_ARGV 1 ARG
     ""
     "TYPE"
-    "SOURCES;INCLUDES;PRECOMPILES;DEFINES;LINKS"
+    "SOURCES;INCLUDES;PRECOMPILES;DEFINES;DEPENDS;LINKS"
   )
 
   # Determine whether we have any C or CPP sources
@@ -134,11 +134,17 @@ function(add_module NAME)
     return()
   endif()
 
+  set(${NAME}_DEPENDS "")
+  foreach(DEPEND ${ARG_DEPENDS})
+    list(APPEND ${NAME}_DEPENDS ${DEPENDS_${DEPEND}})
+  endforeach()
+
   # Compose includes
   target_include_directories(${NAME}
     ${TYPE_PUBLIC}
     ${ARG_INCLUDES}
     ${${PARENT}_INCLUDES}
+    ${${NAME}_DEPENDS}
   )
   set(${NAME}_INCLUDES "${ARG_INCLUDES};${${PARENT}_INCLUDES}" PARENT_SCOPE)
 
