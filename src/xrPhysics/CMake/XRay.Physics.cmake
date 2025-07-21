@@ -4,14 +4,22 @@ add_module(XRay.Physics
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
+  DEFINES
+  XRCORE_EXPORTS
+
+  DEPENDS
+  XRay.Core
+  XRay.Collision
+  XRay.Engine
+  XRay.Render.Common
+  XRay.Render.API
+  XRay.Sound
+
   LINKS
   loki
   ode
   tbb
-  XRay.Collision
-  XRay.Engine
-  XRay.Render.API
-  XRay.Sound
+  OPCODE
 
   PRECOMPILES
   [["xrCore.h"]]
@@ -43,6 +51,11 @@ add_module(XRay.Physics
   PhysicsCommon.h
 )
 
+target_compile_options(XRay.Physics
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
+)
 
 add_module(XRay.Physics.ActivationBox
   SOURCES
