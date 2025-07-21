@@ -119,9 +119,10 @@ target_precompile_headers(luabind
 
 target_compile_options(luabind
   PUBLIC
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-extra-qualification>
   $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-unqualified-friend>
 )
