@@ -1,24 +1,29 @@
 add_module(XRay.Game.Core
   TYPE STATIC
 
-  DEFINES
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Collision
-  XRay.Core.Crypto
-  XRay.Engine
-  XRay.NetServer
-  XRay.Render.API
-  XRay.Render.Common
-
   LINKS
+  CxImage
   IKAN
-  ode
   luabind
   LuaJIT
   LZO
+  ode
   TinyXML
+
+  XRay.Core.Defines
+  XRay.Game.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Core.Crypto.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
+
+  XRay.Game.Precompiles
 
   SOURCES
   ../xrServerEntities/pch_script.cpp

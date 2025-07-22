@@ -4,21 +4,6 @@ add_module(XRay.Game
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/src/xrServerEntities
-
-  PRECOMPILES
-  ../xrEngine/stdafx.h
-
-  [["DPlay/dplay8.h"]]
-
-  ../build_config_defines.h
-
-  macros.h
-
-  [["gamefont.h"]]
-  [["xr_object.h"]]
-  [["igame_level.h"]]
-  [["xrPhysics.h"]]
-  [["smart_cast.h"]]
   
   DEFINES
   GP_EMAIL_LEN=128
@@ -26,20 +11,37 @@ add_module(XRay.Game
   GP_UNIQUENICK_LEN=32
   GP_PASSWORD_LEN=32
   XRGAME_EXPORTS
-
-  DEPENDS
-  XRay.Collision
-  XRay.Core
-  XRay.Core.Crypto
-  XRay.Engine
-  XRay.NetServer
-  XRay.Physics
-  XRay.Render.API
   
   LINKS
   DPlay
   CxImage
   IKAN
+
+  XRay.Core.Defines
+  XRay.Engine.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Core.Crypto.Includes
+  XRay.Engine.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.API.Includes
+
+  PRECOMPILES
+  $<$<COMPILE_LANGUAGE:CXX>:../xrEngine/stdafx.h>
+
+  [[$<$<COMPILE_LANGUAGE:CXX>:DPlay/dplay8.h>]]
+
+  $<$<COMPILE_LANGUAGE:CXX>:../build_config_defines.h>
+
+  $<$<COMPILE_LANGUAGE:CXX>:macros.h>
+
+  [[$<$<COMPILE_LANGUAGE:CXX>:gamefont.h>]]
+  [[$<$<COMPILE_LANGUAGE:CXX>:xr_object.h>]]
+  [[$<$<COMPILE_LANGUAGE:CXX>:igame_level.h>]]
+  [[$<$<COMPILE_LANGUAGE:CXX>:xrPhysics.h>]]
+  [[$<$<COMPILE_LANGUAGE:CXX>:smart_cast.h>]]
 
   SOURCES
   xrGame.cpp

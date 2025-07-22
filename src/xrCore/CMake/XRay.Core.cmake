@@ -2,17 +2,12 @@ add_module(XRay.Core
   TYPE STATIC
 
   INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}/..
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
   PURE_ALLOC
   XRCORE_EXPORTS
   PORTABLE_BUGSLAYERUTIL
-
-  DEPENDS
-  XRay.Render.API
-  XRay.Collision
 
   LINKS
   DxErr
@@ -21,19 +16,22 @@ add_module(XRay.Core
   StackWalker
   winmm
 
+  XRay.Includes
+  XRay.Render.API.Includes
+  XRay.Collision.Includes
+
   PRECOMPILES
   xrCore.h
   xrCore_platform.h
 
   SOURCES
-  FTimer.cpp
   xrCore.cpp
-  
-  FTimer.h
   xrCore.h
   xrCore_platform.h
+
+  FTimer.cpp
+  FTimer.h
   
-  ../build_config_defines.h
   ChooseTypes.H
   client_id.h
   robin_hood.h

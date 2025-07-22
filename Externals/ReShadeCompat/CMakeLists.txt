@@ -21,7 +21,6 @@ target_compile_options(ReShadeCompat
 target_compile_definitions(ReShadeCompat
   PRIVATE
   PURE_ALLOC
-  XRCORE_EXPORTS
   IMGUI_DISABLE_INCLUDE_IMCONFIG_H
   ImTextureID=ImU64
 )
@@ -30,4 +29,5 @@ target_link_libraries(ReShadeCompat
   PRIVATE
   imgui
   reshade
+  XRay.Core.Defines
 )

@@ -1,22 +1,25 @@
 add_module(XRay.Game.AI.Navigation
   TYPE STATIC
 
-  DEFINES
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Collision
-  XRay.Engine
-  XRay.NetServer
-  XRay.Render.Common
-  XRay.Render.API
-
   LINKS
   ode
   luabind
   LuaJIT
   LZO
   TinyXML
+
+  XRay.Core.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+
+  XRay.Game.Precompiles
 )
 
 target_compile_options(XRay.Game.AI.Navigation
@@ -223,6 +226,9 @@ add_module(XRay.Game.AI.Navigation.PatrolPaths.Storage
 )
 
 add_module(XRay.Game.AI.Navigation.PatrolPaths.Point
+  # Needs to end up in XRay.Game.AI for correct linkage against XRay.Engine
+  NO_LINK_PARENT
+
   SOURCES
   patrol_point.cpp
   patrol_point.h

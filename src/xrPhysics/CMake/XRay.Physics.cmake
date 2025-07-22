@@ -4,22 +4,18 @@ add_module(XRay.Physics
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
-  DEFINES
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Core
-  XRay.Collision
-  XRay.Engine
-  XRay.Render.Common
-  XRay.Render.API
-  XRay.Sound
-
   LINKS
   loki
   ode
   tbb
   OPCODE
+  XRay.Core.Defines
+  XRay.Core.Includes
+  XRay.Collision.Includes
+  XRay.Engine.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.Sound.Includes
 
   PRECOMPILES
   [["xrCore.h"]]

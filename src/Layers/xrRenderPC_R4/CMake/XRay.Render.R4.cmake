@@ -1,9 +1,8 @@
 add_module(XRay.Render.R4
   TYPE STATIC
-  
-  PRECOMPILES stdafx.h
 
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
   STATIC_RENDERER_R4
@@ -21,10 +20,15 @@ add_module(XRay.Render.R4
   optick
   ReShadeCompat
   tbb
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.Render.API
+  XRay.Collision.Includes
+  XRay.Core.Defines
+  XRay.Core.Includes
+  XRay.Engine.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
+  
+  PRECOMPILES
+  stdafx.h
 
   SOURCES
   ../xrRenderDX10/DXCommonTypes.h
@@ -61,8 +65,6 @@ add_module(XRay.Render.R4.3DFluid
 
 add_module(XRay.Render.R4.Core
   SOURCES
-  ../xrRenderDX10/dx10EventWrapper.cpp
-  ../xrRenderDX10/dx10EventWrapper.h
   ../xrRenderDX10/dx10Texture.cpp
   ../xrRender/particles_systems_library_interface.hpp
   ../xrRender/PSLibrary.cpp
@@ -147,8 +149,10 @@ add_module(XRay.Render.R4.Core.Target.ColorMap
 
 add_module(XRay.Render.R4.Debug
   SOURCES
-  ../xrRender/Debug/dxPixEventWrapper.cpp
-  ../xrRender/Debug/dxPixEventWrapper.h
+  ../xrRenderDX10/dx10EventWrapper.cpp
+  ../xrRenderDX10/dx10EventWrapper.h
+  #../xrRender/Debug/dxPixEventWrapper.cpp
+  #../xrRender/Debug/dxPixEventWrapper.h
 )
 
 add_module(XRay.Render.R4.Details

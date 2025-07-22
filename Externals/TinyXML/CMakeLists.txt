@@ -5,20 +5,20 @@ target_folder(TinyXML ${FOLDER_EXTERNAL})
 target_include_directories(TinyXML
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${DEPENDS_XRay.Core}
-  ${DEPENDS_XRay.XMLParser}
 )
 
-target_compile_definitions(TinyXML
+target_link_libraries(TinyXML
   PRIVATE
-  XRCORE_EXPORTS
-  XRXMLPARSER_EXPORTS
+  XRay.Core.Defines
+  XRay.Core.Includes
+  XRay.XMLParser.Defines
+  XRay.XMLParser.Includes
 )
 
 target_precompile_headers(TinyXML
   PRIVATE
-  <xrCore.h>
-  <xrXMLParser.h>
+  [["xrCore.h"]]
+  [["xrXMLParser.h"]]
 )
 
 target_sources(TinyXML

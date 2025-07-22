@@ -4,20 +4,20 @@ target_folder(IKAN ${FOLDER_EXTERNAL})
 
 set(IKAN_DIR ../IKAN-xr)
 
-target_precompile_headers(IKAN
-  PRIVATE
-  <xrCore.h>
-  <xrPhysics.h>
-  <_std_extensions.h>
-  <_stl_extensions.h>
-)
-
 target_include_directories(IKAN
   PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/IKAN
-  ${DEPENDS_XRay.Core}
-  ${DEPENDS_XRay.Physics}
+)
+
+target_link_libraries(IKAN
+  PRIVATE
+  ode
+  
+  XRay.Core.Defines
+
+  XRay.Core.Includes
+  XRay.Physics.Includes
 )
 
 target_compile_options(IKAN
@@ -25,14 +25,12 @@ target_compile_options(IKAN
   $<$<CXX_COMPILER_ID:MSVC>:/wd5033>
 )
 
-target_compile_definitions(IKAN
+target_precompile_headers(IKAN
   PRIVATE
-  XRCORE_EXPORTS
-)
-
-target_link_libraries(IKAN
-  PRIVATE
-  ode
+  <xrCore.h>
+  <xrPhysics.h>
+  <_std_extensions.h>
+  <_stl_extensions.h>
 )
 
 target_sources_sandboxed(IKAN

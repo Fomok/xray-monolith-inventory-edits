@@ -6,17 +6,6 @@ add_module(XRay.Engine
 
   DEFINES
   ENGINE_BUILD
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Collision
-  XRay.Core
-  XRay.Game
-  XRay.Particles
-  XRay.Render.Common
-  XRay.Render.API
-  XRay.Sound
-  XRay.XMLParser
 
   LINKS
   dxsdk
@@ -28,7 +17,19 @@ add_module(XRay.Engine
   LuaJIT
   luabind
   Vfw32
+
+  XRay.Core.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Game.Includes
+  XRay.Particles.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.Sound.Includes
   
+  XRay.Game.AI.Navigation
+
   PRECOMPILES
   stdafx.h
 

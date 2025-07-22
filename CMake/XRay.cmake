@@ -31,7 +31,4 @@ include(XRay.Modules)
 # Setup source utility machinery
 include(XRay.Sources)
 
-# Setup dependency system
-include(XRay.Depends)
-
 message(STATUS)

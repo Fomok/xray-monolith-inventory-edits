@@ -1,5 +1,6 @@
 add_module(XRay.Render.Common
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   SOURCES
   #blenders/Blender.cpp

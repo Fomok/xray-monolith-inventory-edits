@@ -3,6 +3,8 @@ add_module(XRay.Core.Crypto
 
   LINKS
   OpenSSL
+  XRay.Core.Defines
+  XRay.Core.Includes
 
   DEFINES
   CRYPTO_BUILD

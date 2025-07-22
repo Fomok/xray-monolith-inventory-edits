@@ -4,9 +4,13 @@ add_library(XRay.Engine.Main INTERFACE)
 
 target_link_libraries(XRay.Engine.Main
   INTERFACE
+  discord
   icu
 
+  XRay.Core
+  XRay.Collision
   XRay.CPUPipe
+  XRay.Engine
   XRay.Game
   XRay.NetServer
   XRay.Particles

@@ -39,5 +39,5 @@ target_link_libraries(lua-extensions
   LuaPanda
   luasocket
   LuaJIT
-  XRay.Core
+  XRay.Includes
 )

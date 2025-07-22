@@ -1,25 +1,29 @@
 add_module(XRay.Game.AI.Script
   TYPE STATIC
 
-  DEFINES
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Collision
-  XRay.Core.Crypto
-  XRay.Engine
-  XRay.NetServer
-  XRay.Render.Common
-  XRay.Render.API
-
   LINKS
   ode
   imgui
   luabind
+  lua-extensions
   LuaJIT
   LZO
   TinyXML
-  lua-extensions
+  
+  XRay.Core.Defines
+  XRay.Game.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Core.Crypto.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+
+  XRay.Game.Precompiles
 
   SOURCES
   ../xrServerEntities/script_export_macroses.h

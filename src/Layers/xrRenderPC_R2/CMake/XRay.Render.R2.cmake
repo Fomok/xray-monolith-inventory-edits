@@ -1,9 +1,11 @@
 add_module(XRay.Render.R2
   TYPE STATIC
   
-  PRECOMPILES stdafx.h
+  PRECOMPILES
+  stdafx.h
 
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
   STATIC_RENDERER_R2
@@ -19,10 +21,12 @@ add_module(XRay.Render.R2
   optick
   ReShadeCompat
   tbb
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.Render.API
+  XRay.Collision.Includes
+  XRay.Core.Defines
+  XRay.Core.Includes
+  XRay.Engine.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
 
   SOURCES
   ../../xrEngine/cl_intersect.h

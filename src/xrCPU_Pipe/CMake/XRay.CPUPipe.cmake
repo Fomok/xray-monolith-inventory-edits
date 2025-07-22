@@ -3,15 +3,15 @@ add_module(XRay.CPUPipe
   
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
-  DEPENDS
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.Render.Common
-  XRay.Render.API
+  LINKS
+  XRay.Collision.Includes
+  XRay.Core.Defines
+  XRay.Core.Includes
+  XRay.Engine.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
 
   DEFINES
-  XRCORE_EXPORTS
   $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0501>
   WIN32_LEAN_AND_MEAN
   RENDER=1

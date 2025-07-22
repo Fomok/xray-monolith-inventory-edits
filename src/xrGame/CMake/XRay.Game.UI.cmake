@@ -1,24 +1,30 @@
 add_module(XRay.Game.UI
   TYPE STATIC
 
-  DEFINES
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Collision
-  XRay.Core.Crypto
-  XRay.Engine
-  XRay.Render.API
-  XRay.Render.Common
-  XRay.NetServer
-
   LINKS
+  CxImage
   luabind
   LuaJIT
   LZO
   ode
   OPCODE
   TinyXML
+
+  XRay.Core.Defines
+  XRay.Game.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Core.Crypto.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.Physics.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
+  XRay.Sound.Includes
+  XRay.NetServer.Includes
+
+  XRay.Game.Precompiles
 
   SOURCES
   UIDialogHolder.cpp

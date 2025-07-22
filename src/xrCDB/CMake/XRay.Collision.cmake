@@ -5,17 +5,15 @@ add_module(XRay.Collision
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
-  XRCORE_EXPORTS
   XRCDB_EXPORTS
-
-  DEPENDS
-  XRay.Core
-  XRay.Render.API
-  XRay.Render.Common
 
   LINKS
   OPCODE
   optick
+  XRay.Core.Defines
+  XRay.Core.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
 
   PRECOMPILES
   stdafx.h

@@ -4,8 +4,8 @@ add_module(XRay.Render.API
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
-  DEPENDS
-  XRay.Render.Common
+  LINKS
+  XRay.Render.Common.Includes
 
   DEFINES
   $<$<PLATFORM_ID:Windows>:_WIN32_WINDOWS=0x0410>

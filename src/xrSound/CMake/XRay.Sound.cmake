@@ -21,14 +21,7 @@ add_module(XRay.Sound
   NONEWIC
   NOBITMAP
 
-  XRCORE_EXPORTS
   XRSOUND_EXPORTS
-
-  DEPENDS
-  XRay.Core
-  XRay.Collision
-  XRay.Render.API
-  XRay.Render.Common
 
   LINKS
   dxsdk
@@ -39,6 +32,11 @@ add_module(XRay.Sound
   libvorbisfile
   OpenAL
   tbb
+  XRay.Core.Defines
+  XRay.Core.Includes
+  XRay.Collision.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
 
   PRECOMPILES
   [["xrCore.h"]]

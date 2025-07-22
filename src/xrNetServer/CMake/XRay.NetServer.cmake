@@ -4,17 +4,15 @@ add_module(XRay.NetServer
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
-  DEFINES
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Core
-
   LINKS
   DPlay
   DxErr
   optick
   Ws2_32
+
+  XRay.Core.Defines
+  
+  XRay.Core.Includes
 
   PRECOMPILES
   [["xrCore.h"]]

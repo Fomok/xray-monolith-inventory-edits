@@ -1,23 +1,28 @@
 add_module(XRay.Game.Physics
   TYPE STATIC
-  
-  DEFINES
-  XRCORE_EXPORTS
-
-  DEPENDS
-  XRay.Collision
-  XRay.Engine
-  XRay.NetServer
-  XRay.Render.Common
-  XRay.Render.API
 
   LINKS
+  IKAN
   luabind
   LuaJIT
   LZO
   OPCODE
   ode
   TinyXML
+
+  XRay.Core.Defines
+  XRay.Game.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+
+  XRay.Game.Precompiles
   
   SOURCES
   ../xrServerEntities/PHNetState.cpp
