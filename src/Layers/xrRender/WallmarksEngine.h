@@ -11,6 +11,10 @@ namespace WallmarksEngine
 class CSkeletonWallmark;
 class CKinematics;
 
+struct intrusive_base;
+template <typename object_type, typename base_type = intrusive_base>
+class intrusive_ptr;
+
 class CWallmarksEngine
 {
 public:

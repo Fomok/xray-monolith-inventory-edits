@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <intrusive_ptr.h>
+
 #include "../xrRender/r__dsgraph_structure.h"
 #include "../xrRender/r__occlusion.h"
 

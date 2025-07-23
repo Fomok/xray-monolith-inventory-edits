@@ -2,7 +2,9 @@
 #ifndef SkeletonCustomH
 #define SkeletonCustomH
 
-#include		"fhierrarhyvisual.h"
+#include <intrusive_ptr.h>
+
+#include "fhierrarhyvisual.h"
 #include "IRenderable.h"
 #include <optional>
 #include "bone.h"
