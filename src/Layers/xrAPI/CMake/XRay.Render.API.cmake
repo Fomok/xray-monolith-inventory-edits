@@ -10,9 +10,6 @@ add_module(XRay.Render.API
   DEFINES
   $<$<PLATFORM_ID:Windows>:_WIN32_WINDOWS=0x0410>
   $<$<PLATFORM_ID:Windows>:WIN32_LEAN_AND_MEAN>
-
-  PRECOMPILES
-  [["windows.h"]]
   
   SOURCES
   xrAPI.cpp
