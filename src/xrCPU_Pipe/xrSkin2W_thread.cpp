@@ -1,4 +1,4 @@
-#pragma hdrstop
+#include "SkeletonXVertRender.h"
 
 extern xrSkin4W* skin4W_func;
 

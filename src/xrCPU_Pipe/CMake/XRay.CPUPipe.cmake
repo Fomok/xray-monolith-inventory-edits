@@ -17,12 +17,12 @@ add_module(XRay.CPUPipe
   RENDER=1
 
   PRECOMPILES
-  [["windows.h"]]
-  [["stdio.h"]]
-  [["intrin.h"]]
+  #[["windows.h"]]
+  #[["stdio.h"]]
+  #[["intrin.h"]]
 
-  [["xrCore.h"]]
-  [["SkeletonXVertRender.h"]]
+  #[["xrCore.h"]]
+  #[["SkeletonXVertRender.h"]]
 
   engine.h
 

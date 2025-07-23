@@ -2,6 +2,8 @@
 #ifndef BoneH
 #define BoneH
 
+#include "xrCore.h"
+
 #ifdef _LW_EXPORT
 #include <lwsdk/lwrender.h>
 #endif
