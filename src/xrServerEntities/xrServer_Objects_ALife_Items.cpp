@@ -6,6 +6,8 @@
 //	Description : Server objects items for ALife simulator
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_utils.h>
+
 #include "xrMessages.h"
 #include "xrServer_Objects_ALife_Items.h"
 #include "clsid_game.h"

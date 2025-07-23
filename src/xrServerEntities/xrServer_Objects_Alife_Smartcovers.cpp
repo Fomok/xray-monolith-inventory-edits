@@ -6,6 +6,8 @@
 //	Description : Server objects smartcovers for ALife simulator
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_server.h>
+
 #include "pch_script.h"
 #include "xrServer_Objects_ALife_Smartcovers.h"
 

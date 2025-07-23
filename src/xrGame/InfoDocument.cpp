@@ -2,8 +2,10 @@
 // InfoDocument.cpp
 // InfoDocument - документ, содержащий сюжетную информацию
 ///////////////////////////////////////////////////////////////
+#include <PhysicsShell.h>
+#include <net_utils.h>
+
 #include "InfoDocument.h"
-#include "../xrphysics/PhysicsShell.h"
 #include "PDA.h"
 #include "inventoryowner.h"
 #include "xrserver_objects_alife_items.h"

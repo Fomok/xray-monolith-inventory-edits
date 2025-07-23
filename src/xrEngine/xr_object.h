@@ -1,6 +1,16 @@
 #ifndef __XR_OBJECT_H__
 #define __XR_OBJECT_H__
 
+//#include <net_utils.h>
+
+// refs
+//class ENGINE_API IRender_Visual;
+class ENGINE_API IRender_Sector;
+class ENGINE_API IRender_ObjectSpecific;
+class ENGINE_API CCustomHUD;
+class CSE_Abstract;
+class NET_Packet;
+
 #include "../xrcdb/ispatial.h"
 #include "isheduled.h"
 //#include "iinputreceiver.h"
@@ -8,13 +18,6 @@
 #include "icollidable.h"
 #include "engineapi.h"
 #include "device.h"
-// refs
-//class ENGINE_API IRender_Visual;
-class ENGINE_API IRender_Sector;
-class ENGINE_API IRender_ObjectSpecific;
-class ENGINE_API CCustomHUD;
-class NET_Packet;
-class CSE_Abstract;
 
 //-----------------------------------------------------------------------------------------------------------
 #define CROW_RADIUS (30.f)

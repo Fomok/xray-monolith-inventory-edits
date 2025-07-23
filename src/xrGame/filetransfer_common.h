@@ -1,6 +1,9 @@
 #ifndef FILETRANSFER_COMMON
 #define FILETRANSFER_COMMON
 
+class NET_Packet;
+class ClientID;
+
 namespace file_transfer
 {
 	u32 const data_max_chunk_size = 4096; //4Kb on update ~	80		Kb/sec

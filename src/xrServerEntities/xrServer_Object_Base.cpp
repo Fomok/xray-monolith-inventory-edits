@@ -6,6 +6,8 @@
 //	Description : Server base object
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_utils.h>
+
 #include "xrServer_Objects.h"
 #include "xrMessages.h"
 #include "game_base_space.h"

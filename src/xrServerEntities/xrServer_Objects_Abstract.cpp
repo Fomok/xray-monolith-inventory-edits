@@ -8,6 +8,8 @@
 
 #pragma pack(push,4)
 
+#include <net_utils.h>
+
 #include "xrServer_Objects_Abstract.h"
 #include "xrMessages.h"
 

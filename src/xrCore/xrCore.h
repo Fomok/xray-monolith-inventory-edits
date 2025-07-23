@@ -304,8 +304,6 @@ DEFINE_VECTOR(xr_rtoken, RTokenVec, RTokenVecIt);
 #include "fastdelegate.h"
 #include "intrusive_ptr.h"
 
-#include "net_utils.h"
-
 // destructor
 template <class T>
 class destructor

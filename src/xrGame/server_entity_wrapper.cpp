@@ -6,6 +6,8 @@
 //	Description : Server entity wrapper
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_utils.h>
+
 #include "server_entity_wrapper.h"
 #include "xrServer_Objects.h"
 #include "xrmessages.h"
