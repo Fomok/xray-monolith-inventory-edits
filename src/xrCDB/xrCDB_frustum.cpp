@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "xrCDB.h"
 #include "frustum.h"

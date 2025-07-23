@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include	"../../xrEngine/Render.h"
 #include	"ResourceManager.h"

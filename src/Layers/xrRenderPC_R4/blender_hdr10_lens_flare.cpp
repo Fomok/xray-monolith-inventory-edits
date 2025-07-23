@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "blender_hdr10_lens_flare.h"
 

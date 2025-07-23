@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 #include "rt_lzo1x.h"
 
 

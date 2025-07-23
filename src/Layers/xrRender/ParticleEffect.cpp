@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "ParticleEffect.h"
 #include <tbb/parallel_for.h>

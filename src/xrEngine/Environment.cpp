@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #ifndef _EDITOR
 #include "render.h"

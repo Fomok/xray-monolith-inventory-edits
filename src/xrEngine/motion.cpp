@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "motion.h"
 #include "envelope.h"

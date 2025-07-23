@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "SoundRender_Emitter.h"
 #include "SoundRender_Core.h"

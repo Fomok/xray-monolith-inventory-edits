@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 // upper 3 bits
 #define pvSIGN_MASK 0xe000

@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include <errno.h>
 #include <malloc.h>

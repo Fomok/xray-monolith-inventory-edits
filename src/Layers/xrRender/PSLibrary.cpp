@@ -1,7 +1,6 @@
 //----------------------------------------------------
 // file: PSLibrary.cpp
 //----------------------------------------------------
-#pragma hdrstop
 
 #include "PSLibrary.h"
 #include "ParticleEffect.h"

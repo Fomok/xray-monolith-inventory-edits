@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 #include "xr_efflensflare.h"
 
 #include "igame_persistent.h"

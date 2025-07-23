@@ -2,7 +2,6 @@
 // file: FileSystem.cpp
 //----------------------------------------------------
 
-#pragma hdrstop
 
 #include "cderr.h"
 #include "commdlg.h"

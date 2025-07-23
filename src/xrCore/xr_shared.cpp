@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "xr_shared.h"
 /*

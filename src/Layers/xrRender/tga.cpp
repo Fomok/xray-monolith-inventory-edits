@@ -1,5 +1,4 @@
 // file: targasaver.cpp
-#pragma hdrstop
 
 #include "tga.h"
 

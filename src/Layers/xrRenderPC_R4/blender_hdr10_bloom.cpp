@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "blender_hdr10_bloom.h"
 

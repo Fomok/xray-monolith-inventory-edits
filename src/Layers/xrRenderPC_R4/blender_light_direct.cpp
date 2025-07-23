@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "Blender_light_direct.h"
 

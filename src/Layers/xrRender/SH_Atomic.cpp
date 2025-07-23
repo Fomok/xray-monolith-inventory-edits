@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "sh_atomic.h"
 #include "ResourceManager.h"

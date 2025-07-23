@@ -1,7 +1,6 @@
 // xrCDB.cpp : Defines the entry point for the DLL application.
 //
 
-#pragma hdrstop
 
 #include "xrCDB.h"
 #include "profiler.h"

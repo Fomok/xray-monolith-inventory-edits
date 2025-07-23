@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "bone.h"
 #include "gamemtllib.h"

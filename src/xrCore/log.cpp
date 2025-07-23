@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include <time.h>
 #include "resource.h"

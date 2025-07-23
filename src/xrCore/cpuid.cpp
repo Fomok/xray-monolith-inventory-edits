@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 #include "cpuid.h"
 #include <intrin.h>
 

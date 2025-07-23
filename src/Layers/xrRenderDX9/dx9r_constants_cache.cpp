@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "../xrRender/r_constants_cache.h"
 

@@ -1,4 +1,3 @@
-#pragma hdrstop
 #include "detailmodel.h"
 
 CDetail::~CDetail()

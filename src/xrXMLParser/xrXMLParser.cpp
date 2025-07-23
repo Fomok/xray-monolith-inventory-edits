@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include <xrCore.h>
 #include "xrXMLParser.h"

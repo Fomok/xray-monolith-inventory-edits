@@ -1,7 +1,6 @@
 //----------------------------------------------------
 // file: PSObject.cpp
 //----------------------------------------------------
-#pragma hdrstop
 
 #include "ParticlesObject.h"
 #include "defines.h"

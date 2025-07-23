@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "Blender_Screen_SET.h"
 

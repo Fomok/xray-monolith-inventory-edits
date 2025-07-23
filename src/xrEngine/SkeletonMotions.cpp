@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-#pragma hdrstop
 
 #include "SkeletonMotions.h"
 //#include "SkeletonAnimated.h"

@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "xrdebug.h"
 #include "os_clipboard.h"

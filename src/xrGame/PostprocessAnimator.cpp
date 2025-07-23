@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "postprocessanimator.h"
 #ifndef _PP_EDITOR_

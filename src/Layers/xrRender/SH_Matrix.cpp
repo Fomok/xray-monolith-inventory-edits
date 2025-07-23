@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 void CMatrix::Calculate()
 {

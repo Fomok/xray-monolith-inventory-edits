@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "r_backend_tree.h"
 

@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "ModelPool.h"
 

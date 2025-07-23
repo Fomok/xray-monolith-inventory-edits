@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 #include "GameFont.h"
 #ifndef _EDITOR
 #include "Render.h"

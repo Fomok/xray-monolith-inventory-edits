@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 typedef struct TTAPI_WORKER_PARAMS
 {

@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "ObjectAnimator.h"
 #include "motion.h"

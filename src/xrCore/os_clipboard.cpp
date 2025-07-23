@@ -5,7 +5,6 @@
 // Description : os clipboard class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#pragma hdrstop
 #include "os_clipboard.h"
 
 void os_clipboard::copy_to_clipboard(LPCSTR buf)

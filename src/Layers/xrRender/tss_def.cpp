@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "tss_def.h"
 

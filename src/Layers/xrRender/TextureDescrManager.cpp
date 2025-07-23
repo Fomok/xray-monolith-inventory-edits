@@ -1,4 +1,3 @@
-#pragma hdrstop
 #include "TextureDescrManager.h"
 #include "ETextureParams.h"
 #include "profiler.h"

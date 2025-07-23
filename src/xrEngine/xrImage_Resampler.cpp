@@ -4,7 +4,6 @@
  * by Dale Schumacher
  */
 
-#pragma hdrstop
 
 #include "xrImage_Resampler.h"
 

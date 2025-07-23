@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "ResourceManager.h"
 #include "blenders\Blender_Recorder.h"

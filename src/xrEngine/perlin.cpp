@@ -1,7 +1,6 @@
 /* coherent noise function over 1, 2 or 3 dimensions */
 /* (copyright Ken CPerlinNoise) */
 
-#pragma hdrstop
 
 #include "perlin.h"
 

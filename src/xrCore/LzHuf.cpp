@@ -1,8 +1,6 @@
 // LzHuf.cpp : Defines the entry point for the console application.
 //
 
-#pragma hdrstop
-
 #include <io.h>
 #include <fcntl.h>
 #include <sys\stat.h>

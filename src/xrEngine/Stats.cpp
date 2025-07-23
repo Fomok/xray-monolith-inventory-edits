@@ -1,5 +1,4 @@
 #include "GameFont.h"
-#pragma hdrstop
 
 #include "../xrcdb/ISpatial.h"
 #include "IGame_Persistent.h"

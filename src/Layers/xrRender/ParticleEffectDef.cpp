@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "ParticleEffectDef.h"
 #include "ParticleEffect.h"

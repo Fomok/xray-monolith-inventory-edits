@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "particle_actions_collection.h"
 using namespace PAPI;

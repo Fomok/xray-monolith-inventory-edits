@@ -1,5 +1,4 @@
 //---------------------------------------------------------------------------
-#pragma hdrstop
 
 #include "GameMtlLib.h"
 //#include "../include/xrapi/xrapi.h"

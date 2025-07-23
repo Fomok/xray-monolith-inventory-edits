@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #if 0
 

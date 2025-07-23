@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include ".\soundrender_cache.h"
 

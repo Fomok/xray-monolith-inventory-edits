@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "Environment.h"
 #include "xr_efflensflare.h"

@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 #include "soundrender_target.h"
 #include "soundrender_core.h"

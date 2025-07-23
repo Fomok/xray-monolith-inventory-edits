@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 using namespace std;
 

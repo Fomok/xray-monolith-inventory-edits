@@ -1,7 +1,6 @@
 // HW.cpp: implementation of the CHW class.
 //////////////////////////////////////////////////////////////////////
 
-#pragma hdrstop
 
 #pragma warning(disable:4995)
 #include <d3dx9.h>

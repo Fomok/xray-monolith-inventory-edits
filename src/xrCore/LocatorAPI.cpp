@@ -2,8 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#pragma hdrstop
-
 #pragma warning(disable:4995)
 #include <direct.h>
 #include <fcntl.h>

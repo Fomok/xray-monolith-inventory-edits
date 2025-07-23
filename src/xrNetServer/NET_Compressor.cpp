@@ -1,7 +1,6 @@
 // NET_Compressor.cpp: implementation of the NET_Compressor class.
 //
 //////////////////////////////////////////////////////////////////////
-#pragma hdrstop
 
 #include "NET_Common.h"
 #include "NET_Compressor.h"

@@ -1,4 +1,3 @@
-#pragma hdrstop
 #include "dx10EventWrapper.h"
 #include "../xrRender/HW.h"
 

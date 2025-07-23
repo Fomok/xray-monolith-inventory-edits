@@ -10,7 +10,6 @@
 //This code shows how to evaluate envelopes in standalone programs.
 //======================================================================
 
-#pragma hdrstop
 
 #include "envelope.h"
 

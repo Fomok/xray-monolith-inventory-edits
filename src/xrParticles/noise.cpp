@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 #include "noise.h"
 
 #ifndef _EDITOR
