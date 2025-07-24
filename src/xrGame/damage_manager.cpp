@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #include "damage_manager.h"
 #include "xr_object.h"

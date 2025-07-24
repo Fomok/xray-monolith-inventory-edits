@@ -292,7 +292,6 @@ DEFINE_VECTOR(xr_rtoken, RTokenVec, RTokenVecIt);
 
 #include "FS.h"
 #include "log.h"
-#include "xr_trims.h"
 
 // destructor
 template <class T>

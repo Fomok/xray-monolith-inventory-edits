@@ -1,4 +1,5 @@
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #ifdef DEBUG
 #	include <xr_ioconsole.h>

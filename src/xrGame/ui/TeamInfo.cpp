@@ -1,4 +1,5 @@
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #include "TeamInfo.h"
 #include "string_table.h"

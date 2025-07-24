@@ -3,7 +3,6 @@ add_module(XRay.Game.AI
   
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
 
   LINKS
   IKAN
@@ -15,6 +14,7 @@ add_module(XRay.Game.AI
   XRay.Game.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
+  XRay.ServerEntities.Includes
 
   XRay.Game.AI.Navigation.PatrolPaths.Point
   

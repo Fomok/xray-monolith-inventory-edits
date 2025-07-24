@@ -10,6 +10,7 @@ add_module(XRay.Game.AI.Navigation
 
   XRay.Core.Defines
 
+  XRay.Includes
   XRay.Collision.Includes
   XRay.Core.Includes
   XRay.Engine.Includes
@@ -18,6 +19,7 @@ add_module(XRay.Game.AI.Navigation
   XRay.Physics.Includes
   XRay.Render.Common.Includes
   XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
 
   XRay.Game.Precompiles
 )

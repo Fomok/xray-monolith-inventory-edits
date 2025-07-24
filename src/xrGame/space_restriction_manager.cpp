@@ -6,6 +6,8 @@
 //	Description : Space restriction manager
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_trims.h>
+
 #include "space_restriction.h"
 #include "restriction_space.h"
 #include "space_restriction_manager.h"

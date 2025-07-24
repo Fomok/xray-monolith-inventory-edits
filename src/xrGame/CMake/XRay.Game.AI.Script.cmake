@@ -23,6 +23,7 @@ add_module(XRay.Game.AI.Script
   XRay.Physics.Includes
   XRay.Render.Common.Includes
   XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
 
   XRay.Game.Precompiles
 

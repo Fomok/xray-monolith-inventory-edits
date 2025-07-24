@@ -5,6 +5,9 @@
 //	---------------------------------------------------------------------------
 //  Multiplayer game log window
 //=============================================================================
+
+#include <xr_trims.h>
+
 #include "UIGameLog.h"
 #include "UIXmlInit.h"
 #include "UIPdaMsgListItem.h"

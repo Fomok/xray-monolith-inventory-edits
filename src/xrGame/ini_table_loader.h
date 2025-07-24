@@ -7,6 +7,7 @@
 #pragma once
 
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 //T_ITEM		-	тип элемента таблицы
 //					

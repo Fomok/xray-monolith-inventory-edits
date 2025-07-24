@@ -1,5 +1,6 @@
 #include <boost/noncopyable.hpp>
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #include "IKLimb.h"
 #include "Kinematics.h"

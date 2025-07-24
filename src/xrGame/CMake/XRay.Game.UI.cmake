@@ -13,6 +13,7 @@ add_module(XRay.Game.UI
   XRay.Core.Defines
   XRay.Game.Defines
 
+  XRay.Includes
   XRay.Collision.Includes
   XRay.Core.Includes
   XRay.Core.Crypto.Includes
@@ -23,6 +24,7 @@ add_module(XRay.Game.UI
   XRay.Render.Common.Includes
   XRay.Sound.Includes
   XRay.NetServer.Includes
+  XRay.ServerEntities.Includes
 
   XRay.Game.Precompiles
 

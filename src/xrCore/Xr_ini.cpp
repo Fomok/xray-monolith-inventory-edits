@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <sstream>
 
+#include <xr_trims.h>
+
 #include "fs_internal.h"
 #include "LocatorAPI.h"
 #include "mezz_stringbuffer.h"

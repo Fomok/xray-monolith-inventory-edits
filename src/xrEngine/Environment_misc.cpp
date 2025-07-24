@@ -2,6 +2,7 @@
 #include <object_broker.h>
 #include <LevelGameDef.h>
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #include "Environment.h"
 #include "xr_efflensflare.h"

@@ -28,6 +28,7 @@ add_module(XRay.Render.R4
   XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
+  XRay.ServerEntities.Includes
   
   PRECOMPILES
   stdafx.h

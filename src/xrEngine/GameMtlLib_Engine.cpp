@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------------
 
+#include <xr_trims.h>
+
 #include <GameMtlLib.h>
 #include <LocatorAPI.h>
 

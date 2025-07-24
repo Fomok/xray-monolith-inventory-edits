@@ -9,6 +9,7 @@
 #include <malloc.h>
 
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #include "FTimer.h"
 #include "FileSystem.h"

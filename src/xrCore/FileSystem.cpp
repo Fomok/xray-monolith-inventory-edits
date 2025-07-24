@@ -6,6 +6,8 @@
 #include <commdlg.h>
 #include <vfw.h>
 
+#include <xr_trims.h>
+
 #include "FileSystem.h"
 #include "LocatorAPI.h"
 

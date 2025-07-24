@@ -1,4 +1,5 @@
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #include "PhysicsShellAnimator.h"
 #include "PhysicsShellAnimatorBoneData.h"

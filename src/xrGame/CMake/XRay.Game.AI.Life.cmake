@@ -11,6 +11,7 @@ add_module(XRay.Game.AI.Life
   XRay.Core.Defines
   XRay.Game.Defines
 
+  XRay.Includes
   XRay.Collision.Includes
   XRay.Core.Includes
   XRay.Engine.Includes
@@ -20,6 +21,7 @@ add_module(XRay.Game.AI.Life
   XRay.Render.Common.Includes
   XRay.Render.API.Includes
   XRay.Sound.Includes
+  XRay.ServerEntities.Includes
 
   XRay.Game.Precompiles
   

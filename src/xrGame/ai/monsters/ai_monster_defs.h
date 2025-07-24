@@ -1,6 +1,7 @@
 #pragma once
 
 #include <xr_ini.h>
+#include <xr_trims.h>
 
 #include "KinematicsAnimated.h"
 #include "cameramanager.h"

@@ -3,6 +3,7 @@
 #include <LocatorAPI.h>
 #include <xr_ioconsole.h>
 #include <xr_input.h>
+#include <xr_trims.h>
 #include <xr_ioc_cmd.h>
 
 #include "xr_level_controller.h"

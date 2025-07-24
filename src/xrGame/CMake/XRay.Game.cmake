@@ -3,7 +3,6 @@ add_module(XRay.Game
   
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/src/xrServerEntities
   
   DEFINES
   GP_EMAIL_LEN=128
@@ -20,6 +19,7 @@ add_module(XRay.Game
   XRay.Core.Defines
   XRay.Engine.Defines
 
+  XRay.Includes
   XRay.Collision.Includes
   XRay.Core.Includes
   XRay.Core.Crypto.Includes
@@ -27,13 +27,14 @@ add_module(XRay.Game
   XRay.NetServer.Includes
   XRay.Physics.Includes
   XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
 
   PRECOMPILES
   $<$<COMPILE_LANGUAGE:CXX>:../xrEngine/stdafx.h>
 
   [[$<$<COMPILE_LANGUAGE:CXX>:DPlay/dplay8.h>]]
 
-  $<$<COMPILE_LANGUAGE:CXX>:../build_config_defines.h>
+  $<$<COMPILE_LANGUAGE:CXX>:build_config_defines.h>
 
   $<$<COMPILE_LANGUAGE:CXX>:macros.h>
 

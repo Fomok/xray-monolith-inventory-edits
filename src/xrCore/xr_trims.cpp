@@ -1,3 +1,5 @@
+#include "xr_trims.h"
+
 LPSTR _TrimLeft(LPSTR str)
 {
 	LPSTR p = str;
