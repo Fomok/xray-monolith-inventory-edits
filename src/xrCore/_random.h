@@ -1,6 +1,8 @@
 #ifndef _LOCAL_RAND
 #define _LOCAL_RAND
 
+#include <xrDebug.h>
+
 /*
 u32 dwRandSeed;
 IC u32 dwfRandom(u32 dwRange)

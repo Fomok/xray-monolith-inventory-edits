@@ -2,6 +2,8 @@
 #define R_BACKEND_RUNTIMEH
 #pragma once
 
+#include <xrDebug.h>
+
 #include "sh_texture.h"
 #include "sh_matrix.h"
 #include "sh_constant.h"
