@@ -13,6 +13,7 @@
 #include "FileSystem.h"
 #include "LocatorAPI.h"
 #include "string_concatenations.h"
+#include "rt_compressor.h"
 #include "xrCore.h"
 
 class CLocatorAPI;

@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <rt_compressor.h>
+
 #include "NET_Common.h"
 #include "NET_Compressor.h"
 

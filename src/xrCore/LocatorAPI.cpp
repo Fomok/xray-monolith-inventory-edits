@@ -8,6 +8,7 @@
 #include <experimental\filesystem>
 #include <malloc.h>
 
+#include <rt_compressor.h>
 #include <string_concatenations.h>
 #include <xr_ini.h>
 #include <xr_trims.h>
