@@ -2,17 +2,16 @@
 #ifndef SkeletonMotionsH
 #define SkeletonMotionsH
 
-//#include "skeletoncustom.h"
+#include <xrsharedmem.h>
+
 #include "bone.h"
 #include "skeletonmotiondefs.h"
-// refs
+
 class CKinematicsAnimated;
 class CBlend;
 class IKinematics;
 
-// callback
 typedef void (*PlayCallback)(CBlend* P);
-
 
 //*** Key frame definition ************************************************************************
 enum

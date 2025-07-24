@@ -8,6 +8,7 @@
 
 #include "os_clipboard.h"
 #include "xrdebug.h"
+#include "xrsharedmem.h"
 
 extern bool shared_str_initialized;
 

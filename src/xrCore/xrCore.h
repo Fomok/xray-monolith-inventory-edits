@@ -224,7 +224,6 @@
 #include "xrDebug.h"
 
 #include "_stl_extensions.h"
-#include "xrsharedmem.h"
 #include "xrstring.h"
 
 // stl ext

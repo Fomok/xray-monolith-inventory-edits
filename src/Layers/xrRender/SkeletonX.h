@@ -6,6 +6,8 @@
 #define SkeletonXH
 #pragma once
 
+#include <xrsharedmem.h>
+
 #include "SkeletonCustom.h"
 #include "SkeletonXVertRender.h"
 

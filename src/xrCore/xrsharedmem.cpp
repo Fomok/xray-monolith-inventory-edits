@@ -1,3 +1,4 @@
+#include <xrsharedmem.h>
 
 using namespace std;
 
