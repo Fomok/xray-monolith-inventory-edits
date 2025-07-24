@@ -1,10 +1,13 @@
 #ifndef _STL_EXT_internal
 #define _STL_EXT_internal
 
-using std::swap;
-
 #include <functional>
+
+#include "xrMemory.h"
+
 #include "_type_traits.h"
+
+using std::swap;
 
 #ifdef __BORLANDC__
 #define M_NOSTDCONTAINERS_EXT

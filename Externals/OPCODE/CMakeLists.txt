@@ -4,9 +4,16 @@ target_folder(OPCODE ${FOLDER_EXTERNAL})
 
 set(OPCODE_DIR ../OPCODE-xr)
 
-target_precompile_headers(OPCODE
-    PRIVATE
-    ../../src/xrCDB/StdAfx.h
+target_include_directories(OPCODE
+  PUBLIC
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/OPCODE
+)
+
+target_link_libraries(OPCODE
+  PRIVATE
+  XRay.Collision.Includes
+  XRay.Core.Includes
 )
 
 target_compile_options(OPCODE
@@ -17,12 +24,9 @@ target_compile_options(OPCODE
   $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-value>
 )
 
-target_include_directories(OPCODE
-  PUBLIC
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}/OPCODE
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/xrCDB/
+target_precompile_headers(OPCODE
+    PRIVATE
+    ../../src/xrCDB/StdAfx.h
 )
 
 target_sources_sandboxed(OPCODE

@@ -2,6 +2,8 @@
 #define xrstringH
 #pragma once
 
+#include "xrMemory.h"
+
 #pragma pack(push,8)
 //////////////////////////////////////////////////////////////////////////
 typedef const char* str_c;

@@ -2,7 +2,8 @@
 #define SH_CONSTANT_H
 #pragma once
 
-#include "../../xrEngine/WaveForm.h"
+#include <xrMemory.h>
+#include <WaveForm.h>
 
 class IReader;
 class IWriter;

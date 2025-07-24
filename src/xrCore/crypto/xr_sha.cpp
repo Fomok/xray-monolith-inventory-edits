@@ -1,5 +1,7 @@
-#include "xr_sha.h"
 #include <openssl/sha.h>
+
+#include "xr_sha.h"
+#include "xrMemory.h"
 
 namespace crypto
 {
