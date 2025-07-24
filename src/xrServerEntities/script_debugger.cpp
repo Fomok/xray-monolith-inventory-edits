@@ -1,3 +1,5 @@
+#include <string_concatenations.h>
+
 #include "script_debugger.h"
 #include "script_lua_helper.h"
 #include "mslotutils.h"

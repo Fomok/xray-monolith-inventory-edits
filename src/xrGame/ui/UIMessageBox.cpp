@@ -1,8 +1,10 @@
+#include <string_concatenations.h>
+
 #include "UIMessageBox.h"
 #include "UIXmlInit.h"
 #include "UI3tButton.h"
 #include "UIEditBox.h"
-#include "../string_table.h"
+#include "string_table.h"
 
 CUIMessageBox::CUIMessageBox()
 {

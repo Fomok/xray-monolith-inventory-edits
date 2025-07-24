@@ -31,6 +31,7 @@ add_module(XRay.Render.R3
   XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
+  XRay.Render.DX10.Includes
 
   SOURCES
   ../xrRender/xrD3DDefs.h

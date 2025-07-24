@@ -1,3 +1,5 @@
+#include <string_concatenations.h>
+
 #include "UIFixedScrollbar.h"
 #include "UI3tButton.h"
 #include "UIFrameLineWnd.h"

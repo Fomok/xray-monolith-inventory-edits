@@ -1,3 +1,5 @@
+#include <string_concatenations.h>
+
 #include "UIXmlInit.h"
 #include "UI3tButton.h"
 #include "UIProgressBar.h"
@@ -7,7 +9,7 @@
 #include <dinput.h>
 #include "UIDemoPlayControl.h"
 #include "UICursor.h"
-#include "../xrEngine/XR_IOConsole.h"
+#include "XR_IOConsole.h"
 #include "string_table.h"
 #include "level.h"
 #include "demoinfo.h"

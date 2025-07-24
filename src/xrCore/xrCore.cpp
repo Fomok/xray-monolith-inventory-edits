@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-
 #include <mmsystem.h>
 #include <objbase.h>
 #ifdef DEBUG
@@ -13,6 +12,7 @@
 
 #include "FileSystem.h"
 #include "LocatorAPI.h"
+#include "string_concatenations.h"
 #include "xrCore.h"
 
 class CLocatorAPI;

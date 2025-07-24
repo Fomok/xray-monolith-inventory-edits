@@ -1,13 +1,15 @@
+#include <string_concatenations.h>
+#include <xr_ioconsole.h>
+
 #include "ServerList.h"
 #include "UIXmlInit.h"
-#include "../string_table.h"
-#include "../../xrEngine/xr_ioconsole.h"
+#include "string_table.h"
 #include "UIEditBox.h"
 #include "UIMessageBoxEx.h"
 #include "UIMessageBox.h"
 #include "TeamInfo.h"
-#include "../MainMenu.h"
-#include "../login_manager.h"
+#include "MainMenu.h"
+#include "login_manager.h"
 
 
 LPCSTR GameTypeToString(EGameIDs gt, bool bShort);

@@ -1,3 +1,4 @@
+#include <string_concatenations.h>
 #include <xr_ini.h>
 
 #include "gsc_dsigned_ltx.h"

@@ -1,6 +1,7 @@
 #include <imgui.h>
 #include <IconsFontAwesome6.h>
 #include <LocatorAPI.h>
+#include <string_concatenations.h>
 #include <xr_ini.h>
 
 #include "imgui_base.h"

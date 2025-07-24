@@ -6,6 +6,7 @@
 #include <D3DX10Tex.h>
 #include <dxRenderDeviceRender.h>
 
+#include <string_concatenations.h>
 #include <xr_ini.h>
 
 // #include "std_classes.h"

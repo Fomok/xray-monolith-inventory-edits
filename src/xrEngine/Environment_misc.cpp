@@ -1,17 +1,16 @@
+#include <LevelGameDef.h>
 #include <LocatorAPI.h>
 #include <object_broker.h>
-#include <LevelGameDef.h>
+#include <string_concatenations.h>
 #include <xr_ini.h>
 #include <xr_trims.h>
 
 #include "Environment.h"
-#include "xr_efflensflare.h"
-#include "thunderbolt.h"
-#include "rain.h"
-
 #include "IGame_Level.h"
-
+#include "rain.h"
 //#include "securom_api.h"
+#include "thunderbolt.h"
+#include "xr_efflensflare.h"
 
 extern float ps_r2_sun_shafts_min;
 extern float ps_r2_sun_shafts_value;

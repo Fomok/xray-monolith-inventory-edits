@@ -3,13 +3,16 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include "FHierrarhyVisual.h"
-#include "../../xrEngine/Fmesh.h"
+#include <string_concatenations.h>
+#include <Fmesh.h>
+
 #ifndef _EDITOR
-#include "../../xrEngine/render.h"
+#include <render.h>
 #else
-#include "../../Include/xrAPI/xrAPI.h"
+#include <xrAPI.h>
 #endif
+
+#include "FHierrarhyVisual.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

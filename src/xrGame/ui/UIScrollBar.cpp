@@ -1,3 +1,5 @@
+#include <string_concatenations.h>
+
 #include "uiscrollbar.h"
 #include "UI3tButton.h"
 #include "UIScrollBox.h"

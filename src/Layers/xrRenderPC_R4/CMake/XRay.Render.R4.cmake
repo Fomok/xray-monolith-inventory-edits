@@ -27,6 +27,7 @@ add_module(XRay.Render.R4
   XRay.Particles.Includes
   XRay.Physics.Includes
   XRay.Render.API.Includes
+  XRay.Render.DX10.Includes
   XRay.Render.Common.Includes
   XRay.ServerEntities.Includes
   

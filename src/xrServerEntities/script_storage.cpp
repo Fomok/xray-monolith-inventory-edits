@@ -13,6 +13,7 @@
 #include <regex>
 
 #include <LocatorAPI.h>
+#include <string_concatenations.h>
 
 #include "pch_script.h"
 #include "script_storage.h"

@@ -3,6 +3,8 @@
 #include <fcntl.h>
 #include <sys\stat.h>
 
+#include <string_concatenations.h>
+
 #include "LocatorAPI.h"
 #include "LocatorAPI_defs.h"
 

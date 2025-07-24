@@ -1,4 +1,5 @@
 #include <LocatorAPI.h>
+#include <string_concatenations.h>
 #include <xr_ini.h>
 
 #include "IGame_Persistent.h"

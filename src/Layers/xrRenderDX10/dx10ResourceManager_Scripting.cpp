@@ -1,18 +1,14 @@
+#include <ai_script_space.h>
+#include <ai_script_lua_extension.h>
+#include <blenders/blender.h>
+#include <blenders/blender_recorder.h>
+#include <dxRenderDeviceRender.h>
+#include <Render.h>
+#include <ResourceManager.h>
+#include <string_concatenations.h>
+#include <tss.h>
 
-#include	"../../xrEngine/Render.h"
-#include	"../xrRender/ResourceManager.h"
-#include	"../xrRender/tss.h"
-#include	"../xrRender/blenders/blender.h"
-#include	"../xrRender/blenders/blender_recorder.h"
-//	adopt_compiler don't have = operator And it can't have = operator
-#pragma warning( push )
-#pragma warning( disable : 4512)
-#include	"../../xrEngine/ai_script_space.h"
-#pragma warning( pop )
-#include	"../../xrEngine/ai_script_lua_extension.h"
-#include	"luabind/return_reference_to_policy.hpp"
-
-#include	"../xrRender/dxRenderDeviceRender.h"
+#include "luabind/return_reference_to_policy.hpp"
 
 using namespace luabind;
 

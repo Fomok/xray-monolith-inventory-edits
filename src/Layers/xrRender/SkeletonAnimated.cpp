@@ -1,13 +1,14 @@
-//---------------------------------------------------------------------------
+#include <fmesh.h>
+#include <string_concatenations.h>
 
-#include 	"SkeletonAnimated.h"
-
-#include	"AnimationKeyCalculate.h"
-#include	"SkeletonX.h"
-#include	"../../xrEngine/fmesh.h"
 #ifdef DEBUG
-#include	"../../xrcore/dump_string.h"
+#include <dump_string.h>
 #endif
+
+#include "AnimationKeyCalculate.h"
+#include "SkeletonAnimated.h"
+#include "SkeletonX.h"
+
 extern int psSkeletonUpdate;
 extern shared_str current_player_hud_sect;
 using namespace animation;

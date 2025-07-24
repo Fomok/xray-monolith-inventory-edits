@@ -1,3 +1,5 @@
+#include <string_concatenations.h>
+
 #include "UIFrameLineWnd.h"
 #include "UITextureMaster.h"
 

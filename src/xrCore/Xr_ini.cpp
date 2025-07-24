@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <sstream>
 
+#include <string_concatenations.h>
 #include <xr_trims.h>
 
 #include "fs_internal.h"

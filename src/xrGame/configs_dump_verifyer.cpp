@@ -1,3 +1,5 @@
+#include <string_concatenations.h>
+
 #include "configs_dump_verifyer.h"
 #include "configs_common.h"
 #include "configs_dumper.h"

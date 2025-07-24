@@ -1,5 +1,6 @@
 #include <msacm.h>
 
+#include <string_concatenations.h>
 #include <LocatorAPI.h>
 
 #include "soundrender_core.h"

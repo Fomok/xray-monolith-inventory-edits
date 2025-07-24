@@ -1,4 +1,5 @@
 #include <LocatorAPI.h>
+#include <string_concatenations.h>
 
 #include "MMSound.h"
 #include "xrUIXmlParser.h"

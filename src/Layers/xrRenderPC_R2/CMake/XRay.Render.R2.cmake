@@ -29,6 +29,7 @@ add_module(XRay.Render.R2
   XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
+  XRay.Render.DX9.Includes
 
   SOURCES
   ../../xrEngine/cl_intersect.h

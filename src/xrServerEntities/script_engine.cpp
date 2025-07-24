@@ -11,6 +11,7 @@
 
 #include <build_config_defines.h>
 #include <LocatorAPI.h>
+#include <string_concatenations.h>
 #include <xr_ini.h>
 
 #include "pch_script.h"

@@ -6,8 +6,10 @@
 #include <string>
 
 #ifdef _EDITOR
-#include "malloc.h"
+#include <malloc.h>
 #endif
+
+#include <string_concatenations.h>
 
 #include "FileSystem.h"
 #include "LocatorAPI.h"

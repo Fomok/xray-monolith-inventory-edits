@@ -1,5 +1,7 @@
 // sea 08.01.2008
 
+#include <string_concatenations.h>
+
 #include "UIDoubleProgressBar.h"
 #include "UIXmlInit.h"
 

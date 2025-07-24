@@ -5,6 +5,7 @@
 #include <IGame_Level.h>
 #include <LocatorAPI.h>
 #include <os_clipboard.h>
+#include <string_concatenations.h>
 #include <xr_input.h>
 #include <xr_IOConsole.h>
 

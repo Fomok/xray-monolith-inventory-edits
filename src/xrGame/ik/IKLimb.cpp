@@ -1,4 +1,6 @@
 #include <boost/noncopyable.hpp>
+
+#include <string_concatenations.h>
 #include <xr_ini.h>
 #include <xr_trims.h>
 
@@ -7,7 +9,7 @@
 #include "gameobject.h"
 #include "game_object_space.h"
 #include "ik_anim_state.h"
-//#include "../ode_include.h"
+//#include "ode_include.h"
 #include "MathUtils.h"
 #include "matrix_utils.h"
 #include "pose_extrapolation.h"

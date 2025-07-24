@@ -1,10 +1,11 @@
+#include <string_concatenations.h>
 
 #include "UIStats.h"
 #include "UIXmlInit.h"
 #include "UIStatsPlayerList.h"
 #include "UIStatic.h"
 #include "UIFrameWindow.h"
-#include "../level.h"
+#include "level.h"
 #include "game_base_space.h"
 
 

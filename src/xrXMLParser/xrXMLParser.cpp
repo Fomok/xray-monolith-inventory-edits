@@ -1,6 +1,7 @@
 
 #include <xrCore.h>
 #include <LocatorAPI.h>
+#include <string_concatenations.h>
 #include <xr_trims.h>
 
 #include "xrXMLParser.h"

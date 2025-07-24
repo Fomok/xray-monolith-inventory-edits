@@ -8,6 +8,7 @@
 
 #include <malloc.h>
 
+#include <string_concatenations.h>
 #include <xr_trims.h>
 
 #include "space_restriction_holder.h"

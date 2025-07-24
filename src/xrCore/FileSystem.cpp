@@ -6,6 +6,7 @@
 #include <commdlg.h>
 #include <vfw.h>
 
+#include <string_concatenations.h>
 #include <xr_trims.h>
 
 #include "FileSystem.h"

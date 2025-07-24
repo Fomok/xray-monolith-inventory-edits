@@ -30,6 +30,7 @@ add_module(XRay.Render.R1
   XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
+  XRay.Render.DX9.Includes
   
   SOURCES
   ../xrRender/xrRender_console.cpp

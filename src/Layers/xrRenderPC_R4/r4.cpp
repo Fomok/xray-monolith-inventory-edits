@@ -1,19 +1,19 @@
+#include <fbasicvisual.h>
+#include <string_concatenations.h>
+#include <xr_object.h>
+#include <CustomHUD.h>
+#include <igame_persistent.h>
+#include <environment.h>
+#include <SkeletonCustom.h>
+#include <LightTrack.h>
+#include <dxRenderDeviceRender.h>
+#include <dxWallMarkArray.h>
+#include <dxUIShader.h>
+#include <3DFluid/dx103DFluidManager.h>
+#include <ShaderResourceTraits.h>
+#include <profiler.h>
+
 #include "r4.h"
-#include "../xrRender/fbasicvisual.h"
-#include "../../xrEngine/xr_object.h"
-#include "../../xrEngine/CustomHUD.h"
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-#include "../xrRender/SkeletonCustom.h"
-#include "../xrRender/LightTrack.h"
-#include "../xrRender/dxRenderDeviceRender.h"
-#include "../xrRender/dxWallMarkArray.h"
-#include "../xrRender/dxUIShader.h"
-
-#include "../xrRenderDX10/3DFluid/dx103DFluidManager.h"
-#include "../xrRender/ShaderResourceTraits.h"
-
-#include "../../xrCore/profiler.h"
 
 #include "D3DX10Core.h"
 
