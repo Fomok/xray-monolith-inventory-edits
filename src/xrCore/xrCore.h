@@ -182,19 +182,6 @@
 #pragma warning (disable : 4512 )
 #endif
 
-// stl
-#pragma warning (push)
-#pragma warning (disable:4702)
-#include <algorithm>
-#include <limits>
-#include <vector>
-#include <stack>
-#include <list>
-#include <set>
-#include <map>
-#pragma warning (pop)
-#pragma warning (disable : 4100 ) // unreferenced formal parameter
-
 // Our headers
 //#ifdef XRCORE_STATIC
 //# define XRCORE_API

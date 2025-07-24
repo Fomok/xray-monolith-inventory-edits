@@ -2,6 +2,9 @@
 #define _STL_EXT_internal
 
 #include <functional>
+#include <deque>
+#include <map>
+#include <set>
 #include <hash_map>
 #include <hash_set>
 
