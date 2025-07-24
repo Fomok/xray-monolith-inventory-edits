@@ -2,6 +2,7 @@
 #define xrMemoryH
 #pragma once
 
+#include "_types.h"
 #include "memory_monitor.h"
 
 #ifdef USE_MEMORY_MONITOR

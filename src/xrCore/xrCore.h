@@ -215,8 +215,6 @@
 # endif
 //#endif
 
-#include "vector.h"
-
 #include "_stl_extensions.h"
 #include "xrstring.h"
 

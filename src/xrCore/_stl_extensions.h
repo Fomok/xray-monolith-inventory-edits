@@ -3,9 +3,9 @@
 
 #include <functional>
 
-#include "xrMemory.h"
-
 #include "_type_traits.h"
+#include "vector.h"
+#include "xrMemory.h"
 
 using std::swap;
 
