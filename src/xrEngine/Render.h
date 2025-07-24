@@ -7,7 +7,11 @@
 
 #include "xrAPI.h"
 #include "FactoryPtr.h"
+
+class IReader;
 class IUIShader;
+class CMemoryWriter;
+
 typedef FactoryPtr<IUIShader> wm_shader;
 //#include "../Include/xrRender/WallMarkArray.h"
 

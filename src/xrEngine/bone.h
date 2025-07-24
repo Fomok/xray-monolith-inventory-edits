@@ -2,14 +2,15 @@
 #ifndef BoneH
 #define BoneH
 
-#include "xrCore.h"
+#include <FS.h>
+#include <xrCore.h>
+
+class IReader;
+class CBone;
 
 #ifdef _LW_EXPORT
 #include <lwsdk/lwrender.h>
 #endif
-
-// refs
-class CBone;
 
 #define BI_NONE (u16(-1))
 

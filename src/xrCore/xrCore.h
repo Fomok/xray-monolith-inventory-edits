@@ -290,7 +290,6 @@ DEFINE_VECTOR(xr_rtoken, RTokenVec, RTokenVecIt);
 
 #define xr_pure_interface __interface
 
-#include "FS.h"
 #include "log.h"
 
 // destructor

@@ -4,6 +4,8 @@
 
 //#include "../include/xrapi/xrapi.h"
 
+class IReader;
+
 #ifdef XRSOUND_EXPORTS
 #define XRSOUND_API
 //__declspec(dllexport)

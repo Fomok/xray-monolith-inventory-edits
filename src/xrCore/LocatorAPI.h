@@ -8,6 +8,7 @@
 
 #include <io.h>
 
+#include "FS.h"
 #include "LocatorAPI_defs.h"
 
 class XRCORE_API CStreamReader;

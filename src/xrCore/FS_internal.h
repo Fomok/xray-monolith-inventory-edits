@@ -2,11 +2,13 @@
 #define FS_internalH
 #pragma once
 
-#include "lzhuf.h"
 #include <io.h>
 #include <fcntl.h>
 #include <sys\stat.h>
 #include <share.h>
+
+#include "FS.h"
+#include "lzhuf.h"
 
 void* FileDownload(LPCSTR fn, u32* pdwSize = NULL);
 void FileCompress(const char* fn, const char* sign, void* data, u32 size);

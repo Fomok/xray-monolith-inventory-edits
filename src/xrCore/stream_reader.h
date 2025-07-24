@@ -1,6 +1,8 @@
 #ifndef STREAM_READER_H
 #define STREAM_READER_H
 
+#include "FS.h"
+
 class XRCORE_API CStreamReader : public IReaderBase<CStreamReader>
 {
 private:

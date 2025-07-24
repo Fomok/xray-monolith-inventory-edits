@@ -1,6 +1,8 @@
 #ifndef FS_IMPL_H_INCLUDED
 #define FS_IMPL_H_INCLUDED
 
+#include "FS.h"
+
 // 1: default
 // 1.5: check next chunk first heuristics
 // 2: vector population heuristics

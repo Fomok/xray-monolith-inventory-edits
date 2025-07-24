@@ -2,6 +2,8 @@
 #define PSystemH
 #pragma once
 
+class IReader;
+
 #define PARTICLES_API
 
 // Actually this must be < sqrt(MAXFLOAT) since we store this value squared.

@@ -7,8 +7,8 @@
 #include "robin_hood.h"
 #endif
 
-// refs
-class CInifile;
+class IReader;
+
 struct xr_token;
 
 
