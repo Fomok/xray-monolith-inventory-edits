@@ -2,6 +2,8 @@
 #define xrMemory_POOLh
 #pragma once
 
+#include "xrSyncronize.h"
+
 class xrMemory;
 
 class MEMPOOL

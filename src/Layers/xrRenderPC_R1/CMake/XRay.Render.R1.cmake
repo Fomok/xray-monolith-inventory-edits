@@ -21,8 +21,11 @@ add_module(XRay.Render.R1
   optick
   ReShadeCompat
   tbb
-  XRay.Collision.Includes
+
   XRay.Core.Defines
+  
+  XRay.Includes
+  XRay.Collision.Includes
   XRay.Core.Includes
   XRay.CPUPipe.Includes
   XRay.Engine.Includes

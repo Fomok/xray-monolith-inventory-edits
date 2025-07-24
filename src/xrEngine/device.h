@@ -9,16 +9,13 @@
 //class ENGINE_API CResourceManager;
 //class ENGINE_API CGammaControl;
 
+#include <build_config_defines.h>
 #include <fastdelegate.h>
 #include <ftimer.h>
+#include <xrSyncronize.h>
 
 #include "pure.h"
-//#include "hw.h"
 #include "stats.h"
-//#include "shader.h"
-//#include "R_Backend.h"
-
-#include "../build_config_defines.h"
 
 #define VIEWPORT_NEAR  Device.ViewportNear //0.2f
 #define R_VIEWPORT_NEAR 0.005f

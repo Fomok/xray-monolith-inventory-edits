@@ -13,6 +13,7 @@ add_module(XRay.Collision
 
   XRay.Core.Defines
   
+  XRay.Includes
   XRay.Core.Includes
   XRay.Engine.Includes
   XRay.Render.API.Includes

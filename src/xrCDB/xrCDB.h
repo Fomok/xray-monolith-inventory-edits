@@ -1,6 +1,8 @@
 #ifndef XRCDB_H
 #define XRCDB_H
 
+#include <xrSyncronize.h>
+
 #define XRCDB_API
 
 #ifdef M_VISUAL

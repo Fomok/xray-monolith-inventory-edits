@@ -9,7 +9,10 @@ add_module(XRay.Physics
   ode
   tbb
   OPCODE
+  
   XRay.Core.Defines
+
+  XRay.Includes
   XRay.Core.Includes
   XRay.Collision.Includes
   XRay.Engine.Includes
