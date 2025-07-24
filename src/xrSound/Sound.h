@@ -2,7 +2,7 @@
 #define SoundH
 #pragma once
 
-//#include "../include/xrapi/xrapi.h"
+#include <xr_resource.h>
 
 class IReader;
 

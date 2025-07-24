@@ -1,12 +1,13 @@
 #ifndef _RENDER_H_
 #define _RENDER_H_
 
+#include <FactoryPtr.h>
+#include <xrAPI.h>
+#include <xr_resource.h>
+
 #include "frustum.h"
 #include "vis_common.h"
 //#include "IRenderDetailModel.h"
-
-#include "xrAPI.h"
-#include "FactoryPtr.h"
 
 class IReader;
 class IUIShader;
