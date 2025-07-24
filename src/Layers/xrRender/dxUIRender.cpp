@@ -1,5 +1,6 @@
-#include "dxUIRender.h"
+#include <LocatorAPI.h>
 
+#include "dxUIRender.h"
 #include "dxUIShader.h"
 
 dxUIRender UIRenderImpl;

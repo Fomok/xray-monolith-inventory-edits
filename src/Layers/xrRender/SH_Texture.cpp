@@ -1,12 +1,13 @@
 
+#include <LocatorAPI.h>
 #include "ResourceManager.h"
 
 #ifndef _EDITOR
-#include "../../xrEngine/render.h"
+#include <render.h>
 #endif
 
-#include "../../xrEngine/tntQAVI.h"
-#include "../../xrEngine/xrTheora_Surface.h"
+#include <tntQAVI.h>
+#include <xrTheora_Surface.h>
 
 #include "dxRenderDeviceRender.h"
 

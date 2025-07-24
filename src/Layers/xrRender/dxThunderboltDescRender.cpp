@@ -1,3 +1,5 @@
+#include <LocatorAPI.h>
+
 #include "dxThunderboltDescRender.h"
 
 void dxThunderboltDescRender::Copy(IThunderboltDescRender& _in)

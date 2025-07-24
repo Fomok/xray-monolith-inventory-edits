@@ -2,15 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "LightShadows.h"
-#include "../xrRender/LightTrack.h"
-#include "../../xrEngine/xr_object.h"
-#include "../xrRender/fbasicvisual.h"
-#include "../../xrEngine/CustomHUD.h"
+#include <CustomHUD.h>
+#include <fbasicvisual.h>
+#include <LocatorAPI.h>
+#include <string_concatenations.h>
+#include <xr_object.h>
 
 #ifndef _EDITOR
-#include "../../xrCPU_Pipe/ttapi.h"
+#include <ttapi.h>
 #endif
+
+#include "LightTrack.h"
+#include "LightShadows.h"
 
 const float S_distance = 256;
 const float S_distance2 = S_distance * S_distance;

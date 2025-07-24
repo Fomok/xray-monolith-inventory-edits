@@ -1,4 +1,4 @@
-
+#include <LocatorAPI.h>
 #include	"xrRender_console.h"
 #include	"dxRenderDeviceRender.h"
 

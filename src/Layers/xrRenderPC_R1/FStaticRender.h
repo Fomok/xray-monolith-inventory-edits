@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include <LocatorAPI.h>
 #include "../xrRender/r__dsgraph_structure.h"
 
 #include "../xrRender/PSLibrary.h"
@@ -17,6 +18,7 @@
 #include "../xrRender/light_DB.h"
 #include "../../xrEngine/fmesh.h"
 
+class CStreamReader;
 class dxRender_Visual;
 
 // definition

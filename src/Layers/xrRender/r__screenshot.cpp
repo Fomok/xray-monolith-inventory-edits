@@ -1,3 +1,4 @@
+#include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <tga.h>
 #include <xrImage_Resampler.h>

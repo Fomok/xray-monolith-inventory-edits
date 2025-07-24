@@ -1,6 +1,7 @@
-#include "dxRainRender.h"
+#include <LocatorAPI.h>
+#include <Rain.h>
 
-#include "../../xrEngine/Rain.h"
+#include "dxRainRender.h"
 
 //	Warning: duplicated in rain.cpp
 static const int max_desired_items = 2500;

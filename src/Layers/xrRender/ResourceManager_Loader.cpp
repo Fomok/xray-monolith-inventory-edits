@@ -1,3 +1,4 @@
+#include <LocatorAPI.h>
 
 #include "ResourceManager.h"
 #include "blenders\blender.h"

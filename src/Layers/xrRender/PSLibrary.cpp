@@ -2,6 +2,7 @@
 // file: PSLibrary.cpp
 //----------------------------------------------------
 
+#include <LocatorAPI.h>
 #include <xr_ini.h>
 
 #include "PSLibrary.h"

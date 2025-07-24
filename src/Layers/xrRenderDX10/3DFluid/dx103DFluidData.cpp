@@ -1,3 +1,4 @@
+#include <LocatorAPI.h>
 #include <xr_ini.h>
 
 #include "dx103DFluidData.h"

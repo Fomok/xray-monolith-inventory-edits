@@ -3,9 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#pragma warning(default:4995)
+
+#include <string_concatenations.h>
+#include <xr_ini.h>
 
 #ifndef _EDITOR
 #include "dxRenderDeviceRender.h"

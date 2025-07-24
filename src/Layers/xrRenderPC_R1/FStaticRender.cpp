@@ -2,21 +2,23 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-#include "../xrRender/fbasicvisual.h"
-#include "../../xrEngine/CustomHUD.h"
-#include "../../xrEngine/xr_object.h"
-#include "../../xrEngine/fmesh.h"
-#include "../xrRender/SkeletonCustom.h"
-#include "../xrRender/lighttrack.h"
-#include "../xrRender/dxRenderDeviceRender.h"
-#include "../xrRender/dxWallMarkArray.h"
-#include "../xrRender/dxUIShader.h"
-//#include "../../xrServerEntities/smart_cast.h"
+#include <LocatorAPI.h>
+#include <string_concatenations.h>
+#include <igame_persistent.h>
+#include <environment.h>
+#include <fbasicvisual.h>
+#include <CustomHUD.h>
+#include <xr_object.h>
+#include <fmesh.h>
+#include <SkeletonCustom.h>
+#include <lighttrack.h>
+#include <dxRenderDeviceRender.h>
+#include <dxWallMarkArray.h>
+#include <dxUIShader.h>
+//#include <smart_cast.h">
 
 #ifndef _EDITOR
-#include "../../xrCPU_Pipe/ttapi.h"
+#include <ttapi.h>
 #endif
 
 
