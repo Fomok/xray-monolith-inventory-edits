@@ -2,10 +2,11 @@
 // file: FileSystem.cpp
 //----------------------------------------------------
 
+#include <cderr.h>
+#include <commdlg.h>
+#include <vfw.h>
 
-#include "cderr.h"
-#include "commdlg.h"
-#include "vfw.h"
+#include "FileSystem.h"
 
 EFS_Utils* xr_EFS = NULL;
 //----------------------------------------------------

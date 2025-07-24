@@ -9,6 +9,7 @@
 #include <malloc.h>
 
 #include "FTimer.h"
+#include "FileSystem.h"
 #include "FS_internal.h"
 #include "stream_reader.h"
 #include "file_stream_reader.h"

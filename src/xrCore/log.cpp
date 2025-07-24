@@ -1,17 +1,17 @@
-
 #include <time.h>
-#include "resource.h"
-#include "log.h"
-#ifdef _EDITOR
-#include "malloc.h"
-#endif
-
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
 #include <string>
 
+#ifdef _EDITOR
+#include "malloc.h"
+#endif
+
+#include "FileSystem.h"
+#include "resource.h"
+#include "log.h"
 #include "profiler.h"
 
 extern BOOL LogExecCB = TRUE;

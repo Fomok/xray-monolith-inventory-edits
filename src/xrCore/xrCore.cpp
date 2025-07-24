@@ -1,17 +1,19 @@
 // xrCore.cpp : Defines the entry point for the DLL application.
 //
 
+
+#include <fstream>
+#include <iostream>
+#include <string>
+
 #include <mmsystem.h>
 #include <objbase.h>
-#include "xrCore.h"
-
 #ifdef DEBUG
 # include <malloc.h>
 #endif // DEBUG
 
-#include<fstream>
-#include <iostream>
-#include <string>
+#include "xrCore.h"
+#include "FileSystem.h"
 
 XRCORE_API xrCore Core;
 extern XRCORE_API u32 build_id;
