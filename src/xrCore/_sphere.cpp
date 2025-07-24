@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 class Miniball;
 class Basis;
 

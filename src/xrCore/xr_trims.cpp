@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 LPSTR _TrimLeft(LPSTR str)
 {
 	LPSTR p = str;
