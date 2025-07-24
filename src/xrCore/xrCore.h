@@ -197,8 +197,6 @@
 # include <hash_map>
 # include <hash_set>
 #endif
-
-#include <string>
 #pragma warning (pop)
 #pragma warning (disable : 4100 ) // unreferenced formal parameter
 
