@@ -6,9 +6,10 @@
 #define AFX_ENGINE_H__22802DD7_D7EB_4234_9781_E237657471AC__INCLUDED_
 #pragma once
 
+#include <xrCPU_Pipe.h>
+
 #include "engineAPI.h"
 #include "eventAPI.h"
-#include "../xrCPU_Pipe/xrCPU_Pipe.h"
 #include "xrSheduler.h"
 
 class ENGINE_API CEngine

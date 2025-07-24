@@ -29,6 +29,7 @@ add_module(XRay.Render.R3
   XRay.Includes
   XRay.Collision.Includes
   XRay.Core.Includes
+  XRay.CPUPipe.Includes
   XRay.Engine.Includes
   XRay.Particles.Includes
   XRay.Physics.Includes

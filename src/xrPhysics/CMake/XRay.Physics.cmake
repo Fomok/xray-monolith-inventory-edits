@@ -15,6 +15,7 @@ add_module(XRay.Physics
   XRay.Includes
   XRay.Core.Includes
   XRay.Collision.Includes
+  XRay.CPUPipe.Includes
   XRay.Engine.Includes
   XRay.Render.Common.Includes
   XRay.Render.API.Includes

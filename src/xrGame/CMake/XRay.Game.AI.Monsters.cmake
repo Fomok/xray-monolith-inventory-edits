@@ -14,6 +14,7 @@ add_module(XRay.Game.AI.Monsters
   XRay.Includes
   XRay.Collision.Includes
   XRay.Core.Includes
+  XRay.CPUPipe.Includes
   XRay.Engine.Includes
   XRay.Game.Includes
   XRay.NetServer.Includes

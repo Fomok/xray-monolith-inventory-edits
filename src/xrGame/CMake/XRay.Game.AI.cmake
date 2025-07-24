@@ -10,6 +10,7 @@ add_module(XRay.Game.AI
   XRay.Includes
   XRay.Core.Includes
   XRay.Collision.Includes
+  XRay.CPUPipe.Includes
   XRay.Engine.Includes
   XRay.Game.Includes
   XRay.Render.API.Includes

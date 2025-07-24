@@ -1,6 +1,8 @@
 #ifndef xr_iniH
 #define xr_iniH
 
+#include <clsid.h>
+
 #include "fastdelegate.h"
 
 #ifdef USE_ROBINHOOD

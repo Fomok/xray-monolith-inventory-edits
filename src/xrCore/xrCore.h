@@ -217,8 +217,6 @@
 
 #include "vector.h"
 
-#include "clsid.h"
-
 #include "_stl_extensions.h"
 #include "xrstring.h"
 

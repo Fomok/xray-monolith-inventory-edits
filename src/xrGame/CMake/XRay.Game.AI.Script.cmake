@@ -17,6 +17,7 @@ add_module(XRay.Game.AI.Script
   XRay.Collision.Includes
   XRay.Core.Includes
   XRay.Core.Crypto.Includes
+  XRay.CPUPipe.Includes
   XRay.Engine.Includes
   XRay.Game.Includes
   XRay.NetServer.Includes

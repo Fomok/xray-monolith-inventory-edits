@@ -1,3 +1,4 @@
+#include "clsid.h"
 
 XRCORE_API void __stdcall CLSID2TEXT(CLASS_ID id, LPSTR text)
 {
