@@ -2,11 +2,12 @@
 // 
 //////////////////////////////////////////////////////////////////////
 
+#include <CustomHUD.h>
+#include <igame_persistent.h>
+#include <xr_ini.h>
+
 #include "HUDCrosshair.h"
 #include "HUDTarget.h"
-
-#include "../xrEngine/CustomHUD.h"
-#include "../xrEngine/igame_persistent.h"
 #include "ui_base.h"
 
 string32 crosshair_shader = "hud\\cursor";

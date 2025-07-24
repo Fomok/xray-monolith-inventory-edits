@@ -1,8 +1,8 @@
-#include	"death_anims.h"
+#include <xr_ini.h>
 
-#include "KinematicsAnimated.h"
-
+#include "death_anims.h"
 #include "entity_alive.h"
+#include "KinematicsAnimated.h"
 
 #ifdef	DEBUG
 	BOOL death_anim_debug	 = FALSE;

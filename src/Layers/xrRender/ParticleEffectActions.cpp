@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------
 
-#define AnsiString std::string
+#include <particle_actions_collection.h>
+#include <xr_ini.h>
 
 #include "ParticleEffectActions.h"
-//#include "../xrServerEntities/PropertiesListHelper.h"
-#include "../xrParticles/particle_actions_collection.h"
+//#include <PropertiesListHelper.h>
 
 using namespace PAPI;
 #define PARTICLE_ACTION_VERSION		0x0001

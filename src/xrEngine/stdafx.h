@@ -54,6 +54,7 @@
 
 #include "../xrSound/sound.h"
 
+class CInifile;
 extern ENGINE_API CInifile* pGameIni;
 
 #ifndef DEBUG

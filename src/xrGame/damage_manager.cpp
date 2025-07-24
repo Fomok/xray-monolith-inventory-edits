@@ -6,6 +6,7 @@
 //	Description : Damage manager
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_ini.h>
 
 #include "damage_manager.h"
 #include "xr_object.h"

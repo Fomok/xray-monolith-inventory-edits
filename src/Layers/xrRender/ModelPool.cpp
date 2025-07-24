@@ -1,9 +1,10 @@
+#include <xr_ini.h>
 
 #include "ModelPool.h"
 
 #ifndef _EDITOR
-#include "../../xrEngine/IGame_Persistent.h"
-#include "../../xrEngine/fmesh.h"
+#include <IGame_Persistent.h>
+#include <fmesh.h>
 #include "fhierrarhyvisual.h"
 #include "SkeletonAnimated.h"
 #include "fvisual.h"

@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "PhysicsShellAnimator.h"
 #include "PhysicsShellAnimatorBoneData.h"
 #include "KinematicsAnimated.h"

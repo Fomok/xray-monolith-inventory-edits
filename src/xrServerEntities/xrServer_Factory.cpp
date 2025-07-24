@@ -6,6 +6,8 @@
 //	Description : Server objects factory
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_ini.h>
+
 #include "object_factory.h"
 
 CSE_Abstract* F_entity_Create(LPCSTR section)

@@ -8,6 +8,8 @@
 #include <experimental\filesystem>
 #include <malloc.h>
 
+#include <xr_ini.h>
+
 #include "FTimer.h"
 #include "FileSystem.h"
 #include "FS_internal.h"

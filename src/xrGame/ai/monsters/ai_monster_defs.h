@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xr_ini.h>
+
 #include "KinematicsAnimated.h"
 #include "cameramanager.h"
 

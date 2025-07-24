@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "first_bullet_controller.h"
 #include "level.h"
 

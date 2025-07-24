@@ -4,6 +4,8 @@
 #ifndef XR_IOCONSOLE_H_INCLUDED
 #define XR_IOCONSOLE_H_INCLUDED
 
+#include <fastdelegate.h>
+
 #include "FactoryPtr.h"
 #include "UIShader.h"
 

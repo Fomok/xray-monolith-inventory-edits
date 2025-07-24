@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xr_ini.h>
+
 IC void CMeleeChecker::load(LPCSTR section)
 {
 	m_as_min_dist = pSettings->r_float(section, "as_min_dist");

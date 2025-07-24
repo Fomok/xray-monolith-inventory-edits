@@ -2,6 +2,8 @@
 // file: PSLibrary.cpp
 //----------------------------------------------------
 
+#include <xr_ini.h>
+
 #include "PSLibrary.h"
 #include "ParticleEffect.h"
 #include "ParticleGroup.h"

@@ -9,9 +9,11 @@
 //class ENGINE_API CResourceManager;
 //class ENGINE_API CGammaControl;
 
+#include <fastdelegate.h>
+#include <ftimer.h>
+
 #include "pure.h"
 //#include "hw.h"
-#include "../xrcore/ftimer.h"
 #include "stats.h"
 //#include "shader.h"
 //#include "R_Backend.h"

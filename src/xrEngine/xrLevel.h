@@ -1,6 +1,8 @@
 #ifndef xrLevelH
 #define xrLevelH
 
+#include <xr_ini.h>
+
 #pragma once
 
 struct xrGUID

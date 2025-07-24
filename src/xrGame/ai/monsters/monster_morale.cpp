@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "monster_morale.h"
 
 void CMonsterMorale::init_external(CBaseMonster* obj)

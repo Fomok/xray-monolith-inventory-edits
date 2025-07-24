@@ -9,14 +9,15 @@
 #include <unordered_map>
 #include <set>
 
+#include <build_config_defines.h>
 #include <LocatorAPI.h>
+#include <xr_ini.h>
 
 #include "pch_script.h"
 #include "script_engine.h"
 #include "ai_space.h"
 #include "object_factory.h"
 #include "script_process.h"
-#include "../build_config_defines.h"
 #include "script_storage.h"
 
 #ifdef USE_DEBUGGER

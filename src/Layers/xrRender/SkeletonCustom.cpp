@@ -1,10 +1,12 @@
 //---------------------------------------------------------------------------
 
+#include <fmesh.h>
+#include <xr_ini.h>
+
 #include 	"SkeletonCustom.h"
 #include	"SkeletonX.h"
-#include	"../../xrEngine/fmesh.h"
 #ifndef _EDITOR
-#include	"../../xrEngine/Render.h"
+#include	<Render.h>
 #endif
 int psSkeletonUpdate = 32;
 xrCriticalSection UCalc_Mutex
@@ -14,9 +16,9 @@ xrCriticalSection UCalc_Mutex
 ;
 
 #ifndef _EDITOR
-#include "../../xrServerEntities/smart_cast.h"
+#include <smart_cast.h>
 #else
-#include "../../Include/xrAPI/xrAPI.h"
+#include <xrAPI.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////

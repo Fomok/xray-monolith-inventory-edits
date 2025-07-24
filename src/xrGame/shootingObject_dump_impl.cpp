@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "ShootingObject.h"
 #include "GameObject.h"
 

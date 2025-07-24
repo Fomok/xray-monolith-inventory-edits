@@ -4,6 +4,8 @@
 
 #include "Shader.h"
 
+#define AnsiString std::string
+
 namespace PAPI
 {
 	struct Particle;

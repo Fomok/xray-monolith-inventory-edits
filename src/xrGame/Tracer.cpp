@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "Tracer.h"
 #include "render.h"
 

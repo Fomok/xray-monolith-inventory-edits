@@ -1,6 +1,7 @@
 #include <LocatorAPI.h>
 #include <object_broker.h>
 #include <LevelGameDef.h>
+#include <xr_ini.h>
 
 #include "Environment.h"
 #include "xr_efflensflare.h"

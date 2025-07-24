@@ -1,8 +1,8 @@
-
-#include "../../xrParticles/psystem.h"
+#include <psystem.h>
+#include <xr_ini.h>
 
 #ifndef _EDITOR
-#include "../../xrServerEntities/smart_cast.h"
+#include <smart_cast.h>
 #endif
 
 #include "ParticleGroup.h"

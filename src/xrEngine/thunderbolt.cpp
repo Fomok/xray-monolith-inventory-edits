@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xr_ini.h>
+
 #ifndef _EDITOR
 #include "render.h"
 #endif
@@ -10,8 +12,8 @@
 #ifdef _EDITOR
 #include "ui_toolscustom.h"
 #else
+#include <xr_area.h>
 #include "igame_level.h"
-#include "../xrcdb/xr_area.h"
 #include "xr_object.h"
 #endif
 

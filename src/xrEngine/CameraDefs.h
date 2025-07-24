@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <fastdelegate.h>
+
 struct ENGINE_API SBaseEffector
 {
 	typedef fastdelegate::FastDelegate0<> CB_ON_B_REMOVE;

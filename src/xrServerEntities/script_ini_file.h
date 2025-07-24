@@ -8,12 +8,12 @@
 
 #pragma once
 
+#include <xr_ini.h>
+
 #include "script_token_list.h"
 #include "script_export_space.h"
 
 #include "pch_script.h"
-
-
 
 class CScriptIniFile : public CInifile
 {

@@ -6,6 +6,8 @@
 //	Description : Visual memory parameters
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_ini.h>
+
 #include "visual_memory_params.h"
 #include "memory_space.h"
 

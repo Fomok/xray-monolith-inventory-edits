@@ -2,7 +2,9 @@
 #ifndef ParticleEffectActionsH
 #define ParticleEffectActionsH
 
-#include "../../xrCore/_stl_extensions.h"
+#include <_stl_extensions.h>
+
+#define AnsiString std::string
 
 struct PBool
 {

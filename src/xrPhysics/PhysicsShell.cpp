@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "physicsshell.h"
 #include "PHDynamicData.h"
 #include "Physics.h"

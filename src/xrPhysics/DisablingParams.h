@@ -1,6 +1,8 @@
 #ifndef DISABLING_PARAMS_H
 #define DISABLING_PARAMS_H
 
+class CInifile;
+
 struct SOneDDOParams
 {
 	void Mul(float v);

@@ -6,6 +6,8 @@
 //	Description : Stalker velocity collection
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_ini.h>
+
 #include "stalker_velocity_collection.h"
 
 using namespace MonsterSpace;

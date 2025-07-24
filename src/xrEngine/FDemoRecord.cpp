@@ -1,4 +1,6 @@
 #include <LocatorAPI.h>
+#include <UICursor.h>
+#include <xr_ini.h>
 
 #include "igame_level.h"
 #include "x_ray.h"
@@ -11,7 +13,7 @@
 #include "render.h"
 #include "CustomHUD.h"
 #include "CameraManager.h"
-#include "../xrGame/UICursor.h"
+
 extern BOOL g_bDisableRedText;
 static Flags32 s_hud_flag = {0};
 static Flags32 s_dev_flags = {0};

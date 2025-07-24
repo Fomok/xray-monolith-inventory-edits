@@ -25,6 +25,8 @@ add_module(XRay.Render.R2
   XRay.Core.Defines
   XRay.Core.Includes
   XRay.Engine.Includes
+  XRay.Particles.Includes
+  XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
 

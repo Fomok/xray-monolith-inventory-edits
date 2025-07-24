@@ -1,3 +1,4 @@
+#include <xr_ini.h>
 
 #include "ParticleEffectDef.h"
 #include "ParticleEffect.h"
@@ -5,7 +6,6 @@
 	#include "UI_ToolsCustom.h"
 	#include "ParticleEffectActions.h"
 #else
-#define AnsiString std::string
 #include "ParticleEffectActions.h"
 #endif
 

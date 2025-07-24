@@ -1,5 +1,6 @@
 #include <igame_persistent.h>
 #include <LocatorAPI.h>
+#include <xr_ini.h>
 
 #include "xrMessages.h"
 #include "xrGameSpyServer.h"

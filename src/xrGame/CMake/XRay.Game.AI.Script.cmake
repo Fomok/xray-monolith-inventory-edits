@@ -13,6 +13,7 @@ add_module(XRay.Game.AI.Script
   XRay.Core.Defines
   XRay.Game.Defines
 
+  XRay.Includes
   XRay.Collision.Includes
   XRay.Core.Includes
   XRay.Core.Crypto.Includes

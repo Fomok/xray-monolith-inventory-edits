@@ -2,14 +2,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#pragma warning(default:4995)
-
 #include <D3DX10Tex.h>
+#include <dxRenderDeviceRender.h>
 
-#include "../xrRender/dxRenderDeviceRender.h"
+#include <xr_ini.h>
 
 // #include "std_classes.h"
 // #include "xr_avi.h"

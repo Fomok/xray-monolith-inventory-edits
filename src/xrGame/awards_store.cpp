@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "awards_store.h"
 
 namespace gamespy_profile

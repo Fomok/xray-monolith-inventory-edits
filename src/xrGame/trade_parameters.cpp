@@ -6,6 +6,8 @@
 //	Description : trade parameters class
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_ini.h>
+
 #include "trade_parameters.h"
 
 CTradeParameters* CTradeParameters::m_instance = 0;

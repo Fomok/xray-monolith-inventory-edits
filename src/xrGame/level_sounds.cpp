@@ -1,6 +1,8 @@
 #include <random>
 #include <algorithm>
 
+#include <xr_ini.h>
+
 #include "level.h"
 #include "level_sounds.h"
 

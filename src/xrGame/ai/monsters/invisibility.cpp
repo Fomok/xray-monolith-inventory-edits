@@ -1,3 +1,5 @@
+#include <xr_ini.h>
+
 #include "invisibility.h"
 
 void CInvisibility::reinit()

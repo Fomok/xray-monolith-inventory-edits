@@ -1,3 +1,4 @@
+#include <xr_ini.h>
 
 #include "mezz_stringbuffer.h"
 

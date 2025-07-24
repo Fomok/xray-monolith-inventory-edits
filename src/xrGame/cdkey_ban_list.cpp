@@ -1,4 +1,5 @@
 #include <LocatorAPI.h>
+#include <xr_ini.h>
 
 #include "cdkey_ban_list.h"
 #include "object_broker.h"

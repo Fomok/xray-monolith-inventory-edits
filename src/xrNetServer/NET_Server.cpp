@@ -2,6 +2,7 @@
 
 #include <dxerr.h>
 #include <LocatorAPI.h>
+#include <xr_ini.h>
 
 #include "NET_Common.h"
 #include "NET_Log.h"

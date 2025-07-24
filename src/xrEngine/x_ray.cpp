@@ -5,13 +5,21 @@
 // Oles - Oles Shishkovtsov
 // AlexMX - Alexander Maksimchuk
 //-----------------------------------------------------------------------------
+
+#include <process.h>
+#include <locale.h>
+#include <unicode/unistr.h>
+#include <unicode/ucnv.h>
+#include <discord.h>
+
+#include <xr_ini.h>
+#include <NET_AuthCheck.h>
+#include <ispatial.h>
+
 #include "igame_level.h"
 #include "igame_persistent.h"
-
 #include "dedicated_server_only.h"
 #include "no_single.h"
-#include "../xrNetServer/NET_AuthCheck.h"
-
 #include "xr_input.h"
 #include "xr_ioconsole.h"
 #include "x_ray.h"
@@ -19,20 +27,10 @@
 #include "GameFont.h"
 #include "resource.h"
 #include "LightAnimLibrary.h"
-#include "../xrcdb/ispatial.h"
 #include "Text_Console.h"
-#include <process.h>
-#include <locale.h>
-
-#include <unicode/unistr.h>
-#include <unicode/ucnv.h>
-#include <discord.h>
 #include "profiler.h"
-
 #include "xrSash.h"
-
 //#include "securom_api.h"
-
 
 //---------------------------------------------------------------------
 #define XRAY_MONOLITH_VERSION "X-Ray Monolith v1.5.3"
