@@ -32,9 +32,12 @@ add_module(XRay.Sound
   libvorbisfile
   OpenAL
   tbb
+
   XRay.Core.Defines
+
   XRay.Core.Includes
   XRay.Collision.Includes
+  XRay.Engine.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
 

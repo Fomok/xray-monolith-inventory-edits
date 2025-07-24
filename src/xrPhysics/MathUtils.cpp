@@ -1,6 +1,10 @@
+#include <FTimer.h>
+
 #include "mathutils.h"
 #include "ode/common.h"
+
 XRPHYSICS_API const float phInfinity = dInfinity;
+
 /*
 #include "MathUtils.h"
 enum EBoxSideNearestPointCode
@@ -49,6 +53,7 @@ EBoxSideNearestPointCode GetNearestPointOnOBBSide(const Fmatrix &xform,const Fve
 	float diffs=diffc<0.f ? diffc+h	:	diffc-h;
 }
 */
+
 IC bool RAYvsCYLINDER(const Fcylinder& c_cylinder, const Fvector& S, const Fvector& D, float& R, BOOL bCull)
 {
 	const float& r = c_cylinder.m_radius;

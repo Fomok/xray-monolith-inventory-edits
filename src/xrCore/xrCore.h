@@ -299,8 +299,6 @@ DEFINE_VECTOR(xr_rtoken, RTokenVec, RTokenVecIt);
 #else
 # include "LocatorAPI.h"
 #endif
-#include "FileSystem.h"
-#include "FTimer.h"
 
 // destructor
 template <class T>

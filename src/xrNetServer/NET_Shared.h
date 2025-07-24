@@ -2,12 +2,15 @@
 
 #define XRNETSERVER_API
 
-#include "net_utils.h"
 #include <dplay/dplay8.h>
+
+#include <FTimer.h>
+#include <net_utils.h>
+
 #include "net_messages.h"
-
-
 #include "net_compressor.h"
+
+class CTimer;
 
 XRNETSERVER_API extern ClientID BroadcastCID;
 

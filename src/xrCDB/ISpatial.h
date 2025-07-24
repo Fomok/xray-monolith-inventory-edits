@@ -1,8 +1,9 @@
 #ifndef XRENGINE_ISPATIAL_H_INCLUDED
 #define XRENGINE_ISPATIAL_H_INCLUDED
+#pragma once
 
-//#pragma once
-#include "../xrCore/xrPool.h"
+#include <FTimer.h>
+#include <xrPool.h>
 
 #include "xr_collide_defs.h"
 

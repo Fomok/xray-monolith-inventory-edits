@@ -2,6 +2,8 @@
 #define SoundRender_CoreH
 #pragma once
 
+#include <FTimer.h>
+
 #include "SoundRender.h"
 #include "SoundRender_Environment.h"
 #include "SoundRender_Cache.h"
