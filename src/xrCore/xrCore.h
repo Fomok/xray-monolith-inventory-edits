@@ -192,11 +192,6 @@
 #include <list>
 #include <set>
 #include <map>
-
-#ifndef _EDITOR
-# include <hash_map>
-# include <hash_set>
-#endif
 #pragma warning (pop)
 #pragma warning (disable : 4100 ) // unreferenced formal parameter
 

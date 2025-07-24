@@ -2,6 +2,8 @@
 #define _STL_EXT_internal
 
 #include <functional>
+#include <hash_map>
+#include <hash_set>
 
 #include "_type_traits.h"
 #include "vector.h"
