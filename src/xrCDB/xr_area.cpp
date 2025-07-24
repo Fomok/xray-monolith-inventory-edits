@@ -1,9 +1,11 @@
+#include <LocatorAPI.h>
+#include <xr_object.h>
+#include <xrLevel.h>
+#include <xr_collide_form.h>
+
 //#include "igame_level.h"
 
 #include "xr_area.h"
-#include "../xrengine/xr_object.h"
-#include "../xrengine/xrLevel.h"
-#include "../xrengine/xr_collide_form.h"
 //#include "../xrsound/sound.h"
 //#include "x_ray.h"
 //#include "GameFont.h"

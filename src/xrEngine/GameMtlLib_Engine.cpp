@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 
-#include "../xrEngine/GameMtlLib.h"
+#include <GameMtlLib.h>
+#include <LocatorAPI.h>
 
 void DestroySounds(SoundVec& lst)
 {

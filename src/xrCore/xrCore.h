@@ -294,11 +294,6 @@ DEFINE_VECTOR(xr_rtoken, RTokenVec, RTokenVecIt);
 #include "log.h"
 #include "xr_trims.h"
 #include "xr_ini.h"
-#ifdef NO_FS_SCAN
-# include "ELocatorAPI.h"
-#else
-# include "LocatorAPI.h"
-#endif
 
 // destructor
 template <class T>

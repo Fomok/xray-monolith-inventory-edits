@@ -6,17 +6,20 @@
 //	Description : XRay Script Storage
 ////////////////////////////////////////////////////////////////////////////
 
+#include <stdarg.h>
+#include <unordered_map>
+#include <set>
+#include <sstream>
+#include <regex>
+
+#include <LocatorAPI.h>
+
 #include "pch_script.h"
 #include "script_storage.h"
 #include "script_thread.h"
 #include "ai_space.h"
 #include "script_engine.h"
 #include "mezz_stringbuffer.h"
-#include <stdarg.h>
-#include <unordered_map>
-#include <set>
-#include <sstream>
-#include <regex>
 
 #if !defined(DEBUG) && defined(USE_LUAJIT_ONE)
 #	include "opt.lua.h"

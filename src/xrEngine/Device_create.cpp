@@ -1,12 +1,12 @@
+#include <LocatorAPI.h>
 
-//#include "resourcemanager.h"
 #include "DrawUtils.h"
-//#include "xr_effgamma.h"
 #include "render.h"
 #include "dedicated_server_only.h"
-#include "xrxrc.h"
-
+//#include "resourcemanager.h"
 //#include "securom_api.h"
+#include "xrxrc.h"
+//#include "xr_effgamma.h"
 
 extern XRCDB_API BOOL* cdb_bDebug;
 

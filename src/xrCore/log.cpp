@@ -10,6 +10,7 @@
 #endif
 
 #include "FileSystem.h"
+#include "LocatorAPI.h"
 #include "resource.h"
 #include "log.h"
 #include "profiler.h"

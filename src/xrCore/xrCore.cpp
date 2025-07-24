@@ -1,7 +1,6 @@
 // xrCore.cpp : Defines the entry point for the DLL application.
 //
 
-
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -12,8 +11,12 @@
 # include <malloc.h>
 #endif // DEBUG
 
-#include "xrCore.h"
 #include "FileSystem.h"
+#include "LocatorAPI.h"
+#include "xrCore.h"
+
+class CLocatorAPI;
+extern XRCORE_API CLocatorAPI* xr_FS;
 
 XRCORE_API xrCore Core;
 extern XRCORE_API u32 build_id;

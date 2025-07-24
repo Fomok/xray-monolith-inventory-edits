@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+#include <LocatorAPI.h>
 
 #include "SkeletonMotions.h"
 //#include "SkeletonAnimated.h"

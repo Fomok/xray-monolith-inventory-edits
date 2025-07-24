@@ -1,17 +1,13 @@
-
-#include "xrdebug.h"
-#include "os_clipboard.h"
-
 #include <sal.h>
 #include <dxerr.h>
-
-#pragma warning(push)
-#pragma warning(disable:4995)
 #include <malloc.h>
 #include <direct.h>
-#pragma warning(pop)
 
-#include "../build_config_defines.h"
+#include <build_config_defines.h>
+#include <LocatorAPI.h>
+
+#include "os_clipboard.h"
+#include "xrdebug.h"
 
 extern bool shared_str_initialized;
 

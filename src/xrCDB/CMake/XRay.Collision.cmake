@@ -10,8 +10,11 @@ add_module(XRay.Collision
   LINKS
   OPCODE
   optick
+
   XRay.Core.Defines
+  
   XRay.Core.Includes
+  XRay.Engine.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
 

@@ -1,7 +1,8 @@
-#include "xrSASH.h"
+#include <LocatorAPI.h>
 
 #include "xr_ioconsole.h"
 #include "xr_ioc_cmd.h"
+#include "xrSASH.h"
 
 xrSASH ENGINE_API g_SASH;
 

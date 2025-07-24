@@ -6,16 +6,14 @@
 //	Description : ALife spawn registry
 ////////////////////////////////////////////////////////////////////////////
 
+#include <malloc.h>
+#include <LocatorAPI.h>
+
 #include "alife_spawn_registry.h"
 #include "object_broker.h"
 #include "game_base.h"
 #include "ai_space.h"
 #include "game_graph.h"
-
-#pragma warning(push)
-#pragma warning(disable:4995)
-#include <malloc.h>
-#pragma warning(pop)
 
 CALifeSpawnRegistry::CALifeSpawnRegistry(LPCSTR section)
 {

@@ -1,26 +1,28 @@
-#include "MainMenu.h"
-#include "UI/UIDialogWnd.h"
-#include "ui/UIMessageBoxEx.h"
-#include "../xrEngine/xr_IOConsole.h"
-#include "../xrEngine/IGame_Level.h"
-#include "../xrEngine/CameraManager.h"
-#include "../xrEngine/xr_input.h"
-#include "xr_Level_controller.h"
-#include "ui\UITextureMaster.h"
-#include "ui\UIXmlInit.h"
+#include <shellapi.h>
+
+#include <CameraManager.h>
 #include <dinput.h>
-#include "ui\UIBtnHint.h"
-#include "UICursor.h"
+#include <IGame_Level.h>
+#include <LocatorAPI.h>
+#include <os_clipboard.h>
+#include <xr_input.h>
+#include <xr_IOConsole.h>
+
+#include "ui/UICDkey.h"
+#include "ui/UIDialogWnd.h"
+#include "ui/UIMessageBoxEx.h"
+#include "ui/UITextureMaster.h"
+#include "ui/UIXmlInit.h"
+#include "ui/UIBtnHint.h"
+
 #include "gamespy/CdkeyDecode/cdkeydecode.h"
+#include "MainMenu.h"
 #include "string_table.h"
-#include "../xrCore/os_clipboard.h"
+#include "UICursor.h"
+#include "xr_Level_controller.h"
 
 #include "DemoInfo.h"
 #include "DemoInfo_Loader.h"
-
-#include "ui/UICDkey.h"
-
-#include <shellapi.h>
 
 #include "object_broker.h"
 

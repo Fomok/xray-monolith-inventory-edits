@@ -7,6 +7,7 @@
 #include <vfw.h>
 
 #include "FileSystem.h"
+#include "LocatorAPI.h"
 
 EFS_Utils* xr_EFS = NULL;
 //----------------------------------------------------

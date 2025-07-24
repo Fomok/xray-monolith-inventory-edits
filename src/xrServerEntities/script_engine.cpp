@@ -6,6 +6,11 @@
 //	Description : XRay Script Engine
 ////////////////////////////////////////////////////////////////////////////
 
+#include <unordered_map>
+#include <set>
+
+#include <LocatorAPI.h>
+
 #include "pch_script.h"
 #include "script_engine.h"
 #include "ai_space.h"
@@ -13,8 +18,6 @@
 #include "script_process.h"
 #include "../build_config_defines.h"
 #include "script_storage.h"
-#include <unordered_map>
-#include <set>
 
 #ifdef USE_DEBUGGER
 #	ifndef USE_LUA_STUDIO

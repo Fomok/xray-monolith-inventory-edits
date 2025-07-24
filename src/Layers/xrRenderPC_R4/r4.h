@@ -2,27 +2,28 @@
 
 #include <intrusive_ptr.h>
 
-#include "../xrRender/r__dsgraph_structure.h"
-#include "../xrRender/r__occlusion.h"
+#include <r__dsgraph_structure.h>
+#include <r__occlusion.h>
 
-#include "../xrRender/PSLibrary.h"
+#include <PSLibrary.h>
+#include <light_db.h>
+#include <LightTrack.h>
+#include <r_sun_cascades.h>
+
+#include <hom.h>
+#include <detailmanager.h>
+#include <modelpool.h>
+#include <wallmarksengine.h>
+
+#include <irenderable.h>
+#include <fmesh.h>
+#include <LocatorAPI.h>
 
 #include "r2_types.h"
 #include "r4_rendertarget.h"
 
-#include "../xrRender/hom.h"
-#include "../xrRender/detailmanager.h"
-#include "../xrRender/modelpool.h"
-#include "../xrRender/wallmarksengine.h"
-
 #include "smap_allocator.h"
-#include "../xrRender/light_db.h"
 #include "light_render_direct.h"
-#include "../xrRender/LightTrack.h"
-#include "../xrRender/r_sun_cascades.h"
-
-#include "../../xrEngine/irenderable.h"
-#include "../../xrEngine/fmesh.h"
 
 class dxRender_Visual;
 

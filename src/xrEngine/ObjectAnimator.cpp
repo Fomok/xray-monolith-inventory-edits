@@ -1,3 +1,4 @@
+#include <LocatorAPI.h>
 
 #include "ObjectAnimator.h"
 #include "motion.h"

@@ -4,6 +4,7 @@
 
 
 #include "FileSystem.h"
+#include "LocatorAPI.h"
 
 #include <io.h>
 #include <fcntl.h>

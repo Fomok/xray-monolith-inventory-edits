@@ -1,6 +1,8 @@
+#include <igame_persistent.h>
+#include <LocatorAPI.h>
+
 #include "xrMessages.h"
 #include "xrGameSpyServer.h"
-#include "../xrEngine/igame_persistent.h"
 
 //#define DEMO_BUILD
 

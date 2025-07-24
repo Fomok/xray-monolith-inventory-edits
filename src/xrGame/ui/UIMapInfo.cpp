@@ -1,3 +1,5 @@
+#include <LocatorAPI.h>
+
 #include "UIMapInfo.h"
 #include "UIScrollView.h"
 #include "UIXmlInit.h"

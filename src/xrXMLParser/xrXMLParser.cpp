@@ -1,5 +1,7 @@
 
 #include <xrCore.h>
+#include <LocatorAPI.h>
+
 #include "xrXMLParser.h"
 
 extern void XMLLuaCallback(CXml &m_xml, LPCSTR xml_string);

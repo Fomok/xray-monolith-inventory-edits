@@ -1,3 +1,4 @@
+#include <LocatorAPI.h>
 
 #include "postprocessanimator.h"
 #ifndef _PP_EDITOR_

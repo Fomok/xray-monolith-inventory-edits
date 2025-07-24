@@ -1,3 +1,4 @@
+#include <LocatorAPI.h>
 #include <net_utils.h>
 
 #include "filereceiver_node.h"

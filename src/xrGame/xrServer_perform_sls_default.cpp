@@ -1,3 +1,5 @@
+#include <LocatorAPI.h>
+
 #include "xrserver.h"
 #include "xrmessages.h"
 

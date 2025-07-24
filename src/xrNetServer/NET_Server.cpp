@@ -1,9 +1,12 @@
-#include "dxerr.h"
-#include "NET_Common.h"
-#include "net_server.h"
 #include <functional>
 
+#include <dxerr.h>
+#include <LocatorAPI.h>
+
+#include "NET_Common.h"
 #include "NET_Log.h"
+#include "net_server.h"
+
 
 #pragma warning(push)
 #pragma warning(disable:4995)

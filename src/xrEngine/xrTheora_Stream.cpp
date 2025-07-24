@@ -1,3 +1,5 @@
+#include <LocatorAPI.h>
+
 #include "xrtheora_stream.h"
 
 #ifdef _EDITOR

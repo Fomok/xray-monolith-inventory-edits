@@ -6,6 +6,8 @@
 //	Description : Level graph
 ////////////////////////////////////////////////////////////////////////////
 
+#include <LocatorAPI.h>
+
 #include "level_graph.h"
 #include "profiler.h"
 

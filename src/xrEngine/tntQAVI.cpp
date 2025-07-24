@@ -1,5 +1,6 @@
-
 //#include <crtdbg.h>
+
+#include <LocatorAPI.h>
 
 #include "tntQAVI.h"
 

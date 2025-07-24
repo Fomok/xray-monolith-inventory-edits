@@ -1,3 +1,5 @@
+#include <LocatorAPI.h>
+
 #include "igame_level.h"
 #include "x_ray.h"
 

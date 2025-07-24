@@ -1,4 +1,5 @@
 #include <FTimer.h>
+#include <LocatorAPI.h>
 #include <xrLevel.h>
 
 #include "soundrender_core.h"

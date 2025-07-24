@@ -14,6 +14,7 @@
 #include "Level_network_map_sync.h"
 #include "secure_messaging.h"
 #include "traffic_optimization.h"
+#include "LocatorAPI.h"
 
 class CHUDManager;
 class CParticlesObject;

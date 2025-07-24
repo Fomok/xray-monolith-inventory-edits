@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include <net_utils.h>
+#include <LocatorAPI.h>
 
 #include "xrServer_Objects.h"
 #include "xrMessages.h"

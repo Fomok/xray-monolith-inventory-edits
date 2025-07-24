@@ -1,3 +1,5 @@
+#include <LocatorAPI.h>
+
 #include "stream_reader.h"
 
 void CStreamReader::construct(

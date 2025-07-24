@@ -1,3 +1,4 @@
+#include <LocatorAPI.h>
 
 #include "soundrender_target.h"
 #include "soundrender_core.h"
