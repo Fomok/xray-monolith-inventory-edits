@@ -86,7 +86,6 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <math.h>
-#include <string.h>
 
 #ifdef XRCORE_STATIC
 # define NO_FS_SCAN
