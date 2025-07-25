@@ -2,6 +2,8 @@
 #define PSystemH
 #pragma once
 
+#include "xrCore.h"
+
 class IReader;
 
 #define PARTICLES_API

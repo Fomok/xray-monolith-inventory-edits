@@ -37,12 +37,16 @@ __forceinline int iFloor_SSE(float const x)
 
 #endif
 
-static int p[B + B + 2];
-static float g[B + B + 2][3];
+namespace detail {
+	static int p[B + B + 2];
+	static float g[B + B + 2][3];
+}
 
 //--------------------------------------------------------------------
 void noise3Init()
 {
+	using namespace detail;
+	
 	int i, j, k;
 	float v[3], s;
 	int rnd;
@@ -89,6 +93,8 @@ void noise3Init()
 
 float noise3(const Fvector& vec)
 {
+	using namespace detail;
+	
 	int bx0, bx1;
 	int by0, by1;
 	int bz0, bz1;

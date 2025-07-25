@@ -12,7 +12,7 @@ add_module(XRay.Particles
   XRay.CPUPipe.Includes
 
   PRECOMPILES
-  [["xrCore.h"]]
+  #[["xrCore.h"]]
   #psystem.h
 
   SOURCES
