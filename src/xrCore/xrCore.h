@@ -83,7 +83,6 @@
 // using std::exception;
 
 #include <stdio.h>
-#include <stdlib.h>
 
 #ifdef XRCORE_STATIC
 # define NO_FS_SCAN
