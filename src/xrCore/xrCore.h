@@ -88,8 +88,6 @@
 #include <math.h>
 #include <string.h>
 #include <typeinfo>
-#include <thread>
-//#include <process.h>
 
 #ifdef XRCORE_STATIC
 # define NO_FS_SCAN
