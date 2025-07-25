@@ -125,7 +125,6 @@
 
 #include <time.h>
 #define ALIGN(a) __declspec(align(a))
-#include <sys\utime.h>
 #define MODULE_NAME "xrCore.dll"
 
 

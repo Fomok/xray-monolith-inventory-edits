@@ -3,9 +3,10 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <direct.h>
+#include <experimental/filesystem>
 #include <fcntl.h>
-#include <sys\stat.h>
-#include <experimental\filesystem>
+#include <sys/stat.h>
+#include <sys/utime.h>
 #include <malloc.h>
 
 #include <rt_compressor.h>
