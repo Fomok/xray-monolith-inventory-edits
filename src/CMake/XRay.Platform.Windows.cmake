@@ -1,5 +1,10 @@
+set(XRPLATFORM_WINDOWS_H xrPlatform_Windows.h)
+
 # Windows-specific definitions
 add_module(XRay.Platform.Windows
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
+
   DEFINES
   VC_EXTRALEAN
   WIN32_LEAN_AND_MEAN
@@ -27,11 +32,18 @@ add_module(XRay.Platform.Windows
   DOSWIN32
   _WIN32_DCOM
   _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+
+  SOURCES
+  ${XRPLATFORM_WINDOWS_H}
 )
 
 # FIXME: Suppress warnings
 target_compile_options(XRay.Platform.Windows
   INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FI${XRPLATFORM_WINDOWS_H}>
+  $<$<CXX_COMPILER_ID:Clang>:-include${XRPLATFORM_WINDOWS_H}>
+  $<$<CXX_COMPILER_ID:GNU>:-include${XRPLATFORM_WINDOWS_H}>
+
   /wd4996
   /wd4251 # object needs DLL interface
   /wd4201 # nonstandard extension used : nameless struct/union

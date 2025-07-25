@@ -2,6 +2,9 @@ set(XRPLATFORM_H xrPlatform.h)
 
 # Single source of truth for global definitions
 add_module(XRay.Platform
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
+
   LINKS
   XRay.Includes
 
@@ -12,9 +15,9 @@ add_module(XRay.Platform
 # Force include platform header
 target_compile_options(XRay.Platform
   INTERFACE
-  $<$<CXX_COMPILER_ID:MSVC>:/FI ${XRPLATFORM_H}>
-  $<$<CXX_COMPILER_ID:Clang>:-include ${XRPLATFORM_H}>
-  $<$<CXX_COMPILER_ID:GNU>:-include ${XRPLATFORM_H}>
+  $<$<CXX_COMPILER_ID:MSVC>:/FI${XRPLATFORM_H}>
+  $<$<CXX_COMPILER_ID:Clang>:-include${XRPLATFORM_H}>
+  $<$<CXX_COMPILER_ID:GNU>:-include${XRPLATFORM_H}>
 )
 
 # Platform-specific submodules
