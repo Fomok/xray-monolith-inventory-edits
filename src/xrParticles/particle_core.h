@@ -2,8 +2,12 @@
 #ifndef particle_coreH
 #define particle_coreH
 
+#include "psystem.h"
+
 #define SQRT2PI 2.506628274631000502415765284811045253006f
 #define ONEOVERSQRT2PI (1.f/SQRT2PI)
+
+enum pDomainEnum : u32;
 
 namespace PAPI
 {

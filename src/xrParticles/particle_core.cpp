@@ -1,5 +1,6 @@
 //---------------------------------------------------------------------------
 
+#include "psystem.h"
 #include "particle_core.h"
 
 using namespace PAPI;

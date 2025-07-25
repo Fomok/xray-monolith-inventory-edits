@@ -4,11 +4,6 @@ add_module(XRay.Engine.Interfaces.Collidable
   ICollidable.h
 )
 
-add_module(XRay.Engine.Interfaces.Particles
-  SOURCES
-  psystem.h
-)
-
 add_module(XRay.Engine.Interfaces.ImGui
   SOURCES
   imgui_base.cpp

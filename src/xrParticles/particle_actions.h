@@ -2,6 +2,7 @@
 #ifndef particle_actionsH
 #define particle_actionsH
 
+#include "psystem.h"
 
 namespace PAPI
 {

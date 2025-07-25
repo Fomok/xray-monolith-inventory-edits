@@ -2,6 +2,7 @@
 #ifndef particle_actions_collectionH
 #define particle_actions_collectionH
 
+#include "psystem.h"
 #include "particle_actions.h"
 #include "particle_core.h"
 

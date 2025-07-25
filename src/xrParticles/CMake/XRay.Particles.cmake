@@ -13,7 +13,7 @@ add_module(XRay.Particles
 
   PRECOMPILES
   [["xrCore.h"]]
-  psystem.h
+  #psystem.h
 
   SOURCES
   psystem.h
