@@ -10,6 +10,8 @@ add_module(XRay.Game.Core
   ode
   TinyXML
 
+  XRay.Platform
+  
   XRay.Core.Defines
   XRay.Game.Defines
 

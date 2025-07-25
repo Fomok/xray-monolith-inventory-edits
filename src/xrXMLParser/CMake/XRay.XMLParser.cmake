@@ -9,7 +9,11 @@ add_module(XRay.XMLParser
 
   LINKS
   TinyXML
+
+  XRay.Platform
+
   XRay.Core.Defines
+  
   XRay.Core.Includes
   
   SOURCES

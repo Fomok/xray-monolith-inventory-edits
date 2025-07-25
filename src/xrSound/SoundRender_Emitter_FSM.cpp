@@ -75,8 +75,8 @@ void CSoundRender_Emitter::update(float dt)
 			};
 
 			float speedOfSound = 343.f;
-			float oldDelay = starting_delay;
-			auto oldState = m_current_state;
+			//float oldDelay = starting_delay;
+			//auto oldState = m_current_state;
 			auto delay = CalculateSmoothSoundDelay(p_source.position.distance_to(SoundRender->listener_position()), speedOfSound, soundSmoothingParams::distanceBasedDelayMinDistance, 60);
 
 			// clamp delay in case of strange result

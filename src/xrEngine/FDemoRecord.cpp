@@ -294,7 +294,6 @@ void CDemoRecord::MakeLevelMapProcess()
 			{
 				psHUD_Flags.assign(s_hud_flag);
 
-				BOOL bDevReset = !psDeviceFlags.equal(s_dev_flags, rsFullscreen);
 				psDeviceFlags = s_dev_flags;
 				m_bMakeLevelMap = FALSE;
 				m_iLMScreenshotFragment = -1;

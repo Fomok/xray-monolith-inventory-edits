@@ -10,6 +10,8 @@ add_module(XRay.Game.AI.Script
   LZO
   TinyXML
   
+  XRay.Platform
+  
   XRay.Core.Defines
   XRay.Game.Defines
 

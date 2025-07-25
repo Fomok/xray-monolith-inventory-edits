@@ -33,6 +33,8 @@ add_module(XRay.Sound
   OpenAL
   tbb
 
+  XRay.Platform
+  
   XRay.Core.Defines
 
   XRay.Core.Includes

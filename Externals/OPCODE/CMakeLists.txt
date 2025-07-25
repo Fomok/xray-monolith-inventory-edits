@@ -18,6 +18,7 @@ target_link_libraries(OPCODE
 
 target_compile_options(OPCODE
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4995>

@@ -489,7 +489,6 @@ void CDetailManager::details_clear()
 
 		for (u32 O = 0; O < objects.size(); O++)
 		{
-			CDetail& Object = *objects[O];
 			xr_vector<SlotItemVec*>& vis = list[O];
 			if (!vis.empty())
 			{

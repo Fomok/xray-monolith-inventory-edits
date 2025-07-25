@@ -16,6 +16,8 @@ add_module(XRay.Game
   CxImage
   IKAN
 
+  XRay.Platform
+  
   XRay.Core.Defines
   XRay.Engine.Defines
 

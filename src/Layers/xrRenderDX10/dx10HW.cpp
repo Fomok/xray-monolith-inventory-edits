@@ -433,10 +433,6 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     }
 #endif
 
-    UINT createDeviceFlags = 0;
-#ifdef DEBUG
-	//createDeviceFlags |= D3Dxx_CREATE_DEVICE_DEBUG;
-#endif
     HRESULT R = 0;
     // Create the device
     //	DX10 don't need it?
@@ -508,6 +504,11 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     R_CHK(pContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&pAnnotation));
 
 #else
+    UINT createDeviceFlags = 0;
+#ifdef DEBUG
+	//createDeviceFlags |= D3Dxx_CREATE_DEVICE_DEBUG;
+#endif
+
 	R = D3DX10CreateDeviceAndSwapChain(m_pAdapter,
         m_DriverType,
         NULL,

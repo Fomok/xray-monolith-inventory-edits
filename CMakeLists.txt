@@ -40,7 +40,7 @@ file(GLOB_RECURSE SOURCES_GAMEDATA CMake/*)
 target_sources(Build PRIVATE ${SOURCES_GAMEDATA})
 
 # Hand off to our XRay entrypoint
-include(XRay)
+include(XRay.CMake)
 
 # Setup external libraries
 add_subdirectory(Externals)

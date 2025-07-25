@@ -4,9 +4,12 @@ add_module(XRay.CPUPipe
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
+  XRay.Platform
+
+  XRay.Core.Defines
+  
   XRay.Includes
   XRay.Collision.Includes
-  XRay.Core.Defines
   XRay.Core.Includes
   XRay.Engine.Includes
   XRay.Render.Common.Includes

@@ -10,6 +10,8 @@ add_module(XRay.Physics
   tbb
   OPCODE
   
+  XRay.Platform
+  
   XRay.Core.Defines
 
   XRay.Includes

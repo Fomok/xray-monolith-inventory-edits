@@ -1,10 +1,4 @@
-add_module(XRay
-  INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}
-
-  SOURCES
-  build_config_defines.h
-)
+add_cmake_directory(XRay)
 
 add_subdirectory("Layers")
 

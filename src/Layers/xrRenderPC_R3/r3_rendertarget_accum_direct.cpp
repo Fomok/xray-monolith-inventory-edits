@@ -749,8 +749,6 @@ void CRenderTarget::accum_direct_blend()
 		// Common calc for quad-rendering
 		u32 Offset;
 		u32 C = color_rgba(255, 255, 255, 255);
-		float _w = float(Device.dwWidth);
-		float _h = float(Device.dwHeight);
 		
 		Fvector2 p0, p1;
 		p0.set(0.0f, 0.0f);
@@ -760,10 +758,6 @@ void CRenderTarget::accum_direct_blend()
 
 		// Fill vertex buffer
 		FVF::TL2uv* pv = (FVF::TL2uv*)RCache.Vertex.Lock(4, g_combine_2UV->vb_stride, Offset);
-		//pv->set						(EPS,			float(_h+EPS),	d_Z,	d_W, C, p0.x, p1.y, p0.x, p1.y);	pv++;
-		//pv->set						(EPS,			EPS,			d_Z,	d_W, C, p0.x, p0.y, p0.x, p0.y);	pv++;
-		//pv->set						(float(_w+EPS),	float(_h+EPS),	d_Z,	d_W, C, p1.x, p1.y, p1.x, p1.y);	pv++;
-		//pv->set						(float(_w+EPS),	EPS,			d_Z,	d_W, C, p1.x, p0.y, p1.x, p0.y);	pv++;
 		pv->set(-1, -1, d_Z, d_W, C, 0, 1, 0, 1);
 		pv++;
 		pv->set(-1, 1, d_Z, d_W, C, 0, 0, 0, 0);

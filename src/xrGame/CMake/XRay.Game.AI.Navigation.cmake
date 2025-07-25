@@ -8,6 +8,8 @@ add_module(XRay.Game.AI.Navigation
   LZO
   TinyXML
 
+  XRay.Platform
+  
   XRay.Core.Defines
 
   XRay.Includes

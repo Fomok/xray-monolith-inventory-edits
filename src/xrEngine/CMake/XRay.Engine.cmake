@@ -18,6 +18,8 @@ add_module(XRay.Engine
   luabind
   Vfw32
 
+  XRay.Platform
+  
   XRay.Core.Defines
 
   XRay.Collision.Includes

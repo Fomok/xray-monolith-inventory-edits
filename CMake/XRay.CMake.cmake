@@ -4,9 +4,6 @@ message(STATUS "      Version: 1.6")
 
 cmake_policy(SET CMP0140 NEW)
 
-# Setup platform configurations
-include(XRay.Platform)
-
 # Setup build configurations
 include(XRay.Configs)
 

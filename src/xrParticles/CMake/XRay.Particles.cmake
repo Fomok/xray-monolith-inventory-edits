@@ -6,6 +6,9 @@ add_module(XRay.Particles
 
   LINKS
   tbb
+  
+  XRay.Platform
+
   XRay.Core.Defines
   XRay.Core.Includes
   XRay.CPUPipe.Includes

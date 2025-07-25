@@ -5,6 +5,8 @@
  *  Contents: memory allocation routines                                    *
  ****************************************************************************/
 
+#include <windows.h>
+
 enum
 {
 	UNIT_SIZE=12,
@@ -54,6 +56,7 @@ static BYTE *HeapStart, *pText, *UnitsStart, *LoUnit, *HiUnit;
 inline void PrefetchData(void* Addr)
 {
 #if defined(_USE_PREFETCHING)
+    #pragma warning(disable : 4189)
 	BYTE PrefetchByte = *(volatile BYTE*)Addr;
 #endif /* defined(_USE_PREFETCHING) */
 }

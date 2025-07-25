@@ -10,6 +10,8 @@ add_module(XRay.NetServer
   optick
   Ws2_32
 
+  XRay.Platform
+  
   XRay.Core.Defines
   
   XRay.Core.Includes

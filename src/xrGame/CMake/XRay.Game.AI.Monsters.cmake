@@ -8,6 +8,8 @@ add_module(XRay.Game.AI.Monsters
   LZO
   TinyXML
   
+  XRay.Platform
+  
   XRay.Core.Defines
   XRay.Game.Defines
 

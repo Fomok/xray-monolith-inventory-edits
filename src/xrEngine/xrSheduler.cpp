@@ -318,7 +318,7 @@ void CSheduler::ProcessStep()
 	CTimer eTimer;
 	for (int i = 0; !Items.empty() && Top().dwTimeForExecute < dwTime; ++i)
 	{
-		u32 delta_ms = dwTime - Top().dwTimeForExecute;
+		//u32 delta_ms = dwTime - Top().dwTimeForExecute;
 
 		// Update
 		Item T = Top();

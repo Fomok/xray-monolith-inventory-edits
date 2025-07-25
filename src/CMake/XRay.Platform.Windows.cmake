@@ -1,0 +1,52 @@
+add_module(XRay.Platform.Windows
+  DEFINES
+  VC_EXTRALEAN
+  WIN32_LEAN_AND_MEAN
+  STRICT
+  IDIRECTPLAY2_OR_GREATER
+  DIRECTINPUT_VERSION=0x0800
+  _CRT_SECURE_NO_DEPRECATE
+
+  # windows.h
+  _WIN32_WINNT=0x0501
+
+  NOGDICAPMASKS
+  NOMENUS
+  NOICONS
+  NOKEYSTATES
+  NODRAWTEXT
+  NOMEMMGR
+  NOMETAFILE
+  NOSERVICE
+  NOCOMM
+  NOHELP
+  NOPROFILER
+  NOMCX
+  NOMINMAX
+  DOSWIN32
+  _WIN32_DCOM
+  _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+)
+
+target_compile_options(XRay.Platform.Windows
+  INTERFACE
+  /wd4996
+  /wd4251 # object needs DLL interface
+  /wd4201 # nonstandard extension used : nameless struct/union
+  /wd4100 # unreferenced formal parameter
+  /wd4127 # conditional expression is constant
+  /wd4530 # C++ exception handler used, but unwind semantics are not enabled
+  /wd4345
+  /wd4714 # __forceinline not inlined
+
+  # local variable is initialized but not refenced
+  # frequently in release code due to large amount of VERIFY
+  $<$<CONFIG:DEBUG>:/wd4189>
+
+  /wd4512
+)
+
+target_link_libraries(XRay.Platform
+  INTERFACE
+  $<$<PLATFORM_ID:Windows>:XRay.Platform.Windows>
+)
