@@ -1,4 +1,5 @@
 #include <igame_persistent.h>
+#include <igame_level.h>
 #include <LocatorAPI.h>
 #include <xr_ini.h>
 
