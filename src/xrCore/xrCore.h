@@ -123,7 +123,6 @@
 #pragma intrinsic (abs, fabs, fmod, sin, cos, tan, asin, acos, atan, sqrt, exp, log, log10, strcat)
 #endif
 
-#include <time.h>
 #define ALIGN(a) __declspec(align(a))
 #define MODULE_NAME "xrCore.dll"
 

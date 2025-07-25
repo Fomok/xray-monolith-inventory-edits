@@ -1,10 +1,14 @@
-﻿#include "pch_script.h"
+﻿#include <time.h>
+
+#include <build_config_defines.h>
+#include <cl_intersect.h>
+#include <matrix_utils.h>
+#include <script_engine.h>
+#include <xr_input.h>
+
+#include "pch_script.h"
 #include "Actor_Flags.h"
 #include "hudmanager.h"
-#ifdef DEBUG
-
-#	include "PHDebug.h"
-#endif // DEBUG
 #include "alife_space.h"
 #include "hit.h"
 #include "PHDestroyable.h"
@@ -16,20 +20,14 @@
 #include "EffectorBobbing.h"
 #include "ActorEffector.h"
 #include "EffectorZoomInertion.h"
-//#include "SleepEffector.h"
 #include "character_info.h"
 #include "CustomOutfit.h"
 #include "actorcondition.h"
 #include "UIGameCustom.h"
-#include "../xrphysics/matrix_utils.h"
 #include "clsid_game.h"
 #include "game_cl_base_weapon_usage_statistic.h"
 #include "Grenade.h"
 #include "Torch.h"
-
-// breakpoints
-#include "../xrEngine/xr_input.h"
-//
 #include "Actor.h"
 #include "ActorAnimation.h"
 #include "actor_anim_defs.h"
@@ -38,7 +36,6 @@
 #include "ai_space.h"
 #include "trade.h"
 #include "inventory.h"
-//#include "Physics.h"
 #include "level.h"
 #include "GamePersistent.h"
 #include "game_cl_base.h"
@@ -46,8 +43,6 @@
 #include "xrmessages.h"
 #include "string_table.h"
 #include "usablescriptobject.h"
-#include "../xrEngine/cl_intersect.h"
-//#include "ExtendedGeom.h"
 #include "alife_registry_wrappers.h"
 #include "Kinematics.h"
 #include "artefact.h"
@@ -65,30 +60,28 @@
 #include "location_manager.h"
 #include "player_hud.h"
 #include "ai/monsters/basemonster/base_monster.h"
-
 #include "UIRender.h"
-
 #include "ai_object_location.h"
 #include "ui/uiMotionIcon.h"
 #include "ui/UIActorMenu.h"
 #include "ActorHelmet.h"
 #include "UI/UIDragDropReferenceList.h"
-
-#include "../build_config_defines.h"
-
 #include "ActorNightVision.h"
 #include "Flashlight.h"
+
 //Alundaio
 #include "ActorBackpack.h"
 #include "script_hit.h"
-#include "../../xrServerEntities/script_engine.h"
-
 //-Alundaio
 
 //Rezy
 #include "x_ray.h"
 #include "ui/UIHudStatesWnd.h"
 #include "script_attachment_manager.h"
+
+#ifdef DEBUG
+#	include "PHDebug.h"
+#endif // DEBUG
 
 const u32 patch_frames = 50;
 const float respawn_delay = 1.f;

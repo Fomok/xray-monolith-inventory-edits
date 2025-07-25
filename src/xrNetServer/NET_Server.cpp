@@ -1,4 +1,5 @@
 #include <functional>
+#include <time.h>
 
 #include <dxerr.h>
 #include <LocatorAPI.h>

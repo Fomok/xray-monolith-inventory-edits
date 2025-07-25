@@ -6,11 +6,12 @@
 // AlexMX - Alexander Maksimchuk
 //-----------------------------------------------------------------------------
 
+#include <discord.h>
 #include <process.h>
 #include <locale.h>
+#include <time.h>
 #include <unicode/unistr.h>
 #include <unicode/ucnv.h>
-#include <discord.h>
 
 #include <xr_ini.h>
 #include <NET_AuthCheck.h>

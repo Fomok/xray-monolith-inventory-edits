@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include "stats_submitter.h"
 #include "login_manager.h"
 #include "MainMenu.h"
