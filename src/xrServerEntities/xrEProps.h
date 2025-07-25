@@ -29,14 +29,6 @@ typedef fastdelegate::FastDelegate0<> TOnItemAfterRemove;
 typedef fastdelegate::FastDelegate0<> TOnCloseEvent;
 typedef fastdelegate::FastDelegate0<> TOnModifiedEvent;
 
-#ifdef __BORLANDC__
-#	include "mxPlacemnt.hpp"
-    typedef fastdelegate::FastDelegate1<TElTreeItem*>			TOnILItemFocused;
-	//---------------------------------------------------------------------------
-	void XR_EPROPS_API CheckWindowPos(TForm* form);
-	//---------------------------------------------------------------------------
-#endif
-
 //------------------------------------------------------------------------------
 // Prepare Key
 //------------------------------------------------------------------------------
@@ -163,11 +155,7 @@ public:
 };
 
 //---------------------------------------------------------------------------
-#ifdef __BORLANDC__
-	extern "C" XR_EPROPS_API IPropHelper& PHelper ();
-#else
 extern IPropHelper& PHelper();
-#endif
 //---------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -182,9 +170,5 @@ public:
 	virtual ListItem* __stdcall CreateItem(ListItemsVec& items, LPCSTR key, int type, u32 item_flags = 0,
 	                                       void* object = 0) =0;
 };
-
-#ifdef __BORLANDC__
-	extern "C" XR_EPROPS_API IListHelper& LHelper ();
-#endif
 
 #endif

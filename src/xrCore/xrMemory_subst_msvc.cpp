@@ -2,8 +2,6 @@
 #include "xrMemory_align.h"
 #include "xrMemory_pure.h"
 
-#ifndef __BORLANDC__
-
 #ifndef DEBUG_MEMORY_MANAGER
 # define debug_mode 0
 #endif // DEBUG_MEMORY_MANAGER
@@ -305,4 +303,3 @@ void* xrMemory::mem_realloc(void* P, size_t size
 	return _ptr;
 }
 
-#endif // __BORLANDC__

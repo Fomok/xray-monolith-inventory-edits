@@ -90,12 +90,7 @@ extern XRCORE_API xrMemory Memory;
 #define CopyMemory(a,b,c) memcpy(a,b,c) //. CopyMemory(a,b,c)
 #define FillMemory(a,b,c) Memory.mem_fill(a,c,b)
 
-// delete
-#ifdef __BORLANDC__
-#include "xrMemory_subst_borland.h"
-#else
 #include "xrMemory_subst_msvc.h"
-#endif
 
 // generic "C"-like allocations/deallocations
 #ifdef DEBUG_MEMORY_NAME

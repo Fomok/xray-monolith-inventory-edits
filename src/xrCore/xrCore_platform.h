@@ -16,12 +16,6 @@
 # define _WIN32_WINNT 0x0501
 #endif
 
-#ifdef __BORLANDC__
-#include <vcl.h>
-#include <mmsystem.h>
-#include <stdint.h>
-#endif
-
 #define NOGDICAPMASKS
 //#define NOSYSMETRICS
 #define NOMENUS
@@ -39,12 +33,7 @@
 #define DOSWIN32
 #define _WIN32_DCOM
 
-#pragma warning(push)
-#pragma warning(disable:4005)
 #include <windows.h>
-#ifndef __BORLANDC__
 #include <windowsx.h>
-#endif
-#pragma warning(pop)
 
 #endif

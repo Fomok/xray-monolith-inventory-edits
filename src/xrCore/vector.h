@@ -19,9 +19,6 @@
 #ifdef _MSC_VER
 #define M_VISUAL
 #endif
-#ifdef __BORLANDC__
-#define M_BORLAND
-#endif
 
 // Constants
 #ifdef M_VISUAL

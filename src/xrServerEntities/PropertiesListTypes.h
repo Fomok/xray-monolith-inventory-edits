@@ -7,10 +7,6 @@
 #include "WaveForm.H"
 #include "gametype_chooser.h"
 
-#ifdef __BORLANDC__
-#	include "ElTree.hpp"
-#endif
-
 #pragma pack(push, 8)
 
 //---------------------------------------------------------------------------
@@ -268,9 +264,6 @@ public:
 		return values.front();
 	};
 	IC EPropType Type() { return type; }
-#ifdef __BORLANDC__
-	IC TElTreeItem*		Item			(){return (TElTreeItem*)item;}
-#endif
 	IC LPCSTR Key() { return key.c_str(); }
 	IC void Enable(BOOL val) { m_Flags.set(flDisabled, !val); }
 	IC BOOL Enabled() { return !m_Flags.is(flDisabled); }
