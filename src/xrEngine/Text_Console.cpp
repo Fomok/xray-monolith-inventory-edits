@@ -1,3 +1,5 @@
+#include <windowsx.h>
+
 #include "Text_Console.h"
 #include "line_editor.h"
 

@@ -12,7 +12,7 @@
 #endif
 
 #ifndef DEBUG
-# define MASTER_GOLD
+#define MASTER_GOLD
 #endif // DEBUG
 
 //#define BENCHMARK_BUILD
@@ -59,8 +59,6 @@
 // multithreading disabled
 #error Please enable multi-threaded library...
 #endif
-
-# include "xrCore_platform.h"
 
 /*
 // stl-config
@@ -145,6 +143,7 @@
 # endif
 //#endif
 
+#include <windows.h>
 #include "_stl_extensions.h"
 #include "xrstring.h"
 
