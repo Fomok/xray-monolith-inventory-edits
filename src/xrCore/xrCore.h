@@ -79,11 +79,6 @@
 #define _STLP_USE_DECLSPEC 1 // no exceptions, import allocator and common stuff
 #endif
 
-// #include <exception>
-// using std::exception;
-
-#include <stdio.h>
-
 #ifdef XRCORE_STATIC
 # define NO_FS_SCAN
 #endif
