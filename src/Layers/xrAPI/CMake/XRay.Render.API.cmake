@@ -5,8 +5,6 @@ add_module(XRay.Render.API
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
-  XRay.Platform
-  
   XRay.Render.Common.Includes
 
   DEFINES

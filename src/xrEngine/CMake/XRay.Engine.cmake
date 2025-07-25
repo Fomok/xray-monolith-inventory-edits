@@ -17,8 +17,6 @@ add_module(XRay.Engine
   LuaJIT
   luabind
   Vfw32
-
-  XRay.Platform
   
   XRay.Core.Defines
 

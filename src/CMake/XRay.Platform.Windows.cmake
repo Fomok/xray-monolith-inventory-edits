@@ -1,3 +1,4 @@
+# Windows-specific definitions
 add_module(XRay.Platform.Windows
   DEFINES
   VC_EXTRALEAN
@@ -28,6 +29,7 @@ add_module(XRay.Platform.Windows
   _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 )
 
+# FIXME: Suppress warnings
 target_compile_options(XRay.Platform.Windows
   INTERFACE
   /wd4996
@@ -46,6 +48,7 @@ target_compile_options(XRay.Platform.Windows
   /wd4512
 )
 
+# On Windows, link the Windows platform module
 target_link_libraries(XRay.Platform
   INTERFACE
   $<$<PLATFORM_ID:Windows>:XRay.Platform.Windows>

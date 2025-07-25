@@ -9,9 +9,12 @@ target_include_directories(TinyXML
 
 target_link_libraries(TinyXML
   PRIVATE
+  XRay.Platform
+
   XRay.Core.Defines
-  XRay.Core.Includes
   XRay.XMLParser.Defines
+  
+  XRay.Core.Includes
   XRay.XMLParser.Includes
 )
 

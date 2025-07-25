@@ -14,6 +14,8 @@ target_link_libraries(IKAN
   PRIVATE
   ode
   
+  XRay.Platform
+  
   XRay.Core.Defines
 
   XRay.Core.Includes

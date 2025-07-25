@@ -16,8 +16,6 @@ add_module(XRay.Core
   StackWalker
   winmm
 
-  XRay.Platform
-
   XRay.Includes
   XRay.Render.API.Includes
   XRay.Collision.Includes

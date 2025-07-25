@@ -2,12 +2,12 @@
 #define STDAFX_3DA
 #pragma once
 
+#include <xrCore.h>
+#include <xrAPI.h>
+
 #ifdef _EDITOR
 #include "../editors/ECore/stdafx.h"
 #else
-
-#include "../xrCore/xrCore.h"
-#include "../Layers/xrAPI/xrAPI.h"
 
 #ifdef _DEBUG
 # define D3D_DEBUG_INFO

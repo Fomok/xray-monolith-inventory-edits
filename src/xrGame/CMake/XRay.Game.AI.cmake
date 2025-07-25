@@ -7,8 +7,6 @@ add_module(XRay.Game.AI
   LINKS
   IKAN
 
-  XRay.Platform
-  
   XRay.Includes
   XRay.Core.Includes
   XRay.Collision.Includes

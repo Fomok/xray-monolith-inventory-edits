@@ -21,8 +21,6 @@ add_module(XRay.Render.R4
   ReShadeCompat
   tbb
 
-  XRay.Platform
-  
   XRay.Core.Defines
   
   XRay.Includes

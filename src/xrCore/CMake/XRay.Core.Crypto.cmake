@@ -4,8 +4,6 @@ add_module(XRay.Core.Crypto
   LINKS
   OpenSSL
 
-  XRay.Platform
-
   XRay.Core.Defines
   
   XRay.Core.Includes

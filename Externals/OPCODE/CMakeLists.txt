@@ -12,6 +12,8 @@ target_include_directories(OPCODE
 
 target_link_libraries(OPCODE
   PRIVATE
+  XRay.Platform
+
   XRay.Collision.Includes
   XRay.Core.Includes
 )

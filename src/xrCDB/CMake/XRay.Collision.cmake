@@ -11,8 +11,6 @@ add_module(XRay.Collision
   OPCODE
   optick
 
-  XRay.Platform
-  
   XRay.Core.Defines
   
   XRay.Includes
