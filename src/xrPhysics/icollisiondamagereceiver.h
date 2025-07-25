@@ -1,5 +1,7 @@
 #pragma once
 
+#include "xrPhysics.h"
+
 class ICollisionDamageReceiver
 {
 public:

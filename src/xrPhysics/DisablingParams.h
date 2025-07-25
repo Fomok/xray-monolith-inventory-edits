@@ -1,6 +1,8 @@
 #ifndef DISABLING_PARAMS_H
 #define DISABLING_PARAMS_H
 
+#include "xrPhysics.h"
+
 class CInifile;
 
 struct SOneDDOParams

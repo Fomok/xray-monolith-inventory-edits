@@ -1,5 +1,6 @@
 #pragma	once
 
+#include "xrPhysics.h"
 
 XRPHYSICS_API bool valid_pos(const Fvector& P);
 XRPHYSICS_API const Fbox& ph_boundaries();

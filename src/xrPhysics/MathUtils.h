@@ -1,6 +1,7 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
+#include "xrPhysics.h"
 
 extern XRPHYSICS_API const float phInfinity;
 

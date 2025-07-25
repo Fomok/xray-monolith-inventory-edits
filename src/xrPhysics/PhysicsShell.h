@@ -2,6 +2,7 @@
 #define PhysicsShellH
 #pragma once
 
+#include "xrPhysics.h"
 #include "PHDefs.h"
 #include "PhysicsCommon.h"
 #include "icollidevalidator.h"
