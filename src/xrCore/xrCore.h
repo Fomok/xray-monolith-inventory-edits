@@ -85,7 +85,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <math.h>
 
 #ifdef XRCORE_STATIC
 # define NO_FS_SCAN
@@ -116,7 +115,7 @@
 #ifndef DEBUG
 #pragma inline_depth ( 254 )
 #pragma inline_recursion( on )
-#pragma intrinsic (abs, fabs, fmod, sin, cos, tan, asin, acos, atan, sqrt, exp, log, log10, strcat)
+//#pragma intrinsic (abs, fabs, fmod, sin, cos, tan, asin, acos, atan, sqrt, exp, log, log10, strcat)
 #endif
 
 #define ALIGN(a) __declspec(align(a))
