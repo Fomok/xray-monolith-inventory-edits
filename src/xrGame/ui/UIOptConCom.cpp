@@ -1,12 +1,11 @@
-#include "../../xrEngine/xr_ioconsole.h"
-#include "../../xrEngine/xr_ioc_cmd.h"
+#include <xr_ioconsole.h>
+#include <xr_ioc_cmd.h>
+
 #include "UIOptConCom.h"
-#include "../../xrcore/xrCore.h"
 //#include "game_base_space.h"
 #include "gametype_chooser.h"
-#include "../RegistryFuncs.h"
-
-#include "ui/UICDkey.h"
+#include "RegistryFuncs.h"
+#include "UICDkey.h"
 
 xr_token g_GameModes [] = {
 	{"st_deathmatch", eGameIDDeathmatch},
