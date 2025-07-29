@@ -4,12 +4,8 @@
 
 #include <windows.h>
 
-#include "_stl_extensions.h"
 #include "xrstring.h"
 #include "log.h"
-
-DEFINE_VECTOR(shared_str, RStringVec, RStringVecIt);
-DEFINE_SET(shared_str, RStringSet, RStringSetIt);
 
 // ********************************************** The Core definition
 class XRCORE_API xrCore

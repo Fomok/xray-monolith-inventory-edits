@@ -2,6 +2,7 @@
 #define xrstringH
 #pragma once
 
+#include "_stl_extensions.h"
 #include "xrMemory.h"
 #include "xrSyncronize.h"
 
@@ -155,6 +156,9 @@ public:
 		return (shared_str&)*this;
 	}
 };
+
+DEFINE_VECTOR(shared_str, RStringVec, RStringVecIt);
+DEFINE_SET(shared_str, RStringSet, RStringSetIt);
 
 // res_ptr == res_ptr
 // res_ptr != res_ptr
