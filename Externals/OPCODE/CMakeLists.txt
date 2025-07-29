@@ -14,6 +14,8 @@ target_link_libraries(OPCODE
   PRIVATE
   XRay.Platform
 
+  XRay.Core.Defines
+
   XRay.Collision.Includes
   XRay.Core.Includes
 )

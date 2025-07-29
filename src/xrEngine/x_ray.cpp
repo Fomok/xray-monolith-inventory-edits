@@ -1147,7 +1147,9 @@ int stack_overflow_exception_filter(int exception_code)
 #include <boost/crc.hpp>
 
 //extern BOOL DllMainOpenAL32(HANDLE module, DWORD reason, LPVOID reserved);
+#ifndef XRCORE_STATIC
 extern BOOL DllMainXrCore(HANDLE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved);
+#endif
 extern BOOL DllMainXrPhysics(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
 
 //extern BOOL DllMainXrGame(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved);
@@ -1163,10 +1165,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      int nCmdShow)
 {
 	//DllMainOpenAL32(NULL, DLL_PROCESS_ATTACH, NULL);
+#ifndef XRCORE_STATIC
 	DllMainXrCore(NULL, DLL_PROCESS_ATTACH, NULL);
+#endif
 	DllMainXrPhysics(NULL, DLL_PROCESS_ATTACH, NULL);
 
+#ifndef XRCORE_STATIC
 	DllMainXrCore(NULL, DLL_THREAD_ATTACH, NULL);
+#endif
 
 	__try
 	{
@@ -1179,7 +1185,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 
 	DllMainXrPhysics(NULL, DLL_PROCESS_DETACH, NULL);
+#ifndef XRCORE_STATIC
 	DllMainXrCore(NULL, DLL_PROCESS_DETACH, NULL);
+#endif
 	//DllMainOpenAL32(NULL, DLL_PROCESS_DETACH, NULL);
 
 	return (0);

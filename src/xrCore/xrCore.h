@@ -2,33 +2,6 @@
 #define xrCoreH
 #pragma once
 
-// *** try to minimize code bloat of STLport
-#ifdef XRCORE_EXPORTS // no exceptions, export allocator and common stuff
-#define _STLP_DESIGNATED_DLL 1
-#define _STLP_USE_DECLSPEC 1
-#else
-#define _STLP_USE_DECLSPEC 1 // no exceptions, import allocator and common stuff
-#endif
-
-#ifdef XRCORE_STATIC
-# define NO_FS_SCAN
-#endif
-
-#define MODULE_NAME "xrCore.dll"
-
-// Our headers
-//#ifdef XRCORE_STATIC
-//# define XRCORE_API
-//#else
-# ifdef XRCORE_EXPORTS
-# define XRCORE_API
-//__declspec(dllexport)
-# else
-# define XRCORE_API
-//__declspec(dllimport)
-# endif
-//#endif
-
 #include <windows.h>
 #include "_stl_extensions.h"
 #include "xrstring.h"

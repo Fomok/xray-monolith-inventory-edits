@@ -57,9 +57,6 @@
 // multithreading disabled
 #error Please enable multi-threaded library...
 #endif
-#ifdef _EDITOR
-# define NO_FS_SCAN
-#endif
 
 // inline control - redefine to use compiler's heuristics ONLY
 // it seems "IC" is misused in many places which cause code-bloat

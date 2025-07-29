@@ -1,11 +1,18 @@
+set(XRCORE_STATIC On CACHE BOOL "Build XRay.Core as a static library")
+
+if(XRCORE_STATIC)
+  set(XRCORE_TYPE STATIC)
+else()
+  set(XRCORE_TYPE SHARED)
+endif()
+
 add_module(XRay.Core
-  TYPE STATIC
+  TYPE ${XRCORE_TYPE}
 
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
-  XRCORE_EXPORTS
   PURE_ALLOC
   PORTABLE_BUGSLAYERUTIL
 
@@ -42,6 +49,33 @@ target_compile_options(XRay.Core
   PRIVATE
   $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
 )
+
+target_compile_definitions(XRay.Core
+  PRIVATE
+  _STLP_DESIGNATED_DLL=1
+  _STLP_USE_DECLSPEC=1
+  XRCORE_EXPORTS
+  MODULE_NAME="xrCore.dll"
+  INTERFACE
+  _STLP_USE_DECLSPEC=1
+)
+
+if(XRCORE_STATIC)
+  target_compile_definitions(XRay.Core.Defines
+    INTERFACE
+    XRCORE_STATIC
+    [[XRCORE_API=]]
+  )
+else()
+  target_compile_definitions(XRay.Core
+    PRIVATE
+    XRCORE_API=__declspec\(dllexport\)
+  )
+  target_compile_definitions(XRay.Core.Defines
+    INTERFACE
+    XRCORE_API=__declspec\(dllimport\)
+  )
+endif()
 
 set_source_files_properties(
   lzo_compressor.cpp
