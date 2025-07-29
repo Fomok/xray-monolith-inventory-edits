@@ -96,7 +96,7 @@ protected:
 	float m_fLR_InertiaFactor;
 	float m_fUD_InertiaFactor;
 	bool hasEnoughBatteryPower(){ return (!IsUsingCondition() || (IsUsingCondition() && GetCondition() > m_fLowestBatteryCharge)); }
-	static void _BCL JoystickCallback(CBoneInstance* B);
+	static void JoystickCallback(CBoneInstance* B);
 	bool m_bNoticedEmptyBattery;
 	bool m_LastMBZoom;
 public:

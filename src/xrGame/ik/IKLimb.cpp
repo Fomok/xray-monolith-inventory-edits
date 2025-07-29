@@ -1070,7 +1070,7 @@ struct ssaved_callback :
 	CBoneInstance& _bi;
 };
 
-static void _BCL get_matrix(CBoneInstance* P)
+static void get_matrix(CBoneInstance* P)
 {
 	VERIFY(_valid( P->mTransform ));
 	*((Fmatrix*)P->callback_param()) = P->mTransform;

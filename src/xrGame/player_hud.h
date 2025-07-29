@@ -393,7 +393,7 @@ private:
 	shared_str m_sect_name;
 	xr_vector<u16> m_ancors;
 	attachable_hud_item* m_attached_items[3];
-	static void _BCL FingerCallback(CBoneInstance* B);
+	static void FingerCallback(CBoneInstance* B);
 public:
 	IKinematicsAnimated* m_model;
 	IKinematicsAnimated* m_model_2;

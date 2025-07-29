@@ -53,11 +53,11 @@ public:
 	shared_str					dbg_texture	;
 	shared_str					dbg_shader_def	;
 	shared_str					dbg_texture_def	;
-	virtual shared_str	_BCL	getDebugName() { return dbg_name; }
-	virtual LPCSTR _BCL			getDebugShader() { return *dbg_shader; }
-	virtual LPCSTR _BCL			getDebugTexture() { return *dbg_texture; }
-	virtual LPCSTR _BCL			getDebugShaderDef() { return *dbg_shader_def; }
-	virtual LPCSTR _BCL			getDebugTextureDef() { return *dbg_texture_def; }
+	virtual shared_str getDebugName() { return dbg_name; }
+	virtual LPCSTR getDebugShader() { return *dbg_shader; }
+	virtual LPCSTR getDebugTexture() { return *dbg_texture; }
+	virtual LPCSTR getDebugShaderDef() { return *dbg_shader_def; }
+	virtual LPCSTR getDebugTextureDef() { return *dbg_texture_def; }
 public:
 	// Common data for rendering
 	u32 Type; // visual's type
@@ -87,7 +87,7 @@ public:
 	virtual void SetShaderTexture(LPCSTR shader, LPCSTR texture);
 	virtual void ResetShaderTexture();
 
-	virtual vis_data& _BCL getVisData() { return vis; }
+	virtual vis_data& getVisData() { return vis; }
 	virtual u32 getType() { return Type; }
 	
 	CTexture* GetTexture();							//--DSR--

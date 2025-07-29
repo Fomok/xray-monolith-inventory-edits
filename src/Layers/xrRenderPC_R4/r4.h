@@ -390,7 +390,7 @@ public:
 	virtual void Screenshot(ScreenshotMode mode, CMemoryWriter& memory_writer);
 	virtual void ScreenshotAsyncBegin();
 	virtual void ScreenshotAsyncEnd(CMemoryWriter& memory_writer);
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 
 	// Particles
 	virtual void ExportParticles();

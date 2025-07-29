@@ -202,7 +202,7 @@ public:
 	
 	Fmatrix& BoneTransform(IKinematics* model);
 
-	static void _BCL ScriptAttachmentBoneCallback(CBoneInstance* B);
+	static void ScriptAttachmentBoneCallback(CBoneInstance* B);
 	void SetBoneCallback(u16 bone_id, u16 parent_bone, bool overwrite = false);
 	void SetBoneCallback(LPCSTR bone, LPCSTR parent_bone, bool overwrite = false);
 	void SetBoneCallback(u16 bone, LPCSTR parent_bone, bool overwrite = false);

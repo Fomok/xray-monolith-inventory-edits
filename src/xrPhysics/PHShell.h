@@ -55,8 +55,8 @@ public:
 	virtual void applyImpulseTrace(const Fvector& pos, const Fvector& dir, float val, const u16 id);
 	virtual void applyHit(const Fvector& pos, const Fvector& dir, float val, const u16 id, ALife::EHitType hit_type);
 
-	static void _BCL BonesCallback(CBoneInstance* B);
-	static void _BCL StataticRootBonesCallBack(CBoneInstance* B);
+	static void BonesCallback(CBoneInstance* B);
+	static void StataticRootBonesCallBack(CBoneInstance* B);
 	virtual BoneCallbackFun* GetBonesCallback() { return BonesCallback; }
 
 	virtual BoneCallbackFun* GetStaticObjectBonesCallback()
@@ -152,7 +152,7 @@ public:
 	virtual void applyTorque(const Fvector& dir, float val);
 
 	virtual void applyImpulse(const Fvector& dir, float val);
-	virtual void _BCL applyGravityAccel(const Fvector& accel);
+	virtual void applyGravityAccel(const Fvector& accel);
 	virtual void setTorque(const Fvector& torque);
 	virtual void setForce(const Fvector& force);
 
@@ -253,7 +253,7 @@ public:
 	virtual CPHMoveStorage* MoveStorage() { return &m_traced_geoms; }
 	virtual void build_FromKinematics(IKinematics* K, BONE_P_MAP* p_geting_map = NULL);
 	virtual void preBuild_FromKinematics(IKinematics* K, BONE_P_MAP* p_geting_map);
-	virtual void _BCL ActivatingBonePoses(IKinematics& K);
+	virtual void ActivatingBonePoses(IKinematics& K);
 	virtual void ZeroCallbacks();
 	virtual void ResetCallbacks(u16 id, Flags64& mask);
 	void PlaceBindToElForms();
@@ -262,7 +262,7 @@ public:
 	virtual void set_DisableParams(const SAllDDOParams& params);
 	virtual void UpdateRoot();
 	virtual void SmoothElementsInertia(float k);
-	virtual void _BCL InterpolateGlobalTransform(Fmatrix* m);
+	virtual void InterpolateGlobalTransform(Fmatrix* m);
 	virtual void InterpolateGlobalPosition(Fvector* v);
 	virtual void AnimatorOnFrame();
 	virtual void GetGlobalTransformDynamic(Fmatrix* m);

@@ -52,7 +52,7 @@ public:
 	virtual void Init(int stage);
 	virtual void UnLoad();
 	virtual void Render();
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 
 	void SetRank(s16 team, u8 rank);
 

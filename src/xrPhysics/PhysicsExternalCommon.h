@@ -20,7 +20,7 @@ typedef void ObjectContactCallbackFun(bool& do_colide, bool bo1, dContact& c, SG
                                       SGameMtl* material_2);
 
 
-typedef void _BCL BoneCallbackFun(CBoneInstance* B);
+typedef void BoneCallbackFun(CBoneInstance* B);
 
 
 typedef void PhysicsStepTimeCallback(u32 step_start, u32 step_end);
