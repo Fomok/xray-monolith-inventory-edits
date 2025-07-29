@@ -40,6 +40,8 @@ add_module(XRay.Core
   ChooseTypes.H
   client_id.h
   robin_hood.h
+  
+  destructor.h
 
   xr_rtoken.h
   xr_shortcut.h

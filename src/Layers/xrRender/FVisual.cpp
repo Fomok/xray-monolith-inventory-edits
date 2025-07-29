@@ -3,14 +3,16 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#pragma warning(default:4995)
 
-#include "../../xrEngine/fmesh.h"
+#include <destructor.h>
+#include <fmesh.h>
+#if defined(USE_DX10) || defined(USE_DX11)
+#include <dx10BufferUtils.h>
+#endif
+
 #include "fvisual.h"
 
-#include "../xrRenderDX10/dx10BufferUtils.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

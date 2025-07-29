@@ -1,3 +1,4 @@
+#include <destructor.h>
 #include <LocatorAPI.h>
 
 #include "motion.h"

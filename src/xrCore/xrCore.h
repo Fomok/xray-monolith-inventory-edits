@@ -13,20 +13,6 @@ DEFINE_SET(shared_str, RStringSet, RStringSetIt);
 
 #include "log.h"
 
-// destructor
-template <class T>
-class destructor
-{
-	T* ptr;
-public:
-	destructor(T* p) { ptr = p; }
-	~destructor() { xr_delete(ptr); }
-	IC T& operator()()
-	{
-		return *ptr;
-	}
-};
-
 // ********************************************** The Core definition
 class XRCORE_API xrCore
 {
