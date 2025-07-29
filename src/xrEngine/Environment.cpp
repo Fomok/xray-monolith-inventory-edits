@@ -1,5 +1,4 @@
 #include <LocatorAPI.h>
-#include <xrCore.h>
 #include <xr_ini.h>
 
 #ifndef _EDITOR
