@@ -40,7 +40,7 @@ add_module(XRay.Core
   ChooseTypes.H
   client_id.h
   robin_hood.h
-  
+
   destructor.h
 
   xr_rtoken.h
@@ -61,8 +61,12 @@ target_compile_definitions(XRay.Core
   _STLP_USE_DECLSPEC=1
   XRCORE_EXPORTS
   MODULE_NAME="xrCore.dll"
+)
+
+target_compile_definitions(XRay.Core.Defines
   INTERFACE
   _STLP_USE_DECLSPEC=1
+  xr_pure_interface=__interface
 )
 
 if(XRCORE_STATIC)
