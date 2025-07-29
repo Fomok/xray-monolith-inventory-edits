@@ -1,6 +1,10 @@
 #ifndef __M__
 #define __M__
 
+#include "_vector2.h"
+#include "_vector4.h"
+#include "_quaternion.h"
+
 /*
 * DirectX-compliant, ie row-column order, ie m[Row][Col].
 * Same as:

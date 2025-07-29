@@ -1,6 +1,9 @@
 #ifndef __Q__
 #define __Q__
 
+template<typename T>
+struct _matrix;
+
 /***************************************************************************
  The quatern module contains basic support for a quaternion object.
 

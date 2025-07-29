@@ -2,9 +2,12 @@
 #define PSystemH
 #pragma once
 
-#include "xrCore.h"
+#include <_flags.h>
+#include <_vector3d.h>
+#include <_matrix.h>
 
 class IReader;
+class IWriter;
 
 #define PARTICLES_API
 

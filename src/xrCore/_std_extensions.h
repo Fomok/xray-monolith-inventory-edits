@@ -2,6 +2,8 @@
 #define _STD_EXT_internal
 
 #include <stdarg.h>
+#include <stdio.h>
+#include <float.h>
 
 #define BREAK_AT_STRCMP
 #ifndef DEBUG

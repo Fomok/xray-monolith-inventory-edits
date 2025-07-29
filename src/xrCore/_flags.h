@@ -1,6 +1,8 @@
 #ifndef __FLAGS_H__
 #define __FLAGS_H__
 
+#include "_types.h"
+
 template <class T>
 struct _flags
 {

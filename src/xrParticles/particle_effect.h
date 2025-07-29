@@ -3,6 +3,7 @@
 #define particle_effectH
 
 #include "psystem.h"
+#include "xrMemory.h"
 
 namespace PAPI
 {

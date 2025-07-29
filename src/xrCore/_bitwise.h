@@ -2,6 +2,8 @@
 #define _BITWISE_
 #pragma once
 
+#include <corecrt_math.h>
+
 // float values defines
 #define fdSGN 0x080000000 // mask for sign bit
 #define fdMABS 0x07FFFFFFF // mask for absolute value (~sgn)

@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------------
 
+#include <vector.h>
+
 #include "psystem.h"
 #include "particle_core.h"
 
