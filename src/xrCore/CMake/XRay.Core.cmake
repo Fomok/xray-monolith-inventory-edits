@@ -42,6 +42,7 @@ add_module(XRay.Core
   robin_hood.h
 
   xr_rtoken.h
+  xr_shortcut.h
 
   resource.h
   xrCore.rc

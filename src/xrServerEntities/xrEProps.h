@@ -14,6 +14,8 @@
 #include "PropertiesListTypes.h"
 #include "ItemListTypes.h"
 
+struct xr_shortcut;
+
 enum EItemType
 {
 	TYPE_INVALID= -1,
