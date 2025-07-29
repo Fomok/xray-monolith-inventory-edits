@@ -1,7 +1,6 @@
 #ifndef CRYPTO_INCLUDED
 #define CRYPTO_INCLUDED
 
-#include "xrCore.h"
 #include "xr_dsa.h"
 #include "xr_sha.h"
 
