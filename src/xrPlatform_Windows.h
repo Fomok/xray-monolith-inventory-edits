@@ -2,6 +2,8 @@
 #define xrPlatformWindowsH
 #pragma once
 
+#include <windows.h>
+
 #ifndef DEBUG
 #pragma inline_depth ( 254 )
 #pragma inline_recursion( on )

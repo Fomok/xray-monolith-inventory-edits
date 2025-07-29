@@ -2,8 +2,6 @@
 #define xrCoreH
 #pragma once
 
-#include <windows.h>
-
 #include "xrstring.h"
 #include "log.h"
 

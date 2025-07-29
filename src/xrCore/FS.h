@@ -5,8 +5,6 @@
 #ifndef fsH
 #define fsH
 
-#include <windows.h>
-
 #include <xrstring.h>
 #include <xrMemory.h>
 

@@ -5,8 +5,6 @@
  *  Contents: memory allocation routines                                    *
  ****************************************************************************/
 
-#include <windows.h>
-
 enum
 {
 	UNIT_SIZE=12,
