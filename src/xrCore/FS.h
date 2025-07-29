@@ -5,7 +5,9 @@
 #ifndef fsH
 #define fsH
 
-#include <xrCore.h>
+#include <windows.h>
+
+#include <xrstring.h>
 #include <xrMemory.h>
 
 #define CFS_CompressMark (1ul << 31ul)

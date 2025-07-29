@@ -1,5 +1,3 @@
-//.#include "../xrCore/xrCore.h"
-
 #include "xrCDB.h"
 
 namespace CDB
