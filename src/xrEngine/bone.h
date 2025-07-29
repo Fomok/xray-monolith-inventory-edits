@@ -3,7 +3,6 @@
 #define BoneH
 
 #include <FS.h>
-#include <xrCore.h>
 
 class IReader;
 class CBone;

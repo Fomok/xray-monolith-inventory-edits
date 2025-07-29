@@ -1,6 +1,7 @@
 #ifndef XRCDB_H
 #define XRCDB_H
 
+#include <log.h>
 #include <xrSyncronize.h>
 
 #define XRCDB_API
