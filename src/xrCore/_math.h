@@ -1,6 +1,8 @@
 #ifndef __XR_MATH_H__
 #define __XR_MATH_H__
 
+#include <intrin.h>
+
 #include "cpuid.h"
 
 namespace FPU

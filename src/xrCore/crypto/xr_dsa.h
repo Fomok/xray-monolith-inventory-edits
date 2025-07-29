@@ -1,8 +1,9 @@
 #ifndef XR_DSA_INCLUDED
 #define XR_DSA_INCLUDED
 
+#include "_types.h"
+#include "xrstring.h"
 #include "crypto_api_def.h"
-#include "xrCore.h"
 
 struct dsa_st;
 

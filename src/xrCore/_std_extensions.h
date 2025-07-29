@@ -1,6 +1,8 @@
 #ifndef _STD_EXT_internal
 #define _STD_EXT_internal
 
+#include <stdarg.h>
+
 #define BREAK_AT_STRCMP
 #ifndef DEBUG
 #undef BREAK_AT_STRCMP
