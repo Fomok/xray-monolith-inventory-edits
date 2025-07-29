@@ -1,6 +1,7 @@
 #ifndef _LOCAL_RAND
 #define _LOCAL_RAND
 
+#include <_types.h>
 #include <xrDebug.h>
 
 /*
