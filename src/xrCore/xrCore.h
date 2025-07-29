@@ -7,22 +7,6 @@
 #include "xrstring.h"
 
 // stl ext
-struct XRCORE_API xr_rtoken
-{
-	shared_str name;
-	int id;
-
-	xr_rtoken(LPCSTR _nm, int _id)
-	{
-		name = _nm;
-		id = _id;
-	}
-
-public:
-	void rename(LPCSTR _nm) { name = _nm; }
-	bool equal(LPCSTR _nm) { return (0 == xr_strcmp(*name, _nm)); }
-};
-
 #pragma pack (push,1)
 struct XRCORE_API xr_shortcut
 {
@@ -61,7 +45,6 @@ struct XRCORE_API xr_shortcut
 
 DEFINE_VECTOR(shared_str, RStringVec, RStringVecIt);
 DEFINE_SET(shared_str, RStringSet, RStringSetIt);
-DEFINE_VECTOR(xr_rtoken, RTokenVec, RTokenVecIt);
 
 #define xr_pure_interface __interface
 

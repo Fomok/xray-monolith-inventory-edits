@@ -41,6 +41,8 @@ add_module(XRay.Core
   client_id.h
   robin_hood.h
 
+  xr_rtoken.h
+
   resource.h
   xrCore.rc
 )

@@ -2,6 +2,7 @@
 #ifndef PropertiesListTypesH
 #define PropertiesListTypesH
 
+#include <xr_rtoken.h>
 #include <xr_trims.h>
 
 #include "WaveForm.H"
