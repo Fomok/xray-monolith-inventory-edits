@@ -165,14 +165,6 @@ namespace CPU
 		return _dest;
 	}
 
-#ifdef M_BORLAND
-u64 __fastcall GetCLK(void)
-{
-    _asm db 0x0F;
-    _asm db 0x31;
-}
-#endif
-
 	void Detect()
 	{
 		// General CPU identification
@@ -288,11 +280,6 @@ void _initialize_cpu(void)
 	g_initialize_cpu_called = true;
 }
 
-#ifdef M_BORLAND
-void _initialize_cpu_thread()
-{
-}
-#else
 // per-thread initialization
 #include <xmmintrin.h>
 #define _MM_DENORMALS_ZERO_MASK 0x0040
@@ -329,7 +316,6 @@ void _initialize_cpu_thread()
 		}
 	}
 }
-#endif
 // threading API
 #pragma pack(push,8)
 struct THREAD_NAME
