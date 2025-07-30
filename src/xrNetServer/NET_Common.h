@@ -3,6 +3,9 @@
 #pragma once
 //==============================================================================
 
+#include <_types.h>
+#include "NET_Shared.h"
+
 struct GameDescriptionData
 {
 	string128 map_name;
