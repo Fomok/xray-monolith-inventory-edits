@@ -1,5 +1,6 @@
 #pragma once
 
+#include "xrPhysics.h"
 #include "_vector3d.h"
 #include "_matrix.h"
 #include "CameraBase.h"

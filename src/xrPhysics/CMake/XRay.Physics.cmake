@@ -30,7 +30,7 @@ add_module(XRay.Physics
 
   #$<$<CONFIG:DEBUG>:[["d3d9types.h"]]>
 
-  xrPhysics.h
+  #xrPhysics.h
   smart_cast.h
   gm_library.h
 
