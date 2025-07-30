@@ -45,7 +45,7 @@ add_module(XRay.Sound
   #[["xrCore.h"]]
   #[["xrCDB.h"]]
 
-  [["mmsystem.h"]]
+  #[["mmsystem.h"]]
   [["mmreg.h"]]
 
   [["vorbis/codec.h"]]

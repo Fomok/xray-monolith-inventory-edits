@@ -1,3 +1,4 @@
+#include <mmsystem.h>
 #include <msacm.h>
 
 #include <string_concatenations.h>
