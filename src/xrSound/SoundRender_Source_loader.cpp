@@ -1,4 +1,5 @@
 #include <mmsystem.h>
+#include <mmreg.h>
 #include <msacm.h>
 
 #include <string_concatenations.h>
