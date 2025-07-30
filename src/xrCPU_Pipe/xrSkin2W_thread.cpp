@@ -1,4 +1,5 @@
 #include "xrCPU_Pipe.h"
+#include "ttapi.h"
 #include "SkeletonXVertRender.h"
 #include "bone.h"
 

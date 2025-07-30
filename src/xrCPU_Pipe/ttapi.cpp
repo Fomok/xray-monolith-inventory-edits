@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <malloc.h>
 
+#include "ttapi.h"
 #include "cpuid.h"
 
 typedef struct TTAPI_WORKER_PARAMS
