@@ -30,7 +30,7 @@ target_compile_options(IKAN
 
 target_precompile_headers(IKAN
   PRIVATE
-  [["xrCore.h"]]
+  #[["xrCore.h"]]
   [["xrPhysics.h"]]
   [["_std_extensions.h"]]
   [["_stl_extensions.h"]]
