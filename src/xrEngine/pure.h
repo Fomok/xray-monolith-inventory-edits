@@ -1,6 +1,7 @@
 #ifndef _PURE_H_AAA_
 #define _PURE_H_AAA_
 
+#include <resource.h>
 #include <smart_cast.h>
 
 // messages

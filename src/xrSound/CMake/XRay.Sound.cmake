@@ -54,7 +54,7 @@ add_module(XRay.Sound
   #[["vorbis/vorbisfile.h"]]
 
   #sound.h
-  resource.h
+  #resource.h
 
   SOURCES
   guids.cpp
