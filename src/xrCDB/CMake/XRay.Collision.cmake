@@ -5,6 +5,7 @@ add_module(XRay.Collision
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  [[ENGINE_API=]]
   XRCDB_EXPORTS
 
   LINKS
@@ -12,6 +13,7 @@ add_module(XRay.Collision
   optick
 
   XRay.Core.Defines
+  XRay.Engine.Defines
   
   XRay.Includes
   XRay.CPUPipe.Includes
@@ -21,7 +23,9 @@ add_module(XRay.Collision
   XRay.Render.Common.Includes
 
   PRECOMPILES
-  stdafx.h
+  [["xrCore.h"]]
+  alloc.h
+  [["opcode.h"]]
   
   SOURCES
   #cl_raypick.cpp
@@ -32,8 +36,8 @@ add_module(XRay.Collision
   xrCDB_frustum.cpp
   xrCDB_ray.cpp
 
+  alloc.h
   Frustum.h
-  StdAfx.h
   xrCDB.h
 )
 

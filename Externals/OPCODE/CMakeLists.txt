@@ -30,8 +30,10 @@ target_compile_options(OPCODE
 )
 
 target_precompile_headers(OPCODE
-    PRIVATE
-    ../../src/xrCDB/StdAfx.h
+  PRIVATE
+  [["xrCore.h"]]
+  [["alloc.h"]]
+  [["opcode.h"]]
 )
 
 target_sources_sandboxed(OPCODE
