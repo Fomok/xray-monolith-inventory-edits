@@ -91,9 +91,12 @@
 //--------- static assertion
 template<bool> struct CompileTimeError;
 template<> struct CompileTimeError<true> {};
+
+#undef STATIC_CHECK // from loki
 #define STATIC_CHECK(expr, msg) \
 { \
  CompileTimeError<((expr) != 0)> ERROR_##msg; \
  (void)ERROR_##msg; \
 }
+
 #endif // xrDebug_macrosH

@@ -32,7 +32,7 @@ add_module(XRay.Physics
 
   #xrPhysics.h
   smart_cast.h
-  gm_library.h
+  #gm_library.h
 
   SOURCES
   console_vars.cpp

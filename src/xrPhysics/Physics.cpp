@@ -1,8 +1,10 @@
+#include <gamemtllib.h>
+
+#include "gm_library.h"
 #include "PHDynamicData.h"
 #include "Physics.h"
 #include "tri-colliderknoopc/dTriList.h"
 #include "PHContactBodyEffector.h"
-#include "../xrEngine/gamemtllib.h"
 //#include "gameobject.h"
 //#include "PhysicsShellHolder.h"
 #include "PHCollideValidator.h"

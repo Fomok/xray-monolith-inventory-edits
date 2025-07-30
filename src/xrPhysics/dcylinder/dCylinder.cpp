@@ -1,7 +1,7 @@
 
 #include "dCylinder.h"
-
-#include "../ode_include.h"
+#include "ode_include.h"
+#include "xrDebug.h"
 
 // given a pointer `p' to a dContactGeom, return the dContactGeom at
 // p + skip bytes.

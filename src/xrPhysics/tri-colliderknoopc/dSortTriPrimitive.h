@@ -1,16 +1,19 @@
 #ifndef D_SORT_TRI_PRIMITIVE_H
 #define D_SORT_TRI_PRIMITIVE_H
+
+#include <xr_area.h>
+#include <gamemtllib.h>
+
+#include "__aabb_tri.h"
+#include "console_vars.h"
 #include "dTriCollideK.h"
 #include "dTriColliderCommon.h"
 #include "dTriColliderMath.h"
-#include "__aabb_tri.h"
-#include "../MathUtils.h"
-#include "../console_vars.h"
-#include "../phworld.h"
-#include "../../xrcdb/xr_area.h"
-#include "../../xrEngine/gamemtllib.h"
+#include "gm_library.h"
+#include "MathUtils.h"
+#include "phworld.h"
 #ifdef DEBUG
-#include "../debug_output.h"
+#include "debug_output.h"
 #endif
 
 IC bool negative_tri_set_ignored_by_positive_tri(const Triangle& neg_tri, const Triangle& pos_tri,

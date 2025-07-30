@@ -1,7 +1,10 @@
 #ifndef PH_GEOMETRY_OWNER_H
 #define PH_GEOMETRY_OWNER_H
+
+#include <gamemtllib.h>
+#include <gm_library.h>
+
 #include "Geometry.h"
-#include "../xrEngine/gamemtllib.h"
 
 DEFINE_VECTOR(CODEGeom*, GEOM_STORAGE, GEOM_I)
 typedef xr_vector<CODEGeom*>::const_iterator GEOM_CI;
