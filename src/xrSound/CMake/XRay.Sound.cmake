@@ -42,7 +42,7 @@ add_module(XRay.Sound
   XRay.Render.Common.Includes
 
   PRECOMPILES
-  [["xrCore.h"]]
+  #[["xrCore.h"]]
   [["xrCDB.h"]]
 
   [["mmsystem.h"]]

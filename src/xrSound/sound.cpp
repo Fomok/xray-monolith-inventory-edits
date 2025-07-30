@@ -1,3 +1,4 @@
+#include <xrCore.h>
 
 #include "SoundRender_CoreA.h"
 

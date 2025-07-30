@@ -2,6 +2,7 @@
 
 #include <string_concatenations.h>
 #include <LocatorAPI.h>
+#include <xrCore.h>
 
 #include "soundrender_core.h"
 #include "soundrender_source.h"
