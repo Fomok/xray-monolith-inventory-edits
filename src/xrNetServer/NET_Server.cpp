@@ -1,19 +1,15 @@
 #include <functional>
 #include <time.h>
+#include <malloc.h>
 
 #include <dxerr.h>
 #include <LocatorAPI.h>
 #include <xr_ini.h>
+#include <xrCore.h>
 
 #include "NET_Common.h"
 #include "NET_Log.h"
 #include "net_server.h"
-
-
-#pragma warning(push)
-#pragma warning(disable:4995)
-#include <malloc.h>
-#pragma warning(pop)
 
 static INetLog* pSvNetLog = NULL;
 

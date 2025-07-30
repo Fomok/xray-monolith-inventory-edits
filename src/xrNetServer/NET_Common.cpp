@@ -1,3 +1,4 @@
+#include <xrCore.h>
 
 #include "NET_Common.h"
 

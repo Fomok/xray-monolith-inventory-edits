@@ -1,16 +1,14 @@
+#include <malloc.h>
+
+#include <xrCore.h>
+#include <dxerr.h>
+#include <profiler.h>
+
 #include "NET_Common.h"
 #include "net_client.h"
 #include "net_server.h"
 #include "net_messages.h"
 #include "NET_Log.h"
-
-#pragma warning(push)
-#pragma warning(disable:4995)
-#include <malloc.h>
-#include "dxerr.h"
-#include "profiler.h"
-
-//#pragma warning(pop)
 
 // {0218FA8B-515B-4bf2-9A5F-2F079D1759F3}
 static const GUID NET_GUID =

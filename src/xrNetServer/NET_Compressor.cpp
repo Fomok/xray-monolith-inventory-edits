@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <rt_compressor.h>
+#include <xrCore.h>
 
 #include "NET_Common.h"
 #include "NET_Compressor.h"
