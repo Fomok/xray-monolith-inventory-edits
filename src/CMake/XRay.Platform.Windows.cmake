@@ -40,24 +40,26 @@ add_module(XRay.Platform.Windows
 # FIXME: Suppress warnings
 target_compile_options(XRay.Platform.Windows
   INTERFACE
+  ## Force include platform header
   $<$<CXX_COMPILER_ID:MSVC>:/FI${XRPLATFORM_WINDOWS_H}>
   $<$<CXX_COMPILER_ID:Clang>:-include${XRPLATFORM_WINDOWS_H}>
   $<$<CXX_COMPILER_ID:GNU>:-include${XRPLATFORM_WINDOWS_H}>
 
-  /wd4996
-  /wd4251 # object needs DLL interface
-  /wd4201 # nonstandard extension used : nameless struct/union
-  /wd4100 # unreferenced formal parameter
-  /wd4127 # conditional expression is constant
-  /wd4530 # C++ exception handler used, but unwind semantics are not enabled
-  /wd4345
-  /wd4714 # __forceinline not inlined
+  ## Suppress MSVC warnings
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4996>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4251> # object needs DLL interface
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4201> # nonstandard extension used : nameless struct/union
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100> # unreferenced formal parameter
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4127> # conditional expression is constant
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4530> # C++ exception handler used, but unwind semantics are not enabled
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4345>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4714> # __forceinline not inlined
 
   # local variable is initialized but not refenced
   # frequently in release code due to large amount of VERIFY
-  $<$<CONFIG:DEBUG>:/wd4189>
+  $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<CONFIG:DEBUG>>:/wd4189>
 
-  /wd4512
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4512>
 )
 
 # On Windows, link the Windows platform module
