@@ -2,6 +2,9 @@
 #define xr_resourceH
 #pragma once
 
+#include "_types.h"
+#include "xrstring.h"
+
 // resource itself, the base class for all derived resources
 class XRCORE_API xr_resource
 {

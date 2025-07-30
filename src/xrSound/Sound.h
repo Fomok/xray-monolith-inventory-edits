@@ -2,6 +2,7 @@
 #define SoundH
 #pragma once
 
+#include <xrCDB.h>
 #include <xr_resource.h>
 
 class IReader;

@@ -43,7 +43,7 @@ add_module(XRay.Sound
 
   PRECOMPILES
   #[["xrCore.h"]]
-  [["xrCDB.h"]]
+  #[["xrCDB.h"]]
 
   [["mmsystem.h"]]
   [["mmreg.h"]]
