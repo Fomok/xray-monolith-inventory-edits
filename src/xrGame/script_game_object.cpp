@@ -6,6 +6,8 @@
 //	Description : Script game object class
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xrCore.h>
+
 #include "pch_script.h"
 #include "script_game_object.h"
 #include "script_game_object_impl.h"

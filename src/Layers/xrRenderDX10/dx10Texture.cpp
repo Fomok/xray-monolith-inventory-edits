@@ -8,6 +8,7 @@
 
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
+#include <xrCore.h>
 #include <xr_ini.h>
 
 // #include "std_classes.h"

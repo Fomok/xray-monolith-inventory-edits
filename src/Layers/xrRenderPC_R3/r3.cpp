@@ -9,6 +9,7 @@
 #include <LightTrack.h>
 #include <SkeletonCustom.h>
 #include <string_concatenations.h>
+#include <xrCore.h>
 #include <xr_object.h>
 
 #include "r3.h"

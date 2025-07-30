@@ -6,6 +6,8 @@
 //	Description : Autosave manager
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xrCore.h>
+
 #include "autosave_manager.h"
 #include "date_time.h"
 #include "ai_space.h"

@@ -35,7 +35,7 @@ class CControlPathBuilderBase : public CControl_ComBase
 	public:
 		STarget()
 		{
-			_position.set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+			_position.set(-flt_max, -flt_max, -flt_max);
 			_node = u32(-1);
 		}
 

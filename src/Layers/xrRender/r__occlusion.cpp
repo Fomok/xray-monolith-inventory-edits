@@ -1,4 +1,6 @@
-#include ".\r__occlusion.h"
+#include <xrCore.h>
+
+#include "r__occlusion.h"
 
 #include "QueryHelper.h"
 

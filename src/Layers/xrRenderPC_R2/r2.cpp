@@ -1,5 +1,6 @@
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
+#include <xrCore.h>
 
 #include <fbasicvisual.h>
 #include <xr_object.h>

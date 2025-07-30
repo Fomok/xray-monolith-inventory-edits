@@ -1,5 +1,6 @@
 #include <ISpatial.h>
 #include <xr_ini.h>
+#include <xrCore.h>
 
 #include "DrawUtils.h"
 #include "GameFont.h"

@@ -1,4 +1,5 @@
 #include <LocatorAPI.h>
+#include <xrCore.h>
 
 #include "DrawUtils.h"
 #include "render.h"

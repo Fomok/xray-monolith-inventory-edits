@@ -1,3 +1,5 @@
+#include <xrCore.h>
+
 #include "pch_script.h"
 #include "FDemoRecord.h"
 #include "FDemoPlay.h"

@@ -2,7 +2,6 @@
 #define STDAFX_3DA
 #pragma once
 
-#include <xrCore.h>
 #include <xrAPI.h>
 
 #ifdef _EDITOR

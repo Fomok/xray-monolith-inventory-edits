@@ -1,5 +1,6 @@
 #include <LocatorAPI.h>
 #include <profiler.h>
+#include <xrCore.h>
 
 #include "igame_level.h"
 #include "igame_persistent.h"

@@ -2,14 +2,15 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#pragma warning(disable:4995)
 #include <d3dx9.h>
 #ifdef USE_DX11
 # include <d3d11_4.h>
 # include <dxgi1_5.h>
 #endif
-#pragma warning(default:4995)
-#include "../xrRender/HW.h"
+
+#include <HW.h>
+#include <xrCore.h>
+
 #include "XR_IOConsole.h"
 #include "xrAPI.h"
 #include "xrRender_console.h"

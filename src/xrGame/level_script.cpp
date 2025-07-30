@@ -6,6 +6,15 @@
 //	Description : Level script export
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xrCore.h>
+#include <igame_persistent.h>
+#include <xr_collide_defs.h>
+#include <Rain.h>
+#include <xr_efflensflare.h>
+#include <thunderbolt.h>
+#include <GameMtlLib.h>
+#include <xr_input.h>
+
 #include "pch_script.h"
 #include "level.h"
 #include "actor.h"
@@ -13,7 +22,6 @@
 #include "patrol_path_storage.h"
 #include "xrServer.h"
 #include "client_spawn_manager.h"
-#include "../xrEngine/igame_persistent.h"
 #include "game_cl_base.h"
 #include "UIGameCustom.h"
 #include "UI/UIDialogWnd.h"
@@ -40,15 +48,9 @@
 #include "ui\UIMainIngameWnd.h"
 #include "ui\UIHudStatesWnd.h"
 #include "raypick.h"
-#include "../xrcdb/xr_collide_defs.h"
-#include "../xrEngine/Rain.h"
 #include "Level_Bullet_Manager.h"
-#include "../xrEngine/xr_efflensflare.h"
-#include "../xrEngine/thunderbolt.h"
 #include "GametaskManager.h"
 #include "xr_level_controller.h"
-#include "../xrEngine/GameMtlLib.h"
-#include "../xrEngine/xr_input.h"
 #include "script_ini_file.h"
 #include "EffectorBobbing.h"
 #include "LevelDebugScript.h"

@@ -23,7 +23,7 @@ namespace extrapolation
 	class point
 	{
 	public:
-		point(): m_time(-FLT_MAX)
+		point(): m_time(-flt_max)
 		{
 		}
 

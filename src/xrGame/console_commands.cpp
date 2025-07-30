@@ -1,9 +1,18 @@
+#include <xrCore.h>
+#include <xr_ioconsole.h>
+#include <xr_ioc_cmd.h>
+#include <customhud.h>
+#include <fdemorecord.h>
+#include <fdemoplay.h>
+//#include <PhysicsGamePars.h>
+#include <iphworld.h>
+//#include <resourcemanager.h>
+//#include <doug_lea_memory_allocator.h>
+#include <console_vars.h>
+#include <LocatorAPI.h>
+#include <x_ray.h>
+
 #include "pch_script.h"
-#include "../xrEngine/xr_ioconsole.h"
-#include "../xrEngine/xr_ioc_cmd.h"
-#include "../xrEngine/customhud.h"
-#include "../xrEngine/fdemorecord.h"
-#include "../xrEngine/fdemoplay.h"
 #include "xrMessages.h"
 #include "xrserver.h"
 #include "level.h"
@@ -23,8 +32,6 @@
 #include "script_process.h"
 #include "xrServer_Objects.h"
 #include "ui/UIMainIngameWnd.h"
-//#include "../xrphysics/PhysicsGamePars.h"
-#include "../xrphysics/iphworld.h"
 #include "string_table.h"
 #include "autosave_manager.h"
 #include "ai_space.h"
@@ -40,16 +47,12 @@
 #include "MainMenu.h"
 #include "saved_game_wrapper.h"
 #include "level_graph.h"
-//#include "../xrEngine/resourcemanager.h"
-//#include "../xrEngine/doug_lea_memory_allocator.h"
 #include "cameralook.h"
 #include "character_hit_animations_params.h"
 #include "inventory_upgrade_manager.h"
 
 #include "ai_debug_variables.h"
-#include "../xrphysics/console_vars.h"
 #include <sstream>
-#include "..\xrCore\LocatorAPI.h"
 #ifdef DEBUG
 #	include "PHDebug.h"
 #	include "ui/UIDebugFonts.h"
@@ -58,7 +61,6 @@
 #endif // DEBUG
 
 
-#include "..\..\xrEngine\x_ray.h"
 
 #include "NewZoomFlag.h"
 float n_zoom_step_count = 3.0f;
@@ -708,8 +710,8 @@ class CCC_DemoRecordSetPos : public CCC_Vector3
 	static Fvector p;
 public:
 
-	CCC_DemoRecordSetPos(LPCSTR N) : CCC_Vector3(N, &p, Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX),
-	                                             Fvector().set(FLT_MAX, FLT_MAX, FLT_MAX))
+	CCC_DemoRecordSetPos(LPCSTR N) : CCC_Vector3(N, &p, Fvector().set(-flt_max, -flt_max, -flt_max),
+	                                             Fvector().set(flt_max, flt_max, flt_max))
 	{
 	};
 
@@ -737,8 +739,8 @@ class CCC_DemoRecordSetDir : public CCC_Vector3
 	static Fvector d;
 public:
 
-	CCC_DemoRecordSetDir(LPCSTR N) : CCC_Vector3(N, &d, Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX),
-		Fvector().set(FLT_MAX, FLT_MAX, FLT_MAX))
+	CCC_DemoRecordSetDir(LPCSTR N) : CCC_Vector3(N, &d, Fvector().set(-flt_max, -flt_max, -flt_max),
+		Fvector().set(flt_max, flt_max, flt_max))
 	{
 	};
 
@@ -817,8 +819,8 @@ class CCC_FPDDirectionOffset : public CCC_Vector3
 	static Fvector d;
 public:
 
-	CCC_FPDDirectionOffset(LPCSTR N) : CCC_Vector3(N, &d, Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX),
-		Fvector().set(FLT_MAX, FLT_MAX, FLT_MAX))
+	CCC_FPDDirectionOffset(LPCSTR N) : CCC_Vector3(N, &d, Fvector().set(-flt_max, -flt_max, -flt_max),
+		Fvector().set(flt_max, flt_max, flt_max))
 	{
 	};
 
@@ -837,8 +839,8 @@ class CCC_FPDPositionOffset : public CCC_Vector3
 	static Fvector d;
 public:
 
-	CCC_FPDPositionOffset(LPCSTR N) : CCC_Vector3(N, &d, Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX),
-		Fvector().set(FLT_MAX, FLT_MAX, FLT_MAX))
+	CCC_FPDPositionOffset(LPCSTR N) : CCC_Vector3(N, &d, Fvector().set(-flt_max, -flt_max, -flt_max),
+		Fvector().set(flt_max, flt_max, flt_max))
 	{
 	};
 

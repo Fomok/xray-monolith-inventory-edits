@@ -6,6 +6,7 @@
 #include <d3dx9.h>
 
 #include <string_concatenations.h>
+#include <xrCore.h>
 #include <xr_ini.h>
 
 #ifndef _EDITOR

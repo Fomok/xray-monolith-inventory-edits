@@ -1,3 +1,9 @@
+#include <xrCore.h>
+#include <xr_input.h>
+#include <xrSASH.h>
+#include <script_engine.h>
+#include <xrServer_Object_Base.h>
+
 #include "pch_script.h"
 #include "gamepersistent.h"
 #include "fmesh.h"
@@ -21,17 +27,13 @@
 
 #include "UI/UItextureMaster.h"
 
-#include "../xrEngine/xrSASH.h"
 #include "ai_space.h"
-#include "../xrServerEntities/script_engine.h"
 
 #include "holder_custom.h"
 #include "game_cl_base.h"
 #include "xrserver_objects_alife_monsters.h"
-#include "../xrServerEntities/xrServer_Object_Base.h"
 #include "UI/UIGameTutorial.h"
 
-#include "../xrEngine/xr_input.h"
 
 #ifndef MASTER_GOLD
 #	include "custommonster.h"

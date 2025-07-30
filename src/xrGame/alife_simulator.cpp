@@ -8,6 +8,7 @@
 
 #include <IGame_Persistent.h>
 #include <LocatorAPI.h>
+#include <xrCore.h>
 #include <xr_ioconsole.h>
 
 #include "pch_script.h"

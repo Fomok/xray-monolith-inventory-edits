@@ -1,8 +1,10 @@
+#include <xrCore.h>
+#include <x_ray.h>
+
 #include "string_table.h"
 
 #include "ui/xrUIXmlParser.h"
 #include "xr_level_controller.h"
-#include "..\..\xrEngine\x_ray.h"
 #include "MainMenu.h"
 #include "UIGameCustom.h"
 #include <regex>

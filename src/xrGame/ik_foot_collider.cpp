@@ -22,7 +22,7 @@ ik_foot_collider::ik_foot_collider()
 {
 }
 
-static const Fplane invalide_plane = {-FLT_MAX, -FLT_MAX, -FLT_MAX, -FLT_MAX};
+static const Fplane invalide_plane = {-flt_max, -flt_max, -flt_max, -flt_max};
 
 
 struct ik_pick_result
@@ -30,12 +30,12 @@ struct ik_pick_result
 	ik_pick_result(ik_foot_geom::e_collide_point _point):
 		p(invalide_plane),
 		point(_point),
-		position(Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX))
+		position(Fvector().set(-flt_max, -flt_max, -flt_max))
 	{
 		range = 0.0f;
-		triangle[0] = Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-		triangle[1] = Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-		triangle[2] = Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+		triangle[0] = Fvector().set(-flt_max, -flt_max, -flt_max);
+		triangle[1] = Fvector().set(-flt_max, -flt_max, -flt_max);
+		triangle[2] = Fvector().set(-flt_max, -flt_max, -flt_max);
 	}
 
 	Fplane p;
@@ -339,7 +339,7 @@ void ik_foot_collider::collide(SIKCollideData& cld, const ik_foot_geom& foot_geo
 		return;
 	}
 
-	float hight = -FLT_MAX;
+	float hight = -flt_max;
 	ik_pick_result r = r_toe;
 
 

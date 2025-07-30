@@ -2,11 +2,11 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#pragma warning(disable:4995)
+#include <xrCore.h>
 #include <d3dx9.h>
-#pragma warning(default:4995)
+#include <XR_IOConsole.h>
+
 #include "HW.h"
-#include "../../xrEngine/XR_IOConsole.h"
 
 #ifndef _EDITOR
 void fill_vid_mode_list(CHW* _hw);

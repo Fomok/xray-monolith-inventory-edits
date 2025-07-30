@@ -12,6 +12,7 @@
 #include <3DFluid/dx103DFluidManager.h>
 #include <ShaderResourceTraits.h>
 #include <profiler.h>
+#include <xrCore.h>
 
 #include "r4.h"
 

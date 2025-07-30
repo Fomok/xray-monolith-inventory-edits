@@ -307,7 +307,7 @@ namespace xr_imgui
         FontConfig.EllipsisChar = READ_IF_EXISTS(config, r_u16, "font", "ellipsischar", 0);
         FontConfig.SizePixels = READ_IF_EXISTS(config, r_float, "font", "sizepixels", xrImGuiFontSize);
         FontConfig.GlyphMinAdvanceX = READ_IF_EXISTS(config, r_float, "font", "glyphminadvancex", 0.f);
-        FontConfig.GlyphMaxAdvanceX = READ_IF_EXISTS(config, r_float, "font", "glyphmaxadvancex", FLT_MAX);
+        FontConfig.GlyphMaxAdvanceX = READ_IF_EXISTS(config, r_float, "font", "glyphmaxadvancex", flt_max);
         FontConfig.RasterizerMultiply = READ_IF_EXISTS(config, r_float, "font", "rasterizermultiply", 1.f);
         FontConfig.RasterizerDensity = READ_IF_EXISTS(config, r_float, "font", "rasterizerdensity", 1.f);
 

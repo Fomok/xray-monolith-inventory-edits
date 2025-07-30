@@ -1,5 +1,6 @@
 #include <LocatorAPI.h>
 #include <xr_ini.h>
+#include <xrCore.h>
 
 #include "xr_ioconsole.h"
 #include "xr_ioc_cmd.h"

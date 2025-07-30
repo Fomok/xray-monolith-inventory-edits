@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include <malloc.h>
+
+#include <xrCore.h>
 #include <LocatorAPI.h>
 
 #include "alife_spawn_registry.h"

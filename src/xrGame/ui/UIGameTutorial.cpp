@@ -1,15 +1,17 @@
+#include <script_engine.h>
+#include <xr_input.h>
+#include <xr_ioconsole.h>
+#include <xrCore.h>
+
 #include "pch_script.h"
 #include "UIGameTutorial.h"
 #include "UIWindow.h"
 #include "UIStatic.h"
 #include "UIXmlInit.h"
 #include "object_broker.h"
-#include "../../xrEngine/xr_input.h"
-#include "../xr_level_controller.h"
-#include "../../xrServerEntities/script_engine.h"
-#include "../ai_space.h"
-#include "../../xrEngine/xr_ioconsole.h"
-#include "../UIGameCustom.h"
+#include "xr_level_controller.h"
+#include "ai_space.h"
+#include "UIGameCustom.h"
 #include "UIActorMenu.h"
 #include "UIPdaWnd.h"
 

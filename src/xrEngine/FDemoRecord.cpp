@@ -1,6 +1,7 @@
 #include <LocatorAPI.h>
 #include <UICursor.h>
 #include <xr_ini.h>
+#include <xrCore.h>
 
 #include "igame_level.h"
 #include "x_ray.h"

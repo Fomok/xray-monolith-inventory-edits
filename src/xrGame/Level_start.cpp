@@ -1,13 +1,16 @@
+#include <xrCore.h>
+#include <xrstring.h>
+#include <x_ray.h>
+#include <device.h>
+#include <IGame_Persistent.h>
+#include <xr_ioconsole.h>
+
 #include "level.h"
 #include "Level_Bullet_Manager.h"
 #include "xrserver.h"
 #include "game_cl_base.h"
 #include "xrmessages.h"
 #include "xrGameSpyServer.h"
-#include "../xrEngine/x_ray.h"
-#include "../xrEngine/device.h"
-#include "../xrEngine/IGame_Persistent.h"
-#include "../xrEngine/xr_ioconsole.h"
 #include "MainMenu.h"
 #include "string_table.h"
 #include "UIGameCustom.h"

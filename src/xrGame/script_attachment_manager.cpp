@@ -1,4 +1,7 @@
 #pragma once
+
+#include <xrCore.h>
+
 #include "script_attachment_manager.h"
 #include "player_hud.h"
 #include "actor.h"

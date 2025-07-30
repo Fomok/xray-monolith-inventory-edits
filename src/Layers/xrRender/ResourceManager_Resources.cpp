@@ -1,9 +1,8 @@
 #include <d3dx9.h>
-#ifndef _EDITOR
-#endif
 
 #include <string_concatenations.h>
 #include <render.h>
+#include <xrCore.h>
 
 #include "ResourceManager.h"
 #include "tss.h"

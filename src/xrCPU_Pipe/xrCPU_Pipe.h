@@ -2,6 +2,10 @@
 #define xrCPU_PipeH
 #pragma once
 
+#include <cpuid.h>
+#include <_types.h>
+#include <_vector3d.h>
+
 // Forward references
 struct ENGINE_API vertRender;
 struct ENGINE_API vertBoned1W;

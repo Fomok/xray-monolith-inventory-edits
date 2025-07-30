@@ -3,6 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 
 
+#include <xrCore.h>
+#include <xrstring.h>
 #include <time.h>
 
 #include "Blender.h"

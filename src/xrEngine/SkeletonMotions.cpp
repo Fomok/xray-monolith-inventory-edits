@@ -457,7 +457,7 @@ float motion_marks::time_to_next_mark(float time) const
 {
 	C_ITERATOR i = intervals.begin();
 	C_ITERATOR e = intervals.end();
-	float result_dist = FLT_MAX;
+	float result_dist = flt_max;
 	for (; i != e; ++i)
 	{
 		float dist = (*i).first - time;

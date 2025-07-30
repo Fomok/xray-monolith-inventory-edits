@@ -3,6 +3,8 @@
 //	Last updated: 13/08/2015
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xrCore.h>
+
 #include "ActorHelmet.h"
 #include "Actor.h"
 #include "Inventory.h"
