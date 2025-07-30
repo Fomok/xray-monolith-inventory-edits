@@ -1,8 +1,9 @@
-
-#include "xrsharedmem.h"
-#include "xrMemory_pure.h"
-
 #include <malloc.h>
+
+#include "xrMemory.h"
+#include "xrMemory_pure.h"
+#include "xrsharedmem.h"
+#include "xrstring.h"
 
 xrMemory Memory;
 BOOL mem_initialized = FALSE;

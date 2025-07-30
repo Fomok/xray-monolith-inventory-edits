@@ -1,6 +1,9 @@
 #ifndef _vector_included
 #define _vector_included
 
+ICF int iFloor(float x);
+ICF int iCeil(float x);
+
 // Undef some macros
 #ifdef M_PI
 #undef M_PI

@@ -2,6 +2,7 @@
 #define FS_IMPL_H_INCLUDED
 
 #include "FS.h"
+#include "log.h"
 
 // 1: default
 // 1.5: check next chunk first heuristics

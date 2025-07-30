@@ -1,5 +1,6 @@
 #include "xrMemory_POOL.h"
 #include "xrMemory_align.h"
+#include "xrDebug.h"
 
 void MEMPOOL::block_create()
 {

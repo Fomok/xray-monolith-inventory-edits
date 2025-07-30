@@ -1,3 +1,7 @@
+#include "_types.h"
+#include "_std_extensions.h"
+#include "_bitwise.h"
+#include "_vector3d.h"
 
 // upper 3 bits
 #define pvSIGN_MASK 0xe000

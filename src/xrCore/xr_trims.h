@@ -1,6 +1,9 @@
 #ifndef xr_trimsH
 #define xr_trimsH
 
+#include "_types.h"
+#include "xrstring.h"
+
 // refs
 struct xr_token;
 

@@ -6,7 +6,9 @@
 #include <build_config_defines.h>
 #include <LocatorAPI.h>
 
+#include "log.h"
 #include "os_clipboard.h"
+#include "xrCore.h"
 #include "xrdebug.h"
 #include "xrsharedmem.h"
 

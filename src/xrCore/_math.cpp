@@ -1,4 +1,3 @@
-
 #include <process.h>
 
 // mmsystem.h
@@ -9,7 +8,13 @@
 #define MMNOJOY
 #include <mmsystem.h>
 
+#include "_math.h"
+#include "_matrix.h"
+#include "_random.h"
+#include "cpuid.h"
+#include "log.h"
 #include "profiler.h"
+#include "xrCore.h"
 
 // Initialized on startup
 XRCORE_API Fmatrix Fidentity;

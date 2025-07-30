@@ -9,6 +9,8 @@
 #ifndef OS_CLIPBOARD_H_INCLUDED
 #define OS_CLIPBOARD_H_INCLUDED
 
+#include "_types.h"
+
 namespace os_clipboard
 {
 	XRCORE_API void copy_to_clipboard(LPCSTR buf);

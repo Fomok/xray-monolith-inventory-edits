@@ -3,6 +3,7 @@
 
 #include <clsid.h>
 
+#include "xrstring.h"
 #include "fastdelegate.h"
 
 #ifdef USE_ROBINHOOD

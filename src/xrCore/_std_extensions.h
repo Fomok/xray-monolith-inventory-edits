@@ -1,9 +1,12 @@
 #ifndef _STD_EXT_internal
 #define _STD_EXT_internal
 
+#include <corecrt_math.h>
 #include <float.h>
 #include <stdarg.h>
 #include <stdio.h>
+
+#include "_types.h"
 
 #define BREAK_AT_STRCMP
 #ifndef DEBUG

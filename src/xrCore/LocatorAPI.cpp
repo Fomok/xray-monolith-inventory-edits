@@ -14,6 +14,7 @@
 #include <xr_ini.h>
 #include <xr_trims.h>
 
+#include "xrCore.h"
 #include "FTimer.h"
 #include "FileSystem.h"
 #include "FS_internal.h"

@@ -1,6 +1,11 @@
 #ifndef STRING_CONCATENATIONS_H
 #define STRING_CONCATENATIONS_H
 
+#include "_types.h"
+#include "_stl_extensions.h"
+
+class shared_str;
+
 #ifndef _EDITOR
 
 LPSTR XRCORE_API strconcat(int dest_sz, char* dest, const char* S1, const char* S2);

@@ -11,6 +11,7 @@
 
 #include "FileSystem.h"
 #include "LocatorAPI.h"
+#include "log.h"
 
 EFS_Utils* xr_EFS = NULL;
 //----------------------------------------------------

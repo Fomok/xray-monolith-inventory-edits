@@ -1,6 +1,8 @@
 #ifndef __Q__
 #define __Q__
 
+#include "_vector3d.h"
+
 template<typename T>
 struct _matrix;
 

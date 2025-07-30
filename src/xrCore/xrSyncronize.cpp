@@ -1,3 +1,6 @@
+#include "xrSyncronize.h"
+#include "xrDebug.h"
+#include "xrMemory.h"
 
 #ifdef PROFILE_CRITICAL_SECTIONS
 static add_profile_portion_callback add_profile_portion = 0;

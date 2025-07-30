@@ -5,6 +5,8 @@
 #include <bitset>
 #include <memory>
 
+#include "_stl_extensions.h"
+
 /***
 *
 * int _cpuid (_p_info *pinfo)

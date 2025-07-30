@@ -3,6 +3,7 @@
 
 #include <intrin.h>
 
+#include "vector.h"
 #include "cpuid.h"
 
 namespace FPU

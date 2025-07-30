@@ -9,6 +9,7 @@
 
 #include "FS.h"
 #include "lzhuf.h"
+#include "log.h"
 
 void* FileDownload(LPCSTR fn, u32* pdwSize = NULL);
 void FileCompress(const char* fn, const char* sign, void* data, u32 size);

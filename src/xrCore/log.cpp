@@ -11,6 +11,7 @@
 
 #include <string_concatenations.h>
 
+#include "xrCore.h"
 #include "FileSystem.h"
 #include "LocatorAPI.h"
 #include "resource.h"

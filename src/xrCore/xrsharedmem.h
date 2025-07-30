@@ -2,6 +2,9 @@
 #define xrsharedmemH
 #pragma once
 
+#include "_types.h"
+#include "_stl_extensions.h"
+
 #pragma pack(push,4)
 //////////////////////////////////////////////////////////////////////////
 #pragma warning(push)

@@ -28,7 +28,7 @@ add_module(XRay.Core
   XRay.Collision.Includes
 
   PRECOMPILES
-  xrCore.h
+  #xrCore.h
 
   SOURCES
   xrCore.cpp

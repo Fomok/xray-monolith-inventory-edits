@@ -2,6 +2,10 @@
 #define _INCDEF_NETUTILS_H_
 #pragma once
 
+#include "_types.h"
+#include "_vector3d.h"
+#include "_vector4.h"
+#include "xrstring.h"
 #include "client_id.h"
 
 #pragma pack(push,1)
