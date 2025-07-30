@@ -20,7 +20,7 @@ target_link_libraries(TinyXML
 
 target_precompile_headers(TinyXML
   PRIVATE
-  [["xrCore.h"]]
+  #[["xrCore.h"]]
   [["xrXMLParser.h"]]
 )
 

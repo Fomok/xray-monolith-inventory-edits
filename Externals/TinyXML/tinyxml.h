@@ -32,6 +32,8 @@ distribution.
 #pragma warning( disable : 4786 )
 #endif
 
+#include "_stl_extensions.h"
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
