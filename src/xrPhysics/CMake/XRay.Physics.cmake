@@ -22,7 +22,7 @@ add_module(XRay.Physics
   XRay.Sound.Includes
 
   PRECOMPILES
-  [["xrCore.h"]]
+  #[["xrCore.h"]]
   [["xrCDB.h"]]
   [["sound.h"]]
   [["xrAPI.h"]]
