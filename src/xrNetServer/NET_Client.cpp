@@ -4,6 +4,7 @@
 #include <dxerr.h>
 #include <profiler.h>
 
+#include "macros.h"
 #include "NET_Common.h"
 #include "net_client.h"
 #include "net_server.h"

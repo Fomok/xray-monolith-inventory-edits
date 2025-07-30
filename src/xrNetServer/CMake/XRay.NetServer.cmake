@@ -18,7 +18,7 @@ add_module(XRay.NetServer
   #[["xrCore.h"]]
   #[["DPlay/dplay8.h"]]
   #NET_Shared.h
-  macros.h
+  #macros.h
 
   SOURCES
   macros.h

@@ -7,6 +7,7 @@
 #include <xr_ini.h>
 #include <xrCore.h>
 
+#include "macros.h"
 #include "NET_Common.h"
 #include "NET_Log.h"
 #include "net_server.h"
