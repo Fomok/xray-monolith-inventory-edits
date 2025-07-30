@@ -1,13 +1,11 @@
 add_module(XRay.Render.R3
   TYPE STATIC
-  
-  PRECOMPILES
-  stdafx.h
 
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  RENDER=3
   STATIC_RENDERER_R3
   USE_DX10
   XRRENDER_R3_EXPORTS
@@ -25,6 +23,8 @@ add_module(XRay.Render.R3
   tbb
   
   XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Collision.Includes
@@ -38,6 +38,9 @@ add_module(XRay.Render.R3
   XRay.Render.DX10.Includes
   XRay.ServerEntities.Includes
   XRay.Sound.Includes
+  
+  PRECOMPILES
+  stdafx.h
 
   SOURCES
   ../xrRender/xrD3DDefs.h

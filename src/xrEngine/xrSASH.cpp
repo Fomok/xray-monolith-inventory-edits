@@ -2,6 +2,7 @@
 #include <xr_ini.h>
 #include <xrCore.h>
 
+#include "Engine.h"
 #include "xr_ioconsole.h"
 #include "xr_ioc_cmd.h"
 #include "xrSASH.h"

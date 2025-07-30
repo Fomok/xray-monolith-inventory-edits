@@ -38,8 +38,10 @@ add_module(XRay.Sound
   XRay.Core.Includes
   XRay.Collision.Includes
   XRay.Engine.Includes
+  XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
+  XRay.ServerEntities.Includes
 
   PRECOMPILES
   #[["xrCore.h"]]

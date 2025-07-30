@@ -2,6 +2,7 @@ add_module(XRay.Game.AI.Navigation
   TYPE STATIC
 
   LINKS
+  dxsdk
   ode
   luabind
   LuaJIT
@@ -9,6 +10,8 @@ add_module(XRay.Game.AI.Navigation
   TinyXML
 
   XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Collision.Includes

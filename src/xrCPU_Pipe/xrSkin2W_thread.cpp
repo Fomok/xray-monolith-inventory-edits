@@ -1,4 +1,5 @@
 #include "SkeletonXVertRender.h"
+#include "bone.h"
 
 extern xrSkin4W* skin4W_func;
 

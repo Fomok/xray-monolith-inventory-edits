@@ -1,12 +1,20 @@
 #ifndef LAYERS_XRRENDER_LIGHT_H_INCLUDED
 #define LAYERS_XRRENDER_LIGHT_H_INCLUDED
 
-#include "../../xrcdb/ispatial.h"
+#include <ISpatial.h>
+#include <Render.h>
+#include <Shader.h>
+
+#define STR(x) #x
+#define XSTR(x) STR(x)
+#pragma message("R_*: " XSTR(R_R1) ", " XSTR(R_R2) ", " XSTR(R_R3) ", " XSTR(R_R4))
+#pragma message("RENDER: " XSTR(RENDER))
 
 #if (RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
-#	include "light_package.h"
-#	include "light_smapvis.h"
-#	include "light_GI.h"
+#pragma message("Condition passed")
+#include "light_package.h"
+#include "light_smapvis.h"
+#include "light_GI.h"
 #endif //(RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
 
 extern Fvector4 ps_ssfx_volumetric;

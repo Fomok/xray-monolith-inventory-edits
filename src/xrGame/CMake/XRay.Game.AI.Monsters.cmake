@@ -2,6 +2,7 @@ add_module(XRay.Game.AI.Monsters
   TYPE STATIC
   
   LINKS
+  dxsdk
   ode
   luabind
   LuaJIT
@@ -10,6 +11,8 @@ add_module(XRay.Game.AI.Monsters
   
   XRay.Core.Defines
   XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Collision.Includes

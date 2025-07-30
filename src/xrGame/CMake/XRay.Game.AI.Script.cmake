@@ -2,6 +2,7 @@ add_module(XRay.Game.AI.Script
   TYPE STATIC
 
   LINKS
+  dxsdk
   ode
   imgui
   luabind
@@ -12,6 +13,8 @@ add_module(XRay.Game.AI.Script
   
   XRay.Core.Defines
   XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Collision.Includes

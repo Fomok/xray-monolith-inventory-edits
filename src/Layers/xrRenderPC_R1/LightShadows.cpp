@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <CustomHUD.h>
+#include <Engine.h>
 #include <fbasicvisual.h>
 #include <LocatorAPI.h>
 #include <string_concatenations.h>

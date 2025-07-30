@@ -1,3 +1,4 @@
+#include <Engine.h>
 #include <xrCore.h>
 #include <xrstring.h>
 #include <x_ray.h>

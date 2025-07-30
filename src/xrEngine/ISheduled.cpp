@@ -1,3 +1,4 @@
+#include "Engine.h"
 #include "xrSheduler.h"
 #include "xr_object.h"
 

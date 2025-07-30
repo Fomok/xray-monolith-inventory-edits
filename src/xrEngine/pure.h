@@ -1,6 +1,8 @@
 #ifndef _PURE_H_AAA_
 #define _PURE_H_AAA_
 
+#include <smart_cast.h>
+
 // messages
 #define REG_PRIORITY_LOW 0x11111111ul
 #define REG_PRIORITY_NORMAL 0x22222222ul

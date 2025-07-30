@@ -4,7 +4,11 @@ add_module(XRay.CPUPipe
   INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
+  dxsdk
+  loki
+
   XRay.Core.Defines
+  XRay.Engine.Defines
   
   XRay.Includes
   XRay.Collision.Includes
@@ -12,6 +16,8 @@ add_module(XRay.CPUPipe
   XRay.Engine.Includes
   XRay.Render.Common.Includes
   XRay.Render.API.Includes
+  XRay.Physics.Includes
+  XRay.ServerEntities.Includes
 
   DEFINES
   $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0501>
@@ -25,8 +31,6 @@ add_module(XRay.CPUPipe
 
   #[["xrCore.h"]]
   #[["SkeletonXVertRender.h"]]
-
-  engine.h
 
   xrCPU_Pipe.h
   ttapi.h

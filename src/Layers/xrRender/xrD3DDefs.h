@@ -2,11 +2,12 @@
 #define	xrD3DDefs_included
 #pragma once
 
-#if defined(USE_DX11) || defined(USE_DX10)
+#include <d3d9.h>
+#include <d3dx9core.h>
 
-#	include "..\xrRenderDX10\DXCommonTypes.h"
-
-#else	//	USE_DX10
+#if defined(USE_DX10) || defined(USE_DX11)
+#include <DXCommonTypes.h>
+#else	//	USE_DX10 || USE_DX11
 
 typedef IDirect3DVertexShader9 ID3DVertexShader;
 typedef IDirect3DPixelShader9 ID3DPixelShader;

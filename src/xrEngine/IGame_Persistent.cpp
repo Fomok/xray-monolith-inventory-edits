@@ -4,6 +4,7 @@
 #include <xrCore.h>
 
 #include "IGame_Persistent.h"
+#include "Engine.h"
 
 #ifndef _EDITOR
 #include "environment.h"

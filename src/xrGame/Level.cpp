@@ -1,3 +1,4 @@
+#include <Engine.h>
 #include <xrCore.h>
 
 #include "pch_script.h"

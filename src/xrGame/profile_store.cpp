@@ -1,5 +1,6 @@
 #include <time.h>
 
+#include <Engine.h>
 #include <LocatorAPI.h>
 
 #include "profile_store.h"

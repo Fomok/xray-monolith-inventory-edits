@@ -5,12 +5,15 @@ add_module(XRay.Physics
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
+  dxsdk
   loki
   ode
   tbb
   OPCODE
   
   XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Core.Includes
@@ -31,7 +34,7 @@ add_module(XRay.Physics
   #$<$<CONFIG:DEBUG>:[["d3d9types.h"]]>
 
   #xrPhysics.h
-  smart_cast.h
+  #smart_cast.h
   #gm_library.h
 
   SOURCES

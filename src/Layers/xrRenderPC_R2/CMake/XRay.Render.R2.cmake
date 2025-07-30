@@ -1,13 +1,11 @@
 add_module(XRay.Render.R2
   TYPE STATIC
-  
-  PRECOMPILES
-  stdafx.h
 
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  RENDER=2
   STATIC_RENDERER_R2
   XRRENDER_R2_EXPORTS
 
@@ -23,6 +21,8 @@ add_module(XRay.Render.R2
   tbb
 
   XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
   
   XRay.Includes
   XRay.Collision.Includes
@@ -36,6 +36,9 @@ add_module(XRay.Render.R2
   XRay.Render.DX9.Includes
   XRay.ServerEntities.Includes
   XRay.Sound.Includes
+
+  PRECOMPILES
+  stdafx.h
 
   SOURCES
   ../../xrEngine/cl_intersect.h

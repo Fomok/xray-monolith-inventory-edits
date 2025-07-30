@@ -3,6 +3,7 @@ add_module(XRay.Game.Core
 
   LINKS
   CxImage
+  dxsdk
   IKAN
   luabind
   LuaJIT
@@ -12,6 +13,8 @@ add_module(XRay.Game.Core
 
   XRay.Core.Defines
   XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Collision.Includes

@@ -9,6 +9,7 @@ add_module(XRay.Collision
   XRCDB_EXPORTS
 
   LINKS
+  loki
   OPCODE
   optick
 
@@ -19,8 +20,10 @@ add_module(XRay.Collision
   XRay.CPUPipe.Includes
   XRay.Core.Includes
   XRay.Engine.Includes
+  XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
+  XRay.ServerEntities.Includes
 
   PRECOMPILES
   [["xrCore.h"]]

@@ -2,6 +2,12 @@ add_module(XRay.Render.Common
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
+  DEFINES
+  R_R1=1
+  R_R2=2
+  R_R3=3
+  R_R4=4
+
   SOURCES
   #blenders/Blender.cpp
   blenders/Blender.h

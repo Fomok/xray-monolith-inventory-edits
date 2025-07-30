@@ -1,6 +1,8 @@
 #ifndef __X_RAY_H__
 #define __X_RAY_H__
 
+#include "EventAPI.h"
+
 // refs
 class ENGINE_API CGameFont;
 

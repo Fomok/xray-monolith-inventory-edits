@@ -2,6 +2,7 @@ add_module(XRay.Game.AI.Components
   TYPE STATIC
 
   LINKS
+  dxsdk
   ode
   IKAN
   luabind
@@ -11,6 +12,8 @@ add_module(XRay.Game.AI.Components
 
   XRay.Core.Defines
   XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Collision.Includes

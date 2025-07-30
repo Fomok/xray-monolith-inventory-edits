@@ -2,6 +2,8 @@
 #define	dx10ConstantBuffer_included
 #pragma once
 
+#include "DXCommonTypes.h"
+
 struct R_constant;
 struct R_constant_load;
 

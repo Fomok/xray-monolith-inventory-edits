@@ -2,6 +2,7 @@ add_module(XRay.Game.Physics
   TYPE STATIC
 
   LINKS
+  dxsdk
   IKAN
   luabind
   LuaJIT
@@ -12,6 +13,8 @@ add_module(XRay.Game.Physics
 
   XRay.Core.Defines
   XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
 
   XRay.Includes
   XRay.Collision.Includes

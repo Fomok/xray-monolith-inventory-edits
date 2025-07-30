@@ -3,20 +3,20 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#pragma warning(default:4995)
 
 #ifndef _EDITOR
-#include	"../../xrEngine/Render.h"
+#include <Render.h>
 #else
-	#include "../../Include/xrAPI/xrAPI.h"
+#include <xrAPI.h>
 #endif
+
+#include <Engine.h>
+#include <fmesh.h>
+#include <xrCPU_Pipe.h>
 
 #include "SkeletonX.h"
 #include "SkeletonCustom.h"
-#include "../../xrEngine/fmesh.h"
-#include "../../xrCPU_Pipe/xrCPU_Pipe.h"
 
 shared_str s_bones_array_const;
 shared_str s_bones_array_prev_const;

@@ -1,5 +1,7 @@
-#include "../xrRender/light.h"
-#include "../xrRender/FBasicVisual.h"
+#include <light.h>
+#include <FBasicVisual.h>
+
+#include "light_smapvis.h"
 
 smapvis::smapvis()
 {

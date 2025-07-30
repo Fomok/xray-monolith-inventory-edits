@@ -1,3 +1,5 @@
+#include <Engine.h>
+
 #include "screenshot_manager.h"
 #include "level.h"
 #include "game_cl_mp.h"

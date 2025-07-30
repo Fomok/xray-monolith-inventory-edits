@@ -20,6 +20,7 @@
 
 // you must define ENGINE_BUILD then building the engine itself
 // and not define it if you are about to build DLL
+/*
 #ifndef NO_ENGINE_API
 #ifdef ENGINE_BUILD
 #define DLL_API
@@ -37,11 +38,16 @@
 #define ENGINE_API
 #define DLL_API
 #endif // NO_ENGINE_API
+*/
 
 #define ECORE_API
 
 // Our headers
-#include "engine.h"
+#include <bone.h>
+#include <Render.h>
+#include <Device.h>
+#include <light.h>
+
 #include "defines.h"
 #ifndef NO_XRLOG
 #include "../xrcore/log.h"

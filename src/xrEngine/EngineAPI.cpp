@@ -2,8 +2,9 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include "Engine.h"
 #include "EngineAPI.h"
-#include "../xrcdb/xrXRC.h"
+#include "xrXRC.h"
 
 //#include "securom_api.h"
 

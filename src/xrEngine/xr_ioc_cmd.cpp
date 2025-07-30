@@ -2,6 +2,7 @@
 #include <xr_ini.h>
 #include <xrCore.h>
 
+#include "Engine.h"
 #include "igame_level.h"
 
 //#include "xr_effgamma.h"

@@ -6,6 +6,9 @@ add_module(XRay.Engine
 
   DEFINES
   ENGINE_BUILD
+  [[ENGINE_API=]]
+  [[ECORE_API=]]
+  [[DLL_API=]]
 
   LINKS
   dxsdk

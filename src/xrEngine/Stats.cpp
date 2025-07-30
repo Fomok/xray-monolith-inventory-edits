@@ -2,6 +2,7 @@
 #include <xr_ini.h>
 #include <xrCore.h>
 
+#include "Engine.h"
 #include "DrawUtils.h"
 #include "GameFont.h"
 #include "IGame_Persistent.h"

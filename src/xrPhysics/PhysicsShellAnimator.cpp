@@ -9,6 +9,7 @@
 //#include "game_object_space.h"
 #include "IPhysicsShellHolder.h"
 #include "bone.h"
+#include "smart_cast.h"
 
 
 CPhysicsShellAnimator::

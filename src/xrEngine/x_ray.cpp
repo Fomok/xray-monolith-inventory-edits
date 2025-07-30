@@ -17,6 +17,7 @@
 #include <NET_AuthCheck.h>
 #include <ispatial.h>
 
+#include "Engine.h"
 #include "igame_level.h"
 #include "igame_persistent.h"
 #include "dedicated_server_only.h"

@@ -1,13 +1,11 @@
 add_module(XRay.Render.R1
   TYPE STATIC
-  
-  PRECOMPILES
-  stdafx.h
 
   INCLUDES
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  RENDER=1
   STATIC_RENDERER_R1
   XRRENDER_R1_EXPORTS
 
@@ -23,6 +21,8 @@ add_module(XRay.Render.R1
   tbb
 
   XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
   
   XRay.Includes
   XRay.Collision.Includes
@@ -36,6 +36,9 @@ add_module(XRay.Render.R1
   XRay.Render.DX9.Includes
   XRay.ServerEntities.Includes
   XRay.Sound.Includes
+  
+  PRECOMPILES
+  stdafx.h
   
   SOURCES
   ../xrRender/xrRender_console.cpp

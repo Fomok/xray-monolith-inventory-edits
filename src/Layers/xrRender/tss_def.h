@@ -1,6 +1,8 @@
 #ifndef TSS_DEF_H
 #define TSS_DEF_H
 
+#include <d3d9.h>
+
 #pragma once
 
 class SimulatorStates

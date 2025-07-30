@@ -5,6 +5,7 @@ add_module(XRay.Render.R4
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  RENDER=4
   STATIC_RENDERER_R4
   USE_DX11
   XRRENDER_R4_EXPORTS
@@ -22,6 +23,8 @@ add_module(XRay.Render.R4
   tbb
 
   XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
   
   XRay.Includes
   XRay.Collision.Includes

@@ -1,5 +1,6 @@
 #include <shellapi.h>
 
+#include <Engine.h>
 #include <CameraManager.h>
 #include <dinput.h>
 #include <IGame_Level.h>

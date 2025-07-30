@@ -3,9 +3,12 @@
 
 #pragma once
 
+#include <EngineAPI.h>
+#include <EventAPI.h>
+#include <xr_area.h>
+
 #include "iinputreceiver.h"
 #include "xr_object_list.h"
-#include "../xrcdb/xr_area.h"
 
 // refs
 class ENGINE_API CCameraManager;
