@@ -2,6 +2,8 @@
 #define SoundRender_TargetH
 #pragma once
 
+#include <vorbis/vorbisfile.h>
+
 #include "soundrender.h"
 
 class CSoundRender_Target

@@ -1,3 +1,5 @@
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
 
 #include "soundrender_core.h"
 #include "soundrender_source.h"

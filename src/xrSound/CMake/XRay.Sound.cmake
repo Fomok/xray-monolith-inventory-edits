@@ -48,8 +48,8 @@ add_module(XRay.Sound
   #[["mmsystem.h"]]
   #[["mmreg.h"]]
 
-  [["vorbis/codec.h"]]
-  [["vorbis/vorbisfile.h"]]
+  #[["vorbis/codec.h"]]
+  #[["vorbis/vorbisfile.h"]]
 
   sound.h
   resource.h
