@@ -28,7 +28,7 @@ add_module(XRay.Physics
   #[["sound.h"]]
   #[["xrAPI.h"]]
 
-  $<$<CONFIG:DEBUG>:[["d3d9types.h"]]>
+  #$<$<CONFIG:DEBUG>:[["d3d9types.h"]]>
 
   xrPhysics.h
   smart_cast.h
