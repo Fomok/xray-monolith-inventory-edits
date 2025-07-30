@@ -32,7 +32,7 @@ add_module(XRay.CPUPipe
   #[["xrCore.h"]]
   #[["SkeletonXVertRender.h"]]
 
-  xrCPU_Pipe.h
+  #xrCPU_Pipe.h
   ttapi.h
 
   SOURCES

@@ -9,6 +9,7 @@
 	#include <tal.h>
 #endif // _GPA_ENABLED
 
+struct _processor_info;
 
 typedef VOID (*PTTAPI_WORKER_FUNC)(LPVOID lpWorkerParameters);
 typedef PTTAPI_WORKER_FUNC LPPTTAPI_WORKER_FUNC;

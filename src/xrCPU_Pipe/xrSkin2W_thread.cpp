@@ -1,3 +1,4 @@
+#include "xrCPU_Pipe.h"
 #include "SkeletonXVertRender.h"
 #include "bone.h"
 
