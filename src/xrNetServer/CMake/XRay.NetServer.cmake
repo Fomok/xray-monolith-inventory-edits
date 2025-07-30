@@ -16,7 +16,7 @@ add_module(XRay.NetServer
 
   PRECOMPILES
   #[["xrCore.h"]]
-  [["DPlay/dplay8.h"]]
+  #[["DPlay/dplay8.h"]]
   NET_Shared.h
   macros.h
 
