@@ -1,8 +1,8 @@
 #ifndef PHJOINT_DESTROY_INFO_H
 #define PHJOINT_DESTROY_INFO_H
 
-//#include "ode_include.h"
-#include "ode/common.h"
+#include <ode/common.h>
+#include <_types.h>
 
 class CPHJointDestroyInfo
 {

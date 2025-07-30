@@ -1,4 +1,9 @@
 #pragma once
+
+#include "_types.h"
+#include "_vector3d.h"
+#include "_matrix.h"
+
 class ICollisionDamageInfo;
 class IDamageSource;
 //class IKinematics;

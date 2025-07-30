@@ -34,6 +34,7 @@ add_module(XRay.Render.R4
   XRay.Render.Common.Includes
   XRay.Render.DX10.Includes
   XRay.ServerEntities.Includes
+  XRay.Sound.Includes
   
   PRECOMPILES
   stdafx.h

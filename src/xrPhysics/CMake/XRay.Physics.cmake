@@ -19,12 +19,13 @@ add_module(XRay.Physics
   XRay.Engine.Includes
   XRay.Render.Common.Includes
   XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
   XRay.Sound.Includes
 
   PRECOMPILES
   #[["xrCore.h"]]
   #[["xrCDB.h"]]
-  [["sound.h"]]
+  #[["sound.h"]]
   [["xrAPI.h"]]
 
   $<$<CONFIG:DEBUG>:[["d3d9types.h"]]>

@@ -1,5 +1,8 @@
 #ifndef PH_ITEM_LIST_H
 #define PH_ITEM_LIST_H
+
+#include "_types.h"
+
 /*
 #define DECLARE_PHLIST_ITEM(class_name)			public:\
 												class CPHListItem\

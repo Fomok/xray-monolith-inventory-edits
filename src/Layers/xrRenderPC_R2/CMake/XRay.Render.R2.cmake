@@ -35,6 +35,7 @@ add_module(XRay.Render.R2
   XRay.Render.Common.Includes
   XRay.Render.DX9.Includes
   XRay.ServerEntities.Includes
+  XRay.Sound.Includes
 
   SOURCES
   ../../xrEngine/cl_intersect.h

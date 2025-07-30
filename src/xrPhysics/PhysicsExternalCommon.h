@@ -2,6 +2,8 @@
 #define _PHYSICS_EXTERNAL_COMMON_
 #pragma once
 
+#include "_matrix.h"
+#include "_vector3d.h"
 #include "xrPhysics.h"
 
 struct dContactGeom;

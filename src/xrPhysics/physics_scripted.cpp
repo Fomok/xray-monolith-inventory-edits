@@ -1,5 +1,5 @@
-
 #include "physics_scripted.h"
+#include "xrMemory.h"
 
 cphysics_scripted::~cphysics_scripted()
 {

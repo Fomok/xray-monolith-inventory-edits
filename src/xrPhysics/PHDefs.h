@@ -1,5 +1,8 @@
 #ifndef PHDEFS_H
 #define PHDEFS_H
+
+#include "_stl_extensions.h"
+
 class CPHElement;
 class CPHJoint;
 class CPhysicsShell;

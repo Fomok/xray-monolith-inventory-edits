@@ -1,5 +1,7 @@
 #pragma	once
 
+#include <_vector3d.h>
+#include <_fbox.h>
 #include "xrPhysics.h"
 
 XRPHYSICS_API bool valid_pos(const Fvector& P);

@@ -35,6 +35,7 @@ add_module(XRay.Render.R1
   XRay.Render.Common.Includes
   XRay.Render.DX9.Includes
   XRay.ServerEntities.Includes
+  XRay.Sound.Includes
   
   SOURCES
   ../xrRender/xrRender_console.cpp

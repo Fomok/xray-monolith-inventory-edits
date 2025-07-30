@@ -1,7 +1,11 @@
 #ifndef ELEVATOR_STAETE
 #define ELEVATOR_STAETE
 
+#include <_types.h>
+#include <_vector3d.h>
+
 #include "ielevatorstate.h"
+
 class CPHCharacter;
 struct dContact;
 struct SGameMtl;

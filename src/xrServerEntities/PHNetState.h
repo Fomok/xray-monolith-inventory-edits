@@ -1,7 +1,10 @@
 #ifndef  PHNETSTATE_H
 #define  PHNETSTATE_H
 
+#include <_vector3d.h>
+
 class NET_Packet;
+class IReader;
 
 struct SPHNetState
 {

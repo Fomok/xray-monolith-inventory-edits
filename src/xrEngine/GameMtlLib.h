@@ -4,6 +4,9 @@
 //---------------------------------------------------------------------------
 #pragma once
 
+#include "sound.h"
+#include "xrapi.h"
+
 #define GAMEMTL_CURRENT_VERSION 0x0001
 //----------------------------------------------------
 
@@ -70,8 +73,6 @@ DEFINE_VECTOR(shared_str, PSVec, PSIt);
 #include "RenderFactory.h"
 // DEFINE_VECTOR(ref_shader,ShaderVec,ShaderIt);
 #endif
-
-#include "xrapi.h"
 
 struct MTL_EXPORT_API SGameMtl
 {

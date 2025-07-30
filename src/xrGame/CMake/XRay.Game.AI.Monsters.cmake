@@ -22,6 +22,7 @@ add_module(XRay.Game.AI.Monsters
   XRay.Render.Common.Includes
   XRay.Render.API.Includes
   XRay.ServerEntities.Includes
+  XRay.Sound.Includes
 
   XRay.Game.Precompiles
 )

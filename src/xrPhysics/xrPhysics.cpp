@@ -1,9 +1,10 @@
 // xrPhysics.cpp : Defines the entry point for the DLL application.
 //
 
-#include "xrPhysics.h"
+#include <xrMemory.h>
+#include <ode/memory.h>
 
-#include "ode/memory.h"
+#include "xrPhysics.h"
 
 
 #ifdef _MANAGED

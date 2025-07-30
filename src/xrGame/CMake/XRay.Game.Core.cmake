@@ -25,6 +25,7 @@ add_module(XRay.Game.Core
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
   XRay.ServerEntities.Includes
+  XRay.Sound.Includes
 
   XRay.Game.Precompiles
 

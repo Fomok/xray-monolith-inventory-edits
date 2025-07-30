@@ -1,4 +1,8 @@
 #pragma once
+
+#include "_vector3d.h"
+#include "_fbox.h"
+
 class CPHCharacter;
 
 class IPHMovementControl
