@@ -23,6 +23,8 @@
  */
 
 #include "OpenALDeviceList.h"
+#include "sound.h"
+#include "log.h"
 
 #pragma warning(push)
 #pragma warning(disable:4995)

@@ -53,7 +53,7 @@ add_module(XRay.Sound
   #[["vorbis/codec.h"]]
   #[["vorbis/vorbisfile.h"]]
 
-  sound.h
+  #sound.h
   resource.h
 
   SOURCES

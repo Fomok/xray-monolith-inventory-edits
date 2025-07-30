@@ -5,13 +5,7 @@
 #include <Render.h>
 #include <Shader.h>
 
-#define STR(x) #x
-#define XSTR(x) STR(x)
-#pragma message("R_*: " XSTR(R_R1) ", " XSTR(R_R2) ", " XSTR(R_R3) ", " XSTR(R_R4))
-#pragma message("RENDER: " XSTR(RENDER))
-
 #if (RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
-#pragma message("Condition passed")
 #include "light_package.h"
 #include "light_smapvis.h"
 #include "light_GI.h"
