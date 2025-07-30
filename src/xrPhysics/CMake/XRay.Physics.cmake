@@ -26,7 +26,7 @@ add_module(XRay.Physics
   #[["xrCore.h"]]
   #[["xrCDB.h"]]
   #[["sound.h"]]
-  [["xrAPI.h"]]
+  #[["xrAPI.h"]]
 
   $<$<CONFIG:DEBUG>:[["d3d9types.h"]]>
 
