@@ -7,6 +7,8 @@
 #ifndef STATS_MANAGER_H_INCLUDED
 #define STATS_MANAGER_H_INCLUDED
 
+#include "xrD3DDefs.h"
+
 enum enum_stats_buffer_type
 {
 	enum_stats_buffer_type_vertex,

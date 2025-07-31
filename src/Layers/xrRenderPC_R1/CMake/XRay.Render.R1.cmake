@@ -8,6 +8,8 @@ add_module(XRay.Render.R1
   RENDER=1
   STATIC_RENDERER_R1
   XRRENDER_R1_EXPORTS
+  [[TEX_POINT_ATT="internal\\internal_light_attpoint"]]
+  [[TEX_SPOT_ATT="internal\\internal_light_attclip"]]
 
   LINKS
   dxsdk
@@ -39,6 +41,17 @@ add_module(XRay.Render.R1
   XRay.Sound.Includes
   
   PRECOMPILES
+  #[["d3dx9.h"]]
+  #[["xrD3DDefs.h"]]
+  #[["HW.h"]]
+  #[["Shader.h"]]
+  #[["R_Backend.h"]]
+  #[["R_Backend_Runtime.h"]]
+  #[["resourcemanager.h"]]
+  #[["vis_common.h"]]
+  #[["render.h"]]
+  #[["_d3d_extensions.h"]]
+
   stdafx.h
   
   SOURCES
@@ -52,6 +65,19 @@ add_module(XRay.Render.R1
   
   xrRender_R1.cpp
 )
+
+if(NOT EDITOR)
+  target_precompile_headers(XRay.Render.R1
+    PRIVATE
+    #[["igame_level.h"]]
+
+    #[["blenders/blender.h"]]
+    #[["blenders/blender_clsid.h"]]
+    #[["psystem.h"]]
+    #[["xrRender_console.h"]]
+    #[["FStaticRender.h"]]
+  )
+endif()
 
 add_module(XRay.Render.R1.Core
   SOURCES
