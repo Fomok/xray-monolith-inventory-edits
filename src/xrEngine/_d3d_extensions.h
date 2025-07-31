@@ -4,6 +4,11 @@
 #include <d3d9types.h>
 #include <d3dx9mesh.h>
 
+#include <_types.h>
+#include <_color.h>
+#include <_vector3d.h>
+#include <light.h>
+
 #ifndef NO_XR_LIGHT
 struct Flight
 {

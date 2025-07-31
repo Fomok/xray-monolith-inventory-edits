@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "../../xrEngine/render.h"
 #include "../../xrEngine/_d3d_extensions.h"
 
 #ifndef _EDITOR
