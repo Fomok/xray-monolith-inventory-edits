@@ -24,9 +24,6 @@
 #endif // NO_ENGINE_API
 */
 
-#ifndef NO_XRLOG
-#include "../xrcore/log.h"
-#endif
 #include "device.h"
 #include "../xrcore/fs.h"
 
