@@ -25,18 +25,8 @@
 */
 
 class CInifile;
+
 extern ENGINE_API CInifile* pGameIni;
-
-#ifndef DEBUG
-# define LUABIND_NO_ERROR_CHECKING
-#endif
-
-#if !defined(DEBUG) || defined(FORCE_NO_EXCEPTIONS)
-# define LUABIND_NO_EXCEPTIONS
-# define BOOST_NO_EXCEPTIONS
-#endif
-
-#define LUABIND_DONT_COPY_STRINGS
 
 #define READ_IF_EXISTS(ltx,method,section,name,default_value)\
  (((ltx)->line_exist(section, name)) ? ((ltx)->method(section, name)) : (default_value))

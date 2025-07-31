@@ -10,6 +10,7 @@ add_module(XRay.Engine
   [[ECORE_API=]]
   [[DLL_API=]]
   $<$<CONFIG:DEBUG>:D3D_DEBUG_INFO>
+  $<$<NOT:$<CONFIG:DEBUG>>:LUABIND_NO_ERROR_CHECKING>
 
   LINKS
   dxsdk
@@ -68,6 +69,13 @@ if(NOT NO_XRLOG)
   #  INTERFACE
   #  [["log.h"]]
   #)
+endif()
+
+if($<OR:$<NOT:$<CONFIG:DEBUG>>,${FORCE_NO_EXCEPTIONS}>)
+  target_compile_definitions(XRay.Engine.Defines
+    INTERFACE
+    BOOST_NO_EXCEPTIONS
+  )
 endif()
 
 add_module(XRay.Engine.Collision
