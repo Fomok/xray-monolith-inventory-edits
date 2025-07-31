@@ -2,8 +2,6 @@
 #define STDAFX_3DA
 #pragma once
 
-#include <xrAPI.h>
-
 #ifdef _EDITOR
 #include "../editors/ECore/stdafx.h"
 #else
@@ -39,8 +37,6 @@
 #define DLL_API
 #endif // NO_ENGINE_API
 */
-
-#define ECORE_API
 
 // Our headers
 #include <bone.h>

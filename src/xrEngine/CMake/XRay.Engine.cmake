@@ -9,6 +9,7 @@ add_module(XRay.Engine
   [[ENGINE_API=]]
   [[ECORE_API=]]
   [[DLL_API=]]
+  $<$<CONFIG:DEBUG>:D3D_DEBUG_INFO>
 
   LINKS
   dxsdk
@@ -34,7 +35,17 @@ add_module(XRay.Engine
   XRay.Game.AI.Navigation
 
   PRECOMPILES
-  stdafx.h
+  #[["xrAPI.h"]]
+  #[["d3d9.h"]]
+  #[["bone.h"]]
+  #[["Render.h"]]
+  #[["Device.h"]]
+  #[["light.h"]]
+  #[["defines.h"]]
+  #[["fs.h"]]
+  #[["xrXRC.h"]]
+  #[["sound.h"]]
+  #[["sound.h"]]
 
   SOURCES
   defines.cpp
@@ -51,6 +62,13 @@ add_module(XRay.Engine
   trivial_encryptor.h
   _d3d_extensions.h
 )
+
+if(NOT NO_XRLOG)
+  #target_precompile_headers(XRay.Engine.Precompiles
+  #  INTERFACE
+  #  [["log.h"]]
+  #)
+endif()
 
 add_module(XRay.Engine.Collision
   SOURCES
