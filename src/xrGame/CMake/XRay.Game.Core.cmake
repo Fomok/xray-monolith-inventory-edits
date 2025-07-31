@@ -24,6 +24,7 @@ add_module(XRay.Game.Core
   XRay.Engine.Includes
   XRay.Game.Includes
   XRay.NetServer.Includes
+  XRay.Particles.Includes
   XRay.Physics.Includes
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
