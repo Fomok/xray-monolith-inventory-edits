@@ -17,6 +17,7 @@
 #endif
 
 #include "HW.h"
+#include "Shader.h"
 #include "r_DStreams.h"
 #include "r_constants_cache.h"
 #include "r_backend_xform.h"
