@@ -4,6 +4,7 @@
 
 
 #include "Blender_Detail_still.h"
+#include <blenders/Blender_CLSID.h>
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

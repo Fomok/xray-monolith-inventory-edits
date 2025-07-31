@@ -1,4 +1,6 @@
 
+#include <blenders/Blender_CLSID.h>
+
 #include "Blender_Particle.h"
 
 #define					oBlendCount	6

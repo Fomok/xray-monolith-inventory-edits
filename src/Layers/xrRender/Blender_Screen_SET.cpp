@@ -1,3 +1,4 @@
+#include <blenders/Blender_CLSID.h>
 
 #include "Blender_Screen_SET.h"
 

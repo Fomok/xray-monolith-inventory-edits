@@ -5,7 +5,6 @@
 #pragma once
 
 #ifndef _EDITOR
-#include "../xrRender/blenders\blender_clsid.h"
 #include "../../xrParticles/psystem.h"
 #include "../xrRender/xrRender_console.h"
 #include "FStaticRender.h"
