@@ -2,20 +2,6 @@
 #define STDAFX_3DA
 #pragma once
 
-#ifdef _EDITOR
-#include "../editors/ECore/stdafx.h"
-#else
-
-#ifdef _DEBUG
-# define D3D_DEBUG_INFO
-#endif
-
-#pragma warning(push)
-#pragma warning(disable:4995)
-#include <d3d9.h>
-//#include <dplay8.h>
-#pragma warning(pop)
-
 // you must define ENGINE_BUILD then building the engine itself
 // and not define it if you are about to build DLL
 /*
@@ -72,5 +58,4 @@ extern ENGINE_API CInifile* pGameIni;
 #define READ_IF_EXISTS(ltx,method,section,name,default_value)\
  (((ltx)->line_exist(section, name)) ? ((ltx)->method(section, name)) : (default_value))
 
-#endif // EDITOR
 #endif // !defined STDAFX_3DA
