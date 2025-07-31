@@ -1,10 +1,12 @@
 // HUDRecon.cpp: Distance and identification readout
 // 
 //////////////////////////////////////////////////////////////////////
-#include "HUDRecon.h"
 
-#include "../xrEngine/Environment.h"
-#include "../xrEngine/CustomHUD.h"
+#include <Environment.h>
+#include <CustomHUD.h>
+#include <d3d9types.h>
+
+#include "HUDRecon.h"
 #include "Entity.h"
 #include "Actor.h"
 #include "Weapon.h"

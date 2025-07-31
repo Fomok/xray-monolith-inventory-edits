@@ -3,6 +3,7 @@
 #include "HudSound.h"
 
 class CPhysicsShellHolder;
+ENGINE_API class CBoneInstance;
 
 class CCarWeapon : public CShootingObject
 {

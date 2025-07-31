@@ -24,12 +24,6 @@
 #endif // NO_ENGINE_API
 */
 
-// Our headers
-#include <bone.h>
-#include <Render.h>
-#include <Device.h>
-#include <light.h>
-
 #include "defines.h"
 #ifndef NO_XRLOG
 #include "../xrcore/log.h"

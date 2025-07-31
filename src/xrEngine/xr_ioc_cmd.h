@@ -1,5 +1,7 @@
 #pragma once
 
+#include <d3d9types.h>
+
 #include <string_concatenations.h>
 #include "xrSASH.h"
 

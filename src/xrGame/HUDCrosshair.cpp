@@ -2,6 +2,8 @@
 // 
 //////////////////////////////////////////////////////////////////////
 
+#include <d3d9types.h>
+
 #include <CustomHUD.h>
 #include <igame_persistent.h>
 #include <xr_ini.h>

@@ -1,3 +1,5 @@
+#include <d3d9types.h>
+
 #include "HUDTarget.h"
 
 #include "player_hud.h"

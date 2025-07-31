@@ -9,6 +9,7 @@ class CAdvancedDetector;
 class CEliteDetector;
 class CUIXml;
 class CLAItem;
+ENGINE_API class CBoneInstance;
 
 class CUICustomDeviceBase
 {
