@@ -2,6 +2,7 @@
 
 #include "DetailManager.h"
 #include "cl_intersect.h"
+#include "xrRender_console.h"
 
 #ifdef _EDITOR
 #	include "scene.h"

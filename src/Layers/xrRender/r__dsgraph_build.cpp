@@ -9,6 +9,7 @@
 #include "flod.h"
 #include "particlegroup.h"
 #include "FTreeVisual.h"
+#include "xrRender_console.h"
 
 using namespace R_dsgraph;
 

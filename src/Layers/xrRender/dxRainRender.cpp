@@ -3,6 +3,7 @@
 
 #include "dxRainRender.h"
 #include "R_Backend.h"
+#include "xrRender_console.h"
 
 //	Warning: duplicated in rain.cpp
 static const int max_desired_items = 2500;

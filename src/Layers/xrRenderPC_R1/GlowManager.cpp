@@ -11,6 +11,7 @@
 
 #include "GlowManager.h"
 #include "R_Backend.h"
+#include "xrRender_console.h"
 
 #define FADE_SCALE_UP		4096.f
 #define FADE_SCALE_DOWN		1024.f

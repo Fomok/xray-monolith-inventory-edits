@@ -7,6 +7,7 @@
 #include "dxEnvironmentRender.h"
 #include "dxRenderDeviceRender.h"
 #include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 static Fmatrix mSky_prev = Fidentity;
 

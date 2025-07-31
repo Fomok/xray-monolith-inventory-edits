@@ -25,6 +25,7 @@
 #endif
 
 #include "R_Backend.h"
+#include "xrRender_console.h"
 
 using namespace R_dsgraph;
 

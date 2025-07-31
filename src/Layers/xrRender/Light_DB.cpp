@@ -6,6 +6,7 @@
 #include "environment.h"
 #include "R_light.h"
 #include "light_db.h"
+#include "xrRender_console.h"
 
 CLight_DB::CLight_DB()
 {

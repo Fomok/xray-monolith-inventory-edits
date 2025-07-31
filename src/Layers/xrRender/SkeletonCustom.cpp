@@ -3,8 +3,6 @@
 #include <fmesh.h>
 #include <xr_ini.h>
 
-#include 	"SkeletonCustom.h"
-#include	"SkeletonX.h"
 #ifndef _EDITOR
 #include	<Render.h>
 #endif
@@ -20,6 +18,10 @@ xrCriticalSection UCalc_Mutex
 #else
 #include <xrAPI.h>
 #endif
+
+#include "SkeletonCustom.h"
+#include "SkeletonX.h"
+#include "xrRender_console.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

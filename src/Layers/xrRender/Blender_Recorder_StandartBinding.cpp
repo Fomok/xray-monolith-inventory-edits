@@ -10,6 +10,7 @@
 
 #include "dxRenderDeviceRender.h"
 #include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 // matrices
 #define	BIND_DECLARE(xf)	\

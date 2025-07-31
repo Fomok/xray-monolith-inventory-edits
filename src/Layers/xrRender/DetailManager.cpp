@@ -10,6 +10,7 @@
 #include "DetailManager.h"
 #include "cl_intersect.h"
 #include "R_Backend.h"
+#include "xrRender_console.h"
 
 #ifdef _EDITOR
 #	include "ESceneClassList.h"

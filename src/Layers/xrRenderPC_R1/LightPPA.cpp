@@ -9,6 +9,7 @@
 
 #include "R_Backend.h"
 #include "LightPPA.h"
+#include "xrRender_console.h"
 
 const u32 MAX_POLYGONS = 1024 * 8;
 const float MAX_DISTANCE = 50.f;

@@ -11,6 +11,7 @@
 #include "WallmarksEngine.h"
 #include "R_Backend_Runtime.h"
 #include "SkeletonCustom.h"
+#include "xrRender_console.h"
 
 float wallmark_range_static = 100.f;
 float wallmark_range_skeleton = 50.f;

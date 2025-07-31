@@ -5,6 +5,5 @@
 #pragma once
 
 #ifndef _EDITOR
-#include "../xrRender/xrRender_console.h"
 #include "FStaticRender.h"
 #endif

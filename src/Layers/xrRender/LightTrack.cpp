@@ -9,6 +9,7 @@
 #include "igame_persistent.h"
 #include "igame_level.h"
 #include "environment.h"
+#include "xrRender_console.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

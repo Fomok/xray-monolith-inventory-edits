@@ -7,6 +7,7 @@
 #include "RenderVisual.h"
 #include "xr_object.h"
 #include "lighttrack.h"
+#include "xrRender_console.h"
 
 #ifndef _EDITOR
 #include "ttapi.h"

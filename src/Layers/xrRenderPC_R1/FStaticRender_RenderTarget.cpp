@@ -4,6 +4,7 @@
 
 #include "fstaticrender_rendertarget.h"
 #include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 static LPCSTR RTname = "$user$rendertarget";
 static LPCSTR RTname_color_map = "$user$rendertarget_color_map";

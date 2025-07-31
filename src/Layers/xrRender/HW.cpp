@@ -7,6 +7,7 @@
 #include <XR_IOConsole.h>
 
 #include "HW.h"
+#include "xrRender_console.h"
 
 #ifndef _EDITOR
 void fill_vid_mode_list(CHW* _hw);

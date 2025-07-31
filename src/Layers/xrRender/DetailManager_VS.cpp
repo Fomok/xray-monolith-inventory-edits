@@ -13,6 +13,7 @@
 #include <dx10BufferUtils.h>
 
 #include "R_Backend.h"
+#include "xrRender_console.h"
 
 const int quant = 16384;
 const int c_hdr = 10;

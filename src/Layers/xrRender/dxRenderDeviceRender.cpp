@@ -3,6 +3,7 @@
 #include "R_Backend_Runtime.h"
 #include "dxRenderDeviceRender.h"
 #include "ResourceManager.h"
+#include "xrRender_console.h"
 
 dxRenderDeviceRender::dxRenderDeviceRender()
 	: Resources(0)

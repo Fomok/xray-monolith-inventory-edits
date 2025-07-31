@@ -6,6 +6,7 @@
 
 #include "ftreevisual.h"
 #include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 shared_str m_xform;
 shared_str m_xform_v;
