@@ -30,8 +30,6 @@ add_module(XRay.Game
   XRay.ServerEntities.Includes
 
   PRECOMPILES
-  $<$<COMPILE_LANGUAGE:CXX>:../xrEngine/stdafx.h>
-
   [[$<$<COMPILE_LANGUAGE:CXX>:DPlay/dplay8.h>]]
 
   $<$<COMPILE_LANGUAGE:CXX>:build_config_defines.h>

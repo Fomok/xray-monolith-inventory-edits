@@ -6,6 +6,7 @@
 //	Description : Script ini file class export
 ////////////////////////////////////////////////////////////////////////////
 
+#include <Engine.h>
 #include <LocatorAPI.h>
 
 #include "pch_script.h"

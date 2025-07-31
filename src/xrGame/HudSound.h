@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Engine.h>
 #include <sound.h>
 
 struct HUD_SOUND_ITEM

@@ -1,7 +1,9 @@
+#include <Engine.h>
+
 #include "monster_aura.h"
 #include "basemonster/base_monster.h"
-#include "../../Actor.h"
-#include "../../ActorEffector.h"
+#include "Actor.h"
+#include "ActorEffector.h"
 
 //#include "../../HudSound.h"
 

@@ -2,6 +2,7 @@
 #define	Kinematics_included
 #pragma once
 
+#include <Engine.h>
 #include "RenderVisual.h"
 
 typedef void (* UpdateCallback)(IKinematics* P);

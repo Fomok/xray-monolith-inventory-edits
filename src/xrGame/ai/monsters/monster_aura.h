@@ -4,6 +4,7 @@
 #include <sound.h>
 
 class CBaseMonster;
+class CIniFile;
 
 class monster_aura
 {

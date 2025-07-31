@@ -1,3 +1,4 @@
+#include <Engine.h>
 #include <xr_ini.h>
 
 #include "Tracer.h"

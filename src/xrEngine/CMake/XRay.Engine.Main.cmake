@@ -20,11 +20,6 @@ target_link_libraries(XRay.Engine.Main
   XRay.XMLParser
 )
 
-target_precompile_headers(XRay.Engine.Main
-  INTERFACE
-  stdafx.h
-)
-
 target_sources(XRay.Engine.Main
   INTERFACE
   x_ray.cpp

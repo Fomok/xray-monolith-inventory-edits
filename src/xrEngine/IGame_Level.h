@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <Engine.h>
 #include <EngineAPI.h>
 #include <EventAPI.h>
 #include <sound.h>

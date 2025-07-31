@@ -6,6 +6,7 @@
 //	Description : Visual memory parameters
 ////////////////////////////////////////////////////////////////////////////
 
+#include <Engine.h>
 #include <xr_ini.h>
 
 #include "visual_memory_params.h"

@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <Engine.h>
+
 #include "alife_space.h"
 #include "hit_immunity_space.h"
 

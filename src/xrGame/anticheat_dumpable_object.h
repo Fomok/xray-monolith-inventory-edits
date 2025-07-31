@@ -1,6 +1,8 @@
 #ifndef ANTICHEAT_DUMPABLE_OBJECT
 #define ANTICHEAT_DUMPABLE_OBJECT
 
+#include <Engine.h>
+
 class IAnticheatDumpable
 {
 public:
