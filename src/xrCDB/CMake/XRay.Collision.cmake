@@ -26,8 +26,8 @@ add_module(XRay.Collision
   XRay.ServerEntities.Includes
 
   PRECOMPILES
-  [["xrCore.h"]]
-  alloc.h
+  #[["xrCore.h"]]
+  #alloc.h
   [["opcode.h"]]
   
   SOURCES
