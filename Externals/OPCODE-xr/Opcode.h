@@ -34,6 +34,8 @@
 #include <assert.h>
 #include <float.h>
 
+#include "xrCore.h"
+
 #ifndef ASSERT
 #define	ASSERT	assert
 #endif
