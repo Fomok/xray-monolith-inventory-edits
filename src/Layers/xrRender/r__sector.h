@@ -6,6 +6,8 @@
 #define _PORTAL_H_
 #pragma once
 
+#include "Shader.h"
+
 class CPortal;
 class CSector;
 

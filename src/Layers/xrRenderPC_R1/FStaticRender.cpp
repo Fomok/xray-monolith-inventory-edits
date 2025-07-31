@@ -17,7 +17,7 @@
 #include <dxRenderDeviceRender.h>
 #include <dxWallMarkArray.h>
 #include <dxUIShader.h>
-//#include <smart_cast.h">
+#include <ResourceManager.h>
 
 #ifndef _EDITOR
 #include <ttapi.h>

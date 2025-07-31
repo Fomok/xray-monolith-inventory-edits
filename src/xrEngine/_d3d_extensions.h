@@ -1,6 +1,9 @@
 #ifndef _D3D_EXT_internal
 #define _D3D_EXT_internal
 
+#include <d3d9types.h>
+#include <d3dx9mesh.h>
+
 #ifndef NO_XR_LIGHT
 struct Flight
 {

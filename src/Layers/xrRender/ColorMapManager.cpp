@@ -2,6 +2,7 @@
 
 #include "ColorMapManager.h"
 #include "dxRenderDeviceRender.h"
+#include "ResourceManager.h"
 
 ColorMapManager::ColorMapManager()
 {

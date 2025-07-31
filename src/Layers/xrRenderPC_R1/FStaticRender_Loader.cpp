@@ -8,6 +8,7 @@
 #include <IGame_Persistent.h>
 #include <stream_reader.h>
 #include <dxRenderDeviceRender.h>
+#include <ResourceManager.h>
 
 void CRender::level_Load(IReader* fs)
 {

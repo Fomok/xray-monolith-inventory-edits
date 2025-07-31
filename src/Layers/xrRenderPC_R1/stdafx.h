@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "../xrRender/resourcemanager.h"
-
 #include "../../xrEngine/vis_common.h"
 #include "../../xrEngine/render.h"
 #include "../../xrEngine/_d3d_extensions.h"
