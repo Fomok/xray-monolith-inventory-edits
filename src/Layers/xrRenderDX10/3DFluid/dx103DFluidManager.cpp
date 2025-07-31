@@ -1,7 +1,7 @@
+#include <defines.h>
+#include <dxRenderDeviceRender.h>
+
 #include "dx103DFluidManager.h"
-
-#include "../../xrRender/dxRenderDeviceRender.h"
-
 #include "dx103DFluidBlenders.h"
 #include "dx103DFluidData.h"
 #include "dx103DFluidGrid.h"

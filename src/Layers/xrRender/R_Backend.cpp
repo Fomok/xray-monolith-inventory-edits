@@ -1,6 +1,7 @@
+#include <defines.h>
 
 #if defined(USE_DX10) || defined(USE_DX11)
-#include "../xrRenderDX10/dx10BufferUtils.h"
+#include <dx10BufferUtils.h>
 #endif	//	USE_DX11
 
 CBackend RCache;

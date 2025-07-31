@@ -1,7 +1,9 @@
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
+#include <defines.h>
 
-#include "../xrRender/dxEnvironmentRender.h"
+#include <igame_persistent.h>
+#include <environment.h>
+
+#include <dxEnvironmentRender.h>
 
 #define STENCIL_CULL 0
 

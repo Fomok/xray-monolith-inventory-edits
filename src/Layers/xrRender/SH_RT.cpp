@@ -1,6 +1,6 @@
+#include <defines.h>
 
 #include "ResourceManager.h"
-
 #include "dxRenderDeviceRender.h"
 
 CRT::CRT()

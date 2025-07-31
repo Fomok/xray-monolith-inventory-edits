@@ -4,6 +4,7 @@
 
 
 #include <d3dx9.h>
+#include <defines.h>
 
 #include <string_concatenations.h>
 #include <xrCore.h>

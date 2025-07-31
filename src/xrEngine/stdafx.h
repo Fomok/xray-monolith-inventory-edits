@@ -24,7 +24,6 @@
 #endif // NO_ENGINE_API
 */
 
-#include "defines.h"
 #ifndef NO_XRLOG
 #include "../xrcore/log.h"
 #endif

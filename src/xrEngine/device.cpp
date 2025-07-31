@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <frustum.h>
 #include <profiler.h>
 #include <xrCore.h>

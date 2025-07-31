@@ -1,9 +1,10 @@
 
+#include <defines.h>
 #include "ResourceManager.h"
 #ifndef _EDITOR
-#include	"../../xrEngine/Render.h"
+#include	<Render.h>
 #else
-	#include "../../Include/xrAPI/xrAPI.h"
+	#include <xrAPI.h>
 #endif
 
 void CResourceManager::reset_begin()

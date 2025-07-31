@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <LocatorAPI.h>
 #include <xr_ini.h>
 #include <xrCore.h>

@@ -1,5 +1,6 @@
-#include "dxRenderDeviceRender.h"
+#include <defines.h>
 
+#include "dxRenderDeviceRender.h"
 #include "ResourceManager.h"
 
 dxRenderDeviceRender::dxRenderDeviceRender()

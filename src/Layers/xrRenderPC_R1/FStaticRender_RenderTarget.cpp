@@ -1,6 +1,7 @@
-#include "fstaticrender_rendertarget.h"
-#include "../../xrEngine/IGame_Persistent.h"
+#include <defines.h>
+#include <IGame_Persistent.h>
 
+#include "fstaticrender_rendertarget.h"
 
 static LPCSTR RTname = "$user$rendertarget";
 static LPCSTR RTname_color_map = "$user$rendertarget_color_map";

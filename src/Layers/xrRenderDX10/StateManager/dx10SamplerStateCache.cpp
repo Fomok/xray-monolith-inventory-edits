@@ -1,6 +1,7 @@
-#include "dx10SamplerStateCache.h"
+#include <defines.h>
 
-#include "../dx10StateUtils.h"
+#include "dx10SamplerStateCache.h"
+#include "dx10StateUtils.h"
 
 using dx10StateUtils::operator==;
 

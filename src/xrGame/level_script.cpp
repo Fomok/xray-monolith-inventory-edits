@@ -6,6 +6,7 @@
 //	Description : Level script export
 ////////////////////////////////////////////////////////////////////////////
 
+#include <defines.h>
 #include <xrCore.h>
 #include <igame_persistent.h>
 #include <xr_collide_defs.h>

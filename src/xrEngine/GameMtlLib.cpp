@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <mezz_stringbuffer.h>
 //#include <xrapi.h>
 

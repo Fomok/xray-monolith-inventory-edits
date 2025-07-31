@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <xrCore.h>

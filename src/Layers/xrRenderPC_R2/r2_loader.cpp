@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <malloc.h>
 #include <LocatorAPI.h>
 

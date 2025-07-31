@@ -1,3 +1,5 @@
+#include <defines.h>
+
 #include "entitycondition.h"
 #include "inventoryowner.h"
 #include "customoutfit.h"

@@ -1,5 +1,6 @@
-
+#include <defines.h>
 #include <LocatorAPI.h>
+
 #include "ResourceManager.h"
 
 #ifndef _EDITOR

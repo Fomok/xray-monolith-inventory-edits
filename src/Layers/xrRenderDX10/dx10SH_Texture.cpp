@@ -1,4 +1,4 @@
-
+#include <defines.h>
 #include <ResourceManager.h>
 
 #ifndef _EDITOR

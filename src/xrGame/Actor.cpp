@@ -1,6 +1,7 @@
 ﻿#include <time.h>
 
 #include <build_config_defines.h>
+#include <defines.h>
 #include <cl_intersect.h>
 #include <matrix_utils.h>
 #include <script_engine.h>

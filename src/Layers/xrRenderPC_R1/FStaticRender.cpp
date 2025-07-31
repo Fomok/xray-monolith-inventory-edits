@@ -2,6 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <defines.h>
 #include <xrCore.h>
 #include <LocatorAPI.h>
 #include <string_concatenations.h>

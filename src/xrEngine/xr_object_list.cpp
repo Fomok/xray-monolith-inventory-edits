@@ -1,3 +1,6 @@
+#include <defines.h>
+#include <net_utils.h>
+
 #include "igame_level.h"
 #include "igame_persistent.h"
 
@@ -6,7 +9,6 @@
 #include "std_classes.h"
 
 #include "xr_object.h"
-#include "../xrCore/net_utils.h"
 
 #include "CustomHUD.h"
 

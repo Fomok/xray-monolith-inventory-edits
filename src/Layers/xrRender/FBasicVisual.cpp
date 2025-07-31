@@ -2,13 +2,14 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <defines.h>
 
 #ifndef _EDITOR
-#	include "../../xrEngine/render.h"
+#	include <render.h>
 #endif // #ifndef _EDITOR
 
+#include <fmesh.h>
 #include "fbasicvisual.h"
-#include "../../xrEngine/fmesh.h"
 #include "dxRenderDeviceRender.h"
 
 //////////////////////////////////////////////////////////////////////

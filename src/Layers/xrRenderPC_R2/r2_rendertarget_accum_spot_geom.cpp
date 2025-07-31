@@ -1,5 +1,6 @@
 
-#include "../xrRender/du_cone.h"
+#include <defines.h>
+#include <du_cone.h>
 
 /*
 Fvector du_cone_vertices[DU_CONE_NUMVERTEX]=

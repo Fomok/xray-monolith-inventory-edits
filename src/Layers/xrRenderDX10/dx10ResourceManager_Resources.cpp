@@ -1,5 +1,5 @@
-
 #include <d3dx9.h>
+#include <defines.h>
 
 #ifndef _EDITOR
 #include <render.h>

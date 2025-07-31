@@ -3,6 +3,8 @@
 //	Last updated: 13/08/2015
 ////////////////////////////////////////////////////////////////////////////
 
+#include <defines.h>
+
 #include "Weapon.h"
 #include "ParticlesObject.h"
 #include "entity_alive.h"

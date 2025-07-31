@@ -1,9 +1,10 @@
-#include <xrCore.h>
+#include <defines.h>
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <tga.h>
-#include <xrImage_Resampler.h>
 #include <xr_effgamma.h>
+#include <xrImage_Resampler.h>
+#include <xrCore.h>
 
 #include "dxRenderDeviceRender.h"
 

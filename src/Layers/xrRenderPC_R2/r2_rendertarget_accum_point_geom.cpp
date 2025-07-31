@@ -1,5 +1,6 @@
 
-#include "../xrRender/du_sphere.h"
+#include <defines.h>
+#include <du_sphere.h>
 
 /*
 Fvector du_sphere_vertices[DU_SPHERE_NUMVERTEX]=

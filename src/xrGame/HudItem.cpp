@@ -1,4 +1,8 @@
-﻿#include "HudItem.h"
+﻿#include <defines.h>
+#include <CameraBase.h>
+#include <SkeletonMotions.h>
+
+#include "HudItem.h"
 #include "physic_item.h"
 #include "actor.h"
 #include "actoreffector.h"
@@ -6,11 +10,9 @@
 #include "xrmessages.h"
 #include "level.h"
 #include "inventory.h"
-#include "../xrEngine/CameraBase.h"
 #include "player_hud.h"
-#include "../xrEngine/SkeletonMotions.h"
 
-#include "../build_config_defines.h"
+#include "build_config_defines.h"
 #include "ui_base.h"
 #include "ui\UIScriptWnd.h"
 

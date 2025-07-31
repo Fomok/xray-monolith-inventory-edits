@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <Engine.h>
 #include <xrCore.h>
 #include <xr_input.h>

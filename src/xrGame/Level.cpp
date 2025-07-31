@@ -1,5 +1,6 @@
 #include <d3d9types.h>
 
+#include <defines.h>
 #include <Engine.h>
 #include <xrCore.h>
 

@@ -1,13 +1,11 @@
+#include <defines.h>
 #include <xrCore.h>
 #include <xr_ioconsole.h>
 #include <xr_ioc_cmd.h>
 #include <customhud.h>
 #include <fdemorecord.h>
 #include <fdemoplay.h>
-//#include <PhysicsGamePars.h>
 #include <iphworld.h>
-//#include <resourcemanager.h>
-//#include <doug_lea_memory_allocator.h>
 #include <console_vars.h>
 #include <LocatorAPI.h>
 #include <x_ray.h>

@@ -1,15 +1,17 @@
-﻿#include "player_hud.h"
+﻿#include <CameraBase.h>
+#include <defines.h>
+#include <IGame_Persistent.h>
+
+#include "player_hud.h"
 #include "HudItem.h"
 #include "ui_base.h"
 #include "actor.h"
 #include "physic_item.h"
 #include "static_cast_checked.hpp"
 #include "actoreffector.h"
-#include "../xrEngine/IGame_Persistent.h"
 #include "inventory_item.h"
 #include "weapon.h"
 #include "script_attachment_manager.h"
-#include "../xrEngine/CameraBase.h"
 
 extern int g_nearwall;
 

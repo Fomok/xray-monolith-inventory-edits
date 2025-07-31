@@ -6,6 +6,7 @@
 // AlexMX - Alexander Maksimchuk
 //-----------------------------------------------------------------------------
 
+#include <defines.h>
 #include <discord.h>
 #include <process.h>
 #include <locale.h>

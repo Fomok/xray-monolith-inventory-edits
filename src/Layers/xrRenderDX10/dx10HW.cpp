@@ -8,6 +8,7 @@
 # include <dxgi1_5.h>
 #endif
 
+#include <defines.h>
 #include <HW.h>
 #include <xrCore.h>
 

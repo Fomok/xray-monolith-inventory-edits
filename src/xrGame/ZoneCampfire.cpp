@@ -1,4 +1,5 @@
 #include <LightAnimLibrary.h>
+#include <defines.h>
 #include <xr_ini.h>
 
 #include "ZoneCampfire.h"

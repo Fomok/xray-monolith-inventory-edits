@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <fbasicvisual.h>
 #include <string_concatenations.h>
 #include <xr_object.h>

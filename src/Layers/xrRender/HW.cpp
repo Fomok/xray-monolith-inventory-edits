@@ -1,7 +1,7 @@
 // HW.cpp: implementation of the CHW class.
 //////////////////////////////////////////////////////////////////////
 
-
+#include <defines.h>
 #include <xrCore.h>
 #include <d3dx9.h>
 #include <XR_IOConsole.h>

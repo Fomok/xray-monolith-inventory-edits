@@ -1,8 +1,9 @@
+#include <build_config_defines.h>
+#include <defines.h>
 #include <LocatorAPI.h>
-#include	"xrRender_console.h"
-#include	"dxRenderDeviceRender.h"
 
-#include "../../build_config_defines.h"
+#include "xrRender_console.h"
+#include "dxRenderDeviceRender.h"
 
 u32 ps_Preset = 2;
 xr_token qpreset_token [ ] = {

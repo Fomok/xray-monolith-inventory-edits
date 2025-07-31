@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <defines.h>
+
 #include "Engine.h"
 #include "EngineAPI.h"
 #include "xrCore.h"

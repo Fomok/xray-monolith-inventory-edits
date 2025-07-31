@@ -1,7 +1,7 @@
+#include <defines.h>
+
 #include "ColorMapManager.h"
-
 #include "dxRenderDeviceRender.h"
-
 
 ColorMapManager::ColorMapManager()
 {

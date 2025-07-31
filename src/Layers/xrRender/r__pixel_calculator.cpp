@@ -1,6 +1,8 @@
-#include	"r__pixel_calculator.h"
-#define		rt_dimensions 1024
-#include	"../xrRender/FBasicVisual.h"
+#include <defines.h>
+#include <FBasicVisual.h>
+#include <r__pixel_calculator.h>
+
+#define rt_dimensions 1024
 
 #if !defined(USE_DX10) && !defined(USE_DX11)
 void r_pixel_calculator::begin()

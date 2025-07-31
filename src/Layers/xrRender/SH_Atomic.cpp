@@ -1,4 +1,6 @@
 
+#include <defines.h>
+
 #include "sh_atomic.h"
 #include "ResourceManager.h"
 

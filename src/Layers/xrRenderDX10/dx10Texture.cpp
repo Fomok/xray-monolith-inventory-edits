@@ -6,6 +6,7 @@
 #include <D3DX10Tex.h>
 #include <dxRenderDeviceRender.h>
 
+#include <defines.h>
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <xrCore.h>

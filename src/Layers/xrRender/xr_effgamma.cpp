@@ -1,3 +1,5 @@
+#include <defines.h>
+
 #include "xr_effgamma.h"
 
 #if defined(USE_DX10) || defined(USE_DX11)

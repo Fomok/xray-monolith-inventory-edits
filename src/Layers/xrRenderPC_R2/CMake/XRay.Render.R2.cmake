@@ -34,6 +34,7 @@ add_module(XRay.Render.R2
   XRay.Render.API.Includes
   XRay.Render.Common.Includes
   XRay.Render.DX9.Includes
+  XRay.Render.DX10.Includes
   XRay.ServerEntities.Includes
   XRay.Sound.Includes
 

@@ -1,5 +1,5 @@
 #include <malloc.h>
-
+#include <defines.h>
 #include <LocatorAPI.h>
 #include <ResourceManager.h>
 #include <fbasicvisual.h>

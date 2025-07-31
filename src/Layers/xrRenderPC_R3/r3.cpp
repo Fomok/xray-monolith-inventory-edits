@@ -1,4 +1,5 @@
 ﻿#include <3DFluid\dx103DFluidManager.h>
+#include <defines.h>
 #include <fbasicvisual.h>
 #include <CustomHUD.h>
 #include <dxRenderDeviceRender.h>

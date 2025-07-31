@@ -1,8 +1,10 @@
 ﻿
+#include <defines.h>
+#include <fmesh.h>
+#include <irenderable.h>
+
 #include "fhierrarhyvisual.h"
 #include "SkeletonCustom.h"
-#include "../../xrEngine/fmesh.h"
-#include "../../xrEngine/irenderable.h"
 
 #include "flod.h"
 #include "particlegroup.h"

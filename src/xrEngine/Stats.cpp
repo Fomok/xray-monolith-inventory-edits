@@ -1,3 +1,4 @@
+#include <defines.h>
 #include <ISpatial.h>
 #include <xr_ini.h>
 #include <xrCore.h>

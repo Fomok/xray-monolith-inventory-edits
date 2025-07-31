@@ -1,3 +1,7 @@
+#include <defines.h>
+#include <CameraBase.h>
+#include <gamemtllib.h>
+
 #include "actor.h"
 #include "weapon.h"
 #include "mercuryball.h"
@@ -6,7 +10,6 @@
 #include "xr_level_controller.h"
 #include "UsableScriptObject.h"
 #include "customzone.h"
-#include "../xrEngine/gamemtllib.h"
 #include "ui/UIMainIngameWnd.h"
 #include "UIGameCustom.h"
 #include "Grenade.h"
@@ -164,8 +167,6 @@ void CActor::DrawPickupItems()
 			PickupInfoDraw(*it);
 	}
 }
-
-#include "../xrEngine/CameraBase.h"
 
 void CActor::PickupModeUpdate_COD(pickup_result_t pickup_result)
 {
