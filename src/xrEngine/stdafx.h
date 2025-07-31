@@ -24,8 +24,6 @@
 #endif // NO_ENGINE_API
 */
 
-#include "../xrcdb/xrXRC.h"
-
 #include "../xrSound/sound.h"
 
 class CInifile;
