@@ -5,8 +5,6 @@
 #pragma once
 
 #ifndef _EDITOR
-#include "../../xrEngine/igame_level.h"
-
 #include "../xrRender/blenders\blender.h"
 #include "../xrRender/blenders\blender_clsid.h"
 #include "../../xrParticles/psystem.h"

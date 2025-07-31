@@ -5,6 +5,8 @@
 
 #include <FS.h>
 
+#include "IGame_Level.h"
+
 #pragma pack(push,4)
 
 // Parameter/Property specifications
