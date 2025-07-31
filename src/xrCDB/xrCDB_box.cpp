@@ -1,3 +1,4 @@
+#include <Opcode.h>
 
 #include "xrCDB.h"
 

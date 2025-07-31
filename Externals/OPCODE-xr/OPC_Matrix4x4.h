@@ -12,6 +12,8 @@
 #ifndef __ICEMATRIX4X4_H__
 #define __ICEMATRIX4X4_H__
 
+#include "Opcode.h"
+
 // Forward declarations
 class PRS;
 class PR;

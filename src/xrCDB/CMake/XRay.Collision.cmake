@@ -28,7 +28,7 @@ add_module(XRay.Collision
   PRECOMPILES
   #[["xrCore.h"]]
   #alloc.h
-  [["opcode.h"]]
+  #[["opcode.h"]]
   
   SOURCES
   #cl_raypick.cpp

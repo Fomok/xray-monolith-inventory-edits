@@ -4,6 +4,7 @@
 
 #include "Engine.h"
 #include "EngineAPI.h"
+#include "xrCore.h"
 #include "xrXRC.h"
 
 //#include "securom_api.h"

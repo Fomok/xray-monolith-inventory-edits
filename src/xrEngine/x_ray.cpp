@@ -14,6 +14,7 @@
 #include <unicode/ucnv.h>
 
 #include <xr_ini.h>
+#include <xrCore.h>
 #include <NET_AuthCheck.h>
 #include <ispatial.h>
 

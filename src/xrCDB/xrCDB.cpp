@@ -1,6 +1,7 @@
 // xrCDB.cpp : Defines the entry point for the DLL application.
 //
 
+#include <opcode.h>
 
 #include "xrCDB.h"
 #include "profiler.h"

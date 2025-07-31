@@ -1,4 +1,5 @@
 #include <cl_intersect.h>
+#include <opcode.h>
 #include <xr_collide_form.h>
 #include <xr_object.h>
 #include <xr_resource.h>
