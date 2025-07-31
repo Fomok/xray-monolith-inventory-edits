@@ -1,6 +1,8 @@
 
+#include <GameFont.h>
+
 #include "dxApplicationRender.h"
-#include "../../xrEngine/GameFont.h"
+#include "R_Backend.h"
 
 void draw_multiline_text(CGameFont* F, float fTargetWidth, LPCSTR pszText);
 

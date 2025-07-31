@@ -17,6 +17,7 @@
 
 #include "SkeletonX.h"
 #include "SkeletonCustom.h"
+#include "R_Backend.h"
 
 shared_str s_bones_array_const;
 shared_str s_bones_array_prev_const;

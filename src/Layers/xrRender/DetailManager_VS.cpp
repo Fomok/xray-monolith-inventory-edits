@@ -12,6 +12,8 @@
 
 #include <dx10BufferUtils.h>
 
+#include "R_Backend.h"
+
 const int quant = 16384;
 const int c_hdr = 10;
 const int c_size = 4;

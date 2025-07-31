@@ -23,6 +23,7 @@
 #include <ttapi.h>
 #endif
 
+#include "R_Backend.h"
 
 using namespace R_dsgraph;
 

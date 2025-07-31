@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "LightProjector.h"
+#include "R_Backend_Runtime.h"
 #include "RenderVisual.h"
 #include "xr_object.h"
 #include "lighttrack.h"

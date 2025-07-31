@@ -1,12 +1,11 @@
-
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/igame_level.h"
-#include "../../xrEngine/environment.h"
-#include "../../xrEngine/fmesh.h"
-
-#include "../../build_config_defines.h"
+#include <build_config_defines.h>
+#include <igame_persistent.h>
+#include <igame_level.h>
+#include <environment.h>
+#include <fmesh.h>
 
 #include "ftreevisual.h"
+#include "R_Backend_Runtime.h"
 
 shared_str m_xform;
 shared_str m_xform_v;

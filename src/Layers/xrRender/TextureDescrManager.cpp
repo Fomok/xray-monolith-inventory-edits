@@ -1,5 +1,6 @@
 #include <LocatorAPI.h>
 
+#include "R_Backend.h"
 #include "TextureDescrManager.h"
 #include "ETextureParams.h"
 #include "profiler.h"

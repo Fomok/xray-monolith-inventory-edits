@@ -15,6 +15,7 @@
 
 #include "LightTrack.h"
 #include "LightShadows.h"
+#include "R_Backend_Runtime.h"
 
 const float S_distance = 256;
 const float S_distance2 = S_distance * S_distance;

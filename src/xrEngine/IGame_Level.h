@@ -9,6 +9,7 @@
 #include <sound.h>
 #include <xr_area.h>
 
+#include "pure.h"
 #include "iinputreceiver.h"
 #include "xr_object_list.h"
 

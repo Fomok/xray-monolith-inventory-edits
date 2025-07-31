@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "../xrRender/R_Backend_Runtime.h"
-
 #include "../xrRender/resourcemanager.h"
 
 #include "../../xrEngine/vis_common.h"

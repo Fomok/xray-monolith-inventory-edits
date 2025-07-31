@@ -1,9 +1,11 @@
 // xrRender_R1.cpp : Defines the entry point for the DLL application.
 //
 
-#include "../xrRender/dxRenderFactory.h"
-#include "../xrRender/dxUIRender.h"
-#include "../xrRender/dxDebugRender.h"
+#include <dxRenderFactory.h>
+#include <dxUIRender.h>
+#include <dxDebugRender.h>
+
+#include "R_Backend.h"
 
 //BOOL APIENTRY DllMain( HANDLE hModule, 
 BOOL DllMainXrRenderR1(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

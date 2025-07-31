@@ -1,6 +1,7 @@
-#include "dxFontRender.h"
+#include <GameFont.h>
 
-#include "../../xrEngine/GameFont.h"
+#include "dxFontRender.h"
+#include "R_Backend.h"
 
 dxFontRender::dxFontRender()
 {

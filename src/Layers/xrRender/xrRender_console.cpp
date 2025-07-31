@@ -4,6 +4,7 @@
 
 #include "xrRender_console.h"
 #include "dxRenderDeviceRender.h"
+#include "R_Backend.h"
 
 u32 ps_Preset = 2;
 xr_token qpreset_token [ ] = {

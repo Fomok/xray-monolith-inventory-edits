@@ -4,6 +4,8 @@
 #include <dx10BufferUtils.h>
 #endif	//	USE_DX11
 
+#include "R_Backend.h"
+
 CBackend RCache;
 
 // Create Quad-IB

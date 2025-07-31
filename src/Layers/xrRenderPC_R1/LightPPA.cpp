@@ -2,11 +2,13 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <igame_persistent.h>
+#include <environment.h>
+#include <CustomHUD.h>
+#include <fbasicvisual.h>
+
+#include "R_Backend.h"
 #include "LightPPA.h"
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-#include "../xrRender/fbasicvisual.h"
-#include "../../xrEngine/CustomHUD.h"
 
 const u32 MAX_POLYGONS = 1024 * 8;
 const float MAX_DISTANCE = 50.f;

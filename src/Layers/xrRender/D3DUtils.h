@@ -6,7 +6,9 @@
 #define D3DUtilsH
 
 #include <device.h>
+
 #include "DrawUtils.h"
+#include "R_Backend.h"
 
 //----------------------------------------------------
 

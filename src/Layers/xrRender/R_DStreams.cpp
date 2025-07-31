@@ -2,6 +2,7 @@
 #include <dxRenderDeviceRender.h>
 
 #include "ResourceManager.h"
+#include "R_Backend.h"
 #include "R_DStreams.h"
 
 //////////////////////////////////////////////////////////////////////

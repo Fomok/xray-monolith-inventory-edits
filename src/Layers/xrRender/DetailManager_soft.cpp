@@ -1,5 +1,5 @@
-
 #include "detailmanager.h"
+#include "R_Backend.h"
 
 const u32 vs_size = 3000;
 

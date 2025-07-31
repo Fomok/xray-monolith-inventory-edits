@@ -3,18 +3,16 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#pragma warning(default:4995)
+#include <fmesh.h>
+#include <xrCPU_Pipe.h>
+#include <dx10BufferUtils.h>
+#include <EnnumerateVertices.h>
 
-#include "../../xrEngine/fmesh.h"
-#include "../../xrCPU_Pipe/xrCPU_Pipe.h"
 #include "FSkinned.h"
 #include "SkeletonX.h"
+#include "R_Backend.h"
 
-#include "../xrRenderDX10/dx10BufferUtils.h"
-
-#include "../../xrEngine/EnnumerateVertices.h"
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////

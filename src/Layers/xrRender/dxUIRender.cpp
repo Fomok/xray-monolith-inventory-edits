@@ -2,6 +2,7 @@
 
 #include "dxUIRender.h"
 #include "dxUIShader.h"
+#include "R_Backend_Runtime.h"
 
 dxUIRender UIRenderImpl;
 

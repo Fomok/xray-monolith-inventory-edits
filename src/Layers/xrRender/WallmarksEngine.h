@@ -5,6 +5,8 @@
 
 #include <intrusive_ptr.h>
 
+#include "FVF.h"
+
 namespace WallmarksEngine
 {
 	struct wm_slot;

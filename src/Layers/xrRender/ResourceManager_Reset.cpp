@@ -7,6 +7,8 @@
 	#include <xrAPI.h>
 #endif
 
+#include "R_Backend.h"
+
 void CResourceManager::reset_begin()
 {
 	// destroy everything, renderer may use

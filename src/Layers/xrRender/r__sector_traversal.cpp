@@ -1,6 +1,8 @@
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
+#include <igame_persistent.h>
+#include <environment.h>
+
 #include "fvf.h"
+#include "R_Backend.h"
 
 CPortalTraverser PortalTraverser;
 

@@ -1,5 +1,6 @@
 #include <defines.h>
 
+#include "R_Backend_Runtime.h"
 #include "dxRenderDeviceRender.h"
 #include "ResourceManager.h"
 

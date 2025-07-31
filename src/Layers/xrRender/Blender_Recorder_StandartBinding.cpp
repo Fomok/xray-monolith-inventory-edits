@@ -1,17 +1,15 @@
 ﻿
-#pragma warning(push)
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#pragma warning(pop)
+
+#include <igame_persistent.h>
+#include <environment.h>
 
 #include "ResourceManager.h"
 #include "blenders\Blender_Recorder.h"
 #include "blenders\Blender.h"
 
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-
 #include "dxRenderDeviceRender.h"
+#include "R_Backend_Runtime.h"
 
 // matrices
 #define	BIND_DECLARE(xf)	\
