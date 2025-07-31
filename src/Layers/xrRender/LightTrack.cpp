@@ -6,13 +6,9 @@
 #include "RenderVisual.h"
 #include "xr_object.h"
 
-#ifdef _EDITOR
-#	include "igame_persistent.h"
-#	include "environment.h"
-#else
-#	include "igame_persistent.h"
-#	include "environment.h"
-#endif
+#include "igame_persistent.h"
+#include "igame_level.h"
+#include "environment.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

@@ -1,3 +1,4 @@
+#include <IGame_Level.h>
 
 #include "DetailManager.h"
 #include "cl_intersect.h"

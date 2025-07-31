@@ -1,3 +1,4 @@
+#include <IGame_Level.h>
 #include <xr_ini.h>
 
 #include "ParticleEffectDef.h"

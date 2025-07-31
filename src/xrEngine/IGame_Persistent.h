@@ -2,6 +2,7 @@
 #define IGame_PersistentH
 #pragma once
 
+#include <EngineAPI.h>
 #include <gametype_chooser.h>
 #include <xr_trims.h>
 

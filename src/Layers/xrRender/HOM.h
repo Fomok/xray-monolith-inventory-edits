@@ -3,7 +3,8 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "../../xrEngine/IGame_Persistent.h"
+#include <IGame_Persistent.h>
+#include <xrXRC.h>
 
 class occTri;
 

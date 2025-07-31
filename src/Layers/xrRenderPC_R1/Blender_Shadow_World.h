@@ -2,6 +2,9 @@
 #define BLENDER_SHADOW_WORLD_H
 #pragma once
 
+#include "blenders/Blender.h"
+
+
 class CBlender_ShWorld : public IBlender
 {
 public:

@@ -6,6 +6,8 @@
 #define AFX_BLENDER_DEFAULT_AREF_H__E17F011F_C371_4464_B75A_01D68F55FC4E__INCLUDED_
 #pragma once
 
+#include "blenders/Blender.h"
+
 class CBlender_default_aref : public IBlender
 {
 public:

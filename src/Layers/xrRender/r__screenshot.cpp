@@ -1,5 +1,6 @@
 #include <defines.h>
 #include <LocatorAPI.h>
+#include <IGame_Level.h>
 #include <string_concatenations.h>
 #include <tga.h>
 #include <xr_effgamma.h>

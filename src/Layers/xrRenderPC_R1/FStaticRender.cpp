@@ -7,6 +7,7 @@
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <igame_persistent.h>
+#include <igame_level.h>
 #include <environment.h>
 #include <fbasicvisual.h>
 #include <CustomHUD.h>

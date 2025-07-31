@@ -5,6 +5,7 @@
 #include <fmesh.h>
 #include <xrLevel.h>
 #include <x_ray.h>
+#include <IGame_Level.h>
 #include <IGame_Persistent.h>
 #include <stream_reader.h>
 #include <dxRenderDeviceRender.h>

@@ -2,6 +2,8 @@
 #define BLENDER_BLUR_H
 #pragma once
 
+#include "blenders/Blender.h"
+
 class CBlender_Blur : public IBlender
 {
 public:

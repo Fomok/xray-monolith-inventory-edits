@@ -1,5 +1,6 @@
 #include <defines.h>
 #include <IGame_Persistent.h>
+#include <IGame_Level.h>
 
 #include "fstaticrender_rendertarget.h"
 #include "R_Backend_Runtime.h"

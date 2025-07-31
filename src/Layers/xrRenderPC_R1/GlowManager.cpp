@@ -5,6 +5,7 @@
 #include <igame_persistent.h>
 #include <environment.h>
 #include <x_ray.h>
+#include <IGame_Level.h>
 #include <GameFont.h>
 #include <xr_object.h>
 
