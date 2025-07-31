@@ -24,7 +24,6 @@
 #endif // NO_ENGINE_API
 */
 
-#include "device.h"
 #include "../xrcore/fs.h"
 
 #include "../xrcdb/xrXRC.h"
