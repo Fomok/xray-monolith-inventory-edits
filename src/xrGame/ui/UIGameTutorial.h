@@ -1,4 +1,7 @@
 #pragma once
+
+#include <sound.h>
+
 #include "xr_level_controller.h"
 
 class CUIWindow;

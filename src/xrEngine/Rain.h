@@ -6,7 +6,8 @@
 #define RainH
 #pragma once
 
-#include "../xrcdb/xr_collide_defs.h"
+#include <sound.h>
+#include <xr_collide_defs.h>
 
 //refs
 class ENGINE_API IRender_DetailModel;

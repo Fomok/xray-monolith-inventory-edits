@@ -5,6 +5,7 @@
 
 #include <EngineAPI.h>
 #include <EventAPI.h>
+#include <sound.h>
 #include <xr_area.h>
 
 #include "iinputreceiver.h"

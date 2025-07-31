@@ -8,8 +8,9 @@
 
 #pragma once
 
+#include <sound.h>
+
 #include "script_entity_space.h"
-//#include "Kinematics.h"
 #include "KinematicsAnimated.h"
 
 class CSE_Abstract;

@@ -1,3 +1,4 @@
+#include <sound.h>
 
 #include "ai_sounds.h"
 

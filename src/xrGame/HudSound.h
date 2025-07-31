@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sound.h>
+
 struct HUD_SOUND_ITEM
 {
 	HUD_SOUND_ITEM() : m_activeSnd(NULL), m_b_exclusive(false)

@@ -1,6 +1,8 @@
 #ifndef EnvironmentH
 #define EnvironmentH
 
+#include <sound.h>
+
 // refs
 class ENGINE_API IRender_Visual;
 class ENGINE_API CInifile;

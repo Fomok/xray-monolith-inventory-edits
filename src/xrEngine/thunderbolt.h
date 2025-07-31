@@ -6,14 +6,15 @@
 #define ThunderboltH
 #pragma once
 
-//refs
-class ENGINE_API IRender_DetailModel;
-class ENGINE_API CLAItem;
+#include <sound.h>
 
 #include "FactoryPtr.h"
 #include "LensFlareRender.h"
 #include "ThunderboltDescRender.h"
 #include "ThunderboltRender.h"
+
+class ENGINE_API IRender_DetailModel;
+class ENGINE_API CLAItem;
 
 #ifdef INGAME_EDITOR
 # define INGAME_EDITOR_VIRTUAL virtual

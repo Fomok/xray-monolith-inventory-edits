@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <sound.h>
+
 #include "fooditem.h"
 #include "script_export_space.h"
 
