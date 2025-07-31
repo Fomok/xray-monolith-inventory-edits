@@ -16,6 +16,7 @@
 #	include "..\xrRenderPC_R4\r_backend_lod.h"
 #endif
 
+#include "HW.h"
 #include "r_DStreams.h"
 #include "r_constants_cache.h"
 #include "r_backend_xform.h"
