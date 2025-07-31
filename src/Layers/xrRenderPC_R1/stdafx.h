@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "../../xrEngine/_d3d_extensions.h"
-
 #ifndef _EDITOR
 #include "../../xrEngine/igame_level.h"
 
