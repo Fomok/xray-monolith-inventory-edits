@@ -1,3 +1,5 @@
+#include <FS.h>
+
 #include "xrserver.h"
 #include "xrmessages.h"
 #include "xrserver_objects.h"

@@ -6,6 +6,7 @@
 //	Description : Server entity wrapper
 ////////////////////////////////////////////////////////////////////////////
 
+#include <FS.h>
 #include <net_utils.h>
 
 #include "server_entity_wrapper.h"

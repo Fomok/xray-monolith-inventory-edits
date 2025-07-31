@@ -6,6 +6,8 @@
 //	Description : ALife Simulator header
 ////////////////////////////////////////////////////////////////////////////
 
+#include <FS.h>
+
 #include "alife_simulator_header.h"
 
 CALifeSimulatorHeader::~CALifeSimulatorHeader()

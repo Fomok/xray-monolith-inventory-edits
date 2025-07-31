@@ -2,6 +2,9 @@
 #define xrPROPERTIES_H
 
 #pragma once
+
+#include <FS.h>
+
 #pragma pack(push,4)
 
 // Parameter/Property specifications

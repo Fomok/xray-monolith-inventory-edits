@@ -2,6 +2,7 @@
 
 #include <d3d9types.h>
 
+#include <FS.h>
 #include <string_concatenations.h>
 #include "xrSASH.h"
 

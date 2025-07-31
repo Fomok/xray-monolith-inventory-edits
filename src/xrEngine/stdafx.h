@@ -24,8 +24,6 @@
 #endif // NO_ENGINE_API
 */
 
-#include "../xrcore/fs.h"
-
 #include "../xrcdb/xrXRC.h"
 
 #include "../xrSound/sound.h"

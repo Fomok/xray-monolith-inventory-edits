@@ -1,9 +1,7 @@
 #ifndef EnvelopeH
 #define EnvelopeH
 
-// refs
-class IWriter;
-class IReader;
+#include <FS.h>
 
 /*
 ======================================================================

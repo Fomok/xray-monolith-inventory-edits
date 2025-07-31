@@ -6,10 +6,12 @@
 //	Description : Patrol path
 ////////////////////////////////////////////////////////////////////////////
 
+#include <fs.h>
 #include <regex>
+#include <mezz_stringbuffer.h>
+
 #include "patrol_path.h"
 #include "levelgamedef.h"
-#include "../xrCore/mezz_stringbuffer.h"
 
 LPCSTR TEST_PATROL_PATH_NAME = "val_dogs_nest4_centre";
 

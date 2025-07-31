@@ -1,6 +1,7 @@
 #ifndef GSC_DSINGNED_LTX_INCLUDED
 #define GSC_DSINGNED_LTX_INCLUDED
 
+#include <FS.h>
 #include <fastdelegate.h>
 #include <xr_ini.h>
 

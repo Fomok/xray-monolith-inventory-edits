@@ -6,6 +6,8 @@
 //	Description : Script reader
 ////////////////////////////////////////////////////////////////////////////
 
+#include <FS.h>
+
 #include "pch_script.h"
 #include "script_reader.h"
 

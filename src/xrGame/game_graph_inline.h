@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <fs.h>
+
 #ifdef AI_COMPILER
 IC CGameGraph::CGameGraph									(LPCSTR file_name, u32 current_version)
 {
