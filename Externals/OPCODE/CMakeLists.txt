@@ -32,7 +32,7 @@ target_compile_options(OPCODE
 target_precompile_headers(OPCODE
   PRIVATE
   [["xrCore.h"]]
-  [["alloc.h"]]
+  #[["alloc.h"]]
   [["opcode.h"]]
 )
 
