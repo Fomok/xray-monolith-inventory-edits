@@ -7,6 +7,7 @@
 
 #include <dxRenderDeviceRender.h>
 #include <string_concatenations.h>
+#include <resourcemanager.h>
 
 #include "CSCompiler.h"
 #include "ComputeShader.h"
