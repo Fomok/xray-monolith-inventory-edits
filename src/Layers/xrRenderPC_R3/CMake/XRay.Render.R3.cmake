@@ -1,3 +1,12 @@
+add_module(XRay.Render.R3.ForceIncludes INTERFACE)
+
+target_compile_options(XRay.Render.R3.ForceIncludes
+  INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FIr3.h>
+  $<$<CXX_COMPILER_ID:Clang>:-includer3.h>
+  $<$<CXX_COMPILER_ID:GNU>:-includer3.h>
+)
+
 add_module(XRay.Render.R3
   TYPE STATIC
 
@@ -23,6 +32,7 @@ add_module(XRay.Render.R3
   tbb
   
   XRay.Platform
+  XRay.Render.R3.ForceIncludes
   
   XRay.Core.Defines
   XRay.Engine.Defines
