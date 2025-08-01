@@ -1,4 +1,5 @@
 #include <defines.h>
+#include <dx10EventWrapper.h>
 
 #include "igame_persistent.h"
 #include "irenderable.h"

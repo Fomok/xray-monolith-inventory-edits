@@ -1,6 +1,7 @@
 
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
+#include <igame_persistent.h>
+#include <environment.h>
+#include <dx10EventWrapper.h>
 
 #pragma pack(push,4)
 struct v_build

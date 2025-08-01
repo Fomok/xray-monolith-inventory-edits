@@ -1,4 +1,5 @@
 #include <defines.h>
+#include <dx10EventWrapper.h>
 
 IC bool pred_area(light* _1, light* _2)
 {

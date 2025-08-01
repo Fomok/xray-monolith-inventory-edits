@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "../xrRenderDX10/dx10EventWrapper.h"
-
 #include "../xrRender/Shader.h"
 #include "../xrRender/R_Backend.h"
 #include "../xrRender/R_Backend_Runtime.h"

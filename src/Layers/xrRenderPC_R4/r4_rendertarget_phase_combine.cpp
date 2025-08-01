@@ -2,6 +2,7 @@
 #include <igame_persistent.h>
 #include <environment.h>
 #include <dxEnvironmentRender.h>
+#include <dx10EventWrapper.h>
 
 #define STENCIL_CULL 0
 

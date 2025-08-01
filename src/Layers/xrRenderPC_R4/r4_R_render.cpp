@@ -3,6 +3,7 @@
 #include <customhud.h>
 #include <xr_object.h>
 #include <xrCore.h>
+#include <dx10EventWrapper.h>
 
 #include <QueryHelper.h>
 
