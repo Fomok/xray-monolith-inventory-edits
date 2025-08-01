@@ -4,6 +4,4 @@
 
 #pragma once
 
-#include "../xrRender/blenders\blender.h"
-#include "../xrRender/blenders\blender_clsid.h"
 #include "../xrRender/xrRender_console.h"

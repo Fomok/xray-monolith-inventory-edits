@@ -1,5 +1,6 @@
 
-#include "../xrRender/uber_deffer.h"
+#include <uber_deffer.h>
+#include <blenders/Blender_CLSID.h>
 #include "Blender_deffer_model.h"
 
 CBlender_deffer_model::CBlender_deffer_model()
