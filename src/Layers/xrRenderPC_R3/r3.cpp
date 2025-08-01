@@ -15,6 +15,7 @@
 #include <xrCore.h>
 #include <xr_object.h>
 #include <StateManager/dx10StateManager.h>
+#include <resourcemanager.h>
 
 #include "r3.h"
 #include "D3DX10Core.h"

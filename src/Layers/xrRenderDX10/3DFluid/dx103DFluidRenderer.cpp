@@ -1,5 +1,6 @@
 #include <defines.h>
 #include <dxRenderDeviceRender.h>
+#include <resourcemanager.h>
 
 #include "dx103DFluidRenderer.h"
 #include "dx103DFluidBlenders.h"

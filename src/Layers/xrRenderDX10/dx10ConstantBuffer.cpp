@@ -1,5 +1,6 @@
 #include <defines.h>
 #include <dxRenderDeviceRender.h>
+#include <resourcemanager.h>
 
 #include "dx10ConstantBuffer.h"
 #include "dx10BufferUtils.h"
