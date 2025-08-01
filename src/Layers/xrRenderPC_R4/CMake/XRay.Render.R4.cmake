@@ -42,6 +42,28 @@ add_module(XRay.Render.R4
   XRay.Sound.Includes
   
   PRECOMPILES
+  #[["d3dx9.h"]]
+  #[["d3d11.h"]]
+  #[["d3d11_1.h"]]
+  #[["d3d11_2.h"]]
+  #[["D3Dx11core.h"]]
+  #[["D3DCompiler.h"]]
+  #[["xrD3DDefs.h"]]
+  #[["dx10EventWrapper.h"]]
+  #[["psystem.h"]]
+  #[["HW.h"]]
+  #[["Shader.h"]]
+  #[["R_Backend.h"]]
+  #[["R_Backend_Runtime.h"]]
+  #[["resourcemanager.h"]]
+  #[["vis_common.h"]]
+  #[["render.h"]]
+  #[["_d3d_extensions.h"]]
+  #[["igame_level.h"]]
+  #[["blenders/blender.h"]]
+  #[["blenders/blender_clsid.h"]]
+  #[["xrRender_console.h"]]
+  #[["r4.h"]]
   stdafx.h
 
   SOURCES
