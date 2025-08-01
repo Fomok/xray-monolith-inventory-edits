@@ -2,6 +2,8 @@
 #include <FBasicVisual.h>
 #include <r__pixel_calculator.h>
 
+#include "HW.h"
+
 #define rt_dimensions 1024
 
 #if !defined(USE_DX10) && !defined(USE_DX11)

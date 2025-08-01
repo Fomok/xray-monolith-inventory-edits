@@ -1,5 +1,7 @@
 #pragma once
 
+class light;
+
 class CLight_Compute_XFORM_and_VIS
 {
 public:

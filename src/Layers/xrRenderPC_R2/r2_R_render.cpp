@@ -5,6 +5,8 @@
 #include <FBasicVisual.h>
 #include <xrRender_console.h>
 
+#include "r2.h"
+
 IC bool pred_sp_sort(ISpatial* _1, ISpatial* _2)
 {
 	float d1 = _1->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition);

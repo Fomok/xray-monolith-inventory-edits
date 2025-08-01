@@ -1,5 +1,3 @@
-
-
 void CRenderTarget::phase_smaa()
 {
 	//Constants

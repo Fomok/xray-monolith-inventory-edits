@@ -1,3 +1,12 @@
+add_module(XRay.Render.R2.ForceIncludes INTERFACE)
+
+target_compile_options(XRay.Render.R2.ForceIncludes
+  INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FIr2.h>
+  $<$<CXX_COMPILER_ID:Clang>:-includer2.h>
+  $<$<CXX_COMPILER_ID:GNU>:-includer2.h>
+)
+
 add_module(XRay.Render.R2
   TYPE STATIC
 
@@ -21,6 +30,7 @@ add_module(XRay.Render.R2
   tbb
 
   XRay.Platform
+  XRay.Render.R2.ForceIncludes
   
   XRay.Core.Defines
   XRay.Engine.Defines
@@ -58,7 +68,6 @@ add_module(XRay.Render.R2
   #[["psystem.h"]]
   #[["xrRender_console.h"]]
   #[["r2.h"]]
-  stdafx.h
 
   SOURCES
   ../../xrEngine/cl_intersect.h
@@ -67,7 +76,6 @@ add_module(XRay.Render.R2
   ../xrRender/xrRender_console.h
   jitter.h
   xrRender_R2.cpp
-  stdafx.h
 )
 
 add_module(XRay.Render.R2.Core

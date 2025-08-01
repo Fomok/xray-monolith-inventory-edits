@@ -1,6 +1,7 @@
 #include <xrRender_console.h>
 #include <igame_persistent.h>
 #include <environment.h>
+#include "r2.h"
 
 //////////////////////////////////////////////////////////////////////////
 // tables to calculate view-frustum bounds in world space

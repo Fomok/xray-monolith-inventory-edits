@@ -1,5 +1,6 @@
 #include <xrRender_console.h>
 #include <customhud.h>
+#include "r2.h"
 
 float g_fSCREEN;
 

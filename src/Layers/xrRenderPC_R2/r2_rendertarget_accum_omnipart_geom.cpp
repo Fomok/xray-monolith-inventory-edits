@@ -1,6 +1,8 @@
 #include <defines.h>
 #include <du_sphere_part.h>
 
+#include "r2.h"
+
 void CRenderTarget::accum_omnip_geom_create()
 {
 	u32 dwUsage = D3DUSAGE_WRITEONLY;

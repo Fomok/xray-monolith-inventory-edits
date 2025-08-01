@@ -1,4 +1,3 @@
-
 void CRenderTarget::phase_lut()
 {
 	//Constants

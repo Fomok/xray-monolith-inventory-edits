@@ -1,3 +1,4 @@
+#include "r2.h"
 
 BOOL xrRender_test_hw()
 {

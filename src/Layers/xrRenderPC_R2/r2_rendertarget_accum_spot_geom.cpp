@@ -1,6 +1,6 @@
-
 #include <defines.h>
 #include <du_cone.h>
+#include "r2.h"
 
 /*
 Fvector du_cone_vertices[DU_CONE_NUMVERTEX]=

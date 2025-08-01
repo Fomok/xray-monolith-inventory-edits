@@ -1,4 +1,5 @@
 #include <xrRender_console.h>
+#include "r2.h"
 
 #pragma pack(push,4)
 struct v_build

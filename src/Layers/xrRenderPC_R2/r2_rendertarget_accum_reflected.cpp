@@ -1,3 +1,4 @@
+#include "r2.h"
 
 void CRenderTarget::accum_reflected(light* L)
 {

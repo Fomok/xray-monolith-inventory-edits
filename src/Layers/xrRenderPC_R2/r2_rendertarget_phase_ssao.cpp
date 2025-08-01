@@ -1,6 +1,4 @@
-
-//#include "../../xrEngine/igame_persistent.h"
-//#include "../../xrEngine/environment.h"
+#include "r2.h"
 
 #pragma pack(push,4)
 struct v_ssao
