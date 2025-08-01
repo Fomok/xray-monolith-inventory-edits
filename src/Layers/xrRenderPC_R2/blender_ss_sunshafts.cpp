@@ -1,5 +1,5 @@
-
 #include "Blender_ss_sunshafts.h"
+#include "jitter.h"
 
 CBlender_sunshafts::CBlender_sunshafts() { description.CLS = 0; }
 

@@ -65,6 +65,7 @@ add_module(XRay.Render.R2
   ../xrRender/xrD3DDefs.h
   ../xrRender/xrRender_console.cpp
   ../xrRender/xrRender_console.h
+  jitter.h
   xrRender_R2.cpp
   stdafx.h
 )
