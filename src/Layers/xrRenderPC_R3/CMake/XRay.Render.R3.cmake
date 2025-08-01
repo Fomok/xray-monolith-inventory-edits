@@ -52,7 +52,27 @@ add_module(XRay.Render.R3
   XRay.Sound.Includes
   
   PRECOMPILES
-  stdafx.h
+  #[["d3dx9.h"]]
+  #[["d3d10_1.h"]]
+  #[["d3d11.h"]]
+  #[["D3Dx10core.h"]]
+  #[["D3DCompiler.h"]]
+  #[["xrD3DDefs.h"]]
+  #[["Debug/dxPixEventWrapper.h"]]
+  #[["psystem.h"]]
+  #[["HW.h"]]
+  #[["Shader.h"]]
+  #[["R_Backend.h"]]
+  #[["R_Backend_Runtime.h"]]
+  #[["resourcemanager.h"]]
+  #[["vis_common.h"]]
+  #[["render.h"]]
+  #[["_d3d_extensions.h"]]
+  #[["igame_level.h"]]
+  #[["blenders\blender.h"]]
+  #[["blenders\blender_clsid.h"]]
+  #[["xrRender_console.h"]]
+  #[["r3.h"]]
 
   SOURCES
   ../xrRender/xrD3DDefs.h
@@ -60,9 +80,9 @@ add_module(XRay.Render.R3
   ../xrRender/xrRender_console.cpp
   ../xrRender/xrRender_console.h
 
-  xrRender_R3.cpp
+  jitter.h
 
-  stdafx.h
+  xrRender_R3.cpp
 )
 
 add_module(XRay.Render.R3.3DFluid
