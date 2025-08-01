@@ -1,5 +1,5 @@
-
 #include "Blender_light_spot.h"
+#include "jitter.h"
 
 CBlender_accum_spot::CBlender_accum_spot() { description.CLS = 0; }
 

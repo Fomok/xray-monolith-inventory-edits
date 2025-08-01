@@ -1,5 +1,5 @@
-
 #include "Blender_light_direct.h"
+#include "jitter.h"
 
 CBlender_accum_direct::CBlender_accum_direct() { description.CLS = 0; }
 
