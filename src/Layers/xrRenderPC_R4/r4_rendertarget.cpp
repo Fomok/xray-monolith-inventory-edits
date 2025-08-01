@@ -5,6 +5,7 @@
 #include <dxRenderDeviceRender.h>
 #include <xrRender_console.h>
 #include <D3DX10Tex.h>
+#include <D3DX11Tex.h>
 
 #include "blender_light_occq.h"
 #include "blender_light_mask.h"

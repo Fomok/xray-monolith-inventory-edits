@@ -4,19 +4,6 @@
 
 #pragma once
 
-#include <d3dx9.h>
-#pragma warning(default:4995)
-#pragma warning(disable:4714)
-#pragma warning( 4 : 4018 )
-#pragma warning( 4 : 4244 )
-#pragma warning(disable:4237)
-
-#include <d3d11.h>
-#include <d3d11_1.h>
-#include <d3d11_2.h>
-#include <D3Dx11core.h>
-#include <D3DCompiler.h>
-
 #include "../xrRender/xrD3DDefs.h"
 
 #include "../xrRenderDX10/dx10EventWrapper.h"

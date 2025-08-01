@@ -1,3 +1,5 @@
+#include <D3DX11tex.h>
+
 #include <defines.h>
 #include <LocatorAPI.h>
 #include <IGame_Level.h>

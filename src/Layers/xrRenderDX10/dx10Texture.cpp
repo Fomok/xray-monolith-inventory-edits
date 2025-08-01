@@ -3,14 +3,18 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <d3dx9.h>
-#include <D3DX10Tex.h>
 #include <dxRenderDeviceRender.h>
-
 #include <defines.h>
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <xrCore.h>
 #include <xr_ini.h>
+
+#if defined(USE_DX10)
+#include <D3DX10Tex.h>
+#elif defined(USE_DX11)
+#include <D3DX11Tex.h>
+#endif
 
 // #include "std_classes.h"
 // #include "xr_avi.h"

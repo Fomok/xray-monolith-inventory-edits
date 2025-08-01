@@ -14,6 +14,7 @@
 #include <ShaderResourceTraits.h>
 #include <profiler.h>
 #include <xrCore.h>
+#include <d3dcompiler.h>
 
 #include "r4.h"
 
