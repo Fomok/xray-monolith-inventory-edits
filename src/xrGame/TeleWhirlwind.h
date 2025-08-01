@@ -1,5 +1,8 @@
 #ifndef TELE_WHIRLWIND
 #define TELE_WHIRLWIND
+
+#include <DPlay/dplay8.h>
+
 #include "ai/monsters/telekinesis.h"
 #include "ai/monsters/telekinetic_object.h"
 #include "../xrphysics/PHImpact.h"

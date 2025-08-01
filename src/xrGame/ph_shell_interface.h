@@ -1,5 +1,7 @@
 #pragma once
 
+#include <DPlay/dplay8.h>
+
 interface IPhysicShellCreator
 {
 public:
