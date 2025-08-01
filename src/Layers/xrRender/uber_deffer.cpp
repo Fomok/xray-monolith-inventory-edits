@@ -1,4 +1,5 @@
 #include <string_concatenations.h>
+#include <resourcemanager.h>
 
 #include "uber_deffer.h"
 #include "dxRenderDeviceRender.h"

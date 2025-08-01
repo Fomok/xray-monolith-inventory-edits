@@ -3,6 +3,7 @@
 #include <string_concatenations.h>
 #include <xrCore.h>
 
+#include <resourcemanager.h>
 #include <fbasicvisual.h>
 #include <xr_object.h>
 #include <CustomHUD.h>
