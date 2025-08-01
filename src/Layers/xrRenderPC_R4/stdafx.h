@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "../xrRender/xrD3DDefs.h"
-
 #include "../xrRenderDX10/dx10EventWrapper.h"
 
 #include "../../xrParticles/psystem.h"
