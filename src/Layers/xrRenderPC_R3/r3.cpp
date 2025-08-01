@@ -1,4 +1,6 @@
-﻿#include <3DFluid\dx103DFluidManager.h>
+﻿#include <d3dcompiler.h>
+
+#include <3DFluid\dx103DFluidManager.h>
 #include <defines.h>
 #include <fbasicvisual.h>
 #include <CustomHUD.h>

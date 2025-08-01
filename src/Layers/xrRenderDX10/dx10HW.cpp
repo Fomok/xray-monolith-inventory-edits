@@ -8,6 +8,8 @@
 # include <dxgi1_5.h>
 #endif
 
+#include <D3DX10core.h>
+
 #include <defines.h>
 #include <HW.h>
 #include <xrCore.h>
