@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <blenders/Blender.h>
+
 #if !defined(SHADER__INCLUDED_)
 #define SHADER__INCLUDED_
 #pragma once

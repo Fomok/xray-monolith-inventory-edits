@@ -1,4 +1,5 @@
-#include "../xrRender/light.h"
+#include <light.h>
+#include <IGame_Level.h>
 
 IC bool pred_LI(const light_indirect& A, const light_indirect& B)
 {
