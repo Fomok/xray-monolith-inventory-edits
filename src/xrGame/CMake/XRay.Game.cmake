@@ -32,7 +32,7 @@ add_module(XRay.Game
   PRECOMPILES
   #[[$<$<COMPILE_LANGUAGE:CXX>:DPlay/dplay8.h>]]
 
-  $<$<COMPILE_LANGUAGE:CXX>:build_config_defines.h>
+  #$<$<COMPILE_LANGUAGE:CXX>:build_config_defines.h>
 
   $<$<COMPILE_LANGUAGE:CXX>:macros.h>
 

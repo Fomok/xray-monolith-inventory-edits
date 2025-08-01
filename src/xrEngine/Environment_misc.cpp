@@ -1,9 +1,11 @@
+#include <build_config_defines.h>
 #include <LevelGameDef.h>
 #include <LocatorAPI.h>
 #include <object_broker.h>
 #include <string_concatenations.h>
 #include <xr_ini.h>
 #include <xr_trims.h>
+#include <Unknwn.h>
 
 #include "Environment.h"
 #include "IGame_Level.h"
