@@ -5,7 +5,12 @@
 #include <IObjectPhysicsCollision.h>
 #include <IPhysicsGeometry.h>
 #include <dxRenderDeviceRender.h>
+
+#if defined(USE_DX10)
 #include <Debug/dxPixEventWrapper.h>
+#elif defined(USE_DX11)
+#include <dx10EventWrapper.h>
+#endif
 
 #include "dx103DFluidBlenders.h"
 #include "dx103DFluidData.h"
