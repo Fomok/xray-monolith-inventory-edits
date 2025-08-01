@@ -1,4 +1,5 @@
-#include "./dx10RainBlender.h"
+#include "dx10RainBlender.h"
+#include "jitter.h"
 
 void CBlender_rain::Compile(CBlender_Compile& C)
 {
