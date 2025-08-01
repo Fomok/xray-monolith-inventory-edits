@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include "../xrRender/R_Backend.h"
-#include "../xrRender/R_Backend_Runtime.h"
-
 #include "../xrRender/resourcemanager.h"
 
 #include "../xrRender/blenders\blender.h"

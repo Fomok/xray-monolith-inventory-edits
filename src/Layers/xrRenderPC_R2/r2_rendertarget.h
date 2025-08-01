@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../xrRender/ColorMapManager.h"
+#include <ColorMapManager.h>
+#include <R_Backend_Runtime.h>
 
 class light;
 
