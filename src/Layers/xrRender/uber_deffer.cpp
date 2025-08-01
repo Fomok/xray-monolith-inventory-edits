@@ -3,6 +3,7 @@
 
 #include "uber_deffer.h"
 #include "dxRenderDeviceRender.h"
+#include "blenders/Blender_Recorder.h"
 
 void fix_texture_name(LPSTR fn);
 

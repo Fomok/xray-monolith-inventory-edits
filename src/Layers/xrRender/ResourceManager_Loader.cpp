@@ -3,7 +3,7 @@
 
 #include "ResourceManager.h"
 #include "blenders\blender.h"
-
+#include "blenders/Blender_CLSID.h"
 
 void CResourceManager::OnDeviceDestroy(BOOL)
 {
