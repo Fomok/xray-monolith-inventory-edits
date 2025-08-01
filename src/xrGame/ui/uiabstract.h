@@ -1,10 +1,9 @@
 #pragma once
 
-#pragma warning (disable : 4511 )
-#pragma warning (disable : 4512 )
-
-#include "../ui_base.h"
 #include <boost/noncopyable.hpp>
+
+#include "ui_base.h"
+#include "gamefont.h"
 
 typedef CGameFont::EAligment ETextAlignment;
 

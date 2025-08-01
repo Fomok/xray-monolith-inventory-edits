@@ -36,7 +36,7 @@ add_module(XRay.Game
 
   #$<$<COMPILE_LANGUAGE:CXX>:macros.h>
 
-  [[$<$<COMPILE_LANGUAGE:CXX>:gamefont.h>]]
+  #[[$<$<COMPILE_LANGUAGE:CXX>:gamefont.h>]]
   [[$<$<COMPILE_LANGUAGE:CXX>:xr_object.h>]]
   #[[$<$<COMPILE_LANGUAGE:CXX>:igame_level.h>]]
   #[[$<$<COMPILE_LANGUAGE:CXX>:xrPhysics.h>]]
