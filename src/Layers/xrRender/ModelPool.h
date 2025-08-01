@@ -4,6 +4,9 @@
 #define ModelPoolH
 #pragma once
 
+#include "ParticleEffectDef.h"
+#include "ParticleGroup.h"
+
 // refs
 class dxRender_Visual;
 

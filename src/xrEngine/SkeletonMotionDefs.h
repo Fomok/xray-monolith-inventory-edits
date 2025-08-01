@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include "_types.h"
+#include "vector.h"
+
 const u32 MAX_PARTS = 4;
 
 const f32 SAMPLE_FPS = 30.f;

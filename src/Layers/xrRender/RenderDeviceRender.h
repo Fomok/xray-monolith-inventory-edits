@@ -2,6 +2,8 @@
 #define RenderDeviceRender_included
 #pragma once
 
+#include "_matrix.h"
+
 class IRenderDeviceRender
 {
 public:

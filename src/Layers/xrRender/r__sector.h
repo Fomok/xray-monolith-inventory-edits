@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Shader.h"
+#include "Render.h"
 
 class CPortal;
 class CSector;

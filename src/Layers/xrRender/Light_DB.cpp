@@ -1,3 +1,4 @@
+#include <Device.h>
 #include <LocatorAPI.h>
 
 #include "_d3d_extensions.h"

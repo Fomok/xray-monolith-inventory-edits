@@ -5,6 +5,7 @@
 
 #include <defines.h>
 #include <LocatorAPI.h>
+#include <frustum.h>
 #include <xr_ini.h>
 
 #include "DetailManager.h"

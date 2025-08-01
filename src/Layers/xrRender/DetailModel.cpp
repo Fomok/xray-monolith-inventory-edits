@@ -1,4 +1,7 @@
+#include <FS.h>
+
 #include "detailmodel.h"
+#include "HW.h"
 
 CDetail::~CDetail()
 {

@@ -1,5 +1,4 @@
-#include "dxImGuiRender.h"
-
+#include <d3d9types.h>
 #include <imgui.h>
 
 #if defined(USE_DX11)
@@ -9,6 +8,9 @@
 #else
 #include <backends/imgui_impl_dx9.h>
 #endif
+
+#include "dxImGuiRender.h"
+#include "HW.h"
 
 void dxImGuiRender::Copy(IImGuiRender& _in)
 {

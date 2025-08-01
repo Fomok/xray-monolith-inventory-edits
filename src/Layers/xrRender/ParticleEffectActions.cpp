@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 
 #include <particle_actions_collection.h>
+#include <FS.h>
 #include <xr_ini.h>
 
 #include "ParticleEffectActions.h"

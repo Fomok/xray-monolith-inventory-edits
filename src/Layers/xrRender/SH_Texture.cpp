@@ -1,5 +1,7 @@
 #include <defines.h>
 #include <LocatorAPI.h>
+#include <HW.h>
+#include <IGame_Persistent.h>
 
 #include "ResourceManager.h"
 

@@ -2,6 +2,9 @@
 #ifndef ParticleEffectDefH
 #define ParticleEffectDefH
 
+#include <xr_ini.h>
+
+#include "FS.h"
 #include "Shader.h"
 
 #define AnsiString std::string

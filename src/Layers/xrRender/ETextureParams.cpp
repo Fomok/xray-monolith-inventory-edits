@@ -1,4 +1,6 @@
 
+#include <FS.h>
+
 #include "ETextureParams.h"
 
 xr_token tparam_token [ ] = {

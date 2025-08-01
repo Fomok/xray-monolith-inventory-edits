@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RainRender.h"
+#include "Shader.h"
 
 class dxRainRender : public IRainRender
 {

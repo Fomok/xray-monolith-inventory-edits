@@ -3,6 +3,8 @@
 #include <string_concatenations.h>
 #include <render.h>
 #include <xrCore.h>
+#include <LocatorAPI.h>
+#include <HW.h>
 
 #include "ResourceManager.h"
 #include "tss.h"

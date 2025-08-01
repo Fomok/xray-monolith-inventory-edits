@@ -1,4 +1,8 @@
 #pragma once
+
+#include <_vector3d.h>
+#include <_matrix.h>
+
 #include "DebugShader.h"
 
 class IDebugRender

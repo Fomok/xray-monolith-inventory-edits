@@ -4,6 +4,7 @@
 #include <Engine.h>
 
 #include "EventAPI.h"
+#include "pure.h"
 
 // refs
 class ENGINE_API CGameFont;

@@ -1,6 +1,7 @@
 
 #include	<ai_script_space.h>
 #include	<ai_script_lua_extension.h>
+#include	<LocatorAPI.h>
 #include	<Render.h>
 #include	<string_concatenations.h>
 #include	<luabind/return_reference_to_policy.hpp>

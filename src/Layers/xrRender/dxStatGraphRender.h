@@ -2,9 +2,11 @@
 #define	dxStatGraphRender_included
 #pragma once
 
-#include "StatGraphRender.h"
+#include <StatGraph.h>
 
-#include "../../xrEngine/StatGraph.h"
+#include "StatGraphRender.h"
+#include "FVF.h"
+#include "Shader.h"
 
 class dxStatGraphRender : public IStatGraphRender
 {

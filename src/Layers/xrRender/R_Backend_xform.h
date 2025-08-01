@@ -2,6 +2,10 @@
 #define r_backend_xformH
 #pragma once
 
+#include "_matrix.h"
+
+struct R_constant;
+
 class ECORE_API R_xforms
 {
 public:

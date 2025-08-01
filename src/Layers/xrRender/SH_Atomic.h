@@ -4,6 +4,7 @@
 #include <xr_resource.h>
 #include <xrD3DDefs.h>
 
+#include "r_constants.h"
 #include "tss_def.h"
 
 #if defined(USE_DX10) || defined(USE_DX11)

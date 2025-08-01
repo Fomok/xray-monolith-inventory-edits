@@ -1,6 +1,8 @@
 #include <LocatorAPI.h>
 #include <fmesh.h>
 #include <string_concatenations.h>
+#include <Device.h>
+#include <xr_trims.h>
 
 #ifdef DEBUG
 #include <dump_string.h>

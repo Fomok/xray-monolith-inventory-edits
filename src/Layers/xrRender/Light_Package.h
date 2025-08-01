@@ -1,5 +1,7 @@
 #pragma once
 
+#include "_stl_extensions.h"
+
 class light;
 
 class light_Package

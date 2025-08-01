@@ -2,6 +2,11 @@
 #define fmeshH
 #pragma once
 
+#include <xrstring.h>
+
+class IReader;
+class IWriter;
+
 //BOOL ValidateIndices (u32 vCount, u32 iCount, u16* pIndices);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

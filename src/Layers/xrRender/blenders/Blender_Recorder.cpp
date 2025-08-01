@@ -2,12 +2,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-
-#include "..\ResourceManager.h"
+#include "ResourceManager.h"
 #include "Blender_Recorder.h"
 #include "Blender.h"
 
-#include "..\dxRenderDeviceRender.h"
+#include "dxRenderDeviceRender.h"
 
 static int ParseName(LPCSTR N)
 {

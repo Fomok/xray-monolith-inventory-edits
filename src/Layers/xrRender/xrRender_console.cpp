@@ -1,7 +1,9 @@
 #include <build_config_defines.h>
 #include <defines.h>
 #include <LocatorAPI.h>
+#include <IGame_Persistent.h>
 
+#include "Render.h"
 #include "xrRender_console.h"
 #include "dxRenderDeviceRender.h"
 #include "R_Backend.h"

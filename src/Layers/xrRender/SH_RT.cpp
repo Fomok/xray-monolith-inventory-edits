@@ -1,4 +1,5 @@
 #include <defines.h>
+#include <HW.h>
 
 #include "ResourceManager.h"
 #include "dxRenderDeviceRender.h"

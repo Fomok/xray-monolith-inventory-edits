@@ -10,6 +10,7 @@
 
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
+#include <log.h>
 
 #include "ai_script_lua_extension.h"
 #include "ai_script_space.h"

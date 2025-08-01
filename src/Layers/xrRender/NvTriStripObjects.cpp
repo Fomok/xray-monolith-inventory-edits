@@ -5,6 +5,7 @@
 #include <set>
 #include "NvTriStripObjects.h"
 #include "VertexCache.h"
+#include "log.h"
 
 #define CACHE_INEFFICIENCY 6
 

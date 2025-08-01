@@ -6,6 +6,7 @@
 #include <d3dx9.h>
 #include <defines.h>
 
+#include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <xrCore.h>
 #include <xr_ini.h>
@@ -14,8 +15,7 @@
 #include "dxRenderDeviceRender.h"
 #endif
 
-// #include "std_classes.h"
-// #include "xr_avi.h"
+#include "HW.h"
 
 void fix_texture_name(LPSTR fn)
 {

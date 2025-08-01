@@ -3,6 +3,7 @@
 #pragma once
 
 #include "WallMarkArray.h"
+#include "Shader.h"
 
 class dxWallMarkArray : public IWallMarkArray
 {

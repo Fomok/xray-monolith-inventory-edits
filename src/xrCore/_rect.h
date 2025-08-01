@@ -1,6 +1,8 @@
 #ifndef __FRECT
 #define __FRECT
 
+#include "_vector2.h"
+
 template <class T>
 struct _rect
 {

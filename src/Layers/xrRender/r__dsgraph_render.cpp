@@ -6,6 +6,7 @@
 #include <CustomHUD.h>
 
 #include "R_Backend.h"
+#include "r__dsgraph_types.h"
 #include "FBasicVisual.h"
 
 using namespace R_dsgraph;

@@ -8,6 +8,7 @@
 #include <environment.h>
 #endif
 
+#include "r__dsgraph_structure.h"
 #include "R_Backend.h"
 
 extern float r_ssaLOD_A;

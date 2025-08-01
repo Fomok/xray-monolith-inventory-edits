@@ -1,4 +1,5 @@
 #include <defines.h>
+#include <HW.h>
 
 #include "xr_effgamma.h"
 

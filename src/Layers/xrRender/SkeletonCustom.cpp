@@ -1,5 +1,7 @@
 //---------------------------------------------------------------------------
 
+#include <Device.h>
+#include <LocatorAPI.h>
 #include <fmesh.h>
 #include <xr_ini.h>
 

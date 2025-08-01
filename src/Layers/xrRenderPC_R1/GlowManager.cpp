@@ -4,9 +4,10 @@
 
 #include <igame_persistent.h>
 #include <environment.h>
-#include <x_ray.h>
+#include <FS.h>
 #include <IGame_Level.h>
 #include <GameFont.h>
+#include <x_ray.h>
 #include <xr_object.h>
 
 #include "GlowManager.h"

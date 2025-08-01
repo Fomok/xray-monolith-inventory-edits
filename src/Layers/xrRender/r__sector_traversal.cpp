@@ -3,6 +3,7 @@
 
 #include "fvf.h"
 #include "R_Backend.h"
+#include "r__sector.h"
 
 CPortalTraverser PortalTraverser;
 

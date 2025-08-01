@@ -1,6 +1,7 @@
 
 #include <d3dx9.h>
 #include <frustum.h>
+#include <IGame_Persistent.h>
 
 #if defined(USE_DX10) || defined(USE_DX11)
 #include <StateManager/dx10StateManager.h>

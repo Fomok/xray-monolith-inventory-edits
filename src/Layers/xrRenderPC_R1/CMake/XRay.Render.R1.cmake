@@ -1,3 +1,12 @@
+add_library(XRay.Render.R1.ForceIncludes INTERFACE)
+
+target_compile_options(XRay.Render.R1.ForceIncludes
+  INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FIFStaticRender.h>
+  $<$<CXX_COMPILER_ID:Clang>:-includeFStaticRender.h>
+  $<$<CXX_COMPILER_ID:GNU>:-includeFStaticRender.h>
+)
+
 add_module(XRay.Render.R1
   TYPE STATIC
 
@@ -21,6 +30,9 @@ add_module(XRay.Render.R1
   optick
   ReShadeCompat
   tbb
+
+  XRay.Platform
+  XRay.Render.R1.ForceIncludes
 
   XRay.Core.Defines
   XRay.Engine.Defines
@@ -52,8 +64,6 @@ add_module(XRay.Render.R1
   #[["render.h"]]
   #[["_d3d_extensions.h"]]
 
-  stdafx.h
-  
   SOURCES
   ../xrRender/xrRender_console.cpp
   ../xrRender/xrRender_console.h
@@ -61,8 +71,6 @@ add_module(XRay.Render.R1
   ../xrRender/cl_intersect.h
   ../xrRender/xrD3DDefs.h
 
-  stdafx.h
-  
   xrRender_R1.cpp
 )
 

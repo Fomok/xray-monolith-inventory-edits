@@ -8,8 +8,10 @@
 
 #include <HW.h>
 #include <xrpool.h>
+#include <xrXRC.h>
 #include "detailformat.h"
 #include "detailmodel.h"
+#include "vis_common.h"
 
 #ifdef _EDITOR
 //.	#include	"ESceneClassList.h"

@@ -7,6 +7,7 @@
 #pragma once
 
 #include <sound.h>
+#include <xr_ini.h>
 
 #include "FactoryPtr.h"
 #include "LensFlareRender.h"

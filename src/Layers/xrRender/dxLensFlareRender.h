@@ -3,6 +3,7 @@
 #pragma once
 
 #include "LensFlareRender.h"
+#include "Shader.h"
 
 class dxFlareRender : public IFlareRender
 {

@@ -5,6 +5,7 @@
 #include "vis_common.h"
 
 #include "RenderVisual.h"
+#include "Shader.h"
 
 #define VLOAD_NOVERTICES		(1<<0)
 

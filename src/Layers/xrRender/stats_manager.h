@@ -7,6 +7,7 @@
 #ifndef STATS_MANAGER_H_INCLUDED
 #define STATS_MANAGER_H_INCLUDED
 
+#include "_types.h"
 #include "xrD3DDefs.h"
 
 enum enum_stats_buffer_type

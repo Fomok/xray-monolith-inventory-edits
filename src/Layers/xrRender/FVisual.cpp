@@ -6,6 +6,8 @@
 #include <d3dx9.h>
 
 #include <destructor.h>
+#include <FS.h>
+#include <HW.h>
 #include <fmesh.h>
 #if defined(USE_DX10) || defined(USE_DX11)
 #include <dx10BufferUtils.h>

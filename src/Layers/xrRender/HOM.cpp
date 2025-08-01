@@ -2,14 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "HOM.h"
-#include "occRasterizer.h"
-#include "../../xrEngine/GameFont.h"
-
-#include "dxRenderDeviceRender.h"
-
 #include <tbb/blocked_range.h>
 #include <tbb/parallel_for.h>
+
+#include <LocatorAPI.h>
+#include <GameFont.h>
+
+#include "HOM.h"
+#include "occRasterizer.h"
+
+#include "dxRenderDeviceRender.h"
 
 float psOSSR = .001f;
 

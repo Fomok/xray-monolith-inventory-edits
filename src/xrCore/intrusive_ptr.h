@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <_types.h>
+
 #ifdef XRGAME_EXPORTS
 # include "../xrServerEntities/object_type_traits.h"
 #endif //XRGAME_EXPORTS

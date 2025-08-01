@@ -3,6 +3,8 @@
 #pragma once
 
 #include "UIRender.h"
+#include "FVF.h"
+#include "Shader.h"
 
 class dxUIRender : public IUIRender
 {

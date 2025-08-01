@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <blenders/Blender_CLSID.h>
+#include <HW.h>
 
 #include "blender_LaEmB.h"
 

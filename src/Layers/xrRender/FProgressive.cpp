@@ -4,6 +4,7 @@
 
 #include <destructor.h>
 #include <fmesh.h>
+#include <FS.h>
 
 #include "R_Backend.h"
 #include "FProgressive.h"

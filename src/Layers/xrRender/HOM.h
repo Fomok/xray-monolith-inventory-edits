@@ -4,7 +4,10 @@
 #pragma once
 
 #include <IGame_Persistent.h>
+#include <Frustum.h>
 #include <xrXRC.h>
+
+#include "vis_common.h"
 
 class occTri;
 

@@ -5,6 +5,7 @@
 
 #include <string_concatenations.h>
 #include <Fmesh.h>
+#include <FS.h>
 
 #ifndef _EDITOR
 #include <render.h>

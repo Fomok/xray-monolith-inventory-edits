@@ -3,6 +3,7 @@
 #include <fixedmap.h>
 
 #include "Shader.h"
+#include "IRenderable.h"
 
 //#ifndef USE_MEMORY_MONITOR
 //#	define USE_DOUG_LEA_ALLOCATOR_FOR_RENDER

@@ -1,6 +1,8 @@
 #ifndef _PURE_H_AAA_
 #define _PURE_H_AAA_
 
+#include <_types.h>
+#include <_stl_extensions.h>
 #include <resource.h>
 #include <smart_cast.h>
 

@@ -1,3 +1,4 @@
+#include <Device.h>
 #include <LocatorAPI.h>
 
 #include "ResourceManager.h"

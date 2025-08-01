@@ -5,9 +5,12 @@
 #include <smart_cast.h>
 #endif
 
+#include "log.h"
 #include "ParticleGroup.h"
 #include "PSLibrary.h"
 #include "ParticleEffect.h"
+#include "Render.h"
+#include "xrAPI.h"
 
 using namespace PS;
 

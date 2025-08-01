@@ -32,9 +32,7 @@
 #include <luabind/luabind.hpp>
 #include <luabind/object.hpp>
 
-#pragma warning(default:4244)
-#pragma warning(default:4995)
-#pragma warning(default:4267)
+#include <xrstring.h>
 
 typedef lua_State CLuaVirtualMachine;
 

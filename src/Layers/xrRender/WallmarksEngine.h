@@ -4,6 +4,7 @@
 #pragma once
 
 #include <intrusive_ptr.h>
+#include <Shader.h>
 
 #include "FVF.h"
 

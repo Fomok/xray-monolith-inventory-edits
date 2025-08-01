@@ -2,11 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <IGame_Persistent.h>
+#include <xrLevel.h>
+#include <xr_object.h>
+
 #include "r__sector.h"
-#include "../../xrEngine/xrLevel.h"
-#include "../../xrEngine/xr_object.h"
 #include "fbasicvisual.h"
-#include "../../xrEngine/IGame_Persistent.h"
 #include "dxRenderDeviceRender.h"
 
 //////////////////////////////////////////////////////////////////////

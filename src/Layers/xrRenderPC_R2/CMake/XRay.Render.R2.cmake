@@ -20,6 +20,8 @@ add_module(XRay.Render.R2
   ReShadeCompat
   tbb
 
+  XRay.Platform
+  
   XRay.Core.Defines
   XRay.Engine.Defines
   XRay.Render.Common.Defines
@@ -35,6 +37,7 @@ add_module(XRay.Render.R2
   XRay.Render.Common.Includes
   XRay.Render.DX9.Includes
   XRay.Render.DX10.Includes
+  XRay.Render.R1.Includes
   XRay.ServerEntities.Includes
   XRay.Sound.Includes
 

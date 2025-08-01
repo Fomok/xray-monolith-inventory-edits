@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 
-#include 	"SkeletonCustom.h"
+#include "SkeletonCustom.h"
+#include "Device.h"
 
 extern int psSkeletonUpdate;
 

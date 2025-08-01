@@ -2,6 +2,7 @@
 #define IGame_PersistentH
 #pragma once
 
+#include <pure.h>
 #include <EngineAPI.h>
 #include <gametype_chooser.h>
 #include <xr_trims.h>
@@ -11,7 +12,8 @@
 #include "IGame_ObjectPool.h"
 #endif
 
-#include "ShadersExternalData.h" //--#SM+#--
+#include "ShadersExternalData.h"
+#include "GameFont.h"
 
 class IRenderVisual;
 class IMainMenu;

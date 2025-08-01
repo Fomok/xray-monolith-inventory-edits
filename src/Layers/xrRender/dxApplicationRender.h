@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ApplicationRender.h"
+#include "Shader.h"
 #include "x_ray.h"
 
 class dxApplicationRender : public IApplicationRender

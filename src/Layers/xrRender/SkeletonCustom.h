@@ -9,6 +9,7 @@
 #include <optional>
 #include "bone.h"
 #include "Kinematics.h"
+#include "FVF.h"
 
 // consts
 extern xrCriticalSection UCalc_Mutex;

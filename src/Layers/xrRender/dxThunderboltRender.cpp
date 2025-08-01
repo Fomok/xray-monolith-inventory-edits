@@ -3,6 +3,7 @@
 #include "dxThunderboltRender.h"
 #include "dxThunderboltDescRender.h"
 #include "dxLensFlareRender.h"
+#include "IRenderDetailModel.h"
 #include "R_Backend.h"
 
 dxThunderboltRender::dxThunderboltRender()

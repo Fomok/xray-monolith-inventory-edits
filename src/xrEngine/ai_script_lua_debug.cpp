@@ -8,6 +8,7 @@
 
 #include "ai_script_space.h"
 #include "ai_script_lua_extension.h"
+#include "log.h"
 
 using namespace Script;
 

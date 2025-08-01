@@ -2,6 +2,9 @@
 #define	RenderVisual_included
 #pragma once
 
+#include "_flags.h"
+#include "_stl_extensions.h"
+
 class IKinematics;
 class IKinematicsAnimated;
 class IParticleCustom;

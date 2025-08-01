@@ -3,6 +3,7 @@
 #include <igame_level.h>
 #include <environment.h>
 #include <fmesh.h>
+#include <FS.h>
 
 #include "ftreevisual.h"
 #include "R_Backend_Runtime.h"

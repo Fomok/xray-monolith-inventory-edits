@@ -7,6 +7,7 @@
 #include <fastdelegate.h>
 
 #include "FactoryPtr.h"
+#include "pure.h"
 #include "UIShader.h"
 
 //refs

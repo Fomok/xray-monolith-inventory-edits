@@ -6,10 +6,13 @@
 #include "fhierrarhyvisual.h"
 #include "SkeletonCustom.h"
 
+#include "Device.h"
 #include "flod.h"
 #include "particlegroup.h"
 #include "FTreeVisual.h"
 #include "xrRender_console.h"
+#include "r__dsgraph_types.h"
+#include "r__dsgraph_structure.h"
 
 using namespace R_dsgraph;
 

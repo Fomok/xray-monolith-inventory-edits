@@ -4,6 +4,7 @@
 #include <defines.h>
 #include <xrCore.h>
 #include <d3dx9.h>
+#include <IGame_Persistent.h>
 #include <XR_IOConsole.h>
 
 #include "HW.h"

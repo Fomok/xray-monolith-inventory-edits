@@ -14,6 +14,7 @@
 #include <unicode/unistr.h>
 #include <unicode/ucnv.h>
 
+#include <LocatorAPI.h>
 #include <xr_ini.h>
 #include <xrCore.h>
 #include <NET_AuthCheck.h>
