@@ -1,3 +1,4 @@
+#include <xrRender_console.h>
 
 // startup
 void CRenderTarget::phase_scene_prepare()

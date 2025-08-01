@@ -4,6 +4,7 @@
 
 #include <blenders/Blender_CLSID.h>
 #include <string_concatenations.h>
+#include <xrRender_console.h>
 
 #include "blender_BmmD.h"
 

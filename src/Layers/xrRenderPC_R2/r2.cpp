@@ -2,6 +2,7 @@
 #include <LocatorAPI.h>
 #include <string_concatenations.h>
 #include <xrCore.h>
+#include <xrRender_console.h>
 
 #include <resourcemanager.h>
 #include <fbasicvisual.h>

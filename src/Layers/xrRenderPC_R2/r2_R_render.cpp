@@ -3,6 +3,7 @@
 #include <customhud.h>
 #include <xr_object.h>
 #include <FBasicVisual.h>
+#include <xrRender_console.h>
 
 IC bool pred_sp_sort(ISpatial* _1, ISpatial* _2)
 {

@@ -4,5 +4,4 @@
 
 #pragma once
 
-#include "../xrRender/xrRender_console.h"
 #include "r2.h"

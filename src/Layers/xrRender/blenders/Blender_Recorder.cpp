@@ -2,6 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <xrRender_console.h>
+
 #include "ResourceManager.h"
 #include "Blender_Recorder.h"
 #include "Blender.h"

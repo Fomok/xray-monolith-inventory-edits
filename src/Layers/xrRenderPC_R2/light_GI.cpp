@@ -1,3 +1,4 @@
+#include <xrRender_console.h>
 #include <IGame_Level.h>
 #include <light.h>
 

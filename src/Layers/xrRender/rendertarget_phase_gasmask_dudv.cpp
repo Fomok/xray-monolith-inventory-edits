@@ -1,3 +1,4 @@
+#include <xrRender_console.h>
 
 void CRenderTarget::phase_gasmask_dudv()
 {

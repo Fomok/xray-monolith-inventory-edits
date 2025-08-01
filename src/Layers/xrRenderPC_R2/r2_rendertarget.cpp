@@ -1,5 +1,6 @@
 #include <defines.h>
 #include <resourcemanager.h>
+#include <xrRender_console.h>
 
 #include "blender_light_occq.h"
 #include "blender_light_mask.h"

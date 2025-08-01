@@ -1,5 +1,6 @@
 #include <light.h>
 #include <FBasicVisual.h>
+#include <xrRender_console.h>
 
 #include "light_smapvis.h"
 

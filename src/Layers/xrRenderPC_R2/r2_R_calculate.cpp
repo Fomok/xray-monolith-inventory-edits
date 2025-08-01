@@ -1,4 +1,5 @@
-#include "../../xrEngine/customhud.h"
+#include <xrRender_console.h>
+#include <customhud.h>
 
 float g_fSCREEN;
 
