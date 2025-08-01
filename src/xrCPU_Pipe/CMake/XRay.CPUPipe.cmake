@@ -18,6 +18,7 @@ add_module(XRay.CPUPipe
   XRay.Render.API.Includes
   XRay.Physics.Includes
   XRay.ServerEntities.Includes
+  XRay.Sound.Includes
 
   DEFINES
   $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=0x0501>
