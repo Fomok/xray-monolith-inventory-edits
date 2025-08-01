@@ -2,6 +2,8 @@
 #define	dx10ShaderResourceStateCache_included
 #pragma once
 
+#include <R_Backend.h>
+
 class dx10ShaderResourceStateCache
 {
 public:

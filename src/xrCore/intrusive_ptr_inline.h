@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <xrDebug_macros.h>
+
 #define TEMPLATE_SPECIALIZATION template <typename object_type, typename base_type>
 #define _intrusive_ptr intrusive_ptr<object_type,base_type>
 

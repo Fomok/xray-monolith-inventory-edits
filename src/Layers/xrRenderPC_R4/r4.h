@@ -4,6 +4,8 @@
 
 #include <r__dsgraph_structure.h>
 #include <r__occlusion.h>
+#include <R_Backend_Runtime.h>
+#include <xrRender_console.h>
 
 #include <PSLibrary.h>
 #include <light_db.h>

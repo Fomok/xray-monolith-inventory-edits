@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include "../xrcore/_type_traits.h"
+#include <_type_traits.h>
 #include "object_type_traits.h"
+#include <xrDebug_macros.h>
 
 #ifdef DEBUG
 	void add_smart_cast_stats		(LPCSTR,LPCSTR);
