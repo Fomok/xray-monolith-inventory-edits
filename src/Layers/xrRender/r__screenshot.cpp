@@ -1,4 +1,3 @@
-#include <D3DX11tex.h>
 
 #include <defines.h>
 #include <LocatorAPI.h>
@@ -11,8 +10,10 @@
 
 #include "dxRenderDeviceRender.h"
 
-#if defined(USE_DX10) || defined(USE_DX11)
-#include "d3dx10tex.h"
+#if defined(USE_DX10)
+#include <D3DX10tex.h>
+#elif defined(USE_DX11)
+#include <D3DX11tex.h>
 #endif	//	USE_DX10
 
 #define	GAMESAVE_SIZE	128
