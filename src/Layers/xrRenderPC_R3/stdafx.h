@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "../xrRender/Debug/dxPixEventWrapper.h"
-
 #include "../xrRender/R_Backend.h"
 #include "../xrRender/R_Backend_Runtime.h"
 
