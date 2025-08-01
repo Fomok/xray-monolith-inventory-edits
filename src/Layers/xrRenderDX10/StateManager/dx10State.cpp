@@ -1,7 +1,7 @@
 #include "dx10State.h"
 
-//#include "dx10RSManager.h"
 #include "dx10StateCache.h"
+#include "dx10StateManager.h"
 
 dx10State::dx10State() :
 	m_pRasterizerState(0),

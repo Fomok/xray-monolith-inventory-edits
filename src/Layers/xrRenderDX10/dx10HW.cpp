@@ -20,6 +20,7 @@
 
 #include "StateManager/dx10SamplerStateCache.h"
 #include "StateManager/dx10StateCache.h"
+#include "StateManager/dx10StateManager.h"
 
 #ifndef _EDITOR
 void fill_vid_mode_list(CHW* _hw);

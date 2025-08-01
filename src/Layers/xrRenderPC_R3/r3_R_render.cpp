@@ -4,6 +4,7 @@
 #include <FBasicVisual.h>
 #include <QueryHelper.h>
 #include <Debug/dxPixEventWrapper.h>
+#include <R_Backend_Runtime.h>
 
 IC bool pred_sp_sort(ISpatial* _1, ISpatial* _2)
 {

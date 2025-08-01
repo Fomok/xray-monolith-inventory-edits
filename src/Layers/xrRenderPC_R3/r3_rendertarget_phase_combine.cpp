@@ -4,6 +4,7 @@
 #include <environment.h>
 
 #include <dxEnvironmentRender.h>
+#include <StateManager/dx10StateManager.h>
 #include <Debug/dxPixEventWrapper.h>
 
 #define STENCIL_CULL 0

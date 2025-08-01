@@ -1,4 +1,5 @@
-#include "../xrRender/du_cone.h"
+#include <du_cone.h>
+#include <StateManager/dx10StateManager.h>
 
 //extern Fvector du_cone_vertices[DU_CONE_NUMVERTEX];
 

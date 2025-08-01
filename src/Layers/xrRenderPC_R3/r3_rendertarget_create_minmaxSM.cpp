@@ -1,3 +1,4 @@
+#include <StateManager/dx10StateManager.h>
 
 void CRenderTarget::create_minmax_SM()
 {

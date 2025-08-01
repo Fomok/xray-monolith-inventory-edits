@@ -14,6 +14,7 @@
 #include <string_concatenations.h>
 #include <xrCore.h>
 #include <xr_object.h>
+#include <StateManager/dx10StateManager.h>
 
 #include "r3.h"
 #include "D3DX10Core.h"

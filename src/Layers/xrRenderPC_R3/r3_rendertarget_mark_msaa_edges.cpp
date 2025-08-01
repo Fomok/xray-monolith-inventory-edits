@@ -1,3 +1,4 @@
+#include <StateManager/dx10StateManager.h>
 
 /*
 	GSC:

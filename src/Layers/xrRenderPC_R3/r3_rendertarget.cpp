@@ -4,6 +4,7 @@
 #include <dxRenderDeviceRender.h>
 #include <msaa/dx10MSAABlender.h>
 #include <DX10 Rain/dx10RainBlender.h>
+#include <StateManager/dx10StateManager.h>
 
 #include "blender_light_occq.h"
 #include "blender_light_mask.h"
