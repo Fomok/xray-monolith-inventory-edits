@@ -74,7 +74,6 @@ add_module(XRay.Render.R4
   #[["blenders/blender_clsid.h"]]
   #[["xrRender_console.h"]]
   #[["r4.h"]]
-  stdafx.h
 
   SOURCES
   ../xrRenderDX10/DXCommonTypes.h
@@ -83,9 +82,9 @@ add_module(XRay.Render.R4
   ../xrRender/xrRender_console.cpp
   ../xrRender/xrRender_console.h
 
-  xrRender_R4.cpp
+  jitter.h
 
-  stdafx.h
+  xrRender_R4.cpp
 )
 
 add_module(XRay.Render.R4.3DFluid
