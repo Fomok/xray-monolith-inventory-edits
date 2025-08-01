@@ -9,6 +9,7 @@
 #include "pch_script.h"
 #include "game_graph.h"
 #include "ai_space.h"
+#include "macros.h"
 
 using namespace luabind;
 

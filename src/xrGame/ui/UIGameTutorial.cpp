@@ -14,6 +14,7 @@
 #include "UIGameCustom.h"
 #include "UIActorMenu.h"
 #include "UIPdaWnd.h"
+#include "macros.h"
 
 extern ENGINE_API BOOL bShowPauseString;
 

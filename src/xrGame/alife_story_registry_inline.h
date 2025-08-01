@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 IC void CALifeStoryRegistry::remove(ALife::_STORY_ID id, bool no_assert)
 {
 	if (id == INVALID_STORY_ID)

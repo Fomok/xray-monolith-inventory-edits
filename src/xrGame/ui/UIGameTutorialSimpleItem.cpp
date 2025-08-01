@@ -16,6 +16,7 @@
 #include "MainMenu.h"
 #include "xr_level_controller.h"
 #include "ai_space.h"
+#include "macros.h"
 
 extern ENGINE_API BOOL bShowPauseString;
 

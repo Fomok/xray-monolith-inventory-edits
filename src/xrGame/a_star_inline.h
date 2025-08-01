@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 #define TEMPLATE_SPECIALIZATION \
 	template <\
 		typename _dist_type,\

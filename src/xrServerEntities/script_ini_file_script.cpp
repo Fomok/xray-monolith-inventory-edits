@@ -15,6 +15,7 @@
 #include "string_table.h"
 #include "script_engine.h"
 #include "ai_space.h"
+#include "macros.h"
 
 using namespace luabind;
 

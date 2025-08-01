@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 IC void CALifeObjectRegistry::add(CSE_ALifeDynamicObject* object)
 {
 	if (objects().find(object->ID) != objects().end())

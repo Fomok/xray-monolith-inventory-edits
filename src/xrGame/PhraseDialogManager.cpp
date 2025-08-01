@@ -11,6 +11,7 @@
 #include "script_engine.h"
 #include "gameobject.h"
 #include "script_game_object.h"
+#include "macros.h"
 
 CPhraseDialogManager::CPhraseDialogManager(void)
 {

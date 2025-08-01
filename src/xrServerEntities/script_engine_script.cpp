@@ -13,6 +13,7 @@
 #include "ai_space.h"
 #include "script_debugger.h"
 #include "new_sds.h"
+#include "macros.h"
 
 using namespace luabind;
 

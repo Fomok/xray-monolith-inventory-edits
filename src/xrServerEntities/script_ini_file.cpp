@@ -12,6 +12,7 @@
 #include "script_engine.h"
 #include "ai_space.h"
 #include "object_factory.h"
+#include "macros.h"
 
 CScriptIniFile::CScriptIniFile(IReader* F, LPCSTR path) :
 	inherited(F, path)

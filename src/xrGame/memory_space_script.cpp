@@ -12,6 +12,7 @@
 #include "gameobject.h"
 #include "entity_alive.h"
 #include "danger_object.h"
+#include "macros.h"
 
 using namespace luabind;
 

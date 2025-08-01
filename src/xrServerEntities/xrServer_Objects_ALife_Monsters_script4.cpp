@@ -15,6 +15,7 @@
 #ifdef XRGAME_EXPORTS
 #include "relation_registry.h"
 #endif // #ifdef XRGAME_EXPORTS
+#include "macros.h"
 
 using namespace luabind;
 

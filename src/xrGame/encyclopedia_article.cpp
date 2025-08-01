@@ -9,6 +9,7 @@
 #include "ui/UIInventoryUtilities.h"
 #include "object_broker.h"
 #include "UIShader.h"
+#include "macros.h"
 
 using namespace InventoryUtilities;
 

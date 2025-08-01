@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 IC CPatrolPathStorage::CPatrolPathStorage()
 {
 }
