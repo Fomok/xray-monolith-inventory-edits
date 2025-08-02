@@ -161,9 +161,12 @@
         box,
     }
     debug_render {
-        DBG_ScriptObject* add_object(u16 id, DebugRenderType type)
-        void remove_object(u16 id)
-        DBG_ScriptObject* get_object(u16 id)
+        DBG_ScriptObject* add_object(u32 id, DebugRenderType type)
+        DBG_ScriptObject* add_object(LPCSTR id, DebugRenderType type)
+        void remove_object(u32 id)
+        void remove_object(LPCSTR id)
+        DBG_ScriptObject* get_object(u32 id)
+        DBG_ScriptObject* get_object(LPCSTR id)
         u32 get_flags()
         void set_flags(u32 flags)
         DBG_ScriptSphere* cast_dbg_sphere()
