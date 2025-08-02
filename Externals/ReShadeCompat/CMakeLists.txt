@@ -9,8 +9,8 @@ target_sources(ReShadeCompat
 
 target_precompile_headers(ReShadeCompat
   PRIVATE
-  <imgui/imgui.h>
-  <reshade/reshade.hpp>
+  #<imgui/imgui.h>
+  #<reshade/reshade.hpp>
 )
 
 target_compile_options(ReShadeCompat

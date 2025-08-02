@@ -1,3 +1,6 @@
+#include <imgui/imgui.h>
+#include <reshade/reshade.hpp>
+
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 #pragma warning(disable: 4047)
 HINSTANCE hInstance = (HINSTANCE)&__ImageBase;
