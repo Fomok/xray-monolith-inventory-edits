@@ -22,9 +22,10 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-
 #ifndef TINYXML_INCLUDED
 #define TINYXML_INCLUDED
+
+#define XRXMLPARSER_API
 
 #ifdef _MSC_VER
 #pragma warning( push )
