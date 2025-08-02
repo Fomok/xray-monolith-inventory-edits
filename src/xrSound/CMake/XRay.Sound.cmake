@@ -66,6 +66,9 @@ add_module(XRay.Sound
   Sound.h
   SoundRender.h
 
+  NotificationClient.cpp
+  NotificationClient.h
+
   resource.h
 )
 

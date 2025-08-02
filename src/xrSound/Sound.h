@@ -37,6 +37,7 @@ XRSOUND_API extern float psSoundRolloff;
 XRSOUND_API extern float psSoundOcclusionScale;
 XRSOUND_API extern Flags32 psSoundFlags;
 XRSOUND_API extern int psSoundTargets;
+XRSOUND_API extern float snd_efx_environment_change_time;
 XRSOUND_API extern float psSpeedOfSound;
 XRSOUND_API extern int psSoundCacheSizeMB;
 XRSOUND_API extern xr_token* snd_devices_token;
@@ -47,7 +48,7 @@ enum
 {
 	ss_Hardware = (1ul << 1ul),
 	//!< Use hardware mixing only
-	ss_EAX = (1ul << 2ul),
+	ss_EFX = (1ul << 2ul),
 	//!< Use eax
 	ss_forcedword = u32(-1)
 };
@@ -74,6 +75,7 @@ enum
 	//!< Looped
 	sm_2D = (1ul << 1ul),
 	//!< 2D mode
+	sm_Intro = (1ul << 2ul), //!< Only for music and video
 	sm_forcedword = u32(-1),
 };
 
@@ -291,6 +293,7 @@ class XRSOUND_API CSound_emitter
 public:
 	virtual BOOL is_2D() = 0;
 	virtual void switch_to_2D() = 0;
+	virtual void switch_to_Intro() = 0;
 	virtual void switch_to_3D() = 0;
 	virtual void set_position(const Fvector& pos) = 0;
 	virtual void set_frequency(float freq) = 0;
@@ -397,7 +400,6 @@ public:
 	virtual const Fvector& listener_position() = 0;
 };
 
-class CSound_manager_interface;
 extern XRSOUND_API CSound_manager_interface* Sound;
 
 /// ********* Sound ********* (utils, accessors, helpers)
@@ -521,6 +523,4 @@ IC void ref_sound::set_params(CSound_params* p)
 		_feedback()->set_volume(p->volume);
 	}
 }
-
-
 #endif

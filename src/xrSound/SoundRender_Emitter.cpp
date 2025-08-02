@@ -1,8 +1,8 @@
 
-#include "soundrender_emitter.h"
-#include "soundrender_core.h"
-#include "soundrender_source.h"
-#include "soundrender_targetA.h"
+#include "SoundRender_Emitter.h"
+#include "SoundRender_Core.h"
+#include "SoundRender_Source.h"
+#include "SoundRender_TargetA.h"
 
 extern u32 psSoundModel;
 extern float psSoundVEffects;
@@ -94,6 +94,13 @@ void CSoundRender_Emitter::switch_to_2D()
 	set_priority(100.f);
 }
 
+void CSoundRender_Emitter::switch_to_Intro()
+{
+	bIntro = true;
+	b2D = TRUE;
+	set_priority(100.f);
+}
+
 void CSoundRender_Emitter::switch_to_3D()
 {
 	b2D = FALSE;
@@ -110,8 +117,6 @@ u32 CSoundRender_Emitter::play_time()
 	else
 		return 0;
 }
-
-#include "SoundRender_Source.h"
 
 void CSoundRender_Emitter::set_cursor(u32 p)
 {

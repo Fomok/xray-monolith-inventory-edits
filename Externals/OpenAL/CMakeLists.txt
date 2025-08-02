@@ -4,6 +4,40 @@ target_folder(OpenAL ${FOLDER_EXTERNAL})
 
 set(OPENAL_DIR ../OpenAL-git)
 
+target_compile_definitions(OpenAL
+  PUBLIC
+  AL_LIBTYPE_STATIC
+  AL_BUILD_LIBRARY
+  AL_ALEXT_PROTOTYPES
+  ALC_API=
+  AL_API=
+  NOMINMAX
+  RESTRICT=__restrict
+  PRIVATE
+  _CRT_SECURE_NO_WARNINGS
+)
+
+target_compile_options(OpenAL
+  PRIVATE
+  # Enable standards-conformance mode on MSVC
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
+  # Suppress compiler warnings
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4065>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4127>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4324>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd5030>
+)
+
+target_include_directories(OpenAL
+  PUBLIC
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}/openal
+  ${CMAKE_CURRENT_BINARY_DIR}/openal/common
+  ${CMAKE_CURRENT_BINARY_DIR}/openal/include
+)
+
 target_sources_sandboxed(OpenAL
   DIRECTORY openal
 
@@ -240,38 +274,4 @@ target_sources_sandboxed(OpenAL
   ${OPENAL_DIR}/core/mixer/mixer_sse2.cpp
   ${OPENAL_DIR}/core/mixer/mixer_sse3.cpp
   ${OPENAL_DIR}/core/mixer/mixer_sse41.cpp
-)
-
-target_compile_definitions(OpenAL
-  PUBLIC
-  AL_LIBTYPE_STATIC
-  AL_BUILD_LIBRARY
-  AL_ALEXT_PROTOTYPES
-  ALC_API=
-  AL_API=
-  NOMINMAX
-  RESTRICT=__restrict
-  PRIVATE
-  _CRT_SECURE_NO_WARNINGS
-)
-
-target_compile_options(OpenAL
-  PRIVATE
-  # Enable standards-conformance mode on MSVC
-  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
-  # Suppress compiler warnings
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4065>
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4127>
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4267>
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4324>
-  $<$<CXX_COMPILER_ID:MSVC>:/wd5030>
-)
-
-target_include_directories(OpenAL
-  PUBLIC
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}/openal
-  ${CMAKE_CURRENT_BINARY_DIR}/openal/common
-  ${CMAKE_CURRENT_BINARY_DIR}/openal/include
 )

@@ -433,6 +433,35 @@ void CModelPool::Prefetch_One(LPCSTR N, bool assert)
 		Delete(V,FALSE);
 }
 
+bool CModelPool::Exists(LPCSTR N)
+{
+	string_path low_name;
+	VERIFY(xr_strlen(N) < sizeof(low_name));
+	xr_strcpy(low_name, N);
+	strlwr(low_name);
+	if (strext(low_name)) *strext(low_name) = 0;
+
+	// Search pool and return early if exists
+	POOL_IT it = Pool.find(low_name);
+	if (it != Pool.end())
+		return true;
+
+	// Search for already loaded model (reference, base model) and return early if exists
+	dxRender_Visual* Base = Instance_Find(low_name);
+	if (Base)
+		return true;
+
+	// Prefetch model
+	dxRender_Visual* V = Create(N, 0, false);
+	if (V) 
+	{
+		Delete(V, FALSE);
+		return true;
+	}
+
+	return false;
+}
+
 dxRender_Visual* CModelPool::CreatePE(PS::CPEDef* source)
 {
 	PS::CParticleEffect* V = (PS::CParticleEffect*)Instance_Create(MT_PARTICLE_EFFECT);

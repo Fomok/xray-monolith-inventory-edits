@@ -407,6 +407,24 @@ public:
 		return frame_timer.GetElapsed_ms();
 	}
 
+	// demonized: Perceivable distance depending on FOV, so that objects will behave normal in binoculars
+	IC float GetPerceivedDist(const Fvector& p, float* real_dist = nullptr)
+	{
+		float dist = vCameraPosition.distance_to(p);
+		float fov_rad = deg2rad(fFOV);
+		float perceived_dist = dist * tanf(fov_rad * 0.5f);
+		if (real_dist) *real_dist = dist;
+		return perceived_dist;
+	}
+
+	IC float CalcSSADynamic(const Fvector& C, float R)
+	{
+		Fvector4 v_res1, v_res2;
+		mFullTransform.transform(v_res1, C);
+		mFullTransform.transform(v_res2, Fvector(C).mad(vCameraRight, R));
+		return v_res1.sub(v_res2).magnitude();
+	}
+
 public:
 	void xr_stdcall on_idle();
 	bool xr_stdcall on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& result);

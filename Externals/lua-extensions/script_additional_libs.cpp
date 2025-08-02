@@ -1,4 +1,5 @@
 //RvP, 11.05.2014	Функционал из xrLuaFix
+
 #include "script_additional_libs.h"
 #include <random>
 #include "build_config_defines.h"

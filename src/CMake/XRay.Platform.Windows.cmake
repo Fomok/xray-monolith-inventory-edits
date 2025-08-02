@@ -14,7 +14,7 @@ add_module(XRay.Platform.Windows
   _CRT_SECURE_NO_DEPRECATE
 
   # windows.h
-  _WIN32_WINNT=0x0501
+  _WIN32_WINNT=_WIN32_WINNT_WIN7
 
   NOGDICAPMASKS
   NOMENUS
