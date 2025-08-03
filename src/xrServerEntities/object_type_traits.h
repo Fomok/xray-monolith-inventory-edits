@@ -9,6 +9,8 @@
 #define object_type_traits_h_included
 #pragma once
 
+#include <_type_traits.h>
+
 //#define USE_BOOST
 
 #ifdef USE_BOOST
