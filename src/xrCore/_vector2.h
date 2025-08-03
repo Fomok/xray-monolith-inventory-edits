@@ -1,6 +1,8 @@
 #ifndef __V2D__
 #define __V2D__
 
+#include "math_constants.h"
+
 template <class T>
 struct _vector2
 {

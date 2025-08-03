@@ -3,6 +3,7 @@
 
 #include <_random.h>
 #include <_std_extensions.h>
+#include "math_constants.h"
 
 // Inline call
 #ifndef IC

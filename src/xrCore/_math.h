@@ -33,7 +33,7 @@ namespace CPU
 	XRCORE_API extern _processor_info ID;
 	XRCORE_API extern u64 QPC();
 
-#ifdef M_VISUAL
+#ifdef _MSC_VER
 #ifndef _M_AMD64
 #pragma warning(push)
 #pragma warning(disable:4035)

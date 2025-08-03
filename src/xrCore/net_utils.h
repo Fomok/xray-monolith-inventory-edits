@@ -3,6 +3,7 @@
 #pragma once
 
 #include "_types.h"
+#include "math_constants.h"
 #include "_vector3d.h"
 #include "_vector4.h"
 #include "xrstring.h"
