@@ -23,4 +23,4 @@ public:
 };
 
 
-#endif PHJOINT_DESTROY_INFO_H
+#endif //PHJOINT_DESTROY_INFO_H
