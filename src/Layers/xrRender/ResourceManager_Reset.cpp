@@ -7,7 +7,7 @@
 	#include <xrAPI.h>
 #endif
 
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 
 void CResourceManager::reset_begin()
 {

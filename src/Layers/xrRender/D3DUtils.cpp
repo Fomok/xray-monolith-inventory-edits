@@ -12,6 +12,7 @@
 #include "du_cylinder.h"
 
 #include "dxRenderDeviceRender.h"
+#include "R_Backend_Runtime.h"
 
 CDrawUtilities DUImpl;
 

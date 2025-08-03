@@ -24,7 +24,7 @@
 #include <ttapi.h>
 #endif
 
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 #include "xrRender_console.h"
 
 using namespace R_dsgraph;

@@ -2,7 +2,7 @@
 #include <tbb/blocked_range.h>
 
 #include "ParticleEffect.h"
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 
 #ifndef _EDITOR
 #include <xmmintrin.h>

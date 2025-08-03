@@ -4,7 +4,7 @@
 #include <dx10BufferUtils.h>
 #endif	//	USE_DX11
 
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 
 CBackend RCache;
 

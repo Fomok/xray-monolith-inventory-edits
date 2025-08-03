@@ -2,7 +2,7 @@
 
 #include <LocatorAPI.h>
 #include <intrusive_ptr.h>
-#include <R_Backend.h>
+#include <R_Backend_Runtime.h>
 #include <r__dsgraph_structure.h>
 #include <r__occlusion.h>
 #include <PSLibrary.h>

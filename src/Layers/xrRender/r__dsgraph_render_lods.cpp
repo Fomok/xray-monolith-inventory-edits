@@ -9,7 +9,7 @@
 #endif
 
 #include "r__dsgraph_structure.h"
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 
 extern float r_ssaLOD_A;
 extern float r_ssaLOD_B;

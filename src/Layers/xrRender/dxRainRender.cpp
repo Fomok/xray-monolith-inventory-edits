@@ -2,7 +2,7 @@
 #include <Rain.h>
 
 #include "dxRainRender.h"
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 #include "xrRender_console.h"
 
 //	Warning: duplicated in rain.cpp

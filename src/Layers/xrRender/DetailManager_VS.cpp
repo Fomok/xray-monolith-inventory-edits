@@ -12,7 +12,7 @@
 
 #include <dx10BufferUtils.h>
 
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 #include "xrRender_console.h"
 
 const int quant = 16384;

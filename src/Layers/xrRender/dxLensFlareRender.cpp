@@ -2,7 +2,7 @@
 #include <iGame_persistent.h>
 
 #include "dxLensFlareRender.h"
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 
 #define MAX_Flares	24
 

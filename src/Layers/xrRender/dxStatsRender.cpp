@@ -2,7 +2,7 @@
 
 #include "dxStatsRender.h"
 #include "dxRenderDeviceRender.h"
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 
 void dxStatsRender::Copy(IStatsRender& _in)
 {

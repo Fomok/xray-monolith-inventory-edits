@@ -4,7 +4,7 @@
 #include "dxThunderboltDescRender.h"
 #include "dxLensFlareRender.h"
 #include "IRenderDetailModel.h"
-#include "R_Backend.h"
+#include "R_Backend_Runtime.h"
 
 dxThunderboltRender::dxThunderboltRender()
 {
