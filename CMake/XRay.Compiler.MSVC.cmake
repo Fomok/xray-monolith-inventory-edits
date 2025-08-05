@@ -18,8 +18,6 @@ set(XRAY_COMPILER_FLAGS
     /FC
     # Use multi-threaded DLL
     /MD
-    # Use full paths in diagnostics
-    /FC
     # Suppress 'Use /EHsc' warning
     /wd4530
 )
