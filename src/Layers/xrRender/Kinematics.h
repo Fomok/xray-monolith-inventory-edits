@@ -48,9 +48,7 @@ public:
 	virtual u16 LL_BoneID(const shared_str& B) = 0;
 	virtual LPCSTR LL_BoneName_dbg(u16 ID) = 0;
 
-	virtual xr_vector<xr_pair<u16, shared_str>> list_bones() = 0;
-
-	virtual CInifile* LL_UserData() = 0;
+	virtual CInifile* _BCL LL_UserData() = 0;
 	virtual accel* LL_Bones() = 0;
 
 	virtual ICF CBoneInstance& LL_GetBoneInstance(u16 bone_id) = 0;
