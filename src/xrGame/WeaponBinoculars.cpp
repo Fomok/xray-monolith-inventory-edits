@@ -160,6 +160,7 @@ void newGetZoomData(const float scope_factor, const float zoom_step_count, float
 
 void CWeaponBinoculars::ZoomInc()
 {
+	if (!m_zoom_params.m_bUseDynamicZoom) return;
 	float delta, min_zoom_factor;
 	if (zoomFlags.test(NEW_ZOOM)) {
 		newGetZoomData(m_zoom_params.m_fScopeZoomFactor, m_zoom_params.m_fZoomStepCount, delta, min_zoom_factor, czoom);
@@ -175,6 +176,7 @@ void CWeaponBinoculars::ZoomInc()
 
 void CWeaponBinoculars::ZoomDec()
 {
+	if (!m_zoom_params.m_bUseDynamicZoom) return;
 	float delta, min_zoom_factor;
 	if (zoomFlags.test(NEW_ZOOM)) {
 		newGetZoomData(m_zoom_params.m_fScopeZoomFactor, m_zoom_params.m_fZoomStepCount, delta, min_zoom_factor, czoom);
