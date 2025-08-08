@@ -388,8 +388,8 @@ public:
 	void OnMovementChanged(ACTOR_DEFS::EMoveCommand cmd);
 	bool inertion_allowed();
 private:
-	const Fvector& attach_rot(u8 part) const;
-	const Fvector& attach_pos(u8 part) const;
+	Fvector attach_rot(u8 part) const;
+	Fvector attach_pos(u8 part) const;
 	shared_str m_sect_name;
 	xr_vector<u16> m_ancors;
 	attachable_hud_item* m_attached_items[3];

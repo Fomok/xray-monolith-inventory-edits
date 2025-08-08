@@ -1014,7 +1014,7 @@ u32 player_hud::motion_length(const MotionID& M, const CMotionDef*& md, float sp
 	return 0;
 }
 
-const Fvector& player_hud::attach_rot(u8 part) const
+Fvector player_hud::attach_rot(u8 part) const
 {
 	if (m_attached_items[part])
 		return m_attached_items[part]->hands_attach_rot();
@@ -1024,7 +1024,7 @@ const Fvector& player_hud::attach_rot(u8 part) const
 	return Fvector().set(0.f, 0.f, 0.f);
 }
 
-const Fvector& player_hud::attach_pos(u8 part) const
+Fvector player_hud::attach_pos(u8 part) const
 {
 	if (m_attached_items[part])
 		return m_attached_items[part]->hands_attach_pos();
