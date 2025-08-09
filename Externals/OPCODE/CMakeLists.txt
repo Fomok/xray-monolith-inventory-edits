@@ -12,6 +12,8 @@ target_include_directories(OPCODE
 
 target_link_libraries(OPCODE
   PRIVATE
+  FastDynamicCast
+  
   XRay.Platform
 
   XRay.Core.Defines

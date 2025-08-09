@@ -9,6 +9,8 @@ target_include_directories(TinyXML
 
 target_link_libraries(TinyXML
   PRIVATE
+  FastDynamicCast
+  
   XRay.Platform
 
   XRay.Core.Defines

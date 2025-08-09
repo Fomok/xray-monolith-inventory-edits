@@ -3,6 +3,7 @@ add_module(XRay.Game.AI.Script
 
   LINKS
   dxsdk
+  FastDynamicCast
   ode
   imgui
   luabind

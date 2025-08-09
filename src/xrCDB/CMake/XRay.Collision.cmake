@@ -9,6 +9,7 @@ add_module(XRay.Collision
   XRCDB_EXPORTS
 
   LINKS
+  FastDynamicCast
   loki
   OPCODE
   optick

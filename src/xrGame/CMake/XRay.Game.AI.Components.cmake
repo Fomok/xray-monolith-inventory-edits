@@ -3,6 +3,7 @@ add_module(XRay.Game.AI.Components
 
   LINKS
   dxsdk
+  FastDynamicCast
   ode
   IKAN
   luabind

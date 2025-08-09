@@ -141,17 +141,6 @@ add_module(XRay.Game.Core.Common.Shared
   NewZoomFlag.h
 )
 
-add_module(XRay.Game.Core.Common.SmartCast
-  SOURCES
-  ../xrServerEntities/smart_cast.cpp
-  ../xrServerEntities/smart_cast.h
-  ../xrServerEntities/smart_cast_impl0.h
-  ../xrServerEntities/smart_cast_impl1.h
-  ../xrServerEntities/smart_cast_impl2.h
-
-  ../xrServerEntities/smart_cast_stats.cpp
-)
-
 add_module(XRay.Game.Core.Common.StringTable
   SOURCES
   string_table.cpp

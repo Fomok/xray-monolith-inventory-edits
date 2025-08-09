@@ -11,7 +11,8 @@ class ENGINE_API CCustomHUD;
 class CSE_Abstract;
 class NET_Packet;
 
-#include "../xrcdb/ispatial.h"
+#include <ispatial.h>
+
 #include "isheduled.h"
 //#include "iinputreceiver.h"
 #include "irenderable.h"

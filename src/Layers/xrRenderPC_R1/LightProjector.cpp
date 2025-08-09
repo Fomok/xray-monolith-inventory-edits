@@ -79,14 +79,14 @@ void CLightProjector::set_object(IRenderable* O)
 
 		if (current)
 		{
-			ISpatial* spatial = dynamic_cast<ISpatial*>(O);
+			ISpatial* spatial = fast_dynamic_cast<ISpatial*>(O);
 			if (0 == spatial) current = 0;
 			else
 			{
 				spatial->spatial_updatesector();
 				if (0 == spatial->spatial.sector)
 				{
-					CObject* obj = dynamic_cast<CObject*>(O);
+					CObject* obj = fast_dynamic_cast<CObject*>(O);
 					if (obj) Msg("! Invalid object '%s' position. Outside of sector structure.", obj->cName().c_str());
 					current = 0;
 				}
@@ -137,7 +137,7 @@ void CLightProjector::OnAppActivate()
 void CLightProjector::calculate()
 {
 #ifdef _GPA_ENABLED
-		TAL_SCOPED_TASK_NAMED( "CLightProjector::calculate()" );
+	TAL_SCOPED_TASK_NAMED("CLightProjector::calculate()");
 #endif // _GPA_ENABLED
 
 	if (receivers.empty()) return;
@@ -182,7 +182,7 @@ void CLightProjector::calculate()
 	Device.Statistic->RenderDUMP_Pcalc.Begin();
 	RCache.set_RT(RT->pRT);
 	RCache.set_ZB(RImplementation.Target->pTempZB);
-	CHK_DX(HW.pDevice->Clear (0,0, D3DCLEAR_ZBUFFER | (HW.Caps.bStencil?D3DCLEAR_STENCIL:0), 0,1,0 ));
+	CHK_DX(HW.pDevice->Clear(0, 0, D3DCLEAR_ZBUFFER | (HW.Caps.bStencil ? D3DCLEAR_STENCIL : 0), 0, 1, 0));
 	RCache.set_xform_world(Fidentity);
 
 	// reallocate/reassociate structures + perform all the work
@@ -216,7 +216,7 @@ void CLightProjector::calculate()
 		float p_R = R.O->renderable.visual->getVisData().sphere.R * 1.1f;
 		//VERIFY2		(p_R>EPS_L,"Object has no physical size");
 #ifdef DEBUG
-		VERIFY3(p_R>EPS_L, "Object has no physical size", R.O->renderable.visual->getDebugName().c_str());
+		VERIFY3(p_R > EPS_L, "Object has no physical size", R.O->renderable.visual->getDebugName().c_str());
 #endif
 		float p_hat = p_R / P_cam_dist;
 		float p_asp = 1.f;
@@ -238,30 +238,30 @@ void CLightProjector::calculate()
 		Fvector v;
 		v.sub(v_Cs, v_C);;
 #ifdef DEBUG
-		if ((v.x*v.x+v.y*v.y+v.z*v.z)<=flt_zero)	{
-			CObject* OO = dynamic_cast<CObject*>(R.O);
-			Msg("Object[%s] Visual[%s] has invalid position. ",*OO->cName(),*OO->cNameVisual());
+		if ((v.x * v.x + v.y * v.y + v.z * v.z) <= flt_zero) {
+			CObject* OO = fast_dynamic_cast<CObject*>(R.O);
+			Msg("Object[%s] Visual[%s] has invalid position. ", *OO->cName(), *OO->cNameVisual());
 			Fvector cc;
 			OO->Center(cc);
-			Log("center=",cc);
+			Log("center=", cc);
 
-			Log("visual_center=",OO->Visual()->getVisData().sphere.P);
-			
-			Log("full_matrix=",OO->XFORM());
+			Log("visual_center=", OO->Visual()->getVisData().sphere.P);
 
-			Log	("v_N",v_N);
-			Log	("v_C",v_C);
-			Log	("v_Cs",v_Cs);
+			Log("full_matrix=", OO->XFORM());
+
+			Log("v_N", v_N);
+			Log("v_C", v_C);
+			Log("v_Cs", v_Cs);
 
 			Log("all bones transform:--------");
-			CKinematics* K = dynamic_cast<CKinematics*>(OO->Visual());
-			
-			for(u16 ii=0; ii<K->LL_BoneCount();++ii){
+			CKinematics* K = fast_dynamic_cast<CKinematics*>(OO->Visual());
+
+			for (u16 ii = 0; ii < K->LL_BoneCount(); ++ii) {
 				Fmatrix tr;
 
 				tr = K->LL_GetTransform(ii);
-				Log("bone ",K->LL_BoneName_dbg(ii));
-				Log("bone_matrix",tr);
+				Log("bone ", K->LL_BoneName_dbg(ii));
+				Log("bone_matrix", tr);
 			}
 			Log("end-------");
 		}
@@ -273,7 +273,7 @@ void CLightProjector::calculate()
 			R.dwTimeValid = Device.dwTimeGlobal;
 			LT->shadow_recv_frame = Device.dwFrame - 1;
 			LT->shadow_recv_slot = -1;
-			continue ;
+			continue;
 		}
 
 		mView.build_camera(v_C, v_Cs, v_N);
@@ -288,7 +288,7 @@ void CLightProjector::calculate()
 		// Clear color to ambience
 		Fvector& cap = LT->get_approximate();
 		CHK_DX(
-			HW.pDevice->Clear(0,0, D3DCLEAR_TARGET, color_rgba_f(cap.x,cap.y,cap.z, (cap.x+cap.y+cap.z)/4.f), 1, 0 ));
+			HW.pDevice->Clear(0, 0, D3DCLEAR_TARGET, color_rgba_f(cap.x, cap.y, cap.z, (cap.x + cap.y + cap.z) / 4.f), 1, 0));
 
 		// calculate uv-gen matrix and clamper
 		Fmatrix mCombine;
@@ -319,7 +319,7 @@ void CLightProjector::calculate()
 		BB.set(min, max);
 		R.UVclamp_min.set(min).add(.05f); // shrink a little
 		R.UVclamp_max.set(max).sub(.05f); // shrink a little
-		ISpatial* spatial = dynamic_cast<ISpatial*>(O);
+		ISpatial* spatial = fast_dynamic_cast<ISpatial*>(O);
 		if (spatial)
 		{
 			spatial->spatial_updatesector();

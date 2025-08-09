@@ -3,6 +3,7 @@ add_module(XRay.Game.Physics
 
   LINKS
   dxsdk
+  FastDynamicCast
   IKAN
   luabind
   LuaJIT

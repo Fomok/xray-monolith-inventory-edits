@@ -6,6 +6,7 @@ add_module(XRay.Physics
 
   LINKS
   dxsdk
+  FastDynamicCast
   loki
   ode
   tbb

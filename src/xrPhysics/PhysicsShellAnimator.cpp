@@ -1,3 +1,4 @@
+#include <smart_cast.h>
 #include <xr_ini.h>
 #include <xr_trims.h>
 
@@ -9,7 +10,6 @@
 //#include "game_object_space.h"
 #include "IPhysicsShellHolder.h"
 #include "bone.h"
-#include "smart_cast.h"
 
 
 CPhysicsShellAnimator::

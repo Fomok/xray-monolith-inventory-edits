@@ -7,6 +7,7 @@ add_module(XRay.NetServer
   LINKS
   DPlay
   DxErr
+  FastDynamicCast
   optick
   Ws2_32
 

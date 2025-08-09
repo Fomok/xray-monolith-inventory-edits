@@ -4,6 +4,7 @@ add_module(XRay.Game.UI
   LINKS
   CxImage
   dxsdk
+  FastDynamicCast
   luabind
   LuaJIT
   LZO

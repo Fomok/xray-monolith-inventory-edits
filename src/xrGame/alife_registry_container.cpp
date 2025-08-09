@@ -6,8 +6,6 @@
 //	Description : ALife registry container class
 ////////////////////////////////////////////////////////////////////////////
 
-#include <FS.h>
-
 #include "alife_registry_container.h"
 #include "object_interfaces.h"
 #include "alife_space.h"

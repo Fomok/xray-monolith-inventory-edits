@@ -4,6 +4,7 @@ add_module(XRay.Game.Core
   LINKS
   CxImage
   dxsdk
+  FastDynamicCast
   IKAN
   luabind
   LuaJIT

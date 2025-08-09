@@ -248,7 +248,7 @@ void FTreeVisual::Copy(dxRender_Visual* pSrc)
 {
 	dxRender_Visual::Copy(pSrc);
 
-	FTreeVisual* pFrom = dynamic_cast<FTreeVisual*>(pSrc);
+	FTreeVisual* pFrom = fast_dynamic_cast<FTreeVisual*>(pSrc);
 
 	PCOPY(rm_geom);
 
@@ -351,6 +351,6 @@ void FTreeVisual_PM::Render(float LOD)
 void FTreeVisual_PM::Copy(dxRender_Visual* pSrc)
 {
 	inherited::Copy(pSrc);
-	FTreeVisual_PM* pFrom = dynamic_cast<FTreeVisual_PM*>(pSrc);
+	FTreeVisual_PM* pFrom = fast_dynamic_cast<FTreeVisual_PM*>(pSrc);
 	PCOPY(pSWI);
 }

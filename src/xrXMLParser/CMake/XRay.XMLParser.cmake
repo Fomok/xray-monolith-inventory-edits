@@ -8,6 +8,7 @@ add_module(XRay.XMLParser
   XRXMLPARSER_EXPORTS
 
   LINKS
+  FastDynamicCast
   TinyXML
 
   XRay.Core.Defines

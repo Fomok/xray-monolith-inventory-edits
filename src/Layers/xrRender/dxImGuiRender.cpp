@@ -14,7 +14,7 @@
 
 void dxImGuiRender::Copy(IImGuiRender& _in)
 {
-    *this = *dynamic_cast<dxImGuiRender*>(&_in);
+    *this = *fast_dynamic_cast<dxImGuiRender*>(&_in);
 }
 
 void dxImGuiRender::SetState(ImDrawData* data)

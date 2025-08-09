@@ -20,6 +20,8 @@ set(XRAY_COMPILER_FLAGS
     /MD
     # Suppress 'Use /EHsc' warning
     /wd4530
+    # Disable redefined symbol warnings (loki / xrDebug STATIC_CHECK)
+    /wd4005
 )
 
 # Debug flags

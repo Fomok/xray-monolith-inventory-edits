@@ -8,6 +8,10 @@
 
 #pragma once
 
+#ifdef DEBUG
+#include "loki/Typelist.h"
+#endif
+
 #include <Engine.h>
 #include <client_id.h>
 
@@ -15,10 +19,6 @@
 #include "object_interfaces.h"
 #include "script_value_container.h"
 #include "alife_space.h"
-
-#ifdef DEBUG
-#include "loki/Typelist.h"
-#endif
 
 class NET_Packet;
 class xrClientData;

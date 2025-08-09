@@ -12,6 +12,7 @@ target_include_directories(IKAN
 
 target_link_libraries(IKAN
   PRIVATE
+  FastDynamicCast
   ode
   
   XRay.Platform

@@ -22,6 +22,7 @@ add_module(XRay.Render.R3
   LINKS
   dxgi
   dxsdk
+  FastDynamicCast
   imgui
   loki
   luabind

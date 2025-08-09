@@ -5,6 +5,7 @@ add_module(XRay.Particles
   ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
+  FastDynamicCast
   tbb
   
   XRay.Core.Defines

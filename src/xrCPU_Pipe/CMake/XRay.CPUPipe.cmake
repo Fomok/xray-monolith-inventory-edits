@@ -5,6 +5,7 @@ add_module(XRay.CPUPipe
 
   LINKS
   dxsdk
+  FastDynamicCast
   loki
 
   XRay.Core.Defines

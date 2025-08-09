@@ -15,7 +15,6 @@
 #include <dxRenderDeviceRender.h>
 #include <dxWallMarkArray.h>
 #include <dxUIShader.h>
-//#include <smart_cast.h>
 
 #include "r2.h"
 

@@ -55,3 +55,6 @@
 [submodule "Externals/optick-git"]
 	path = Externals/optick-git
 	url = https://github.com/bombomby/optick.git
+[submodule "Externals/FastDynamicCast-git"]
+	path = Externals/FastDynamicCast-git
+	url = https://github.com/tobspr/FastDynamicCast

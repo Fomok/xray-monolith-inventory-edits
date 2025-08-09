@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <loki/Typelist.h>
+
 #include "script_export_space.h"
 
 typedef class_exporter<Fvector> CScriptFvector;

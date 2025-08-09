@@ -26,6 +26,7 @@ add_module(XRay.Sound
   LINKS
   dxsdk
   dxguid
+  FastDynamicCast
   libogg
   libtheora
   libvorbis

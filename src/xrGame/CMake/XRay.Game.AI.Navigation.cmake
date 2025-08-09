@@ -3,6 +3,7 @@ add_module(XRay.Game.AI.Navigation
 
   LINKS
   dxsdk
+  FastDynamicCast
   ode
   luabind
   LuaJIT
