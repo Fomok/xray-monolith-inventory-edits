@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <sound.h>
+
 class CAI_Stalker;
 
 class CStalkerSoundData : public CSound_UserData

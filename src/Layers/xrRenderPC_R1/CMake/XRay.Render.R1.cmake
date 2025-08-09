@@ -1,16 +1,28 @@
+add_library(XRay.Render.R1.ForceIncludes INTERFACE)
+
+target_compile_options(XRay.Render.R1.ForceIncludes
+  INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FIFStaticRender.h>
+  $<$<CXX_COMPILER_ID:Clang>:-includeFStaticRender.h>
+  $<$<CXX_COMPILER_ID:GNU>:-includeFStaticRender.h>
+)
+
 add_module(XRay.Render.R1
   TYPE STATIC
-  
-  PRECOMPILES stdafx.h
 
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  RENDER=1
   STATIC_RENDERER_R1
   XRRENDER_R1_EXPORTS
+  [[TEX_POINT_ATT="internal\\internal_light_attpoint"]]
+  [[TEX_SPOT_ATT="internal\\internal_light_attclip"]]
 
   LINKS
   dxsdk
+  FastDynamicCast
   imgui
   loki
   luabind
@@ -19,12 +31,40 @@ add_module(XRay.Render.R1
   optick
   ReShadeCompat
   tbb
-  XRay.Collision
-  XRay.Core
-  XRay.CPUPipe
-  XRay.Engine
-  XRay.Render.API
+
+  XRay.Platform
+  XRay.Render.R1.ForceIncludes
+
+  XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
   
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Particles.Includes
+  XRay.Physics.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.DX9.Includes
+  XRay.Render.DX10.Includes
+  XRay.ServerEntities.Includes
+  XRay.Sound.Includes
+  
+  PRECOMPILES
+  #[["d3dx9.h"]]
+  #[["xrD3DDefs.h"]]
+  #[["HW.h"]]
+  #[["Shader.h"]]
+  #[["R_Backend.h"]]
+  #[["R_Backend_Runtime.h"]]
+  #[["resourcemanager.h"]]
+  #[["vis_common.h"]]
+  #[["render.h"]]
+  #[["_d3d_extensions.h"]]
+
   SOURCES
   ../xrRender/xrRender_console.cpp
   ../xrRender/xrRender_console.h
@@ -32,10 +72,21 @@ add_module(XRay.Render.R1
   ../xrRender/cl_intersect.h
   ../xrRender/xrD3DDefs.h
 
-  stdafx.h
-  
   xrRender_R1.cpp
 )
+
+if(NOT EDITOR)
+  target_precompile_headers(XRay.Render.R1
+    PRIVATE
+    #[["igame_level.h"]]
+
+    #[["blenders/blender.h"]]
+    #[["blenders/blender_clsid.h"]]
+    #[["psystem.h"]]
+    #[["xrRender_console.h"]]
+    #[["FStaticRender.h"]]
+  )
+endif()
 
 add_module(XRay.Render.R1.Core
   SOURCES

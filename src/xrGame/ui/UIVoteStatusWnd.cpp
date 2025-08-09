@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIVoteStatusWnd.h"
 #include "UIXmlInit.h"
 #include "UIStatic.h"

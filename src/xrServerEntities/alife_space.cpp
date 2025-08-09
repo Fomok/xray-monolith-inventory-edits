@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "alife_space.h"
 
 namespace ALife

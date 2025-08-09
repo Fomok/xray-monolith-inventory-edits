@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ai_monster_utils.h"
 #include "entity.h"
 #include "ai_object_location.h"

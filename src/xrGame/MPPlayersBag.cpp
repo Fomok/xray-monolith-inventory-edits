@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "MPPlayersBag.h"
 #include "Level.h"

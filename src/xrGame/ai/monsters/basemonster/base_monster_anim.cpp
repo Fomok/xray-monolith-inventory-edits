@@ -6,7 +6,6 @@
 //	Description : Animations for monsters of biting class 
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "base_monster.h"
 #include "KinematicsAnimated.h"
 #include "sound_player.h"

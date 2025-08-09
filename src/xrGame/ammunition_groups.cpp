@@ -1,7 +1,8 @@
-#include "stdafx.h"
+#include <xr_ini.h>
+#include <xr_trims.h>
+
 #include "ammunition_groups.h"
 #include "ui/UIBuyWndShared.h"
-#include "../xrCore/xr_ini.h"
 
 namespace award_system
 {

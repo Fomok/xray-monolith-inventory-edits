@@ -4,8 +4,8 @@
 //	Copyright (C) GSC Game World - 2009
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stats_manager.h"
+#include "IGame_Persistent.h"
 
 #ifdef _EDITOR
     const bool g_dedicated_server = false;

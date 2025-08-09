@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx103DFluidEmitters.h"
 
 #include "dx103DFluidBlenders.h"

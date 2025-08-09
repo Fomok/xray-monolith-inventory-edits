@@ -6,7 +6,6 @@
 //	Description : Script token list class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "script_token_list.h"
 
 CScriptTokenList::~CScriptTokenList()

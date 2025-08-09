@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "actor.h"
 #include "customdetector.h"
 #include "weapon.h"

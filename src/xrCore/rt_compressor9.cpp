@@ -1,8 +1,7 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <LocatorAPI.h>
 
 #include "rt_lzo1x.h"
-
+#include "log.h"
 
 //==============================================================================
 

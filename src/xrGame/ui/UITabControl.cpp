@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UITabControl.h"
 #include "UITabButton.h"
 

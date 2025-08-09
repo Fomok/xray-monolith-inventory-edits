@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------------
-#include "stdafx.h"
-#pragma hdrstop
 
+#include <vector.h>
+
+#include "psystem.h"
 #include "particle_core.h"
 
 using namespace PAPI;

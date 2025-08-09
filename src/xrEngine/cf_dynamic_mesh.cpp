@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "cf_dynamic_mesh.h"
 

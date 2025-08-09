@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include "_stl_extensions.h"
+#include "_vector3d.h"
 
 class Miniball;
 class Basis;

@@ -2,7 +2,11 @@
 #define SH_TEXTURE_H
 #pragma once
 
-#include "../../xrCore/xr_resource.h"
+#include <d3d9types.h>
+#include <fastdelegate.h>
+#include <xr_resource.h>
+
+#include <xrD3DDefs.h>
 
 class ENGINE_API CAviPlayerCustom;
 class CTheoraSurface;

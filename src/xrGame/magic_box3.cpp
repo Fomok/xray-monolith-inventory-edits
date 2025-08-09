@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "magic_box3.h"
 
 bool MagicBox3::intersects(const MagicBox3& rkBox1) const

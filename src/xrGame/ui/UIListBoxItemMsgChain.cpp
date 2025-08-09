@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIListBoxItemMsgChain.h"
 #include "UIScrollView.h"
 

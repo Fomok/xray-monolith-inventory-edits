@@ -6,6 +6,8 @@
 //	Description : Script game object class
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xrCore.h>
+
 #include "pch_script.h"
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
@@ -48,6 +50,7 @@
 #include "Pda.h"
 #include "player_hud.h"
 #include "script_attachment_manager.h"
+#include "CustomDevice.h"
 
 class CScriptBinderObject;
 
@@ -576,9 +579,9 @@ bool CScriptGameObject::is_bone_visible(u16 bone_id, bool bHud)
 
 	if (!k) return result;
 
-	auto bones = k->list_bones();
-	for (const auto& bone : bones)
-		result[bone.first] = bone.second.c_str();
+	auto bones = k->LL_Bones();
+	for (const auto& bone : *bones)
+		result[bone.second] = bone.first.c_str();
 
 	return result;
 }
@@ -779,6 +782,38 @@ void CScriptGameObject::SetPsyFactor(float val)
 		return;
 	}
 	pda->m_psy_factor = val;
+}
+
+// Added by Ncenka - allow turn on/off devices
+bool CScriptGameObject::IsDeviceEnabled() const
+{
+	CPda* pda = smart_cast<CPda*>(m_game_object);
+	if (pda)
+		return pda->m_PdaEnabled;
+
+	CCustomDevice* custom_device = smart_cast<CCustomDevice*>(m_game_object);
+	if (custom_device)
+		return custom_device->m_CustomDeviceEnabled;
+
+	return false;
+}
+
+// Added by Ncenka - allow turn on/off devices
+void CScriptGameObject::SetDeviceEnabled(bool enabled)
+{
+	CPda* pda = smart_cast<CPda*>(m_game_object);
+	if (pda)
+	{
+		pda->m_PdaEnabled = enabled;
+		return;
+	}
+
+	CCustomDevice* custom_device = smart_cast<CCustomDevice*>(m_game_object);
+	if (custom_device)
+	{
+		custom_device->m_CustomDeviceEnabled = enabled;
+		return;
+	}
 }
 
 void CScriptGameObject::eat(CScriptGameObject* item)

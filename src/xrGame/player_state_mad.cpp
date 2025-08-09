@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "player_state_mad.h"
 #include "game_base.h"
 #include "game_state_accumulator.h"

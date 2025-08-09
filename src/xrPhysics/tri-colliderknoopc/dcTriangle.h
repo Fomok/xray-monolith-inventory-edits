@@ -1,4 +1,7 @@
-#pragma		once
+#pragma once
+
+#include <xrCDB.h>
+
 struct Triangle
 {
 	//dReal* v0;

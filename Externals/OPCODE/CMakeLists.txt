@@ -4,23 +4,38 @@ target_folder(OPCODE ${FOLDER_EXTERNAL})
 
 set(OPCODE_DIR ../OPCODE-xr)
 
-target_precompile_headers(OPCODE
-    PRIVATE
-    ../../src/xrCDB/StdAfx.h
-)
-
-target_compile_options(OPCODE
-  PRIVATE
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
-  $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-value>
-)
-
 target_include_directories(OPCODE
   PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}/OPCODE
+)
+
+target_link_libraries(OPCODE
   PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src/xrCDB/
+  FastDynamicCast
+  
+  XRay.Platform
+
+  XRay.Core.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+)
+
+target_compile_options(OPCODE
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4995>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-value>
+)
+
+target_precompile_headers(OPCODE
+  PRIVATE
+  #[["xrCore.h"]]
+  #[["alloc.h"]]
+  #[["opcode.h"]]
 )
 
 target_sources_sandboxed(OPCODE

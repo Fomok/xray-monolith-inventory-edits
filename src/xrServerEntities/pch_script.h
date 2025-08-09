@@ -9,9 +9,6 @@
 #ifndef PCH_SCRIPT_H
 #define PCH_SCRIPT_H
 
-#include "../xrEngine/stdafx.h"
-
-
 //AVO: lua re-org
 #include "lua.hpp"
 /*extern "C" {

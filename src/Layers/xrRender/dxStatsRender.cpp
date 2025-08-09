@@ -1,7 +1,8 @@
-#include "stdafx.h"
+#include <GameFont.h>
+
 #include "dxStatsRender.h"
-#include "../../xrEngine/GameFont.h"
 #include "dxRenderDeviceRender.h"
+#include "R_Backend_Runtime.h"
 
 void dxStatsRender::Copy(IStatsRender& _in)
 {

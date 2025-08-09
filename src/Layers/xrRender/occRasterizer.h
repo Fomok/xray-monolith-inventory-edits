@@ -2,6 +2,11 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include <_bitwise.h>
+#include <_flags.h>
+#include <_vector3d.h>
+#include <_plane.h>
+
 const int occ_dim_0 = 64;
 const int occ_dim_1 = occ_dim_0 / 2;
 const int occ_dim_2 = occ_dim_1 / 2;

@@ -1,6 +1,9 @@
 #ifndef __XR_OBJECT_LIST_H__
 #define __XR_OBJECT_LIST_H__
 
+#include <clsid.h>
+#include <fastdelegate.h>
+
 // refs
 class ENGINE_API CObject;
 class NET_Packet;

@@ -7,7 +7,6 @@
 //
 // copyright 2005 GSC Game World
 
-#include "StdAfx.h"
 #include "UITextureMaster.h"
 #include "UIStaticItem.h"
 #include "uiabstract.h"

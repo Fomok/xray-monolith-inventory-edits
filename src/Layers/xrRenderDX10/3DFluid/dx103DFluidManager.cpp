@@ -1,8 +1,15 @@
-#include "stdafx.h"
+#include <defines.h>
+#include <dxRenderDeviceRender.h>
+
+#if defined(USE_DX10)
+#include <Debug/dxPixEventWrapper.h>
+#elif defined(USE_DX11)
+#include <dx10EventWrapper.h>
+#endif
+
+#include <resourcemanager.h>
+
 #include "dx103DFluidManager.h"
-
-#include "../../xrRender/dxRenderDeviceRender.h"
-
 #include "dx103DFluidBlenders.h"
 #include "dx103DFluidData.h"
 #include "dx103DFluidGrid.h"

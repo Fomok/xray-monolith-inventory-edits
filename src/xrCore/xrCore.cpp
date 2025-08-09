@@ -1,19 +1,23 @@
 // xrCore.cpp : Defines the entry point for the DLL application.
 //
-#include "stdafx.h"
-#pragma hdrstop
 
+#include <fstream>
+#include <iostream>
+#include <string>
 #include <mmsystem.h>
 #include <objbase.h>
-#include "xrCore.h"
-
 #ifdef DEBUG
 # include <malloc.h>
 #endif // DEBUG
 
-#include<fstream>
-#include <iostream>
-#include <string>
+#include "FileSystem.h"
+#include "LocatorAPI.h"
+#include "string_concatenations.h"
+#include "rt_compressor.h"
+#include "xrCore.h"
+
+class CLocatorAPI;
+extern XRCORE_API CLocatorAPI* xr_FS;
 
 XRCORE_API xrCore Core;
 extern XRCORE_API u32 build_id;

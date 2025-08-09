@@ -2,6 +2,40 @@ add_library(luabind STATIC)
 
 target_folder(luabind ${FOLDER_LUA})
 
+target_include_directories(luabind
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/luabind
+)
+
+target_link_libraries(luabind
+  PUBLIC
+  boost
+  PRIVATE
+  FastDynamicCast
+  LuaJIT
+)
+
+target_compile_options(luabind
+  PUBLIC
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-extra-qualification>
+  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-unqualified-friend>
+)
+
+target_compile_definitions(luabind
+  PRIVATE
+  LUABIND_BUILDING
+)
+
+target_precompile_headers(luabind
+  PRIVATE
+  pch.h
+)
+
 target_sources(luabind PRIVATE
   luabind_memory.cpp
   pch.cpp
@@ -104,35 +138,4 @@ target_sources(luabind PRIVATE
   luabind/wrapper_base.hpp
   luabind/yield_policy.hpp
   pch.h
-)
-
-target_include_directories(luabind
-  PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}/luabind
-)
-
-target_precompile_headers(luabind
-  PRIVATE
-  pch.h
-)
-
-target_compile_options(luabind
-  PUBLIC
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
-  $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
-  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-extra-qualification>
-  $<$<CXX_COMPILER_ID:Clang>:-Wno-microsoft-unqualified-friend>
-)
-
-target_compile_definitions(luabind
-  PRIVATE
-  LUABIND_BUILDING
-)
-
-target_link_libraries(luabind
-  PUBLIC
-  boost
-  PRIVATE
-  LuaJIT
 )

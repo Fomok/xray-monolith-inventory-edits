@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "game_state_accumulator.h"
 
 //typelist:

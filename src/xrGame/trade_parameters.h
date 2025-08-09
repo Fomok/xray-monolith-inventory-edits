@@ -10,6 +10,8 @@
 
 #include "trade_action_parameters.h"
 
+class CInifile;
+
 class CTradeParameters
 {
 public:

@@ -11,6 +11,8 @@
 #ifndef _EDITOR
 
 #include "RenderDeviceRender.h"
+#include "Device.h"
+#include "Shader.h"
 #include "xr_effgamma.h"
 
 class CResourceManager;

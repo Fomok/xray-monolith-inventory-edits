@@ -1,9 +1,12 @@
 #ifndef XRCDB_H
 #define XRCDB_H
 
+#include <log.h>
+#include <xrSyncronize.h>
+
 #define XRCDB_API
 
-#ifdef M_VISUAL
+#ifdef _MSC_VER
 #define ALIGN(a) __declspec(align(a))
 #else
 #define ALIGN(a)

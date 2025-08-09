@@ -2,10 +2,10 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#include "igame_level.h"
+#include <xr_ini.h>
 
 #include "CameraBase.h"
+#include "igame_level.h"
 
 CCameraBase::CCameraBase(CObject* p, u32 flags)
 {

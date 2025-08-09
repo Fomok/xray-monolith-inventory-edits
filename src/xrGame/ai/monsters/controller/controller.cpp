@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "controller.h"
 #include "controller_state_manager.h"
 #include "../controlled_entity.h"

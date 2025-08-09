@@ -1,6 +1,8 @@
 #ifndef	dx10MSAABlender_included
 #define	dx10MSAABlender_included
 
+#include <blenders/Blender.h>
+
 class CBlender_msaa : public IBlender
 {
 public:

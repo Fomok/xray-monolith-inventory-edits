@@ -3,6 +3,12 @@
 #pragma once
 
 #include "RenderDetailModel.h"
+#include "_types.h"
+#include "_sphere.h"
+#include "_fbox.h"
+#include "_flags.h"
+#include "_vector3d.h"
+#include "Shader.h"
 
 //////////////////////////////////////////////////////////////////////////
 // definition (Detail Model)

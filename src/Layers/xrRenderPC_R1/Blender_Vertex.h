@@ -6,6 +6,8 @@
 #define AFX_BLENDER_VERTEX_H__D3B42F77_7018_4672_B6A5_6EE6BD947662__INCLUDED_
 #pragma once
 
+#include "blenders/Blender.h"
+
 class CBlender_Vertex : public IBlender
 {
 public:

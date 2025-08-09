@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <LocatorAPI.h>
 
 #include "postprocessanimator.h"
 #ifndef _PP_EDITOR_

@@ -1,10 +1,9 @@
-#include "stdafx.h"
-#pragma hdrstop
-
+#include "_std_extensions.h"
+#include "xrMemory.h"
 #include "xrMemory_align.h"
 #include "xrMemory_pure.h"
-
-#ifndef __BORLANDC__
+#include "xrMEMORY_POOL.h"
+#include "xrDebug.h"
 
 #ifndef DEBUG_MEMORY_MANAGER
 # define debug_mode 0
@@ -307,4 +306,3 @@ void* xrMemory::mem_realloc(void* P, size_t size
 	return _ptr;
 }
 
-#endif // __BORLANDC__

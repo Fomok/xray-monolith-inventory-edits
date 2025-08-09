@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sound.h>
+
 class CUIXml;
 
 class CMMSound

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dTriColliderCommon.h"
 #include "../dCylinder/dCylinder.h"
 #include "dTriCylinder.h"

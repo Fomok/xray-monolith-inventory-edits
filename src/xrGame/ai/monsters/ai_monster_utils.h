@@ -1,5 +1,8 @@
 #pragma once
 
+#include <xr_ini.h>
+#include <xr_trims.h>
+
 // проверить, находится ли объект entity на ноде
 // возвращает позицию объекта, если он находится на ноде, или центр его ноды
 class CEntity;

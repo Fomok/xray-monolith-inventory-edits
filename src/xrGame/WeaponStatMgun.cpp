@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "WeaponStatMgun.h"
 #include "Kinematics.h"
 #include "PhysicsShell.h"

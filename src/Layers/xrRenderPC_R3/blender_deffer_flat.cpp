@@ -1,7 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "../xrRender/uber_deffer.h"
+#include <uber_deffer.h>
+#include <blenders/Blender_CLSID.h>
 #include "Blender_deffer_flat.h"
 
 CBlender_deffer_flat::CBlender_deffer_flat()

@@ -1,6 +1,10 @@
 #ifndef logH
 #define logH
 
+#include <windows.h>
+
+#include "xrstring.h"
+
 #define VPUSH(a) ((a).x), ((a).y), ((a).z)
 
 void XRCORE_API __cdecl Msg(LPCSTR format, ...);

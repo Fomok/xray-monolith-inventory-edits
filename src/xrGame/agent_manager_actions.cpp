@@ -6,7 +6,6 @@
 //	Description : Agent manager actions
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "agent_manager_actions.h"
 #include "agent_manager.h"
 #include "agent_member_manager.h"

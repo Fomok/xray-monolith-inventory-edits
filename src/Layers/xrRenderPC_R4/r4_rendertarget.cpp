@@ -1,5 +1,12 @@
-#include "stdafx.h"
-#include "../xrRender/resourcemanager.h"
+#include <defines.h>
+#include <resourcemanager.h>
+#include <msaa/dx10MSAABlender.h>
+#include <DX10 Rain/dx10RainBlender.h>
+#include <dxRenderDeviceRender.h>
+#include <xrRender_console.h>
+#include <D3DX10Tex.h>
+#include <D3DX11Tex.h>
+
 #include "blender_light_occq.h"
 #include "blender_light_mask.h"
 #include "blender_light_direct.h"
@@ -12,8 +19,6 @@
 #include "blender_ssao.h"
 #include "dx11MinMaxSMBlender.h"
 #include "dx11HDAOCSBlender.h"
-#include "../xrRenderDX10/msaa/dx10MSAABlender.h"
-#include "../xrRenderDX10/DX10 Rain/dx10RainBlender.h"
 ////////////////////////////lvutner
 #include "blender_ss_sunshafts.h"
 #include "blender_gasmask_drops.h"
@@ -29,10 +34,6 @@
 #include "blender_hdr10_bloom.h"
 #include "blender_hdr10_lens_flare.h"
 
-#include "../xrRender/dxRenderDeviceRender.h"
-#include "../xrRender/xrRender_console.h"
-
-#include <D3DX10Tex.h>
 
 D3D_VIEWPORT custom_viewport[1] = { 0, 0, 0, 0, 0.f, 1.f };
 

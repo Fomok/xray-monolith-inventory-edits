@@ -1,27 +1,52 @@
 add_module(XRay.Engine
   TYPE STATIC
   
-  PRECOMPILES stdafx.h
-  
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
-  DEFINES ENGINE_BUILD
+  DEFINES
+  ENGINE_BUILD
+  [[ENGINE_API=]]
+  [[ECORE_API=]]
+  [[DLL_API=]]
+  $<$<CONFIG:DEBUG>:D3D_DEBUG_INFO>
+  $<$<NOT:$<CONFIG:DEBUG>>:LUABIND_NO_ERROR_CHECKING>
 
   LINKS
+  dxsdk
   discord
   dinput8
   imgui
+  libogg
+  libtheora
   LuaJIT
   luabind
-  
   Vfw32
-  XRay.Collision
-  XRay.Core
-  XRay.Game
-  XRay.Particles
-  XRay.Render.API
-  XRay.Sound
-  XRay.XMLParser
+  
+  XRay.Core.Defines
+
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Game.Includes
+  XRay.Particles.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.Sound.Includes
+  
+  XRay.Game.AI.Navigation
+
+  PRECOMPILES
+  #[["xrAPI.h"]]
+  #[["d3d9.h"]]
+  #[["bone.h"]]
+  #[["Render.h"]]
+  #[["Device.h"]]
+  #[["light.h"]]
+  #[["defines.h"]]
+  #[["fs.h"]]
+  #[["xrXRC.h"]]
+  #[["sound.h"]]
+  #[["sound.h"]]
 
   SOURCES
   defines.cpp
@@ -33,11 +58,46 @@ add_module(XRay.Engine
   no_single.h
   Properties.h
   pure.h
-  stdafx.h
   std_classes.h
   trivial_encryptor.h
   _d3d_extensions.h
 )
+
+
+# you must define ENGINE_BUILD then building the engine itself
+# and not define it if you are about to build DLL
+
+#ifndef NO_ENGINE_API
+#ifdef ENGINE_BUILD
+#define DLL_API
+#__declspec(dllimport)
+#define ENGINE_API
+#__declspec(dllexport)
+#else
+#undef DLL_API
+#define DLL_API
+#__declspec(dllexport)
+#define ENGINE_API
+#__declspec(dllimport)
+#endif
+#else
+#define ENGINE_API
+#define DLL_API
+#endif // NO_ENGINE_API
+
+if(NOT NO_XRLOG)
+  #target_precompile_headers(XRay.Engine.Precompiles
+  #  INTERFACE
+  #  [["log.h"]]
+  #)
+endif()
+
+if($<OR:$<NOT:$<CONFIG:DEBUG>>,${FORCE_NO_EXCEPTIONS}>)
+  target_compile_definitions(XRay.Engine.Defines
+    INTERFACE
+    BOOST_NO_EXCEPTIONS
+  )
+endif()
 
 add_module(XRay.Engine.Collision
   SOURCES

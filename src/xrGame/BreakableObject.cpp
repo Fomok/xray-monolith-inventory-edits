@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <net_utils.h>
+
 #include "BreakableObject.h"
 #include "xrserver_objects_alife.h"
 #include "IPHStaticGeomShell.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIHudStatesWnd.h"
 
 #include "../Actor.h"

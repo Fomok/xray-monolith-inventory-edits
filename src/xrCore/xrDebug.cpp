@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
 
 #ifndef _EDITOR
 
@@ -9,23 +7,12 @@
 
 #include "dxerr.h"
 
-#ifdef __BORLANDC__
-#include "d3d9.h"
-#include "d3dx9.h"
-#include "D3DX_Wrapper.h"
-#pragma comment (lib,"EToolsB.lib")
-static BOOL bException = TRUE;
-#else
 static BOOL bException = FALSE;
-#endif
 
 #ifdef _M_AMD64
 #define DEBUG_INVOKE DebugBreak ()
 #else
 #define DEBUG_INVOKE __asm { int 3 }
-#ifndef __BORLANDC__
-#pragma comment (lib,"dxerr.lib")
-#endif
 #endif
 
 XRCORE_API xrDebug Debug;
@@ -320,31 +307,6 @@ LONG WINAPI UnhandledFilter(struct _EXCEPTION_POINTERS* pExceptionInfo)
 	return retval;
 }
 
-//////////////////////////////////////////////////////////////////////
-#ifdef M_BORLAND
-// typedef void ( _RTLENTRY *___new_handler) ();
-namespace std
-{
-extern new_handler _RTLENTRY _EXPFUNC set_new_handler(new_handler new_p);
-};
-
-// typedef int (__stdcall * _PNH)( size_t );
-// _CRTIMP int __cdecl _set_new_mode( int );
-// _PNH __cdecl set_new_handler( _PNH );
-// typedef void (new * new_handler)();
-// new_handler set_new_handler(new_handler my_handler);
-static void __cdecl def_new_handler()
-{
-    FATAL("Out of memory.");
-}
-
-void xrDebug::_initialize(const bool& dedicated)
-{
-    // std::set_new_mode (1); // gen exception if can't allocate memory
-    std::set_new_handler(def_new_handler); // exception-handler for 'out of memory' condition
-    ::SetUnhandledExceptionFilter(UnhandledFilter); // exception handler to all "unhandled" exceptions
-}
-#else
 typedef int (__cdecl* _PNH)(size_t);
 _CRTIMP int __cdecl _set_new_mode(int);
 _CRTIMP _PNH __cdecl _set_new_handler(_PNH);
@@ -358,7 +320,5 @@ void xrDebug::_initialize(const bool& dedicated)
 	std::set_unexpected(_terminate);
 	::SetUnhandledExceptionFilter(UnhandledFilter); // exception handler to all "unhandled" exceptions
 }
-
-#endif
 
 #endif

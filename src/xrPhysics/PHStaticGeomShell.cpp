@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PHStaticGeomShell.h"
 #include "SpaceUtils.h"
 //#include "GameObject.h"
@@ -47,7 +46,7 @@ CPHStaticGeomShell::CPHStaticGeomShell()
 	spatial.type |= STYPE_PHYSIC;
 }
 
-void _BCL cb(CBoneInstance* B)
+void cb(CBoneInstance* B)
 {
 }
 

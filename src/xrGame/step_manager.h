@@ -1,4 +1,7 @@
 #pragma once
+
+#include <xr_ini.h>
+
 #include "step_manager_defs.h"
 
 class CEntityAlive;

@@ -6,10 +6,10 @@
 //	Description : ALife object class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "xrServer_Objects_ALife.h"
 #include "alife_simulator.h"
 #include "xrServer_Objects_ALife_Items.h"
+#include "LocatorAPI.h"
 
 void CSE_ALifeObject::spawn_supplies()
 {

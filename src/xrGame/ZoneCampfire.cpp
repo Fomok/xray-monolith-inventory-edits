@@ -1,8 +1,10 @@
-#include "stdafx.h"
+#include <LightAnimLibrary.h>
+#include <defines.h>
+#include <xr_ini.h>
+
 #include "ZoneCampfire.h"
 #include "ParticlesObject.h"
 #include "GamePersistent.h"
-#include "../xrEngine/LightAnimLibrary.h"
 
 /*
 CZoneCampfire* g_zone = NULL;

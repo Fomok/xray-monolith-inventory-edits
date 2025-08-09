@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "pseudo_gigant.h"
 #include "pseudogigant_state_manager.h"
 

@@ -1,5 +1,6 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include "clsid.h"
+#include "xrDebug.h"
+#include "xrstring.h"
 
 XRCORE_API void __stdcall CLSID2TEXT(CLASS_ID id, LPSTR text)
 {

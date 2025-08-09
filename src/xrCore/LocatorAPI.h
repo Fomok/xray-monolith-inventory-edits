@@ -6,14 +6,13 @@
 #define LocatorAPIH
 #pragma once
 
-#pragma warning(push)
-#pragma warning(disable:4995)
 #include <io.h>
-#pragma warning(pop)
 
+#include "FS.h"
 #include "LocatorAPI_defs.h"
 
 class XRCORE_API CStreamReader;
+class CInifile;
 
 class XRCORE_API CLocatorAPI
 {

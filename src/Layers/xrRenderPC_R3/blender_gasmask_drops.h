@@ -1,5 +1,6 @@
 #pragma once
 
+#include <blenders/Blender.h>
 
 class CBlender_gasmask_drops : public IBlender
 {

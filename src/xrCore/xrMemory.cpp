@@ -1,10 +1,9 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "xrsharedmem.h"
-#include "xrMemory_pure.h"
-
 #include <malloc.h>
+
+#include "xrMemory.h"
+#include "xrMemory_pure.h"
+#include "xrsharedmem.h"
+#include "xrstring.h"
 
 xrMemory Memory;
 BOOL mem_initialized = FALSE;
@@ -23,14 +22,14 @@ extern pso_MemFill32 xrMemFill32_x86;
 
 #ifdef DEBUG_MEMORY_NAME
 // Global new/delete override
-# if !(defined(__BORLANDC__) || defined(NO_XRNEW))
+# if !defined(NO_XRNEW)
 void* operator new (size_t size) {return Memory.mem_alloc(size ? size : 1, "C++ NEW");}
 void operator delete (void* p) { xr_free(p); }
 void* operator new[](size_t size) { return Memory.mem_alloc(size ? size : 1, "C++ NEW"); }
 void operator delete[](void* p) { xr_free(p); }
 # endif
 #else // DEBUG_MEMORY_NAME
-# if !(defined(__BORLANDC__) || defined(NO_XRNEW))
+# if !defined(NO_XRNEW)
 void* operator new(size_t size) { return Memory.mem_alloc(size ? size : 1); }
 void operator delete(void* p) { xr_free(p); }
 void* operator new[](size_t size) { return Memory.mem_alloc(size ? size : 1); }
@@ -97,7 +96,6 @@ void xrMemory::_initialize(BOOL bDebug)
 		mem_fill32 = xrMemFill32_x86;
 	}
 
-#ifndef M_BORLAND
 #ifndef PURE_ALLOC
     if (!strstr(Core.Params, "-pure_alloc"))
     {
@@ -111,7 +109,6 @@ void xrMemory::_initialize(BOOL bDebug)
         }
     }
 #endif // PURE_ALLOC
-#endif // M_BORLAND
 
 #ifdef DEBUG_MEMORY_MANAGER
     if (0 == strstr(Core.Params, "-memo")) mem_initialized = TRUE;
@@ -148,11 +145,9 @@ void xrMemory::_destroy()
 	xr_delete(g_pSharedMemoryContainer);
 	xr_delete(g_pStringContainer);
 
-#ifndef M_BORLAND
 # ifdef DEBUG_MEMORY_MANAGER
     if (debug_mode) dbg_dump_leaks();
 # endif // DEBUG_MEMORY_MANAGER
-#endif // M_BORLAND
 
 	mem_initialized = FALSE;
 #ifdef DEBUG_MEMORY_MANAGER

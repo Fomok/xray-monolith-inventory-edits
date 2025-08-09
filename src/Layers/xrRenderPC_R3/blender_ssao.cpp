@@ -1,7 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #include "Blender_SSAO.h"
+#include "jitter.h"
 
 CBlender_SSAO_noMSAA::CBlender_SSAO_noMSAA() { description.CLS = 0; }
 

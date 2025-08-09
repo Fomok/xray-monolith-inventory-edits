@@ -2,6 +2,10 @@
 #define _HW_CAPS_
 #pragma once
 
+#include <d3d9types.h>
+
+#include <_types.h>
+
 #define	CAP_VERSION(a,b)	(u32(a)*10 + u32(b))
 
 class CHWCaps

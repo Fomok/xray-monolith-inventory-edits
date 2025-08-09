@@ -1,11 +1,11 @@
-#include "stdafx.h"
+#include <render.h>
+#include <irenderable.h>
+#include <igame_persistent.h>
+#include <environment.h>
+#include <CustomHUD.h>
 
-#include "../../xrEngine/render.h"
-#include "../../xrEngine/irenderable.h"
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-#include "../../xrEngine/CustomHUD.h"
-
+#include "R_Backend_Runtime.h"
+#include "r__dsgraph_types.h"
 #include "FBasicVisual.h"
 
 using namespace R_dsgraph;

@@ -5,14 +5,26 @@
 // Oles - Oles Shishkovtsov
 // AlexMX - Alexander Maksimchuk
 //-----------------------------------------------------------------------------
-#include "stdafx.h"
+
+#include <defines.h>
+#include <discord.h>
+#include <process.h>
+#include <locale.h>
+#include <time.h>
+#include <unicode/unistr.h>
+#include <unicode/ucnv.h>
+
+#include <LocatorAPI.h>
+#include <xr_ini.h>
+#include <xrCore.h>
+#include <NET_AuthCheck.h>
+#include <ispatial.h>
+
+#include "Engine.h"
 #include "igame_level.h"
 #include "igame_persistent.h"
-
 #include "dedicated_server_only.h"
 #include "no_single.h"
-#include "../xrNetServer/NET_AuthCheck.h"
-
 #include "xr_input.h"
 #include "xr_ioconsole.h"
 #include "x_ray.h"
@@ -20,20 +32,10 @@
 #include "GameFont.h"
 #include "resource.h"
 #include "LightAnimLibrary.h"
-#include "../xrcdb/ispatial.h"
 #include "Text_Console.h"
-#include <process.h>
-#include <locale.h>
-
-#include <unicode/unistr.h>
-#include <unicode/ucnv.h>
-#include <discord.h>
 #include "profiler.h"
-
 #include "xrSash.h"
-
 //#include "securom_api.h"
-
 
 //---------------------------------------------------------------------
 #define XRAY_MONOLITH_VERSION "X-Ray Monolith v1.5.3"
@@ -128,7 +130,7 @@ void compute_build_id()
 //////////////////////////////////////////////////////////////////////////
 struct _SoundProcessor : public pureFrame
 {
-	virtual void _BCL OnFrame()
+	virtual void OnFrame()
 	{
 		//Msg ("------------- sound: %d [%3.2f,%3.2f,%3.2f]",u32(Device.dwFrame),VPUSH(Device.vCameraPosition));
 		Device.Statistic->Sound.Begin();
@@ -1149,7 +1151,9 @@ int stack_overflow_exception_filter(int exception_code)
 #include <boost/crc.hpp>
 
 //extern BOOL DllMainOpenAL32(HANDLE module, DWORD reason, LPVOID reserved);
+#ifndef XRCORE_STATIC
 extern BOOL DllMainXrCore(HANDLE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved);
+#endif
 extern BOOL DllMainXrPhysics(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
 
 //extern BOOL DllMainXrGame(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved);
@@ -1165,10 +1169,14 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      int nCmdShow)
 {
 	//DllMainOpenAL32(NULL, DLL_PROCESS_ATTACH, NULL);
+#ifndef XRCORE_STATIC
 	DllMainXrCore(NULL, DLL_PROCESS_ATTACH, NULL);
+#endif
 	DllMainXrPhysics(NULL, DLL_PROCESS_ATTACH, NULL);
 
+#ifndef XRCORE_STATIC
 	DllMainXrCore(NULL, DLL_THREAD_ATTACH, NULL);
+#endif
 
 	__try
 	{
@@ -1181,7 +1189,9 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 	}
 
 	DllMainXrPhysics(NULL, DLL_PROCESS_DETACH, NULL);
+#ifndef XRCORE_STATIC
 	DllMainXrCore(NULL, DLL_PROCESS_DETACH, NULL);
+#endif
 	//DllMainOpenAL32(NULL, DLL_PROCESS_DETACH, NULL);
 
 	return (0);

@@ -6,7 +6,6 @@
 //	Description : Stalker animation pair
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_animation_pair.h"
 #include "stalker_animation_manager.h"
 #include "../xrEngine/motion.h"

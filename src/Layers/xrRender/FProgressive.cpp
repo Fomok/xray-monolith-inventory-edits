@@ -2,10 +2,11 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
+#include <destructor.h>
+#include <fmesh.h>
+#include <FS.h>
 
-#include "../../xrEngine/fmesh.h"
+#include "R_Backend_Runtime.h"
 #include "FProgressive.h"
 
 //////////////////////////////////////////////////////////////////////

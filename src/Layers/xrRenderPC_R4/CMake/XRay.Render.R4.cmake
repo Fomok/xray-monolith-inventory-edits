@@ -1,11 +1,20 @@
+add_module(XRay.Render.R4.ForceIncludes INTERFACE)
+
+target_compile_options(XRay.Render.R4.ForceIncludes
+  INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FIr4.h>
+  $<$<CXX_COMPILER_ID:Clang>:-includer4.h>
+  $<$<CXX_COMPILER_ID:GNU>:-includer4.h>
+)
+
 add_module(XRay.Render.R4
   TYPE STATIC
-  
-  PRECOMPILES stdafx.h
 
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  RENDER=4
   STATIC_RENDERER_R4
   USE_DX11
   XRRENDER_R4_EXPORTS
@@ -13,6 +22,7 @@ add_module(XRay.Render.R4
   LINKS
   dxgi
   dxsdk
+  FastDynamicCast
   imgui
   loki
   luabind
@@ -21,10 +31,50 @@ add_module(XRay.Render.R4
   optick
   ReShadeCompat
   tbb
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.Render.API
+
+  XRay.Platform
+  XRay.Render.R4.ForceIncludes
+  
+  XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+  
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Particles.Includes
+  XRay.Physics.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.DX10.Includes
+  XRay.ServerEntities.Includes
+  XRay.Sound.Includes
+  
+  PRECOMPILES
+  #[["d3dx9.h"]]
+  #[["d3d11.h"]]
+  #[["d3d11_1.h"]]
+  #[["d3d11_2.h"]]
+  #[["D3Dx11core.h"]]
+  #[["D3DCompiler.h"]]
+  #[["xrD3DDefs.h"]]
+  #[["dx10EventWrapper.h"]]
+  #[["psystem.h"]]
+  #[["HW.h"]]
+  #[["Shader.h"]]
+  #[["R_Backend.h"]]
+  #[["R_Backend_Runtime.h"]]
+  #[["resourcemanager.h"]]
+  #[["vis_common.h"]]
+  #[["render.h"]]
+  #[["_d3d_extensions.h"]]
+  #[["igame_level.h"]]
+  #[["blenders/blender.h"]]
+  #[["blenders/blender_clsid.h"]]
+  #[["xrRender_console.h"]]
+  #[["r4.h"]]
 
   SOURCES
   ../xrRenderDX10/DXCommonTypes.h
@@ -33,9 +83,9 @@ add_module(XRay.Render.R4
   ../xrRender/xrRender_console.cpp
   ../xrRender/xrRender_console.h
 
-  xrRender_R4.cpp
+  jitter.h
 
-  stdafx.h
+  xrRender_R4.cpp
 )
 
 add_module(XRay.Render.R4.3DFluid
@@ -61,8 +111,6 @@ add_module(XRay.Render.R4.3DFluid
 
 add_module(XRay.Render.R4.Core
   SOURCES
-  ../xrRenderDX10/dx10EventWrapper.cpp
-  ../xrRenderDX10/dx10EventWrapper.h
   ../xrRenderDX10/dx10Texture.cpp
   ../xrRender/particles_systems_library_interface.hpp
   ../xrRender/PSLibrary.cpp
@@ -147,8 +195,10 @@ add_module(XRay.Render.R4.Core.Target.ColorMap
 
 add_module(XRay.Render.R4.Debug
   SOURCES
-  ../xrRender/Debug/dxPixEventWrapper.cpp
-  ../xrRender/Debug/dxPixEventWrapper.h
+  ../xrRenderDX10/dx10EventWrapper.cpp
+  ../xrRenderDX10/dx10EventWrapper.h
+  #../xrRender/Debug/dxPixEventWrapper.cpp
+  #../xrRender/Debug/dxPixEventWrapper.h
 )
 
 add_module(XRay.Render.R4.Details

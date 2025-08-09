@@ -5,6 +5,10 @@
 #ifndef FileSystemH
 #define FileSystemH
 
+#include "_types.h"
+#include "_std_extensions.h"
+#include "xrstring.h"
+
 #define BACKUP_FILE_LEVEL 5
 
 class XRCORE_API EFS_Utils

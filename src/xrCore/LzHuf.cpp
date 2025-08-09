@@ -1,12 +1,13 @@
 // LzHuf.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
-#pragma hdrstop
-
 #include <io.h>
+#include <stdio.h>
 #include <fcntl.h>
 #include <sys\stat.h>
+
+#include "_types.h"
+#include "xrMemory.h"
 
 #define MODULE
 

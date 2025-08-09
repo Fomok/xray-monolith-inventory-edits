@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xrServer.h"
 #include "xrServer_Objects.h"
 

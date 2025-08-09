@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <net_utils.h>
+
 #include "player_account.h"
 #include "MainMenu.h"
 #include "login_manager.h"

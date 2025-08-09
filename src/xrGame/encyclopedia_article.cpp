@@ -3,13 +3,13 @@
 // структура, хранящая и загружающая статьи в энциклопедию
 ///////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "encyclopedia_article.h"
 #include "ui/xrUIXmlParser.h"
 #include "ui/UIXmlInit.h"
 #include "ui/UIInventoryUtilities.h"
 #include "object_broker.h"
 #include "UIShader.h"
+#include "macros.h"
 
 using namespace InventoryUtilities;
 

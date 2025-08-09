@@ -1,4 +1,7 @@
-#include "stdafx.h"
+#include <xrCore.h>
+#include <XR_IOConsole.h>
+#include <igame_persistent.h>
+
 #include "game_sv_mp.h"
 #include "xrServer.h"
 #include "xrMessages.h"
@@ -7,8 +10,6 @@
 #include "level.h"
 #include "xrserver_objects_alife_monsters.h"
 #include "actor.h"
-#include "../xrEngine/XR_IOConsole.h"
-#include "../xrEngine/igame_persistent.h"
 #include "date_time.h"
 #include "game_cl_base.h"
 #include "Spectator.h"

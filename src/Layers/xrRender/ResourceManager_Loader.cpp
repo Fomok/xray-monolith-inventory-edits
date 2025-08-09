@@ -1,9 +1,9 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <Device.h>
+#include <LocatorAPI.h>
 
 #include "ResourceManager.h"
 #include "blenders\blender.h"
-
+#include "blenders/Blender_CLSID.h"
 
 void CResourceManager::OnDeviceDestroy(BOOL)
 {

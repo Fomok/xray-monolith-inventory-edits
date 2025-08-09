@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "climableobject.h"
 #include "IPHStaticGeomShell.h"
 #include "xrServer_Objects_ALife.h"

@@ -1,8 +1,7 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <xr_ini.h>
+#include <object_broker.h>
 
 #include "xr_efflensflare.h"
-
 #include "igame_persistent.h"
 #include "Environment.h"
 //#include "SkeletonCustom.h"
@@ -10,8 +9,6 @@
 #include "bone.h"
 #include "Kinematics.h"
 #include "cl_intersect.h"
-
-#include "../xrServerEntities/object_broker.h"
 
 #ifdef _EDITOR
 #include "ui_toolscustom.h"

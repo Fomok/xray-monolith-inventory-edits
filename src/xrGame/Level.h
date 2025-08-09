@@ -14,6 +14,7 @@
 #include "Level_network_map_sync.h"
 #include "secure_messaging.h"
 #include "traffic_optimization.h"
+#include "LocatorAPI.h"
 
 class CHUDManager;
 class CParticlesObject;
@@ -219,7 +220,7 @@ public:
 	virtual void Load_GameSpecific_CFORM(CDB::TRI* T, u32 count);
 	// Events
 	virtual void OnEvent(EVENT E, u64 P1, u64 P2);
-	virtual void _BCL OnFrame(void);
+	virtual void OnFrame(void);
 	virtual void OnRender();
 
 	enum DBG_RENDER_FLAGS
@@ -230,8 +231,8 @@ public:
 	};
 
 	Flags32 m_debug_render_flags;
-	xr_map<u16, DBG_ScriptObject*> m_debug_render_queue;
-	xr_map<u16, DBG_ScriptObject*>* getScriptRenderQueue() { return &m_debug_render_queue; }
+	xr_map<shared_str, DBG_ScriptObject*> m_debug_render_queue;
+	xr_map<shared_str, DBG_ScriptObject*>* getScriptRenderQueue() { return &m_debug_render_queue; }
 	void ScriptDebugRender();
 
 	virtual shared_str OpenDemoFile(const char* demo_file_name);

@@ -1,4 +1,6 @@
-#include "stdafx.h"
+#include <string_concatenations.h>
+#include <LocatorAPI.h>
+
 #include "xrtheora_surface.h"
 #include "xrtheora_stream.h"
 

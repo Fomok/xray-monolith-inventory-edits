@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
 
 #include "blender_pp_bloom.h"
 

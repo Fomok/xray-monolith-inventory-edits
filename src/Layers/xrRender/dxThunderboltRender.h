@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ThunderboltRender.h"
+#include "Shader.h"
 
 class dxThunderboltRender : public IThunderboltRender
 {

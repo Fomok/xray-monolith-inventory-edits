@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ElevatorState.h"
 #include "IClimableObject.h"
 #include "PHCharacter.h"

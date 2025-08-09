@@ -1,7 +1,8 @@
-#include "stdafx.h"
+#include <xr_ini.h>
+#include <xr_trims.h>
+
 #include "UIBuyWndShared.h"
 #include "UIMPTradeWnd.h"
-
 
 extern LPCSTR _list_names[];
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "UIShader.h"
+#include "Shader.h"
 
 class dxUIShader : public IUIShader
 {

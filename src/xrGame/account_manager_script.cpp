@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "account_manager.h"
 
 using namespace luabind;

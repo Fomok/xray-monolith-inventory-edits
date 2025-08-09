@@ -1,23 +1,19 @@
-#include "stdafx.h"
+#include <boost/noncopyable.hpp>
+
+#include <xr_ini.h>
 
 #include "ikfoot.h"
-
 #include "ik_collide_data.h"
 #include "GameObject.h"
-
-
 //#include "ode_include.h"
 #include "MathUtils.h"
 #include "Kinematics.h"
 #include "bone.h"
 #include "ennumerateVertices.h"
-#include <boost/noncopyable.hpp>
-
 
 #ifdef DEBUG
 #include "PHDebug.h"
 #endif
-
 
 CIKFoot::CIKFoot():
 	m_bind_b2_to_b3(Fidentity),

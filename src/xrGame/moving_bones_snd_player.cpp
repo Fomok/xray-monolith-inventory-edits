@@ -1,6 +1,6 @@
-#include	"stdafx.h"
+#include <xr_ini.h>
 
-#include	"moving_bones_snd_player.h"
+#include "moving_bones_snd_player.h"
 
 #include "Kinematics.h"
 #include "bone.h"
@@ -10,12 +10,13 @@
 #ifdef DEBUG
 #include "phdebug.h"
 #endif
+
 moving_bones_snd_player::moving_bones_snd_player(IKinematics* K, CInifile* ini, LPCSTR section, const Fmatrix& object):
 	bone_id(BI_NONE),
-	min_factor(-FLT_MAX),
-	max_factor(-FLT_MAX),
-	base_velocity(-FLT_MAX),
-	smothed_velocity(-FLT_MAX),
+	min_factor(-flt_max),
+	max_factor(-flt_max),
+	base_velocity(-flt_max),
+	smothed_velocity(-flt_max),
 	previous_position(Fidentity),
 	kinematics(K)
 {

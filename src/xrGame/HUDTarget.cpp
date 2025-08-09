@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <d3d9types.h>
+
 #include "HUDTarget.h"
 
 #include "player_hud.h"
@@ -390,7 +391,7 @@ void CHUDTarget::Render()
 	if (pAttach0)
 	{
 		CHudItem* pItem = pAttach0->m_parent_hud_item;
-		CWeapon* pWeapon = dynamic_cast<CWeapon*>(pItem);
+		CWeapon* pWeapon = fast_dynamic_cast<CWeapon*>(pItem);
 		if (pWeapon)
 		{
 			const SPickParam* pick = &pItem->GetPick();

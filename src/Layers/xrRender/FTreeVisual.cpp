@@ -1,14 +1,13 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/igame_level.h"
-#include "../../xrEngine/environment.h"
-#include "../../xrEngine/fmesh.h"
-
-#include "../../build_config_defines.h"
+#include <build_config_defines.h>
+#include <igame_persistent.h>
+#include <igame_level.h>
+#include <environment.h>
+#include <fmesh.h>
+#include <FS.h>
 
 #include "ftreevisual.h"
+#include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 shared_str m_xform;
 shared_str m_xform_v;
@@ -127,11 +126,11 @@ struct FTreeVisual_setup
 		float tm_rot = PI_MUL_2 * Device.fTimeGlobal / ps_r__Tree_w_rot;
 
 #ifdef TREE_WIND_EFFECT
-		CEnvDescriptor& E = *g_pGamePersistent->Environment().CurrentEnv;
-		float fValue = E.m_fTreeAmplitudeIntensity;
 		wind.set(_sin(tm_rot), 0, _cos(tm_rot), 0);
 		wind.normalize();
 #if RENDER!=R_R1
+		CEnvDescriptor& E = *g_pGamePersistent->Environment().CurrentEnv;
+		float fValue = E.m_fTreeAmplitudeIntensity;
 		wind.mul(fValue); // dir1*amplitude
 #else // R1
 		wind.mul(ps_r__Tree_w_amp); // dir1*amplitude
@@ -249,7 +248,7 @@ void FTreeVisual::Copy(dxRender_Visual* pSrc)
 {
 	dxRender_Visual::Copy(pSrc);
 
-	FTreeVisual* pFrom = dynamic_cast<FTreeVisual*>(pSrc);
+	FTreeVisual* pFrom = fast_dynamic_cast<FTreeVisual*>(pSrc);
 
 	PCOPY(rm_geom);
 
@@ -352,6 +351,6 @@ void FTreeVisual_PM::Render(float LOD)
 void FTreeVisual_PM::Copy(dxRender_Visual* pSrc)
 {
 	inherited::Copy(pSrc);
-	FTreeVisual_PM* pFrom = dynamic_cast<FTreeVisual_PM*>(pSrc);
+	FTreeVisual_PM* pFrom = fast_dynamic_cast<FTreeVisual_PM*>(pSrc);
 	PCOPY(pSWI);
 }

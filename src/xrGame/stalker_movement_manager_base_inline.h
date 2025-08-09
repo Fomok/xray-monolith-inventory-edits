@@ -1,4 +1,6 @@
 #include "stalker_movement_manager_base.h"
+#include "macros.h"
+
 ////////////////////////////////////////////////////////////////////////////
 //	Module 		: stalker_movement_manager_base_inline.h
 //	Created 	: 27.12.2003

@@ -6,7 +6,6 @@
 //	Description : Stalker search planner class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_search_planner.h"
 #include "ai/stalker/ai_stalker.h"
 #include "stalker_decision_space.h"

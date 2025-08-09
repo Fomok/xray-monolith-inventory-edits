@@ -6,7 +6,6 @@
 //	Description : Evaluation functions storage class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "ef_storage.h"
 #include "ef_primary.h"
 #include "ef_pattern.h"

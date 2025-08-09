@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "uidialogwnd.h"
 #include "UICursor.h"
 

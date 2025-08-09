@@ -1,5 +1,7 @@
 #pragma once
 
+#include "blenders/Blender.h"
+
 class CBlender_bloom_build : public IBlender
 {
 public:

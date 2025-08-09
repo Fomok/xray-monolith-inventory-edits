@@ -5,7 +5,6 @@
 //	Description : UI Secondary Task Wnd class impl
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "UISecondTaskWnd.h"
 
 #include "xrUIXmlParser.h"

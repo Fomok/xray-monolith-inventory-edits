@@ -1,57 +1,33 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "xrdebug.h"
-#include "os_clipboard.h"
-
 #include <sal.h>
 #include <dxerr.h>
-
-#pragma warning(push)
-#pragma warning(disable:4995)
 #include <malloc.h>
 #include <direct.h>
-#pragma warning(pop)
 
-#include "../build_config_defines.h"
+#include <build_config_defines.h>
+#include <LocatorAPI.h>
+
+#include "log.h"
+#include "os_clipboard.h"
+#include "xrCore.h"
+#include "xrdebug.h"
+#include "xrsharedmem.h"
 
 extern bool shared_str_initialized;
 
-#ifdef __BORLANDC__
-# include "d3d9.h"
-# include "d3dx9.h"
-# include "D3DX_Wrapper.h"
-# pragma comment(lib,"EToolsB.lib")
-# define DEBUG_INVOKE DebugBreak()
-static BOOL bException = TRUE;
-# define USE_BUG_TRAP
-#else
 #ifndef NO_BUG_TRAP
 # define USE_BUG_TRAP
 #endif //-!NO_BUG_TRAP
 # define DEBUG_INVOKE __asm int 3
 static BOOL bException = FALSE;
-#endif
 
 #ifndef USE_BUG_TRAP
 # include <exception>
-#endif
-
-#ifndef _M_AMD64
-# ifndef __BORLANDC__
-# pragma comment(lib,"dxerr.lib")
-# endif
 #endif
 
 #include <dbghelp.h> // MiniDump flags
 
 #ifdef USE_BUG_TRAP
 # include <BugTrap/source/BugTrap.h> // for BugTrap functionality
-#ifndef __BORLANDC__
-# pragma comment(lib,"BugTrap.lib") // Link to ANSI DLL
-#else
-# pragma comment(lib,"BugTrapB.lib") // Link to ANSI DLL
-#endif
 #endif // USE_BUG_TRAP
 
 #include <new.h> // for _set_new_mode
@@ -82,7 +58,6 @@ namespace crash_saving
 }
 
 // demonized: print stack trace
-#include <Windows.h>
 #include "mezz_stringbuffer.h"
 #include "StackWalker.h"
 class xr_StackWalker : public StackWalker {
@@ -955,25 +930,6 @@ LONG WINAPI UnhandledFilter(_EXCEPTION_POINTERS* pExceptionInfo)
 #endif //-NO_BUG_TRAP
 
 //////////////////////////////////////////////////////////////////////
-#ifdef M_BORLAND
-namespace std
-{
-    extern new_handler _RTLENTRY _EXPFUNC set_new_handler(new_handler new_p);
-};
-
-static void __cdecl def_new_handler()
-{
-    FATAL ("Out of memory.");
-}
-
-void xrDebug::_initialize (const bool& dedicated)
-{
-    handler = 0;
-    m_on_dialog = 0;
-    std::set_new_handler (def_new_handler); // exception-handler for 'out of memory' condition
-    // ::SetUnhandledExceptionFilter (UnhandledFilter); // exception handler to all "unhandled" exceptions
-}
-#else
 typedef int (__cdecl* _PNH)(size_t);
 _CRTIMP int __cdecl _set_new_mode(int);
 //_CRTIMP _PNH __cdecl _set_new_handler(_PNH);
@@ -1196,4 +1152,4 @@ void xrDebug::_initialize(const bool& dedicated)
     std::terminate ();
 #endif // 0
 }
-#endif
+

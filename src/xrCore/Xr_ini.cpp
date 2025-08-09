@@ -1,8 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "fs_internal.h"
-
 #include <functional>
 #include <regex>
 #include <unordered_map>
@@ -10,6 +5,12 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
+
+#include <string_concatenations.h>
+#include <xr_trims.h>
+
+#include "fs_internal.h"
+#include "LocatorAPI.h"
 #include "mezz_stringbuffer.h"
 
 XRCORE_API CInifile const* pSettings = NULL;

@@ -6,7 +6,6 @@
 //
 // Copyright 2005 GSC Game World
 
-#include "StdAfx.h"
 #include <cstdio>
 
 #include "UILines.h"

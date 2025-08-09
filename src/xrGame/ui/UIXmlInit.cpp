@@ -1,7 +1,8 @@
-#include "stdafx.h"
+#include <string_concatenations.h>
+
 #include "UIXmlInit.h"
-#include "../level.h"
-#include "../string_table.h"
+#include "level.h"
+#include "string_table.h"
 #include "UIFrameWindow.h"
 #include "UICheckButton.h"
 #include "UICustomSpin.h"

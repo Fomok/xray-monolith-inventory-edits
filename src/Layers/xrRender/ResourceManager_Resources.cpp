@@ -1,12 +1,10 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#ifndef _EDITOR
-#include "../../xrEngine/render.h"
-#endif
-#pragma warning(default:4995)
+
+#include <string_concatenations.h>
+#include <render.h>
+#include <xrCore.h>
+#include <LocatorAPI.h>
+#include <HW.h>
 
 #include "ResourceManager.h"
 #include "tss.h"

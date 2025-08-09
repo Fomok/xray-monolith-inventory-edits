@@ -1,8 +1,10 @@
-#include "stdafx.h"
-#include "../xrCDB/frustum.h"
+#include <defines.h>
+#include <frustum.h>
+#include <profiler.h>
+#include <xrCore.h>
+
 #include "xr_ioconsole.h"
 #include "xr_input.h"
-#include "../xrCore/profiler.h"
 
 #pragma warning(disable:4995)
 // mmsystem.h

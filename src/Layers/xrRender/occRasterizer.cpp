@@ -2,7 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <xrMemory.h>
+
 #include "occRasterizer.h"
 
 #ifdef DEBUG

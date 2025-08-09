@@ -1,4 +1,8 @@
-#include "stdafx.h"
+#include <time.h>
+
+#include <Engine.h>
+#include <LocatorAPI.h>
+
 #include "profile_store.h"
 #include "MainMenu.h"
 #include "login_manager.h"

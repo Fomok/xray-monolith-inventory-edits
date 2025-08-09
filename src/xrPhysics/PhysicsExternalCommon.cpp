@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "physicsexternalcommon.h"
 #include "extendedgeom.h"
 #include "mathutilsode.h"

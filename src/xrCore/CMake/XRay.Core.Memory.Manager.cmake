@@ -9,7 +9,6 @@ add_module(XRay.Core.Memory.Manager
   xrMemory_pso_Copy.cpp
   xrMemory_pso_Fill.cpp
   xrMemory_pso_Fill32.cpp
-  xrMemory_subst_borland.cpp
   xrMemory_subst_msvc.cpp
   
   xrMemory.h
@@ -17,6 +16,5 @@ add_module(XRay.Core.Memory.Manager
   xrMEMORY_POOL.h
   xrMemory_pso.h
   xrMemory_pure.h
-  xrMemory_subst_borland.h
   xrMemory_subst_msvc.h
 )

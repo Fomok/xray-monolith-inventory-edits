@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "game_cl_deathmatch.h"
 #include "level.h"
 #include "actor.h"

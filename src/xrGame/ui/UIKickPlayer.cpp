@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 
 #include "UIKickPlayer.h"
 #include "UIVotingCategory.h"

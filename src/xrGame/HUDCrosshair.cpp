@@ -2,12 +2,14 @@
 // 
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <d3d9types.h>
+
+#include <CustomHUD.h>
+#include <igame_persistent.h>
+#include <xr_ini.h>
+
 #include "HUDCrosshair.h"
 #include "HUDTarget.h"
-
-#include "../xrEngine/CustomHUD.h"
-#include "../xrEngine/igame_persistent.h"
 #include "ui_base.h"
 
 string32 crosshair_shader = "hud\\cursor";
@@ -64,12 +66,6 @@ void CHUDCrosshair::SetDispersion(float d)
 }
 
 extern ENGINE_API BOOL g_bRendering;
-
-static float lerp(float a, float b, float t)
-{
-	clamp(t, 0.f, 1.f);
-	return a * (1 - t) + b * t;
-}
 
 void CHUDCrosshair::InitShaderWire()
 {

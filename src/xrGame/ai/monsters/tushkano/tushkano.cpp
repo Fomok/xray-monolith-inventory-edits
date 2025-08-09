@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "tushkano.h"
 #include "tushkano_state_manager.h"
 #include "../monster_velocity_space.h"

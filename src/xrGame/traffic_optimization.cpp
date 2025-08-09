@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <LocatorAPI.h>
+
 #include "traffic_optimization.h"
 
 namespace compression

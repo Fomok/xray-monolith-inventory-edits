@@ -3,7 +3,11 @@
 //////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "../../xrEngine/IGame_Persistent.h"
+#include <IGame_Persistent.h>
+#include <Frustum.h>
+#include <xrXRC.h>
+
+#include "vis_common.h"
 
 class occTri;
 

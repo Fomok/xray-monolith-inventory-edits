@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "game_cl_mp.h"
 #include "ui/UISpeechMenu.h"
 #include "xrMessages.h"

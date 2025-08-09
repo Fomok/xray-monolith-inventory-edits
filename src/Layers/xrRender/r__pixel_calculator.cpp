@@ -1,7 +1,10 @@
-#include	"stdafx.h"
-#include	"r__pixel_calculator.h"
-#define		rt_dimensions 1024
-#include	"../xrRender/FBasicVisual.h"
+#include <defines.h>
+#include <FBasicVisual.h>
+#include <r__pixel_calculator.h>
+
+#include "HW.h"
+
+#define rt_dimensions 1024
 
 #if !defined(USE_DX10) && !defined(USE_DX11)
 void r_pixel_calculator::begin()
@@ -86,7 +89,7 @@ void r_pixel_calculator::run()
 	begin();
 	for (u32 it = 0; it < RImplementation.Visuals.size(); it++)
 	{
-		if (0 == dynamic_cast<IRender_Mesh*>(RImplementation.Visuals[it])) continue;
+		if (0 == fast_dynamic_cast<IRender_Mesh*>(RImplementation.Visuals[it])) continue;
 		Msg("*%d*", it);
 		calculate((dxRender_Visual*)RImplementation.Visuals[it]);
 	}

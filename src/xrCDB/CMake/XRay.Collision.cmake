@@ -1,5 +1,35 @@
 add_module(XRay.Collision
   TYPE STATIC
+
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
+
+  DEFINES
+  [[ENGINE_API=]]
+  XRCDB_EXPORTS
+
+  LINKS
+  FastDynamicCast
+  loki
+  OPCODE
+  optick
+
+  XRay.Core.Defines
+  XRay.Engine.Defines
+  
+  XRay.Includes
+  XRay.CPUPipe.Includes
+  XRay.Core.Includes
+  XRay.Engine.Includes
+  XRay.Physics.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
+  XRay.ServerEntities.Includes
+
+  PRECOMPILES
+  #[["xrCore.h"]]
+  #alloc.h
+  #[["opcode.h"]]
   
   SOURCES
   #cl_raypick.cpp
@@ -10,22 +40,14 @@ add_module(XRay.Collision
   xrCDB_frustum.cpp
   xrCDB_ray.cpp
 
+  alloc.h
   Frustum.h
-  StdAfx.h
   xrCDB.h
+)
 
-  INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}
-
-  PRECOMPILES stdafx.h
-
-  DEFINES XRCDB_EXPORTS
-
-  LINKS
-  OPCODE
-  optick
-  XRay.Core
-  XRay.Render.API
+target_compile_options(XRay.Collision
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
 )
 
 set_source_files_properties(

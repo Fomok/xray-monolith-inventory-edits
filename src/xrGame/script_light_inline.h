@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "../xrEngine/LightAnimLibrary.h"
 
 class CLAItem;

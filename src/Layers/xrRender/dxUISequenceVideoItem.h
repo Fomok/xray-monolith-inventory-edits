@@ -3,6 +3,7 @@
 #pragma once
 
 #include "UISequenceVideoItem.h"
+#include "SH_Texture.h"
 
 class dxUISequenceVideoItem : public IUISequenceVideoItem
 {

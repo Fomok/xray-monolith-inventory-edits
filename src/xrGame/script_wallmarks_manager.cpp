@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "script_wallmarks_manager.h"
 #include "Level.h"
 #include "material_manager.h"

@@ -1,6 +1,8 @@
 #ifndef _PLANE
 #define _PLANE
 
+#include "_matrix.h"
+
 template <class T>
 class _plane
 {

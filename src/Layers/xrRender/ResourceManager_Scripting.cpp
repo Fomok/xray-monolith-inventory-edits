@@ -1,15 +1,15 @@
-#include "stdafx.h"
-#pragma hdrstop
 
-#include	"../../xrEngine/Render.h"
+#include	<ai_script_space.h>
+#include	<ai_script_lua_extension.h>
+#include	<LocatorAPI.h>
+#include	<Render.h>
+#include	<string_concatenations.h>
+#include	<luabind/return_reference_to_policy.hpp>
+
 #include	"ResourceManager.h"
 #include	"tss.h"
-#include	"blenders\blender.h"
-#include	"blenders\blender_recorder.h"
-#include	"../../xrEngine/ai_script_space.h"
-#include	"../../xrEngine/ai_script_lua_extension.h"
-#include	"luabind/return_reference_to_policy.hpp"
-
+#include	"blenders/blender.h"
+#include	"blenders/blender_recorder.h"
 #include	"dxRenderDeviceRender.h"
 
 using namespace luabind;

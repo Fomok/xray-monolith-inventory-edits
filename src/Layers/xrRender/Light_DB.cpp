@@ -1,10 +1,13 @@
-#include "StdAfx.h"
+#include <Device.h>
+#include <LocatorAPI.h>
+
 #include "_d3d_extensions.h"
 #include "xrLevel.h"
 #include "igame_persistent.h"
 #include "environment.h"
 #include "R_light.h"
 #include "light_db.h"
+#include "xrRender_console.h"
 
 CLight_DB::CLight_DB()
 {

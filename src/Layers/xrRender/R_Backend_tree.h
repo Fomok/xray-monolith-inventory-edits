@@ -2,6 +2,11 @@
 #define r_backend_treeH
 #pragma once
 
+#include "_vector4.h"
+#include "_matrix.h"
+
+struct R_constant;
+
 class ECORE_API R_tree
 {
 public:

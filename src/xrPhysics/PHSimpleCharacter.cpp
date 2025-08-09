@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "PHDynamicData.h"
 #include "ExtendedGeom.h"
@@ -145,7 +144,7 @@ bool test_sides(const Fvector& center, const Fvector& side_dir, const Fvector& f
 
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////class//CPHSimpleCharacter////////////////////
-CPHSimpleCharacter::CPHSimpleCharacter(): m_last_environment_update(Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX)),
+CPHSimpleCharacter::CPHSimpleCharacter(): m_last_environment_update(Fvector().set(-flt_max, -flt_max, -flt_max)),
                                           m_last_picked_material(GAMEMTL_NONE_IDX)
 {
 	m_object_contact_callback = NULL;
@@ -369,7 +368,7 @@ void CPHSimpleCharacter::Create(dVector3 sizes)
 	m_last_move.set(0, 0, 0);
 	CPHCollideValidator::SetCharacterClass(*this);
 	m_collision_damage_info.Construct();
-	m_last_environment_update = Fvector().set(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	m_last_environment_update = Fvector().set(-flt_max, -flt_max, -flt_max);
 	m_last_picked_material = GAMEMTL_NONE_IDX;
 }
 

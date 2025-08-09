@@ -1,10 +1,6 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-
-// #include "rt_lzo.h"
+#include "_types.h"
 #include "rt_lzo1x.h"
-
+#include "xrDebug.h"
 
 #define HEAP_ALLOC(var,size) \
  lzo_align_t __LZO_MMODEL var [ ((size) + (sizeof(lzo_align_t) - 1)) / sizeof(lzo_align_t) ]

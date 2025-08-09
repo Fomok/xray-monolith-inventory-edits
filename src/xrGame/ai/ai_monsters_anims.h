@@ -8,8 +8,10 @@
 
 #pragma once
 
+#include <string_concatenations.h>
+
 #include "KinematicsAnimated.h"
-#include "../ai_debug.h"
+#include "ai_debug.h"
 
 DEFINE_VECTOR(MotionID, ANIM_VECTOR, ANIM_IT);
 

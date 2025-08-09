@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "dxConsoleRender.h"
+#include "HW.h"
 
 dxConsoleRender::dxConsoleRender()
 {

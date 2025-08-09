@@ -6,17 +6,22 @@
 //	Description : XRay Script Storage
 ////////////////////////////////////////////////////////////////////////////
 
+#include <stdarg.h>
+#include <unordered_map>
+#include <set>
+#include <sstream>
+#include <regex>
+
+#include <LocatorAPI.h>
+#include <string_concatenations.h>
+#include <xrCore.h>
+
 #include "pch_script.h"
 #include "script_storage.h"
 #include "script_thread.h"
 #include "ai_space.h"
 #include "script_engine.h"
 #include "mezz_stringbuffer.h"
-#include <stdarg.h>
-#include <unordered_map>
-#include <set>
-#include <sstream>
-#include <regex>
 
 #if !defined(DEBUG) && defined(USE_LUAJIT_ONE)
 #	include "opt.lua.h"
@@ -92,6 +97,7 @@ LPCSTR file_header = 0;
 #endif //!PURE_ALLOC
 
 #ifndef USE_DL_ALLOCATOR
+/*
 static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize)
 {
 	(void)ud;
@@ -108,6 +114,7 @@ static void* lua_alloc(void* ud, void* ptr, size_t osize, size_t nsize)
 		return Memory.mem_realloc(ptr, nsize);
 #endif // DEBUG_MEMORY_MANAGER
 }
+*/
 
 u32 game_lua_memory_usage()
 {

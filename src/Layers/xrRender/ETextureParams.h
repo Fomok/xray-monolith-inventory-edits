@@ -1,6 +1,13 @@
 #ifndef ETextureParamsH
 #define ETextureParamsH
 
+#include "_types.h"
+#include "_flags.h"
+#include <xrstring.h>
+
+class IReader;
+class IWriter;
+
 #pragma pack(push,1)
 struct ECORE_API STextureParams
 {

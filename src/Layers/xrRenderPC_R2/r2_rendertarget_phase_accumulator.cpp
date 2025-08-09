@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "r2.h"
 
 void CRenderTarget::phase_accumulator()
 {

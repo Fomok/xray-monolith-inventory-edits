@@ -32,6 +32,8 @@ add_module(XRay.Core.Math
   _sphere.cpp
   dump_string.cpp
   
+  math_constants.h
+
   _bitwise.h
   _color.h
   _compressed_normal.h
@@ -40,12 +42,18 @@ add_module(XRay.Core.Math
   _fbox2.h
   _flags.h
   _math.h
+
   _matrix.h
+  _matrix_ext.h
+  
   _matrix33.h
   _obb.h
   _plane.h
   _plane2.h
+
   _quaternion.h
+  _quaternion_ext.h
+
   _random.h
   _rect.h
   _sphere.h

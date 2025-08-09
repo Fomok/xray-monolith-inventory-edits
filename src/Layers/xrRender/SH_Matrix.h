@@ -2,7 +2,9 @@
 #define SH_MATRIX_H
 #pragma once
 
-#include "../../xrEngine/WaveForm.h"
+#include <xrMemory.h>
+#include <WaveForm.h>
+#include <xr_resource.h>
 
 class IReader;
 class IWriter;

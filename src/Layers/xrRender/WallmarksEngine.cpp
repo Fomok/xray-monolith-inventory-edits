@@ -2,13 +2,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#include "WallmarksEngine.h"
+#include <IGame_Level.h>
+#include <xrEngine/xr_object.h>
+#include <xrEngine/x_ray.h>
+#include <xrEngine/GameFont.h>
 
-#include "../../xrEngine/xr_object.h"
-#include "../../xrEngine/x_ray.h"
-#include "../../xrEngine/GameFont.h"
+#include "WallmarksEngine.h"
+#include "R_Backend_Runtime.h"
 #include "SkeletonCustom.h"
+#include "xrRender_console.h"
 
 float wallmark_range_static = 100.f;
 float wallmark_range_skeleton = 50.f;

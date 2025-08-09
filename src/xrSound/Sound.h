@@ -2,7 +2,10 @@
 #define SoundH
 #pragma once
 
-//#include "../include/xrapi/xrapi.h"
+#include <xrCDB.h>
+#include <xr_resource.h>
+
+class IReader;
 
 #ifdef XRSOUND_EXPORTS
 #define XRSOUND_API
@@ -12,14 +15,7 @@
 //__declspec(dllimport)
 #endif
 
-#ifdef __BORLANDC__
-	#define XRSOUND_EDITOR_API XRSOUND_API
-
-	// editor only refs
-	class XRSOUND_EDITOR_API SoundEnvironment_LIB;
-#else
 #define XRSOUND_EDITOR_API
-#endif
 
 #define SNDENV_FILENAME				"sEnvironment.xr"
 #define OGG_COMMENT_VERSION 		0x0003
@@ -41,6 +37,7 @@ XRSOUND_API extern float psSoundRolloff;
 XRSOUND_API extern float psSoundOcclusionScale;
 XRSOUND_API extern Flags32 psSoundFlags;
 XRSOUND_API extern int psSoundTargets;
+XRSOUND_API extern float snd_efx_environment_change_time;
 XRSOUND_API extern float psSpeedOfSound;
 XRSOUND_API extern int psSoundCacheSizeMB;
 XRSOUND_API extern xr_token* snd_devices_token;
@@ -51,7 +48,7 @@ enum
 {
 	ss_Hardware = (1ul << 1ul),
 	//!< Use hardware mixing only
-	ss_EAX = (1ul << 2ul),
+	ss_EFX = (1ul << 2ul),
 	//!< Use eax
 	ss_forcedword = u32(-1)
 };
@@ -78,6 +75,7 @@ enum
 	//!< Looped
 	sm_2D = (1ul << 1ul),
 	//!< 2D mode
+	sm_Intro = (1ul << 2ul), //!< Only for music and video
 	sm_forcedword = u32(-1),
 };
 
@@ -295,6 +293,7 @@ class XRSOUND_API CSound_emitter
 public:
 	virtual BOOL is_2D() = 0;
 	virtual void switch_to_2D() = 0;
+	virtual void switch_to_Intro() = 0;
 	virtual void switch_to_3D() = 0;
 	virtual void set_position(const Fvector& pos) = 0;
 	virtual void set_frequency(float freq) = 0;
@@ -399,17 +398,8 @@ public:
 
 	virtual void object_relcase(CObject* obj) = 0;
 	virtual const Fvector& listener_position() = 0;
-#ifdef __BORLANDC__
-	virtual SoundEnvironment_LIB*	get_env_library			()																						= 0;
-	virtual void					refresh_env_library		()																						= 0;
-	virtual void					set_user_env			(CSound_environment* E)																	= 0;
-	virtual void					refresh_sources			()																						= 0;
-    virtual void					set_environment			(u32 id, CSound_environment** dst_env)													= 0;
-    virtual void					set_environment_size	(CSound_environment* src_env, CSound_environment** dst_env)								= 0;
-#endif
 };
 
-class CSound_manager_interface;
 extern XRSOUND_API CSound_manager_interface* Sound;
 
 /// ********* Sound ********* (utils, accessors, helpers)
@@ -533,6 +523,4 @@ IC void ref_sound::set_params(CSound_params* p)
 		_feedback()->set_volume(p->volume);
 	}
 }
-
-
 #endif

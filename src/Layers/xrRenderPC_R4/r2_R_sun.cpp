@@ -1,8 +1,9 @@
-#include "stdafx.h"
+#include <defines.h>
+#include <dx10EventWrapper.h>
+
 #include "igame_persistent.h"
 #include "irenderable.h"
 #include "FBasicVisual.h"
-
 #include "r4_R_sun_support.h"
 
 const float tweak_COP_initial_offs = 1200.f;

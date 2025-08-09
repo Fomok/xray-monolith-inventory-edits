@@ -43,7 +43,7 @@ private:
 	virtual void state_end();
 	virtual void state_start();
 
-	static void _BCL rootbone_callback(CBoneInstance* BI);
+	static void rootbone_callback(CBoneInstance* BI);
 
 	void init_bones();
 	void deinit_bones();

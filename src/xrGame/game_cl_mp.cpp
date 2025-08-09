@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <d3d9types.h>
+
 #include "game_cl_mp.h"
 #include "xr_level_controller.h"
 #include "xrMessages.h"

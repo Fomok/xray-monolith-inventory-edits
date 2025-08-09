@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "actor_statistic_mgr.h"
 #include "alife_registry_wrappers.h"
 #include "alife_simulator_header.h"

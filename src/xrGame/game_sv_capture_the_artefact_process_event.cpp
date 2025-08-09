@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "game_sv_capture_the_artefact.h"
 #include "xrServer.h"
 #include "xrMessages.h"

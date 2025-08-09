@@ -21,6 +21,11 @@ target_include_directories(luafilesystem
   ${CMAKE_CURRENT_BINARY_DIR}/luafilesystem
 )
 
+target_compile_options(luafilesystem
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
+)
+
 target_compile_definitions(luafilesystem
   PRIVATE
   _CRT_SECURE_NO_WARNINGS

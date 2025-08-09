@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "uistatic.h"
 #include "UIXmlInit.h"
 #include "UITextureMaster.h"

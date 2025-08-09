@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "game_cl_mp.h"
 #include "game_cl_mp_snd_messages.h"
 #include "Level.h"

@@ -1,5 +1,3 @@
-#include	"stdafx.h"
-
 #include	"ik_limb_state.h"
 
 #include	"ik\iklimb.h"

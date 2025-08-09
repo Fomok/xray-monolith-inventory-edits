@@ -1,6 +1,4 @@
-#include "stdafx.h"
-
-//#include "dxerr8.h"
+#include <defines.h>
 
 // *****************************************************************************************
 // Error handling

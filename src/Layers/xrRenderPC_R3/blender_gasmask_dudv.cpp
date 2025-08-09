@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "blender_gasmask_dudv.h"
 

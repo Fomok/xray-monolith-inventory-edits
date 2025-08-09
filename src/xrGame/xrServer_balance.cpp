@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "xrserver.h"
 
 class xrClientData;

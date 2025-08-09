@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "PHDynamicData.h"
 #include "Physics.h"
 #include "tri-colliderknoopc/dTriList.h"
@@ -95,8 +94,8 @@ void CPHShell::Activate(const Fmatrix& transform, const Fvector& lin_vel, const 
 	}
 
 	{
-		JOINT_I i = joints.begin(), e = joints.end();
-		for (; i != e; ++i) (*i)->Activate();
+		JOINT_I b = joints.begin(), e = joints.end();
+		for (; b != e; ++b) (*b)->Activate();
 	}
 
 	if (PKinematics())

@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <LocatorAPI.h>
 
 #include "ObjectAnimator.h"
 #include "motion.h"

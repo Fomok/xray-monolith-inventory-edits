@@ -1,9 +1,10 @@
 #ifndef PHDISABLING_H
 #define PHDISABLING_H
 
+#include <ode/common.h>
+#include <_vector3d.h>
+
 #include "DisablingParams.h"
-//#include "ode_include.h"
-#include "ode/common.h"
 
 struct SDisableVector
 {

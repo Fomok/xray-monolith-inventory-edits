@@ -1,14 +1,14 @@
 // HW.cpp: implementation of the CHW class.
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
-
-#pragma warning(disable:4995)
+#include <defines.h>
+#include <xrCore.h>
 #include <d3dx9.h>
-#pragma warning(default:4995)
+#include <IGame_Persistent.h>
+#include <XR_IOConsole.h>
+
 #include "HW.h"
-#include "../../xrEngine/XR_IOConsole.h"
+#include "xrRender_console.h"
 
 #ifndef _EDITOR
 void fill_vid_mode_list(CHW* _hw);

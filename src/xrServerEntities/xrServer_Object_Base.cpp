@@ -6,7 +6,9 @@
 //	Description : Server base object
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <net_utils.h>
+#include <LocatorAPI.h>
+
 #include "xrServer_Objects.h"
 #include "xrMessages.h"
 #include "game_base_space.h"

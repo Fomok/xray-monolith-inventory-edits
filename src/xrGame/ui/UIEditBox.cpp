@@ -2,7 +2,6 @@
 // 
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include <dinput.h>
 #include "uieditbox.h"
 #include "UIFrameLineWnd.h"

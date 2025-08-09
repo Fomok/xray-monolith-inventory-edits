@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "snork.h"
 #include "snork_state_manager.h"
 #include "../../../detail_path_manager_space.h"

@@ -5,10 +5,12 @@
 //	Copyright (C) GSC Game World - 2009
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <dxRenderDeviceRender.h>
+#include <string_concatenations.h>
+#include <resourcemanager.h>
+
 #include "CSCompiler.h"
 #include "ComputeShader.h"
-#include "..\xrRender\dxRenderDeviceRender.h"
 
 CSCompiler::CSCompiler(ComputeShader& target):
 	m_Target(target), m_cs(0)

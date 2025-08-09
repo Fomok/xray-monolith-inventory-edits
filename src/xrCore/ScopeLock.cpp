@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ScopeLock.hpp"
 #include "Lock.hpp"
 #include "xrDebug.h"

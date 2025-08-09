@@ -1,6 +1,8 @@
-#include "stdafx.h"
-#include "dx103DFluidData.h"
+#include <defines.h>
+#include <LocatorAPI.h>
+#include <xr_ini.h>
 
+#include "dx103DFluidData.h"
 #include "dx103DFluidManager.h"
 
 namespace

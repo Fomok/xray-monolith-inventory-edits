@@ -1,5 +1,11 @@
-#include "stdafx.h"
-#include "../xrRender/resourcemanager.h"
+#include <defines.h>
+#include <resourcemanager.h>
+#include <D3DX10Tex.h>
+#include <dxRenderDeviceRender.h>
+#include <msaa/dx10MSAABlender.h>
+#include <DX10 Rain/dx10RainBlender.h>
+#include <StateManager/dx10StateManager.h>
+
 #include "blender_light_occq.h"
 #include "blender_light_mask.h"
 #include "blender_light_direct.h"
@@ -11,8 +17,6 @@
 #include "blender_luminance.h"
 #include "blender_ssao.h"
 #include "dx10MinMaxSMBlender.h"
-#include "../xrRenderDX10/msaa/dx10MSAABlender.h"
-#include "../xrRenderDX10/DX10 Rain/dx10RainBlender.h"
 
 ////////////////////////////lvutner
 #include "blender_ss_sunshafts.h"
@@ -24,10 +28,6 @@
 #include "blender_pp_bloom.h"
 #include "blender_nightvision.h"
 #include "blender_lut.h"
-
-#include "../xrRender/dxRenderDeviceRender.h"
-
-#include <D3DX10Tex.h>
 
 void CRenderTarget::u_setrt(const ref_rt& _1, const ref_rt& _2, const ref_rt& _3, ID3DDepthStencilView* zb)
 {

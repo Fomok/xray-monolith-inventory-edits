@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 IC bool CDetailPathManager::actual() const
 {
 	return (m_actuality);

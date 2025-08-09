@@ -2,6 +2,8 @@
 #define r_backendH
 #pragma once
 
+#include <xrDebug.h>
+
 //#define RBackend_PGO
 
 #ifdef	RBackend_PGO
@@ -10,15 +12,17 @@
 #define PGO(a)
 #endif
 
+#ifdef USE_DX11
+#	include "..\xrRenderPC_R4\r_backend_lod.h"
+#endif
+
+#include "HW.h"
+#include "Shader.h"
 #include "r_DStreams.h"
 #include "r_constants_cache.h"
 #include "r_backend_xform.h"
 #include "r_backend_hemi.h"
 #include "r_backend_tree.h"
-
-#ifdef USE_DX11
-#	include "..\xrRenderPC_R4\r_backend_lod.h"
-#endif
 
 #include "fvf.h"
 

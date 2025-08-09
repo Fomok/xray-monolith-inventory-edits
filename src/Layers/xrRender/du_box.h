@@ -3,6 +3,9 @@
 #ifndef du_boxH
 #define du_boxH
 //---------------------------------------------------------------------------
+
+#include "_vector3d.h"
+
 #define DU_BOX_NUMVERTEX	8
 #define DU_BOX_NUMFACES		12
 #define DU_BOX_NUMLINES		12

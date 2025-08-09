@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dx10ShaderResourceStateCache.h"
 
 dx10ShaderResourceStateCache SRVSManager;

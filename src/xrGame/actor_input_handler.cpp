@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "actor_input_handler.h"
 #include "actor.h"
 #include "level.h"

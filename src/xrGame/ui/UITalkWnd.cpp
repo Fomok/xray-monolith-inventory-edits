@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UITalkWnd.h"
 
 #include "UITalkDialogWnd.h"

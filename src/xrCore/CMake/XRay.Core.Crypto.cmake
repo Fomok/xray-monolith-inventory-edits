@@ -2,7 +2,12 @@ add_module(XRay.Core.Crypto
   TYPE STATIC
 
   LINKS
+  FastDynamicCast
   OpenSSL
+
+  XRay.Core.Defines
+  
+  XRay.Core.Includes
 
   DEFINES
   CRYPTO_BUILD

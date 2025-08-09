@@ -1,5 +1,7 @@
 #pragma once
 
+#include <blenders/Blender.h>
+
 class CBlender_light_occq : public IBlender
 {
 public:

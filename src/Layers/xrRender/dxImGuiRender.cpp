@@ -1,6 +1,4 @@
-#include "stdafx.h"
-#include "dxImGuiRender.h"
-
+#include <d3d9types.h>
 #include <imgui.h>
 
 #if defined(USE_DX11)
@@ -11,20 +9,22 @@
 #include <backends/imgui_impl_dx9.h>
 #endif
 
+#include "dxImGuiRender.h"
+#include "HW.h"
+
 void dxImGuiRender::Copy(IImGuiRender& _in)
 {
-    *this = *dynamic_cast<dxImGuiRender*>(&_in);
+    *this = *fast_dynamic_cast<dxImGuiRender*>(&_in);
 }
 
 void dxImGuiRender::SetState(ImDrawData* data)
 {
-#if defined(USE_DX11) || defined(USE_DX10)
-    D3D_VIEWPORT VP = { 0, 0, (FLOAT)data->DisplaySize.x, (FLOAT)data->DisplaySize.y, 0, 1.f };
 #if defined(USE_DX11)
+    D3D_VIEWPORT VP = { 0, 0, (FLOAT)data->DisplaySize.x, (FLOAT)data->DisplaySize.y, 0, 1.f };
     HW.pContext->RSSetViewports(1, &VP);
-#else
-    HW.pDevice->RSSetViewports(1, &VP);
-#endif
+#elif defined(USE_DX10)
+    D3D_VIEWPORT VP = { 0, 0, (UINT)data->DisplaySize.x, (UINT)data->DisplaySize.y, 0, 1.f };
+    HW.pContext->RSSetViewports(1, &VP);
 #else
     D3DVIEWPORT9 VP = { 0, 0, (DWORD)data->DisplaySize.x, (DWORD)data->DisplaySize.y, 0, 1.f };
     HW.pDevice->SetViewport(&VP);

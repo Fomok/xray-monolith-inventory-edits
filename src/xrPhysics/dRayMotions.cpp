@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dCylinder/dCylinder.h"
 struct dContactGeom;
 int dCollideCylRay(dxGeom* o1, dxGeom* o2, int flags, dContactGeom* contact, int skip);

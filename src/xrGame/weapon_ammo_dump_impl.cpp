@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "WeaponAmmo.h"
 
 void CCartridge::DumpActiveParams(shared_str const& section_name,

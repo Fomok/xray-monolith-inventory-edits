@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <net_utils.h>
+
 #include "actor_mp_state.h"
 
 #define USE_LOGIC_ACCELERATION

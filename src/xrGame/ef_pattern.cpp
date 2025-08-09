@@ -6,7 +6,8 @@
 //	Description : Pattern based evaluation functions trained by supervised learning
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <LocatorAPI.h>
+
 #include "ef_pattern.h"
 #include "ef_primary.h"
 #include "ai_space.h"

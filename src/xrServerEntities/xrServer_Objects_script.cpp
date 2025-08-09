@@ -6,6 +6,8 @@
 //	Description : Server objects script export
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_server.h>
+
 #include "pch_script.h"
 #include "xrServer_Objects.h"
 #include "phnetstate.h"

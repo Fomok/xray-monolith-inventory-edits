@@ -2,6 +2,9 @@
 #define	ColorMapManager_included
 #pragma once
 
+#include <Shader.h>
+#include <xrstring.h>
+
 //	Reduces amount of work if the texture was not changed.
 //	Stores used textures in a separate map to avoid removal of
 //	of color map textures from memory.

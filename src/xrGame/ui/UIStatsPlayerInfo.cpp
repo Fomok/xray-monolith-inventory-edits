@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 
 #include "UIStatsPlayerInfo.h"
 #include "UIStatic.h"

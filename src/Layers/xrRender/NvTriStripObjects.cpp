@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #pragma warning( disable : 4786 )
 #pragma warning( disable : 4018 )
 
@@ -6,6 +5,7 @@
 #include <set>
 #include "NvTriStripObjects.h"
 #include "VertexCache.h"
+#include "log.h"
 
 #define CACHE_INEFFICIENCY 6
 

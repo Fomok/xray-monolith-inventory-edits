@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "eventapi.h"
 #include "xr_ioconsole.h"
 

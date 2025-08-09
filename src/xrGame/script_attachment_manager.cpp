@@ -1,5 +1,7 @@
 #pragma once
-#include "stdafx.h"
+
+#include <xrCore.h>
+
 #include "script_attachment_manager.h"
 #include "player_hud.h"
 #include "actor.h"
@@ -524,6 +526,9 @@ void script_attachment::SetBoneVisible(u16 bone_id, bool bVisibility, bool bRecu
 		bool bVisibleNow = m_kinematics->LL_GetBoneVisible(bone_id);
 		if (bVisibleNow != bVisibility)
 			m_kinematics->LL_SetBoneVisible(bone_id, bVisibility, TRUE);
+
+		m_kinematics->CalculateBones_Invalidate();
+		m_kinematics->CalculateBones(TRUE);
 	}
 }
 
@@ -611,9 +616,9 @@ LPCSTR script_attachment::bone_name(u16 bone_id)
 {
 	::luabind::object result = ::luabind::newtable(ai().script_engine().lua());
 
-	auto bones = m_kinematics->list_bones();
-	for (const auto& bone : bones)
-		result[bone.first] = bone.second.c_str();
+	auto bones = m_kinematics->LL_Bones();
+	for (const auto& bone : *bones)
+		result[bone.second] = bone.first.c_str();
 
 	return result;
 }

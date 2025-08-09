@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "DetailManager.h"
 
 void CDetailManager::cache_Initialize()

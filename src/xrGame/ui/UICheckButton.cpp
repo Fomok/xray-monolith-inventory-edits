@@ -2,7 +2,6 @@
 // с галочкой и без
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include ".\uicheckbutton.h"
 #include "UIXmlInit.h"
 #include "UIHint.h"

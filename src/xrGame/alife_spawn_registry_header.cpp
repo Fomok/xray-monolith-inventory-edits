@@ -6,10 +6,11 @@
 //	Description : ALife spawn registry header
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <FS.h>
+#include <xrlevel.h>
+
 #include "alife_spawn_registry_header.h"
 #include "alife_space.h"
-#include "../xrEngine/xrlevel.h"
 
 CALifeSpawnHeader::~CALifeSpawnHeader()
 {

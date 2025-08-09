@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "controller_psy_hit.h"
 #include "../BaseMonster/base_monster.h"
 #include "controller.h"

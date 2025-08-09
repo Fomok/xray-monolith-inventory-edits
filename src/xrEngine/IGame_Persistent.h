@@ -2,13 +2,18 @@
 #define IGame_PersistentH
 #pragma once
 
-#include "..\xrServerEntities\gametype_chooser.h"
+#include <pure.h>
+#include <EngineAPI.h>
+#include <gametype_chooser.h>
+#include <xr_trims.h>
+
 #ifndef _EDITOR
 #include "Environment.h"
 #include "IGame_ObjectPool.h"
 #endif
 
-#include "ShadersExternalData.h" //--#SM+#--
+#include "ShadersExternalData.h"
+#include "GameFont.h"
 
 class IRenderVisual;
 class IMainMenu;
@@ -138,7 +143,7 @@ public:
 	virtual void OnAppEnd();
 	virtual void OnAppActivate();
 	virtual void OnAppDeactivate();
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 	virtual void ImGui_OnRender(LPCSTR name) {};
 
 	// вызывается только когда изменяется тип игры

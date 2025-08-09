@@ -1,4 +1,3 @@
-#pragma hdrstop
 
 /* lzo1x_d3.c -- LZO1X decompression with preset dictionary
 

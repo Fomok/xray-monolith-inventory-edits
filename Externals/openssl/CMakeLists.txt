@@ -11,6 +11,7 @@ target_include_directories(OpenSSL
 
 target_compile_options(OpenSSL
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4005>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4267>

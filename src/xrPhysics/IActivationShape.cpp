@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "iactivationshape.h"
 #include "phactivationshape.h"
 #include "physics.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "../xrengine/xr_object.h"
 #ifdef DEBUG
 #include "ObjectDump.h"

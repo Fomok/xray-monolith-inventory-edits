@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
 
 #include "Environment.h"
 #ifndef _EDITOR

@@ -1,7 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #include "blender_light_direct_cascade.h"
+#include "jitter.h"
 
 CBlender_accum_direct_cascade::CBlender_accum_direct_cascade() { description.CLS = 0; }
 

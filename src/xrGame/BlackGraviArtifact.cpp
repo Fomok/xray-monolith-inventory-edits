@@ -4,7 +4,6 @@
 // такой же как и обычный, но при получении хита
 ///////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "BlackGraviArtifact.h"
 #include "../xrphysics/PhysicsShell.h"
 #include "entity_alive.h"

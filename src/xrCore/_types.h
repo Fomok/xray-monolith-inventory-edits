@@ -1,6 +1,8 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <stdlib.h>
+
 // Type defs
 typedef signed char s8;
 typedef unsigned char u8;
@@ -41,10 +43,8 @@ typedef pcstr LPCSTR;
 
 #define flt_max type_max(float)
 #define flt_min type_min(float)
-//#define FLT_MAX 3.402823466e+38F /* max value */
+//#define flt_max 3.402823466e+38F /* max value */
 //#define FLT_MIN 1.175494351e-38F /* min positive value */
-#define FLT_MAX flt_max
-#define FLT_MIN flt_min
 
 #define flt_zero type_zero(float)
 #define flt_eps type_epsilon(float)

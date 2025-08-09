@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <xrCore.h>
 
 #include "NET_Common.h"
 

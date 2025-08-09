@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "DemoInfo_Loader.h"
 #include "../xrCore/stream_reader.h"
 #include "Level.h"

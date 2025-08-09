@@ -2,6 +2,8 @@
 #define xrRender_consoleH
 #pragma once
 
+#include <psystem.h>
+
 // Common
 extern ECORE_API float ps_ssfx_fog_scattering;
 extern ECORE_API Fvector4 ps_ssfx_motionblur;

@@ -1,12 +1,19 @@
-#include "stdafx.h"
-//#include "../../xrEngine/xr_effgamma.h"
-#include "xr_effgamma.h"
-#include "dxRenderDeviceRender.h"
-#include "../xrRender/tga.h"
-#include "../../xrEngine/xrImage_Resampler.h"
 
-#if defined(USE_DX10) || defined(USE_DX11)
-#include "d3dx10tex.h"
+#include <defines.h>
+#include <LocatorAPI.h>
+#include <IGame_Level.h>
+#include <string_concatenations.h>
+#include <tga.h>
+#include <xr_effgamma.h>
+#include <xrImage_Resampler.h>
+#include <xrCore.h>
+
+#include "dxRenderDeviceRender.h"
+
+#if defined(USE_DX10)
+#include <D3DX10tex.h>
+#elif defined(USE_DX11)
+#include <D3DX11tex.h>
 #endif	//	USE_DX10
 
 #define	GAMESAVE_SIZE	128

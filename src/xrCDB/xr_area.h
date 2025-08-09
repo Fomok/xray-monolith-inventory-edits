@@ -7,6 +7,7 @@
 // refs
 class ISpatial;
 class ICollisionForm;
+class IReader;
 class CObject;
 
 #include "FactoryPtr.h"

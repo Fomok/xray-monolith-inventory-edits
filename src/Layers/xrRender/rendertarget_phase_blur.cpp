@@ -1,6 +1,3 @@
-#include "stdafx.h"
-
-
 IC bool SortLights(light* i, light* j)
 {
 	return (i->distance < j->distance&& i->sss_priority < j->sss_priority);

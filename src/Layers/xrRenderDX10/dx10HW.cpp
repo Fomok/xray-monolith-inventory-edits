@@ -1,23 +1,26 @@
 // dx10HW.cpp: implementation of the DX10 specialisation of CHW.
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
 
-#pragma warning(disable:4995)
 #include <d3dx9.h>
 #ifdef USE_DX11
 # include <d3d11_4.h>
 # include <dxgi1_5.h>
 #endif
-#pragma warning(default:4995)
-#include "../xrRender/HW.h"
+
+#include <D3DX10core.h>
+
+#include <defines.h>
+#include <HW.h>
+#include <xrCore.h>
+
 #include "XR_IOConsole.h"
 #include "xrAPI.h"
 #include "xrRender_console.h"
 
 #include "StateManager/dx10SamplerStateCache.h"
 #include "StateManager/dx10StateCache.h"
+#include "StateManager/dx10StateManager.h"
 
 #ifndef _EDITOR
 void fill_vid_mode_list(CHW* _hw);
@@ -435,10 +438,6 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     }
 #endif
 
-    UINT createDeviceFlags = 0;
-#ifdef DEBUG
-	//createDeviceFlags |= D3Dxx_CREATE_DEVICE_DEBUG;
-#endif
     HRESULT R = 0;
     // Create the device
     //	DX10 don't need it?
@@ -510,6 +509,11 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     R_CHK(pContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&pAnnotation));
 
 #else
+    UINT createDeviceFlags = 0;
+#ifdef DEBUG
+	//createDeviceFlags |= D3Dxx_CREATE_DEVICE_DEBUG;
+#endif
+
 	R = D3DX10CreateDeviceAndSwapChain(m_pAdapter,
         m_DriverType,
         NULL,

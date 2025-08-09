@@ -1,5 +1,3 @@
-#include	"stdafx.h"
-
 #include	"ik_calculate_data.h"
 
 #include	"ik/iklimb.h"

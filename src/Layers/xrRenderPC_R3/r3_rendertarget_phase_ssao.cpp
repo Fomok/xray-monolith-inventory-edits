@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 static void set_viewport(ID3D10Device* dev, u32 w, u32 h)
 {

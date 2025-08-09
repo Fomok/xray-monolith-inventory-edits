@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 #define TEMPLATE_SPECIALIZATION template<typename _world_property>
 #define CConditionStateAbstract CConditionState<_world_property>
 

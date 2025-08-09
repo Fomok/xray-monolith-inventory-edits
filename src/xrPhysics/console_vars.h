@@ -1,5 +1,7 @@
 #pragma once
 
+#include "xrPhysics.h"
+
 struct XRPHYSICS_API ph_console
 {
 	static BOOL g_bDebugDumpPhysicsStep; //= 0;

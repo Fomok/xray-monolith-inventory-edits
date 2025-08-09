@@ -1,6 +1,10 @@
 #ifndef __V3D__
 #define __V3D__
 
+#include <_random.h>
+#include <_std_extensions.h>
+#include "math_constants.h"
+
 // Inline call
 #ifndef IC
 #define IC __forceinline

@@ -1,8 +1,8 @@
 #ifndef XR_SHA_INCLUDED
 #define XR_SHA_INCLUDED
 
+#include "_types.h"
 #include "crypto_api_def.h"
-#include "xrCore.h"
 
 struct SHAstate_st;
 

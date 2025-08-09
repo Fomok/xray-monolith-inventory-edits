@@ -1,7 +1,9 @@
 #pragma once
 
+#include <sound.h>
+#include <feel_touch.h>
+
 #include "space_restrictor.h"
-#include "../xrEngine/feel_touch.h"
 #include "script_export_space.h"
 
 class CActor;

@@ -1,7 +1,7 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 //#include <crtdbg.h>
+
+#include <LocatorAPI.h>
+#include <string_concatenations.h>
 
 #include "tntQAVI.h"
 

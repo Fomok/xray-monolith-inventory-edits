@@ -6,7 +6,6 @@
 //	Description : debug renderer
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "debug_renderer.h"
 
 void CDebugRenderer::add_lines		(Fvector const *vertices, u32 const &vertex_count, u16 const *pairs, u32 const &pair_count, u32 const &color, bool bHud)

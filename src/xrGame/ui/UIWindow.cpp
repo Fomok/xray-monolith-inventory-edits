@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIWindow.h"
 #include "UICursor.h"
 #include "MainMenu.h"

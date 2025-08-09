@@ -1,21 +1,21 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <string_concatenations.h>
+#include <LocatorAPI.h>
+#include <xr_ini.h>
 
+#include "FontRender.h"
 #include "GameFont.h"
-#ifndef _EDITOR
-#include "Render.h"
-#endif
+#include "RenderFactory.h"
+#include "xrAPI.h"
+
 #ifdef _EDITOR
 unsigned short int mbhMulti2Wide
 ( wide_char* WideStr , wide_char* WidePos , const unsigned short int WideStrSize , const char* MultiStr ) {return 0;};
+#else
+#include "Render.h"
 #endif
 
 extern ENGINE_API BOOL g_bRendering;
 ENGINE_API Fvector2 g_current_font_scale = {1.0f, 1.0f};
-
-#include "xrAPI.h"
-#include "RenderFactory.h"
-#include "FontRender.h"
 
 CGameFont::CGameFont(LPCSTR section, u32 flags)
 {

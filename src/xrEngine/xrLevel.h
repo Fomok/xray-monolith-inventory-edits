@@ -1,6 +1,9 @@
 #ifndef xrLevelH
 #define xrLevelH
 
+#include <string_concatenations.h>
+#include <xr_ini.h>
+
 #pragma once
 
 struct xrGUID

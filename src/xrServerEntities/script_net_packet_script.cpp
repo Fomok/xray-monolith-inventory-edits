@@ -6,6 +6,8 @@
 //	Description : XRay Script net packet class script export
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_utils.h>
+
 #include "pch_script.h"
 #include "script_net_packet.h"
 

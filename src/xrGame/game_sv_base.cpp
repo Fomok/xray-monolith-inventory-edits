@@ -1,4 +1,7 @@
-#include "stdafx.h"
+#include <xrCore.h>
+#include <XR_IOConsole.h>
+#include <xr_ioc_cmd.h>
+
 #include "LevelGameDef.h"
 #include "script_process.h"
 #include "xrServer_Objects_ALife_Monsters.h"
@@ -8,8 +11,6 @@
 #include "xrserver.h"
 #include "ai_space.h"
 #include "game_sv_event_queue.h"
-#include "../xrEngine/XR_IOConsole.h"
-#include "../xrEngine/xr_ioc_cmd.h"
 #include "string_table.h"
 
 #include "debug_renderer.h"

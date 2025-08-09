@@ -1,4 +1,3 @@
-#include "stdafx.h"
 /*
 #include "UITrackButton.h"
 #include "UITrackBar.h"

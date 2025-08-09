@@ -1,19 +1,19 @@
-#include "stdafx.h"
-#include "r2.h"
-#include "../xrRender/ResourceManager.h"
-#include "../xrRender/fbasicvisual.h"
-#include "../../xrEngine/fmesh.h"
-#include "../../xrEngine/xrLevel.h"
-#include "../../xrEngine/x_ray.h"
-#include "../../xrEngine/IGame_Persistent.h"
-#include "../../xrCore/stream_reader.h"
-
-#include "../xrRender/dxRenderDeviceRender.h"
-
-#pragma warning(push)
-#pragma warning(disable:4995)
+#include <defines.h>
 #include <malloc.h>
-#pragma warning(pop)
+#include <LocatorAPI.h>
+
+#include <ResourceManager.h>
+#include <fbasicvisual.h>
+#include <fmesh.h>
+#include <xrLevel.h>
+#include <x_ray.h>
+#include <IGame_Persistent.h>
+#include <IGame_Level.h>
+#include <stream_reader.h>
+#include <dxRenderDeviceRender.h>
+
+
+#include "r2.h"
 
 void CRender::level_Load(IReader* fs)
 {

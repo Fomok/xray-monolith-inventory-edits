@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "killer_victim_velocity_angle.h"
 #include "game_state_accumulator.h"
 #include "game_cl_base.h"

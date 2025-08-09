@@ -6,7 +6,9 @@
 //	Description : Visual memory parameters
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <Engine.h>
+#include <xr_ini.h>
+
 #include "visual_memory_params.h"
 #include "memory_space.h"
 

@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
 #ifdef DEBUG
 
 #include "PHDebug.h"

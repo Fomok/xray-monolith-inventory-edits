@@ -6,7 +6,6 @@
 //	Description : Attachment owner
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "attachment_owner.h"
 #include "attachable_item.h"
 #include "Kinematics.h"

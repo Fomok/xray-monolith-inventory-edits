@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <dx10EventWrapper.h>
 
 // startup
 void CRenderTarget::phase_scene_prepare()

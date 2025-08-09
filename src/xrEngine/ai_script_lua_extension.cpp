@@ -7,25 +7,13 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include <stdarg.h>
-#include "stdafx.h"
+
+#include <LocatorAPI.h>
+#include <string_concatenations.h>
+#include <log.h>
+
 #include "ai_script_lua_extension.h"
 #include "ai_script_space.h"
-
-#ifdef XRRENDER_R4_EXPORTS
-#define ENGINE_BUILD
-#endif // XRRENDER_R4_EXPORTS
-
-#ifdef XRRENDER_R3_EXPORTS
-#define ENGINE_BUILD
-#endif // XRRENDER_R3_EXPORTS
-
-#ifdef XRRENDER_R2_EXPORTS
-#define ENGINE_BUILD
-#endif // XRRENDER_R2_EXPORTS
-
-#ifdef XRRENDER_R1_EXPORTS
-#define ENGINE_BUILD
-#endif // XRRENDER_R1_EXPORTS
 
 #ifndef ENGINE_BUILD
 #include "ai_space.h"

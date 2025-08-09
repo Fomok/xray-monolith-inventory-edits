@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UITeamHeader.h"
 #include "UITeamState.h"
 #include "ui/UIStatic.h"

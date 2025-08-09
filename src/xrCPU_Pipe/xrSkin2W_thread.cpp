@@ -1,5 +1,7 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include "xrCPU_Pipe.h"
+#include "ttapi.h"
+#include "SkeletonXVertRender.h"
+#include "bone.h"
 
 extern xrSkin4W* skin4W_func;
 

@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIVote.h"
 #include "UIStatic.h"
 #include "UI3tButton.h"

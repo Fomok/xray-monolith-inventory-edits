@@ -1,6 +1,8 @@
-#ifndef xr_resourceH
-#define xr_resourceH
 #pragma once
+#include <fast_dynamic_cast.h>
+
+#include "_types.h"
+#include "xrstring.h"
 
 // resource itself, the base class for all derived resources
 class XRCORE_API xr_resource
@@ -192,5 +194,3 @@ resptr_core<T, D> static_pointer_cast(resptr_core<U, D> const& p) { return stati
 
 template <class T, class U, typename D>
 resptr_core<T, D> dynamic_pointer_cast(resptr_core<U, D> const& p) { return dynamic_cast<T*>(p.get()); }
-
-#endif //xr_resourceH

@@ -6,7 +6,8 @@
 //	Description : Script sound action class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <LocatorAPI.h>
+
 #include "script_sound_action.h"
 #include "ai_space.h"
 #include "script_engine.h"

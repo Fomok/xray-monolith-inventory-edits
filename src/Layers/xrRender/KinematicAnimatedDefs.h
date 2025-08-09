@@ -3,7 +3,9 @@
 
 #pragma once
 
-#include	"../../xrEngine/SkeletonMotionDefs.h"
+#include <SkeletonMotionDefs.h>
+#include <FixedVector.h>
+
 // consts
 const u32 MAX_BLENDED = 16;
 const u32 MAX_CHANNELS = 4;

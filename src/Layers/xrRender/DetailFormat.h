@@ -1,5 +1,7 @@
 #pragma once
 
+#include <xrDebug.h>
+
 #ifndef _DETAIL_FORMAT_H_
 #define _DETAIL_FORMAT_H_
 #pragma pack(push,1)

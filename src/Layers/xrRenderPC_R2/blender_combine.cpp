@@ -1,7 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #include "Blender_combine.h"
+#include "jitter.h"
 
 CBlender_combine::CBlender_combine() { description.CLS = 0; }
 

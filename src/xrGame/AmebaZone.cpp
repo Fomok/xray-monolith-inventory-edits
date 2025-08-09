@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <xr_ini.h>
 
 #include "AmebaZone.h"
 #include "ZoneVisual.h"

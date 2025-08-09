@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <Engine.h>
+
 #include "associative_vector.h"
 
 class CInventoryOwner;

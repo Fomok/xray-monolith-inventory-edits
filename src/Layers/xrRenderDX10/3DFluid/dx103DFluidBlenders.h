@@ -2,6 +2,8 @@
 #define	dx103DFluidBlenders_included
 #pragma once
 
+#include <blenders/Blender.h>
+
 class CBlender_fluid_advect : public IBlender
 {
 public:

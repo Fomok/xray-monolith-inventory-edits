@@ -3,6 +3,9 @@
 #ifndef du_coneH
 #define du_coneH
 //---------------------------------------------------------------------------
+
+#include "_vector3d.h"
+
 #define DU_CONE_NUMVERTEX	18
 #define DU_CONE_NUMFACES	32
 #define DU_CONE_NUMLINES	24

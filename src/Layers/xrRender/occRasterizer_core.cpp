@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "occRasterizer.h"
 
 static occTri* currentTri = 0;

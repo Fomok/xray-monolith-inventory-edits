@@ -8,7 +8,6 @@
 // BlackDrops - черные капли
 ///////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "Needles.h"
 #include "../xrphysics/PhysicsShell.h"
 

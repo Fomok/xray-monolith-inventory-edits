@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <FS.h>
+
 template <class M, typename P>
 struct CLoader
 {

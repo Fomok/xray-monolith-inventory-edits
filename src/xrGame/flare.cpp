@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "flare.h"
 #include "player_hud.h"
 #include "../xrEngine/LightAnimLibrary.h"

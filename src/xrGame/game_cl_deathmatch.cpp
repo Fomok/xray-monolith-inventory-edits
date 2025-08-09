@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <Engine.h>
+
 #include "game_cl_deathmatch.h"
 #include "xrMessages.h"
 #include "UIGameDM.h"

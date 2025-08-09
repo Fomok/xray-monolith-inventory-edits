@@ -1,4 +1,7 @@
-﻿#include "stdafx.h"
+﻿#include <defines.h>
+#include <CameraBase.h>
+#include <SkeletonMotions.h>
+
 #include "HudItem.h"
 #include "physic_item.h"
 #include "actor.h"
@@ -7,11 +10,9 @@
 #include "xrmessages.h"
 #include "level.h"
 #include "inventory.h"
-#include "../xrEngine/CameraBase.h"
 #include "player_hud.h"
-#include "../xrEngine/SkeletonMotions.h"
 
-#include "../build_config_defines.h"
+#include "build_config_defines.h"
 #include "ui_base.h"
 #include "ui\UIScriptWnd.h"
 
@@ -1205,3 +1206,43 @@ CAnonHudItem::~CAnonHudItem() { }
 void CAnonHudItem::UpdateXForm() { }
 
 void CAnonHudItem::on_renderable_Render() { }
+
+#ifdef ATTACHMENT_HUD_VISBOX
+void VisualCallbackHud(IKinematics* tpKinematics)
+{
+	CHudItem* game_object = static_cast<CHudItem*>((tpKinematics->GetUpdateCallbackParam()));
+	VERIFY(game_object);
+
+	CHudItem::HUD_CALLBACK_VECTOR_IT I = game_object->visual_callbacks().begin();
+	CHudItem::HUD_CALLBACK_VECTOR_IT E = game_object->visual_callbacks().end();
+	for (; I != E; ++I)
+		(*I)(tpKinematics);
+}
+
+void CHudItem::add_visual_callback(hud_visual_callback* callback)
+{
+	if (!HudItemData()->m_model) return;
+	HUD_CALLBACK_VECTOR_IT I = std::find(visual_callbacks().begin(), visual_callbacks().end(), callback);
+	if (I != visual_callbacks().end()) return;
+	if (m_visual_callback.empty()) SetKinematicsCallback(true);
+	m_visual_callback.push_back(callback);
+}
+
+void CHudItem::remove_visual_callback(hud_visual_callback* callback)
+{
+	if (!HudItemData()->m_model) return;
+	HUD_CALLBACK_VECTOR_IT I = std::find(m_visual_callback.begin(), m_visual_callback.end(), callback);
+	if (I == m_visual_callback.end()) return;
+	m_visual_callback.erase(I);
+	if (m_visual_callback.empty()) SetKinematicsCallback(false);
+}
+
+void CHudItem::SetKinematicsCallback(bool set)
+{
+	if (!HudItemData()->m_model) return;
+	if (set)
+		HudItemData()->m_model->Callback(VisualCallbackHud, this);
+	else
+		HudItemData()->m_model->Callback(0, 0);
+}
+#endif

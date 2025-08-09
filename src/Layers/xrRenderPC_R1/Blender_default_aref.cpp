@@ -2,8 +2,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
+#include <blenders/Blender_CLSID.h>
 
 #include "Blender_default_aref.h"
 

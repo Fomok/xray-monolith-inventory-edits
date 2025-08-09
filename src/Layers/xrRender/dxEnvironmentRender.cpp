@@ -1,12 +1,13 @@
-#include "stdafx.h"
+#include <defines.h>
+
+#include <environment.h>
+#include <ResourceManager.h>
+#include <xr_efflensflare.h>
+
 #include "dxEnvironmentRender.h"
-
 #include "dxRenderDeviceRender.h"
-
-#include "../../xrEngine/environment.h"
-#include "../../Layers/xrRender/ResourceManager.h"
-
-#include "../../xrEngine/xr_efflensflare.h"
+#include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 static Fmatrix mSky_prev = Fidentity;
 

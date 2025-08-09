@@ -6,7 +6,6 @@
 //	Description : Object handler action planner
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "object_handler_planner.h"
 #include "object_property_evaluators.h"
 #include "object_actions.h"

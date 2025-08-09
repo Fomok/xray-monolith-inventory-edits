@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <Debug/dxPixEventWrapper.h>
 
 // startup
 void CRenderTarget::phase_scene_prepare()

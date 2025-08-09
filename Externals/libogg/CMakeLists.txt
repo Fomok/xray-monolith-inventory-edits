@@ -24,5 +24,6 @@ target_include_directories(libogg
 
 target_compile_options(libogg
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4456>
 )

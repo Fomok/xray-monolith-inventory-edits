@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 LRESULT CALLBACK WndProc2(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {

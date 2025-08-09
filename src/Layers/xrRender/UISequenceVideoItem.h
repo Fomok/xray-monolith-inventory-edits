@@ -2,6 +2,8 @@
 #define	UISequenceVideoItem_included
 #pragma once
 
+#include <_types.h>
+
 class IUISequenceVideoItem
 {
 public:

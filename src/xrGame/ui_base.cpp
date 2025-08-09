@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <LocatorAPI.h>
+
 #include "ui_base.h"
 #include "GamePersistent.h"
 #include "UICursor.h"

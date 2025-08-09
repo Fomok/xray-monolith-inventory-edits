@@ -1,16 +1,20 @@
+set(XRCORE_STATIC On CACHE BOOL "Build XRay.Core as a static library")
+
+if(XRCORE_STATIC)
+  set(XRCORE_TYPE STATIC)
+else()
+  set(XRCORE_TYPE SHARED)
+endif()
+
 add_module(XRay.Core
-  TYPE STATIC
-  
-  PRECOMPILES stdafx.h
+  TYPE ${XRCORE_TYPE}
+
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
   PURE_ALLOC
-  XRCORE_EXPORTS
   PORTABLE_BUGSLAYERUTIL
-
-  INCLUDES
-  ${CMAKE_CURRENT_SOURCE_DIR}/..
-  ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
   DxErr
@@ -18,26 +22,69 @@ add_module(XRay.Core
   optick
   StackWalker
   winmm
-  XRay.Render.API
-  XRay.Collision
+
+  XRay.Includes
+  XRay.Render.API.Includes
+  XRay.Collision.Includes
+
+  PRECOMPILES
+  #xrCore.h
 
   SOURCES
-  FTimer.cpp
   xrCore.cpp
-  
-  FTimer.h
-  stdafx.h
   xrCore.h
-  xrCore_platform.h
+
+  FTimer.cpp
+  FTimer.h
   
-  ../build_config_defines.h
   ChooseTypes.H
   client_id.h
   robin_hood.h
 
+  destructor.h
+
+  xr_rtoken.h
+  xr_shortcut.h
+
   resource.h
   xrCore.rc
 )
+
+target_compile_options(XRay.Core
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
+)
+
+target_compile_definitions(XRay.Core
+  PRIVATE
+  _STLP_DESIGNATED_DLL=1
+  _STLP_USE_DECLSPEC=1
+  XRCORE_EXPORTS
+  MODULE_NAME="xrCore.dll"
+)
+
+target_compile_definitions(XRay.Core.Defines
+  INTERFACE
+  _STLP_USE_DECLSPEC=1
+  xr_pure_interface=__interface
+)
+
+if(XRCORE_STATIC)
+  target_compile_definitions(XRay.Core.Defines
+    INTERFACE
+    XRCORE_STATIC
+    [[XRCORE_API=]]
+  )
+else()
+  target_compile_definitions(XRay.Core
+    PRIVATE
+    XRCORE_API=__declspec\(dllexport\)
+  )
+  target_compile_definitions(XRay.Core.Defines
+    INTERFACE
+    XRCORE_API=__declspec\(dllimport\)
+  )
+endif()
 
 set_source_files_properties(
   lzo_compressor.cpp

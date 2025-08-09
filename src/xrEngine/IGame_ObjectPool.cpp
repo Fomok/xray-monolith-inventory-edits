@@ -1,4 +1,7 @@
-#include "stdafx.h"
+#include <string_concatenations.h>
+#include <xr_ini.h>
+
+#include "Engine.h"
 #include "igame_level.h"
 #include "IGame_Persistent.h"
 #include "igame_objectpool.h"

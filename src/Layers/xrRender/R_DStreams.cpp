@@ -1,10 +1,10 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <defines.h>
+#include <dxRenderDeviceRender.h>
 
 #include "ResourceManager.h"
+#include "R_Backend_Runtime.h"
 #include "R_DStreams.h"
 
-#include "../xrRender/dxRenderDeviceRender.h"
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////

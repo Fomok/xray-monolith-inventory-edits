@@ -2,13 +2,17 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-#include "../../xrEngine/x_ray.h"
-#include "../../xrEngine/GameFont.h"
+#include <igame_persistent.h>
+#include <environment.h>
+#include <FS.h>
+#include <IGame_Level.h>
+#include <GameFont.h>
+#include <x_ray.h>
+#include <xr_object.h>
+
 #include "GlowManager.h"
-#include "../../xrEngine/xr_object.h"
+#include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 #define FADE_SCALE_UP		4096.f
 #define FADE_SCALE_DOWN		1024.f

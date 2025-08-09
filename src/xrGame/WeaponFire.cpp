@@ -2,7 +2,6 @@
 // function responsible for firing with CWeapon
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "Weapon.h"
 #include "ParticlesObject.h"
 #include "entity.h"

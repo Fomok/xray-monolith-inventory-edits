@@ -1,6 +1,8 @@
 #ifndef FILERECEIVER_NODE
 #define FILERECEIVER_NODE
 
+#include <FS.h>
+
 #include "filetransfer_common.h"
 
 namespace file_transfer

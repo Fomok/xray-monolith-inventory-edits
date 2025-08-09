@@ -1,3 +1,6 @@
+#include <defines.h>
+#include <x_ray.h>
+
 #include "pch_script.h"
 #include "GameTaskManager.h"
 #include "alife_registry_wrappers.h"
@@ -11,7 +14,6 @@
 #include "ui/UIPDAWnd.h"
 #include "encyclopedia_article.h"
 #include "ui/UIMapWnd.h"
-#include "..\..\xrEngine\x_ray.h"
 #include "string_table.h"
 
 #pragma warning(push)

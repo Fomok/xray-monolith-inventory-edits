@@ -1,4 +1,9 @@
+#ifndef __GAME_SV_EVENT_QUEUE_H__
+#define __GAME_SV_EVENT_QUEUE_H__
+
 #pragma once
+
+#include <net_utils.h>
 
 struct GameEvent
 {
@@ -29,3 +34,5 @@ public:
 	u32 EraseEvents(event_predicate to_del);
 	void SetIgnoreEventsFor(bool ignore, ClientID clientID);
 };
+
+#endif //__GAME_SV_EVENT_QUEUE_H__

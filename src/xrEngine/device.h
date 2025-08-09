@@ -9,14 +9,13 @@
 //class ENGINE_API CResourceManager;
 //class ENGINE_API CGammaControl;
 
-#include "pure.h"
-//#include "hw.h"
-#include "../xrcore/ftimer.h"
-#include "stats.h"
-//#include "shader.h"
-//#include "R_Backend.h"
+#include <build_config_defines.h>
+#include <fastdelegate.h>
+#include <ftimer.h>
+#include <xrSyncronize.h>
 
-#include "../build_config_defines.h"
+#include "pure.h"
+#include "stats.h"
 
 #define VIEWPORT_NEAR  Device.ViewportNear //0.2f
 #define R_VIEWPORT_NEAR 0.005f
@@ -408,6 +407,24 @@ public:
 		return frame_timer.GetElapsed_ms();
 	}
 
+	// demonized: Perceivable distance depending on FOV, so that objects will behave normal in binoculars
+	IC float GetPerceivedDist(const Fvector& p, float* real_dist = nullptr)
+	{
+		float dist = vCameraPosition.distance_to(p);
+		float fov_rad = deg2rad(fFOV);
+		float perceived_dist = dist * tanf(fov_rad * 0.5f);
+		if (real_dist) *real_dist = dist;
+		return perceived_dist;
+	}
+
+	IC float CalcSSADynamic(const Fvector& C, float R)
+	{
+		Fvector4 v_res1, v_res2;
+		mFullTransform.transform(v_res1, C);
+		mFullTransform.transform(v_res2, Fvector(C).mad(vCameraRight, R));
+		return v_res1.sub(v_res2).magnitude();
+	}
+
 public:
 	void xr_stdcall on_idle();
 	bool xr_stdcall on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& result);
@@ -416,9 +433,9 @@ private:
 	void message_loop();
 
 public:
-	virtual void _BCL AddSeqFrame(pureFrame* f, bool mt);
-	virtual void _BCL RemoveSeqFrame(pureFrame* f);
-	virtual CStatsPhysics* _BCL StatPhysics() { return Statistic; }
+	virtual void AddSeqFrame(pureFrame* f, bool mt);
+	virtual void RemoveSeqFrame(pureFrame* f);
+	virtual CStatsPhysics* StatPhysics() { return Statistic; }
 
 private:
 	xr_imgui::ide m_imgui;

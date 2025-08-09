@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "flesh.h"
 #include "flesh_state_manager.h"
 

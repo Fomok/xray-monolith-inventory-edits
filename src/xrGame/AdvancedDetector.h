@@ -17,4 +17,4 @@ protected:
 	CUIArtefactDetectorAdv& ui();
 };
 
-//	static void _BCL		BoneCallback					(CBoneInstance *B);
+//	static void BoneCallback					(CBoneInstance *B);

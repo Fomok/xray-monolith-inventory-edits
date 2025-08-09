@@ -6,7 +6,6 @@
 //	Description : Stalker animation manager : bone callbacks
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_animation_manager.h"
 #include "ai/stalker/ai_stalker.h"
 #include "sight_manager.h"
@@ -16,7 +15,7 @@
 
 typedef CStalkerAnimationManager::callback_params callback_params;
 
-static void _BCL callback_rotation(CBoneInstance* bone)
+static void callback_rotation(CBoneInstance* bone)
 {
 	if (!_valid( bone->mTransform )) return;
 	R_ASSERT(_valid( bone->mTransform ));
@@ -64,7 +63,7 @@ static void _BCL callback_rotation(CBoneInstance* bone)
 	R_ASSERT(_valid( bone->mTransform ));
 }
 
-static void _BCL callback_rotation_blend(CBoneInstance* const bone)
+static void callback_rotation_blend(CBoneInstance* const bone)
 {
 	R_ASSERT(_valid( bone->mTransform ));
 

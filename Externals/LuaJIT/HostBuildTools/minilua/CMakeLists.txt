@@ -21,6 +21,7 @@ target_sources(minilua PRIVATE
 target_compile_options(minilua
   PRIVATE
   ${HOST_ACFLAGS}
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4132>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4324>
 )

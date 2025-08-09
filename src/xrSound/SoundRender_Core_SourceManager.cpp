@@ -1,10 +1,10 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <LocatorAPI.h>
+#include <tbb/parallel_for_each.h>
+#include <profiler.h>
 
 #include "SoundRender_Core.h"
 #include "SoundRender_Source.h"
 #include "ScopeLock.hpp"
-#include <tbb/parallel_for_each.h>
 
 CSoundRender_Source* CSoundRender_Core::i_create_source(LPCSTR name)
 {
@@ -33,6 +33,7 @@ void CSoundRender_Core::i_destroy_source(CSoundRender_Source* S)
 
 void CSoundRender_Core::i_create_all_sources()
 {
+	PROF_EVENT();
 	CTimer T;
 	T.Start();
 

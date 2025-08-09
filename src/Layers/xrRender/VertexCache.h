@@ -1,6 +1,8 @@
 #ifndef VERTEX_CACHE_H
 #define VERTEX_CACHE_H
 
+#include <_stl_extensions.h>
+
 class VertexCache
 {
 public:

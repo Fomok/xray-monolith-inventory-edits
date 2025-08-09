@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <Engine.h>
+
 #include "xrserver.h"
 #include "game_sv_single.h"
 #include "game_sv_deathmatch.h"

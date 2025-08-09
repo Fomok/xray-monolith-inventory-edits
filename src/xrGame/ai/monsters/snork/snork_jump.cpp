@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "snork.h"
 #include "snork_jump.h"
 //#include "../jump_ability.h"

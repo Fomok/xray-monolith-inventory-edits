@@ -1,5 +1,7 @@
 #pragma once
 
+#include "blenders/Blender.h"
+
 class CBlender_accum_direct_cascade : public IBlender
 {
 public:

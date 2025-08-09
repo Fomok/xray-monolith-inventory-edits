@@ -6,6 +6,8 @@
 //	Description : Script process class
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_trims.h>
+
 #include "pch_script.h"
 #include "script_engine.h"
 #include "script_process.h"

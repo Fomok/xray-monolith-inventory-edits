@@ -1,9 +1,8 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "ParticleEffect.h"
 #include <tbb/parallel_for.h>
 #include <tbb/blocked_range.h>
+
+#include "ParticleEffect.h"
+#include "R_Backend_Runtime.h"
 
 #ifndef _EDITOR
 #include <xmmintrin.h>

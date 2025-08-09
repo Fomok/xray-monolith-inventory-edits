@@ -1,6 +1,6 @@
-#include "stdafx.h"
-
 #include "physics_scripted.h"
+#include "xrDebug.h"
+#include "xrMemory.h"
 
 cphysics_scripted::~cphysics_scripted()
 {

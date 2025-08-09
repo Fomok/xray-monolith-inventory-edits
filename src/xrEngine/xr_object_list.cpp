@@ -1,4 +1,6 @@
-#include "stdafx.h"
+#include <defines.h>
+#include <net_utils.h>
+
 #include "igame_level.h"
 #include "igame_persistent.h"
 
@@ -7,7 +9,6 @@
 #include "std_classes.h"
 
 #include "xr_object.h"
-#include "../xrCore/net_utils.h"
 
 #include "CustomHUD.h"
 
@@ -123,7 +124,7 @@ void CObjectList::SingleUpdate(CObject* O)
 	Device.Statistic->UpdateClient_updated++;
 	O->dwFrame_UpdateCL = Device.dwFrame;
 
-	// Msg ("[%d][0x%08x]IAmNotACrowAnyMore (CObjectList::SingleUpdate)", Device.dwFrame, dynamic_cast<void*>(O));
+	// Msg ("[%d][0x%08x]IAmNotACrowAnyMore (CObjectList::SingleUpdate)", Device.dwFrame, fast_dynamic_cast<void*>(O));
 
 	O->UpdateCL();
 #ifdef DEBUG
@@ -189,7 +190,7 @@ void CObjectList::clear_crow_vec(Objects& o)
 {
 	for (u32 _it = 0; _it < o.size(); _it++)
 	{
-		// Msg ("[%d][0x%08x]IAmNotACrowAnyMore (clear_crow_vec)", Device.dwFrame, dynamic_cast<void*>(o[_it]));
+		// Msg ("[%d][0x%08x]IAmNotACrowAnyMore (clear_crow_vec)", Device.dwFrame, fast_dynamic_cast<void*>(o[_it]));
 		o[_it]->IAmNotACrowAnyMore();
 	}
 	o.clear_not_free();
@@ -304,7 +305,7 @@ void CObjectList::Update(bool bForce)
 			// Msg ("Object [%x]", O);
 #ifdef DEBUG
             if (debug_destroy)
-                Msg("Destroying object[%x][%x] [%d][%s] frame[%d]", dynamic_cast<void*>(O), O, O->ID(), *O->cName(), Device.dwFrame);
+                Msg("Destroying object[%x][%x] [%d][%s] frame[%d]", fast_dynamic_cast<void*>(O), O, O->ID(), *O->cName(), Device.dwFrame);
 #endif // DEBUG
 			O->net_Destroy();
 			Destroy(O);

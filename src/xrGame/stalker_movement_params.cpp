@@ -6,7 +6,6 @@
 //	Description : Stalker movement parameters class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_movement_params.h"
 #include "ai_monster_space.h"
 #include "movement_manager_space.h"

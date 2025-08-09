@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "PHWorld.h"
 #include "tri-colliderknoopc/dTriList.h"

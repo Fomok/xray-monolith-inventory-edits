@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "ISpatial.h"
 #include "frustum.h"
 

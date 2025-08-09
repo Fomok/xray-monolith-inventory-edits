@@ -7,6 +7,12 @@ message(STATUS "    Generator: ${CMAKE_GENERATOR}")
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/CMake)
 
+# Configure CCache
+include(XRay.CCache)
+
+# Configure IWYU
+include(XRay.IWYU)
+
 # Configure Win32-specific before-project settings
 if (WIN32)
   include(XRay.Win32)
@@ -34,7 +40,7 @@ file(GLOB_RECURSE SOURCES_GAMEDATA CMake/*)
 target_sources(Build PRIVATE ${SOURCES_GAMEDATA})
 
 # Hand off to our XRay entrypoint
-include(XRay)
+include(XRay.CMake)
 
 # Setup external libraries
 add_subdirectory(Externals)

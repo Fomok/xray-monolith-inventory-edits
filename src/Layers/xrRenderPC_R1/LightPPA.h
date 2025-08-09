@@ -6,7 +6,8 @@
 #define AFX_LIGHTPPA_H__E5B97AC9_84A6_4773_9FEF_3BC5D1CEF8B6__INCLUDED_
 #pragma once
 
-#include "../xrRender/light.h"
+#include <light.h>
+#include <xrXRC.h>
 
 struct CLightR_Vertex
 {

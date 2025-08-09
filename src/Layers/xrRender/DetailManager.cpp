@@ -2,11 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
+
+#include <defines.h>
+#include <LocatorAPI.h>
+#include <frustum.h>
+#include <xr_ini.h>
 
 #include "DetailManager.h"
 #include "cl_intersect.h"
+#include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 #ifdef _EDITOR
 #	include "ESceneClassList.h"
@@ -15,9 +20,10 @@
 #	include "igame_persistent.h"
 #	include "environment.h"
 #else
-#	include "../../xrEngine/igame_persistent.h"
-#	include "../../xrEngine/environment.h"
 #   include <xmmintrin.h>
+
+#	include <igame_persistent.h>
+#	include <environment.h>
 #endif
 
 
@@ -487,7 +493,6 @@ void CDetailManager::details_clear()
 
 		for (u32 O = 0; O < objects.size(); O++)
 		{
-			CDetail& Object = *objects[O];
 			xr_vector<SlotItemVec*>& vis = list[O];
 			if (!vis.empty())
 			{

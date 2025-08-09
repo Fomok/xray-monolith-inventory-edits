@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 // Dima needs this because we have to exclude option /EHsc (exception handling) from the project
 namespace boost

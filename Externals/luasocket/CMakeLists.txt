@@ -49,6 +49,7 @@ target_include_directories(luasocket
 
 target_compile_options(luasocket
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
 )
 

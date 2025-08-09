@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <destructor.h>
+#include <LocatorAPI.h>
 
 #include "motion.h"
 #include "envelope.h"

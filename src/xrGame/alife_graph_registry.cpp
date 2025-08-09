@@ -6,7 +6,6 @@
 //	Description : ALife graph registry
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_graph_registry.h"
 #include "../xrEngine/x_ray.h"
 

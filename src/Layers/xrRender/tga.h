@@ -3,6 +3,10 @@
 #ifndef _INCDEF_TARGASAVER_H_
 #define _INCDEF_TARGASAVER_H_
 
+#include "_types.h"
+
+class IWriter;
+
 #pragma pack(push,1)
 struct tgaImgSpecHeader
 {

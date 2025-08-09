@@ -3,7 +3,6 @@
 // Silencer - апгрейд оружия глушитель 
 ///////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 
 #include "silencer.h"
 //#include "PhysicsShell.h"

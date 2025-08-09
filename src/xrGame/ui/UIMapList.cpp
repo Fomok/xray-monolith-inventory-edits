@@ -1,4 +1,6 @@
-#include "StdAfx.h"
+#include <xrCore.h>
+#include <xr_ioconsole.h>
+
 #include "UIMapList.h"
 #include "UIListBox.h"
 #include "UIFrameWindow.h"
@@ -9,8 +11,7 @@
 #include "UIMapInfo.h"
 #include "UIComboBox.h"
 #include "UIListBoxItem.h"
-#include "../../xrEngine/xr_ioconsole.h"
-#include "../string_table.h"
+#include "string_table.h"
 
 #include "object_broker.h"
 #include "game_base.h"

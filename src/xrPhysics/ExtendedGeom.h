@@ -4,6 +4,9 @@
 #ifndef	dSINGLE
  #define dSINGLE
 #endif
+
+#include "xrPhysics.h"
+
 #include "PHObject.h"
 //#include "ode_include.h"
 #include "ode/common.h"

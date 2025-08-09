@@ -1,14 +1,17 @@
 #ifndef xr_iniH
 #define xr_iniH
 
+#include <clsid.h>
+
+#include "xrstring.h"
 #include "fastdelegate.h"
 
 #ifdef USE_ROBINHOOD
 #include "robin_hood.h"
 #endif
 
-// refs
-class CInifile;
+class IReader;
+
 struct xr_token;
 
 

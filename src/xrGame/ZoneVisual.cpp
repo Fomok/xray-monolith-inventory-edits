@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "CustomZone.h"
 //#include "KinematicsAnimated.h"
 #include "KinematicsAnimated.h"

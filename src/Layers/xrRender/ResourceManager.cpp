@@ -2,18 +2,20 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
 
-#pragma warning(disable:4995)
+#include <tbb/parallel_for_each.h>
 #include <d3dx9.h>
-#pragma warning(default:4995)
 
+#include <IGame_Persistent.h>
+#include <Device.h>
+
+#include "HW.h"
+#include "Render.h"
 #include "ResourceManager.h"
 #include "tss.h"
 #include "blenders/blender.h"
 #include "blenders/blender_recorder.h"
-#include <tbb/parallel_for_each.h>
+#include "xrAPI.h"
 
 //	Already defined in Texture.cpp
 void fix_texture_name(LPSTR fn);

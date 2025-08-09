@@ -6,11 +6,13 @@
 //	Description : Script ini file class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <LocatorAPI.h>
+
 #include "script_ini_file.h"
 #include "script_engine.h"
 #include "ai_space.h"
 #include "object_factory.h"
+#include "macros.h"
 
 CScriptIniFile::CScriptIniFile(IReader* F, LPCSTR path) :
 	inherited(F, path)

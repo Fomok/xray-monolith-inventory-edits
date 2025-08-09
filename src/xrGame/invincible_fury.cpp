@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "invincible_fury.h"
 #include "kills_store.h"
 #include "game_cl_base.h"

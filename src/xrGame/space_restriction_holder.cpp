@@ -6,7 +6,11 @@
 //	Description : Space restriction holder
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <malloc.h>
+
+#include <string_concatenations.h>
+#include <xr_trims.h>
+
 #include "space_restriction_holder.h"
 #include "object_broker.h"
 #include "space_restrictor.h"
@@ -14,11 +18,6 @@
 #include "space_restriction_shape.h"
 #include "space_restriction_composition.h"
 #include "restriction_space.h"
-
-#pragma warning(push)
-#pragma warning(disable:4995)
-#include <malloc.h>
-#pragma warning(pop)
 
 const u32 time_to_delete = 300000;
 

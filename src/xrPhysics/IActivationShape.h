@@ -1,5 +1,11 @@
 #pragma once
+
+#include "xrPhysics.h"
+#include "_vector3d.h"
+#include "_matrix.h"
+
 class IPhysicsShellHolder;
+
 XRPHYSICS_API void ActivateShapeExplosive(IPhysicsShellHolder* self_obj, const Fvector& size, Fvector& out_size,
                                           Fvector& in_out_pos);
 XRPHYSICS_API void ActivateShapePhysShellHolder(IPhysicsShellHolder* obj, const Fmatrix& in_xform,

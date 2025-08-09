@@ -6,7 +6,6 @@
 //	Description : obstacles query
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "obstacles_query.h"
 #include "GameObject.h"
 #include "ai_obstacle.h"

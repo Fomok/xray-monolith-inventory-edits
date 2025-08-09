@@ -1,5 +1,9 @@
 #pragma once
 
+#include "pure.h"
+#include "EngineAPI.h"
+#include "EventAPI.h"
+
 ENGINE_API extern Flags32 psHUD_Flags;
 #define HUD_CROSSHAIR (1<<0)
 #define HUD_CROSSHAIR_DIST (1<<1)
@@ -16,6 +20,7 @@ ENGINE_API extern Flags32 psHUD_Flags;
 
 class ENGINE_API IRender_Visual;
 class CUI;
+class CObject;
 
 class ENGINE_API CCustomHUD :
 	public DLL_Pure,

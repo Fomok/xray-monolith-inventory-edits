@@ -1,8 +1,9 @@
-#include "stdafx.h"
-#include "dx10ConstantBuffer.h"
+#include <defines.h>
+#include <dxRenderDeviceRender.h>
+#include <resourcemanager.h>
 
+#include "dx10ConstantBuffer.h"
 #include "dx10BufferUtils.h"
-#include "../xrRender/dxRenderDeviceRender.h"
 
 dx10ConstantBuffer::~dx10ConstantBuffer()
 {

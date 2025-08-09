@@ -1,11 +1,42 @@
 add_module(XRay.Game.Physics
   TYPE STATIC
+
+  LINKS
+  dxsdk
+  FastDynamicCast
+  IKAN
+  luabind
+  LuaJIT
+  LZO
+  OPCODE
+  ode
+  TinyXML
+
+  XRay.Core.Defines
+  XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
+  XRay.Sound.Includes
+
+  XRay.Game.Precompiles
   
   SOURCES
-  ph_shell_interface.h
-
   ../xrServerEntities/PHNetState.cpp
   ../xrServerEntities/PHNetState.h
+
+  ph_shell_interface.h
 
   PHShellCreator.cpp
   PHShellCreator.h

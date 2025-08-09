@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "black_list.h"
 #include "level.h"
 #include "game_cl_base.h"

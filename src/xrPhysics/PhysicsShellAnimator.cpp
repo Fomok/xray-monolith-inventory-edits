@@ -1,4 +1,7 @@
-#include "StdAfx.h"
+#include <smart_cast.h>
+#include <xr_ini.h>
+#include <xr_trims.h>
+
 #include "PhysicsShellAnimator.h"
 #include "PhysicsShellAnimatorBoneData.h"
 #include "KinematicsAnimated.h"

@@ -1,9 +1,11 @@
 #pragma once
+
+class NET_Packet;
+class xrServer;
+
 #include "game_base.h"
 #include "xrServer_Object_Base.h"
 #include "associative_vector.h"
-
-class xrServer;
 
 class item_respawn_manager
 {

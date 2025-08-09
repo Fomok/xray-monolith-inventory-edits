@@ -1,9 +1,10 @@
-#include "stdafx.h"
-#include "dxThunderboltRender.h"
+#include <thunderbolt.h>
 
-#include "../../xrEngine/thunderbolt.h"
+#include "dxThunderboltRender.h"
 #include "dxThunderboltDescRender.h"
 #include "dxLensFlareRender.h"
+#include "IRenderDetailModel.h"
+#include "R_Backend_Runtime.h"
 
 dxThunderboltRender::dxThunderboltRender()
 {

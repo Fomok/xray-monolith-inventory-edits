@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "DelayedActionFuse.h"
 
 CDelayedActionFuse::CDelayedActionFuse()

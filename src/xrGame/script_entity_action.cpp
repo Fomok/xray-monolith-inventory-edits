@@ -6,7 +6,6 @@
 //	Description : Script entity action class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "script_entity_action.h"
 
 CScriptEntityAction::~CScriptEntityAction()

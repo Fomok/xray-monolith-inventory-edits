@@ -1,5 +1,8 @@
-#include "StdAfx.h"
-#include ".\r__occlusion.h"
+#include <defines.h>
+#include <xrCore.h>
+#include <xrRender_console.h>
+
+#include "r__occlusion.h"
 
 #include "QueryHelper.h"
 

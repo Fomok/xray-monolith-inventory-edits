@@ -6,7 +6,6 @@
 //	Description : Agent manager planner
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "agent_manager.h"
 #include "agent_manager_space.h"
 #include "agent_manager_actions.h"

@@ -6,7 +6,6 @@
 //	Description : ALife trader abstract class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "alife_simulator.h"
 #include "specific_character.h"
@@ -16,6 +15,7 @@
 #include "alife_graph_registry.h"
 #include "xrServer.h"
 #include "alife_schedule_registry.h"
+#include "LocatorAPI.h"
 
 #ifdef DEBUG
 	extern Flags32 psAI_Flags;

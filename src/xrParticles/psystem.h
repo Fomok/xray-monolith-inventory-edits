@@ -2,6 +2,13 @@
 #define PSystemH
 #pragma once
 
+#include <_flags.h>
+#include <_vector3d.h>
+#include <_matrix.h>
+
+class IReader;
+class IWriter;
+
 #define PARTICLES_API
 
 // Actually this must be < sqrt(MAXFLOAT) since we store this value squared.

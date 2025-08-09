@@ -1,12 +1,13 @@
-#include "stdafx.h"
-#pragma hdrstop
 
+#include <defines.h>
 #include "ResourceManager.h"
 #ifndef _EDITOR
-#include	"../../xrEngine/Render.h"
+#include	<Render.h>
 #else
-	#include "../../Include/xrAPI/xrAPI.h"
+	#include <xrAPI.h>
 #endif
+
+#include "R_Backend_Runtime.h"
 
 void CResourceManager::reset_begin()
 {

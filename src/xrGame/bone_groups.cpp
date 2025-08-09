@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "bone_groups.h"
 #include "Actor.h"
 #include "Kinematics.h"

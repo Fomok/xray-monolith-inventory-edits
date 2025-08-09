@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "IGame_Level.h"
 
 int CRender::translateSector(IRender_Sector* pSector)
 {

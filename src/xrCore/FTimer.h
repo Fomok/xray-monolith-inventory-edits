@@ -2,6 +2,8 @@
 #define FTimerH
 #pragma once
 
+#include <log.h>
+
 class CTimer_paused;
 
 class XRCORE_API pauseMngr

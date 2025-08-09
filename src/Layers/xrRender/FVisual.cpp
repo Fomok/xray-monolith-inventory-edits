@@ -2,17 +2,20 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
 
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#pragma warning(default:4995)
 
-#include "../../xrEngine/fmesh.h"
+#include <destructor.h>
+#include <FS.h>
+#include <HW.h>
+#include <fmesh.h>
+#if defined(USE_DX10) || defined(USE_DX11)
+#include <dx10BufferUtils.h>
+#endif
+
 #include "fvisual.h"
+#include "R_Backend_Runtime.h"
 
-#include "../xrRenderDX10/dx10BufferUtils.h"
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -237,7 +240,7 @@ void Fvisual::Copy(dxRender_Visual* pSrc)
 {
 	dxRender_Visual::Copy(pSrc);
 
-	Fvisual* pFrom = dynamic_cast<Fvisual*>(pSrc);
+	Fvisual* pFrom = fast_dynamic_cast<Fvisual*>(pSrc);
 
 	PCOPY(rm_geom);
 

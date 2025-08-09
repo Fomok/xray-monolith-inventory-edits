@@ -1,8 +1,8 @@
-#include "stdafx.h"
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-
-#include "../xrRender/dxEnvironmentRender.h"
+#include <defines.h>
+#include <igame_persistent.h>
+#include <environment.h>
+#include <dxEnvironmentRender.h>
+#include <xrRender_console.h>
 
 #define STENCIL_CULL 0
 
@@ -270,7 +270,10 @@ void CRenderTarget::phase_combine()
 	if(ps_r2_mask_control.x > 0)
 	{
 		phase_gasmask_dudv();
-		phase_gasmask_drops();
+		if (ps_r2_drops_control.x > 0)
+		{
+			phase_gasmask_drops();
+		}
 	}
 	
 	if(ps_r2_nightvision > 0)

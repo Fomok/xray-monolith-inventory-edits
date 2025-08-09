@@ -1,5 +1,37 @@
 add_module(XRay.Game.AI.Navigation
   TYPE STATIC
+
+  LINKS
+  dxsdk
+  FastDynamicCast
+  ode
+  luabind
+  LuaJIT
+  LZO
+  TinyXML
+
+  XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
+
+  XRay.Game.Precompiles
+)
+
+target_compile_options(XRay.Game.AI.Navigation
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
 )
 
 add_module(XRay.Game.AI.Navigation.GameGraph
@@ -201,6 +233,9 @@ add_module(XRay.Game.AI.Navigation.PatrolPaths.Storage
 )
 
 add_module(XRay.Game.AI.Navigation.PatrolPaths.Point
+  # Needs to end up in XRay.Game.AI for correct linkage against XRay.Engine
+  NO_LINK_PARENT
+
   SOURCES
   patrol_point.cpp
   patrol_point.h

@@ -1,6 +1,9 @@
 #pragma once
 
+#include "_stl_extensions.h"
 #include "DebugRender.h"
+#include "FVF.h"
+#include "Shader.h"
 
 class dxDebugRender : public IDebugRender
 {

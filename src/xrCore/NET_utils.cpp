@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
 #include "NET_utils.h"
 
 

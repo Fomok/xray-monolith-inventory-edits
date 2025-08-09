@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
+
+#include <blenders/Blender_CLSID.h>
 
 #include "Blender_Editor_Selection.h"
 

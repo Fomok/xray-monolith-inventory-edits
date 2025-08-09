@@ -1,16 +1,26 @@
+add_module(XRay.Render.R2.ForceIncludes INTERFACE)
+
+target_compile_options(XRay.Render.R2.ForceIncludes
+  INTERFACE
+  $<$<CXX_COMPILER_ID:MSVC>:/FIr2.h>
+  $<$<CXX_COMPILER_ID:Clang>:-includer2.h>
+  $<$<CXX_COMPILER_ID:GNU>:-includer2.h>
+)
+
 add_module(XRay.Render.R2
   TYPE STATIC
-  
-  PRECOMPILES stdafx.h
 
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   DEFINES
+  RENDER=2
   STATIC_RENDERER_R2
   XRRENDER_R2_EXPORTS
 
   LINKS
   dxsdk
+  FastDynamicCast
   imgui
   loki
   luabind
@@ -19,18 +29,54 @@ add_module(XRay.Render.R2
   optick
   ReShadeCompat
   tbb
-  XRay.Collision
-  XRay.Core
-  XRay.Engine
-  XRay.Render.API
+
+  XRay.Platform
+  XRay.Render.R2.ForceIncludes
+  
+  XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+  
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Particles.Includes
+  XRay.Physics.Includes
+  XRay.Render.API.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.DX9.Includes
+  XRay.Render.DX10.Includes
+  XRay.Render.R1.Includes
+  XRay.ServerEntities.Includes
+  XRay.Sound.Includes
+
+  PRECOMPILES
+  #[["d3dx9.h"]]
+  #[["xrD3DDefs.h"]]
+  #[["HW.h"]]
+  #[["Shader.h"]]
+  #[["R_Backend.h"]]
+  #[["R_Backend_Runtime.h"]]
+  #[["resourcemanager.h"]]
+  #[["vis_common.h"]]
+  #[["render.h"]]
+  #[["_d3d_extensions.h"]]
+  #[["igame_level.h"]]
+  #[["blenders/blender.h"]]
+  #[["blenders/blender_clsid.h"]]
+  #[["psystem.h"]]
+  #[["xrRender_console.h"]]
+  #[["r2.h"]]
 
   SOURCES
   ../../xrEngine/cl_intersect.h
   ../xrRender/xrD3DDefs.h
   ../xrRender/xrRender_console.cpp
   ../xrRender/xrRender_console.h
+  jitter.h
   xrRender_R2.cpp
-  stdafx.h
 )
 
 add_module(XRay.Render.R2.Core

@@ -2,6 +2,8 @@
 #define xrXMLParserH
 #pragma once
 
+#include <xrstring.h>
+
 #define XRXMLPARSER_API
 
 const LPCSTR CONFIG_PATH = "$game_config$";

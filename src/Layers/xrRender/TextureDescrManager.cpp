@@ -1,5 +1,6 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <LocatorAPI.h>
+
+#include "R_Backend_Runtime.h"
 #include "TextureDescrManager.h"
 #include "ETextureParams.h"
 #include "profiler.h"

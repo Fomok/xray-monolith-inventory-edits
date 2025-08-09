@@ -1,7 +1,11 @@
-#include "stdafx.h"
+#include <LocatorAPI.h>
+#include <profiler.h>
+#include <xrCore.h>
+
 #include "igame_level.h"
 #include "igame_persistent.h"
 
+#include "Engine.h"
 #include "x_ray.h"
 #include "std_classes.h"
 #include "customHUD.h"
@@ -11,8 +15,6 @@
 #include "CameraManager.h"
 #include "xr_object.h"
 #include "feel_sound.h"
-
-#include "../xrCore/profiler.h"
 
 //#include "securom_api.h"
 

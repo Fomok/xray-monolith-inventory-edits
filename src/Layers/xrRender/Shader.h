@@ -2,12 +2,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+#include <blenders/Blender.h>
+
 #if !defined(SHADER__INCLUDED_)
 #define SHADER__INCLUDED_
 #pragma once
 
+#include <xr_resource.h>
+
 #include "r_constants.h"
-#include "../../xrCore/xr_resource.h"
 
 #include "sh_atomic.h"
 #include "sh_texture.h"
@@ -20,7 +23,7 @@ class CBlender_Compile;
 class IBlender;
 #define	SHADER_PASSES_MAX		2
 
-#pragma pack(push,4)
+#pragma pack(push,8)
 
 //////////////////////////////////////////////////////////////////////////
 struct ECORE_API STextureList : public xr_resource_flagged, public xr_vector<std::pair<u32, ref_texture>>

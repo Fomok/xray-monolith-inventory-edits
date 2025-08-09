@@ -4,15 +4,11 @@
 
 //#define ANONYMOUS_BUILD
 
-#ifndef __BORLANDC__
 # ifndef ANONYMOUS_BUILD
 # define DEBUG_INFO __FILE__,__LINE__,__FUNCTION__
 # else // ANONYMOUS_BUILD
 # define DEBUG_INFO "",__LINE__,""
 # endif // ANONYMOUS_BUILD
-#else // __BORLANDC__
-# define DEBUG_INFO __FILE__,__LINE__,__FILE__
-#endif // __BORLANDC__
 
 #ifdef ANONYMOUS_BUILD
 #define _TRE(arg) ""
@@ -56,11 +52,7 @@
 # endif // NON_FATAL_VERIFY
 //-AVO
 # else // DEBUG
-# ifdef __BORLANDC__
-# define NODEFAULT
-# else
 # define NODEFAULT __assume(0)
-# endif
 #ifdef USE_VERIFY_IN_RELEASE
 # define VERIFY(expr) do {if (!(expr)) ::Debug.soft_fail(#expr,DEBUG_INFO);} while(0)
 # define VERIFY2(expr,e2) do {if (!(expr)) ::Debug.soft_fail(#expr,e2,DEBUG_INFO);} while(0)
@@ -99,9 +91,11 @@
 //--------- static assertion
 template<bool> struct CompileTimeError;
 template<> struct CompileTimeError<true> {};
+
 #define STATIC_CHECK(expr, msg) \
 { \
  CompileTimeError<((expr) != 0)> ERROR_##msg; \
  (void)ERROR_##msg; \
 }
+
 #endif // xrDebug_macrosH

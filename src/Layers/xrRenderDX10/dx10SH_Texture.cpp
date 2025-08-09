@@ -1,16 +1,15 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "../xrRender/ResourceManager.h"
+#include <defines.h>
+#include <ResourceManager.h>
 
 #ifndef _EDITOR
-#include "../../xrEngine/render.h"
+#include <render.h>
 #endif
 
-#include "../../xrEngine/tntQAVI.h"
-#include "../../xrEngine/xrTheora_Surface.h"
+#include <tntQAVI.h>
+#include <xrCore.h>
+#include <xrTheora_Surface.h>
 
-#include "../xrRender/dxRenderDeviceRender.h"
+#include <dxRenderDeviceRender.h>
 
 #include "StateManager/dx10ShaderResourceStateCache.h"
 

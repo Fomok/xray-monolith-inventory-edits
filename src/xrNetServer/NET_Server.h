@@ -5,6 +5,8 @@
 #include "NET_Common.h"
 #include "NET_PlayersMonitor.h"
 
+class CInifile;
+
 struct SClientConnectData
 {
 	ClientID clientID;

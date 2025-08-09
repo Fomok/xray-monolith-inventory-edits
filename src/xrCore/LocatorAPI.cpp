@@ -2,18 +2,23 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
-
-#pragma warning(disable:4995)
 #include <direct.h>
+#include <experimental/filesystem>
 #include <fcntl.h>
-#include <sys\stat.h>
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#include <experimental\filesystem>
-#pragma warning(default:4995)
+#include <sys/stat.h>
+#include <sys/utime.h>
+#include <malloc.h>
 
+#include <rt_compressor.h>
+#include <string_concatenations.h>
+#include <xr_ini.h>
+#include <xr_trims.h>
+
+#include "xrCore.h"
+#include "FTimer.h"
+#include "FileSystem.h"
 #include "FS_internal.h"
+#include "LocatorAPI.h"
 #include "stream_reader.h"
 #include "file_stream_reader.h"
 
@@ -21,11 +26,6 @@ const u32 BIG_FILE_READER_WINDOW_SIZE = 1024 * 1024;
 
 //typedef void DUMMY_STUFF (const void*,const u32&,void*);
 //XRCORE_API DUMMY_STUFF *g_temporary_stuff = 0;
-
-# pragma warning(push)
-# pragma warning(disable:4995)
-# include <malloc.h>
-# pragma warning(pop)
 
 CLocatorAPI* xr_FS = NULL;
 

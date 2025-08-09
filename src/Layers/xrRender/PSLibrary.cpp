@@ -1,9 +1,11 @@
 //----------------------------------------------------
 // file: PSLibrary.cpp
 //----------------------------------------------------
-#include "stdafx.h"
-#pragma hdrstop
 
+#include <LocatorAPI.h>
+#include <xr_ini.h>
+
+#include "log.h"
 #include "PSLibrary.h"
 #include "ParticleEffect.h"
 #include "ParticleGroup.h"

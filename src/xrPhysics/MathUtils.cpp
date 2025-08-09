@@ -1,7 +1,10 @@
-#include "stdafx.h"
+#include <FTimer.h>
+
 #include "mathutils.h"
 #include "ode/common.h"
+
 XRPHYSICS_API const float phInfinity = dInfinity;
+
 /*
 #include "MathUtils.h"
 enum EBoxSideNearestPointCode
@@ -50,6 +53,7 @@ EBoxSideNearestPointCode GetNearestPointOnOBBSide(const Fmatrix &xform,const Fve
 	float diffs=diffc<0.f ? diffc+h	:	diffc-h;
 }
 */
+
 IC bool RAYvsCYLINDER(const Fcylinder& c_cylinder, const Fvector& S, const Fvector& D, float& R, BOOL bCull)
 {
 	const float& r = c_cylinder.m_radius;
@@ -278,7 +282,7 @@ IC bool RAYvsCYLINDER(const Fcylinder& c_cylinder, const Fvector& S, const Fvect
 						float sq_sphere_dist = sq_sin * tc_h * tc_h;
 						//if(sq_sphere_dist>sq_horde)return false	;
 						float tr_c = tr - tc_h * cs;
-						float diff = _sqrt(sq_horde - sq_sphere_dist);
+						diff = _sqrt(sq_horde - sq_sphere_dist);
 						tr2 = tr_c + diff;
 						if (tr2 < 0.f) return false; //
 						if (tr2 < R)
@@ -310,7 +314,7 @@ IC bool RAYvsCYLINDER(const Fcylinder& c_cylinder, const Fvector& S, const Fvect
 					if (bCull)return false;
 					else
 					{
-						float diff = c_diff / cs;
+						diff = c_diff / cs;
 						tr2 = tr + diff;
 						if (tr2 < 0.f) return false; //
 						if (tr2 < R)
@@ -338,9 +342,9 @@ IC bool RAYvsCYLINDER(const Fcylinder& c_cylinder, const Fvector& S, const Fvect
 					if (bCull)return false;
 					else
 					{
-						float tc_h = tc - h;
-						float tr_c = tr - tc_h * cs;
-						float diff = _sqrt(sq_horde - sq_sin * tc_h * tc_h);
+						tc_h = tc - h;
+						tr_c = tr - tc_h * cs;
+						diff = _sqrt(sq_horde - sq_sin * tc_h * tc_h);
 						tr2 = tr_c + diff;
 						if (tr2 < R)
 						{
@@ -527,32 +531,32 @@ void capped_cylinder_ray_collision_test()
 	t.Start();
 	for (int i = 0; i < 1000000; i++)
 	{
-		Fcylinder c;
-		c.m_center.random_point(Fvector().set(2, 2, 2));
-		c.m_direction.random_dir();
-		c.m_height = Random.randF(0.2f, 2.f);
-		c.m_radius = Random.randF(0.1f, 2.f);
+		Fcylinder cyl;
+		cyl.m_center.random_point(Fvector().set(2, 2, 2));
+		cyl.m_direction.random_dir();
+		cyl.m_height = Random.randF(0.2f, 2.f);
+		cyl.m_radius = Random.randF(0.1f, 2.f);
 		//ray
-		Fvector dir, pos;
-		float R = Random.randF(0.1f, 2.f);
-		dir.random_dir();
-		pos.random_point(Fvector().set(2, 2, 2));
-		RAYvsCYLINDER(c, pos, dir, R,TRUE);
+		Fvector d, p;
+		float rand = Random.randF(0.1f, 2.f);
+		d.random_dir();
+		p.random_point(Fvector().set(2, 2, 2));
+		RAYvsCYLINDER(cyl, p, d, rand,TRUE);
 	}
 	Msg("my RAYvsCYLINDE time %f ms", t.GetElapsed_sec() * 1000.f);
 	t.Start();
 	for (int i = 0; i < 1000000; i++)
 	{
-		Fcylinder c;
-		c.m_center.random_point(Fvector().set(2, 2, 2));
-		c.m_direction.random_dir();
-		c.m_height = Random.randF(0.2f, 2.f);
-		c.m_radius = Random.randF(0.1f, 2.f);
+		Fcylinder cyl;
+		cyl.m_center.random_point(Fvector().set(2, 2, 2));
+		cyl.m_direction.random_dir();
+		cyl.m_height = Random.randF(0.2f, 2.f);
+		cyl.m_radius = Random.randF(0.1f, 2.f);
 		//ray
-		Fvector dir, pos; //float R=Random.randF(0.1f,2.f);
-		dir.random_dir();
-		pos.random_point(Fvector().set(2, 2, 2));
-		c.intersect(pos, dir, ir, code);
+		Fvector d, p; //float R=Random.randF(0.1f,2.f);
+		d.random_dir();
+		p.random_point(Fvector().set(2, 2, 2));
+		cyl.intersect(p, d, ir, code);
 	}
 	Msg("current intersect time %f ms", t.GetElapsed_sec() * 1000.f);
 }

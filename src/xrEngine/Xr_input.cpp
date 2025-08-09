@@ -1,6 +1,6 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <defines.h>
 
+#include "Engine.h"
 #include "xr_input.h"
 #include "IInputReceiver.h"
 //#include "../include/editor/ide.hpp"

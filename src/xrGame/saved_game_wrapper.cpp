@@ -6,16 +6,18 @@
 //	Description : saved game wrapper class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <LocatorAPI.h>
+#include <rt_compressor.h>
+
 #include "saved_game_wrapper.h"
 #include "alife_time_manager.h"
 #include "alife_object_registry.h"
-#include "xrServer_Objects_ALife_Monsters.h"
 #include "ai_space.h"
 #include "game_graph.h"
 #include "alife_simulator_header.h"
 #include "alife_simulator.h"
 #include "alife_spawn_registry.h"
+#include "xrServer_Objects_ALife_Monsters.h"
 
 extern LPCSTR alife_section;
 

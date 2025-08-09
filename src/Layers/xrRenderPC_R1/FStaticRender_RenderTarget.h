@@ -1,6 +1,8 @@
 #pragma once
 
-#include "../xrRender/ColorMapManager.h"
+#include <ColorMapManager.h>
+
+#include "Render.h"
 
 
 class CRenderTarget : public IRender_Target

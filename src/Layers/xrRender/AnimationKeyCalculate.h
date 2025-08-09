@@ -1,4 +1,10 @@
 #pragma once
+
+#include "Animation.h"
+#include "animation_blend.h"
+#include "SkeletonMotions.h"
+#include "KinematicAnimatedDefs.h"
+
 //------------------------------------------------------------------------------
 // calculate
 //------------------------------------------------------------------------------

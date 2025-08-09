@@ -2,6 +2,11 @@
 #define _BITWISE_
 #pragma once
 
+#include <corecrt_math.h>
+
+#include "_types.h"
+#include "vector.h"
+
 // float values defines
 #define fdSGN 0x080000000 // mask for sign bit
 #define fdMABS 0x07FFFFFFF // mask for absolute value (~sgn)
@@ -12,7 +17,7 @@
 #define fdTWO 0x040000000 // 2.0
 #define fdOOB 0x000000000 // "out of bounds" value
 #define fdNAN 0x07fffffff // "Not a number" value
-#define fdMAX 0x07F7FFFFF // FLT_MAX
+#define fdMAX 0x07F7FFFFF // flt_max
 #define fdRLE10 0x03ede5bdb // 1/ln10
 
 // integer math on floats

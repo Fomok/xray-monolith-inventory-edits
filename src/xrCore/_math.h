@@ -1,6 +1,9 @@
 #ifndef __XR_MATH_H__
 #define __XR_MATH_H__
 
+#include <intrin.h>
+
+#include "vector.h"
 #include "cpuid.h"
 
 namespace FPU
@@ -30,7 +33,7 @@ namespace CPU
 	XRCORE_API extern _processor_info ID;
 	XRCORE_API extern u64 QPC();
 
-#ifdef M_VISUAL
+#ifdef _MSC_VER
 #ifndef _M_AMD64
 #pragma warning(push)
 #pragma warning(disable:4035)
@@ -46,10 +49,6 @@ IC u64 GetCLK(void)
 		return __rdtsc();
 	}
 #endif
-#endif
-
-#ifdef M_BORLAND
-XRCORE_API u64 __fastcall GetCLK (void);
 #endif
 };
 

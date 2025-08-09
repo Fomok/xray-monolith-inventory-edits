@@ -1,6 +1,9 @@
 add_module(XRay.Render.DX10
   TYPE INTERFACE
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
+
   SOURCES
   3DFluid/dx103DFluidBlenders.cpp
   3DFluid/dx103DFluidBlenders.h

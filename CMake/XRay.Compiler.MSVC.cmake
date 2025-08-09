@@ -16,18 +16,18 @@ set(XRAY_COMPILER_FLAGS
     /WX
     # Use full paths in diagnostic messages
     /FC
-    # Store debug information in PDB
-    /Zi
     # Use multi-threaded DLL
     /MD
-    # Use full paths in diagnostics
-    /FC
     # Suppress 'Use /EHsc' warning
     /wd4530
+    # Disable redefined symbol warnings (loki / xrDebug STATIC_CHECK)
+    /wd4005
 )
 
 # Debug flags
 set(XRAY_COMPILER_FLAGS_DEBUG
+    # Store debug information in object files
+    /Z7
     # Don't omit frame pointers
     /Oy-
     # Warning level 4
@@ -40,6 +40,8 @@ set(XRAY_COMPILER_FLAGS_DEBUG
 
 # Release flags
 set(XRAY_COMPILER_FLAGS_RELEASE
+    # Store debug information in PDB
+    /Zi
     # Aggressive function inlining
     /Ob3
     # Omit frame pointers
@@ -80,6 +82,7 @@ set(XRAY_LINKER_FLAGS
     # Treat warnings as errors
     /WX
     # Disable multiply-defined symbol warnings (libjpeg / cximage)
+    /ignore:4006
     /ignore:4099
 )
 

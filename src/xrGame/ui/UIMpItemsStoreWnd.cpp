@@ -1,4 +1,6 @@
-#include "stdafx.h"
+#include <xr_ini.h>
+#include <xr_trims.h>
+
 #include "UIMpItemsStoreWnd.h"
 #include "UIXmlInit.h"
 #include "UITabButtonMP.h"

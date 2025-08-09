@@ -1,5 +1,6 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <clsid.h>
+#include <LocatorAPI.h>
+#include <xr_ini.h>
 
 #include "profiler.h"
 

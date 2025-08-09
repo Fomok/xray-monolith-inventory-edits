@@ -1,17 +1,15 @@
-#include "stdafx.h"
-//#include "PHdynamicdata.h"
-//#include "Physics.h"
-#include "level.h"
-#include "../xrEngine/x_ray.h"
-#include "../xrEngine/igame_persistent.h"
+#include <defines.h>
+#include <igame_persistent.h>
+#include <iphworld.h>
+#include <x_ray.h>
 
+#include "level.h"
 #include "ai_space.h"
 #include "game_cl_base.h"
 #include "NET_Queue.h"
 #include "file_transfer.h"
 #include "hudmanager.h"
 
-#include "../xrphysics/iphworld.h"
 
 
 #include "phcommander.h"

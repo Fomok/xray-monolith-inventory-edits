@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <FS.h>
+
 #include "screenshots_writer.h"
 #include "screenshots_common.h"
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "PHDestroyableNotificate.h"
 #include "alife_space.h"
 #include "hit.h"

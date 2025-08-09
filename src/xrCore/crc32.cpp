@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include "_types.h"
 
 static BOOL crc32_ready = FALSE;
 static u32 crc32_table[256]; // Lookup table array

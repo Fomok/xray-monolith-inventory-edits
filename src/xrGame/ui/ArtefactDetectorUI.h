@@ -9,6 +9,7 @@ class CAdvancedDetector;
 class CEliteDetector;
 class CUIXml;
 class CLAItem;
+ENGINE_API class CBoneInstance;
 
 class CUICustomDeviceBase
 {
@@ -109,7 +110,7 @@ public:
 	void construct(CAdvancedDetector* p);
 	void SetValue(const float v1, const Fvector& v2);
 	float CurrentYRotation() const;
-	static void _BCL BoneCallback(CBoneInstance* B);
+	static void BoneCallback(CBoneInstance* B);
 	void ResetBoneCallbacks();
 	void SetBoneCallbacks();
 };

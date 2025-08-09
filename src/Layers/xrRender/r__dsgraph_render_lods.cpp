@@ -1,13 +1,15 @@
-#include "stdafx.h"
 #include "flod.h"
 
 #ifdef _EDITOR
 #include "igame_persistent.h"
 #include "environment.h"
 #else
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
+#include <igame_persistent.h>
+#include <environment.h>
 #endif
+
+#include "r__dsgraph_structure.h"
+#include "R_Backend_Runtime.h"
 
 extern float r_ssaLOD_A;
 extern float r_ssaLOD_B;

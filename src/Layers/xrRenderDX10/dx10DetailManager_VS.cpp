@@ -1,10 +1,8 @@
-#include "stdafx.h"
-#include "../xrRender/DetailManager.h"
-
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-
-#include "../xrRenderDX10/dx10BufferUtils.h"
+#include <defines.h>
+#include <DetailManager.h>
+#include <igame_persistent.h>
+#include <environment.h>
+#include <dx10BufferUtils.h>
 
 // Vars to store wind prev frame data ( Motion vectors )
 static u32 prev_frame = 0;

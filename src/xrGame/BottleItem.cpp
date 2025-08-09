@@ -3,7 +3,6 @@
 // BottleItem - бутылка с напитком, которую можно разбить
 ///////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "BottleItem.h"
 #include "xrmessages.h"
 #include "entity_alive.h"

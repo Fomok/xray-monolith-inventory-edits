@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------
-#include "stdafx.h"
-#pragma hdrstop
 
-#include "../xrEngine/GameMtlLib.h"
+#include <xr_trims.h>
+
+#include <GameMtlLib.h>
+#include <LocatorAPI.h>
 
 void DestroySounds(SoundVec& lst)
 {

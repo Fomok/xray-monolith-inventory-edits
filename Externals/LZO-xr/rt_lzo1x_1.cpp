@@ -1,5 +1,3 @@
-#pragma hdrstop
-
 /* lzo1x_1.c -- LZO1X-1 compression
 
    This file is part of the LZO real-time data compression library.

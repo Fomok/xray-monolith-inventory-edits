@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "HUDManager.h"
 #include "hudtarget.h"
 #include "actor.h"

@@ -6,7 +6,6 @@
 //	Description : ALife monster patrol path manager class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_monster_patrol_path_manager.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "ai_space.h"

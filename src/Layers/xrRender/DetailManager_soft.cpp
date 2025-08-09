@@ -1,7 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #include "detailmanager.h"
+#include "R_Backend_Runtime.h"
 
 const u32 vs_size = 3000;
 

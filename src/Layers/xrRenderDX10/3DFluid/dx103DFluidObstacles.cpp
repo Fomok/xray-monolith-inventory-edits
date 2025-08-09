@@ -1,11 +1,16 @@
-#include "stdafx.h"
 #include "dx103DFluidObstacles.h"
 
-#include "../../xrRender/dxRenderDeviceRender.h"
-#include "../../../xrEngine/xr_object.h"
-#include "../../../xrEngine/IPhysicsShell.h"
-#include "../../../xrEngine/IObjectPhysicsCollision.h"
-#include "../../../xrEngine/IPhysicsGeometry.h"
+#include <xr_object.h>
+#include <IPhysicsShell.h>
+#include <IObjectPhysicsCollision.h>
+#include <IPhysicsGeometry.h>
+#include <dxRenderDeviceRender.h>
+
+#if defined(USE_DX10)
+#include <Debug/dxPixEventWrapper.h>
+#elif defined(USE_DX11)
+#include <dx10EventWrapper.h>
+#endif
 
 #include "dx103DFluidBlenders.h"
 #include "dx103DFluidData.h"

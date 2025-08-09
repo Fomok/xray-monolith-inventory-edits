@@ -1,21 +1,13 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "fs_internal.h"
-
-#pragma warning(disable:4995)
 #include <io.h>
 #include <direct.h>
 #include <fcntl.h>
 #include <sys\stat.h>
-#pragma warning(default:4995)
+
+#include "fs_internal.h"
+#include "LocatorAPI.h"
 
 //typedef void DUMMY_STUFF (const void*,const u32&,void*);
 //XRCORE_API DUMMY_STUFF *g_dummy_stuff = 0;
-
-#ifdef M_BORLAND
-# define O_SEQUENTIAL 0
-#endif // M_BORLAND
 
 #ifdef FS_DEBUG
 XRCORE_API u32 g_file_mapped_memory = 0;
@@ -432,8 +424,8 @@ void IReader::r(void* p, int cnt)
 	advance(cnt);
 #ifdef DEBUG
     BOOL bShow = FALSE;
-    if (dynamic_cast<CFileReader*>(this)) bShow = TRUE;
-    if (dynamic_cast<CVirtualFileReader*>(this)) bShow = TRUE;
+    if (fast_dynamic_cast<CFileReader*>(this)) bShow = TRUE;
+    if (fast_dynamic_cast<CVirtualFileReader*>(this)) bShow = TRUE;
     if (bShow)
     {
         FS.dwOpenCounter++;

@@ -6,6 +6,8 @@
 //	Description : Server items for ALife simulator, script export, the second part
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_utils.h>
+
 #include "pch_script.h"
 #include "xrServer_Objects_ALife_Items.h"
 #include "xrServer_script_macroses.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "dxHashHelper.h"
 
 bool dxHashHelper::m_bTableReady = false;

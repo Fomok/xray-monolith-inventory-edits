@@ -1,4 +1,7 @@
 #pragma once
+
+#include <Engine.h>
+
 #include "UIStatic.h"
 #include "UIWndCallback.h"
 

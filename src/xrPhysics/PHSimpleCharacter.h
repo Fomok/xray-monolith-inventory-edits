@@ -1,10 +1,13 @@
 #pragma once
+
+#include <gamemtllib.h>
+
 #include "PHCharacter.h"
 #include "Physics.h"
 #include "MathUtils.h"
 #include "ElevatorState.h"
 #include "IColisiondamageInfo.h"
-#include "../xrEngine/gamemtllib.h"
+#include "gm_library.h"
 
 namespace ALife
 {

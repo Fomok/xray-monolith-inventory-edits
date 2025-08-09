@@ -6,6 +6,8 @@
 #include <vector>
 #include <regex>
 
+#include <xr_ini.h>
+
 class MezzStringBuffer
 {
 public:

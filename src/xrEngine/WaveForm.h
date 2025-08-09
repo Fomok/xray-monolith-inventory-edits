@@ -2,6 +2,9 @@
 #define WAVEFORM_H
 #pragma once
 
+#include "_std_extensions.h"
+#include "vector.h"
+
 #pragma pack(push,4)
 struct WaveForm
 {

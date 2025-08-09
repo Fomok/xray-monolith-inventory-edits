@@ -2,17 +2,16 @@
 #define xrMemoryH
 #pragma once
 
+#include "_types.h"
 #include "memory_monitor.h"
 
 #ifdef USE_MEMORY_MONITOR
 # define DEBUG_MEMORY_NAME
 #endif // USE_MEMORY_MONITOR
 
-#ifndef M_BORLAND
 # if 0//def DEBUG
 # define DEBUG_MEMORY_MANAGER
 # endif // DEBUG
-#endif // M_BORLAND
 
 #ifdef DEBUG_MEMORY_MANAGER
 XRCORE_API extern BOOL g_bMEMO;
@@ -89,12 +88,7 @@ extern XRCORE_API xrMemory Memory;
 #define CopyMemory(a,b,c) memcpy(a,b,c) //. CopyMemory(a,b,c)
 #define FillMemory(a,b,c) Memory.mem_fill(a,c,b)
 
-// delete
-#ifdef __BORLANDC__
-#include "xrMemory_subst_borland.h"
-#else
 #include "xrMemory_subst_msvc.h"
-#endif
 
 // generic "C"-like allocations/deallocations
 #ifdef DEBUG_MEMORY_NAME

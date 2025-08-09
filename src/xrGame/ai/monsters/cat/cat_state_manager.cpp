@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "cat.h"
 #include "cat_state_manager.h"
 

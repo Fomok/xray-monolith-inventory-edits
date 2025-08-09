@@ -1,12 +1,11 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #include "cpuid.h"
 #include <intrin.h>
 
 #include <array>
 #include <bitset>
 #include <memory>
+
+#include "_stl_extensions.h"
 
 /***
 *

@@ -6,7 +6,6 @@
 //	Description : ALife combat manager
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_combat_manager.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "alife_graph_registry.h"

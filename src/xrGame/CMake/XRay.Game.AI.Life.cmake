@@ -1,6 +1,35 @@
 add_module(XRay.Game.AI.Life
   TYPE STATIC
   
+  LINKS
+  dxsdk
+  FastDynamicCast
+  luabind
+  LuaJIT
+  LZO
+  ode
+  TinyXML
+
+  XRay.Core.Defines
+  XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.Sound.Includes
+  XRay.ServerEntities.Includes
+
+  XRay.Game.Precompiles
+  
   SOURCES
   ../xrServerEntities/alife_space.cpp
   ../xrServerEntities/alife_space.h

@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <defines.h>
 
 #include "hwcaps.h"
 #include "hw.h"

@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <xrRender_console.h>
+
 #include "r2_rendertarget.h"
 
 void CRenderTarget::u_calc_tc_noise(Fvector2& p0, Fvector2& p1)

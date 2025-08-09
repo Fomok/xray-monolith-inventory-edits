@@ -5,9 +5,9 @@
 // Description : os clipboard class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
 #include "os_clipboard.h"
+#include "xrstring.h"
+#include "xrDebug.h"
 
 void os_clipboard::copy_to_clipboard(LPCSTR buf)
 {

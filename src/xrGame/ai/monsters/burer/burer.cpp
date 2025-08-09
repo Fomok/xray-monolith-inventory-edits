@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "burer.h"
 #include "PhysicsShell.h"
 #include "characterphysicssupport.h"

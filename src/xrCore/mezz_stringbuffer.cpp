@@ -1,6 +1,7 @@
-#include "stdafx.h"
+#include <xr_ini.h>
 
 #include "mezz_stringbuffer.h"
+#include "log.h"
 
 MezzStringBuffer::MezzStringBuffer(uint32_t Size)
 {

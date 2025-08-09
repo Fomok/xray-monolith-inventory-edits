@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 IC CALifeScheduleRegistry::CALifeScheduleRegistry()
 {
 	m_objects_per_update = 1;

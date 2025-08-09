@@ -5,8 +5,10 @@
 
 #pragma once
 
+#include <sound.h>
+#include <PHUpdateObject.h>
+
 #include "physic_item.h"
-#include "../xrphysics/PHUpdateObject.h"
 
 class CRocketLauncher;
 struct dContact;

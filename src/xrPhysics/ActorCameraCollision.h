@@ -1,7 +1,15 @@
 #pragma once
+
+#include "xrPhysics.h"
+#include "_vector3d.h"
+#include "_matrix.h"
+#include "CameraBase.h"
+#include "IPhysicsShellHolder.h"
+
 class CPhysicsShell;
 class CCameraBase;
 class IPhysicsShellHolder;
+
 extern XRPHYSICS_API CPhysicsShell* actor_camera_shell;
 #ifdef DEBUG
 extern XRPHYSICS_API BOOL dbg_draw_camera_collision;

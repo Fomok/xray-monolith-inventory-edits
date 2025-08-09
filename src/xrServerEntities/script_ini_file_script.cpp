@@ -6,12 +6,16 @@
 //	Description : Script ini file class export
 ////////////////////////////////////////////////////////////////////////////
 
+#include <Engine.h>
+#include <LocatorAPI.h>
+
 #include "pch_script.h"
 #include "script_ini_file.h"
 
 #include "string_table.h"
 #include "script_engine.h"
 #include "ai_space.h"
+#include "macros.h"
 
 using namespace luabind;
 

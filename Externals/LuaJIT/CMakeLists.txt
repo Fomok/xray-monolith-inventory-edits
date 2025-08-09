@@ -614,6 +614,7 @@ target_link_libraries(LuaJIT
 
 target_compile_options(LuaJIT
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4057>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4127>

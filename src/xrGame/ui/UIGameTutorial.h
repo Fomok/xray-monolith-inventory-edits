@@ -1,4 +1,7 @@
 #pragma once
+
+#include <sound.h>
+
 #include "xr_level_controller.h"
 
 class CUIWindow;
@@ -28,7 +31,7 @@ public:
 
 	void Destroy(); //be careful
 
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 	virtual void OnRender();
 	CUIWindow* MainWnd() { return m_UIWindow; }
 	bool IsActive() { return !!m_flags.test(etsActive); }

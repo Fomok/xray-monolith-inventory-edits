@@ -91,6 +91,7 @@ target_sources_sandboxed(libtheora
 
 target_compile_options(libtheora
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4018>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4132>

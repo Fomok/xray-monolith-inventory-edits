@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "CustomHUD.h"
 
 Flags32 psHUD_Flags = {

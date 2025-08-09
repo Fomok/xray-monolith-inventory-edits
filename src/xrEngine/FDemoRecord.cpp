@@ -1,4 +1,9 @@
-#include "stdafx.h"
+#include <defines.h>
+#include <LocatorAPI.h>
+#include <UICursor.h>
+#include <xr_ini.h>
+#include <xrCore.h>
+
 #include "igame_level.h"
 #include "x_ray.h"
 
@@ -10,7 +15,7 @@
 #include "render.h"
 #include "CustomHUD.h"
 #include "CameraManager.h"
-#include "../xrGame/UICursor.h"
+
 extern BOOL g_bDisableRedText;
 static Flags32 s_hud_flag = {0};
 static Flags32 s_dev_flags = {0};
@@ -291,7 +296,6 @@ void CDemoRecord::MakeLevelMapProcess()
 			{
 				psHUD_Flags.assign(s_hud_flag);
 
-				BOOL bDevReset = !psDeviceFlags.equal(s_dev_flags, rsFullscreen);
 				psDeviceFlags = s_dev_flags;
 				m_bMakeLevelMap = FALSE;
 				m_iLMScreenshotFragment = -1;

@@ -6,7 +6,8 @@
 //	Description : Server objects
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <net_utils.h>
+
 #include "xrServer_Objects.h"
 #include "game_base_space.h"
 

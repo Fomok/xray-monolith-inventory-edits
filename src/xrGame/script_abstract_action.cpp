@@ -6,7 +6,6 @@
 //	Description : Script abstract action
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "script_abstract_action.h"
 
 CScriptAbstractAction::~CScriptAbstractAction()

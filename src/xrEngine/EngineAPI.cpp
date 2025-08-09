@@ -2,9 +2,12 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <defines.h>
+
+#include "Engine.h"
 #include "EngineAPI.h"
-#include "../xrcdb/xrXRC.h"
+#include "xrCore.h"
+#include "xrXRC.h"
 
 //#include "securom_api.h"
 
@@ -72,10 +75,8 @@ extern BOOL DllMainXrRenderR4(HANDLE hModule, DWORD ul_reason_for_call, LPVOID l
 
 void CEngineAPI::InitializeNotDedicated()
 {
-	LPCSTR r2_name = "xrRender_R2.dll";
-	LPCSTR r3_name = "xrRender_R3.dll";
-	LPCSTR r4_name = "xrRender_R4.dll";
 #ifdef STATIC_RENDERER_R4
+	LPCSTR r4_name = "xrRender_R4.dll";
 	//if (psDeviceFlags.test(rsR4))
     {
         // try to initialize R4
@@ -95,6 +96,7 @@ void CEngineAPI::InitializeNotDedicated()
 #endif
 
 #ifdef STATIC_RENDERER_R3
+	LPCSTR r3_name = "xrRender_R3.dll";
 	//if (psDeviceFlags.test(rsR3))
 	{
 		// try to initialize R3
@@ -115,6 +117,7 @@ void CEngineAPI::InitializeNotDedicated()
 #endif
 
 #ifdef STATIC_RENDERER_R2
+	LPCSTR r2_name = "xrRender_R2.dll";
 	//if (psDeviceFlags.test(rsR2))
     {
         // try to initialize R2
@@ -147,13 +150,12 @@ void CEngineAPI::Initialize(void)
 {
 	//////////////////////////////////////////////////////////////////////////
 	// render
-	LPCSTR r1_name = "xrRender_R1.dll";
-
 #ifndef DEDICATED_SERVER
 	InitializeNotDedicated();
 #endif // DEDICATED_SERVER
 
 #ifdef STATIC_RENDERER_R1
+	LPCSTR r1_name = "xrRender_R1.dll";
 	//if (0 == hRender)
     {
         // try to load R1
@@ -259,10 +261,6 @@ void CEngineAPI::CreateRendererList()
 	bool bSupports_r3 = false;
 	bool bSupports_r4 = false;
 
-	LPCSTR r2_name = "xrRender_R2.dll";
-	LPCSTR r3_name = "xrRender_R3.dll";
-	LPCSTR r4_name = "xrRender_R4.dll";
-
 	if (strstr(Core.Params, "-perfhud_hack"))
 	{
 		bSupports_r2 = true;
@@ -273,6 +271,7 @@ void CEngineAPI::CreateRendererList()
 	else
 	{
 #ifdef STATIC_RENDERER_R2
+		LPCSTR r2_name = "xrRender_R2.dll";
 		// try to initialize R2
         Log("Loading DLL:", r2_name);
         //hRender = LoadLibrary(r2_name);
@@ -289,6 +288,7 @@ void CEngineAPI::CreateRendererList()
 #endif
 
 #ifdef STATIC_RENDERER_R3
+		LPCSTR r3_name = "xrRender_R3.dll";
 		// try to initialize R3
 		Log("Loading DLL:", r3_name);
 		// Hide "d3d10.dll not found" message box for XP
@@ -308,6 +308,7 @@ void CEngineAPI::CreateRendererList()
 #endif
 
 #ifdef STATIC_RENDERER_R4
+		LPCSTR r4_name = "xrRender_R4.dll";
 		// try to initialize R4
         Log("Loading DLL:", r4_name);
         // Hide "d3d10.dll not found" message box for XP
@@ -328,12 +329,12 @@ void CEngineAPI::CreateRendererList()
 	}
 
 	//hRender = 0;
-	bool proceed = true;
 	xr_vector<LPCSTR> _tmp;
 #ifdef STATIC_RENDERER_R1
 	_tmp.push_back("renderer_r1");
 #endif
 #ifdef STATIC_RENDERER_R2
+	bool proceed = true;
 	if (proceed &= bSupports_r2, proceed)
     {
         _tmp.push_back("renderer_r2a");
@@ -343,10 +344,12 @@ void CEngineAPI::CreateRendererList()
         _tmp.push_back("renderer_r2.5");
 #endif
 #ifdef STATIC_RENDERER_R3
+	bool proceed = true;
 	if (proceed &= bSupports_r3, proceed)
 		_tmp.push_back("renderer_r3");
 #endif
 #ifdef STATIC_RENDERER_R4
+	bool proceed = true;
 	if (proceed &= bSupports_r4, proceed)
         _tmp.push_back("renderer_r4");
 #endif

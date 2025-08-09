@@ -2,7 +2,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include "stdafx.h"
 #include "types.h"
 
 #include <cstring>

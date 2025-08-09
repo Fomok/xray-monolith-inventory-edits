@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "dxUISequenceVideoItem.h"
+#include "R_Backend_Runtime.h"
 
 dxUISequenceVideoItem::dxUISequenceVideoItem()
 {

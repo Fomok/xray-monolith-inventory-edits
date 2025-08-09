@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIMPAdminMenu.h"
 #include "UIMPPlayersAdm.h"
 #include "UIMPServerAdm.h"

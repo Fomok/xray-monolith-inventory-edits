@@ -23,5 +23,6 @@ target_include_directories(StackWalker
 
 target_compile_options(StackWalker
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:Clang>:-Wno-switch>
 )

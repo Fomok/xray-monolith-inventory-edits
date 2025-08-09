@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "xrCore.h"
+
 #define TEMPLATE_SPECIALIZATION \
 	template <\
 		typename _object_type,\

@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include "_types.h"
 
 void __stdcall xrMemFill32_x86(LPVOID dest, u32 value, u32 count)
 {
@@ -8,7 +7,7 @@ void __stdcall xrMemFill32_x86(LPVOID dest, u32 value, u32 count)
 	for (; ptr != end;) *ptr++ = value;
 }
 
-#if defined(M_BORLAND) || defined(_M_AMD64)
+#if defined(_M_AMD64)
 void __stdcall xrMemFill32_MMX(LPVOID dest, u32 value, u32 count)
 {
 	u32* ptr = (u32*)dest;

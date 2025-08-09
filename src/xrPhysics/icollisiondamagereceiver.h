@@ -1,5 +1,9 @@
 #pragma once
 
+#include "_types.h"
+#include "_vector3d.h"
+#include "xrPhysics.h"
+
 class ICollisionDamageReceiver
 {
 public:

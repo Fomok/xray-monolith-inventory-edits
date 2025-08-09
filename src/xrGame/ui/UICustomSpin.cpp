@@ -6,7 +6,6 @@
 //
 // copyright 2005 GSC Game World
 
-#include "StdAfx.h"
 #include "UI3tButton.h"
 #include "UIFrameLineWnd.h"
 #include "UILines.h"

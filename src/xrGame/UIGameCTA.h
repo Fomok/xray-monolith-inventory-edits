@@ -118,7 +118,7 @@ public:
 	virtual void SetClGame(game_cl_GameState* g);
 	virtual void Init(int stage);
 	virtual void UnLoad();
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 	virtual void Render();
 
 	virtual bool IR_UIOnKeyboardPress(int dik);

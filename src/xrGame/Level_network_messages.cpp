@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <Engine.h>
+
 #include "entity.h"
 #include "xrserver_objects.h"
 #include "level.h"

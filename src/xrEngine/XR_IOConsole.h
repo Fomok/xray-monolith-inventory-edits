@@ -4,7 +4,10 @@
 #ifndef XR_IOCONSOLE_H_INCLUDED
 #define XR_IOCONSOLE_H_INCLUDED
 
+#include <fastdelegate.h>
+
 #include "FactoryPtr.h"
+#include "pure.h"
 #include "UIShader.h"
 
 //refs
@@ -138,7 +141,7 @@ public:
 	virtual void Destroy();
 
 	virtual void OnRender();
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 	virtual void OnScreenResolutionChanged();
 	string64 ConfigFile;
 	bool bVisible;

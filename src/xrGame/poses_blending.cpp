@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "poses_blending.h"
 

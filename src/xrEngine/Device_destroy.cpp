@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "DrawUtils.h"
 #include "render.h"

@@ -1,17 +1,15 @@
-#include "stdafx.h"
+#include <malloc.h>
+
+#include <xrCore.h>
+#include <dxerr.h>
+#include <profiler.h>
+
+#include "macros.h"
 #include "NET_Common.h"
 #include "net_client.h"
 #include "net_server.h"
 #include "net_messages.h"
 #include "NET_Log.h"
-
-#pragma warning(push)
-#pragma warning(disable:4995)
-#include <malloc.h>
-#include "dxerr.h"
-#include "profiler.h"
-
-//#pragma warning(pop)
 
 // {0218FA8B-515B-4bf2-9A5F-2F079D1759F3}
 static const GUID NET_GUID =
@@ -447,7 +445,7 @@ BOOL IPureClient::Connect(LPCSTR options)
 		net_Disconnected = FALSE;
 
 		//---------------------------
-		const wchar_t* tmp = L"";
+		//const wchar_t* tmp = L"";
 		//	HRESULT CoInitializeExRes = CoInitializeEx(NULL, 0);
 		//	if (CoInitializeExRes != S_OK && CoInitializeExRes != S_FALSE)
 		//	{
@@ -868,7 +866,6 @@ HRESULT IPureClient::net_Handler(u32 dwMessageType, PVOID pMessage)
 			PDPNMSG_TERMINATE_SESSION pMsg = (PDPNMSG_TERMINATE_SESSION)pMessage;
 			char* m_data = (char*)pMsg->pvTerminateData;
 			u32 m_size = pMsg->dwTerminateDataSize;
-			HRESULT m_hResultCode = pMsg->hResultCode;
 
 			net_Disconnected = TRUE;
 
@@ -882,6 +879,7 @@ HRESULT IPureClient::net_Handler(u32 dwMessageType, PVOID pMessage)
 			else
 			{
 #ifdef DEBUG
+				HRESULT m_hResultCode = pMsg->hResultCode;
 				OnSessionTerminate( (::Debug.error2string(m_hResultCode)));
 				Msg("- Session terminated : %s", (::Debug.error2string(m_hResultCode)));
 #endif
@@ -1018,8 +1016,10 @@ void IPureClient::SendTo_LL(void* data, u32 size, u32 dwFlags, u32 dwTimeout)
 	{
 		Msg("! ERROR: Failed to send net-packet, reason: %s", ::Debug.error2string(hr));
 		//		const char* x = DXGetErrorString9(hr);
+		#ifdef DEBUG
 		const wchar_t* tmp = L"";
 		DXTRACE_ERR(tmp, hr);
+		#endif
 	}
 
 	//	UpdateStatistic();

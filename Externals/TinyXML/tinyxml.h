@@ -22,15 +22,18 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-
 #ifndef TINYXML_INCLUDED
 #define TINYXML_INCLUDED
+
+#define XRXMLPARSER_API
 
 #ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning( disable : 4530 )
 #pragma warning( disable : 4786 )
 #endif
+
+#include "_stl_extensions.h"
 
 #include <ctype.h>
 #include <stdio.h>

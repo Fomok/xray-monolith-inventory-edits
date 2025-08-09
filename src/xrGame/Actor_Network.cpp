@@ -1,3 +1,5 @@
+#include <Engine.h>
+
 #include "pch_script.h"
 #include "actor.h"
 #include "hudmanager.h"

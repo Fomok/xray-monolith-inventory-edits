@@ -7,7 +7,7 @@
 #include "script_engine.h"
 #include "script_game_object.h"
 #include "actor.h"
-
+#include "macros.h"
 
 //предикат для сортировки вектора фраз
 static bool PhraseGoodwillPred(const CPhrase* phrase1, const CPhrase* phrase2)

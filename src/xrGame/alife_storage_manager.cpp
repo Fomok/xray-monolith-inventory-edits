@@ -6,7 +6,10 @@
 //	Description : ALife Simulator storage manager
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <rt_compressor.h>
+#include <igame_persistent.h>
+#include <x_ray.h>
+
 #include "alife_storage_manager.h"
 #include "alife_simulator_header.h"
 #include "alife_time_manager.h"
@@ -17,10 +20,8 @@
 #include "alife_registry_container.h"
 #include "xrserver.h"
 #include "level.h"
-#include "../xrEngine/x_ray.h"
 #include "saved_game_wrapper.h"
 #include "string_table.h"
-#include "../xrEngine/igame_persistent.h"
 #include "autosave_manager.h"
 //Alundaio
 #ifdef ENGINE_LUA_ALIFE_STORAGE_MANAGER_CALLBACKS

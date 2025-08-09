@@ -2,8 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
 
 #include "Shader.h"
 #include "ResourceManager.h"

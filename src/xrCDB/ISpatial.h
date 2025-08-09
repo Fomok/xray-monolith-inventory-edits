@@ -1,8 +1,9 @@
 #ifndef XRENGINE_ISPATIAL_H_INCLUDED
 #define XRENGINE_ISPATIAL_H_INCLUDED
+#pragma once
 
-//#pragma once
-#include "../xrCore/xrPool.h"
+#include <FTimer.h>
+#include <xrPool.h>
 
 #include "xr_collide_defs.h"
 
@@ -118,6 +119,9 @@ public:
 	virtual Feel::Sound* dcast_FeelSound() { return 0; }
 	virtual IRenderable* dcast_Renderable() { return 0; }
 	virtual IRender_Light* dcast_Light() { return 0; }
+
+	// demonized: Check if eligible for bone calc optimizations
+	virtual bool canOptimizeCalculateBones() { return true; }
 
 	ISpatial(ISpatial_DB* space);
 	virtual ~ISpatial();

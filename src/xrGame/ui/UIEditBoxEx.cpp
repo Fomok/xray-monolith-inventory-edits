@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "UIEditBoxEx.h"
 #include "UIFrameWindow.h"

@@ -1,13 +1,18 @@
 #ifndef _RENDER_H_
 #define _RENDER_H_
 
+#include <FactoryPtr.h>
+#include <xrAPI.h>
+#include <xr_resource.h>
+
 #include "frustum.h"
 #include "vis_common.h"
 //#include "IRenderDetailModel.h"
 
-#include "xrAPI.h"
-#include "FactoryPtr.h"
+class IReader;
 class IUIShader;
+class CMemoryWriter;
+
 typedef FactoryPtr<IUIShader> wm_shader;
 //#include "../Include/xrRender/WallMarkArray.h"
 
@@ -329,7 +334,8 @@ public:
 	virtual void model_Logging(BOOL bEnable) = 0;
 	virtual void models_Prefetch() = 0;
 	virtual void models_PrefetchOne(LPCSTR name, bool assert = true) = 0;
-	virtual void models_Clear(BOOL b_complete) = 0;
+	virtual void models_Clear(BOOL b_complete) = 0; 
+	virtual bool models_Exists(LPCSTR name) = 0;
 
 	// Occlusion culling
 	virtual BOOL occ_visible(vis_data& V) = 0;

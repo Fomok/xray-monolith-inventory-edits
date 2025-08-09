@@ -1,5 +1,4 @@
 #pragma once
-#include "stdafx.h"
 #include "imgui/imgui.h"
 
 static bool ugly_hack = false;
@@ -181,7 +180,7 @@ IC bool ImGui_InvisibleButton(LPCSTR label, Fvector2 size, ImGuiButtonFlags flag
 	return ImGui::InvisibleButton(label, *(ImVec2*)&size, flags);
 }
 
-IC void ImGui_ProgressBar(float fraction, Fvector2 size = Fvector2{FLT_MAX,0}, LPCSTR overlay = 0)
+IC void ImGui_ProgressBar(float fraction, Fvector2 size = Fvector2{flt_max,0}, LPCSTR overlay = 0)
 {
 	ImGui::ProgressBar(fraction, *(ImVec2*)&size, overlay);
 }

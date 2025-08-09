@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <sound.h>
 
 #include "weaponammo.h"
 #include "tracer.h"

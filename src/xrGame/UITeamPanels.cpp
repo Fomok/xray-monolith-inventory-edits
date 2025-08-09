@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UITeamPanels.h"
 #include "ui/UIStatsIcon.h"
 #include "ui/UIFrameLineWnd.h"

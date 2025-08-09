@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <xrRender_console.h>
+#include "r2.h"
 
 // startup
 void CRenderTarget::phase_scene_prepare()

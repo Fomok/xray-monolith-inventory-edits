@@ -1,6 +1,9 @@
 #ifndef REWARD_MANAGER_INCLUDED
 #define REWARD_MANAGER_INCLUDED
 
+#include <Engine.h>
+#include <sound.h>
+
 #include "associative_vector.h"
 
 class game_cl_mp;

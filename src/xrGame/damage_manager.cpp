@@ -6,8 +6,9 @@
 //	Description : Damage manager
 ////////////////////////////////////////////////////////////////////////////
 
+#include <xr_ini.h>
+#include <xr_trims.h>
 
-#include "stdafx.h"
 #include "damage_manager.h"
 #include "xr_object.h"
 #include "Kinematics.h"

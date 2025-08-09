@@ -2,7 +2,6 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "Entity.h"
 #include "actor.h"
 #include "xrserver_objects_alife_monsters.h"

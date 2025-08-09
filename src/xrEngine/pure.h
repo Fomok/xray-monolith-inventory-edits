@@ -1,6 +1,11 @@
 #ifndef _PURE_H_AAA_
 #define _PURE_H_AAA_
 
+#include <_types.h>
+#include <_stl_extensions.h>
+#include <resource.h>
+#include <smart_cast.h>
+
 // messages
 #define REG_PRIORITY_LOW 0x11111111ul
 #define REG_PRIORITY_NORMAL 0x22222222ul
@@ -14,7 +19,7 @@ typedef void __fastcall RP_FUNC(void* obj);
 #define DECLARE_MESSAGE( name ) DECLARE_MESSAGE_CL(name, )
 #define DECLARE_RP(name) void __fastcall rp_##name(void *p) { ((pure##name *)p)->On##name(); }
 
-DECLARE_MESSAGE_CL(Frame, _BCL);
+DECLARE_MESSAGE_CL(Frame, );
 
 DECLARE_MESSAGE(Render);
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "phmovementcontrol.h"
 
 #include "../xrEngine/cl_intersect.h"

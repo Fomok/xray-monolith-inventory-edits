@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include "_types.h"
 
 #pragma warning(disable:4995)
 void __stdcall xrMemCopy_x86(LPVOID dest, const void* src, u32 n)
@@ -7,7 +6,7 @@ void __stdcall xrMemCopy_x86(LPVOID dest, const void* src, u32 n)
 	memcpy(dest, src, n);
 }
 
-#if defined(M_BORLAND) || defined(_M_AMD64)
+#if defined(_M_AMD64)
 void __stdcall xrMemCopy_MMX(LPVOID dest, const void* src, u32 n)
 {
 	memcpy(dest, src, n);

@@ -1,21 +1,20 @@
-#include "stdafx.h"
-#include "IKLimb.h"
-
 #include <boost/noncopyable.hpp>
 
+#include <string_concatenations.h>
+#include <xr_ini.h>
+#include <xr_trims.h>
+
+#include "IKLimb.h"
 #include "Kinematics.h"
-
 #include "gameobject.h"
-
-#include "../game_object_space.h"
-#include "../ik_anim_state.h"
-
-//#include "../ode_include.h"
+#include "game_object_space.h"
+#include "ik_anim_state.h"
+//#include "ode_include.h"
 #include "MathUtils.h"
 #include "matrix_utils.h"
-#include "../pose_extrapolation.h"
+#include "pose_extrapolation.h"
 #ifdef DEBUG
-#include "../PHDebug.h"
+#include "PHDebug.h"
 #endif
 
 
@@ -1071,7 +1070,7 @@ struct ssaved_callback :
 	CBoneInstance& _bi;
 };
 
-static void _BCL get_matrix(CBoneInstance* P)
+static void get_matrix(CBoneInstance* P)
 {
 	VERIFY(_valid( P->mTransform ));
 	*((Fmatrix*)P->callback_param()) = P->mTransform;

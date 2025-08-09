@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "pseudo_gigant_step_effector.h"
 
 CPseudogigantStepEffector::CPseudogigantStepEffector(float time, float amp, float periods, float power)

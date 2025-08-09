@@ -3,6 +3,7 @@
 #define ParticleEffectH
 //---------------------------------------------------------------------------
 
+#include "xrRender_console.h"
 #include "ParticleEffectDef.h"
 
 #ifdef _EDITOR

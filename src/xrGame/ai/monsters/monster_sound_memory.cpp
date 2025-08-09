@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "monster_sound_memory.h"
 #include "BaseMonster/base_monster.h"
 

@@ -1,9 +1,11 @@
-#include "StdAfx.h"
+#include <LocatorAPI.h>
+#include <xr_ini.h>
+
 #include "UIMapInfo.h"
 #include "UIScrollView.h"
 #include "UIXmlInit.h"
 #include "UIStatic.h"
-#include "../string_table.h"
+#include "string_table.h"
 
 CUIMapInfo::CUIMapInfo()
 {

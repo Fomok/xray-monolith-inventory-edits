@@ -6,6 +6,8 @@
 //	Description : Server monsters for ALife simulator, script export, the second part
 ////////////////////////////////////////////////////////////////////////////
 
+#include <net_utils.h>
+
 #include "pch_script.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "xrServer_script_macroses.h"
@@ -13,6 +15,7 @@
 #ifdef XRGAME_EXPORTS
 #include "relation_registry.h"
 #endif // #ifdef XRGAME_EXPORTS
+#include "macros.h"
 
 using namespace luabind;
 

@@ -1,4 +1,6 @@
-#include "stdafx.h"
+#include <xr_ini.h>
+#include <motion.h>
+#include <mathutils.h>
 
 #include "IKLimbsController.h"
 
@@ -6,12 +8,10 @@
 #include "physicsshellholder.h"
 
 #include "ik_anim_state.h"
-#include "../xrphysics/mathutils.h"
 #include "RenderVisual.h"
 #include "Kinematics.h"
 //#include "ode_include.h"
 #include "characterphysicssupport.h"
-#include "../xrEngine/motion.h"
 #ifdef DEBUG
 #	include "PHDebug.h"
 #endif // DEBUG
@@ -140,8 +140,8 @@ static float doun_shift_correct = 0.1f;
 
 bool CIKLimbsController::PredictObjectShift(const SCalculateData cd[max_size])
 {
-	float predict_time_shift_down = FLT_MAX;
-	float predict_time_shift_up = FLT_MAX;
+	float predict_time_shift_down = flt_max;
+	float predict_time_shift_up = flt_max;
 	float predict_shift_down = 0.f;
 	//float predict_shift_up = 0.f;
 	bool shift_down = false;
@@ -171,7 +171,7 @@ bool CIKLimbsController::PredictObjectShift(const SCalculateData cd[max_size])
 			}
 		}
 	float predict_shift = 0;
-	float predict_time_shift = FLT_MAX;
+	float predict_time_shift = flt_max;
 
 	if (shift_down)
 	{

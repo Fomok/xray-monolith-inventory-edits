@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "player_state_multichampion.h"
 #include "player_spot_params.h"
 #include "game_cl_base.h"

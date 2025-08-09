@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 static void PushFSQ(FVF::TL* pv, float w, float h)
 {

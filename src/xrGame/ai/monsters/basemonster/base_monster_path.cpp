@@ -6,7 +6,6 @@
 //	Description : Path finding, curve building, position prediction
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "base_monster.h"
 #include "../corpse_cover.h"
 #include "../../../cover_manager.h"

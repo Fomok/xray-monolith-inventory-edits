@@ -1,13 +1,18 @@
-﻿#include "stdafx.h"
+﻿
+#include <defines.h>
+#include <fmesh.h>
+#include <irenderable.h>
 
 #include "fhierrarhyvisual.h"
 #include "SkeletonCustom.h"
-#include "../../xrEngine/fmesh.h"
-#include "../../xrEngine/irenderable.h"
 
+#include "Device.h"
 #include "flod.h"
 #include "particlegroup.h"
 #include "FTreeVisual.h"
+#include "xrRender_console.h"
+#include "r__dsgraph_types.h"
+#include "r__dsgraph_structure.h"
 
 using namespace R_dsgraph;
 

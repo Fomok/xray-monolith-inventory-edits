@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "melee_checker.h"
 #include "basemonster/base_monster.h"
 #include "KinematicsAnimated.h"

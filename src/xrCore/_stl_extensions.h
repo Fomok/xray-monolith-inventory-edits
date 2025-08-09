@@ -1,14 +1,19 @@
 #ifndef _STL_EXT_internal
 #define _STL_EXT_internal
 
+#include <functional>
+#include <deque>
+#include <map>
+#include <set>
+#include <hash_map>
+#include <hash_set>
+
+#include "_type_traits.h"
+#include "vector.h"
+#include "xrMemory.h"
+
 using std::swap;
 
-#include <functional>
-#include "_type_traits.h"
-
-#ifdef __BORLANDC__
-#define M_NOSTDCONTAINERS_EXT
-#endif
 #ifdef _M_AMD64
 #define M_DONTDEFERCLEAR_EXT
 #endif
@@ -419,10 +424,5 @@ DEFINE_VECTOR(float, FloatVec, FloatIt);
 DEFINE_VECTOR(float*, LPFloatVec, LPFloatIt);
 DEFINE_VECTOR(int, IntVec, IntIt);
 DEFINE_VECTOR(int*, LPIntVec, LPIntIt);
-
-#ifdef __BORLANDC__
-DEFINE_VECTOR(AnsiString, AStringVec, AStringIt);
-DEFINE_VECTOR(AnsiString*, LPAStringVec, LPAStringIt);
-#endif
 
 #endif

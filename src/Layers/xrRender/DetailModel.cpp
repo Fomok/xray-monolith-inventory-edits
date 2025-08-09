@@ -1,6 +1,7 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <FS.h>
+
 #include "detailmodel.h"
+#include "HW.h"
 
 CDetail::~CDetail()
 {

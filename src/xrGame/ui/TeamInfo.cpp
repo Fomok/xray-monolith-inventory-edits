@@ -1,6 +1,8 @@
-#include "StdAfx.h"
+#include <xr_ini.h>
+#include <xr_trims.h>
+
 #include "TeamInfo.h"
-#include "../string_table.h"
+#include "string_table.h"
 
 u32 CTeamInfo::team1_color;
 u32 CTeamInfo::team2_color;

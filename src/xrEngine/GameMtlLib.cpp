@@ -1,11 +1,9 @@
-//---------------------------------------------------------------------------
-#include "stdafx.h"
-#pragma hdrstop
+#include <defines.h>
+#include <mezz_stringbuffer.h>
+//#include <xrapi.h>
 
 #include "GameMtlLib.h"
-//#include "../include/xrapi/xrapi.h"
-
-#include "../xrCore/mezz_stringbuffer.h"
+#include "LocatorAPI.h"
 
 CGameMtlLibrary GMLib;
 //CSound_manager_interface* Sound = NULL;

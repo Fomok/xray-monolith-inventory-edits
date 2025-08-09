@@ -2,6 +2,8 @@
 #define r_backend_hemiH
 #pragma once
 
+struct R_constant;
+
 class ECORE_API R_hemi
 {
 public:

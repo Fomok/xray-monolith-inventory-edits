@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <Debug/dxPixEventWrapper.h>
 
 IC bool pred_area(light* _1, light* _2)
 {

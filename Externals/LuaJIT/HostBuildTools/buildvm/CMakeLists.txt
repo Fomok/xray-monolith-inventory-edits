@@ -37,6 +37,7 @@ target_include_directories(buildvm
 target_compile_options(buildvm
   PRIVATE
   ${HOST_ACFLAGS}
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4057>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4127>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4244>

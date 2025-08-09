@@ -12,6 +12,8 @@
 #ifndef __ICECONTAINER_H__
 #define __ICECONTAINER_H__
 
+#include "alloc.h"
+
 #define CONTAINER_STATS
 
 class ICECORE_API Container

@@ -1,6 +1,7 @@
 add_subdirectory(cximage)
 add_subdirectory(discord)
 add_subdirectory(DxErr)
+add_subdirectory(FastDynamicCast)
 add_subdirectory(IKAN)
 add_subdirectory(imgui)
 add_subdirectory(libjpeg)

@@ -2,7 +2,9 @@
 #define GamePersistentH
 #pragma once
 
-#include "../xrEngine/IGame_Persistent.h"
+#include <EventAPI.h>
+#include <IGame_Persistent.h>
+
 class CMainMenu;
 class CUICursor;
 class CParticlesObject;
@@ -70,7 +72,7 @@ public:
 	virtual void OnGameStart();
 	virtual void OnGameEnd();
 
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 	virtual void ImGui_OnRender(LPCSTR name);
 	virtual void OnEvent(EVENT E, u64 P1, u64 P2);
 

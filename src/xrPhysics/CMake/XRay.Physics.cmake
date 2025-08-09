@@ -1,17 +1,42 @@
 add_module(XRay.Physics
   TYPE STATIC
-  
-  PRECOMPILES stdafx.h
 
-  INCLUDES ${CMAKE_CURRENT_SOURCE_DIR}
+  INCLUDES
+  ${CMAKE_CURRENT_SOURCE_DIR}
 
   LINKS
+  dxsdk
+  FastDynamicCast
   loki
   ode
   tbb
-  XRay.Collision
-  XRay.Engine
-  XRay.Render.API
+  OPCODE
+  
+  XRay.Core.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+
+  XRay.Includes
+  XRay.Core.Includes
+  XRay.Collision.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
+  XRay.Sound.Includes
+
+  PRECOMPILES
+  #[["xrCore.h"]]
+  #[["xrCDB.h"]]
+  #[["sound.h"]]
+  #[["xrAPI.h"]]
+
+  #$<$<CONFIG:DEBUG>:[["d3d9types.h"]]>
+
+  #xrPhysics.h
+  #smart_cast.h
+  #gm_library.h
 
   SOURCES
   console_vars.cpp
@@ -29,6 +54,12 @@ add_module(XRay.Physics
   ode_include.h
   ode_redefine.h
   PhysicsCommon.h
+)
+
+target_compile_options(XRay.Physics
+  PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4458>
+  $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
 )
 
 add_module(XRay.Physics.ActivationBox

@@ -6,7 +6,6 @@
 //	Description : ALife monster detail path manager class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "alife_monster_detail_path_manager.h"
 #include "ai_space.h"
 #include "alife_simulator.h"

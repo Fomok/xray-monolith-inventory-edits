@@ -1,5 +1,3 @@
-#include	"stdafx.h"
-
 #include	"interactive_animation.h"
 
 #include	"physicsshell.h"

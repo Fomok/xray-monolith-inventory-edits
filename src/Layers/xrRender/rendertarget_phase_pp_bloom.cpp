@@ -1,5 +1,3 @@
-#include "stdafx.h"
-
 extern Fvector4 ps_pp_bloom_thresh;
 extern Fvector4 ps_pp_bloom_weight;
 

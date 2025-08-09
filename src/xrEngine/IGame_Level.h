@@ -3,9 +3,15 @@
 
 #pragma once
 
+#include <Engine.h>
+#include <EngineAPI.h>
+#include <EventAPI.h>
+#include <sound.h>
+#include <xr_area.h>
+
+#include "pure.h"
 #include "iinputreceiver.h"
 #include "xr_object_list.h"
-#include "../xrcdb/xr_area.h"
 
 // refs
 class ENGINE_API CCameraManager;
@@ -110,7 +116,7 @@ public:
 	virtual bool Load_GameSpecific_After() { return TRUE; }; // after object loading
 	virtual void Load_GameSpecific_CFORM(CDB::TRI* T, u32 count) = 0;
 
-	virtual void _BCL OnFrame(void);
+	virtual void OnFrame(void);
 	virtual void OnRender(void);
 
 	virtual shared_str OpenDemoFile(const char* demo_file_name) = 0;

@@ -6,7 +6,6 @@
 //	Description : Stalker animation manager : global animations
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_animation_manager.h"
 #include "ai/stalker/ai_stalker.h"
 #include "inventory.h"

@@ -1,6 +1,8 @@
 #ifndef MATH_UTILS_H
 #define MATH_UTILS_H
 
+#include "xrPhysics.h"
+#include "vector.h"
 
 extern XRPHYSICS_API const float phInfinity;
 
@@ -206,7 +208,7 @@ IC void twoq_2w(const Fquaternion& q1, const Fquaternion& q2, float dt, Fvector&
 	w.sub(v2);
 	w.add(v1);
 	float sinus_2 = 1.f - cosinus * cosinus, k = 2.f / dt;
-	if (sinus_2 > EPS) k *= acos(cosinus) / _sqrt(sinus_2);
+	if (sinus_2 > EPS) k *= (float)acos(cosinus) / _sqrt(sinus_2);
 	w.mul(k);
 }
 

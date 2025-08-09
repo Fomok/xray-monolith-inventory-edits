@@ -1,3 +1,6 @@
+#include <xr_collide_form.h>
+#include <xr_ini.h>
+
 #include "pch_script.h"
 #include "HairsZone.h"
 #include "level.h"
@@ -5,7 +8,6 @@
 #include "entity_alive.h"
 #include "PHMovementControl.h"
 #include "CharacterPhysicsSupport.h"
-#include "../xrengine/xr_collide_form.h"
 
 bool CHairsZone::BlowoutState()
 {

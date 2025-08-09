@@ -1,4 +1,6 @@
-#include "stdafx.h"
+#include <xrCore.h>
+#include <LocatorAPI.h>
+
 #include "xrserver.h"
 #include "xrmessages.h"
 

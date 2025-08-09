@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Weapon.h"
 #include "player_hud.h"
 

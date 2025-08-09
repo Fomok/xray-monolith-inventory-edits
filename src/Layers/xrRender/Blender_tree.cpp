@@ -2,8 +2,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
+#include <blenders/Blender_CLSID.h>
+#include <string_concatenations.h>
 
 #include "Blender_tree.h"
 

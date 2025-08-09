@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UITaskWnd.h"
 #include "UIMapWnd.h"
 #include "object_broker.h"

@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <LocatorAPI.h>
+#include <xr_ini.h>
 
 #ifndef _EDITOR
 #include "render.h"
@@ -23,7 +23,6 @@
 #endif
 
 //#include "D3DUtils.h"
-#include "../xrcore/xrCore.h"
 
 #include "EnvironmentRender.h"
 #include "LensFlareRender.h"

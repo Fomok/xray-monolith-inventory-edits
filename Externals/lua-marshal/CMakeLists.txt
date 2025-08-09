@@ -27,6 +27,7 @@ target_sources(lua-marshal
 
 target_compile_options(lua-marshal
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4018>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4108>

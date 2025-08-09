@@ -1,6 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
-
+#include "HW.h"
+#include "tss.h"
 #include "tss_def.h"
 
 IDirect3DStateBlock9* SimulatorStates::record()

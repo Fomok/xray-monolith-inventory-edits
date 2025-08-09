@@ -1,5 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
 
 #include "SoundRender_Emitter.h"
 #include "SoundRender_Core.h"
@@ -77,8 +75,8 @@ void CSoundRender_Emitter::update(float dt)
 			};
 
 			float speedOfSound = 343.f;
-			float oldDelay = starting_delay;
-			auto oldState = m_current_state;
+			//float oldDelay = starting_delay;
+			//auto oldState = m_current_state;
 			auto delay = CalculateSmoothSoundDelay(p_source.position.distance_to(SoundRender->listener_position()), speedOfSound, soundSmoothingParams::distanceBasedDelayMinDistance, 60);
 
 			// clamp delay in case of strange result
@@ -133,7 +131,6 @@ void CSoundRender_Emitter::update(float dt)
 		smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect
 			                                                          ? psSoundVEffects * psSoundVFactor
 			                                                          : psSoundVMusic * psSoundVMusicFactor) * (b2D ? 1.f : occluder_volume);
-		e_current = e_target = *SoundRender->get_environment(p_source.position);
 		if (update_culling(dt))
 		{
 			m_current_state = stPlaying;
@@ -159,7 +156,6 @@ void CSoundRender_Emitter::update(float dt)
 		smooth_volume = p_source.base_volume * p_source.volume * (owner_data->s_type == st_Effect
 			                                                          ? psSoundVEffects * psSoundVFactor
 			                                                          : psSoundVMusic * psSoundVMusicFactor) * (b2D ? 1.f : occluder_volume);
-		e_current = e_target = *SoundRender->get_environment(p_source.position);
 		if (update_culling(dt))
 		{
 			m_current_state = stPlayingLooped;
@@ -398,8 +394,6 @@ float CSoundRender_Emitter::priority()
 void CSoundRender_Emitter::update_environment(float dt)
 {
 	if (bMoved) {
-		e_target = *SoundRender->get_environment(p_source.position);
 		p_source.update_velocity(dt);
 	}
-	e_current.lerp(e_current, e_target, dt);
 }

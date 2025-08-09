@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "stdafx.h"
 #include "exooutfit.h"
 
 CExoOutfit::CExoOutfit()

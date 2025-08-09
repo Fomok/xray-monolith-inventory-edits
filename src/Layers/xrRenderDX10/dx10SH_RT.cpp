@@ -1,9 +1,6 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#include "../xrRender/ResourceManager.h"
-
-#include "../xrRender/dxRenderDeviceRender.h"
+#include <defines.h>
+#include <ResourceManager.h>
+#include <dxRenderDeviceRender.h>
 
 #include "dx10TextureUtils.h"
 

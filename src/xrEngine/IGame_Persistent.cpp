@@ -1,17 +1,20 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <LocatorAPI.h>
+#include <string_concatenations.h>
+#include <xr_ini.h>
+#include <xrCore.h>
 
 #include "IGame_Persistent.h"
+#include "Engine.h"
 
 #ifndef _EDITOR
 #include "environment.h"
-# include "x_ray.h"
-# include "IGame_Level.h"
-# include "XR_IOConsole.h"
-# include "Render.h"
-# include "ps_instance.h"
-# include "CustomHUD.h"
-# include "perlin.h"
+#include "x_ray.h"
+#include "IGame_Level.h"
+#include "XR_IOConsole.h"
+#include "Render.h"
+#include "ps_instance.h"
+#include "CustomHUD.h"
+#include "perlin.h"
 #endif
 
 #ifdef _EDITOR

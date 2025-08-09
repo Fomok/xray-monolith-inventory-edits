@@ -1,18 +1,23 @@
-﻿#include "stdafx.h"
+﻿#include <d3dcompiler.h>
+
+#include <3DFluid\dx103DFluidManager.h>
+#include <defines.h>
+#include <fbasicvisual.h>
+#include <CustomHUD.h>
+#include <dxRenderDeviceRender.h>
+#include <dxWallMarkArray.h>
+#include <dxUIShader.h>
+#include <environment.h>
+#include <igame_persistent.h>
+#include <LightTrack.h>
+#include <SkeletonCustom.h>
+#include <string_concatenations.h>
+#include <xrCore.h>
+#include <xr_object.h>
+#include <StateManager/dx10StateManager.h>
+#include <resourcemanager.h>
+
 #include "r3.h"
-#include "../xrRender/fbasicvisual.h"
-#include "../../xrEngine/xr_object.h"
-#include "../../xrEngine/CustomHUD.h"
-#include "../../xrEngine/igame_persistent.h"
-#include "../../xrEngine/environment.h"
-#include "../xrRender/SkeletonCustom.h"
-#include "../xrRender/LightTrack.h"
-#include "../xrRender/dxRenderDeviceRender.h"
-#include "../xrRender/dxWallMarkArray.h"
-#include "../xrRender/dxUIShader.h"
-
-#include "..\xrRenderDX10\3DFluid\dx103DFluidManager.h"
-
 #include "D3DX10Core.h"
 
 CRender RImplementation;
@@ -668,6 +673,7 @@ IRenderVisual* CRender::model_CreateParticles(LPCSTR name)
 void CRender::models_Prefetch() { Models->Prefetch(); }
 void CRender::models_PrefetchOne(LPCSTR name, bool assert) { Models->Prefetch_One(name, assert); }
 void CRender::models_Clear(BOOL b_complete) { Models->ClearPool(b_complete); }
+bool CRender::models_Exists(LPCSTR name) { return Models->Exists(name); }
 
 ref_shader CRender::getShader(int id)
 {

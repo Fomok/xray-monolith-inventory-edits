@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sound.h>
 
 enum ETelekineticState
 {

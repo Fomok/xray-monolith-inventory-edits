@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 IC void CPropertyStorage::set_property(const _condition_type& condition_id, const _value_type& value)
 {
 	CConditionStorage::iterator I = std::find(m_storage.begin(), m_storage.end(), condition_id);

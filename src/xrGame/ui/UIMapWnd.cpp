@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIMapWnd.h"
 #include "UIMap.h"
 #include "UIXmlInit.h"
@@ -692,7 +691,7 @@ void CUIMapWnd::ActivatePropertiesBox(CUIWindow* w)
 			// Get gvid and set lvid if wasnt set
 			auto& gg = ai().game_graph();
 			u32 current_gvid = 0;
-			float dist = FLT_MAX;
+			float dist = flt_max;
 			while (gg.valid_vertex_id(current_gvid)) {
 				try {
 					auto vertex = gg.vertex(current_gvid);

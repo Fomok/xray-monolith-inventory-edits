@@ -1,6 +1,8 @@
-#include "stdafx.h"
+#include <string_concatenations.h>
+#include <xr_ini.h>
+
 #include "energy_holder.h"
-#include "../../gameobject.h"
+#include "gameobject.h"
 
 CEnergyHolder::CEnergyHolder()
 {

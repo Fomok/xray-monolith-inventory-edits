@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <defines.h>
 
 #include "detailmanager.h"
 
@@ -7,11 +6,14 @@
 #	include "igame_persistent.h"
 #	include "environment.h"
 #else
-#	include "../../xrEngine/igame_persistent.h"
-#	include "../../xrEngine/environment.h"
+#	include <igame_persistent.h>
+#	include <environment.h>
 #endif
 
-#include "../xrRenderDX10/dx10BufferUtils.h"
+#include <dx10BufferUtils.h>
+
+#include "R_Backend_Runtime.h"
+#include "xrRender_console.h"
 
 const int quant = 16384;
 const int c_hdr = 10;

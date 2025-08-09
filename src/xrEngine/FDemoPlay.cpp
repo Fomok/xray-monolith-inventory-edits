@@ -2,14 +2,15 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include <LocatorAPI.h>
+#include <xr_ini.h>
+
 #include "igame_level.h"
 #include "fdemoplay.h"
 #include "xr_ioconsole.h"
 #include "motion.h"
 #include "Render.h"
 #include "CameraManager.h"
-
 #include "xrSash.h"
 
 //////////////////////////////////////////////////////////////////////

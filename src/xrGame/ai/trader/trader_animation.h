@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sound.h>
+
 #include "KinematicsAnimated.h"
 
 class CAI_Trader;

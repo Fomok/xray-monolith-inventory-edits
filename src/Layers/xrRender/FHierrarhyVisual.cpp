@@ -2,16 +2,18 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
-#pragma hdrstop
+
+#include <string_concatenations.h>
+#include <Fmesh.h>
+#include <FS.h>
+
+#ifndef _EDITOR
+#include <render.h>
+#else
+#include <xrAPI.h>
+#endif
 
 #include "FHierrarhyVisual.h"
-#include "../../xrEngine/Fmesh.h"
-#ifndef _EDITOR
-#include "../../xrEngine/render.h"
-#else
-#include "../../Include/xrAPI/xrAPI.h"
-#endif
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

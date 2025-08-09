@@ -6,7 +6,6 @@
 //	Description : Date and time routines
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 
 #if 0
 #define CHECK_YEAR(year)	\

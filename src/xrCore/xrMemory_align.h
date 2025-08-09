@@ -2,6 +2,8 @@
 #define xrMemory_alignH
 #pragma once
 
+#include "_types.h"
+
 u32 __stdcall xr_aligned_msize(void*);
 void __stdcall xr_aligned_free(void*);
 void* __stdcall xr_aligned_malloc(size_t, size_t);

@@ -1,5 +1,5 @@
-/////////////////////////////////////////////////////////////////////////////////////////////////
-#include "StdAfx.h"
+#include <xr_ini.h>
+
 #include "phcharacter.h"
 #include "Physics.h"
 #include "ExtendedGeom.h"
@@ -13,6 +13,7 @@
 #include "iphysicsshellholder.h"
 #include "bone.h"
 #include "device.h"
+
 extern class CPHWorld* ph_world;
 
 ///////////////////////////////////////////////////////////////////////////////////
@@ -294,7 +295,7 @@ void CPHCapture::Deactivate()
 	Release();
 	if (m_taget_element)
 	{
-		VERIFY(dynamic_cast<CPHElement*>(m_taget_element));
+		VERIFY(fast_dynamic_cast<CPHElement*>(m_taget_element));
 
 		m_taget_element->Enable();
 	}

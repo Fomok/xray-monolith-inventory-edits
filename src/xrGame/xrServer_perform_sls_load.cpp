@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <FS.h>
+
 #include "xrserver.h"
 #include "xrmessages.h"
 

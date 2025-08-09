@@ -2,6 +2,7 @@
 #ifndef StatGraphH
 #define StatGraphH
 
+#include "pure.h"
 #include "FactoryPtr.h"
 #include "StatGraphRender.h"
 

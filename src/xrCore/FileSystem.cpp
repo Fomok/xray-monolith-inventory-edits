@@ -2,12 +2,16 @@
 // file: FileSystem.cpp
 //----------------------------------------------------
 
-#include "stdafx.h"
-#pragma hdrstop
+#include <cderr.h>
+#include <commdlg.h>
+#include <vfw.h>
 
-#include "cderr.h"
-#include "commdlg.h"
-#include "vfw.h"
+#include <string_concatenations.h>
+#include <xr_trims.h>
+
+#include "FileSystem.h"
+#include "LocatorAPI.h"
+#include "log.h"
 
 EFS_Utils* xr_EFS = NULL;
 //----------------------------------------------------

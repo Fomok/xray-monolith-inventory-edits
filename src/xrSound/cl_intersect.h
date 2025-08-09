@@ -2,6 +2,8 @@
 #ifndef intersectH
 #define intersectH
 
+#include "resource.h"
+
 namespace CDB
 {
 	//----------------------------------------------------------------------

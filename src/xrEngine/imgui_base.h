@@ -3,10 +3,13 @@
 #include "IInputReceiver.h"
 #include "ImGuiRender.h"
 
-#define IMGUI_DISABLE_OBSOLETE_KEYIO
 struct ImGuiContext;
 struct ImFont;
 struct ImFontConfig;
+
+class IReader;
+
+#define IMGUI_DISABLE_OBSOLETE_KEYIO
 
 namespace xr_imgui
 {

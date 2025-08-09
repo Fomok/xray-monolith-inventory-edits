@@ -23,6 +23,7 @@ target_include_directories(LuaPanda
 
 target_compile_options(LuaPanda
   PRIVATE
+  $<$<CXX_COMPILER_ID:MSVC>:/permissive->
   $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4244>
   $<$<CXX_COMPILER_ID:MSVC>:/wd4267>

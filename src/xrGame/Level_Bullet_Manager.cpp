@@ -2,7 +2,6 @@
 //								все пули и осколки передаются сюда
 //////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "Level.h"
 #include "Level_Bullet_Manager.h"
 #include "game_cl_base.h"
@@ -142,7 +141,8 @@ void populateBulletTable (
 	u16 parentId,
 	u16 targetId,
 	LPCSTR materialName,
-	float life_time
+	float life_time,
+	int element
 ) {
 	table["position"] = position;
 	table["direction"] = direction;
@@ -155,6 +155,7 @@ void populateBulletTable (
 	table["target_id"] = targetId;
 	table["material"] = materialName;
 	table["life_time"] = life_time;
+	table["element"] = element;
 }
 
 
@@ -295,7 +296,8 @@ void CBulletManager::AddBullet(const Fvector& position,
 			bullet.parent_id,
 			65535,
 			NULL,
-			bullet.life_time
+			bullet.life_time,
+			-1
 		);
 		funct(table);
 	}
@@ -962,7 +964,8 @@ static bool try_update_bullet(SBullet& bullet, Fvector const& gravity, float con
 			bullet.parent_id,
 			65535,
 			NULL,
-			bullet.life_time
+			bullet.life_time,
+			-1
 		);
 		funct(table);
 
@@ -1251,7 +1254,8 @@ void CBulletManager::CommitEvents() // @ the start of frame
 						bullet->parent_id,
 						E.dynamic && E.R.O ? E.R.O->ID() : 65535,
 						mt ? mt->m_Name.c_str() : NULL,
-						bullet->life_time
+						bullet->life_time,
+						E.R.element
 					);
 					funct(table);
 				}
@@ -1279,7 +1283,8 @@ void CBulletManager::CommitEvents() // @ the start of frame
 						bullet->parent_id,
 						65535,
 						NULL,
-						bullet->life_time
+						bullet->life_time,
+						-1
 					);
 					funct(table);
 				}

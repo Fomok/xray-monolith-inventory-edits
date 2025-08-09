@@ -1,14 +1,13 @@
-#include "stdafx.h"
+#include <defines.h>
+#include <dinput.h>
+
 #include "UIDragDropListEx.h"
 #include "UIScrollBar.h"
 #include "object_broker.h"
 #include "UICellItem.h"
 #include "UICursor.h"
-#include "../Level.h"
-//Alundaio
-#include "../Inventory.h"
-#include <dinput.h>
-//-Alundaio
+#include "Level.h"
+#include "Inventory.h"
 
 CUIDragItem* CUIDragDropListEx::m_drag_item = NULL;
 

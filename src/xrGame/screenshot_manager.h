@@ -1,6 +1,8 @@
 #ifndef SCREENSHOT_MANAGER_FOR_MP
 #define SCREENSHOT_MANAGER_FOR_MP
 
+#include <FS.h>
+
 #define RESULT_WIDTH	640
 #define RESULT_HEIGHT	480
 

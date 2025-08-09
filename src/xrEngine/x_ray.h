@@ -1,6 +1,11 @@
 #ifndef __X_RAY_H__
 #define __X_RAY_H__
 
+#include <Engine.h>
+
+#include "EventAPI.h"
+#include "pure.h"
+
 // refs
 class ENGINE_API CGameFont;
 
@@ -68,7 +73,7 @@ public:
 	CApplication();
 	virtual ~CApplication();
 
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 	void load_draw_internal();
 	void destroy_loading_shaders();
 };

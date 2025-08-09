@@ -1,18 +1,22 @@
 #pragma once
 
+#include <d3d9types.h>
+
+#include <FS.h>
+#include <string_concatenations.h>
+#include "xrSASH.h"
+
 #define CMD0(cls) { static cls x##cls(); Console->AddCommand(&x##cls);}
 #define CMD1(cls,p1) { static cls x##cls(p1); Console->AddCommand(&x##cls);}
 #define CMD2(cls,p1,p2) { static cls x##cls(p1,p2); Console->AddCommand(&x##cls);}
 #define CMD3(cls,p1,p2,p3) { static cls x##cls(p1,p2,p3); Console->AddCommand(&x##cls);}
 #define CMD4(cls,p1,p2,p3,p4) { static cls x##cls(p1,p2,p3,p4); Console->AddCommand(&x##cls);}
 
-#include "xrSASH.h"
-
 class ENGINE_API IConsole_Command
 {
 public:
 	friend class CConsole;
-	typedef char TInfo[256];
+	typedef char TInfo[512];
 	typedef char TStatus[256];
 	typedef xr_vector<shared_str> vecTips;
 	typedef xr_vector<shared_str> vecLRU;
@@ -220,11 +224,13 @@ public:
 	{
 		I[0] = 0;
 		xr_token* tok = tokens;
-		while (tok->name)
+		for (int Iter = 0;; Iter++)
 		{
+			if (tok[Iter].name == nullptr)
+				break;
+
 			if (I[0]) xr_strcat(I, "/");
-			xr_strcat(I, tok->name);
-			tok++;
+			xr_strcat(I, tok[Iter].name);
 		}
 	}
 

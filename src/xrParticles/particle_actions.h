@@ -2,6 +2,8 @@
 #ifndef particle_actionsH
 #define particle_actionsH
 
+#include "_stl_extensions.h"
+#include "psystem.h"
 
 namespace PAPI
 {

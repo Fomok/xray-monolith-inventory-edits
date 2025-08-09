@@ -1,5 +1,35 @@
 add_module(XRay.Game.AI.Components
   TYPE STATIC
+
+  LINKS
+  dxsdk
+  FastDynamicCast
+  ode
+  IKAN
+  luabind
+  LuaJIT
+  LZO
+  TinyXML
+
+  XRay.Core.Defines
+  XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
+  XRay.Sound.Includes
+
+  XRay.Game.Precompiles
 )
 
 add_module(XRay.Game.AI.Components.Damage

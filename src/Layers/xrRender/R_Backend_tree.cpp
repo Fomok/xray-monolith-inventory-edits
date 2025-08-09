@@ -1,7 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #include "r_backend_tree.h"
+#include "R_Backend_Runtime.h"
 
 R_tree::R_tree()
 {

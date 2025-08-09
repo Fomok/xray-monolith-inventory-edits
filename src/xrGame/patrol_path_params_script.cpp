@@ -8,6 +8,7 @@
 
 #include "pch_script.h"
 #include "patrol_path_params.h"
+#include "macros.h"
 
 using namespace luabind;
 

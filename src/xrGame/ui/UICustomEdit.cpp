@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "UICustomEdit.h"
 #include "UILines.h"

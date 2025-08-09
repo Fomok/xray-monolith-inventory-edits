@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIOptionsItem.h"
 #include "UIOptionsManager.h"
 #include "../../xrEngine/xr_ioconsole.h"

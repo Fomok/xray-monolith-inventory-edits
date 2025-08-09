@@ -2,7 +2,9 @@
 #define SoundRender_SourceH
 #pragma once
 
-#include "soundrender_cache.h"
+#include <mmreg.h>
+
+#include "SoundRender_Cache.h"
 
 // refs
 struct OggVorbis_File;
@@ -17,8 +19,7 @@ public:
 	float fTimeTotal;
 	u32 dwBytesTotal;
 
-	WAVEFORMATEX m_wformat; //= SoundRender->wfm;
-
+	WAVEFORMATEX m_wformat;
 
 	float m_fBaseVolume;
 	float m_fMinDist;

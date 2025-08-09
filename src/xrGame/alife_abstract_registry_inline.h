@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "macros.h"
+
 #define TEMPLATE_SPECIALIZATION template <typename _index_type, typename _data_type>
 #define CSALifeAbstractRegistry CALifeAbstractRegistry<_index_type,_data_type>
 

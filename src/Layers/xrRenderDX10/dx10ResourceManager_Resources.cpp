@@ -1,24 +1,22 @@
-#include "stdafx.h"
-#pragma hdrstop
-
-#pragma warning(disable:4995)
 #include <d3dx9.h>
-#ifndef _EDITOR
-#include "../../xrEngine/render.h"
-#endif
-#pragma warning(default:4995)
+#include <defines.h>
 
+#ifndef _EDITOR
+#include <render.h>
+#endif
+
+#include <string_concatenations.h>
 #include <D3DX10Core.h>
 
-#include "../xrRender/ResourceManager.h"
-#include "../xrRender/tss.h"
-#include "../xrRender/blenders/blender.h"
-#include "../xrRender/blenders/blender_recorder.h"
+#include <ResourceManager.h>
+#include <tss.h>
+#include <blenders/blender.h>
+#include <blenders/blender_recorder.h>
 
-#include "../xrRenderDX10/dx10BufferUtils.h"
-#include "../xrRenderDX10/dx10ConstantBuffer.h"
+#include <dx10BufferUtils.h>
+#include <dx10ConstantBuffer.h>
 
-#include "../xrRender/ShaderResourceTraits.h"
+#include <ShaderResourceTraits.h>
 
 #ifdef USE_DX11
 SHS* CResourceManager::_CreateHS(LPCSTR Name)

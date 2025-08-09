@@ -1,8 +1,11 @@
-#include "stdafx.h"
-#include "xrSASH.h"
+#include <LocatorAPI.h>
+#include <xr_ini.h>
+#include <xrCore.h>
 
+#include "Engine.h"
 #include "xr_ioconsole.h"
 #include "xr_ioc_cmd.h"
+#include "xrSASH.h"
 
 xrSASH ENGINE_API g_SASH;
 
@@ -520,10 +523,10 @@ void xrSASH::ReleaseEngine()
 //    }
 //
 //    IConsole_Command* pCmd = I->second;
-//    CCC_Mask* pMask = dynamic_cast<CCC_Mask*>(pCmd);
-//    CCC_Token* pToken = dynamic_cast<CCC_Token*>(pCmd);
-//    CCC_Float* pFloat = dynamic_cast<CCC_Float*>(pCmd);
-//    CCC_Integer* pInt = dynamic_cast<CCC_Integer*>(pCmd);
+//    CCC_Mask* pMask = fast_dynamic_cast<CCC_Mask*>(pCmd);
+//    CCC_Token* pToken = fast_dynamic_cast<CCC_Token*>(pCmd);
+//    CCC_Float* pFloat = fast_dynamic_cast<CCC_Float*>(pCmd);
+//    CCC_Integer* pInt = fast_dynamic_cast<CCC_Integer*>(pCmd);
 //
 //    if (pMask)
 //        return OA_TYPE_BOOL;
@@ -557,10 +560,10 @@ void xrSASH::ReleaseEngine()
 //    }
 //
 //    IConsole_Command* pCmd = I->second;
-//    CCC_Mask* pMask = dynamic_cast<CCC_Mask*>(pCmd);
-//    CCC_Token* pToken = dynamic_cast<CCC_Token*>(pCmd);
-//    CCC_Float* pFloat = dynamic_cast<CCC_Float*>(pCmd);
-//    CCC_Integer* pInt = dynamic_cast<CCC_Integer*>(pCmd);
+//    CCC_Mask* pMask = fast_dynamic_cast<CCC_Mask*>(pCmd);
+//    CCC_Token* pToken = fast_dynamic_cast<CCC_Token*>(pCmd);
+//    CCC_Float* pFloat = fast_dynamic_cast<CCC_Float*>(pCmd);
+//    CCC_Integer* pInt = fast_dynamic_cast<CCC_Integer*>(pCmd);
 //
 //    Option.Name = pszOptionName;
 //
@@ -623,10 +626,10 @@ void xrSASH::ReleaseEngine()
 //
 //
 //    IConsole_Command* pCmd = I->second;
-//    CCC_Mask* pMask = dynamic_cast<CCC_Mask*>(pCmd);
-//    CCC_Token* pToken = dynamic_cast<CCC_Token*>(pCmd);
-//    CCC_Float* pFloat = dynamic_cast<CCC_Float*>(pCmd);
-//    CCC_Integer* pInt = dynamic_cast<CCC_Integer*>(pCmd);
+//    CCC_Mask* pMask = fast_dynamic_cast<CCC_Mask*>(pCmd);
+//    CCC_Token* pToken = fast_dynamic_cast<CCC_Token*>(pCmd);
+//    CCC_Float* pFloat = fast_dynamic_cast<CCC_Float*>(pCmd);
+//    CCC_Integer* pInt = fast_dynamic_cast<CCC_Integer*>(pCmd);
 //
 //    Msg("SASH:: Getting option \"%s\".", pszOptionName);
 //
@@ -674,10 +677,10 @@ void xrSASH::ReleaseEngine()
 //    }
 //
 //    IConsole_Command* pCmd = I->second;
-//    CCC_Mask* pMask = dynamic_cast<CCC_Mask*>(pCmd);
-//    CCC_Token* pToken = dynamic_cast<CCC_Token*>(pCmd);
-//    CCC_Float* pFloat = dynamic_cast<CCC_Float*>(pCmd);
-//    CCC_Integer* pInt = dynamic_cast<CCC_Integer*>(pCmd);
+//    CCC_Mask* pMask = fast_dynamic_cast<CCC_Mask*>(pCmd);
+//    CCC_Token* pToken = fast_dynamic_cast<CCC_Token*>(pCmd);
+//    CCC_Float* pFloat = fast_dynamic_cast<CCC_Float*>(pCmd);
+//    CCC_Integer* pInt = fast_dynamic_cast<CCC_Integer*>(pCmd);
 //
 //    Msg("SASH:: Setting option \"%s\".", pOption->Name);
 //

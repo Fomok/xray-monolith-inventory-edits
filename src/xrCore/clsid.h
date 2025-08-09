@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "_types.h"
+
 //***** CLASS ID type
 typedef u64 CLASS_ID;
 #define MK_CLSID(a,b,c,d,e,f,g,h) \

@@ -2,7 +2,37 @@ add_module(XRay.Game.AI.Script
   TYPE STATIC
 
   LINKS
+  dxsdk
+  FastDynamicCast
+  ode
+  imgui
+  luabind
   lua-extensions
+  LuaJIT
+  LZO
+  TinyXML
+  
+  XRay.Core.Defines
+  XRay.Game.Defines
+  XRay.Engine.Defines
+  XRay.Render.Common.Defines
+
+  XRay.Includes
+  XRay.Collision.Includes
+  XRay.Core.Includes
+  XRay.Core.Crypto.Includes
+  XRay.CPUPipe.Includes
+  XRay.Engine.Includes
+  XRay.Game.Includes
+  XRay.NetServer.Includes
+  XRay.Particles.Includes
+  XRay.Physics.Includes
+  XRay.Render.Common.Includes
+  XRay.Render.API.Includes
+  XRay.ServerEntities.Includes
+  XRay.Sound.Includes
+
+  XRay.Game.Precompiles
 
   SOURCES
   ../xrServerEntities/script_export_macroses.h

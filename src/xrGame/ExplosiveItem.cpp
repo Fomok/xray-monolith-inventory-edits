@@ -7,7 +7,6 @@
 //	Last updated: 13/08/2015
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "script_game_object.h"
 #include "ExplosiveItem.h"
 

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "VertexCache.h"
 
 VertexCache::VertexCache() : VertexCache(16)

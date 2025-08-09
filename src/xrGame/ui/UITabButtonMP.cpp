@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UITabButtonMP.h"
 
 CUITabButtonMP::CUITabButtonMP()

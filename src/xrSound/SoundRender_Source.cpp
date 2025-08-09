@@ -1,5 +1,5 @@
-#include "stdafx.h"
-#pragma hdrstop
+#include <vorbis/codec.h>
+#include <vorbis/vorbisfile.h>
 
 #include "soundrender_core.h"
 #include "soundrender_source.h"

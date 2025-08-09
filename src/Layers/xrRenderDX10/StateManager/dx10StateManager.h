@@ -2,6 +2,8 @@
 #define	dx10StateManager_included
 #pragma once
 
+struct R_constant;
+
 class dx10StateManager
 {
 public:

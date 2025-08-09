@@ -1,6 +1,3 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #ifdef DEBUG
 
 static HANDLE hLocalSlot = INVALID_HANDLE_VALUE;

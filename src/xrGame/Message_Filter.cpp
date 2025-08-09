@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <LocatorAPI.h>
+
 #include "Message_Filter.h"
 #include "NET_Queue.h"
 

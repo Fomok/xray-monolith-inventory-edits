@@ -1,10 +1,10 @@
-#include "stdafx.h"
-#pragma hdrstop
-
 #ifdef _EDITOR
 #	include "skeletonX.h"
 #	include "skeletoncustom.h"
 #endif // _EDITOR
+
+#include "SkeletonXVertRender.h"
+#include "bone.h"
 
 void __stdcall xrSkin1W_x86(vertRender* D,
                             vertBoned1W* S,

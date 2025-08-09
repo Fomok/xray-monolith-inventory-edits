@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sound.h>
+
 class ENGINE_API CObject;
 
 namespace Feel

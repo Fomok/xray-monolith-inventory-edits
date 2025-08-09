@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "UIListBoxItem.h"
 #include "UIScrollView.h"
 #include "object_broker.h"

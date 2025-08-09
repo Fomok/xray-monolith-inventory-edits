@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "bloodsucker_state_manager.h"
 #include "bloodsucker.h"
 

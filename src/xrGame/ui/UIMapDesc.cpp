@@ -1,4 +1,3 @@
-#include "stdafx.h"
 
 #include "UIMapDesc.h"
 #include "UIStatic.h"

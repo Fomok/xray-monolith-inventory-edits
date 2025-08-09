@@ -6,6 +6,11 @@
 #define AFX_LIGHTTRACK_H__89914D61_AC0B_4C7C_BA8C_D7D810738CE7__INCLUDED_
 #pragma once
 
+#include "Device.h"
+#include "Render.h"
+#include "light.h"
+#include "xr_collide_defs.h"
+
 const float lt_inc = 4.f;
 const float lt_dec = 2.f;
 const int lt_hemisamples = 26;

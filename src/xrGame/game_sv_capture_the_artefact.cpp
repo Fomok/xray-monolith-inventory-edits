@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "game_sv_capture_the_artefact.h"
 #include "xrserver_objects_alife_monsters.h"
 #include "level.h"

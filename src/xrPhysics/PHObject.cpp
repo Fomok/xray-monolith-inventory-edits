@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Physics.h"
 #include "PHObject.h"
 #include "PHWorld.h"

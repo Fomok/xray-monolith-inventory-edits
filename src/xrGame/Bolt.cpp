@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "bolt.h"
 #include "ParticlesObject.h"
 #include "../xrphysics/PhysicsShell.h"

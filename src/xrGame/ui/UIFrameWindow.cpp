@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <string_concatenations.h>
+
 #include "UIFrameWindow.h"
 #include "UITextureMaster.h"
 #include "UIXmlInit.h"

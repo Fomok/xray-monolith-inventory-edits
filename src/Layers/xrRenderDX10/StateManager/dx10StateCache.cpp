@@ -1,4 +1,5 @@
-#include "stdafx.h"
+#include <defines.h>
+
 #include "dx10StateCache.h"
 
 dx10StateCache<ID3DRasterizerState, D3D_RASTERIZER_DESC> RSManager;

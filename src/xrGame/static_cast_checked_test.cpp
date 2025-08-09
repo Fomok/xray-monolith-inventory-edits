@@ -6,7 +6,6 @@
 //	Description : checked static_cast implementation for debug purposes
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "static_cast_checked.hpp"
 
 // non-polymorphic test

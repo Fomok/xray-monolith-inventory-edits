@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "Engine.h"
 
 bool CRenderDevice::on_message(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& result)
 {

@@ -1,10 +1,13 @@
 #ifndef SCREENSHOT_WRITER_INCLUDED
 #define SCREENSHOT_WRITER_INCLUDED
 
+#include <xr_ini.h>
 #include "xr_dsa_signer.h"
 
 namespace screenshots
 {
+
+
 	class signer : public xr_dsa_signer
 	{
 	public:

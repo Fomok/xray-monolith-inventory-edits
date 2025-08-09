@@ -3,6 +3,7 @@
 #pragma once
 
 #include "FontRender.h"
+#include "Shader.h"
 
 class dxFontRender : public IFontRender
 {

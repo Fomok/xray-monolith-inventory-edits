@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "UIActorMenu.h"
 #include "UIDragDropListEx.h"
 #include "UICharacterInfo.h"

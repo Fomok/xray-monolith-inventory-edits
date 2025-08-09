@@ -1,5 +1,5 @@
-#include "stdafx.h"
 #include "dxStatGraphRender.h"
+#include "R_Backend_Runtime.h"
 
 void dxStatGraphRender::Copy(IStatGraphRender& _in)
 {

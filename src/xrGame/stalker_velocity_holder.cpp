@@ -6,7 +6,6 @@
 //	Description : Stalker velocity holder inline functions
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
 #include "stalker_velocity_holder.h"
 #include "object_broker.h"
 #include "stalker_velocity_collection.h"

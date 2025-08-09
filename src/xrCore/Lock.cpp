@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "Lock.hpp"
 #include <mutex>
 

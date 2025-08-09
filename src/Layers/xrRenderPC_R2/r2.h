@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <LocatorAPI.h>
+#include <intrusive_ptr.h>
+
 #include "../xrRender/r__dsgraph_structure.h"
 #include "../xrRender/r__occlusion.h"
 
@@ -23,6 +26,7 @@
 #include "../../xrEngine/fmesh.h"
 
 
+class CStreamReader;
 class dxRender_Visual;
 
 // definition
@@ -302,6 +306,7 @@ public:
 	virtual void models_Prefetch();
 	virtual void models_PrefetchOne(LPCSTR name, bool assert = true);
 	virtual void models_Clear(BOOL b_complete);
+	virtual bool models_Exists(LPCSTR name);
 
 	// Occlusion culling
 	virtual BOOL occ_visible(vis_data& V);
@@ -315,7 +320,7 @@ public:
 	virtual void Screenshot(ScreenshotMode mode, CMemoryWriter& memory_writer);
 	virtual void ScreenshotAsyncBegin();
 	virtual void ScreenshotAsyncEnd(CMemoryWriter& memory_writer);
-	virtual void _BCL OnFrame();
+	virtual void OnFrame();
 
 	// Render mode
 	virtual void rmNear();
