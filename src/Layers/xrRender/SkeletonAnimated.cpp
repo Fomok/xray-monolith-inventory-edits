@@ -290,7 +290,11 @@ void CKinematicsAnimated::LL_CloseCycle(u16 part, u8 mask_channel /*= (1<<0)*/)
 
 float CKinematicsAnimated::get_animation_length(MotionID motion_ID)
 {
-	VERIFY(motion_ID.slot<m_Motions.size());
+    if (motion_ID.slot >= m_Motions.size())
+    {
+        Msg("! [CKinematicsAnimated::get_animation_length] ERROR motion_ID.slot [%d] must be less than m_Motions.size() [%d], return 0", motion_ID.slot, m_Motions.size());
+        return 0.f;
+    }
 
 	SMotionsSlot& slot = m_Motions[motion_ID.slot];
 
@@ -418,6 +422,12 @@ CBlend* CKinematicsAnimated::LL_PlayCycle(u16 part, MotionID motion_ID, BOOL bMi
                                           LPVOID CallbackParam, u8 channel /*=0*/)
 {
 	VERIFY(motion_ID.valid());
+    if (motion_ID.slot >= m_Motions.size())
+    {
+        Msg("! [CKinematicsAnimated::LL_PlayCycle] ERROR motion_ID.slot [%d] must be less than m_Motions.size() [%d], return 0", motion_ID.slot, m_Motions.size());
+        return NULL;
+    }
+
 	CMotionDef* m_def = m_Motions[motion_ID.slot].motions.motion_def(motion_ID.idx);
 	VERIFY(m_def);
 	if (!m_def) return NULL;
@@ -444,6 +454,12 @@ CBlend* CKinematicsAnimated::PlayCycle(MotionID motion_ID, BOOL bMixIn, PlayCall
 	VERIFY(motion_ID.valid());
 	if (!motion_ID.valid()) return NULL;
 
+    if (motion_ID.slot >= m_Motions.size())
+    {
+        Msg("! [CKinematicsAnimated::PlayCycle] ERROR motion_ID.slot [%d] must be less than m_Motions.size() [%d], return 0", motion_ID.slot, m_Motions.size());
+        return NULL;
+    }
+
 	CMotionDef* m_def = m_Motions[motion_ID.slot].motions.motion_def(motion_ID.idx);
 	VERIFY(m_def);
 	if (!m_def) return NULL;
@@ -456,6 +472,13 @@ CBlend* CKinematicsAnimated::PlayCycle(u16 partition, MotionID motion_ID, BOOL b
                                        LPVOID CallbackParam, u8 channel, float speed)
 {
 	VERIFY(motion_ID.valid());
+
+    if (motion_ID.slot >= m_Motions.size())
+    {
+        Msg("! [CKinematicsAnimated::PlayCycle] ERROR motion_ID.slot [%d] must be less than m_Motions.size() [%d], return 0", motion_ID.slot, m_Motions.size());
+        return NULL;
+    }
+
 	CMotionDef* m_def = m_Motions[motion_ID.slot].motions.motion_def(motion_ID.idx);
 	VERIFY(m_def);
 	if (!m_def) return NULL;
@@ -491,6 +514,13 @@ MotionID CKinematicsAnimated::ID_FX(LPCSTR N)
 CBlend* CKinematicsAnimated::PlayFX(MotionID motion_ID, float power_scale)
 {
 	VERIFY(motion_ID.valid());
+
+    if (motion_ID.slot >= m_Motions.size())
+    {
+        Msg("! [CKinematicsAnimated::PlayFX] ERROR motion_ID.slot [%d] must be less than m_Motions.size() [%d], return 0", motion_ID.slot, m_Motions.size());
+        return NULL;
+    }
+
 	CMotionDef* m_def = m_Motions[motion_ID.slot].motions.motion_def(motion_ID.idx);
 	VERIFY(m_def);
 	if (!m_def) return NULL;
