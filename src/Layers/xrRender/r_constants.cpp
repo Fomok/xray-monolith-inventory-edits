@@ -27,7 +27,7 @@ R_constant_table::~R_constant_table()
 
 void R_constant_table::fatal(LPCSTR S)
 {
-	FATAL(S);
+	//FATAL(S);
 }
 
 void R_constant_table::_copy(const R_constant_table& Other)

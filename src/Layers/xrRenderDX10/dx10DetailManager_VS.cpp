@@ -30,6 +30,14 @@ struct vertHW
 };
 #pragma pack(pop)
 
+struct InstanceData
+{
+	Fvector hpb;
+	float scale;
+	Fvector pos;
+	float hemi;
+};
+
 short QC(float v);
 //{
 //	int t=iFloor(v*float(quant)); clamp(t,-32768,32767);
@@ -255,30 +263,6 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 					}
 				}
 
-				Fvector4* c_ExData = 0;
-				{
-					void* pExtraData;
-					RCache.get_ConstantDirect(strExData, hw_BatchSize * sizeof(Fvector4), &pExtraData, 0, 0);
-					c_ExData = (Fvector4*)pExtraData;
-				}
-				VERIFY(c_ExData);
-
-				//ref_constant constArray = RCache.get_c(strArray);
-				//VERIFY(constArray);
-
-				//u32			c_base				= x_array->vs.index;
-				//Fvector4*	c_storage			= RCache.get_ConstantCache_Vertex().get_array_f().access(c_base);
-				Fvector4* c_storage = 0;
-				//	Map constants to memory directly
-				{
-					void* pVData;
-					RCache.get_ConstantDirect(strArray,
-					                          hw_BatchSize * sizeof(Fvector4) * 4,
-					                          &pVData, 0, 0);
-					c_storage = (Fvector4*)pVData;
-				}
-				VERIFY(c_storage);
-
 				u32 dwBatch = 0;
 
 				xr_vector<SlotItemVec*>::iterator _vI = vis.begin();
@@ -300,11 +284,14 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 							if (!L->GMLight.is_sector_visible(RImplementation.pOutdoorSector))
 								continue;
 
-							if (L->position.distance_to_sqr(Instance.position) >= _sqr(L->range))
+							if (L->position.distance_to_sqr(Instance.pos) >= _sqr(L->range))
 								continue;
 						}
 
-						u32 base = dwBatch * 4;
+						static InstanceData* c_storage = NULL;
+						if (dwBatch == 0)
+							RCache.get_ConstantDirect(strArray, hw_BatchSize * sizeof(InstanceData), (void**)&c_storage, 0, 0);
+						if (!c_storage) continue;
 
 						Instance.alpha += GoToValue(Instance.alpha, Instance.alpha_target);
 
@@ -313,69 +300,40 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 						// Sort of fade using the scale
 						// fade_distance == -1 use light_position to define "fade", anything else uses fade_distance
 						if (fade_distance <= -1)
-							scale *= 1.0f - Instance.position.distance_to_xz_sqr(light_position) * 0.005f;
+							scale *= 1.0f - Instance.pos.distance_to_xz_sqr(light_position) * 0.005f;
 						else if (Instance.distance > fade_distance)
 							scale *= 1.0f - abs(Instance.distance - fade_distance) * 0.005f;
 
 						if (scale <= 0 || Instance.alpha <= 0)
 							break;
 
-						// Build matrix ( 3x4 matrix, last row - color )
-						Fmatrix& M = Instance.mRotY_calculated;
-						c_storage[base + 0].set(M._11 * scale, M._21 * scale, M._31 * scale, M._41);
-						c_storage[base + 1].set(M._12 * scale, M._22 * scale, M._32 * scale, M._42);
-						c_storage[base + 2].set(M._13 * scale, M._23 * scale, M._33 * scale, M._43);
-						//RCache.set_ca(&*constArray, base+0, M._11*scale,	M._21*scale,	M._31*scale,	M._41	);
-						//RCache.set_ca(&*constArray, base+1, M._12*scale,	M._22*scale,	M._32*scale,	M._42	);
-						//RCache.set_ca(&*constArray, base+2, M._13*scale,	M._23*scale,	M._33*scale,	M._43	);
-
-						// Build color
-						// R2 only needs hemisphere
-						float h = Instance.c_hemi;
-						float s = Instance.c_sun;
-						c_storage[base + 3].set(s, s, s, h);
-
-						if (c_ExData)
-							c_ExData[dwBatch].set(Instance.normal.x, Instance.normal.y, Instance.normal.z, Instance.alpha);
-
-						//RCache.set_ca(&*constArray, base+3, s,				s,				s,				h		);
+						c_storage[dwBatch] = {Instance.hpb, Instance.scale_calculated, Instance.pos, Instance.c_hemi};
 						dwBatch ++;
+
 						if (dwBatch == hw_BatchSize)
 						{
 							// flush
 							Device.Statistic->RenderDUMP_DT_Count += dwBatch;
 							u32 dwCNT_verts = dwBatch * Object.number_vertices;
 							u32 dwCNT_prims = (dwBatch * Object.number_indices) / 3;
-							//RCache.get_ConstantCache_Vertex().b_dirty				=	TRUE;
-							//RCache.get_ConstantCache_Vertex().get_array_f().dirty	(c_base,c_base+dwBatch*4);
 							RCache.Render(D3DPT_TRIANGLELIST, vOffset, 0, dwCNT_verts, iOffset, dwCNT_prims);
 							RCache.stat.r.s_details.add(dwCNT_verts);
 
 							// restart
 							dwBatch = 0;
-
-							//	Remap constants to memory directly (just in case anything goes wrong)
-							{
-								void* pVData;
-								RCache.get_ConstantDirect(strArray,
-								                          hw_BatchSize * sizeof(Fvector4) * 4,
-								                          &pVData, 0, 0);
-								c_storage = (Fvector4*)pVData;
-							}
-							VERIFY(c_storage);
 						}
 					}
 				}
+
 				// flush if nessecary
-				if (dwBatch)
+				if (dwBatch > 0 && dwBatch < hw_BatchSize)
 				{
 					Device.Statistic->RenderDUMP_DT_Count += dwBatch;
 					u32 dwCNT_verts = dwBatch * Object.number_vertices;
 					u32 dwCNT_prims = (dwBatch * Object.number_indices) / 3;
-					//RCache.get_ConstantCache_Vertex().b_dirty				=	TRUE;
-					//RCache.get_ConstantCache_Vertex().get_array_f().dirty	(c_base,c_base+dwBatch*4);
 					RCache.Render(D3DPT_TRIANGLELIST, vOffset, 0, dwCNT_verts, iOffset, dwCNT_prims);
 					RCache.stat.r.s_details.add(dwCNT_verts);
+					dwBatch = 0;
 				}
 			}
 			// Clean up

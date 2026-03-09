@@ -82,7 +82,6 @@ CDetailManager::CDetailManager()
 {
 	dtFS = 0;
 	dtSlots = 0;
-	soft_Geom = 0;
 	hw_Geom = 0;
 	hw_BatchSize = 0;
 	hw_VB = 0;
@@ -226,7 +225,6 @@ void CDetailManager::Load()
 
 	// Hardware specific optimizations
 	if (UseVS()) hw_Load();
-	else soft_Load();
 
 	// swing desc
 	// normal
@@ -257,7 +255,6 @@ void CDetailManager::Unload()
 		Device.seqParallelRender.erase(I);
 
 	if (UseVS()) hw_Unload();
-	else soft_Unload();
 
 	for (DetailIt it = objects.begin(); it != objects.end(); it++)
 	{
@@ -382,6 +379,7 @@ void CDetailManager::UpdateVisibleM()
 							float scale = psDeviceFlags2.test(rsNoScale)
 								              ? (Item.scale)
 								              : (Item.scale * alpha_i);
+							Item.scale_calculated = scale;
 							float ssa = psDeviceFlags2.test(rsNoScale) ? scale : scale * scale * Rq_drcp;
 							if (ssa < r_ssaDISCARD)
 							{
@@ -390,12 +388,6 @@ void CDetailManager::UpdateVisibleM()
 							}
 							u32 vis_id = 0;
 							if (ssa > r_ssaCHEAP) vis_id = Item.vis_ID;
-
-							Fmatrix& M = Item.mRotY_calculated;
-							M = Item.mRotY;
-							M._11*=scale; M._21*=scale; M._31*=scale;
-							M._12*=scale; M._22*=scale; M._32*=scale;
-							M._13*=scale; M._23*=scale; M._33*=scale;
 
 							sp.r_items[vis_id].push_back(*siIT);
 							
@@ -467,7 +459,6 @@ void CDetailManager::Render()
 	RCache.set_CullMode(CULL_NONE);
 	RCache.set_xform_world(Fidentity);
 	if (UseVS()) hw_Render();
-	else soft_Render();
 	RCache.set_CullMode(CULL_CCW);
 
 	g_pGamePersistent->m_pGShaderConstants->m_blender_mode.w = 0.0f; //--#SM+#-- Флaa eонцa ?aндa?a o?aвu [end of grass render]	

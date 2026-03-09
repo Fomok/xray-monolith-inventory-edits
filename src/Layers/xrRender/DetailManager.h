@@ -74,10 +74,9 @@ public:
 	struct SlotItem
 	{
 		// один кустик
-		float scale;
-		Fmatrix mRotY;
-		Fmatrix mRotY_calculated;
-		u32 vis_ID; // индекс в visibility списке он же тип [не качается, качается1, качается2]
+		Fvector hpb;
+		float scale_calculated;
+		Fvector pos;
 		float c_hemi;
 		float c_sun;
 		float distance;
@@ -88,6 +87,9 @@ public:
 #if RENDER==R_R1
 		Fvector c_rgb;
 #endif
+
+		float scale;
+		u8 vis_ID; // индекс в visibility списке он же тип [не качается, качается1, качается2]
 	};
 
 	DEFINE_VECTOR(SlotItem*, SlotItemVec, SlotItemVecIt);
@@ -215,13 +217,7 @@ public:
 	virtual ObjectList* 			GetSnapList		()=0;
 #endif
 
-	IC bool UseVS() { return HW.Caps.geometry_major >= 1; }
-
-	// Software processor
-	ref_geom soft_Geom;
-	void soft_Load();
-	void soft_Unload();
-	void soft_Render();
+	IC bool UseVS() { return true; }
 
 	// Hardware processor
 	ref_geom hw_Geom;
