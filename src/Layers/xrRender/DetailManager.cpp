@@ -453,7 +453,12 @@ void CDetailManager::Render()
 	g_pGamePersistent->m_pGShaderConstants->m_blender_mode.w = 1.0f; //--#SM+#-- Флaa нaчaлa ?aндa?a o?aвu [begin of grass render]
 
 #ifndef _EDITOR
-	float factor = g_pGamePersistent->Environment().wind_strength_factor;
+	float _factor = g_pGamePersistent->Environment().wind_strength_factor;
+	static float factor = _factor;
+	static float lastTime = 0.0f;
+	float fTimeDelta = Device.fTimeDelta - lastTime; fTimeDelta *= 0.5f;
+	factor += clampr(_factor - factor, -fTimeDelta, fTimeDelta);
+	lastTime = Device.fTimeDelta;
 #else
 	float factor			= 0.3f;
 #endif

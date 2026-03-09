@@ -25,7 +25,7 @@ v2p_flat main (v_detail v)
 
   // Treewave
   float base = m1.w;
-	float H = pos.y - base; // height of vertex (scaled)
+	float H = v.pos.y * length(m1.xyz); // height of vertex (scaled)
 	float frac = v.misc.z*consts.x; // fractional
 
   float dp = calc_cyclic(dot(pos, wave));  
