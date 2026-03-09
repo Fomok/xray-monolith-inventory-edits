@@ -263,6 +263,13 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 					}
 				}
 
+				Fvector4* c_ExData = 0;
+				{
+					void* pExtraData;
+					RCache.get_ConstantDirect(strExData, hw_BatchSize * sizeof(Fvector4), &pExtraData, 0, 0);
+					c_ExData = (Fvector4*)pExtraData;
+				}
+				VERIFY(c_ExData);
 				u32 dwBatch = 0;
 
 				xr_vector<SlotItemVec*>::iterator _vI = vis.begin();
@@ -307,6 +314,8 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 						if (scale <= 0 || Instance.alpha <= 0)
 							break;
 
+						if (c_ExData)
+							c_ExData[dwBatch].set(Instance.normal.x, Instance.normal.y, Instance.normal.z, Instance.alpha);
 						c_storage[dwBatch] = {Instance.hpb, Instance.scale_calculated, Instance.pos, Instance.c_hemi};
 						dwBatch ++;
 
