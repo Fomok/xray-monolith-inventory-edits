@@ -224,7 +224,7 @@ void CDetailManager::Load()
 	bwdithermap(2, dither);
 
 	// Hardware specific optimizations
-	if (UseVS()) hw_Load();
+	hw_Load();
 
 	// swing desc
 	// normal
@@ -254,7 +254,7 @@ void CDetailManager::Unload()
 	if (I != Device.seqParallelRender.end())
 		Device.seqParallelRender.erase(I);
 
-	if (UseVS()) hw_Unload();
+	hw_Unload();
 
 	for (DetailIt it = objects.begin(); it != objects.end(); it++)
 	{
@@ -458,7 +458,7 @@ void CDetailManager::Render()
 
 	RCache.set_CullMode(CULL_NONE);
 	RCache.set_xform_world(Fidentity);
-	if (UseVS()) hw_Render();
+	hw_Render();
 	RCache.set_CullMode(CULL_CCW);
 
 	g_pGamePersistent->m_pGShaderConstants->m_blender_mode.w = 0.0f; //--#SM+#-- Флaa eонцa ?aндa?a o?aвu [end of grass render]	

@@ -217,8 +217,6 @@ public:
 	virtual ObjectList* 			GetSnapList		()=0;
 #endif
 
-	IC bool UseVS() { return true; }
-
 	// Hardware processor
 	ref_geom hw_Geom;
 	u32 hw_BatchSize;
