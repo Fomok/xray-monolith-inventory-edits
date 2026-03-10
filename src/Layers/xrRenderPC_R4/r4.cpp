@@ -1365,6 +1365,10 @@ HRESULT CRender::shader_compile(
 	sh_name[len] = '0' + char(o.sunstatic);
 	++len;
 
+    defines[def_it].Name = "USE_DX11";
+    defines[def_it].Definition = "1";
+    def_it++;
+
 	if (o.forceskinw)
 	{
 		defines[def_it].Name = "SKIN_COLOR";

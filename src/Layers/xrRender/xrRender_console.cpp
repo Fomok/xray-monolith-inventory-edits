@@ -484,7 +484,7 @@ Flags32 ps_actor_shadow_flags = {0}; //Swartz: actor shadow
 //AVO: detail draw radius
 Flags32 ps_common_flags = {0}; // r1-only
 u32 ps_steep_parallax = 0;
-int ps_r__detail_radius = 49;
+int ps_r__detail_radius = 50;
 #ifdef DETAIL_RADIUS // управление радиусом отрисовки травы
 u32 dm_size = 24;
 u32 dm_cache1_line = 12; //dm_size*2/dm_cache1_count
@@ -1549,7 +1549,7 @@ void xrRender_initconsole()
 	CMD3(CCC_Mask, "r__fast_details_update" ,&ps_r2_ls_flags, R2FLAG_FAST_DETAILS_UPDATE);
 
 #ifdef DETAIL_RADIUS
-	CMD4(CCC_detail_radius, "r__detail_radius", &ps_r__detail_radius, 0, 250);
+	CMD4(CCC_detail_radius, "r__detail_radius", &ps_r__detail_radius, 10, 350);
 	CMD3(CCC_Mask, "r__clear_models_on_unload", &psDeviceFlags2, rsClearModels); //Alundaio
 	CMD3(CCC_Mask, "r__use_precompiled_shaders", &psDeviceFlags2, rsPrecompiledShaders); //Alundaio
 	CMD3(CCC_Mask, "r__enable_grass_shadow", &psDeviceFlags2, rsGrassShadow); //Alundaio

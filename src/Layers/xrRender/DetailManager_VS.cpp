@@ -72,6 +72,9 @@ void CDetailManager::hw_Load_Geom()
 	u32 vSize = sizeof(vertHW);
 	Msg("* [DETAILS] %d v(%d), %d p", dwVerts, vSize, dwIndices / 3);
 
+#if defined(USE_DX11)
+    // Skip
+#else
 #if !defined(USE_DX10) && !defined(USE_DX11)
 	// Determine POOL & USAGE
 	u32 dwUsage = D3DUSAGE_WRITEONLY;
@@ -156,16 +159,19 @@ void CDetailManager::hw_Load_Geom()
 
 	// Declare geometry
 	hw_Geom.create(dwDecl, hw_VB, hw_IB);
+#endif
 }
 
 void CDetailManager::hw_Unload()
 {
 	// Destroy VS/VB/IB
+#if !defined(USE_DX11)
 	hw_Geom.destroy();
 	HW.stats_manager.decrement_stats_vb(hw_VB);
 	HW.stats_manager.decrement_stats_ib(hw_IB);
 	_RELEASE(hw_IB);
 	_RELEASE(hw_VB);
+#endif
 }
 
 #if !defined(USE_DX10) && !defined(USE_DX11)

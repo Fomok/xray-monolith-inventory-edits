@@ -12,6 +12,7 @@ static float prev_time = 0;
 static Fvector4	prev_dir1 = { 0, 0, 0 }, prev_dir2 = { 0, 0, 0 };
 
 const int quant = 16384;
+#ifndef USE_DX11
 const int c_hdr = 10;
 const int c_size = 4;
 
@@ -29,6 +30,7 @@ struct vertHW
 	short u, v, t, mid;
 };
 #pragma pack(pop)
+#endif
 
 struct InstanceData
 {
@@ -37,12 +39,10 @@ struct InstanceData
 	Fvector pos;
 	float hemi;
 };
-
+#ifndef USE_DX11
 short QC(float v);
-//{
-//	int t=iFloor(v*float(quant)); clamp(t,-32768,32767);
-//	return short(t&0xffff);
-//}
+#endif
+constexpr const xr_array<u32, 9> bufferSizes = {64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384};
 
 float GoToValue(float& current, float go_to)
 {
@@ -73,6 +73,42 @@ void CDetailManager::hw_Load_Shaders()
 	hwc_s_consts = T1.get("consts");
 	hwc_s_xform = T1.get("xform");
 	hwc_s_array = T1.get("array");
+
+	//Prepare descs
+#ifdef USE_DX11
+	D3D11_BUFFER_DESC bufferDesc = {};
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	bufferDesc.StructureByteStride = sizeof(InstanceData);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+
+	//Create the buffers & SRV
+    for (int i = 0; i < bufferSizes.size(); ++i)
+    {
+		//Buffer
+		bufferDesc.ByteWidth = bufferSizes[i] * sizeof(InstanceData);
+
+		ID3D11Buffer* buffer = NULL;
+        R_CHK(HW.pDevice->CreateBuffer(&bufferDesc, NULL, &buffer));
+
+        if (buffer)
+            detailBuffer_map.insert({ bufferSizes[i], buffer });
+
+        //SRV
+        srvDesc.Buffer.ElementWidth = bufferSizes[i];
+
+        ID3D11ShaderResourceView* srv = NULL;
+        R_CHK(HW.pDevice->CreateShaderResourceView(buffer, &srvDesc, &srv));
+
+		if(srv)
+			detailSRV_map.insert({bufferSizes[i], srv});
+	}
+#endif
 }
 
 void CDetailManager::hw_Render(light* L)
@@ -101,7 +137,9 @@ void CDetailManager::hw_Render(light* L)
 	// Setup geometry and DMA
 	RCache.set_CullMode(CULL_NONE);
 	RCache.set_xform_world(Fidentity);
+#ifndef USE_DX11
 	RCache.set_Geometry(hw_Geom);
+#endif
 	float scale = 1.f / float(quant);
 	Fvector4 wave, prev_wave;
 	Fvector4 consts;
@@ -181,6 +219,202 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 	if (ps_ssfx_grass_interactive.x > 0)
 		player_pos.set(Device.vCameraPosition.x, Device.vCameraPosition.y, Device.vCameraPosition.z, -1);
 
+#ifdef USE_DX11
+    if (!RImplementation.GMBase.is_sector_visible(RImplementation.pOutdoorSector))
+        return;
+
+    if (RImplementation.phase == CRender::PHASE_SMAP && L)
+    {
+        if (!L->GMLight.is_sector_visible(RImplementation.pOutdoorSector))
+            return;
+    }
+
+    //Render state, shaders & so on [only 1st pass]
+    {
+        CDetail& Object = *objects[0];
+        RCache.set_Element(Object.shader->E[lod_id], 0);
+    }
+    
+    //Bind CBuffers
+    RImplementation.apply_lmaterial(); //Material ID
+
+    RCache.set_c(strConsts, consts);
+    RCache.set_c(strWave, wave);
+    RCache.set_c(strDir2D, wind);
+    RCache.set_c(strXForm, Device.mFullTransform);
+    RCache.set_c(strGrassAlign, ps_ssfx_terrain_grass_align);
+
+    RCache.set_c(strWavePrev, prev_wave);
+    RCache.set_c(strDir2DPrev, prev_wind);
+
+    if (ps_ssfx_grass_interactive.y > 0)
+    {
+        RCache.set_c(strGrassSetup, ps_ssfx_int_grass_params_1);
+
+        Fvector4* c_grass;
+        {
+            void* GrassData;
+            RCache.get_ConstantDirect(strPos, BendersQty * sizeof(Fvector4) * 2, &GrassData, 0, 0);
+            c_grass = (Fvector4*)GrassData;
+        }
+        VERIFY(c_grass);
+
+        if (c_grass)
+        {
+            c_grass[0].set(player_pos);
+            c_grass[16].set(0.0f, -99.0f, 0.0f, 1.0f);
+
+            for (int Bend = 1; Bend < BendersQty; Bend++)
+            {
+                c_grass[Bend].set(GData.pos[Bend].x, GData.pos[Bend].y, GData.pos[Bend].z, GData.radius_curr[Bend]);
+                c_grass[Bend + 16].set(GData.dir[Bend].x, GData.dir[Bend].y, GData.dir[Bend].z, GData.str[Bend]);
+            }
+        }
+
+        Fvector4* c_prev_grass;
+        {
+            void* prev_GrassData;
+            RCache.get_ConstantDirect(strPrevPos, BendersQty * sizeof(Fvector4) * 2, &prev_GrassData, 0, 0);
+            c_prev_grass = (Fvector4*)prev_GrassData;
+        }
+        VERIFY(c_prev_grass);
+
+        if (c_prev_grass)
+        {
+            for (int Bend = 0; Bend < BendersQty; Bend++)
+            {
+                c_prev_grass[Bend].set(GData.prev_pos[Bend]);
+                c_prev_grass[Bend + 16].set(GData.prev_dir[Bend]);
+            }
+        }
+    }
+
+    vis_list& list = m_visibles[var_id];
+
+    static auto itemsSize = [](xr_vector<SlotItemVec*>& vis)
+    {
+        u32 size = 0;
+        xr_vector<SlotItemVec*>::iterator _vI = vis.begin();
+        xr_vector<SlotItemVec*>::iterator _vE = vis.end();
+        for (; _vI != _vE; _vI++)
+        {
+            size += (*_vI)->size();
+        }
+        return size;
+    };
+
+    // demonized: picking right buffer (see above) is too costly on old ass SlotItemVec structure, so use largest buffer possible
+    auto it = detailBuffer_map.rbegin();
+
+    // Current buffer size and resources
+    u32 currentSize = it->first;
+    ID3D11Buffer* currentBuffer = it->second;
+    ID3D11ShaderResourceView* currentSRV = detailSRV_map.find(currentSize)->second;
+
+    //Bind (current) buffer SRV
+    SRVSManager.SetVSResource(0, currentSRV);
+
+    // Pre-calculate SMAP culling variables outside the loop
+    bool bIsSMAP = (RImplementation.phase == CRender::PHASE_SMAP && L != nullptr);
+    float cull_sqr_range = bIsSMAP ? _sqr(L->range) : 0.0f;
+    Fvector L_pos = bIsSMAP ? L->position : Fvector();
+
+    // Iterate
+    for (u32 O = 0; O < objects.size(); O++)
+    {
+        CDetail& Object = *objects[O];
+        xr_vector<SlotItemVec*>& vis = list[O];
+        if (vis.empty())  
+            continue;
+
+        //Set IB, VB and decls
+        RCache.set_Geometry(Object.hw_Geom);
+
+        u32 instanceCount = 0;
+
+        //LVutner: Update the instance buffer
+        D3D11_MAPPED_SUBRESOURCE pSubRes;
+        HW.pContext->Map(currentBuffer, 0, D3D_MAP_WRITE_DISCARD, 0, &pSubRes);
+        InstanceData* c_storage = reinterpret_cast<InstanceData*>(pSubRes.pData);
+
+        Fvector4* c_ExData = nullptr;
+        void* pExtraData;
+        RCache.get_ConstantDirect(strExData, currentSize * sizeof(Fvector4), &pExtraData, 0, 0);
+        c_ExData = (Fvector4*)pExtraData;
+        VERIFY(c_ExData);
+
+        for (SlotItemVec* items : vis)
+        {
+            for (SlotItem* pInstance : *items)
+            {
+                SlotItem& Instance = *pInstance;
+
+                if (bIsSMAP && L_pos.distance_to_sqr(Instance.pos) >= cull_sqr_range)
+                    continue;
+
+                // demonized: Buggy original code, commented in this case
+                /*Instance.alpha += GoToValue(Instance.alpha, Instance.alpha_target);
+
+                float scale = 1.f;
+
+                // Sort of fade using the scale
+                // fade_distance == -1 use light_position to define "fade", anything else uses fade_distance
+                if (fade_distance <= -1)
+                    scale *= 1.0f - Instance.pos.distance_to_xz_sqr(light_position) * 0.005f;
+                else if (Instance.distance > fade_distance)
+                    scale *= 1.0f - abs(Instance.distance - fade_distance) * 0.005f;
+
+                if (scale <= 0 || Instance.alpha <= 0)
+                    break;*/
+
+                if (c_ExData)
+                    c_ExData[instanceCount].set(Instance.normal.x, Instance.normal.y, Instance.normal.z, Instance.alpha);
+
+                c_storage[instanceCount].hpb = Instance.hpb;
+                c_storage[instanceCount].scale = Instance.scale_calculated;
+                c_storage[instanceCount].pos = Instance.pos;
+                c_storage[instanceCount].hemi = Instance.c_hemi;
+
+                //Increment
+                instanceCount++;
+
+                if (instanceCount == currentSize)
+                {
+                    HW.pContext->Unmap(currentBuffer, 0);
+                    RCache.RenderInstancedIndexed(D3DPT_TRIANGLELIST, 0, 0, Object.number_vertices, 0, Object.number_indices / 3, instanceCount, 0);
+                    instanceCount = 0; //Reset
+
+                    // Remap Structured Buffer for the next batch
+                    HW.pContext->Map(currentBuffer, 0, D3D_MAP_WRITE_DISCARD, 0, &pSubRes);
+                    c_storage = reinterpret_cast<InstanceData*>(pSubRes.pData);
+
+                    // Re-fetch Constant Buffer Memory
+                    RCache.get_ConstantDirect(strExData, currentSize * sizeof(Fvector4), &pExtraData, 0, 0);
+                    c_ExData = (Fvector4*)pExtraData;
+                    VERIFY(c_ExData);
+                }
+            }
+        }
+
+        //Render remaining instances
+        if (instanceCount > 0)
+        {
+            HW.pContext->Unmap(currentBuffer, 0);
+            RCache.RenderInstancedIndexed(D3DPT_TRIANGLELIST, 0, 0, Object.number_vertices, 0, Object.number_indices / 3, instanceCount, 0);
+        }
+        else
+        {
+            // Safety: If c_storage was mapped but nothing was written, unmap it anyway
+            HW.pContext->Unmap(currentBuffer, 0);
+        }
+
+        if (ps_ssfx_grass_shadows.x <= 0)
+        {
+            if (!psDeviceFlags2.test(rsGrassShadow) || RImplementation.PHASE_NORMAL == RImplementation.phase) // phase normal without shadows
+                vis.clear_not_free();
+        }
+    }
+#else
 	Device.Statistic->RenderDUMP_DT_Count = 0;
 
 	// Matrices and offsets
@@ -188,13 +422,6 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 	u32 iOffset = 0;
 
 	vis_list& list = m_visibles[var_id];
-
-	CEnvDescriptor& desc = *g_pGamePersistent->Environment().CurrentEnv;
-	Fvector c_sun, c_ambient, c_hemi;
-	c_sun.set(desc.sun_color.x, desc.sun_color.y, desc.sun_color.z);
-	c_sun.mul(.5f);
-	c_ambient.set(desc.ambient.x, desc.ambient.y, desc.ambient.z);
-	c_hemi.set(desc.hemi_color.x, desc.hemi_color.y, desc.hemi_color.z);
 
 	// Iterate
 	for (u32 O = 0; O < objects.size(); O++)
@@ -335,7 +562,7 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 				}
 
 				// flush if nessecary
-				if (dwBatch > 0 && dwBatch < hw_BatchSize)
+				if (dwBatch > 0)
 				{
 					Device.Statistic->RenderDUMP_DT_Count += dwBatch;
 					u32 dwCNT_verts = dwBatch * Object.number_vertices;
@@ -356,4 +583,5 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 		vOffset += hw_BatchSize * Object.number_vertices;
 		iOffset += hw_BatchSize * Object.number_indices;
 	}
+#endif
 }

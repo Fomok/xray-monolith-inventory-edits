@@ -423,7 +423,11 @@ struct	v_tree
 struct        v_detail                    
 {
         float4 pos : POSITION; // (float,float,float,1)
+#ifdef USE_DX11
         float2 tc : TEXCOORD0; // texcoord
+#else
+        int4 misc : TEXCOORD0;        // (u(Q),v(Q),frac,matrix-id)
+#endif
 };
 ////////for screenspace transformation
 struct p_screen

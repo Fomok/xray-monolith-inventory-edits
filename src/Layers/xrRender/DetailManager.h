@@ -1,9 +1,6 @@
 // DetailManager.h: interface for the CDetailManager class.
 //
 //////////////////////////////////////////////////////////////////////
-
-#ifndef DetailManagerH
-#define DetailManagerH
 #pragma once
 
 #include "../../xrCore/xrpool.h"
@@ -218,10 +215,12 @@ public:
 #endif
 
 	// Hardware processor
-	ref_geom hw_Geom;
 	u32 hw_BatchSize;
+#if !defined(USE_DX11)	
+	ref_geom hw_Geom;	
 	ID3DVertexBuffer* hw_VB;
 	ID3DIndexBuffer* hw_IB;
+#endif
 	ref_constant hwc_consts;
 	ref_constant hwc_wave;
 	ref_constant hwc_wind;
@@ -234,6 +233,12 @@ public:
 	void hw_Load_Shaders();
 	void hw_Unload();
 	void hw_Render(light* L = nullptr);
+
+#if defined(USE_DX11)
+	xr_map<u32, ID3D11ShaderResourceView*> detailSRV_map;
+	xr_map<u32, ID3D11Buffer*> detailBuffer_map;
+#endif
+
 #if defined(USE_DX10) || defined(USE_DX11)
 	void hw_Render_dump(const Fvector4 &consts, const Fvector4 &wave, const Fvector4 &wind, const Fvector4& prev_wave, const Fvector4& prev_wind, u32 var_id, u32 lod_id, light* L = nullptr);
 #else	//	USE_DX10
@@ -272,5 +277,3 @@ public:
 	CDetailManager();
 	virtual ~CDetailManager();
 };
-
-#endif //DetailManagerH
