@@ -10,14 +10,14 @@
 
 #ifdef _EDITOR
 //.	#include	"ESceneClassList.h"
-	const int	dm_max_decompress	= 14;
-	class CCustomObject;
-	typedef u32	ObjClassID;
+const int	dm_max_decompress = 14;
+class CCustomObject;
+typedef u32	ObjClassID;
 
-    typedef xr_list<CCustomObject*> 		ObjectList;
-    typedef ObjectList::iterator 			ObjectIt;
-    typedef xr_map<ObjClassID,ObjectList> 	ObjectMap;
-    typedef ObjectMap::iterator 			ObjectPairIt;
+typedef xr_list<CCustomObject*> 		ObjectList;
+typedef ObjectList::iterator 			ObjectIt;
+typedef xr_map<ObjClassID, ObjectList> 	ObjectMap;
+typedef ObjectMap::iterator 			ObjectPairIt;
 
 #else
 const int dm_max_decompress = 7;
@@ -63,10 +63,10 @@ class ECORE_API CDetailManager
 {
 public:
 
-	float fade_distance = 99999;
-	Fvector light_position;
+    float fade_distance = 99999;
+    Fvector light_position;
 
-	void details_clear();
+    void details_clear();
 
 	struct SlotItem
 	{
@@ -89,129 +89,129 @@ public:
 		u8 vis_ID; // индекс в visibility списке он же тип [не качается, качается1, качается2]
 	};
 
-	DEFINE_VECTOR(SlotItem*, SlotItemVec, SlotItemVecIt);
+    DEFINE_VECTOR(SlotItem*, SlotItemVec, SlotItemVecIt);
 
-	struct SlotPart
-	{
-		// 
-		u32 id; // ID модельки
-		SlotItemVec items; // список кустиков
-		SlotItemVec r_items[3]; // список кустиков for render
-	};
+    struct SlotPart
+    {
+        // 
+        u32 id; // ID модельки
+        SlotItemVec items; // список кустиков
+        SlotItemVec r_items[3]; // список кустиков for render
+    };
 
-	enum SlotType
-	{
-		stReady = 0,
-		// Ready to use
-		stPending,
-		// Pending for decompression
+    enum SlotType
+    {
+        stReady = 0,
+        // Ready to use
+        stPending,
+        // Pending for decompression
 
-		stFORCEDWORD = 0xffffffff
-	};
+        stFORCEDWORD = 0xffffffff
+    };
 
-	struct Slot
-	{
-		// распакованый слот размером DETAIL_SLOT_SIZE
-		struct
-		{
-			u32 empty :1;
-			u32 type :1;
-			u32 frame :30;
-		};
+    struct Slot
+    {
+        // распакованый слот размером DETAIL_SLOT_SIZE
+        struct
+        {
+            u32 empty : 1;
+            u32 type : 1;
+            u32 frame : 30;
+        };
 
-		int sx, sz; // координаты слота X x Y
-		vis_data vis; // 
-		SlotPart G[dm_obj_in_slot]; // 
-		bool hidden;
+        int sx, sz; // координаты слота X x Y
+        vis_data vis; // 
+        SlotPart G[dm_obj_in_slot]; // 
+        bool hidden;
 
-		Slot()
-		{
-			frame = 0;
-			empty = 1;
-			type = stReady;
-			sx = sz = 0;
-			vis.clear();
-		}
-	};
+        Slot()
+        {
+            frame = 0;
+            empty = 1;
+            type = stReady;
+            sx = sz = 0;
+            vis.clear();
+        }
+    };
 
-	struct CacheSlot1
-	{
-		u32 empty;
-		vis_data vis;
-		Slot** slots[dm_cache1_count * dm_cache1_count];
+    struct CacheSlot1
+    {
+        u32 empty;
+        vis_data vis;
+        Slot** slots[dm_cache1_count * dm_cache1_count];
 
-		CacheSlot1()
-		{
-			empty = 1;
-			vis.clear();
-		}
-	};
+        CacheSlot1()
+        {
+            empty = 1;
+            vis.clear();
+        }
+    };
 
-	typedef xr_vector<xr_vector<SlotItemVec*>> vis_list;
-	typedef svector<CDetail*, dm_max_objects> DetailVec;
-	typedef DetailVec::iterator DetailIt;
-	typedef poolSS<SlotItem, 4096> PSS;
+    typedef xr_vector<xr_vector<SlotItemVec*>> vis_list;
+    typedef svector<CDetail*, dm_max_objects> DetailVec;
+    typedef DetailVec::iterator DetailIt;
+    typedef poolSS<SlotItem, 4096> PSS;
 public:
-	int dither [16][16];
+    int dither[16][16];
 public:
-	// swing values
-	struct SSwingValue
-	{
-		float rot1;
-		float rot2;
-		float amp1;
-		float amp2;
-		float speed;
-		void lerp(const SSwingValue& v1, const SSwingValue& v2, float factor);
-	};
+    // swing values
+    struct SSwingValue
+    {
+        float rot1;
+        float rot2;
+        float amp1;
+        float amp2;
+        float speed;
+        void lerp(const SSwingValue& v1, const SSwingValue& v2, float factor);
+    };
 
-	SSwingValue swing_desc[2];
-	SSwingValue swing_current;
-	float m_time_rot_1;
-	float m_time_rot_2;
-	float m_time_pos;
-	float m_global_time_old;
+    SSwingValue swing_desc[2];
+    SSwingValue swing_current;
+    float m_time_rot_1;
+    float m_time_rot_2;
+    float m_time_pos;
+    float m_global_time_old;
 public:
-	IReader* dtFS;
-	DetailHeader dtH;
-	DetailSlot* dtSlots; // note: pointer into VFS
-	DetailSlot DS_empty;
+    IReader* dtFS;
+    DetailHeader dtH;
+    DetailSlot* dtSlots; // note: pointer into VFS
+    DetailSlot DS_empty;
 
 public:
-	DetailVec objects;
-	vis_list m_visibles [3]; // 0=still, 1=Wave1, 2=Wave2
+    DetailVec objects;
+    vis_list m_visibles[3]; // 0=still, 1=Wave1, 2=Wave2
 
 #ifndef _EDITOR
-	xrXRC xrc;
+    xrXRC xrc;
 #endif
-	//AVO: detail draw raius
-	//CacheSlot1 					cache_level1[dm_cache1_line][dm_cache1_line];
-	//Slot*							cache		[dm_cache_line][dm_cache_line];	// grid-cache itself
-	//svector<Slot*,dm_cache_size>	cache_task;									// non-unpacked slots
-	//Slot							cache_pool	[dm_cache_size];				// just memory for slots
+    //AVO: detail draw raius
+    //CacheSlot1 					cache_level1[dm_cache1_line][dm_cache1_line];
+    //Slot*							cache		[dm_cache_line][dm_cache_line];	// grid-cache itself
+    //svector<Slot*,dm_cache_size>	cache_task;									// non-unpacked slots
+    //Slot							cache_pool	[dm_cache_size];				// just memory for slots
 
 #ifdef DETAIL_RADIUS
-	CacheSlot1** cache_level1;
-	Slot*** cache; // grid-cache itself
-	svector<Slot*, dm_max_cache_size> cache_task; // non-unpacked slots
-	Slot* cache_pool; // just memory for slots
+    CacheSlot1** cache_level1;
+    Slot*** cache; // grid-cache itself
+    svector<Slot*, dm_max_cache_size> cache_task; // non-unpacked slots
+    Slot* cache_pool; // just memory for slots
 #else
     CacheSlot1 						cache_level1[dm_cache1_line][dm_cache1_line];
-    Slot*							cache[dm_cache_line][dm_cache_line];	// grid-cache itself
+    Slot* cache[dm_cache_line][dm_cache_line];	// grid-cache itself
     svector<Slot*, dm_cache_size>	cache_task;									// non-unpacked slots
     Slot							cache_pool[dm_cache_size];				// just memory for slots*/
 #endif
 
-	int cache_cx;
-	int cache_cz;
+    int cache_cx;
+    int cache_cz;
 
-	PSS poolSI; // pool из которого выделяются SlotItem
+    PSS poolSI; // pool из которого выделяются SlotItem
 
-	void UpdateVisibleM();
-	void UpdateVisibleS();
+    void UpdateVisibleM();
+    void UpdateVisibleS();
 public:
 #ifdef _EDITOR
-	virtual ObjectList* 			GetSnapList		()=0;
+    virtual ObjectList* GetSnapList() = 0;
 #endif
 
 	// Hardware processor
@@ -240,40 +240,40 @@ public:
 #endif
 
 #if defined(USE_DX10) || defined(USE_DX11)
-	void hw_Render_dump(const Fvector4 &consts, const Fvector4 &wave, const Fvector4 &wind, const Fvector4& prev_wave, const Fvector4& prev_wind, u32 var_id, u32 lod_id, light* L = nullptr);
+    void hw_Render_dump(const Fvector4& consts, const Fvector4& wave, const Fvector4& wind, const Fvector4& prev_wave, const Fvector4& prev_wind, u32 var_id, u32 lod_id, light* L = nullptr);
 #else	//	USE_DX10
-	void hw_Render_dump(ref_constant array, u32 var_id, u32 lod_id, u32 c_base, light* L = nullptr);
+    void hw_Render_dump(ref_constant array, u32 var_id, u32 lod_id, u32 c_base, light* L = nullptr);
 #endif	//	USE_DX10
 
 public:
-	// get unpacked slot
-	DetailSlot& QueryDB(int sx, int sz);
+    // get unpacked slot
+    DetailSlot& QueryDB(int sx, int sz);
 
-	void cache_Initialize();
-	void cache_Update(int sx, int sz, Fvector& view, int limit);
-	void cache_Task(int gx, int gz, Slot* D);
-	Slot* cache_Query(int sx, int sz);
-	void cache_Decompress(Slot* D);
-	BOOL cache_Validate();
-	// cache grid to world
-	int cg2w_X(int x) { return cache_cx - dm_size + x; }
-	int cg2w_Z(int z) { return cache_cz - dm_size + (dm_cache_line - 1 - z); }
-	// world to cache grid 
-	int w2cg_X(int x) { return x - cache_cx + dm_size; }
-	int w2cg_Z(int z) { return cache_cz - dm_size + (dm_cache_line - 1 - z); }
+    void cache_Initialize();
+    void cache_Update(int sx, int sz, Fvector& view);
+    void cache_Task(int gx, int gz, Slot* D);
+    Slot* cache_Query(int sx, int sz);
+    void cache_Decompress(Slot* D);
+    BOOL cache_Validate();
+    // cache grid to world
+    int cg2w_X(int x) { return cache_cx - dm_size + x; }
+    int cg2w_Z(int z) { return cache_cz - dm_size + (dm_cache_line - 1 - z); }
+    // world to cache grid 
+    int w2cg_X(int x) { return x - cache_cx + dm_size; }
+    int w2cg_Z(int z) { return cache_cz - dm_size + (dm_cache_line - 1 - z); }
 
-	void Load();
-	void Unload();
-	void Render();
+    void Load();
+    void Unload();
+    void Render();
 
-	/// MT stuff
-	volatile u32 m_frame_calc;
-	volatile u32 m_frame_rendered;
+    /// MT stuff
+    volatile u32 m_frame_calc;
+    volatile u32 m_frame_rendered;
 
-	void __stdcall MT_CALC();
-	
-	volatile bool bWait;
+    void __stdcall MT_CALC();
 
-	CDetailManager();
-	virtual ~CDetailManager();
+    volatile bool bWait;
+
+    CDetailManager();
+    virtual ~CDetailManager();
 };

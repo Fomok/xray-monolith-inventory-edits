@@ -98,6 +98,7 @@ public:
 	virtual CUIStatic* ui_cast_static() { return this; }
 	virtual ITextureOwner* ui_cast_texture_owner() { return this; }
 	virtual CUILightAnimColorConroller* ui_cast_light_anim_color_controller() { return this; }
+    void SetNoShaderCache(bool v) { m_UIStaticItem.SetNoShaderCache(v); }
 
 protected:
 	CUILines* m_pTextControl;
@@ -161,4 +162,6 @@ public:
 	virtual CUILightAnimColorConroller* ui_cast_light_anim_color_controller() { return this; }
 
 	CUILines& TextItemControl() { return m_lines; }
+
+
 };
