@@ -1,5 +1,3 @@
-#ifndef	dx10R_Backend_Runtime_included
-#define	dx10R_Backend_Runtime_included
 #pragma once
 
 #include "StateManager/dx10StateManager.h"
@@ -277,6 +275,39 @@ IC void CBackend::Compute(UINT ThreadGroupCountX, UINT ThreadGroupCountY, UINT T
 	//	State manager may alter constants
 	constants.flush();
 	HW.pContext->Dispatch(ThreadGroupCountX,ThreadGroupCountY,ThreadGroupCountZ);
+}
+#endif
+
+#ifdef USE_DX11
+IC void CBackend::RenderInstancedIndexed(D3DPRIMITIVETYPE T_, u32 baseV, u32 startV, u32 countV, u32 startI, u32 PC, u32 instanceCount, u32 startInstanceLocation)
+{
+	D3D_PRIMITIVE_TOPOLOGY Topology = TranslateTopology(T_);
+	u32	iIndexCount = GetIndexCount(T_, PC);
+
+	//!!! HACK !!!
+	if (hs != 0 || ds != 0)
+	{
+		R_ASSERT(Topology == D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		Topology = D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST;
+	}
+
+	stat.calls++;
+	stat.verts += countV;
+	stat.polys += PC;
+
+	ApplyPrimitieTopology(Topology);
+
+	SRVSManager.Apply();
+	ApplyRTandZB();
+	ApplyVertexLayout();
+	StateManager.Apply();
+	
+	// State manager may alter constants
+	constants.flush();
+
+	HW.pContext->DrawIndexedInstanced(iIndexCount, instanceCount, startI, baseV, startInstanceLocation);
+
+	PGO(Msg("PGO:DIP:%dv/%df",countV,PC));
 }
 #endif
 
@@ -777,5 +808,3 @@ IC void CBackend::get_ConstantDirect(shared_str& n, u32 DataSize, void** pVData,
 		if (pPData) *pPData = 0;
 	}
 }
-
-#endif	//	dx10R_Backend_Runtime_included

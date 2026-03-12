@@ -15,7 +15,6 @@
 
 const int quant = 16384;
 const int c_hdr = 10;
-const int c_size = 4;
 
 static D3DVERTEXELEMENT9 dwDecl[] =
 {
@@ -32,6 +31,14 @@ struct vertHW
 };
 #pragma pack(pop)
 
+struct InstanceData
+{
+	Fvector hpb;
+	float scale;
+	Fvector pos;
+	float hemi;
+};
+
 short QC(float v)
 {
 	int t = iFloor(v * float(quant));
@@ -47,10 +54,11 @@ void CDetailManager::hw_Load()
 
 void CDetailManager::hw_Load_Geom()
 {
-	// Analyze batch-size
-	hw_BatchSize = (u32(HW.Caps.geometry.dwRegisters) - c_hdr) / c_size;
-	clamp(hw_BatchSize, (u32)0, (u32)64);
-	Msg("* [DETAILS] VertexConsts(%d), Batch(%d)", u32(HW.Caps.geometry.dwRegisters), hw_BatchSize);
+	hw_BatchSize = 50;
+
+#ifdef USE_DX11
+	hw_BatchSize = 61;
+#endif
 
 	// Pre-process objects
 	u32 dwVerts = 0;
@@ -64,6 +72,9 @@ void CDetailManager::hw_Load_Geom()
 	u32 vSize = sizeof(vertHW);
 	Msg("* [DETAILS] %d v(%d), %d p", dwVerts, vSize, dwIndices / 3);
 
+#if defined(USE_DX11)
+    // Skip
+#else
 #if !defined(USE_DX10) && !defined(USE_DX11)
 	// Determine POOL & USAGE
 	u32 dwUsage = D3DUSAGE_WRITEONLY;
@@ -92,7 +103,7 @@ void CDetailManager::hw_Load_Geom()
 			const CDetail& D = *objects[o];
 			for (u32 batch = 0; batch < hw_BatchSize; batch++)
 			{
-				u32 mid = batch * c_size;
+				u32 mid = batch;
 				for (u32 v = 0; v < D.number_vertices; v++)
 				{
 					const Fvector& vP = D.vertices[v].P;
@@ -148,16 +159,19 @@ void CDetailManager::hw_Load_Geom()
 
 	// Declare geometry
 	hw_Geom.create(dwDecl, hw_VB, hw_IB);
+#endif
 }
 
 void CDetailManager::hw_Unload()
 {
 	// Destroy VS/VB/IB
+#if !defined(USE_DX11)
 	hw_Geom.destroy();
 	HW.stats_manager.decrement_stats_vb(hw_VB);
 	HW.stats_manager.decrement_stats_ib(hw_IB);
 	_RELEASE(hw_IB);
 	_RELEASE(hw_VB);
+#endif
 }
 
 #if !defined(USE_DX10) && !defined(USE_DX11)
@@ -241,19 +255,6 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
 
 	vis_list& list = m_visibles[var_id];
 
-	Fvector c_sun, c_ambient, c_hemi;
-#ifndef _EDITOR
-	CEnvDescriptor& desc = *g_pGamePersistent->Environment().CurrentEnv;
-	c_sun.set(desc.sun_color.x, desc.sun_color.y, desc.sun_color.z);
-	c_sun.mul(.5f);
-	c_ambient.set(desc.ambient.x, desc.ambient.y, desc.ambient.z);
-	c_hemi.set(desc.hemi_color.x, desc.hemi_color.y, desc.hemi_color.z);
-#else
-	c_sun.set				(1,1,1);	c_sun.mul(.5f);
-	c_ambient.set			(1,1,1);
-	c_hemi.set				(1,1,1);
-#endif
-
 	VERIFY(objects.size()<=list.size());
 
 	// Iterate
@@ -267,7 +268,7 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
 			RCache.set_Element(Object.shader->E[lod_id]);
 			RImplementation.apply_lmaterial();
 			u32 c_base = x_array->vs.index;
-			Fvector4* c_storage = RCache.get_ConstantCache_Vertex().get_array_f().access(c_base);
+			InstanceData* c_storage = (InstanceData*)RCache.get_ConstantCache_Vertex().get_array_f().access(c_base);
 
 			u32 dwBatch = 0;
 
@@ -291,33 +292,13 @@ void CDetailManager::hw_Render_dump(ref_constant x_array, u32 var_id, u32 lod_id
 						if (!L->GMLight.is_sector_visible(RImplementation.pOutdoorSector))
 							continue;
 
-						if (L->position.distance_to_sqr(Instance.position) >= _sqr(L->range))
+						if (L->position.distance_to_sqr(Instance.pos) >= _sqr(L->range))
 							continue;
 					}
 #endif
 
-					u32 base = dwBatch * 4;
-
-					// Build matrix ( 3x4 matrix, last row - color )
-					Fmatrix& M = Instance.mRotY_calculated;
-					c_storage[base+0].set(M._11, M._21, M._31, M._41);
-					c_storage[base+1].set(M._12, M._22, M._32, M._42);
-					c_storage[base+2].set(M._13, M._23, M._33, M._43);
-
-					// Build color
-#if RENDER==R_R1
-					Fvector C;
-					C.set(c_ambient);
-					//					C.mad					(c_lmap,Instance.c_rgb);
-					C.mad(c_hemi, Instance.c_hemi);
-					C.mad(c_sun, Instance.c_sun);
-					c_storage[base + 3].set(C.x, C.y, C.z, 1.f);
-#else
-					// R2 only needs hemisphere
-					float h = Instance.c_hemi;
-					float s = Instance.c_sun;
-					c_storage[base + 3].set(s, s, s, h);
-#endif
+					c_storage[dwBatch] = {Instance.hpb, Instance.scale_calculated, Instance.pos, Instance.c_hemi};
+					
 					dwBatch ++;
 					if (dwBatch == hw_BatchSize)
 					{

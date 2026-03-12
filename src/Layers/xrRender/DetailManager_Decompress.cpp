@@ -274,29 +274,31 @@ RDEVICE.Statistic->TEST0.End		();
 			Fmatrix mScale, mXform;
 			Fbox ItemBB;
 
+			Fmatrix mRotY;
 #ifndef		DBG_SWITCHOFF_RANDOMIZE
-			Item.mRotY.rotateY(r_yaw.randF(0, PI_MUL_2));
+			mRotY.rotateY(r_yaw.randF(0, PI_MUL_2));
 #else
-			Item.mRotY.rotateY				(0);
+			mRotY.rotateY				(0);
 #endif
 
 			// Terrain Alignment
 			if (ps_ssfx_terrain_grass_align > 0)
 			{
 				// Current matrix
-				Fmatrix CurrMatrix = Item.mRotY;
+				Fmatrix CurrMatrix = mRotY;
 
 				// Align to terrain
-				Item.mRotY.j.set(terrain_normal);
-				Fvector::generate_orthonormal_basis(Item.mRotY.j, Item.mRotY.i, Item.mRotY.k);
+				mRotY.j.set(terrain_normal);
+				Fvector::generate_orthonormal_basis(mRotY.j, mRotY.i, mRotY.k);
 
 				// Apply random rotation from old matrix
-				Item.mRotY.mulB_43(CurrMatrix);
+				mRotY.mulB_43(CurrMatrix);
 			}
 
-			Item.mRotY.translate_over(Item_P);
+			Item.pos = Item_P;
+			mRotY.translate_over(Item_P);
 			mScale.scale(Item.scale, Item.scale, Item.scale);
-			mXform.mul_43(Item.mRotY, mScale);
+			mXform.mul_43(mRotY, mScale);
 			ItemBB.xform(Dobj->bv_bb, mXform);
 			Bounds.merge(ItemBB);
 
@@ -307,49 +309,24 @@ RDEVICE.Statistic->TEST0.End		();
 #endif
 #endif
 
-			// Color
-			/*
-			DetailPalette*	c_pal			= (DetailPalette*)&DS.color;
-			float gray255	[4];
-			gray255[0]						=	255.f*float(c_pal->a0)/15.f;
-			gray255[1]						=	255.f*float(c_pal->a1)/15.f;
-			gray255[2]						=	255.f*float(c_pal->a2)/15.f;
-			gray255[3]						=	255.f*float(c_pal->a3)/15.f;
-			*/
-			//float c_f						=	1.f;	//Interpolate		(gray255,x,z,d_size)+.5f;
-			//int c_dw						=	255;	//iFloor			(c_f);
-			//clamp							(c_dw,0,255);
-			//Item.C_dw						=	color_rgba		(c_dw,c_dw,c_dw,255);
-#if RENDER==R_R1
-			Item.c_rgb.x = DS.r_qclr(DS.c_r, 15);
-			Item.c_rgb.y = DS.r_qclr(DS.c_g, 15);
-			Item.c_rgb.z = DS.r_qclr(DS.c_b, 15);
-#endif
-			Item.c_hemi = DS.r_qclr(DS.c_hemi, 15);
-			Item.c_sun = DS.r_qclr(DS.c_dir, 15);
-
-			//? hack: RGB = hemi
-			//? Item.c_rgb.add					(ps_r__Detail_rainbow_hemi*Item.c_hemi);
+			Item.c_hemi = DS.r_qclr(DS.c_hemi, 15)+EPS;
+			Item.c_hemi = DS.r_qclr(DS.c_dir, 15)>0.07f ? Item.c_hemi :
+-Item.c_hemi;
 
 			// Vis-sorting
 #ifndef		DBG_SWITCHOFF_RANDOMIZE
-			if (!UseVS())
-			{
-				// Always still on CPU pipe
-				Item.vis_ID = 0;
-			}
-			else
-			{
-				if (Dobj->m_Flags.is(DO_NO_WAVING)) Item.vis_ID = 0;
-				else
-				{
-					if (::Random.randI(0, 3) == 0) Item.vis_ID = 2; // Second wave
-					else Item.vis_ID = 1; // First wave
-				}
-			}
+            if (Dobj->m_Flags.is(DO_NO_WAVING)) Item.vis_ID = 0;
+            else
+            {
+                if (::Random.randI(0, 3) == 0) Item.vis_ID = 2; // Second wave
+                else Item.vis_ID = 1; // First wave
+            }
 #else
 			Item.vis_ID = 0;
 #endif
+
+			mRotY.getHPB(Item.hpb);
+
 			// Save it
 			D.G[index].items.push_back(ItemP);
 		}

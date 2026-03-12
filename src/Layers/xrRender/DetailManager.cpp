@@ -82,11 +82,12 @@ CDetailManager::CDetailManager()
 {
 	dtFS = 0;
 	dtSlots = 0;
-	soft_Geom = 0;
-	hw_Geom = 0;
 	hw_BatchSize = 0;
+#if !defined(USE_DX11)
+	hw_Geom = 0;
 	hw_VB = 0;
 	hw_IB = 0;
+#endif
 	m_time_rot_1 = 0;
 	m_time_rot_2 = 0;
 	m_time_pos = 0;
@@ -149,7 +150,8 @@ CDetailManager::~CDetailManager()
 	{
 		FS.r_close(dtFS);
 		dtFS = 0;
-	}
+	}	
+
 #ifdef DETAIL_RADIUS
 	for (u32 i = 0; i < dm_cache_size; ++i)
 		cache_pool[i].~Slot();
@@ -225,8 +227,7 @@ void CDetailManager::Load()
 	bwdithermap(2, dither);
 
 	// Hardware specific optimizations
-	if (UseVS()) hw_Load();
-	else soft_Load();
+	hw_Load();
 
 	// swing desc
 	// normal
@@ -256,8 +257,7 @@ void CDetailManager::Unload()
 	if (I != Device.seqParallelRender.end())
 		Device.seqParallelRender.erase(I);
 
-	if (UseVS()) hw_Unload();
-	else soft_Unload();
+	hw_Unload();
 
 	for (DetailIt it = objects.begin(); it != objects.end(); it++)
 	{
@@ -270,6 +270,18 @@ void CDetailManager::Unload()
 	m_visibles[2].clear();
 	FS.r_close(dtFS);
 	dtFS = 0;
+
+    //LVutner: Release buffers	
+#if defined(USE_DX11)
+    for (auto& it : detailBuffer_map)
+        _RELEASE(it.second);
+    detailBuffer_map.clear();
+
+
+    for (auto& its : detailSRV_map)
+        _RELEASE(its.second);
+    detailSRV_map.clear();
+#endif	
 }
 
 extern ECORE_API float r_ssaDISCARD;
@@ -382,6 +394,7 @@ void CDetailManager::UpdateVisibleM()
 							float scale = psDeviceFlags2.test(rsNoScale)
 								              ? (Item.scale)
 								              : (Item.scale * alpha_i);
+							Item.scale_calculated = scale;
 							float ssa = psDeviceFlags2.test(rsNoScale) ? scale : scale * scale * Rq_drcp;
 							if (ssa < r_ssaDISCARD)
 							{
@@ -390,12 +403,6 @@ void CDetailManager::UpdateVisibleM()
 							}
 							u32 vis_id = 0;
 							if (ssa > r_ssaCHEAP) vis_id = Item.vis_ID;
-
-							Fmatrix& M = Item.mRotY_calculated;
-							M = Item.mRotY;
-							M._11*=scale; M._21*=scale; M._31*=scale;
-							M._12*=scale; M._22*=scale; M._32*=scale;
-							M._13*=scale; M._23*=scale; M._33*=scale;
 
 							sp.r_items[vis_id].push_back(*siIT);
 							
@@ -453,7 +460,12 @@ void CDetailManager::Render()
 	g_pGamePersistent->m_pGShaderConstants->m_blender_mode.w = 1.0f; //--#SM+#-- Флaa нaчaлa ?aндa?a o?aвu [begin of grass render]
 
 #ifndef _EDITOR
-	float factor = g_pGamePersistent->Environment().wind_strength_factor;
+	float _factor = g_pGamePersistent->Environment().wind_strength_factor;
+	static float factor = _factor;
+	static float lastTime = 0.0f;
+	float fTimeDelta = Device.fTimeDelta - lastTime; fTimeDelta *= 0.5f;
+	factor += clampr(_factor - factor, -fTimeDelta, fTimeDelta);
+	lastTime = Device.fTimeDelta;
 #else
 	float factor			= 0.3f;
 #endif
@@ -461,8 +473,7 @@ void CDetailManager::Render()
 
 	RCache.set_CullMode(CULL_NONE);
 	RCache.set_xform_world(Fidentity);
-	if (UseVS()) hw_Render();
-	else soft_Render();
+	hw_Render();
 	RCache.set_CullMode(CULL_CCW);
 
 	g_pGamePersistent->m_pGShaderConstants->m_blender_mode.w = 0.0f; //--#SM+#-- Флaa eонцa ?aндa?a o?aвu [end of grass render]	
