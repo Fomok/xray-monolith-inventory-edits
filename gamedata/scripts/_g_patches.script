@@ -712,10 +712,11 @@ _G.log = function(str)
     end
 end
 
--- Heap based spairs
+-- Min-Heap based spairs
 -- Supports early break without sorting whole table
--- Faster retrieval of the first item but might be slower overall than table.sort solution
-_G.spairs = function(t, order)
+-- Faster retrieval of the first item
+_G.nil_func = function() return nil end
+_G.hspairs = function(t, order)
     -- collect the keys
     local keys = {}
     local n = 0
@@ -726,7 +727,7 @@ _G.spairs = function(t, order)
 
     -- Return if table is empty
     if n == 0 then
-    	return function() return nil end
+    	return nil_func
     end
 
     -- If there is only one item, very simple iterator that returns the first item
@@ -803,6 +804,82 @@ _G.spairs = function(t, order)
         return best_key, t[best_key]
     end
 end
+
+-- Max-Heap sort, behaves identical to table.sort
+_G.heapsort = function(t, order)
+    local n = #t
+    if n <= 1 then return end
+
+    -- Max-Heap Sift Down
+    local sift_down
+    if order then
+    	sift_down = function(root, end_idx)
+	        while root * 2 <= end_idx do
+	            local child = root * 2
+	            local swap = root
+	            
+	            -- If order exists, we use it. 
+	            -- To build a Max-Heap for ascending order, we swap if child > swap
+	            if order(t[child], t[swap]) == false then 
+                    swap = child 
+                end
+                if child + 1 <= end_idx and order(t[child + 1], t[swap]) == false then 
+                    swap = child + 1 
+                end
+
+	            if swap == root then break end
+	            t[root], t[swap] = t[swap], t[root]
+	            root = swap
+	        end
+	    end
+    else
+    	sift_down = function(root, end_idx)
+	        while root * 2 <= end_idx do
+	            local child = root * 2
+	            local swap = root
+	            
+	            -- Default ascending (parents > children)
+                if t[child] > t[swap] then 
+                    swap = child 
+                end
+                if child + 1 <= end_idx and t[child + 1] > t[swap] then 
+                    swap = child + 1 
+                end
+
+	            if swap == root then break end
+	            t[root], t[swap] = t[swap], t[root]
+	            root = swap
+	        end
+	    end
+	end
+
+    -- Build the Heap: O(N)
+    for i = math.floor(n / 2), 1, -1 do
+        sift_down(i, n)
+    end
+
+    -- Sort (Extract max and move to end)
+    for i = n, 2, -1 do
+        -- Move current max (root) to the end of the unsorted portion
+        t[1], t[i] = t[i], t[1]
+        -- Sift down the new root in the reduced heap
+        sift_down(1, i - 1)
+    end
+end
+
+-- Replace spairs with hspairs
+-- table.sort with heapsort
+-- Can you guess why in Anomaly's LuaJIT they are faster? (100000 items run in us)
+-- spairs comparator 94795.9765625
+-- hspairs comparator 43937.91796875
+-- spairs 22768.982421875
+-- hspairs 13501.509765625 
+-- table.sort comparator 55890.84765625
+-- heapsort comparator 20329.314453125
+-- table.sort 23911.232421875
+-- heapsort 18591.03515625
+_G.spairs = hspairs
+table.sort = heapsort
 
 -- Always return a copy of these global variables to prevent modification in scripts
 local constTable = {
