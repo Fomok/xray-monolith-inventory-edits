@@ -712,6 +712,98 @@ _G.log = function(str)
     end
 end
 
+-- Heap based spairs
+-- Supports early break without sorting whole table
+-- Faster retrieval of the first item but might be slower overall than table.sort solution
+_G.spairs = function(t, order)
+    -- collect the keys
+    local keys = {}
+    local n = 0
+    for k in pairs(t) do
+    	n = n + 1
+        keys[n] = k
+    end
+
+    -- Return if table is empty
+    if n == 0 then
+    	return function() return nil end
+    end
+
+    -- If there is only one item, very simple iterator that returns the first item
+    if n == 1 then
+        local done = false
+        return function()
+            if done then return nil end
+            done = true
+            return keys[1], t[keys[1]]
+        end
+    end
+
+    local sift_down
+    -- Use order if its provided
+    if order then
+        sift_down = function(idx, end_idx)
+            local root = idx
+            while root * 2 <= end_idx do
+                local child = root * 2
+                local swap = root
+                
+                if order(t, keys[child], keys[swap]) then 
+                    swap = child 
+                end
+                if child + 1 <= end_idx and order(t, keys[child + 1], keys[swap]) then 
+                    swap = child + 1 
+                end
+                
+                if swap == root then break end
+                keys[root], keys[swap] = keys[swap], keys[root]
+                root = swap
+            end
+        end
+    else
+        -- Default alphanumeric sort fallback
+        sift_down = function(idx, end_idx)
+            local root = idx
+            while root * 2 <= end_idx do
+                local child = root * 2
+                local swap = root
+                
+                if keys[child] < keys[swap] then 
+                    swap = child 
+                end
+                if child + 1 <= end_idx and keys[child + 1] < keys[swap] then 
+                    swap = child + 1 
+                end
+                
+                if swap == root then break end
+                keys[root], keys[swap] = keys[swap], keys[root]
+                root = swap
+            end
+        end
+    end
+
+    -- Build the Heap: O(N)
+    for i = math.floor(n / 2), 1, -1 do
+        sift_down(i, n)
+    end
+
+    -- return the iterator function
+    return function()
+        if n == 0 then return nil end
+        
+        local best_key = keys[1]
+        keys[1] = keys[n]
+        keys[n] = nil
+        n = n - 1
+        
+        if n > 0 then
+            sift_down(1, n)
+        end
+        
+        return best_key, t[best_key]
+    end
+end
+
 -- Always return a copy of these global variables to prevent modification in scripts
 local constTable = {
 	VEC_ZERO = function() return vector():set(0,0,0) end,

@@ -626,12 +626,14 @@ function pda.calculate_rankings()
 	
 	-- check all stalker server objects
 	for i, _ in pairs(db.offline_objects) do
-		local se_obj = sim:object(i)
-		if (se_obj and IsStalker(nil,se_obj:clsid()) and se_obj:alive() and se_obj:community() ~= "zombied" and se_obj:community() ~= "trader") then
-			-- Check if object has a story id, if it does they are probably unique
-			local sid = story_objects.story_id_by_object_id[se_obj.id]
-			if not (sid) then
-				t[se_obj.id] = se_obj:rank()
+		if i ~= 65535 then
+			local se_obj = sim:object(i)
+			if (se_obj and IsStalker(nil,se_obj:clsid()) and se_obj:alive() and se_obj:community() ~= "zombied" and se_obj:community() ~= "trader") then
+				-- Check if object has a story id, if it does they are probably unique
+				local sid = story_objects.story_id_by_object_id[se_obj.id]
+				if not (sid) then
+					t[se_obj.id] = se_obj:rank()
+				end
 			end
 		end
 	end
