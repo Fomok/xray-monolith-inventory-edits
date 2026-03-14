@@ -2133,14 +2133,23 @@ void CActor::renderable_Render(IDSGraphManager* DM)
 {
 	VERIFY(_valid(XFORM()));
 
+    static auto canRenderLegs = [](CHolderCustom* m_holder)
+    {
+        return g_player_hud && !m_holder && (legs_in_demo_record || pDemoRecords.empty()) && showActorBody == 0;
+    };
+
 	if (cam_active == eacFirstEye)
 	{
 		if (::Render->active_phase() == 0) // can render first person body here
 		{
-			if (g_player_hud && !m_holder && (legs_in_demo_record || pDemoRecords.empty()) && showActorBody == 0)
+			if (canRenderLegs(m_holder))
 			{
 				g_player_hud->render_legs(DM);
 			}
+            else
+            {
+                XFORM().set(XFORMPrev);
+            }
 
             if (showActorBody == 1 || showActorBody == 2)
             {

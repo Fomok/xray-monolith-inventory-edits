@@ -193,6 +193,7 @@ extern BOOL hud_frequent_updates;
 extern BOOL lua_use_functor_cache;
 
 extern float legs_fwd_offset;
+extern float legs_spine_offset_y;
 extern BOOL legs_in_demo_record;
 
 extern CrosshairSettings g_crosshair_camera_near;
@@ -2712,6 +2713,7 @@ void CCC_RegisterCommands()
 	CMD1(CCC_FreezeTime, "freeze_time");
 
     CMD4(CCC_Float, "g_legs_fwd_offset", &legs_fwd_offset, -2.0f, 2.0f);
+    CMD4(CCC_Float, "g_legs_spine_offset_y", &legs_spine_offset_y, -1.0f, 1.0f);
     CMD4(CCC_Integer, "g_legs_in_demo_record", &legs_in_demo_record, 0, 1);
 
 	CMD3(CCC_Mask, "g_firepos", &psActorFlags, AF_FIREPOS);

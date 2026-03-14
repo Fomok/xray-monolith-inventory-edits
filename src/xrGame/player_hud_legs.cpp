@@ -124,6 +124,7 @@ bool player_legs_controller::ensure_model(const shared_str& sect, const shared_s
 }
 
 // clean up later
+float legs_spine_offset_y = 0.1f;
 void player_legs_controller::copy_bones_from_actor(CActor* actor)
 {
     if (!actor || !m_model)
@@ -145,62 +146,47 @@ void player_legs_controller::copy_bones_from_actor(CActor* actor)
         m_model->LL_GetData(legs_root).m2b_transform);
 
     u16 bone_count = m_model->LL_BoneCount();
-    for (u16 i = 0; i < bone_count; ++i)
+    if (bone_count == actor_K->LL_BoneCount())
     {
-        if (i == legs_root)
-            continue;
-
-        LPCSTR bone_name = m_model->LL_BoneName_dbg(i);
-        u16 actor_bone_id = actor_K->LL_BoneID(bone_name);
-
-        if (actor_bone_id == BI_NONE)
-            continue;
-
-        CBoneInstance& src = actor_K->LL_GetBoneInstance(actor_bone_id);
-        CBoneInstance& dst = m_model->LL_GetBoneInstance(i);
-
-        dst.mTransform.set(src.mTransform);
-        dst.mRenderTransform.mul_43(dst.mTransform,
-            m_model->LL_GetData(i).m2b_transform);
-    }
-
-    for (u16 i = 0; i < bone_count; ++i)
-    {
-        if (i == legs_root)
-            continue;
-
-        LPCSTR bone_name = m_model->LL_BoneName_dbg(i);
-        u16 actor_bone_id = actor_K->LL_BoneID(bone_name);
-
-        if (actor_bone_id == BI_NONE)
+        for (u16 i = 0; i < bone_count; ++i)
         {
-            CBoneInstance& dst = m_model->LL_GetBoneInstance(i);
-            dst.mTransform.identity();
-            dst.mRenderTransform.mul_43(dst.mTransform,
-                m_model->LL_GetData(i).m2b_transform);
+            m_model->LL_GetTransform(i).set(actor_K->LL_GetTransform(i));
+            m_model->LL_GetTransform_R(i).set(actor_K->LL_GetTransform_R(i));
         }
     }
-
-    u16 bone_id = m_model->LL_BoneID("bip01_head");
-    if (bone_id != BI_NONE)
+    else
     {
-        m_model->LL_SetBoneVisible(bone_id, false, true);
-    }
-
-    bone_id = m_model->LL_BoneID("bip01_l_upperarm");
-    if (bone_id != BI_NONE)
-    {
-        m_model->LL_SetBoneVisible(bone_id, false, true);
-    }
-
-    bone_id = m_model->LL_BoneID("bip01_r_upperarm");
-    if (bone_id != BI_NONE)
-    {
-        m_model->LL_SetBoneVisible(bone_id, false, true);
+        for (auto& [bonename, ID] : *m_model->LL_Bones())
+        {
+            auto BoneID = actor_K->LL_BoneID(bonename);
+            if (BoneID != BI_NONE)
+            {
+                m_model->LL_GetTransform(ID).set(actor_K->LL_GetTransform(BoneID));
+                m_model->LL_GetTransform_R(ID).set(actor_K->LL_GetTransform_R(BoneID));
+            }
+        }
     }
     
+    if (auto BoneID = m_model->LL_BoneID("bip01_spine"); BoneID != BI_NONE)
+    {
+        auto& BoneInstance = m_model->LL_GetData(BoneID);
+        auto& transform = m_model->LL_GetTransform(BoneInstance.GetParentID());
+        transform.c.y += legs_spine_offset_y;
+        m_model->Bone_Calculate(&BoneInstance, &transform);
+    }
+
+    static LPCSTR bonesToHide[] = {"bip01_neck", "bip01_l_upperarm", "bip01_r_upperarm" };
+    for (const auto& bone : bonesToHide)                                                 
+    {                                                                                    
+        u16 bone_id = m_model->LL_BoneID(bone);
+        if (bone_id != BI_NONE)
+        {
+            m_model->LL_SetBoneVisible(bone_id, false, true);
+        }
+    }
 }
 
+float legs_fwd_offset = -0.6f;
 void player_legs_controller::update(CActor* actor)
 {
     if (!g_legs_enabled || !actor)
@@ -227,9 +213,23 @@ void player_legs_controller::update(CActor* actor)
         return;
 
     copy_bones_from_actor(actor);
+
+    m_legs_transform.set(actor->XFORM());
+
+    Fvector fwd;
+    fwd.set(m_legs_transform.k);
+    fwd.y = 0.f;
+    fwd.normalize_safe();
+
+    float offset = m_fwd_offset.has_value() ? m_fwd_offset.value() : legs_fwd_offset;
+    m_legs_transform.c.mad(fwd, offset);
+
+    // Move actor's XFORM for correct shadow placement
+    actor->XFORMPrev.set(actor->XFORM());
+    actor->XFORM().set(m_legs_transform);
 }
 
-float legs_fwd_offset = -0.6f;
+
 void player_legs_controller::render(IDSGraphManager* DM)
 {
     if (!g_legs_enabled || !m_model)
@@ -245,17 +245,7 @@ void player_legs_controller::render(IDSGraphManager* DM)
 
     IRenderVisual* visual = m_model->dcast_RenderVisual();
     if (!visual)
-        return;
-
-    m_legs_transform.set(actor->XFORM());
-
-    Fvector fwd;
-    fwd.set(m_legs_transform.k);
-    fwd.y = 0.f;
-    fwd.normalize_safe();
-
-    float offset = m_fwd_offset.has_value() ? m_fwd_offset.value() : legs_fwd_offset;
-    m_legs_transform.c.mad(fwd, offset);
+        return;    
 
     DM->add_Dynamic(visual, &m_legs_transform);
 }
