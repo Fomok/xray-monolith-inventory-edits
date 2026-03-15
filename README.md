@@ -237,6 +237,12 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.03.15h1**
+
+Main and MT:
+  * Fixed Interaction Dot Marks issue when legs are enabled
+  * Fix spazzing shadow of legs in shadow phase, fix wrong placement of active item
+
 **2026.03.15**
 
 Main:

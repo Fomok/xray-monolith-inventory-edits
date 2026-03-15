@@ -2164,8 +2164,25 @@ void CActor::renderable_Render(IDSGraphManager* DM)
 		{
             if (canRenderLegs(m_holder))
             {
+                Fvector fwd = XFORM().k;
+                fwd.y = 0.f;
+                fwd.normalize_safe();
+
+                Fvector diff = XFORM().c;
+                float m = diff.sub(XFORMShadow.c).magnitude();
+
+                // Move actor body to legs
                 XFORM().set(XFORMShadow);
-            }
+                Visual()->dcast_PKinematics()->CalculateBones(TRUE);
+
+                // Move active item
+                PIItem pItem = inventory().ActiveItem();
+                if (pItem)
+                {
+                    auto& v = pItem->object();
+                    v.XFORM().c.mad(fwd, -m);
+                }
+            }                        
 
 			inherited::renderable_Render(DM);
 			if ((IsFocused() || (!(IsFocused() && ((!m_holder) ||
