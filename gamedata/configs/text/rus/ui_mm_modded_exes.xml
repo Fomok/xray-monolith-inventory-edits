@@ -662,6 +662,9 @@
 	<string id="ui_mm_modded_exes_gameplay_gameplay_general_g_legs_spine_offset_y">
 		<text>¬ертикальное смещение позвоночника (g_legs_spine_offset_y)</text>
 	</string>
+	<string id="ui_mm_modded_exes_gameplay_gameplay_general_disable_actor_body_rotation_delay">
+		<text>ћгновенный поворот модели игрока (disable_actor_body_rotation_delay)</text>
+	</string>
 
 	<!-- Aim -->
 	<string id="ui_mm_menu_aim">
