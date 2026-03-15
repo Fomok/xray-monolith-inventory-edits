@@ -2994,6 +2994,9 @@ void CWeapon::modify_holder_params(float& range, float& fov) const
 
 bool CWeapon::render_item_ui_query()
 {
+    if (!m_pInventory)
+        return false;
+
 	bool b_is_active_item = (m_pInventory->ActiveItem() == this);
 	bool res = b_is_active_item && IsZoomed() && ZoomHideCrosshair() && ZoomTexture() && !IsRotatingToZoom();
 	return res;
