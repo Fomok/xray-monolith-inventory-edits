@@ -113,7 +113,7 @@ public:
 	virtual CPHDestroyable* ph_destroyable();
 	CHolderCustom* Holder() { return m_holder; }
 
-    Fmatrix XFORMPrev;
+    Fmatrix XFORMShadow;
 public:
 
 	virtual void Load(LPCSTR section);

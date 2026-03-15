@@ -2146,10 +2146,6 @@ void CActor::renderable_Render(IDSGraphManager* DM)
 			{
 				g_player_hud->render_legs(DM);
 			}
-            else
-            {
-                XFORM().set(XFORMPrev);
-            }
 
             if (showActorBody == 1 || showActorBody == 2)
             {
@@ -2166,6 +2162,11 @@ void CActor::renderable_Render(IDSGraphManager* DM)
 		}
 		else if (AllowActorShadow()) // render actor shadow
 		{
+            if (canRenderLegs(m_holder))
+            {
+                XFORM().set(XFORMShadow);
+            }
+
 			inherited::renderable_Render(DM);
 			if ((IsFocused() || (!(IsFocused() && ((!m_holder) ||
 				(m_holder && m_holder->allowWeapon() && m_holder->HUDView()))))))
