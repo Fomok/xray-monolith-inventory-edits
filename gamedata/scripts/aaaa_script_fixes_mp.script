@@ -785,6 +785,15 @@ function actor_on_first_update_register_callbacks()
 	RegisterScriptCallback("server_object_on_register", server_object_on_register_remove_stale_data)
 end
 
+-- Perform luagc cleanup
+function luagc_cleanup()
+	printf("~[luagc_cleanup] collectgarbage before=%sKb",collectgarbage("count")*1024)
+	collectgarbage("collect")
+	collectgarbage("collect")
+	if jit and jit.flush then jit.flush() end
+	printf("~[luagc_cleanup] collectgarbage after=%sKb",collectgarbage("count")*1024)
+end
+
 function on_game_start()
 	RegisterScriptCallback("actor_on_first_update", actor_on_first_update_calculate_rankings)
 	RegisterScriptCallback("actor_on_first_update", actor_on_first_update_register_callbacks)
@@ -795,4 +804,6 @@ function on_game_start()
 	
 	RegisterScriptCallback("npc_on_update", npc_on_update_force_trader_update)
 	RegisterScriptCallback("anomaly_on_before_activate", anomaly_on_before_activate_pathfinding)
+
+	RegisterScriptCallback("on_loading_screen_key_prompt", luagc_cleanup)
 end
