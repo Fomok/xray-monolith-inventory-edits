@@ -187,61 +187,42 @@ void CDetailManager::cache_Update(int v_x, int v_z, Fvector& view)
             float bestDistances[dm_max_decompress];
             std::fill_n(bestDistances, dm_max_decompress, flt_max);
 
-            float currentWorstBest = flt_max;
-            u32 worstBestIdx = 0;
+            auto bestDistancesBegin = std::begin(bestDistances);
+            auto bestDistancesEnd = std::end(bestDistances);
+            ptrdiff_t maxIdx = 0;
 
-            if (cache_task.size() > 0)
+            for (u32 i = 0, size = cache_task.size(); i < size; ++i)
             {
-                for (u32 i = 0, size = cache_task.size(); i < size; ++i)
+                // Gain access to data
+                Slot* S = cache_task[i];
+                VERIFY(stPending == S->type);
+
+                // Estimate
+                Fvector C;
+                S->vis.box.getcenter(C);
+                float D = view.distance_to_sqr(C);
+
+                // Select
+                if (D < bestDistances[maxIdx])
                 {
-                    // Gain access to data
-                    Slot* S = cache_task[i];
-                    VERIFY(stPending == S->type);
+                    bestDistances[maxIdx] = D;
+                    bestIndexes[maxIdx] = i;
 
-                    // Estimate
-                    Fvector C;
-                    S->vis.box.getcenter(C);
-                    float D = view.distance_to_sqr(C);
-
-                    // Select
-                    if (D < currentWorstBest)
-                    {
-                        bestDistances[worstBestIdx] = D;
-                        bestIndexes[worstBestIdx] = i;
-
-                        // Find the new worst among our top 7
-                        currentWorstBest = bestDistances[0];
-                        worstBestIdx = 0;
-                        for (u32 j = 1; j < dm_max_decompress; ++j)
-                        {
-                            if (bestDistances[j] > currentWorstBest)
-                            {
-                                currentWorstBest = bestDistances[j];
-                                worstBestIdx = j;
-                            }
-                        }
-                    }
+                    const auto maxIt = std::max_element(bestDistancesBegin, bestDistancesEnd);
+                    maxIdx = std::distance(bestDistancesBegin, maxIt);
                 }
+            }
 
-                xr_sort(bestIndexes, bestIndexes + dm_max_decompress, std::greater<u32>());
+            std::sort(bestIndexes, bestIndexes + dm_max_decompress);
 
-                for (u32 i = 0; i < dm_max_decompress; ++i)
+            for (int i = dm_max_decompress - 1; i >= 0; --i)
+            {
+                const u32 bestId = bestIndexes[i];
+                if (bestId != invalidIndex)
                 {
-                    u32 idx = bestIndexes[i];
-                    if (idx == u32(-1) || idx >= cache_task.size()) continue;
-
-                    cache_Decompress(cache_task[idx]);
-
-                    // Optimized Removal (Swap and Pop)
-                    // We don't need complex index tracking if we sort DESCENDING
-                    // AND we check if the item we are swapping from the back was already processed.
-                    u32 lastIdx = cache_task.size() - 1;
-
-                    if (idx != lastIdx)
-                    {
-                        cache_task[idx] = cache_task[lastIdx];
-                    }
-                    cache_task.pop_back();
+                    // Decompress and remove task
+                    cache_Decompress(cache_task[bestId]);
+                    cache_task.erase(bestId);
                 }
             }
         }
