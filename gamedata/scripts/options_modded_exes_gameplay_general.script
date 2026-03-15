@@ -30,4 +30,9 @@ PAGE = page {
 		def = -0.6,
 		step = 0.01,
 	},
+	track {
+		id = "g_legs_spine_offset_y",
+		def = 0.1,
+		step = 0.01,
+	},
 }

@@ -237,6 +237,33 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.03.15**
+
+Main:
+  * Backport from MT: SSS phase_ssfx_sss_ext add more safety
+
+Main and MT:
+  * Legs rendering improvements
+    * Code cleanup
+    * `bip01_spine` is attached to pelvis with optional y offset `g_legs_spine_offset_y`, default 0.1
+    * Hiding neck instead of head
+    * Correct player shadow placement when legs are enabled
+  * Min-Heap based `spairs` iterator
+    * Supports early break without sorting whole table
+    * Faster retrieval of the first item
+  * Max-Heap based replacement of `table.sort`, faster in LuaJIT environment, esp. with custom comparator
+  * disable `alife():object(id)` invalid id spam on `pda.calculate_rankings`
+  * leer-h: Command to disable actor body/legs model rotation delay. Functionality to load new animations for Actor\NPC without editing the existing stalker_animation.omf or including new omf's in the model's motion refs (https://github.com/themrdemonized/xray-monolith/pull/457)
+  * knallpsi: UI optimization, crc32 replacement (https://github.com/themrdemonized/xray-monolith/pull/463)
+  * GhenTuong:
+    * CWeaponStatMgun: Add camera effect when shooting and hand model/animation (https://github.com/themrdemonized/xray-monolith/pull/464)
+    * ltx_help_ex.script edit for WeaponStatMgun and Projector (https://github.com/themrdemonized/xray-monolith/pull/471)
+
+MT:
+  * nullptr check in `CAgentManagerPropertyEvaluatorEnemy::_value_type CAgentManagerPropertyEvaluatorEnemy::evaluate()`
+  * Alife registry uses `sparse_map` data structure for faster insertion, removal and iteration
+  * knallpsi: Details cache update optimization (https://github.com/themrdemonized/xray-monolith/pull/462)
+
 **2026.03.10**
 
 MT:
