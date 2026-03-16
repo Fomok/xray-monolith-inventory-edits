@@ -237,6 +237,11 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.03.16**
+
+Main and MT:
+  * Fixed potential crash in spairs if item was deleted from a table while iterating
+
 **2026.03.15h1**
 
 Main and MT:
