@@ -240,7 +240,14 @@ How to compile exes:
 **2026.03.16**
 
 Main and MT:
-  * Fixed potential crash in spairs if item was deleted from a table while iterating
+  * LuaJIT increase memory allocation to 512MB
+  * Fixed potential crash in `spairs` if item was deleted from a table while iterating
+  * Stricter check for nil in `spairs` when ordering
+  * Replace only `__index` in `_g` metatable for always returning a copy of `VEC_ZERO`, `VEC_X`, `VEC_Y`, `VEC_Z`
+
+MT:
+  * Revert "Merge pull request #462 from knallpsi/detail-cache-optimization", needs further testing
+  * Revert `Alife registry uses sparse_map data structure for faster insertion, removal and iteration`, can cause random bugs
 
 **2026.03.15h1**
 
