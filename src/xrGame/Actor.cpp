@@ -260,6 +260,7 @@ CActor::CActor() : CEntityAlive(), current_ik_cam_shift(0)
 
 CActor::~CActor()
 {
+    m_legs_controller.destroy();
 	xr_delete(m_location_manager);
 	xr_delete(m_memory);
 	xr_delete(game_news_registry);
@@ -526,6 +527,8 @@ void CActor::Load(LPCSTR section)
 	m_sInventoryBoxUseAction = "inventory_box_use";
 	//---------------------------------------------------------------------
 	m_sHeadShotParticle = READ_IF_EXISTS(pSettings, r_string, section, "HeadShotParticle", 0);
+
+    m_legs_controller.destroy();
 }
 
 void CActor::set_actor_box_y_offset(u32 box_num, float offset)
@@ -1837,6 +1840,8 @@ void CActor::shedule_Update(u32 DT)
 		g_cl_ValidateMState(dt, mstate_wishful);
 		g_SetAnimation(mstate_real);
 
+        m_legs_controller.update(this);
+
 		// Check for game-contacts
 		Fvector C;
 		float R;
@@ -2144,7 +2149,7 @@ void CActor::renderable_Render(IDSGraphManager* DM)
 		{
 			if (canRenderLegs(m_holder))
 			{
-				g_player_hud->render_legs(DM);
+				m_legs_controller.render(DM);
 			}
 
             if (showActorBody == 1 || showActorBody == 2)
@@ -2171,23 +2176,26 @@ void CActor::renderable_Render(IDSGraphManager* DM)
                 Fvector diff = XFORM().c;
                 float m = diff.sub(XFORMShadow.c).magnitude();
 
-                // Move actor body to legs
-                XFORM().set(XFORMShadow);
-                Visual()->dcast_PKinematics()->CalculateBones(TRUE);
+                // Render full body from legs controller without hiding bones for shadow correctness
+                // Solves potential issues with manipulating actor's XFORM
+                m_legs_controller.update(this, true);
+                m_legs_controller.render(DM);
 
+                // Ideally the active item also should be duplicated but leave this for now
                 // Move active item
                 PIItem pItem = inventory().ActiveItem();
                 if (pItem)
                 {
                     auto& v = pItem->object();
                     v.XFORM().c.mad(fwd, -m);
+                    v.renderable_Render(DM);
                 }
-            }                        
-
-			inherited::renderable_Render(DM);
-			if ((IsFocused() || (!(IsFocused() && ((!m_holder) ||
-				(m_holder && m_holder->allowWeapon() && m_holder->HUDView()))))))
-				CInventoryOwner::renderable_Render(DM);
+            }
+            else
+            {
+                inherited::renderable_Render(DM);
+                CInventoryOwner::renderable_Render(DM);
+            }			
 		}
 	}
 

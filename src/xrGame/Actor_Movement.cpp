@@ -413,7 +413,7 @@ void CActor::g_Orientate(u32 mstate_rl, float dt)
 	// lerp angle for "effect" and capture torso data from camera
 	float scale_yaw_offset = 1.0f;
 
-	if (cam_active == eacFirstEye && g_player_hud && g_player_hud->m_legs_controller.is_active()) {
+	if (cam_active == eacFirstEye && g_player_hud && m_legs_controller.is_active()) {
 		scale_yaw_offset = 0.15f;
 	}
 

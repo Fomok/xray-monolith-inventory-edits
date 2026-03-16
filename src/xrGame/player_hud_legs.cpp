@@ -125,7 +125,7 @@ bool player_legs_controller::ensure_model(const shared_str& sect, const shared_s
 
 // clean up later
 float legs_spine_offset_y = 0.1f;
-void player_legs_controller::copy_bones_from_actor(CActor* actor)
+void player_legs_controller::copy_bones_from_actor(CActor* actor, bool isShadowPass)
 {
     if (!actor || !m_model)
         return;
@@ -166,29 +166,33 @@ void player_legs_controller::copy_bones_from_actor(CActor* actor)
             }
         }
     }
-    
-    if (auto BoneID = m_model->LL_BoneID("bip01_spine"); BoneID != BI_NONE)
-    {
-        auto& BoneInstance = m_model->LL_GetData(BoneID);
-        auto& transform = m_model->LL_GetTransform(BoneInstance.GetParentID());
-        transform.c.y += legs_spine_offset_y;
-        m_model->Bone_Calculate(&BoneInstance, &transform);
-    }
 
-    static LPCSTR bonesToHide[] = {"bip01_neck", "bip01_l_upperarm", "bip01_r_upperarm" };
-    for (const auto& bone : bonesToHide)                                                 
-    {                                                                                    
-        u16 bone_id = m_model->LL_BoneID(bone);
-        if (bone_id != BI_NONE)
+    if (!isShadowPass)
+    {
+        if (auto BoneID = m_model->LL_BoneID("bip01_spine"); BoneID != BI_NONE)
         {
-            m_model->LL_SetBoneVisible(bone_id, false, true);
+            auto& BoneInstance = m_model->LL_GetData(BoneID);
+            auto& transform = m_model->LL_GetTransform(BoneInstance.GetParentID());
+            transform.c.y += legs_spine_offset_y;
+            m_model->Bone_Calculate(&BoneInstance, &transform);
+        }
+
+        static LPCSTR bonesToHide[] = { "bip01_neck", "bip01_l_upperarm", "bip01_r_upperarm" };
+        for (const auto& bone : bonesToHide)
+        {
+            u16 bone_id = m_model->LL_BoneID(bone);
+            if (bone_id != BI_NONE)
+            {
+                m_model->LL_SetBoneVisible(bone_id, false, true);
+            }
         }
     }
+    
 }
 
 float legs_fwd_offset = -0.6f;
 extern int showActorBody;
-void player_legs_controller::update(CActor* actor)
+void player_legs_controller::update(CActor* actor, bool isShadowPass)
 {
     actor->XFORMShadow.set(actor->XFORM());
 
@@ -215,7 +219,7 @@ void player_legs_controller::update(CActor* actor)
     if (!ensure_model(sect, model))
         return;
 
-    copy_bones_from_actor(actor);
+    copy_bones_from_actor(actor, isShadowPass);
 
     m_legs_transform.set(actor->XFORM());
 
@@ -250,19 +254,4 @@ void player_legs_controller::render(IDSGraphManager* DM)
         return;    
 
     DM->add_Dynamic(visual, &m_legs_transform);
-}
-
-void player_hud::update_legs(const Fmatrix& cam_trans)
-{
-    m_legs_controller.update(g_actor);
-}
-
-void player_hud::render_legs(IDSGraphManager* DM)
-{
-    m_legs_controller.render(DM);
-}
-
-void player_hud::delete_legs_model()
-{
-    m_legs_controller.destroy();
 }

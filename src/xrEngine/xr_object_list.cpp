@@ -27,7 +27,7 @@ BOOL debug_destroy = TRUE;
 CObjectList::CObjectList() :
 	m_owner_thread_id(GetCurrentThreadId())
 {
-	ZeroMemory(map_NETID, 0xffff * sizeof(CObject*));
+    map_NETID.assign(0xffff, nullptr);
 }
 
 CObjectList::~CObjectList()

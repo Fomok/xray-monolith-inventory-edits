@@ -19,6 +19,8 @@
 #include "step_manager.h"
 #include "script_export_space.h"
 
+#include "player_hud_legs.h"
+
 #ifdef STATIONARYMGUN_NEW
 #include "WeaponStatMgun.h"
 #endif
@@ -113,7 +115,10 @@ public:
 	virtual CPHDestroyable* ph_destroyable();
 	CHolderCustom* Holder() { return m_holder; }
 
+public:
     Fmatrix XFORMShadow;
+    player_legs_controller m_legs_controller;
+
 public:
 
 	virtual void Load(LPCSTR section);

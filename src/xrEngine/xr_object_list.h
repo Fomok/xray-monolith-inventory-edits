@@ -8,12 +8,10 @@ class NET_Packet;
 class ENGINE_API CObjectList
 {
 private:
-	// data
-	//. xr_map<u32,CObject*> map_NETID;
-	CObject* map_NETID[0xffff];
+    typedef xr_vector<CObject*> Objects;
 
-private:
-	typedef xr_vector<CObject*> Objects;
+	// data
+    Objects map_NETID;
 
 private:
 	Objects destroy_queue;
