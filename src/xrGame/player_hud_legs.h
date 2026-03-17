@@ -19,6 +19,7 @@ private:
     IKinematics* m_model = nullptr;
     shared_str              m_visual_name;
     shared_str              m_last_outfit_sect;
+    shared_str              m_last_model;
     std::optional<float> m_fwd_offset = std::nullopt;
     float                   m_y_offset = 0.f;
     Fmatrix                 m_legs_transform;

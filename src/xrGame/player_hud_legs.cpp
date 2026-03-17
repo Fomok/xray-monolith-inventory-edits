@@ -27,44 +27,52 @@ bool player_legs_controller::resolve_config(CActor* actor, shared_str& sect, sha
     PIItem outfit = actor->inventory().ItemFromSlot(OUTFIT_SLOT);
     shared_str current_outfit = outfit
         ? outfit->object().cNameSect()
-        : shared_str("");
+        : shared_str("actor");
 
-    if (m_last_outfit_sect != current_outfit)
+    if (m_last_outfit_sect == current_outfit)
     {
-        m_last_outfit_sect = current_outfit;
+        sect = m_last_outfit_sect;
+        model = m_last_model;
+        return true;
     }
+
+    m_last_outfit_sect = current_outfit;
 
     if (outfit)
     {
-        if (pSettings->line_exist(current_outfit, "legs_visual"))
+        if (pSettings->line_exist(m_last_outfit_sect, "legs_visual"))
         {
-            sect = current_outfit;
-            model = pSettings->r_string(current_outfit, "legs_visual");
+            sect = m_last_outfit_sect;
+            m_last_model = pSettings->r_string(m_last_outfit_sect, "legs_visual");
+            model = m_last_model;
             return true;
         }
 
-        if (pSettings->line_exist(current_outfit, "actor_visual"))
+        if (pSettings->line_exist(m_last_outfit_sect, "actor_visual"))
         {
-            sect = current_outfit;
-            model = pSettings->r_string(current_outfit, "actor_visual");
+            sect = m_last_outfit_sect;
+            m_last_model = pSettings->r_string(m_last_outfit_sect, "actor_visual");
+            model = m_last_model;
             return true;
         }
 
-        warn_once("outfit [%s] has no legs_visual or actor_visual, fallback to default", current_outfit.c_str());
+        warn_once("outfit [%s] has no legs_visual or actor_visual, fallback to default", m_last_outfit_sect.c_str());
     }
 
     // default
     if (pSettings->line_exist("actor", "legs_visual"))
     {
-        sect = "actor";
-        model = pSettings->r_string("actor", "legs_visual");
+        sect = m_last_outfit_sect;
+        m_last_model = pSettings->r_string(m_last_outfit_sect, "legs_visual");
+        model = m_last_model;
         return true;
     }
 
-    if (pSettings->line_exist("actor", "visual"))
+    if (pSettings->line_exist(m_last_outfit_sect, "visual"))
     {
-        sect = "actor";
-        model = pSettings->r_string("actor", "visual");
+        sect = m_last_outfit_sect;
+        m_last_model = pSettings->r_string(m_last_outfit_sect, "visual");
+        model = m_last_model;
         return true;
     }
 

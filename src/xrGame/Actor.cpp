@@ -2169,12 +2169,10 @@ void CActor::renderable_Render(IDSGraphManager* DM)
 		{
             if (canRenderLegs(m_holder))
             {
-                Fvector fwd = XFORM().k;
-                fwd.y = 0.f;
-                fwd.normalize_safe();
-
-                Fvector diff = XFORM().c;
-                float m = diff.sub(XFORMShadow.c).magnitude();
+                Fvector diff(XFORMShadow.c);
+                diff.sub(XFORM().c);
+                float m = diff.magnitude();
+                diff.normalize_safe();
 
                 // Render full body from legs controller without hiding bones for shadow correctness
                 // Solves potential issues with manipulating actor's XFORM
@@ -2187,8 +2185,28 @@ void CActor::renderable_Render(IDSGraphManager* DM)
                 if (pItem)
                 {
                     auto& v = pItem->object();
-                    v.XFORM().c.mad(fwd, -m);
+                    v.XFORM().c.mad(diff, m);
                     v.renderable_Render(DM);
+                }
+
+                // Move torch
+                auto I = attachedItem(CLSID_DEVICE_TORCH);
+                if (I)
+                {
+                    auto& v = I->object();
+                    v.XFORM().c.mad(diff, m);
+                    v.renderable_Render(DM);
+                }
+
+                // Move bolt
+                if (inventory().GetActiveSlot() == BOLT_SLOT)
+                {
+                    auto bI = inventory().ItemFromSlot(BOLT_SLOT);
+                    if (bI)
+                    {
+                        auto& v = bI->object();
+                        v.XFORM().c.mad(diff, m);
+                    }
                 }
             }
             else
