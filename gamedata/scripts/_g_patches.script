@@ -776,6 +776,7 @@ end
 -- Min-Heap based spairs
 -- Supports early break without sorting whole table
 -- Faster retrieval of the first item
+-- Initially faster than vanilla spairs but might lose performance due to GC strain
 _G.hspairs = function(t, order)
     -- collect the keys
     local n = 0
@@ -837,8 +838,199 @@ _G.hspairs = function(t, order)
     end
 end
 
--- Replace spairs with hspairs
-_G.spairs = hspairs
+-- Iterative Merge Sort based spairs
+-- Minimize amount of comparisons, wins over vanilla spairs because everything is in JIT
+-- Loses early break ability compared to hspairs
+local mspairs_order = function(t, order)
+    -- collect the keys
+    local n = 0
+    local keys = {}
+    for k in pairs(t) do
+    	n = n + 1
+        keys[n] = k
+    end
+
+    -- Return if table is empty
+    if n == 0 then
+    	return nil_func
+    end
+
+    -- If there is only one item, very simple iterator that returns the first item
+    if n == 1 then
+        local done = false
+        return function()
+            if done then return nil end
+            done = true
+            local val = t[keys[1]]
+            -- Safety check in case the single item was deleted
+            if val ~= nil then 
+                return keys[1], val 
+            end
+        end
+    end
+
+    -- Use order if its provided
+    order = safe_order(order)
+
+    local buffer = {}
+    local size = 1
+    
+    -- Bottom-up merge: size doubles each iteration (1, 2, 4, 8...)
+    while size < n do
+        for left = 1, n, size * 2 do
+            local mid = math_min(left + size - 1, n)
+            local right = math_min(left + size * 2 - 1, n)
+            
+            -- Merge keys[left..mid] and keys[mid+1..right] into buffer
+            local i, j, k = left, mid + 1, left
+            while i <= mid and j <= right do
+                if order(t, keys[i], keys[j]) then
+                    buffer[k] = keys[i]
+                    i = i + 1
+                else
+                    buffer[k] = keys[j]
+                    j = j + 1
+                end
+                k = k + 1
+            end
+            
+            while i <= mid do
+                buffer[k] = keys[i]
+                i = i + 1
+                k = k + 1
+            end
+            
+            while j <= right do
+                buffer[k] = keys[j]
+                j = j + 1
+                k = k + 1
+            end
+        end
+        
+        -- Swap keys and buffer for the next pass
+        -- This is faster than copying elements back
+        keys, buffer = buffer, keys
+        size = size * 2
+    end
+
+    local idx = 0
+    return function()
+        while idx < n do
+            idx = idx + 1
+            local k = keys[idx]
+            local v = t[k]
+            
+            -- If the item still exists in the table, return it
+            if v ~= nil then
+                return k, v
+            end
+            -- If v is nil (deleted mid-iteration), the loop continues to next key
+        end
+        return nil
+    end
+end
+
+local mspairs_default = function(t)
+    -- collect the keys
+    local n = 0
+    local keys = {}
+    for k in pairs(t) do
+    	n = n + 1
+        keys[n] = k
+    end
+
+    -- Return if table is empty
+    if n == 0 then
+    	return nil_func
+    end
+
+    -- If there is only one item, very simple iterator that returns the first item
+    if n == 1 then
+        local done = false
+        return function()
+            if done then return nil end
+            done = true
+            local val = t[keys[1]]
+            -- Safety check in case the single item was deleted
+            if val ~= nil then 
+                return keys[1], val 
+            end
+        end
+    end
+
+    local buffer = {}
+    local size = 1
+    
+    -- Bottom-up merge: size doubles each iteration (1, 2, 4, 8...)
+    while size < n do
+        for left = 1, n, size * 2 do
+            local mid = math_min(left + size - 1, n)
+            local right = math_min(left + size * 2 - 1, n)
+            
+            -- Merge keys[left..mid] and keys[mid+1..right] into buffer
+            local i, j, k = left, mid + 1, left
+            while i <= mid and j <= right do
+                if keys[i] < keys[j] then
+                    buffer[k] = keys[i]
+                    i = i + 1
+                else
+                    buffer[k] = keys[j]
+                    j = j + 1
+                end
+                k = k + 1
+            end
+            
+            while i <= mid do
+                buffer[k] = keys[i]
+                i = i + 1
+                k = k + 1
+            end
+            
+            while j <= right do
+                buffer[k] = keys[j]
+                j = j + 1
+                k = k + 1
+            end
+        end
+        
+        -- Swap keys and buffer for the next pass
+        -- This is faster than copying elements back
+        keys, buffer = buffer, keys
+        size = size * 2
+    end
+
+    local idx = 0
+    return function()
+        while idx < n do
+            idx = idx + 1
+            local k = keys[idx]
+            local v = t[k]
+            
+            -- If the item still exists in the table, return it
+            if v ~= nil then
+                return k, v
+            end
+            -- If v is nil (deleted mid-iteration), the loop continues to next key
+        end
+        return nil
+    end
+end
+_G.mspairs = function(t, order)
+	if order then
+		return mspairs_order(t, order)
+	else
+		return mspairs_default(t)
+	end
+end
+
+-- If some script called spairs without order function, use merge spairs, much faster, otherwise use heap spairs
+_G.spairs = function(t, order)
+	if order then
+		return hspairs(t, order)
+	else
+		return mspairs_default(t)
+	end
+end
 
 -- Always return a copy of these global variables to prevent modification in scripts
 local constTable = {
