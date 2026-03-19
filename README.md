@@ -237,14 +237,35 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
-**2026.03.19**
+**2026.03.19 (Pre-release)**
 
 Main and MT:
+  * `play_cycle CA->PlayCycle` return value check on nullptr
   * Legs improvements:
     * In shadowmap phase render full body model without hiding bones instead of moving the player's, fixes some bugs like reappearing level transition dialog
     * Adjust player's torch and bolt offsets so they won't float in the space
-  * Faster algorithm for `spairs` if order function is not provided
+  * `lua_busy_hands_debug 1` console option to debug common "Busy Hands" errors
+    * Every method of `CScriptGameObject` is wrapped into functions that, when `lua_busy_hands_debug 1` is enabled, will:
+      * First check if game object exists and not unloaded
+      * If it doesn't, instead of executing Lua code that will potentially lead to "Busy Hands", the game will **crash** with proper error log
+      * If check above has passed, the underlying method is wrapped into `try-catch` block that will monitor if executing the method lead to engine errors and sends information to the log
+  * Replacing time event system with Indexed Min-Heap based time events
+    * Peek only closest event
+    * Fast insert and removal
+    * Safety check when creating time event but function is nil
+    * Postpone events when `sleep_active` flag is active so they won't be fired all at once when the flag is lifted
+    * My `optimized_time_events` script is blacklisted from loading so that new system will work all the time
   * Minor optimizations in `_g.script`
+    * Simpler `is_empty`
+    * Simpler `shuffle_table`
+    * Simpler `size_table`
+    * Reservoir sampling based `random_key_table`
+    * `random_choice` without allocating tables
+  * Fixed script_fixes_mp:727 `attempt to index local tm (nil value)`
+  * Fixed `state_mgr_animation.delayed_attach` to not spam time events
+  * Fixed `ui_debug_main.delayed_attach` to not spam time events
+  * Fixed `ui_enemy_health.cs_remove` spamming in time events because the wrapper function for time event doesn't return true
+  * Faster algorithm for `spairs` if order function is not provided  
 
 **2026.03.16**
 
