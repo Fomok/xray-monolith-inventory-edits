@@ -87,6 +87,7 @@ extern int psLua_ParallelGC_CallAmount;
 extern BOOL psLua_ParallelGC_debug;
 extern BOOL psLua_ParallelGC;
 extern BOOL lua_debug;
+BOOL lua_busy_hands_debug = FALSE;
 
 float g_end_modif = 0.f;
 
@@ -2581,6 +2582,7 @@ void CCC_RegisterCommands()
 
 	CMD4(CCC_Integer, "lua_debug", &lua_debug, 0, 1);
 	CMD4(CCC_Integer, "lua_use_functor_cache", &lua_use_functor_cache, 0, 1);
+	CMD4(CCC_Integer, "lua_busy_hands_debug", &lua_busy_hands_debug, 0, 1);
 
 #ifdef DEBUG
 	CMD3(CCC_Mask, "ai_debug", &psAI_Flags, aiDebug);
