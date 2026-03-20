@@ -194,7 +194,7 @@ int CScriptEngine::lua_panic(lua_State* L)
 }
 
 // demonized: get lua stack in array
-static xr_vector<xr_string> get_lua_stack(lua_State* L)
+xr_vector<xr_string> get_lua_stack(lua_State* L)
 {
 	xr_vector<xr_string> res;
 	lua_Debug l_tDebugInfo;
@@ -242,6 +242,30 @@ void CScriptEngine::lua_error(lua_State* L)
 #else
     throw					lua_tostring(L,-1);
 #endif
+}
+
+extern BOOL lua_busy_hands_debug;
+void CScriptEngine::lua_error_not_crash(lua_State* L)
+{
+    if (!lua_busy_hands_debug)
+        return;
+
+    ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "[BusyHandsDebug] Runtime Error");
+    auto stack = get_lua_stack(ai().script_engine().lua());
+
+    xr_string lua_error_line = "";
+    for (auto const& s : stack)
+    {
+        if (s.find("[Lua]") != xr_string::npos)
+        {
+            lua_error_line = s;
+            break;
+        }
+    }
+
+    ::luabind::functor<void> funct;
+    if (ai().script_engine().functor("_G.COnLuaBindFatalError", funct))
+        funct(lua_error_line.c_str());
 }
 
 void printLuaStack()
@@ -300,6 +324,7 @@ void CScriptEngine::setup_callbacks()
 	{
 #if !XRAY_EXCEPTIONS
 		::luabind::set_error_callback(CScriptEngine::lua_error);
+        ::luabind::set_error_callback_not_crash(CScriptEngine::lua_error_not_crash);
 #endif
 
 		::luabind::set_pcall_callback(CScriptEngine::lua_pcall_failed);

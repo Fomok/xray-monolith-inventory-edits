@@ -1184,6 +1184,7 @@ DECLARE_SCRIPT_REGISTER_FUNCTION
 };
 
 extern BOOL lua_busy_hands_debug;
+extern xr_vector<xr_string> get_lua_stack(lua_State* L);
 
 struct SafeWrapBase
 {
@@ -1202,15 +1203,15 @@ struct SafeWrapBase
         }
     }
 
-    static void log_and_error(LPCSTR error)
-    {
-        ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "[BusyHandsDebug] Fatal Error: %s", error);
-        ai().script_engine().lua_error(ai().script_engine().lua());
-    }
-
     static void log(LPCSTR error)
     {
         ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError, "[BusyHandsDebug] Error: %s", error);
+    }
+
+    static void log_and_callback(LPCSTR error)
+    {
+        log(error);
+        ai().script_engine().lua_error_not_crash(ai().script_engine().lua());
     }
 };
 
@@ -1234,24 +1235,14 @@ struct SafeWrap<Ret(CScriptGameObject::*)(Args...), MemFunc> : SafeWrapBase
 
         if (!instance || !instance->is_valid())
         {
-            log_and_error("Accessing destroyed object");
-            return handle_invalid<Ret>();
-        }
+            // Send one last call to Lua to warn users that Lua is about to die
+            log_and_callback("Accessing destroyed object");
 
-        try
-        {
+            // Sayonara
             return (instance->*MemFunc)(std::forward<Args>(args)...);
         }
-        catch (std::exception& e)
-        {
-            // Catches standard C++ exceptions
-            auto s = make_string("C++ Error: %s", e.what());
-            log(s.c_str());
-        }
-        catch (...)
-        {
-            log("Unknown Error");
-        }
+
+        return (instance->*MemFunc)(std::forward<Args>(args)...);
     }
 };
 
@@ -1268,10 +1259,14 @@ struct SafeWrap<Ret(CScriptGameObject::*)(Args...) const, MemFunc> : SafeWrapBas
 
         if (!instance || !instance->is_valid())
         {
-            log_and_error("Accessing destroyed object");
-            return handle_invalid<Ret>();
+            // Send one last call to Lua to warn users that Lua is about to die
+            log_and_callback("Accessing destroyed object");
+
+            // Sayonara
+            return (instance->*MemFunc)(std::forward<Args>(args)...);
         }
 
+        // Try to catch runtime errors in methods and print them
         try
         {
             return (instance->*MemFunc)(std::forward<Args>(args)...);
