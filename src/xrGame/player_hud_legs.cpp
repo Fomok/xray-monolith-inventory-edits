@@ -202,8 +202,8 @@ void player_legs_controller::copy_bones_from_actor(CActor* actor, bool isShadowP
     
 }
 
-float legs_fwd_offset = -0.6f;
-BOOL legs_attach_to_camera = FALSE;
+float legs_fwd_offset = -0.55f;
+BOOL legs_attach_to_camera = TRUE;
 extern int showActorBody;
 extern xr_unordered_set<CDemoRecord*> pDemoRecords;
 void player_legs_controller::update(CActor* actor, bool isShadowPass)
@@ -236,11 +236,8 @@ void player_legs_controller::update(CActor* actor, bool isShadowPass)
     copy_bones_from_actor(actor, isShadowPass);
 
     m_legs_transform.set(actor->XFORM());
-    if (pDemoRecords.empty() && legs_attach_to_camera)
-    {
-        Fvector targetPos{ Device.vCameraPosition.x, m_legs_transform.c.y, Device.vCameraPosition.z };
-        m_legs_transform.c.set(targetPos);
-    }        
+    if (legs_attach_to_camera && pDemoRecords.empty())
+        m_legs_transform.c.set(Device.vCameraPosition.x, m_legs_transform.c.y, Device.vCameraPosition.z);       
 
     Fvector fwd = m_legs_transform.k;
     fwd.y = 0.f;
@@ -252,7 +249,6 @@ void player_legs_controller::update(CActor* actor, bool isShadowPass)
     // Move actor's XFORM for correct shadow placement
     actor->XFORMShadow.translate_over(m_legs_transform.c);
 }
-
 
 void player_legs_controller::render(IDSGraphManager* DM)
 {

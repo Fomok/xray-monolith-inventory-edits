@@ -1177,6 +1177,7 @@ void CActor::UpdateCL()
 	CWeapon* pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
 
 	cam_Update(float(Device.dwTimeDelta) / 1000.0f, currentFOV());
+    m_legs_controller.update(this);
 
 #ifdef STATIONARYMGUN_NEW
 	CWeaponStatMgun *stm = smart_cast<CWeaponStatMgun *>(Holder());
@@ -1839,8 +1840,6 @@ void CActor::shedule_Update(u32 DT)
 
 		g_cl_ValidateMState(dt, mstate_wishful);
 		g_SetAnimation(mstate_real);
-
-        m_legs_controller.update(this);
 
 		// Check for game-contacts
 		Fvector C;
