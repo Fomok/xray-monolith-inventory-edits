@@ -138,7 +138,6 @@ extern BOOL disableActorBodyRotationDelay; //leer
 
 //demonized: new console vars
 extern BOOL firstPersonDeath;
-extern BOOL g_legs_enabled;
 extern BOOL pseudogiantCanDamageObjects;
 extern BOOL use_english_text_for_missing_translations;
 namespace crash_saving {
@@ -193,10 +192,12 @@ extern BOOL hud_frequent_updates;
 
 extern BOOL lua_use_functor_cache;
 
+extern BOOL g_legs_enabled;
 extern float legs_fwd_offset;
 extern float legs_spine_offset_y;
 extern BOOL legs_in_demo_record;
 extern BOOL legs_in_low_crouch;
+extern BOOL legs_attach_to_camera;
 
 extern CrosshairSettings g_crosshair_camera_near;
 extern CrosshairSettings g_crosshair_camera_far;
@@ -2719,6 +2720,7 @@ void CCC_RegisterCommands()
     CMD4(CCC_Float, "g_legs_spine_offset_y", &legs_spine_offset_y, -1.0f, 1.0f);
     CMD4(CCC_Integer, "g_legs_in_demo_record", &legs_in_demo_record, 0, 1);
     CMD4(CCC_Integer, "g_legs_in_low_crouch", &legs_in_low_crouch, 0, 1);
+    CMD4(CCC_Integer, "g_legs_attach_to_camera", &legs_attach_to_camera, 0, 1);
 
 	CMD3(CCC_Mask, "g_firepos", &psActorFlags, AF_FIREPOS);
 	CMD3(CCC_Mask, "g_firepos_zoom", &psActorFlags, AF_FIREPOS_ZOOM);

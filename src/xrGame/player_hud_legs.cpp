@@ -6,6 +6,8 @@
 #include "Inventory.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "../Include/xrRender/KinematicsAnimated.h"
+#include "../xrEngine/FDemoRecord.h"
+#include "../xrEngine/CameraBase.h"
 
 BOOL g_legs_enabled = FALSE;
 
@@ -142,10 +144,12 @@ void player_legs_controller::copy_bones_from_actor(CActor* actor, bool isShadowP
     if (!actor_K)
         return;
 
-    actor_K->CalculateBones(TRUE);
-
-    m_model->CalculateBones_Invalidate();
-    m_model->CalculateBones(TRUE);
+    if (!isShadowPass)
+    {
+        actor_K->CalculateBones(TRUE);
+        m_model->CalculateBones_Invalidate();
+        m_model->CalculateBones(TRUE);
+    }
 
     u16 legs_root = m_model->LL_GetBoneRoot();
     CBoneInstance& root_bi = m_model->LL_GetBoneInstance(legs_root);
@@ -199,7 +203,9 @@ void player_legs_controller::copy_bones_from_actor(CActor* actor, bool isShadowP
 }
 
 float legs_fwd_offset = -0.6f;
+BOOL legs_attach_to_camera = FALSE;
 extern int showActorBody;
+extern xr_unordered_set<CDemoRecord*> pDemoRecords;
 void player_legs_controller::update(CActor* actor, bool isShadowPass)
 {
     actor->XFORMShadow.set(actor->XFORM());
@@ -230,9 +236,13 @@ void player_legs_controller::update(CActor* actor, bool isShadowPass)
     copy_bones_from_actor(actor, isShadowPass);
 
     m_legs_transform.set(actor->XFORM());
+    if (pDemoRecords.empty() && legs_attach_to_camera)
+    {
+        Fvector targetPos{ Device.vCameraPosition.x, m_legs_transform.c.y, Device.vCameraPosition.z };
+        m_legs_transform.c.set(targetPos);
+    }        
 
-    Fvector fwd;
-    fwd.set(m_legs_transform.k);
+    Fvector fwd = m_legs_transform.k;
     fwd.y = 0.f;
     fwd.normalize_safe();
 
