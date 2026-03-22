@@ -355,7 +355,7 @@ void CRenderTarget::accum_volumetric_lv(light* L)
 	L_clr.mul(L->get_LOD());
 
     // Lower intensity to be comparable to SSS
-    L_clr.mul(0.4f);
+    L_clr.mul(0.33f);
 
 	L_pos.set(L->position);
 	L_dir.set(L->direction);
