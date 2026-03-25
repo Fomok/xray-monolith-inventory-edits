@@ -242,6 +242,7 @@ void CUIHudStatesWnd::Update()
 	UpdateHealth(actor);
 	UpdateActiveItemInfo(actor);
 	UpdateIndicators(actor);
+    UpdateHUDAlpha(actor);
 
 	UpdateZones();
 
@@ -910,4 +911,154 @@ void CUIHudStatesWnd::FakeUpdateIndicatorType(u8 t, float power)
 void CUIHudStatesWnd::EnableFakeIndicators(bool enable)
 {
 	m_fake_indicators_update = enable;
+}
+
+int dynHudEnable = 1;
+int dynHudHealthThreshold = 80;
+int dynHudPsyHealthThreshold = 80;
+int dynHudStaminaThreshold = 50;
+float dynHudFadeInSpeed = 0.5f;
+float dynHudFadeOutSpeed = 0.5f;
+void CUIHudStatesWnd::UpdateHUDAlpha(CActor* actor)
+{
+    if (dynHudEnable == 0)
+    {
+        u32 full_alpha = 255;
+        u32 text_clr = color_rgba(238, 155, 23, full_alpha);
+
+        m_back->SetTextureColor(color_rgba(255, 255, 255, full_alpha));
+        m_back->Show(true);
+
+        m_ui_health_bar->SetProgressBarAlpha(full_alpha);
+        m_ui_health_bar->Show(true);
+        m_ui_stamina_bar->SetProgressBarAlpha(full_alpha);
+        m_ui_stamina_bar->Show(true);
+        m_ui_psy_bar->SetProgressBarAlpha(full_alpha);
+        m_ui_psy_bar->Show(true);
+
+        PIItem item = actor->inventory().ActiveItem();
+        bool bHasWeapon = (item && item->cast_weapon());
+
+        auto update_static_text = [&](CUITextWnd* w) {
+            if (w) {
+                w->SetTextColor(text_clr);
+                w->Show(bHasWeapon);
+            }
+            };
+
+        update_static_text(m_ui_weapon_cur_ammo);
+        update_static_text(m_ui_weapon_fmj_ammo);
+        update_static_text(m_ui_weapon_ap_ammo);
+        update_static_text(m_fire_mode);
+        update_static_text(m_ui_grenade);
+
+        if (bHasWeapon) {
+            m_ui_weapon_icon->SetTextureColor(color_rgba(255, 255, 255, full_alpha));
+            m_ui_weapon_icon->Show(true);
+        }
+        else {
+            m_ui_weapon_icon->Show(false);
+        }
+
+        return;
+    }
+
+    float cur_health = actor->GetfHealth();
+    float cur_psy = actor->conditions().GetPsyBar();
+    float cur_stamina = actor->conditions().GetPower();
+
+    clamp(cur_health, 0.0f, 1.0f);
+    clamp(cur_psy, 0.0f, 1.0f);
+    clamp(cur_stamina, 0.0f, 1.0f);
+
+    const float threshold_health = dynHudHealthThreshold / 100.0f;
+    const float threshold_psy = dynHudPsyHealthThreshold / 100.0f;
+    const float threshold_stamina = dynHudStaminaThreshold / 100.0f;
+
+    auto calc_factor = [](float current, float threshold) -> float {
+        if (current >= threshold) return 0.0f;
+        float normalized = current / threshold;
+        return 1.0f - pow(normalized, 5.0f);
+        };
+
+    float health_alpha_factor = calc_factor(cur_health, threshold_health);
+    float psy_alpha_factor = calc_factor(cur_psy, threshold_psy);
+    float stamina_alpha_factor = calc_factor(cur_stamina, threshold_stamina);
+
+    static float s_reload_alpha_factor = 0.0f;
+    bool bReloading = false;
+
+    if (m_dwReloadHideTime > Device.dwTimeGlobal)
+    {
+        m_bForceReloadShow = true;
+    }
+    else
+    {
+        m_bForceReloadShow = false;
+    }
+
+    PIItem item = actor->inventory().ActiveItem();
+    if (item && item->cast_weapon())
+    {
+        CWeapon* weapon = item->cast_weapon();
+
+        if (weapon->GetState() == CWeapon::eReload)
+            bReloading = true;
+    }
+    else
+        s_reload_alpha_factor = 0.0f;
+
+    if (bReloading || m_bForceReloadShow)
+        s_reload_alpha_factor += dynHudFadeInSpeed * Device.fTimeDelta;
+    else
+        s_reload_alpha_factor -= dynHudFadeOutSpeed * Device.fTimeDelta;
+
+    clamp(s_reload_alpha_factor, 0.0f, 1.0f);
+
+    m_common_alpha_factor = _max(health_alpha_factor,
+        _max(psy_alpha_factor,
+            _max(stamina_alpha_factor, s_reload_alpha_factor)));
+
+    u32 alpha = (u32)(m_common_alpha_factor * 255.0f);
+    bool b_show = (alpha > 0);
+
+    m_back->SetTextureColor(color_rgba(255, 255, 255, alpha));
+    if (b_show != m_back->IsShown()) m_back->Show(b_show);
+
+    auto update_bar = [&](CUIProgressBar* bar, float pos) {
+        bar->SetProgressPos(iCeil(pos * 100.0f * 35.f) / 35.f);
+        bar->SetProgressBarAlpha(alpha);
+        if (b_show != bar->IsShown()) bar->Show(b_show);
+        };
+
+    update_bar(m_ui_health_bar, cur_health);
+    update_bar(m_ui_stamina_bar, cur_stamina);
+    update_bar(m_ui_psy_bar, cur_psy);
+
+    u32 text_clr = color_rgba(238, 155, 23, alpha);
+    auto update_text = [&](CUITextWnd* w) {
+        if (!w) return;
+        w->SetTextColor(text_clr);
+        if (b_show != w->IsShown()) w->Show(b_show);
+        };
+
+    update_text(m_ui_weapon_cur_ammo);
+    update_text(m_ui_weapon_fmj_ammo);
+    update_text(m_ui_weapon_ap_ammo);
+    update_text(m_fire_mode);
+    update_text(m_ui_grenade);
+
+    if (item && item->cast_weapon())
+    {
+        m_ui_weapon_icon->SetTextureColor(color_rgba(255, 255, 255, alpha));
+        if (b_show != m_ui_weapon_icon->IsShown()) m_ui_weapon_icon->Show(b_show);
+    }
+    else if (m_ui_weapon_icon->IsShown())
+    {
+        m_ui_weapon_icon->Show(false);
+    }
+}
+
+void CUIHudStatesWnd::ScheduleHide(u32 delay) {
+    m_dwReloadHideTime = Device.dwTimeGlobal + delay;
 }

@@ -133,6 +133,15 @@ extern BOOL g_apply_pdm_to_ads;
 extern BOOL g_smooth_ads_transition;
 extern BOOL g_allow_silencer_hide_tracer;
 
+//leer: Dynamic HUD
+extern BOOL dynHudEnable;
+extern BOOL dynHudQuick;
+extern int dynHudHealthThreshold;
+extern int dynHudPsyHealthThreshold;
+extern int dynHudStaminaThreshold;
+extern float dynHudFadeInSpeed;
+extern float dynHudFadeOutSpeed;
+
 extern int showActorBody; //leer
 extern BOOL disableActorBodyRotationDelay; //leer
 
@@ -3070,4 +3079,13 @@ void CCC_RegisterCommands()
 
     CMD4(CCC_Integer, "show_actor_body", &showActorBody, 0, 2);
     CMD4(CCC_Integer, "disable_actor_body_rotation_delay", &disableActorBodyRotationDelay, 0, 1);
+	
+	//Dynamic HUD
+    CMD4(CCC_Integer, "dynamic_hud_enable", &dynHudEnable, 0, 1);
+    CMD4(CCC_Integer, "dynamic_hud_affect_quickslots", &dynHudQuick, 0, 1);
+    CMD4(CCC_Integer, "dynamic_hud_healthbar_threshold", &dynHudHealthThreshold, 10, 90);
+    CMD4(CCC_Integer, "dynamic_hud_health_psy_bar_threshold", &dynHudPsyHealthThreshold, 10, 90);
+    CMD4(CCC_Integer, "dynamic_hud_staminabar_threshold", &dynHudStaminaThreshold, 10, 90);
+    CMD4(CCC_Float, "dynamic_hud_fade_in_speed", &dynHudFadeInSpeed, 0.1f, 2.0f);
+    CMD4(CCC_Float, "dynamic_hud_fade_out_speed", &dynHudFadeOutSpeed, 0.1f, 2.0f);
 }

@@ -48,6 +48,7 @@ public:
 	bool m_ui_stamina_bar_show;
 	bool m_ui_psy_bar_show;
 
+
 private:
 	float m_last_health;
 	float m_health_blink;
@@ -67,6 +68,10 @@ private:
 	bool m_fake_indicators_update;
 	//	bool				m_cur_state_LA[it_max];
 	bool m_b_force_update;
+
+    float m_common_alpha_factor;
+    bool m_bForceReloadShow = false;
+    u32  m_dwReloadHideTime;
 public:
 	CUIHudStatesWnd();
 	virtual ~CUIHudStatesWnd();
@@ -81,6 +86,7 @@ public:
 	void UpdateHealth(CActor* actor);
 	void SetAmmoIcon(const shared_str& sect_name);
 	void UpdateActiveItemInfo(CActor* actor);
+    void UpdateHUDAlpha(CActor* actor);
 
 	void UpdateZones();
 	void UpdateIndicators(CActor* actor);
@@ -91,6 +97,10 @@ public:
 	void DrawZoneIndicators();
 	void FakeUpdateIndicatorType(u8 t, float power);
 	void EnableFakeIndicators(bool enable);
+    float GetCommonAlphaFactor() const { return m_common_alpha_factor; }
+    void ForceShow() { m_bForceReloadShow = true; }
+    void ForceHide() { m_bForceReloadShow = false; }
+    void ScheduleHide(u32 delay);
 protected:
 	static ALife::EInfluenceType get_indik_type(ALife::EHitType hit_type);
 

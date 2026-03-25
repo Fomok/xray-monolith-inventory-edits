@@ -99,6 +99,20 @@ void CUIProgressBar::Update()
 	}
 }
 
+void CUIProgressBar::SetProgressBarAlpha(u32 alpha_value)
+{
+    m_bUseColor = true;
+    m_bUseGradient = false;
+
+    u32 final_color = color_rgba(255, 255, 255, alpha_value);
+
+    m_maxColor.set(final_color);
+
+    m_UIProgressItem.SetTextureColor(final_color);
+
+    UpdateProgressBar();
+}
+
 void CUIProgressBar::Draw()
 {
 	Frect rect;

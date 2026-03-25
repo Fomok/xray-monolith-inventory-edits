@@ -72,6 +72,7 @@ public:
 	virtual void SetMinColor(u32 color) { m_minColor.set(color); }
 	virtual void SetMiddleColor(u32 color) { m_middleColor.set(color); }
 	virtual void SetMaxColor(u32 color) { m_maxColor.set(color); }
+    virtual void SetProgressBarAlpha(u32 alpha_value);
 	
 	virtual void Draw();
 	virtual void Update();

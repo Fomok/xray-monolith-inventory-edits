@@ -47,6 +47,8 @@ extern void restore_actor();
 
 bool g_bDisableAllInput = false;
 extern float g_fTimeFactor;
+extern int dynHudEnable;
+u32 m_dwReloadHideTime;
 
 #define CURRENT_ENTITY()	(game?((GameID() == eGameIDSingle) ? CurrentEntity() : CurrentControlEntity()):NULL)
 
@@ -154,6 +156,7 @@ extern bool g_block_all_except_movement;
 #include "script_engine.h"
 #include "ai_space.h"
 #include "ui\UIActorMenu.h"
+#include <UIGameCustom.cpp>
 
 extern string_path g_last_saved_game;
 
@@ -581,6 +584,22 @@ void CLevel::IR_OnKeyboardRelease(int key)
             return;
     }
 
+    EGameActions _curr = get_binded_action(key);
+    if ((_curr == kWPN_RELOAD ||
+        _curr == kWPN_FIREMODE_PREV ||
+        _curr == kWPN_FIREMODE_NEXT ||
+        _curr == kWPN_FIRE) && dynHudEnable == TRUE)
+    {
+        if (CurrentGameUI() && CurrentGameUI()->UIMainIngameWnd)
+        {
+            CUIHudStatesWnd* pStates = CurrentGameUI()->UIMainIngameWnd->m_ui_hud_states;
+            if (pStates)
+            {
+                pStates->ForceHide();
+            }
+        }
+    }
+
     if (g_bDisableAllInput) return;
 
 #ifdef INPUT_CALLBACKS
@@ -612,6 +631,22 @@ void CLevel::IR_OnKeyboardHold(int key)
     {
         if (funct(key, get_binded_action(key), g_bDisableAllInput))
             return;
+    }
+
+    EGameActions _curr = get_binded_action(key);
+    if ((_curr == kWPN_RELOAD ||
+        _curr == kWPN_FIREMODE_PREV ||
+        _curr == kWPN_FIREMODE_NEXT ||
+        _curr == kWPN_FIRE) && dynHudEnable == TRUE)
+    {
+        if (CurrentGameUI() && CurrentGameUI()->UIMainIngameWnd)
+        {
+            CUIHudStatesWnd* pStates = CurrentGameUI()->UIMainIngameWnd->m_ui_hud_states;
+            if (pStates)
+            {
+                pStates->ScheduleHide(1000);
+            }
+        }
     }
 
 	if (g_bDisableAllInput) return;

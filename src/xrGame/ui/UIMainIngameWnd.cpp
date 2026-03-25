@@ -341,6 +341,7 @@ void CUIMainIngameWnd::Update()
 	//	UIMotionIcon->SetPower		(m_pActor->conditions().GetPower()*100.0f);
 
 	UpdatePickUpItem();
+    UpdateDynamicAlpha();
 
 	if (Device.dwFrame % 10)
 		return;
@@ -831,90 +832,51 @@ void CUIMainIngameWnd::UpdateMainIndicators()
 
 void CUIMainIngameWnd::UpdateQuickSlots()
 {
-	string32 tmp;
-	LPCSTR str = CStringTable().translate("quick_use_str_1").c_str();
-	strncpy_s(tmp, sizeof(tmp), str, 3);
-	if (tmp[2] == ',')
-		tmp[1] = '\0';
-	m_QuickSlotText1->SetTextST(tmp);
+    CActor* pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+    if (!pActor) return;
 
-	str = CStringTable().translate("quick_use_str_2").c_str();
-	strncpy_s(tmp, sizeof(tmp), str, 3);
-	if (tmp[2] == ',')
-		tmp[1] = '\0';
-	m_QuickSlotText2->SetTextST(tmp);
+    for (u8 i = 0; i < 4; i++)
+    {
+        CUIStatic* wnd = smart_cast<CUIStatic*>(m_quick_slots_icons[i]->FindChild("counter"));
+        if (wnd)
+        {
+            shared_str item_name = g_quick_use_slots[i];
+            if (item_name.size())
+            {
+                u32 count = pActor->inventory().dwfGetSameItemCount(item_name.c_str(), true);
+                string32 str;
+                xr_sprintf(str, "x%d", count);
+                wnd->TextItemControl()->SetText(str);
 
-	str = CStringTable().translate("quick_use_str_3").c_str();
-	strncpy_s(tmp, sizeof(tmp), str, 3);
-	if (tmp[2] == ',')
-		tmp[1] = '\0';
-	m_QuickSlotText3->SetTextST(tmp);
+                wnd->Show(count > 0);
 
-	str = CStringTable().translate("quick_use_str_4").c_str();
-	strncpy_s(tmp, sizeof(tmp), str, 3);
-	if (tmp[2] == ',')
-		tmp[1] = '\0';
-	m_QuickSlotText4->SetTextST(tmp);
+                CUIStatic* main_slot = m_quick_slots_icons[i];
 
+                if (pSettings->line_exist(item_name.c_str(), "icons_texture"))
+                {
+                    LPCSTR icons_texture = pSettings->r_string(item_name.c_str(), "icons_texture");
+                    main_slot->SetShader(InventoryUtilities::GetCustomIconTextureShader(icons_texture));
+                }
+                else
+                    main_slot->SetShader(InventoryUtilities::GetEquipmentIconsShader());
 
-	CActor* pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
-	if (!pActor)
-		return;
-
-	for (u8 i = 0; i < 4; i++)
-	{
-		CUIStatic* wnd = smart_cast<CUIStatic*>(m_quick_slots_icons[i]->FindChild("counter"));
-		if (wnd)
-		{
-			shared_str item_name = g_quick_use_slots[i];
-			if (item_name.size())
-			{
-				u32 count = pActor->inventory().dwfGetSameItemCount(item_name.c_str(), true);
-				string32 str;
-				xr_sprintf(str, "x%d", count);
-				wnd->TextItemControl()->SetText(str);
-				wnd->Show(true);
-
-				CUIStatic* main_slot = m_quick_slots_icons[i];
-
-				if (pSettings->line_exist(item_name.c_str(), "icons_texture"))
-				{
-					LPCSTR icons_texture = pSettings->r_string(item_name.c_str(), "icons_texture");
-					main_slot->SetShader(InventoryUtilities::GetCustomIconTextureShader(icons_texture));
-				}
-				else
-					main_slot->SetShader(InventoryUtilities::GetEquipmentIconsShader());
-
-				Frect texture_rect;
-				texture_rect.x1 = pSettings->r_float(item_name, "inv_grid_x") * INV_GRID_WIDTH;
-				texture_rect.y1 = pSettings->r_float(item_name, "inv_grid_y") * INV_GRID_HEIGHT;
-				texture_rect.x2 = pSettings->r_float(item_name, "inv_grid_width") * INV_GRID_WIDTH;
-				texture_rect.y2 = pSettings->r_float(item_name, "inv_grid_height") * INV_GRID_HEIGHT;
-				texture_rect.rb.add(texture_rect.lt);
-				main_slot->SetTextureRect(texture_rect);
-				main_slot->TextureOn();
-				main_slot->SetStretchTexture(true);
-				if (!count)
-				{
-					wnd->SetTextureColor(color_rgba(255, 255, 255, 0));
-					wnd->TextItemControl()->SetTextColor(color_rgba(255, 255, 255, 0));
-					m_quick_slots_icons[i]->SetTextureColor(color_rgba(255, 255, 255, 100));
-				}
-				else
-				{
-					wnd->SetTextureColor(color_rgba(255, 255, 255, 255));
-					wnd->TextItemControl()->SetTextColor(color_rgba(255, 255, 255, 255));
-					m_quick_slots_icons[i]->SetTextureColor(color_rgba(255, 255, 255, 255));
-				}
-			}
-			else
-			{
-				wnd->Show(false);
-				m_quick_slots_icons[i]->SetTextureColor(color_rgba(255, 255, 255, 0));
-				//				m_quick_slots_icons[i]->Show(false);
-			}
-		}
-	}
+                Frect texture_rect;
+                texture_rect.x1 = pSettings->r_float(item_name, "inv_grid_x") * INV_GRID_WIDTH;
+                texture_rect.y1 = pSettings->r_float(item_name, "inv_grid_y") * INV_GRID_HEIGHT;
+                texture_rect.x2 = pSettings->r_float(item_name, "inv_grid_width") * INV_GRID_WIDTH;
+                texture_rect.y2 = pSettings->r_float(item_name, "inv_grid_height") * INV_GRID_HEIGHT;
+                texture_rect.rb.add(texture_rect.lt);
+                main_slot->SetTextureRect(texture_rect);
+                main_slot->TextureOn();
+                main_slot->SetStretchTexture(true);
+            }
+            else
+            {
+                wnd->Show(false);
+                m_quick_slots_icons[i]->TextureOff();
+            }
+        }
+    }
 }
 
 void CUIMainIngameWnd::DrawMainIndicatorsForInventory()
@@ -1096,4 +1058,75 @@ void CUIMainIngameWnd::UpdateBoosterIndicators(const xr_map<EBoostParams, SBoost
 	}
 
 	return table;
+}
+
+BOOL dynHudQuick = 1;
+void CUIMainIngameWnd::UpdateDynamicAlpha()
+{
+    if (!m_ui_hud_states) return;
+
+    extern int dynHudEnable;
+
+    float factor = m_ui_hud_states->GetCommonAlphaFactor();
+    if (dynHudEnable == 0 || dynHudQuick == FALSE) factor = 1.0f;
+
+    u32 alpha_val = (u32)(factor * 255.0f);
+
+    u32 clr = color_rgba(255, 255, 255, alpha_val);
+
+    bool b_show = (alpha_val > 0);
+
+    for (u32 i = 0; i < m_quick_slots_icons.size(); ++i)
+    {
+        CUIStatic* icon = m_quick_slots_icons[i];
+        if (!icon) continue;
+
+        CUIWindow* counter_wnd = icon->FindChild("counter");
+        bool has_items = counter_wnd && counter_wnd->IsShown();
+
+        if (has_items)
+            icon->SetTextureColor(clr);
+        else
+            icon->SetTextureColor(color_rgba(255, 255, 255, (u8)(100.0f * factor)));
+
+        if (counter_wnd)
+        {
+            CUIStatic* s_counter = smart_cast<CUIStatic*>(counter_wnd);
+            if (s_counter)
+            {
+                s_counter->SetTextureColor(clr);
+
+                if (s_counter->TextItemControl())
+                {
+                    s_counter->TextItemControl()->SetTextColor(clr);
+                }
+            }
+        }
+
+        for (auto child : icon->GetChildWndList())
+        {
+            if (child != counter_wnd)
+            {
+                CUIStatic* s_child = smart_cast<CUIStatic*>(child);
+                if (s_child) s_child->SetTextureColor(clr);
+
+                CUIFrameLineWnd* f_child = smart_cast<CUIFrameLineWnd*>(child);
+                if (f_child) f_child->SetTextureColor(clr);
+            }
+        }
+
+        if (icon->IsShown() != b_show) icon->Show(b_show);
+    }
+
+    auto update_text = [&](CUITextWnd* w) {
+        if (w) {
+            w->SetTextColor(clr);
+            if (w->IsShown() != b_show) w->Show(b_show);
+        }
+        };
+
+    update_text(m_QuickSlotText1);
+    update_text(m_QuickSlotText2);
+    update_text(m_QuickSlotText3);
+    update_text(m_QuickSlotText4);
 }
