@@ -11,4 +11,31 @@ PAGE = page {
 		id = "use_english_text_for_missing_translations",
 		restart = true,
 	},
+	
+	line{},
+	
+	-- Dynamic HUD settings
+	list_bool { id = "dynamic_hud_enable" },
+	list_bool { id = "dynamic_hud_affect_quickslots" },
+	
+	track {
+		id = "dynamic_hud_healthbar_threshold",
+		step = 1,
+	},
+	track {
+		id = "dynamic_hud_health_psy_bar_threshold",
+		step = 1,
+	},
+	track {
+		id = "dynamic_hud_staminabar_threshold",
+		step = 1,
+	},
+	track {
+		id = "dynamic_hud_fade_in_speed",
+		step = 0.1,
+	},
+	track {
+		id = "dynamic_hud_fade_out_speed",
+		step = 0.1,
+	},
 }

@@ -644,7 +644,7 @@ void CLevel::IR_OnKeyboardHold(int key)
             CUIHudStatesWnd* pStates = CurrentGameUI()->UIMainIngameWnd->m_ui_hud_states;
             if (pStates)
             {
-                pStates->ScheduleHide(1000);
+                pStates->ScheduleHide(2000);
             }
         }
     }

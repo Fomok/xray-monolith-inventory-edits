@@ -913,15 +913,15 @@ void CUIHudStatesWnd::EnableFakeIndicators(bool enable)
 	m_fake_indicators_update = enable;
 }
 
-int dynHudEnable = 1;
+BOOL dynHudEnable = FALSE;
 int dynHudHealthThreshold = 80;
 int dynHudPsyHealthThreshold = 80;
 int dynHudStaminaThreshold = 50;
-float dynHudFadeInSpeed = 0.5f;
-float dynHudFadeOutSpeed = 0.5f;
+float dynHudFadeInSpeed = 1.5f;
+float dynHudFadeOutSpeed = 0.3f;
 void CUIHudStatesWnd::UpdateHUDAlpha(CActor* actor)
 {
-    if (dynHudEnable == 0)
+    if (!dynHudEnable)
     {
         u32 full_alpha = 255;
         u32 text_clr = color_rgba(238, 155, 23, full_alpha);
