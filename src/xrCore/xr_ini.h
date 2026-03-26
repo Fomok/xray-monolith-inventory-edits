@@ -9,6 +9,8 @@ struct xr_token;
 class XRCORE_API CInifile
 {
 public:
+    using NoZeroMemoryNew = std::true_type;
+
 	struct XRCORE_API Item
 	{
 		shared_str first;

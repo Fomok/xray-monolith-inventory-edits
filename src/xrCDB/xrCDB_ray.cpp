@@ -187,6 +187,7 @@ public:
 
 void _stab(const AABBNoLeafNode* node)
 {
+    PROF_EVENT("xrCDB_ray::_stab")
 	// Intersection filter stoping 
 	//if (!continue_work)
 	//	return;
@@ -228,6 +229,13 @@ void COLLIDER::ray_query(const MODEL* m_def, const Fvector& r_start, const Fvect
 	PROF_EVENT("COLLIDER::ray_query");
 	if (!m_def)
 		return;
+
+    if (!_finite(r_start.x) || !_finite(r_start.y) || !_finite(r_start.z))
+    {
+        VERIFY("![COLLIDER::ray_query] r_start has NaN members, abort ray_query");
+        return;
+    }
+
 	const_cast<MODEL*>(m_def)->syncronize();
 
 	// Get nodes

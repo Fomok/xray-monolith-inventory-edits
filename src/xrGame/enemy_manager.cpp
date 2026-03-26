@@ -56,6 +56,7 @@ bool CEnemyManager::is_useful(const CEntityAlive* entity_alive) const
 	return (m_object->useful(this, entity_alive));
 }
 
+int enemy_manager_useful_cache_time = 250;
 bool CEnemyManager::useful(const CEntityAlive* entity_alive) const
 {
 	PROF_EVENT("CEnemyManager::useful");
@@ -80,7 +81,26 @@ bool CEnemyManager::useful(const CEntityAlive* entity_alive) const
 	)
 		return (false);
 
-	return (m_useful_callback ? m_useful_callback(m_object->lua_game_object(), entity_alive->lua_game_object()) : true);
+    // Disable caching if time is negative for testing
+    if (enemy_manager_useful_cache_time < 0)
+        return (m_useful_callback ? m_useful_callback(m_object->lua_game_object(), entity_alive->lua_game_object()) : true);
+
+    // demonized: Cache useful checks to avoid expensive Lua calls
+    u32 current_time = Device.dwTimeGlobal;
+    auto it = m_useful_cache.find(entity_alive->ID());
+
+    if (it != m_useful_cache.end() && (current_time < it->second.check_time)) {
+        return it->second.result;
+    }
+
+    bool result = (m_useful_callback ? m_useful_callback(m_object->lua_game_object(), entity_alive->lua_game_object()) : true);
+
+    // Add id based jitter so that next updates will be spread between frames for different entities
+    int jitter = (entity_alive->ID() % 97) * (entity_alive->ID() & 1 ? -1 : 1);
+    u32 next_time = current_time + _max(0, enemy_manager_useful_cache_time + jitter);
+    m_useful_cache[entity_alive->ID()] = { next_time, result };
+
+	return result;
 }
 
 float CEnemyManager::do_evaluate(const CEntityAlive* object) const

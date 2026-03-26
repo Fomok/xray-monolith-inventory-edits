@@ -67,10 +67,10 @@ public:
 
 #ifdef DEBUG_MEMORY_NAME
     void mem_statistic(LPCSTR fn);
-    void* mem_alloc(size_t size, const char* _name);
+    void* mem_alloc(size_t size, const char* _name, bool zeroMemory = true);
     void* mem_realloc(void* p, size_t size, const char* _name);
 #else // DEBUG_MEMORY_NAME
-	void* mem_alloc(size_t size);
+	void* mem_alloc(size_t size, bool zeroMemory = true);
 	void* mem_realloc(void* p, size_t size);
 #endif // DEBUG_MEMORY_NAME
 	void mem_free(void* p);

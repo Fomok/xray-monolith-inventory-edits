@@ -134,7 +134,7 @@ void CHOM::Load()
 		//Device.seqParallelRender.push_back(fastdelegate::FastDelegate0<>(Details, &CDetailManager::MT_CALC));
 
 		// MT-HOM (@front)
-		Device.seqParallelRender.push_back(xr_make_delegate(this, &CHOM::MT_RENDER));
+		// Device.seqParallelRender.push_back(xr_make_delegate(this, &CHOM::MT_RENDER));
 	}
 }
 

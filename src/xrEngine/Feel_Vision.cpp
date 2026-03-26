@@ -11,6 +11,7 @@ Vision::Vision(CObject const* owner) :
 	pure_relcase(&Vision::feel_vision_relcase),
 	m_owner(owner)
 {
+    feel_visible.clear();
 }
 
 Vision::~Vision()
@@ -78,7 +79,7 @@ void Vision::o_delete(CObject* O)
 		[O](const feel_visible_Item& item) { return item.O == O; });
 
 	if (it != feel_visible.end()) {
-		feel_visible.erase_fast(it);
+		feel_visible.erase(it);
 	}
 }
 
@@ -114,7 +115,7 @@ void Vision::feel_vision_relcase(CObject* object)
 			[object](const feel_visible_Item& item) { return item.O == object; });
 
 		if (it != feel_visible.end()) {
-			feel_visible.erase_fast(it);
+			feel_visible.erase(it);
 		}
 	}
 }

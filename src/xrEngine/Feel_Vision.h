@@ -71,9 +71,14 @@ namespace Feel
 
 		void feel_vision_get(xr_vector<CObject*>& R)
 		{
-			R.clear();
-			R.reserve(feel_visible.size());
-			xrSRWLockGuard guard(&lock_visible, true);
+            R.clear();
+            xrSRWLockGuard guard(&lock_visible, true);
+            if (feel_visible.size() > 0xffff)
+            {
+                Msg("![feel_vision_get] abnormally high size of feel_visible, clear and skip");
+                feel_visible.clear();
+                return;
+            }			
 			for (const feel_visible_Item& item : feel_visible)
 			{
 				if (item.O && !item.O->getDestroy() && positive(item.fuzzy))

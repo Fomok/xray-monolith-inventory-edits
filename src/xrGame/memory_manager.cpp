@@ -367,10 +367,15 @@ void CMemoryManager::make_object_visible_somewhen(const CEntityAlive* enemy)
 	bool prev = obj ? obj->visible(mask) : false;
 	visual().add_visible_object(enemy, .001f, true);
 	MemorySpace::CVisibleObject* obj1 = object().memory().visual().visible_object(enemy);
-	VERIFY(obj1);
-	//	if (obj1)
-	//		Msg						("[%6d] make_object_visible_somewhen [%s] = %x",Device.dwTimeGlobal,*enemy->cName(),obj1->m_squad_mask.get());
-	obj1->visible(mask, prev);
+    if (obj1)
+    {
+        //		Msg						("[%6d] make_object_visible_somewhen [%s] = %x",Device.dwTimeGlobal,*enemy->cName(),obj1->m_squad_mask.get());
+        obj1->visible(mask, prev);
+    }
+    else
+    {
+        Msg("![CMemoryManager::make_object_visible_somewhen] tried to make obj1 visible, but its nullptr");
+    }
 }
 
 void CMemoryManager::save(NET_Packet& packet) const

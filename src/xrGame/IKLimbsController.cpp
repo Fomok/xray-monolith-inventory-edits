@@ -369,12 +369,15 @@ void _stdcall CIKLimbsController::IKVisualCallback(IKinematics* K)
 						    //ik->optimize_frame = Device.dwFrame + Random.randI(8);
 					    }
 
-					    PROF_EVENT("IK_UPDATE_CALCULATE");
-					    ik->_pose_extrapolation.update(O->XFORM());
-					    for (CIKLimb& limb : ik->_bone_chains)
-						    ik->LimbUpdate(limb);
+                        {
+                            PROF_EVENT("IK_UPDATE_CALCULATE");
+                            ik->_pose_extrapolation.update(O->XFORM());
+                            for (CIKLimb& limb : ik->_bone_chains)
+                                ik->LimbUpdate(limb);
 
-					    ik->Calculate();
+                            ik->Calculate();
+                        }
+					    
 				    }
 				    else
 				    {

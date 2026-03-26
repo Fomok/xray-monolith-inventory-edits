@@ -186,7 +186,7 @@ void xrLogger::SimpleMessage(LPCSTR Message, u32 MessageSize /*= 0*/)
 		xr_string c = "";
 		if (!t.empty() && is_console_mark((Console_mark)t[0]))
 		{
-			c = (LPCSTR)t[0];
+            c += t[0];
 			c += " ";
 			t.erase(0, 1);
 		}

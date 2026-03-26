@@ -69,14 +69,14 @@ void CObject::cNameSect_set(shared_str N)
 //#include "SkeletonCustom.h"
 void CObject::cNameVisual_set(shared_str N)
 {
+	// check if equal
+	if (*N && *NameVisual)
+		if (N == NameVisual) return;
+
     while (m_p_tasks_count.load(std::memory_order_acquire) > 0)
     {
         std::this_thread::yield();
     }
-
-	// check if equal
-	if (*N && *NameVisual)
-		if (N == NameVisual) return;
 
 	// replace model
 	if (*N && N[0])
