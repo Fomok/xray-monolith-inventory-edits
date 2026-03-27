@@ -536,6 +536,11 @@ ALife::_OBJECT_ID alife_max_id(const CALifeSimulator* self)
 	return self->objects().max_id;
 }
 
+ALife::_OBJECT_ID alife_object_count(const CALifeSimulator* self)
+{
+    return self->objects().objects().size();
+}
+
 ::luabind::object alife_object_ids(const CALifeSimulator* self, const bool keytable = false, const bool withActor = false)
 {
 	VERIFY(self);
@@ -639,6 +644,7 @@ void CALifeSimulator::script_register(lua_State* L)
 		//Alundaio: END
 
 		// demonized: iterate alife objects
+        .def("object_count", &alife_object_count)
 		.def("object_ids", &alife_object_ids)
 		.def("objects", &alife_objects)
 		.def("iterate_objects", &CALifeSimulator__iterate_objects)
