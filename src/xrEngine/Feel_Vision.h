@@ -76,7 +76,7 @@ namespace Feel
             if (feel_visible.size() > 0xffff)
             {
                 Msg("![feel_vision_get] abnormally high size of feel_visible, clear and skip");
-                feel_visible.clear();
+                feel_visible.clear_and_free();
                 return;
             }			
 			for (const feel_visible_Item& item : feel_visible)
