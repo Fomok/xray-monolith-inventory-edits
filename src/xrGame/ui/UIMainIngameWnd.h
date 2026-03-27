@@ -149,6 +149,7 @@ protected:
 	float m_iPickUpItemIconHeight;
 
 	void UpdatePickUpItem();
+    void UpdateDynamicAlpha();
 
 public:
 	void SetPickUpItem(CInventoryItem* PickUpItem);

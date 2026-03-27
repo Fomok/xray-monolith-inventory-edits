@@ -90,6 +90,31 @@
 	<string id="ui_mm_modded_exes_visual_ui_hud_use_english_text_for_missing_translations">
 		<text>Use English Text For Missing Translations (use_english_text_for_missing_translations)</text>
 	</string>
+	
+	<!-- Dynamic Hud -->
+	
+	<string id="ui_mm_modded_exes_visual_ui_hud_dynamic_hud_enable">
+		<text>Enable Dynamic HUD</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_ui_hud_dynamic_hud_affect_quickslots">
+		<text>Dynamic Hud affects quick slots</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_ui_hud_dynamic_hud_healthbar_threshold">
+		<text>Health bar threshold</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_ui_hud_dynamic_hud_health_psy_bar_threshold">
+		<text>Psy-Health bar threshold</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_ui_hud_dynamic_hud_staminabar_threshold">
+		<text>Stamina bar threshold</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_ui_hud_dynamic_hud_fade_in_speed">
+		<text>Fade in speed</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_ui_hud_dynamic_hud_fade_out_speed">
+		<text>Fade out speed</text>
+	</string>
+	
 
 	<!-- Crosshair -->
 	<string id="ui_mm_crosshair_modded_exes">
