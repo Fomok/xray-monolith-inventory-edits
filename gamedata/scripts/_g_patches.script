@@ -1156,6 +1156,28 @@ _G.alife_object = function(id)
 	return server_objects_registry[id] or alife():object(id)
 end
 
+-- alife_on_limit more accurate and prints more information
+_G.alife_on_limit = function()
+	local result = alife():object_count() > _ALIFE_WARNING
+	if result then
+		printe("![alife_on_limit] WARNING alife ID storage is almost filled: %s", _ALIFE_CNT)
+		local section_name_count = {}
+		for id, obj in pairs(server_objects_registry) do
+			local sec = obj:section_name()
+			section_name_count[sec] = (section_name_count[sec] or 0) + 1
+		end
+		printf("~[alife_on_limit] Top 5 bloat, maybe cleanup them?")
+		local i = 0
+		for sec, count in spairs(section_name_count, sort_func_values_descend) do
+			i = i + 1
+			printf("section %s, count %s", sec, count)
+			if i == 5 then
+				break
+			end
+		end
+	end
+	return result
+end
 
 -- Checks if float is nearly 0 with custom precision
 -- EPS defined below

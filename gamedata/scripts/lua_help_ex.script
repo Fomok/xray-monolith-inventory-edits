@@ -115,6 +115,7 @@
     }
 
     alife() {
+        number object_count()
         void iterate_objects(function(se_obj))
     }
 
