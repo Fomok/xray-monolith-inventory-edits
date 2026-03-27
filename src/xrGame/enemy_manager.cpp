@@ -89,14 +89,13 @@ bool CEnemyManager::useful(const CEntityAlive* entity_alive) const
     u32 current_time = Device.dwTimeGlobal;
     auto it = m_useful_cache.find(entity_alive->ID());
 
-    if (it != m_useful_cache.end() && (current_time < it->second.check_time)) {
+    if (it != m_useful_cache.end() && (current_time < it->second.check_time))
         return it->second.result;
-    }
 
     bool result = (m_useful_callback ? m_useful_callback(m_object->lua_game_object(), entity_alive->lua_game_object()) : true);
 
     // Add id based jitter so that next updates will be spread between frames for different entities
-    int jitter = (entity_alive->ID() % 97) * (entity_alive->ID() & 1 ? -1 : 1);
+    int jitter = (entity_alive->ID() % 97 + 1) * (entity_alive->ID() & 1 ? -1 : 1);
     u32 next_time = current_time + _max(0, enemy_manager_useful_cache_time + jitter);
     m_useful_cache[entity_alive->ID()] = { next_time, result };
 
