@@ -221,10 +221,10 @@ public:
 		return (shared_str&)*this;
 	}
 
-	str_c operator*() const { return p_ ? p_->value : 0; }
+	str_c operator*() const noexcept { return p_ ? p_->value : 0; }
 	bool operator!() const noexcept { return p_ == 0; }
 	char operator[](size_t id) { return p_->value[id]; }
-	str_c c_str() const { return p_ ? p_->value : 0; }
+	str_c c_str() const noexcept { return p_ ? p_->value : 0; }
 
 	// misc func
 	u32 size() const

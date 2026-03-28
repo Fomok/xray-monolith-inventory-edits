@@ -53,35 +53,35 @@ IRender_Sector* CRender::detectLastSector(const Fvector& P)
 		return pOutdoorSector;
 
 	static auto detectSector = [](const Fvector& P, Fvector& dir) -> IRender_Sector*
+	{
+		sectors_detect_xrc.ray_options(CDB::OPT_ONLYNEAREST);
+		// Portals model
+		if (RImplementation.rmPortals)
 		{
-			sectors_detect_xrc.ray_options(CDB::OPT_ONLYNEAREST);
-			// Portals model
-			if (RImplementation.rmPortals)
-			{
-				sectors_detect_xrc.ray_query(RImplementation.rmPortals, P, dir, 1000.f);
-				if (sectors_detect_xrc.r_count()) {
-					CDB::RESULT* RP = sectors_detect_xrc.r_begin();
-					CDB::TRI* pTri = RImplementation.rmPortals->get_tris() + RP->id;
-					CPortal* pPortal = (CPortal*)RImplementation.Portals[pTri->dummy];
-					CSector* S = pPortal->getSectorFacing(P);
-					FHierrarhyVisual* pV = (FHierrarhyVisual*)S->root();
-					if (pV)
-					{
-						if (pV->vis.box.contains(P))
-							return S;
-					}
-				}
-			}
-
-			// Geometry model
-			sectors_detect_xrc.ray_query(g_pGameLevel->ObjectSpace.GetStaticModel(), P, dir, 1000.f);
+			sectors_detect_xrc.ray_query(RImplementation.rmPortals, P, dir, 1000.f);
 			if (sectors_detect_xrc.r_count()) {
 				CDB::RESULT* RP = sectors_detect_xrc.r_begin();
-				return RImplementation.getSector(RP->sector);
+				CDB::TRI* pTri = RImplementation.rmPortals->get_tris() + RP->id;
+				CPortal* pPortal = (CPortal*)RImplementation.Portals[pTri->dummy];
+				CSector* S = pPortal->getSectorFacing(P);
+				FHierrarhyVisual* pV = (FHierrarhyVisual*)S->root();
+				if (pV)
+				{
+					if (pV->vis.box.contains(P))
+						return S;
+				}
 			}
+		}
 
-			return nullptr;
-		};
+		// Geometry model
+		sectors_detect_xrc.ray_query(g_pGameLevel->ObjectSpace.GetStaticModel(), P, dir, 1000.f);
+		if (sectors_detect_xrc.r_count()) {
+			CDB::RESULT* RP = sectors_detect_xrc.r_begin();
+			return RImplementation.getSector(RP->sector);
+		}
+
+		return nullptr;
+	};
 
 	IRender_Sector* S = nullptr;
 	Fvector			dir;
