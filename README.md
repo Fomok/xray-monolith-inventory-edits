@@ -268,6 +268,7 @@ How to compile exes:
     * `item_weapon`:
       * A little more optimized ammo aggregation algorithm
   * erepb: expose CALifeSimulator::update_scheduled to lua as force_update (https://github.com/themrdemonized/xray-monolith/pull/493)
+  * Verdatim25: Add a new method to CWeapon to allow for force changing zoom type (https://github.com/themrdemonized/xray-monolith/pull/495)
 
 MT:
   * Fixed crash when using `log_timestamps`, fixes https://github.com/themrdemonized/xray-monolith/issues/485

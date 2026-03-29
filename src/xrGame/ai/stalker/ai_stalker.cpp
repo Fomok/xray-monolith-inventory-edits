@@ -1353,8 +1353,11 @@ void CAI_Stalker::net_Relcase(CObject* O)
 	sight().remove_links(O);
 	movement().remove_links(O);
 
+    if (O == m_throw_ignore_object)
+        m_throw_ignore_object = nullptr;
+
 	if (!g_Alive())
-		return;
+		return;    
 
 	agent_manager().remove_links(O);
 	m_pPhysics_support->in_NetRelcase(O);
