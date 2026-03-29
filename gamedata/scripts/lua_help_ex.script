@@ -94,6 +94,8 @@
         int get_modded_exes_version() // Returns modded exes version in integer format
         table get_string_table() // Returns all translated strings in [string id] = string text format 
         player_hud* get_player_hud()
+
+        // MT only
         string active_tutorial_name()
         class class_info(object) // Returns luabind class with information about object's class: name, methods, attributes
         CGameTaskManager* get_game_task_manager()
@@ -117,6 +119,7 @@
     alife() {
         number object_count()
         void iterate_objects(function(se_obj))
+        void force_update() -- forces an immediate alife scheduled update cycle
     }
 
     game {
@@ -153,6 +156,7 @@
         CUIMessagesWindow get_messages_menu()
     }
 
+    // MT only
     class cse_alife_item_weapon {
         function clone_upgrades(cse_alife_item_weapon*)
     }
@@ -190,12 +194,14 @@
         table GetQuickSlotIcons()
     }
 
+    // MT only
     class CMapManager {
         void RemoveMapLocationByObjectID(u16 id)
         void RemoveMapLocation(CMapLocation* ml)
         void DisableAllPointers()
     }
-
+    
+    // MT only
     class CMapLocation {
         bool HintEnabled()
         string GetHint()
@@ -336,6 +342,7 @@
             text: string, text when spot is hovered
         // }
 
+        // MT only
         CMapManager* get_map_manager()
         void patrol_path_add(string patrol_path, CPatrolPath* path)
         void patrol_path_remove(string patrol_path)

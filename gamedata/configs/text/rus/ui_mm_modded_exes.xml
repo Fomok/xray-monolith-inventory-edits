@@ -659,6 +659,9 @@
 	<string id="ui_mm_modded_exes_gameplay_gameplay_general_g_legs_in_low_crouch">
 		<text>Показывать в низком приседе (g_legs_in_low_crouch)</text>
 	</string>
+	<string id="ui_mm_modded_exes_gameplay_gameplay_general_g_legs_render_attachments_shadow">
+		<text>Рисовать тени аттачментов (g_legs_render_attachments_shadow)</text>
+	</string>
 	<string id="ui_mm_modded_exes_gameplay_gameplay_general_g_legs_fwd_offset">
 		<text>Смещение вперед/назад (g_legs_fwd_offset)</text>
 	</string>

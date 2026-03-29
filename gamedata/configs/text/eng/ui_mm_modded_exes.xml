@@ -660,6 +660,9 @@
 	<string id="ui_mm_modded_exes_gameplay_gameplay_general_g_legs_in_low_crouch">
 		<text>Show in low crouch (g_legs_in_low_crouch)</text>
 	</string>
+	<string id="ui_mm_modded_exes_gameplay_gameplay_general_g_legs_render_attachments_shadow">
+		<text>Render shadows of attached items (g_legs_render_attachments_shadow)</text>
+	</string>
 	<string id="ui_mm_modded_exes_gameplay_gameplay_general_g_legs_fwd_offset">
 		<text>Forward position adjustment (g_legs_fwd_offset)</text>
 	</string>
