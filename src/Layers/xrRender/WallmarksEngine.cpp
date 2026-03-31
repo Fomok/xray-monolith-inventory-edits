@@ -25,7 +25,6 @@ namespace WallmarksEngine
 		wm_slot(ref_shader sh)
 		{
 			shader = sh;
-			static_items.reserve(256);
 			skeleton_items.reserve(256);
 		}
 	};
@@ -61,8 +60,6 @@ CWallmarksEngine::CWallmarksEngine()
 	:lock(MUTEX_PROFILE_ID(CWallmarksEngine))
 #endif // PROFILE_CRITICAL_SECTIONS
 {
-	static_pool.reserve(256);
-	marks.reserve(256);
 	hGeom.create(FVF::F_LIT, RCache.Vertex.Buffer(), NULL);
 }
 

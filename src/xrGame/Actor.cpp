@@ -2174,6 +2174,14 @@ void CActor::renderable_Render(IDSGraphManager* DM)
 		}
 		else if (AllowActorShadow()) // render actor shadow
 		{
+            static u32 renderFrame = 0;
+            bool needAdjust = false;
+            if (Device.dwFrame != renderFrame)
+            {
+                renderFrame = Device.dwFrame;
+                needAdjust = true;
+            }
+
             if (canRenderLegs(this, m_holder))
             {
                 Fvector diff(XFORMShadow.c);
@@ -2192,7 +2200,8 @@ void CActor::renderable_Render(IDSGraphManager* DM)
                 if (pItem)
                 {
                     auto& v = pItem->object();
-                    v.XFORM().c.mad(diff, m);
+                    if (needAdjust)
+                        v.XFORM().c.mad(diff, m);
                     v.renderable_Render(DM);
                 }
 
@@ -2202,7 +2211,8 @@ void CActor::renderable_Render(IDSGraphManager* DM)
                     for (const auto& I : m_attached_objects)
                     {
                         auto& v = I->object();
-                        v.XFORM().c.mad(diff, m);
+                        if (needAdjust)
+                            v.XFORM().c.mad(diff, m);
                         v.renderable_Render(DM);
                     }
                 }
@@ -2214,7 +2224,8 @@ void CActor::renderable_Render(IDSGraphManager* DM)
                     if (bI)
                     {
                         auto& v = bI->object();
-                        v.XFORM().c.mad(diff, m);
+                        if (needAdjust)
+                            v.XFORM().c.mad(diff, m);
                     }
                 }
             }

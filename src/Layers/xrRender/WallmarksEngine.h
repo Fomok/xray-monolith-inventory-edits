@@ -29,8 +29,8 @@ public:
 		IC float TimeEnd() { return m_fTimeEnd; }
 	};
 
-	DEFINE_VECTOR(static_wallmark*, StaticWMVec, StaticWMVecIt);
-	DEFINE_VECTOR(wm_slot*, WMSlotVec, WMSlotVecIt);
+    typedef xr_deque< static_wallmark* > StaticWMVec; typedef StaticWMVec::iterator StaticWMVecIt;
+    typedef xr_deque< wm_slot* > WMSlotVec; typedef WMSlotVec::iterator WMSlotVecIt;
 private:
 	StaticWMVec static_pool;
 	WMSlotVec marks;
