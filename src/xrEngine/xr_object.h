@@ -117,6 +117,8 @@ private:
 	shared_str NameObject;
 	shared_str NameSection;
 	shared_str NameVisual;
+
+    bool m_ForceDestroy;
 protected:
 	// Parentness
 	CObject* Parent;
@@ -282,6 +284,9 @@ public:
 	ICF BOOL getSVU() const { return Props.net_SV_Update; }
 	ICF void setReady(BOOL _ready) { Props.net_Ready = _ready ? 1 : 0; }
 	ICF BOOL getReady() const { return Props.net_Ready; }
+
+    ICF bool getForceDestroy() { return m_ForceDestroy; }
+    ICF void setForceDestroy() { m_ForceDestroy = true; }
 
 	//---------------------------------------------------------------------
 	CObject();

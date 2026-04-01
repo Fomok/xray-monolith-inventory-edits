@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "missile.h"
 //.#include "WeaponHUD.h"
 #include "../xrphysics/PhysicsShell.h"
@@ -607,6 +607,7 @@ void CMissile::OnEvent(NET_Packet& P, u16 type)
 			{
 				m_fake_missile = NULL;
 				IsFakeMissile = true;
+                setForceDestroy();
 			}
 
 			CMissile* missile = smart_cast<CMissile*>(Level().Objects.net_Find(id));

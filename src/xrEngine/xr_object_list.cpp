@@ -34,7 +34,8 @@ CObjectList::~CObjectList()
 {
 	R_ASSERT(objects_active.empty());
 	R_ASSERT(objects_sleeping.empty());
-	R_ASSERT(destroy_queue.empty());
+    R_ASSERT(destroy_queue.empty());
+    R_ASSERT(force_destroy_queue.empty());
 	//. R_ASSERT ( map_NETID.empty() );
 
     auto Callback = xr_make_delegate(this, &CObjectList::ProcessDestroyQueue);
@@ -266,6 +267,7 @@ void CObjectList::Update(bool bForce)
 	}
 
 	// Destroy
+    ProcessDestroyQueueImpl(force_destroy_queue);
     if (mt_Scheduler)
         Device.seqParallelBeforRender.push_back(xr_make_delegate(this, &CObjectList::ProcessDestroyQueue));
     else
@@ -274,12 +276,17 @@ void CObjectList::Update(bool bForce)
 
 void CObjectList::ProcessDestroyQueue()
 {
-    if (!destroy_queue.empty())
+    ProcessDestroyQueueImpl(destroy_queue);
+}
+
+void CObjectList::ProcessDestroyQueueImpl(Objects& queue)
+{
+    if (!queue.empty())
     {
         PROF_EVENT("CObjectList::Update/destroy_queue");
-        for (int it = destroy_queue.size() - 1; it >= 0; it--)
+        for (int it = queue.size() - 1; it >= 0; it--)
         {
-            auto obj = destroy_queue[it];
+            auto obj = queue[it];
             for (const auto oit : objects_active)
                 oit->net_Relcase(obj);
 
@@ -307,7 +314,7 @@ void CObjectList::ProcessDestroyQueue()
             Destroy(obj);
         }
 
-        destroy_queue.clear();
+        queue.clear();
     }
 }
 
@@ -418,7 +425,7 @@ return (it==map_NETID.end())?0:it->second;
 */
 void CObjectList::Load()
 {
-	R_ASSERT(/*map_NETID.empty() &&*/ objects_active.empty() && destroy_queue.empty() && objects_sleeping.empty());
+	R_ASSERT(/*map_NETID.empty() &&*/ objects_active.empty() && force_destroy_queue.empty() && destroy_queue.empty() && objects_sleeping.empty());
 }
 
 void CObjectList::Unload()
@@ -561,7 +568,8 @@ void CObjectList::dump_list(Objects& v, LPCSTR reason)
 
 bool CObjectList::dump_all_objects()
 {
-	dump_list(destroy_queue, "destroy_queue");
+    dump_list(force_destroy_queue, "force_destroy_queue");
+    dump_list(destroy_queue, "destroy_queue");
 	dump_list(objects_active, "objects_active");
 	dump_list(objects_sleeping, "objects_sleeping");
 	dump_list(m_crows[0], "m_crows[0]");
@@ -574,7 +582,11 @@ void CObjectList::register_object_to_destroy(CObject* object_to_destroy)
 #ifdef DEBUG
 	VERIFY(!registered_object_to_destroy(object_to_destroy));
 #endif
-	destroy_queue.push_back(object_to_destroy);
+
+    if (object_to_destroy->getForceDestroy())
+        force_destroy_queue.push_back(object_to_destroy);
+    else
+	    destroy_queue.push_back(object_to_destroy);
 
 	Objects::iterator it = objects_active.begin();
 	Objects::iterator it_e = objects_active.end();
