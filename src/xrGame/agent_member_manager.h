@@ -21,7 +21,6 @@ public:
 	typedef MEMBER_STORAGE::iterator iterator;
 	typedef MEMBER_STORAGE::const_iterator const_iterator;
 	typedef MemorySpace::squad_mask_type squad_mask_type;
-    xrCriticalSection m_combat_members_cs;
 
 private:
 	CAgentManager* m_object;

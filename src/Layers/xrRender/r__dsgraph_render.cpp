@@ -446,15 +446,12 @@ void CDSGraphManager::r_dsgraph_capture_lights()
 	);
 
 #if	RENDER==R_R1
-    static auto comp = [](const ISpatialShared& _1, const ISpatialShared& _2) noexcept
-    {
-        if (!_1.get() || !_2.get()) return false;
-        if (!_1.get()) return true;               // Only _1 is null, so it is "less"
-        if (!_2.get()) return false;              // Only _2 is null, so it is "more"
+	xr_sort(lstLights.begin(), lstLights.end(), [](const ISpatialShared& _1, const ISpatialShared& _2) noexcept
+	{
+		if (!_1.get() || !_2.get()) return false;
 
-        return	_1->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved) < _2->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved);
-    };
-	xr_sort(lstLights.begin(), lstLights.end(), comp);
+		return	_1->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved) < _2->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved);
+	});
 #endif
 
 	for (ISpatialShared spatial : lstLights)
@@ -502,15 +499,12 @@ void CDSGraphManager::r_dsgraph_capture_dynamic(CObject* O)
 #if	RENDER==R_R1
 			if (i_mask[CDSGraphManager::fl_normal])//normal phase
 			{
-                static auto comp = [](const ISpatialShared& _1, const ISpatialShared& _2) noexcept
-                {
-                    if (!_1.get() || !_2.get()) return false;
-                    if (!_1.get()) return true;               // Only _1 is null, so it is "less"
-                    if (!_2.get()) return false;              // Only _2 is null, so it is "more"
+				xr_sort(lstRenderables.begin(), lstRenderables.end(), [](const ISpatialShared& _1, const ISpatialShared& _2) noexcept
+				{
+					if (!_1.get() || !_2.get()) return false;
 
-                    return	_1->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved) < _2->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved);
-                };
-				xr_sort(lstRenderables.begin(), lstRenderables.end(), comp);
+					return	_1->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved) < _2->spatial.sphere.P.distance_to_sqr(Device.vCameraPosition_saved);
+				});
 
 				if (ps_actor_shadow_flags.test(1))
 					g_hud->Render_First(dcast_IPortalTraverser());

@@ -207,12 +207,20 @@ bool try_remove_string(shared_str& search_string, const shared_str& string_to_se
 
 void CSpaceRestrictionHolder::unregister_restrictor(CSpaceRestrictor* space_restrictor)
 {
+    if (m_restrictions.empty())
+        return;
+
 	shared_str restrictor_id = space_restrictor->cName();
 	RESTRICTIONS::iterator I = m_restrictions.find(restrictor_id);
-	VERIFY(I != m_restrictions.end());
-
+    if (I == m_restrictions.end())
+    {
+        return;
+    }
+    
 	CSpaceRestrictionBridge* bridge = (*I).second;
 	m_restrictions.erase(I);
+    if (!bridge)
+        return;
 
 	if (try_remove_string(m_default_out_restrictions, restrictor_id))
 		on_default_restrictions_changed();

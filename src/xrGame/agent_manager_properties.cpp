@@ -40,7 +40,6 @@ CAgentManagerPropertyEvaluatorItem::_value_type CAgentManagerPropertyEvaluatorIt
 
 CAgentManagerPropertyEvaluatorEnemy::_value_type CAgentManagerPropertyEvaluatorEnemy::evaluate()
 {
-    xrCriticalSectionGuard guard(m_object->member().m_combat_members_cs);
 	CAgentMemberManager::iterator I = m_object->member().combat_members().begin();
 	CAgentMemberManager::iterator E = m_object->member().combat_members().end();
 	for (; I != E; ++I)

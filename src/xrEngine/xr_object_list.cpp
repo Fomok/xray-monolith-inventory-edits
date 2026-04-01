@@ -36,6 +36,13 @@ CObjectList::~CObjectList()
 	R_ASSERT(objects_sleeping.empty());
 	R_ASSERT(destroy_queue.empty());
 	//. R_ASSERT ( map_NETID.empty() );
+
+    auto Callback = xr_make_delegate(this, &CObjectList::ProcessDestroyQueue);
+    auto Iter = std::find(Device.seqParallelBeforRender.begin(), Device.seqParallelBeforRender.end(), Callback);
+    if (Iter != Device.seqParallelBeforRender.end())
+    {
+        Device.seqParallelBeforRender.erase(Iter);
+    }
 }
 
 CObject* CObjectList::FindObjectByName(shared_str name)
@@ -195,6 +202,7 @@ void CObjectList::clear_crow_vec(Objects& o)
 	o.clear_not_free();
 }
 
+extern BOOL mt_Scheduler;
 void CObjectList::Update(bool bForce)
 {
 	PROF_EVENT("CObjectList::Update");
@@ -258,40 +266,49 @@ void CObjectList::Update(bool bForce)
 	}
 
 	// Destroy
-	if (!destroy_queue.empty())
-	{
-		PROF_EVENT("CObjectList::Update/destroy_queue");
-		for (int it = destroy_queue.size() - 1; it >= 0; it--)
-		{
-			auto obj = destroy_queue[it];
-			for (const auto oit : objects_active)
-				oit->net_Relcase(obj);
+    if (mt_Scheduler)
+        Device.seqParallelBeforRender.push_back(xr_make_delegate(this, &CObjectList::ProcessDestroyQueue));
+    else
+        ProcessDestroyQueue();
+}
 
-			for (const auto oit : objects_sleeping)
-				oit->net_Relcase(obj);
+void CObjectList::ProcessDestroyQueue()
+{
+    if (!destroy_queue.empty())
+    {
+        PROF_EVENT("CObjectList::Update/destroy_queue");
+        for (int it = destroy_queue.size() - 1; it >= 0; it--)
+        {
+            auto obj = destroy_queue[it];
+            for (const auto oit : objects_active)
+                oit->net_Relcase(obj);
 
-			Sound->object_relcase(obj);
+            for (const auto oit : objects_sleeping)
+                oit->net_Relcase(obj);
 
-			auto It = m_relcase_callbacks.begin();
-			auto Ite = m_relcase_callbacks.end();
-			for (; It != Ite; ++It)
-			{
-				VERIFY(*(*It).m_ID == (It - m_relcase_callbacks.begin()));
-				(*It).m_Callback(obj);
-				g_hud->net_Relcase(obj);
-			}
+            Sound->object_relcase(obj);
+
+            auto It = m_relcase_callbacks.begin();
+            auto Ite = m_relcase_callbacks.end();
+            for (; It != Ite; ++It)
+            {
+                VERIFY(*(*It).m_ID == (It - m_relcase_callbacks.begin()));
+                (*It).m_Callback(obj);
+            }     
+
+            g_hud->net_Relcase(obj);
 
 #ifdef DEBUG
-			if (debug_destroy)
-				Msg("Destroying object[%x][%x] [%d][%s] frame[%d]", fast_dynamic_cast<void*>(obj), obj, obj->ID(), *obj->cName(), Device.dwFrame);
+            if (debug_destroy)
+                Msg("Destroying object[%x][%x] [%d][%s] frame[%d]", fast_dynamic_cast<void*>(obj), obj, obj->ID(), *obj->cName(), Device.dwFrame);
 #endif // DEBUG
 
-			obj->net_Destroy();
-			Destroy(obj);
-		}
+            obj->net_Destroy();
+            Destroy(obj);
+        }
 
-		destroy_queue.clear();
-	}
+        destroy_queue.clear();
+    }
 }
 
 void CObjectList::net_Register(CObject* O)
@@ -406,6 +423,14 @@ void CObjectList::Load()
 
 void CObjectList::Unload()
 {
+    auto Callback = xr_make_delegate(this, &CObjectList::ProcessDestroyQueue);
+    auto Iter = std::find(Device.seqParallelBeforRender.begin(), Device.seqParallelBeforRender.end(), Callback);
+    if (Iter != Device.seqParallelBeforRender.end())
+    {
+        Device.seqParallelBeforRender.erase(Iter);
+    }
+    ProcessDestroyQueue();
+
 	if (objects_sleeping.size() || objects_active.size())
 		Msg("! objects-leaked: %d", objects_sleeping.size() + objects_active.size());
 
@@ -454,30 +479,12 @@ void CObjectList::Destroy(CObject* O)
 	if (0 == O) return;
 	net_Unregister(O);
 
-	if (!Device.Paused())
-	{
-		if (!m_crows[1].empty())
-		{
-			Msg("assertion !m_crows[1].empty() failed: %d", m_crows[1].size());
-
-			Objects::const_iterator i = m_crows[1].begin();
-			Objects::const_iterator const e = m_crows[1].end();
-			for (u32 j = 0; i != e; ++i, ++j)
-				Msg("%d %s", j, (*i)->cName().c_str());
-			VERIFY(Device.Paused() || m_crows[1].empty());
-			m_crows[1].clear_not_free();
-		}
-	}
-	else
-	{
-		Objects& crows = m_crows[1];
-		Objects::iterator const i = std::find(crows.begin(), crows.end(), O);
-		if (i != crows.end())
-		{
-			crows.erase_fast(i);
-			VERIFY(std::find(crows.begin(), crows.end(), O) == crows.end());
-		}
-	}
+    Objects& crows1 = m_crows[1];
+    Objects::iterator _i1 = std::find(crows1.begin(), crows1.end(), O);
+    if (_i1 != crows1.end())
+    {
+        crows1.erase_fast(_i1);
+    }
 
 	Objects& crows = m_crows[0];
 	Objects::iterator _i0 = std::find(crows.begin(), crows.end(), O);

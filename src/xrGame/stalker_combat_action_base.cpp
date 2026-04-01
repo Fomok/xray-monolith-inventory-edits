@@ -267,7 +267,6 @@ void CStalkerActionCombatBase::play_attack_sound(u32 max_start_time, u32 min_sta
     u32 sound_type = eStalkerSoundAttackNoAllies;
 #ifdef DEBUG
     {
-        xrCriticalSectionGuard guard(object().agent_manager().member().m_combat_members_cs);
         if (object().agent_manager().member().combat_members().empty())
             Msg(
                 "! I am in combat, but there is no combat members at all (including me), npc[%s],team[%d],squad[%d],group[%d]",
@@ -280,7 +279,7 @@ void CStalkerActionCombatBase::play_attack_sound(u32 max_start_time, u32 min_sta
 #endif // DEBUG
 
     {
-        xrCriticalSectionGuard guard(object().agent_manager().member().m_combat_members_cs);
+        
         if (object().agent_manager().member().combat_members().size() > 1)
         {
             if (object().agent_manager().enemy().enemies().size() > 1)
@@ -310,7 +309,7 @@ void CStalkerActionCombatBase::play_start_search_sound(u32 max_start_time, u32 m
 
 #ifdef DEBUG
     {
-        xrCriticalSectionGuard guard(object().agent_manager().member().m_combat_members_cs);
+        
         if (object().agent_manager().member().combat_members().empty())
             Msg("! I am in combat, but there is no combat members at all (including me), npc[%s],team[%d],squad[%d],group[%d]",
                 *object().cName(),
@@ -323,7 +322,7 @@ void CStalkerActionCombatBase::play_start_search_sound(u32 max_start_time, u32 m
 
     bool search_with_allies;
     {
-        xrCriticalSectionGuard guard(object().agent_manager().member().m_combat_members_cs);
+        
         search_with_allies = object().agent_manager().member().combat_members().size() > 1;
     }
 
@@ -345,7 +344,7 @@ void CStalkerActionCombatBase::play_enemy_lost_sound(u32 max_start_time, u32 min
 
 #ifdef DEBUG
     {
-        xrCriticalSectionGuard guard(object().agent_manager().member().m_combat_members_cs);
+        
         if (object().agent_manager().member().combat_members().empty())
             Msg("! I am in combat, but there is no combat members at all (including me), npc[%s],team[%d],squad[%d],group[%d]",
                 *object().cName(),
@@ -358,7 +357,7 @@ void CStalkerActionCombatBase::play_enemy_lost_sound(u32 max_start_time, u32 min
 
     bool search_with_allies;
     {
-        xrCriticalSectionGuard guard(object().agent_manager().member().m_combat_members_cs);
+        
         search_with_allies = object().agent_manager().member().combat_members().size() > 1;
     }	
 

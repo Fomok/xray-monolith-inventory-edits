@@ -108,7 +108,7 @@ public:
 
 class CLevel;
 
-class CBulletManager
+class CBulletManager : private pure_relcase
 {
 private:
 	static float const parent_ignore_distance;
@@ -251,6 +251,7 @@ public:
 
 	void CommitEvents(); // @ the start of frame
 	void Render();
+    void __stdcall net_Relcase(CObject* obj);
 };
 
 struct bullet_test_callback_data

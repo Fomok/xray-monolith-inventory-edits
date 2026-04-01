@@ -302,7 +302,7 @@ void IGame_Persistent::UpdateParticles()
 	}
 	ps_active_deffer.clear();
 
-	static auto eraseFunc = [](const intrusive_ptr<CPS_Instance>& Obj) noexcept
+	static auto eraseFunc = [](const intrusive_ptr<CPS_Instance>& Obj)
 	{
 		return Obj->m_NeedDestroy;
 	};
@@ -322,7 +322,7 @@ void IGame_Persistent::destroy_particles(const bool& all_particles)
 	}
 	else
 	{
-		static auto eraseFunc = [](const intrusive_ptr<CPS_Instance>& Obj) noexcept
+		static auto eraseFunc = [](const intrusive_ptr<CPS_Instance>& Obj)
 		{
 			return Obj->destroy_on_game_load();
 		};

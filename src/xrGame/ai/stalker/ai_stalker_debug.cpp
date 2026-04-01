@@ -437,7 +437,6 @@ void CAI_Stalker::debug_text			()
 	DBG_OutText	("%senemies           : %d",indent,agent_manager().enemy().enemies().size());
 	DBG_OutText	("%scorpses           : %d",indent,agent_manager().corpse().corpses().size());
 	DBG_OutText	("%sdanger locations  : %d",indent,agent_manager().location().locations().size());
-    xrCriticalSectionGuard guard(agent_manager().member().m_combat_members_cs);
 	DBG_OutText	("%smembers in combat : %d",indent,agent_manager().member().combat_members().size());
 	if (g_Alive())
 		DBG_OutText("%sI am in combat    : %s",indent,agent_manager().member().registered_in_combat(this) ? "+" : "-");

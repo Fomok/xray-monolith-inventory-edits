@@ -74,7 +74,6 @@ void CAgentCorpseManager::react_on_member_death()
 	for (;;)
 	{
 		bool changed = false;
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
 		CAgentMemberManager::MEMBER_STORAGE::iterator I = object().member().combat_members().begin();
 		CAgentMemberManager::MEMBER_STORAGE::iterator E = object().member().combat_members().end();
 		for (; I != E; ++I)

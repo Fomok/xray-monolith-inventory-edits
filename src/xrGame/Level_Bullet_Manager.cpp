@@ -160,15 +160,15 @@ void populateBulletTable (
 }
 
 
-CBulletManager::CBulletManager()
+CBulletManager::CBulletManager() : pure_relcase(&CBulletManager::net_Relcase)
 #if 0//def PROFILE_CRITICAL_SECTIONS
-	: m_Lock(MUTEX_PROFILE_ID(CBulletManager))
+	,m_Lock(MUTEX_PROFILE_ID(CBulletManager))
 #	ifdef DEBUG
 		,m_thread_id(GetCurrentThreadId())
 #	endif // #ifdef DEBUG
 #else // #ifdef PROFILE_CRITICAL_SECTIONS
 #	ifdef DEBUG
-		: m_thread_id(GetCurrentThreadId())
+		,m_thread_id(GetCurrentThreadId())
 #	endif // #ifdef DEBUG
 #endif // #ifdef PROFILE_CRITICAL_SECTIONS
 {
@@ -1210,7 +1210,22 @@ void CBulletManager::Render()
 	UIRender->CacheSetCullMode(IUIRender::cmCCW);
 }
 
-
+// demonized: net_Relcase for mt_scheduler 1
+void __stdcall CBulletManager::net_Relcase(CObject* object)
+{
+    // Clean up pending events
+    m_Events.erase(
+        std::remove_if(
+            m_Events.begin(),
+            m_Events.end(),
+            [object](const _event& E)
+            {
+                return (E.dynamic && E.R.O == object);
+            }
+        ),
+        m_Events.end()
+    );
+}
 
 void CBulletManager::CommitEvents() // @ the start of frame
 {

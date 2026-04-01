@@ -155,7 +155,7 @@ void CStalkerCombatPlanner::initialize()
 	m_loaded = false;
 
     {
-        xrCriticalSectionGuard guard(object().agent_manager().member().m_combat_members_cs);
+        
         if (!object().agent_manager().member().combat_members().empty())
             CScriptActionPlanner::m_storage.set_property(eWorldPropertyUseSuddenness, false);
     }

@@ -98,7 +98,6 @@ void CAgentEnemyManager::fill_enemies()
 	m_enemies.clear();
 
 	{
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
 		CAgentMemberManager::iterator I = object().member().combat_members().begin();
 		CAgentMemberManager::iterator E = object().member().combat_members().end();
 		for (; I != E; ++I)
@@ -200,7 +199,6 @@ void CAgentEnemyManager::exchange_enemies(CMemberOrder& member0, CMemberOrder& m
 void CAgentEnemyManager::compute_enemy_danger()
 {
     {
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
         ENEMIES::iterator I = m_enemies.begin();
         ENEMIES::iterator E = m_enemies.end();
         for (; I != E; ++I)
@@ -273,7 +271,6 @@ void CAgentEnemyManager::permutate_enemies()
 {
 	// filling member enemies
     {
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
         CAgentMemberManager::iterator I = object().member().combat_members().begin();
         CAgentMemberManager::iterator E = object().member().combat_members().end();
         for (; I != E; ++I)
@@ -314,7 +311,6 @@ void CAgentEnemyManager::permutate_enemies()
 	do
 	{
 		changed = false;
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
 		CAgentMemberManager::iterator I = object().member().combat_members().begin();
 		CAgentMemberManager::iterator E = object().member().combat_members().end();
 		for (; I != E; ++I)
@@ -385,7 +381,6 @@ void CAgentEnemyManager::permutate_enemies()
 	VERIFY(!m_enemies.empty());
 	if (!m_only_wounded_left)
 	{
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
 		CAgentMemberManager::iterator I = object().member().combat_members().begin();
 		CAgentMemberManager::iterator E = object().member().combat_members().end();
 		for (; I != E; ++I)
@@ -438,7 +433,6 @@ void CAgentEnemyManager::assign_enemy_masks()
 	{
 		ENEMIES::iterator I = m_enemies.begin();
 		ENEMIES::iterator E = m_enemies.end();
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
 		for (; I != E; ++I)
 		{
 			CAgentMemberManager::MEMBER_STORAGE::const_iterator i = object().member().combat_members().begin();
@@ -522,7 +516,6 @@ void CAgentEnemyManager::assign_wounded()
 
 	u32 combat_member_count = population(object().member().combat_mask());
     {
-        xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
         VERIFY(combat_member_count == object().member().combat_members().size());
     } 
 
@@ -583,11 +576,9 @@ void CAgentEnemyManager::assign_wounded()
 						(*I).m_probability
 					);
 			}
-            xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
 			Msg						("combat members(%d):",object().member().combat_members().size());
 			{
 				typedef CAgentMemberManager::MEMBER_STORAGE::const_iterator	const_iterator;
-                xrCriticalSectionGuard guard(object().member().m_combat_members_cs);
 				const_iterator		I = object().member().combat_members().begin();
 				const_iterator		E = object().member().combat_members().end();
 				for ( ; I != E; ++I)
