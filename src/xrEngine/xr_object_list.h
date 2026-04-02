@@ -63,6 +63,7 @@ public:
 	void Update(bool bForce);
     void ProcessDestroyQueue();
     void ProcessDestroyQueueImpl(Objects& queue);
+    void ClearProcessDestroyQueueFromDevice();
 
 	void net_Register(CObject* O);
 	void net_Unregister(CObject* O);

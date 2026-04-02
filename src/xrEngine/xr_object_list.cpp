@@ -38,12 +38,7 @@ CObjectList::~CObjectList()
     R_ASSERT(force_destroy_queue.empty());
 	//. R_ASSERT ( map_NETID.empty() );
 
-    auto Callback = xr_make_delegate(this, &CObjectList::ProcessDestroyQueue);
-    auto Iter = std::find(Device.seqParallelBeforRender.begin(), Device.seqParallelBeforRender.end(), Callback);
-    if (Iter != Device.seqParallelBeforRender.end())
-    {
-        Device.seqParallelBeforRender.erase(Iter);
-    }
+    ClearProcessDestroyQueueFromDevice();
 }
 
 CObject* CObjectList::FindObjectByName(shared_str name)
@@ -428,14 +423,21 @@ void CObjectList::Load()
 	R_ASSERT(/*map_NETID.empty() &&*/ objects_active.empty() && force_destroy_queue.empty() && destroy_queue.empty() && objects_sleeping.empty());
 }
 
-void CObjectList::Unload()
+void CObjectList::ClearProcessDestroyQueueFromDevice()
 {
     auto Callback = xr_make_delegate(this, &CObjectList::ProcessDestroyQueue);
-    auto Iter = std::find(Device.seqParallelBeforRender.begin(), Device.seqParallelBeforRender.end(), Callback);
-    if (Iter != Device.seqParallelBeforRender.end())
-    {
-        Device.seqParallelBeforRender.erase(Iter);
-    }
+    Device.seqParallelBeforRender.erase(
+        std::remove_if(
+            Device.seqParallelBeforRender.begin(),
+            Device.seqParallelBeforRender.end(),
+            [Callback](const auto& cb) { return cb == Callback; }
+        ), Device.seqParallelBeforRender.end()
+    );
+}
+
+void CObjectList::Unload()
+{
+    ClearProcessDestroyQueueFromDevice();
     ProcessDestroyQueue();
 
 	if (objects_sleeping.size() || objects_active.size())
