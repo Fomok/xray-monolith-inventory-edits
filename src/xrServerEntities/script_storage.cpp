@@ -816,6 +816,48 @@ static bool unlocalRegex(xr_set<xr_string>& unlocals, xr_string& s, const std::r
 	return false;
 };
 
+// demonized: replaces `for <var> = 1, 65534 do` with `for $1, obj in pairs(server_objects_registry)` do
+static bool LuaReplace65534Loop(xr_string& script)
+{
+	// Prefer a smart rewrite when the next line initializes a local object
+	// from the loop variable, for example:
+	// for i = 1, 65534 do
+	//     local se_obj = sim:object(i)
+	// or:
+	// for i = 1, 65534 do
+	//     local se = alife():object(i)
+	//
+	// In such cases, fold both lines into:
+	// for i, se_obj in pairs(server_objects_registry) do
+	static const std::regex loopWithObjectInitPattern(
+		R"((^|[\r\n])([ \t]*)for\s+([_a-zA-Z][_a-zA-Z0-9]*)\s*=\s*1\s*,\s*65534\b\s*do\s*[\r\n]+[ \t]*local\s+([_a-zA-Z][_a-zA-Z0-9]*)\s*=\s*[^\r\n]*:object\s*\(\s*\3\s*\)\s*(--[^\r\n]*)?)"
+	);
+
+	static const std::regex legacyLoopPattern(
+		R"(\bfor\s+([_a-zA-Z][_a-zA-Z0-9]*)\s*=\s*1\s*,\s*65534\b\s*do\b)"
+	);
+
+	bool replaced = false;
+
+	if (std::regex_search(script, loopWithObjectInitPattern))
+	{
+		script = std::regex_replace(
+			script,
+			loopWithObjectInitPattern,
+			"$1$2for $3, $4 in pairs(server_objects_registry) do$5\n"
+		);
+		replaced = true;
+	}
+
+	if (!std::regex_search(script, legacyLoopPattern))
+		return replaced;
+
+	script = std::regex_replace(script, legacyLoopPattern, "for $1, obj in pairs(server_objects_registry) do");
+	replaced = true;
+	return replaced;
+}
+
+BOOL lua_65534_loop_replacement = TRUE;
 bool CScriptStorage::do_file(LPCSTR caScriptName, LPCSTR caNameSpaceName)
 {
 	if (!unlocalizerPassed) {
@@ -886,22 +928,18 @@ bool CScriptStorage::do_file(LPCSTR caScriptName, LPCSTR caNameSpaceName)
 	auto scriptContents = static_cast<LPCSTR>(l_tpFileReader->pointer());
 	auto scriptLength = (size_t)l_tpFileReader->length();
 	bool unlocalPerformed = false;
-	xr_string unlocalizerResult;
+	bool Lua65534LoopReplaced = false;
+	xr_string rewriteResult(scriptContents, scriptLength);
 	xr_string loweredNameSpaceName = caNameSpaceName;
 	loweredNameSpaceName = loweredNameSpaceName.ToLowerCase();
+
 	if (unlocalizers.find(loweredNameSpaceName) != unlocalizers.end()) {
 		Msg("found script %s in unlocalizers data", caNameSpaceName);
 
 		// Get contents of the script file and split by lines
 		xr_vector<xr_string> tokens;
-		xr_string temp;
-		while (!l_tpFileReader->eof())
-		{
-			char c = l_tpFileReader->r_u8();
-			temp += c;
-		}
 
-		std::stringstream stringStream(std::string(temp.c_str()));
+		std::stringstream stringStream(std::string(rewriteResult.c_str()));
 		xr_string line;
 		tokens.clear();
 		while (std::getline(stringStream, line)) {
@@ -986,16 +1024,22 @@ bool CScriptStorage::do_file(LPCSTR caScriptName, LPCSTR caNameSpaceName)
 			Msg("%s", s.c_str());
 		}*/
 
-		unlocalizerResult = join_list(tokens);
-		scriptContents = unlocalizerResult.c_str();
-		scriptLength = strlen(scriptContents);
+		rewriteResult = join_list(tokens);
 	}
+
+	// replace 65534 loop
+    if (lua_65534_loop_replacement)
+    {
+        Lua65534LoopReplaced = LuaReplace65534Loop(rewriteResult);
+        if (Lua65534LoopReplaced)
+            Msg("[LuaReplace65534Loop] Replaced in script %s", caNameSpaceName);
+    }
 
 	strconcat(sizeof(l_caLuaFileName), l_caLuaFileName, "@", caScriptName);
 
 	bool bufferLoaded = false;
-	if (unlocalPerformed) {
-		bufferLoaded = load_buffer(lua(), scriptContents, scriptLength, l_caLuaFileName, caNameSpaceName);
+	if (unlocalPerformed || Lua65534LoopReplaced) {
+		bufferLoaded = load_buffer(lua(), rewriteResult.c_str(), rewriteResult.length(), l_caLuaFileName, caNameSpaceName);
 	} else {
 		l_tpFileReader->rewind();
 		bufferLoaded = load_buffer(lua(), static_cast<LPCSTR>(l_tpFileReader->pointer()), (size_t)l_tpFileReader->length(), l_caLuaFileName, caNameSpaceName);

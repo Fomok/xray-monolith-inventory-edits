@@ -192,6 +192,7 @@ extern BOOL r_optimize_calculate_bones;
 extern BOOL hud_frequent_updates;
 
 extern BOOL lua_use_functor_cache;
+extern BOOL lua_65534_loop_replacement;
 
 extern BOOL g_legs_enabled;
 extern float legs_fwd_offset;
@@ -2587,7 +2588,8 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer, "lua_parallel_gc", &psLua_ParallelGC, 0, 1);
 
 	CMD4(CCC_Integer, "lua_debug", &lua_debug, 0, 1);
-	CMD4(CCC_Integer, "lua_use_functor_cache", &lua_use_functor_cache, 0, 1);
+    CMD4(CCC_Integer, "lua_use_functor_cache", &lua_use_functor_cache, 0, 1);
+    CMD4(CCC_Integer, "lua_65534_loop_replacement", &lua_65534_loop_replacement, 0, 1);
 	CMD4(CCC_Integer, "lua_busy_hands_debug", &lua_busy_hands_debug, 0, 1);
 
 #ifdef DEBUG
