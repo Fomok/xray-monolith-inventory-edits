@@ -388,6 +388,23 @@ struct timeout_wm_pred
 	}
 };
 
+void CWallmarksEngine::RemoveSkeletonWallmarksFromObject(CKinematics* obj)
+{
+    xrCriticalSectionGuard g(lock);
+    for (WMSlotVecIt slot_it = marks.begin(); slot_it != marks.end(); slot_it++)
+    {
+        wm_slot* slot = *slot_it;
+        slot->skeleton_items.erase(std::remove_if
+        (
+            slot->skeleton_items.begin(),
+            slot->skeleton_items.end(),
+            [obj](const intrusive_ptr<CSkeletonWallmark>& wm) { return wm && wm->Parent() == obj; }
+        ),
+        slot->skeleton_items.end()
+        );
+    }
+}
+
 void CWallmarksEngine::Render()
 {
 	//	if (marks.empty())			return;

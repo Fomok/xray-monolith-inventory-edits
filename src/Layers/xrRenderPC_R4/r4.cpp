@@ -833,6 +833,11 @@ void CRender::add_SkeletonWallmark(const Fmatrix* xf, IKinematics* obj, IWallMar
 	if (pShader) add_SkeletonWallmark(xf, (CKinematics*)obj, *pShader, start, dir, size, ttl, ignore_opt);
 }
 
+void CRender::remove_SkeletonWallmarksFromObject(IKinematics* obj)
+{
+    Wallmarks->RemoveSkeletonWallmarksFromObject(static_cast<CKinematics*>(obj));
+}
+
 void CRender::add_Occluder(Fbox2& bb_screenspace)
 {
 	HOM.occlude(bb_screenspace);

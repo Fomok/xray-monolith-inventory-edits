@@ -126,8 +126,12 @@ void CGameObject::net_Destroy()
 	xr_delete(m_ini_file);
 
 	m_script_clsid = -1;
-	if (Visual() && Visual()->dcast_PKinematics())
-		Visual()->dcast_PKinematics()->Callback(0, 0);
+    if (Visual() && Visual()->dcast_PKinematics())
+    {
+        IKinematics* K = Visual()->dcast_PKinematics();
+        K->Callback(0, 0);
+        ::Render->remove_SkeletonWallmarksFromObject(K);
+    }
 
 	inherited::net_Destroy();
 	setReady(FALSE);

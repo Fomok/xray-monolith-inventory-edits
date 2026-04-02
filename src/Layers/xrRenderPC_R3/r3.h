@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "../xrRender/r__dsgraph_manager.h"
 #include "../xrRender/r__sector.h"
@@ -307,6 +307,8 @@ public:
 	                                  const Fvector& dir, float size, float ttl = 0.f, bool ignore_opt = false);
 	virtual void add_SkeletonWallmark(const Fmatrix* xf, IKinematics* obj, IWallMarkArray* pArray, const Fvector& start,
 	                                  const Fvector& dir, float size, float ttl = 0.f, bool ignore_opt = false);
+
+    virtual void remove_SkeletonWallmarksFromObject(IKinematics* obj);
 
 	//
 	virtual IBlender* blender_create(CLASS_ID cls);

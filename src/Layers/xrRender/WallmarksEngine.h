@@ -73,6 +73,8 @@ public:
 	void AddSkeletonWallmark(const Fmatrix* xf, CKinematics* obj, ref_shader& sh, const Fvector& start,
 	                         const Fvector& dir, float size, float ttl = 0.f, bool ignore_opt = false);
 
+    void RemoveSkeletonWallmarksFromObject(CKinematics* obj);
+
 	// render
 	void Render();
 
