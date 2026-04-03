@@ -357,6 +357,11 @@ void CRender::remove_SkeletonWallmarksFromObject(IKinematics* obj)
     Wallmarks->RemoveSkeletonWallmarksFromObject(static_cast<CKinematics*>(obj));
 }
 
+void CRender::update_Wallmarks()
+{
+    Wallmarks->UpdateWallmarks();
+}
+
 void CRender::add_Occluder(Fbox2& bb_screenspace)
 {
 	VERIFY(_valid(bb_screenspace));

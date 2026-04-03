@@ -363,6 +363,7 @@ public:
 	                                  const Fvector& dir, float size, float ttl = 0.f, bool ignore_opt = false) = 0;
 
     virtual void remove_SkeletonWallmarksFromObject(IKinematics* obj) = 0;
+    virtual void update_Wallmarks() = 0;
 
 	//virtual IBlender* blender_create (CLASS_ID cls) = 0;
 	//virtual void blender_destroy (IBlender* &) = 0;

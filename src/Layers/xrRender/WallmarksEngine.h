@@ -29,8 +29,9 @@ public:
 		IC float TimeEnd() { return m_fTimeEnd; }
 	};
 
-    typedef xr_deque< static_wallmark* > StaticWMVec; typedef StaticWMVec::iterator StaticWMVecIt;
-    typedef xr_deque< wm_slot* > WMSlotVec; typedef WMSlotVec::iterator WMSlotVecIt;
+    typedef xr_vector<static_wallmark*> StaticWMVec;
+    typedef xr_unordered_map<IRender_Sector*, StaticWMVec> StaticWMSectorMap;
+    typedef xr_vector< wm_slot* > WMSlotVec;
 private:
 	StaticWMVec static_pool;
 	WMSlotVec marks;
@@ -74,6 +75,8 @@ public:
 	                         const Fvector& dir, float size, float ttl = 0.f, bool ignore_opt = false);
 
     void RemoveSkeletonWallmarksFromObject(CKinematics* obj);
+
+    void UpdateWallmarks();
 
 	// render
 	void Render();
