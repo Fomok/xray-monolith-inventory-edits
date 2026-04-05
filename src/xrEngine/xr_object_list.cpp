@@ -552,6 +552,31 @@ void CObjectList::relcase_unregister(int* ID)
 	m_relcase_callbacks.pop_back();
 }
 
+void CObjectList::relcase_visual_register(RELCASE_CALLBACK cb, int* ID)
+{
+    *ID = m_relcase_visual_callbacks.size();
+    m_relcase_visual_callbacks.push_back(SRelcasePair(ID, cb));
+}
+
+void CObjectList::relcase_visual_unregister(int* ID)
+{
+    VERIFY(m_relcase_visual_callbacks[*ID].m_ID == ID);
+    m_relcase_visual_callbacks[*ID] = m_relcase_visual_callbacks.back();
+    *m_relcase_visual_callbacks.back().m_ID = *ID;
+    m_relcase_visual_callbacks.pop_back();
+}
+
+void CObjectList::relcase_visual_invoke(CObject* obj)
+{
+    auto It = m_relcase_visual_callbacks.begin();
+    auto Ite = m_relcase_visual_callbacks.end();
+    for (; It != Ite; ++It)
+    {
+        VERIFY(*(*It).m_ID == (It - m_relcase_visual_callbacks.begin()));
+        (*It).m_Callback(obj);
+    }
+}
+
 void CObjectList::dump_list(Objects& v, LPCSTR reason)
 {
 	Objects::iterator it = v.begin();

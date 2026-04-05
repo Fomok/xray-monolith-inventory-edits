@@ -125,21 +125,25 @@ void CRender::Render()
 		HW.pContext->ClearDepthStencilView(HW.pBaseZB, D3D_CLEAR_DEPTH, 1.0f, 0);
 	}*/
 
-	if (RImplementation.o.ssfx_motionvectors)
-	{
-		Target->u_setrt(Device.dwWidth, Device.dwHeight, 0, 0, Target->rt_ssfx_motion_vectors->pRT, 0);
+    GMBase.traverse(RImplementation.pLastSector, ViewBase, Device.vCameraPosition, Device.mFullTransform);
+    GMBase.r_dsgraph_capture_static();
+    GMBase.r_dsgraph_capture_dynamic();
 
-		FLOAT ColorRGBA[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		HW.pContext->ClearRenderTargetView(Target->rt_ssfx_motion_vectors->pRT, ColorRGBA);
+    if (RImplementation.o.ssfx_motionvectors)
+    {
+        Target->u_setrt(Device.dwWidth, Device.dwHeight, 0, 0, Target->rt_ssfx_motion_vectors->pRT, 0);
 
-		RCache.set_Stencil(FALSE);
-		g_pGamePersistent->Environment().RenderSky(true);
+        FLOAT ColorRGBA[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+        HW.pContext->ClearRenderTargetView(Target->rt_ssfx_motion_vectors->pRT, ColorRGBA);
 
-		RCache.Index.Flush();
-		RCache.Vertex.Flush();
+        RCache.set_Stencil(FALSE);
+        g_pGamePersistent->Environment().RenderSky(true);
 
-		RCache.set_xform_world(Fidentity);
-	}
+        RCache.Index.Flush();
+        RCache.Vertex.Flush();
+
+        RCache.set_xform_world(Fidentity);
+    }
 
 	if (ps_r2_ls_flags.test(R2FLAG_TERRAIN_PREPASS))
 	{
@@ -151,10 +155,7 @@ void CRender::Render()
 		PIX_EVENT(DEFER_PART0_SPLIT);
 		// level, SPLIT
 		Target->phase_scene_begin();
-		GMBase.traverse(RImplementation.pLastSector, ViewBase, Device.vCameraPosition, Device.mFullTransform);
-		GMBase.r_dsgraph_capture_static();
 		GMBase.r_dsgraph_render_static(0);
-		GMBase.r_dsgraph_capture_dynamic();
 		GMBase.r_dsgraph_render_dynamic(0);
 		Target->disable_aniso();
 	}

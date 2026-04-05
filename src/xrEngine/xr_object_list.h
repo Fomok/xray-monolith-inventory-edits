@@ -44,6 +44,11 @@ public:
 	void relcase_register(RELCASE_CALLBACK, int*);
 	void relcase_unregister(int*);
 
+    RELCASE_CALLBACK_VEC m_relcase_visual_callbacks;
+    void relcase_visual_register(RELCASE_CALLBACK, int*);
+    void relcase_visual_unregister(int*);
+    void relcase_visual_invoke(CObject* obj);
+
 public:
 	// methods
 	CObjectList();

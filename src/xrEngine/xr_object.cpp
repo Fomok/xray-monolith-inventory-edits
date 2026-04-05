@@ -73,11 +73,6 @@ void CObject::cNameVisual_set(shared_str N)
 	if (*N && *NameVisual)
 		if (N == NameVisual) return;
 
-    while (m_p_tasks_count.load(std::memory_order_acquire) > 0)
-    {
-        std::this_thread::yield();
-    }
-
 	// replace model
 	if (*N && N[0])
 	{
@@ -110,6 +105,7 @@ void CObject::cNameVisual_set(shared_str N)
 			new_k->SetUpdateCallbackParam(old_k->GetUpdateCallbackParam());
 		}
 
+        OnChangeVisual();
 		::Render->model_Delete(old_v);
 	}
 	else
@@ -124,10 +120,13 @@ void CObject::cNameVisual_set(shared_str N)
 		}
 #endif
 
-		::Render->model_Delete(renderable.visual);
-		NameVisual = 0;
+        // The children classes will see that renderable.visual is gone, but actual deletion will happen after the callback to prevent nasty stuff
+        IRenderVisual* old_v = renderable.visual;
+        renderable.visual = nullptr;
+        NameVisual = 0;
+        OnChangeVisual();
+		::Render->model_Delete(old_v);
 	}
-	OnChangeVisual();
 }
 
 // flagging
@@ -287,11 +286,6 @@ BOOL CObject::net_Spawn(CSE_Abstract* data)
 
 void CObject::net_Destroy()
 {
-    while (m_p_tasks_count.load(std::memory_order_acquire) > 0)
-    {
-        std::this_thread::yield();
-    }
-
 	VERIFY(getDestroy());
 	xr_delete(collidable.model);
 	if (register_schedule())
@@ -544,4 +538,10 @@ Fvector CObject::get_last_local_point_on_mesh(Fvector const& local_point, u16 co
 	mE.transform_tiny(result, local_point);
 
 	return result;
+}
+
+void CObject::OnChangeVisual()
+{
+    if (g_pGameLevel)
+        g_pGameLevel->Objects.relcase_visual_invoke(this);   
 }

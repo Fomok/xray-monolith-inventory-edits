@@ -107,8 +107,6 @@ CCustomMonster::CCustomMonster() :
 
 CCustomMonster::~CCustomMonster()
 {
-	Device.secondary_tasks.wait();
-
 	xr_delete(m_sound_user_data_visitor);
 	xr_delete(m_memory_manager);
 	xr_delete(m_movement_manager);
@@ -627,6 +625,19 @@ void CCustomMonster::update_range_fov(float& new_range, float& new_fov, float st
 	float current_far_plane = GamePersistent().Environment().CurrentEnv->far_plane;
 	// 300=standart, 50=super-fog
 
+#ifdef HOLDERCUSTOM_NEW
+    if (cast_stalker() && cast_stalker()->Holder())
+    {
+#ifdef STATIONARYMGUN_NEW
+        CWeaponStatMgun* stm = smart_cast<CWeaponStatMgun*>(cast_stalker()->Holder());
+        if (stm)
+        {
+            stm->OverrideRangeFOV(cast_game_object(), start_range);
+        }
+#endif
+    }
+#endif
+
 	new_fov = start_fov;
 	new_range =
 		start_range
@@ -673,48 +684,6 @@ void CCustomMonster::eye_pp_s2()
 {
 	// Tracing
 	Device.Statistic->AI_Vis_RayTests.Begin();
-
-	// Snapshot bone data before going multithreaded
-	// Safer in order to avoid crash on get_last_local_point_on_mesh or get_new_local_point_on_mesh calls
-	VisionSnapshotList snapshots;
-
-	auto& visible_items = feel_visible;
-	snapshots.reserve(visible_items.size());
-
-	// Lock list to ensure safety
-	xrSRWLockGuard guard(&lock_visible, true);
-	for (auto& item : visible_items)
-	{
-        item.O->m_p_tasks_count.fetch_add(1, std::memory_order_relaxed);
-
-		VisionSnapshotItem snap;
-		snap.Object = item.O;
-		snap.HasCFORM = item.O->CFORM() != 0;
-
-		if (item.O->Visual())
-		{
-			item.O->Center(snap.Position);
-		}
-		else
-		{
-			snap.Position = item.O->Position();
-		}
-
-		// Initial Setup for new objects (added from o_new)
-		if (item.bone_id == u16(-1))
-		{
-			// If it was just added, pick its first valid point right now
-			item.cp_LP = item.O->get_new_local_point_on_mesh(item.bone_id);
-		}
-
-		// Prepare data for raycasts
-		snap.cp_LAST = item.O->get_last_local_point_on_mesh(item.cp_LP, item.bone_id);
-		snap.cp_LP = item.O->get_new_local_point_on_mesh(item.bone_id);
-		snap.bone_id = item.bone_id;
-
-		snapshots.push_back(snap);
-	}
-
 	u32 dwTime = Level().timeServer();
 	u32 dwDT = dwTime - eye_pp_timestamp;
 	eye_pp_timestamp = dwTime;
@@ -723,10 +692,8 @@ void CCustomMonster::eye_pp_s2()
 	Device.secondary_tasks.run([=]()
 	{
 		if (this_thread_id != GetCurrentThreadId()) { PROF_THREAD("X-Ray PPL Thread") }
-		feel_vision_update						(this,eye_matrix.c,float(dwDT)/1000.f,memory().visual().transparency_threshold(), snapshots);
+		feel_vision_update(this,eye_matrix.c,float(dwDT)/1000.f,memory().visual().transparency_threshold());
 
-        for (const auto& s : snapshots)
-            s.Object->m_p_tasks_count.fetch_sub(1, std::memory_order_release);
 	});
 	Device.Statistic->AI_Vis_RayTests.End();
 }

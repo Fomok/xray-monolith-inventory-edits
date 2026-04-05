@@ -16,23 +16,9 @@ namespace Feel
 	const float lr_granularity = 0.1f; // assume similar positions
 
 	class ENGINE_API Vision:
-		private pure_relcase
+		private pure_relcase,
+        private pure_relcase_visual
 	{
-	protected:
-		struct VisionSnapshotItem
-		{
-			CObject* Object;       // ID for matching
-			Fvector Position;
-			Fvector cp_LP;
-			Fvector cp_LAST;
-			u16 bone_id;
-			bool HasCFORM;
-		};
-
-		// Define a type for the list
-		using VisionSnapshotList = xr_vector<VisionSnapshotItem>;
-		xrSRWLock lock_query, lock_visible;
-
 	private:
 		xr_vector<CObject*> seen;
 		xr_vector<CObject*> query;
@@ -41,10 +27,11 @@ namespace Feel
 		xr_vector<ISpatialShared> r_spatial;
 		CObject const* m_owner;
 		CFrustum Frustum;
+		xrSRWLock lock_query, lock_visible;
 
 		void o_new(CObject* E);
 		void o_delete(CObject* E);
-		void o_trace(Fvector& P, float dt, float vis_threshold, const VisionSnapshotList& snapshots);
+		void o_trace(Fvector& P, float dt, float vis_threshold);
 	public:
 		Vision(CObject const* owner);
 		virtual ~Vision();
@@ -66,7 +53,7 @@ namespace Feel
 	public:
 		void feel_vision_clear();
 		void feel_vision_query(Fmatrix& mFull, Fvector& P);
-		void feel_vision_update(CObject* parent, Fvector& P, float dt, float vis_threshold, const VisionSnapshotList& snapshots);
+		void feel_vision_update(CObject* parent, Fvector& P, float dt, float vis_threshold);
 		void __stdcall feel_vision_relcase(CObject* object);
 
 		void feel_vision_get(xr_vector<CObject*>& R)

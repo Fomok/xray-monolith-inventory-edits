@@ -132,8 +132,6 @@ public:
 	u32 dwFrame_UpdateCL;
 	u32 dwFrame_AsCrow;
 
-    xr_atomic_u32 m_p_tasks_count{ 0 };
-
 	// Crow-MODE
 	// if (object_is_visible)
 	// if (object_is_near)
@@ -198,9 +196,7 @@ public:
 	virtual IRenderable* dcast_Renderable() override { return this; }
 	virtual Feel::Sound* dcast_FeelSound() override { return nullptr; }
 
-	virtual void OnChangeVisual()
-	{
-	}
+    virtual void OnChangeVisual();
 
 	virtual IPhysicsShell* physics_shell() { return 0; }
 

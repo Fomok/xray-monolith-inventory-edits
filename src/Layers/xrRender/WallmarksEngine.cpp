@@ -324,10 +324,6 @@ void CWallmarksEngine::AddStaticWallmark(CDB::TRI* pTri, const Fvector* pVerts, 
 void CWallmarksEngine::AddStaticWallmark(CDB::TRI* pTri, const Fvector* pVerts, const Fvector& contact_point,
 	ref_shader hShader, float sz, float ttl, bool ignore_opt, float rotation)
 {
-	// optimization cheat: don't allow wallmarks more than 100 m from viewer/actor
-	if (!ignore_opt && contact_point.distance_to_sqr(Device.vCameraPosition) > _sqr(wallmark_range_static))
-		return;
-
 	// Physics may add wallmarks in parallel with rendering
 	lock.Enter();
 	AddWallmark_internal(pTri, pVerts, contact_point, hShader, sz, ttl, rotation);
@@ -337,10 +333,6 @@ void CWallmarksEngine::AddStaticWallmark(CDB::TRI* pTri, const Fvector* pVerts, 
 void CWallmarksEngine::AddSkeletonWallmark(const Fmatrix* xf, CKinematics* obj, ref_shader& sh, const Fvector& start,
                                            const Fvector& dir, float size, float ttl, bool ignore_opt)
 {
-	if (::RImplementation.phase != CRender::PHASE_NORMAL) return;
-	// optimization cheat: don't allow wallmarks more than 50 m from viewer/actor
-	if (!ignore_opt && xf->c.distance_to_sqr(Device.vCameraPosition) > _sqr(wallmark_range_skeleton)) return;
-
 	VERIFY(obj&&xf&&(size>EPS_L));
 	lock.Enter();
 	obj->AddWallmark(xf, start, dir, sh, size, ttl);
@@ -349,8 +341,6 @@ void CWallmarksEngine::AddSkeletonWallmark(const Fmatrix* xf, CKinematics* obj, 
 
 void CWallmarksEngine::AddSkeletonWallmark(intrusive_ptr<CSkeletonWallmark> wm)
 {
-	if (::RImplementation.phase != CRender::PHASE_NORMAL) return;
-
 	lock.Enter			();
 	// search if similar wallmark exists
 	wm_slot* slot		= FindSlot	(wm->Shader());
@@ -456,6 +446,7 @@ void CWallmarksEngine::UpdateWallmarks()
     }
 }
 
+int r_wallmarks_ssa_k = 30;
 void CWallmarksEngine::Render()
 {
 	//	if (marks.empty())			return;
@@ -476,12 +467,13 @@ void CWallmarksEngine::Render()
 	Device.Statistic->RenderDUMP_WMD_Count = 0;
 	Device.Statistic->RenderDUMP_WMT_Count = 0;
 
-	const float ssaCLIP = r_ssaDISCARD / 4;
     constexpr const u32 max_verts = MAX_TRIS * 3;
 
     if (!marks.empty())
     {
+        const float ssaCLIP = r_ssaDISCARD * r_wallmarks_ssa_k;
         xrCriticalSectionGuard g(lock); // Physics may add wallmarks in parallel with rendering
+
         for (wm_slot* slot : marks)
         {
             bool static_empty = slot->static_items.empty();
@@ -548,7 +540,15 @@ void CWallmarksEngine::Render()
                     }
 #endif
 
+                    if (!RImplementation.ViewBase.testSphere_dirty(W->m_Bounds.P, W->m_Bounds.R))
+                        continue;
+
                     Device.Statistic->RenderDUMP_WMD_Count++;
+                    float dst = Device.vCameraPosition.distance_to_sqr(W->m_Bounds.P);
+                    float ssa = W->m_Bounds.R * W->m_Bounds.R / dst;
+                    if (ssa < ssaCLIP)
+                        continue;
+
                     u32 w_count = u32(w_verts - w_start);
                     if ((w_count + W->VCount()) >= max_verts)
                     {
