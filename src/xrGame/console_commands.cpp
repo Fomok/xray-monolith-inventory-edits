@@ -3172,8 +3172,8 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer, "g_draw_pickup_item_names", &drawPickupItemNames, 0, 1);
 
 	// Wallmark distances
-	CMD4(CCC_Float, "g_wallmark_range_static", &wallmark_range_static, 0.f, 1000.f);
-	CMD4(CCC_Float, "g_wallmark_range_skeleton", &wallmark_range_skeleton, 0.f, 1000.f);
+	//CMD4(CCC_Float, "g_wallmark_range_static", &wallmark_range_static, 0.f, 1000.f);
+	//CMD4(CCC_Float, "g_wallmark_range_skeleton", &wallmark_range_skeleton, 0.f, 1000.f);
 
     CMD1(CCC_Particle_TEST,     "g_ps_test");
     CMD4(CCC_Integer, "show_actor_body", &showActorBody, 0, 2);

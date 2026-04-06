@@ -678,6 +678,9 @@ void CVisualMemoryManager::remove_links(CObject* object)
 
 CVisibleObject* CVisualMemoryManager::visible_object(const CGameObject* game_object)
 {
+    if (!m_objects)
+        return nullptr;
+
 	VISIBLES::iterator I = std::find_if(m_objects->begin(), m_objects->end(), CVisibleObjectPredicateEx(game_object));
 	if (I == m_objects->end())
 		return (0);

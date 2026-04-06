@@ -115,6 +115,7 @@ void CHudItem::PlaySound(LPCSTR alias, const Fvector& position, u8 index)
 
 void CHudItem::renderable_Render(IDSGraphManager* DM)
 {
+	UpdateXForm();
 	BOOL _hud_render = DM->get_HUD() && GetHUDmode();
 
 	if (_hud_render && !IsHidden())
@@ -547,7 +548,6 @@ void CHudItem::UpdateNearWall()
 
 void CHudItem::UpdateCL()
 {
-    UpdateXForm();
 	if (m_current_motion_def)
 	{
 		if (m_bStopAtEndAnimIsRunning)

@@ -3309,7 +3309,7 @@ Fmatrix CWeapon::RayTransform()
 	{
 		// If we're in first-person, use the HUD item transform
 		matrix = hi->m_item_transform;
-		matrix.mulB_43(hi->m_model->LL_GetTransform_safed(measures.m_fire_bone));
+		matrix.mulB_43(hi->m_model->LL_GetTransform(measures.m_fire_bone));
 		matrix.mulB_43(Fmatrix().translate(measures.m_fire_point_offset));
 	}
 	else

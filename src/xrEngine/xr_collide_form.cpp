@@ -151,12 +151,13 @@ void CCF_Skeleton::BuildState()
 		}
 	}
 
+    xrCriticalSectionGuard g(K->UCalc_Mutex);
 	for (ElementVecIt I = elements.begin(); I != elements.end(); I++)
 	{
 		if (!I->valid()) continue;
 		SBoneShape& shape = K->LL_GetData(I->elem_id).shape;
 		Fmatrix ME, T, TW;
-		const Fmatrix& Mbone = K->LL_GetTransform_safed(I->elem_id);
+		const Fmatrix& Mbone = K->LL_GetTransform(I->elem_id);
 #ifdef DEBUG
 		VERIFY2(DET(Mbone)>EPS,
 		        (make_string("0 scale bone matrix, %d \n", I->elem_id) + dbg_object_full_dump_string(owner)).c_str());

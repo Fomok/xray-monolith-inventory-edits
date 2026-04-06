@@ -23,6 +23,7 @@ using ISpatialShared = intrusive_ptr<ISpatial>;
 class IKinematics
 {
 public:
+    xrCriticalSection UCalc_Mutex;
 	typedef xr_vector<std::pair<shared_str, u16>> accel;
 
 	struct pick_result

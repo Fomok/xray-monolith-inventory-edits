@@ -115,8 +115,6 @@ public:
 public:
 	dxRender_Visual* m_lod;
 
-	xrCriticalSection UCalc_Mutex;
-
 #ifdef OPTIMIZE_CALCULATE_BONES
 	IC bool canBeOptimized()
 	{

@@ -446,7 +446,7 @@ void CWallmarksEngine::UpdateWallmarks()
     }
 }
 
-int r_wallmarks_ssa_k = 30;
+int r_wallmarks_ssa_k = 40;
 void CWallmarksEngine::Render()
 {
 	//	if (marks.empty())			return;
@@ -474,8 +474,9 @@ void CWallmarksEngine::Render()
         const float ssaCLIP = r_ssaDISCARD * r_wallmarks_ssa_k;
         xrCriticalSectionGuard g(lock); // Physics may add wallmarks in parallel with rendering
 
-        for (wm_slot* slot : marks)
+        for (int i = 0; i < marks.size(); i++)
         {
+            wm_slot* slot = marks[i];
             bool static_empty = slot->static_items.empty();
             bool skeleton_empty = slot->skeleton_items.empty();
             if (static_empty && skeleton_empty)
@@ -494,8 +495,9 @@ void CWallmarksEngine::Render()
                     if (!RImplementation.GMBase.is_sector_visible(static_cast<CSector*>(sector)))
                         continue;
 
-                    for (static_wallmark* W : static_vec)
+                    for (int j = 0; j < static_vec.size(); j++)
                     {
+                        static_wallmark* W = static_vec[j];
                         if (!RImplementation.ViewBase.testSphere_dirty(W->bounds.P, W->bounds.R))
                             continue;
 
@@ -527,8 +529,9 @@ void CWallmarksEngine::Render()
             if (!skeleton_empty)
             {
                 PROF_EVENT("DYNAMIC_WALLMARKS");
-                for (intrusive_ptr<CSkeletonWallmark> W : slot->skeleton_items)
+                for (int j = 0; j < slot->skeleton_items.size(); j++)
                 {
+                    intrusive_ptr<CSkeletonWallmark> W = slot->skeleton_items[j];
                     if (!W) continue;
 
 #ifdef DEBUG
@@ -556,7 +559,16 @@ void CWallmarksEngine::Render()
                         BeginStream(hGeom, w_offset, w_verts, w_start);
                     }
 
-                    W->Parent()->RenderWallmark(W, w_verts);
+                    FVF::LIT* w_save = w_verts;
+                    try
+                    {
+                        W->Parent()->RenderWallmark(W, w_verts);
+                    }
+                    catch (...)
+                    {
+                        Msg("! Failed to render dynamic wallmark");
+                        w_verts = w_save;
+                    }
 
 #ifdef	DEBUG
                     W->used_in_render = u32(-1);
