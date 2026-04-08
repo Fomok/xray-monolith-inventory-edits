@@ -2,7 +2,6 @@
 
 struct GameEvent
 {
-    using NoZeroMemoryNew = std::true_type;
 	u16 type;
 	u32 time;
 	ClientID sender;

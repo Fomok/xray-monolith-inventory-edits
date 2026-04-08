@@ -18,7 +18,7 @@ struct handles_own_init : std::false_type {};
 template <typename T>
 struct handles_own_init<T, std::void_t<typename T::NoZeroMemoryNew>> : T::NoZeroMemoryNew {};
 
-// 3. Update xr_new to check the registry
+// Update xr_new to check for `using NoZeroMemoryNew` in class
 template <class T, typename... Args>
 IC T* xr_new(Args&&... args)
 {

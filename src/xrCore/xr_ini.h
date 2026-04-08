@@ -9,8 +9,6 @@ struct xr_token;
 class XRCORE_API CInifile
 {
 public:
-    using NoZeroMemoryNew = std::true_type;
-
 	struct XRCORE_API Item
 	{
 		shared_str first;
@@ -76,7 +74,7 @@ public:
 		BOOL line_exist(LPCSTR L, LPCSTR* val = 0);
 	};
 
-	typedef xr_vector<Sect*> Root;
+	typedef xr_vector<Sect> Root;
 	typedef Root::iterator RootIt;
 	typedef Root::const_iterator RootCIt;
 
@@ -130,7 +128,7 @@ public:
 	bool DLTX_isOverride(LPCSTR sec, LPCSTR line);
 	
 private:
-	static xr_unordered_flat_map<xr_string, xr_unordered_flat_map<shared_str, CInifile::Items>> CachedData;
+	static xr_unordered_flat_map<xr_string, Root> CachedData;
 	static xrCriticalSection CacheCS;
 
 public:
@@ -140,6 +138,7 @@ public:
 		total_bytes = 0;
 		section_count = 0;
 		files_cached = CachedData.size();
+        xr_unordered_flat_set<shared_str> strings;
 
 		for (const auto& file_pair : CachedData)
 		{
@@ -152,12 +151,21 @@ public:
 				section_count++;
 				// Each section name
 				// Plus the overhead of the xr_vector structure
-				total_bytes += sizeof(sect_pair.first) + sizeof(sect_pair.second);
+                strings.insert(sect_pair.Name);
+				total_bytes += sizeof(sect_pair.Data);
 
-				// Items
-				total_bytes += sect_pair.second.capacity() * sizeof(Item);
+                // Items
+                for (const auto& d : sect_pair.Data)
+                {
+                    strings.insert(d.first);
+                    strings.insert(d.second);
+                    strings.insert(d.filename);
+                    total_bytes += sizeof(d.depth) + sizeof(d.insertionIndex);
+                }
 			}
 		}
+        for (const auto& s : strings)
+            total_bytes += sizeof(s) + s.size();
 	}
 
 private:

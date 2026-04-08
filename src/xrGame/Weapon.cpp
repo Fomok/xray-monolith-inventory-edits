@@ -1016,6 +1016,12 @@ BOOL CWeapon::net_Spawn(CSE_Abstract* DC)
 	SetState(E->wpn_state);
 	SetNextState(E->wpn_state);
 
+    if (!m_ammoTypes[m_ammoType].c_str())
+    {
+        Msg("![%s] ERROR: CWeapon::net_Spawn: m_ammoTypes[m_ammoType] is invalid, m_ammoTypes.size %d, m_ammoType %d", Name(), m_ammoTypes.size(), m_ammoType);
+        m_ammoType = 0;
+    }
+
 	m_DefaultCartridge.Load(m_ammoTypes[m_ammoType].c_str(), m_ammoType, m_APk);
 	if (iAmmoElapsed)
 	{

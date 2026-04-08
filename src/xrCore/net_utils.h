@@ -17,8 +17,6 @@ struct NET_Buffer
 class XRCORE_API NET_Packet
 {
 public:
-    using NoZeroMemoryNew = std::true_type;
-
 	void construct(const void* data, unsigned size)
 	{
 		memcpy(B.data, data, size);

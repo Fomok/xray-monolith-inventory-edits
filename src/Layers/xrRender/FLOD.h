@@ -5,7 +5,6 @@ class FLOD : public FHierrarhyVisual
 {
 	typedef FHierrarhyVisual inherited;
 public:
-    using NoZeroMemoryNew = std::true_type;
 	struct _vertex
 	{
 		Fvector v;

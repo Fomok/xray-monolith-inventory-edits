@@ -148,13 +148,11 @@ u16	GetSpawnInfo(NET_Packet& P, u16& parent_id, shared_str& section)
 // Define a helper struct to hold the heavy data
 struct ProcessNetPacket : public intrusive_base_nonatomic
 {
-    using NoZeroMemoryNew = std::true_type;
     NET_Packet P;
 };
 
 struct ProcessGameEventsData : ProcessNetPacket
 {
-    using NoZeroMemoryNew = std::true_type;
     prefetch_event E;
     NET_Packet PRespond;
 };

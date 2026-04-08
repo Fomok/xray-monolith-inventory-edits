@@ -918,7 +918,10 @@ void CGamePersistent::OnRenderPPUI_PP()
 
 void CGamePersistent::LoadTitle(bool change_tip, shared_str map_name)
 {
-	pApp->LoadStage();
+    {
+        xrCriticalSectionGuard g(loadTitleCs);
+        pApp->LoadStage();
+    }
 	if (change_tip)
 	{
 		string512 buff;

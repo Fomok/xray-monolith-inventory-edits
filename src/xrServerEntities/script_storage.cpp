@@ -853,14 +853,14 @@ bool CScriptStorage::do_file(LPCSTR caScriptName, LPCSTR caNameSpaceName)
 				sections_type::const_iterator e = sections.end();
 				for (; i != e; ++i)
 				{
-					auto sectionName = xr_string((*i)->Name.c_str()).ToLowerCase();
+					auto sectionName = xr_string((*i).Name.c_str()).ToLowerCase();
 					if (unlocalizers.find(sectionName) == unlocalizers.end()) {
 
 						// construct set that contains top level variables to delocalize by section name
 						unlocalizers[sectionName].clear();
 						Msg("creating unlocalizer for script %s", sectionName.c_str());
 					}
-					auto& data = (*i)->Data;
+					auto& data = (*i).Data;
 					for (auto& item : data) {
 						unlocalizers[sectionName].insert(xr_string(item.first.c_str()));
 						Msg("adding variable %s for unlocalizer for script %s", item.first.c_str(), sectionName.c_str());

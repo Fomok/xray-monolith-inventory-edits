@@ -13,7 +13,6 @@ const int lt_hemisamples = 26;
 class CROS_impl : public IRender_ObjectSpecific
 {
 public:
-    using NoZeroMemoryNew = std::true_type;
 	enum CubeFaces
 	{
 		CUBE_FACE_POS_X,

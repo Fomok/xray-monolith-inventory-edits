@@ -35,6 +35,8 @@ class CGamePersistent :
 
 	xr_delegate<void()> m_intro_event;
 
+    xrCriticalSection loadTitleCs;
+
 	void xr_stdcall start_logo_intro();
 	void xr_stdcall update_logo_intro();
 

@@ -213,29 +213,29 @@ void CWallmarksEngine::AddWallmark_internal(CDB::TRI* pTri, const Fvector* pVert
 {
 	// query for polygons in bounding box
 	// calculate adjacency
-	{
-		Fbox bb_query;
-		Fvector bbc, bbd;
-		bb_query.set(contact_point, contact_point);
-		bb_query.grow(sz * 2.5f);
-		bb_query.get_CD(bbc, bbd);
-		xrc.box_options(CDB::OPT_FULL_TEST);
-		xrc.box_query(g_pGameLevel->ObjectSpace.GetStaticModel(), bbc, bbd);
-		u32 triCount = xrc.r_count();
-		if (0 == triCount)
-			return;
+    Fbox bb_query;
+    Fvector bbc, bbd;
+    bb_query.set(contact_point, contact_point);
+    bb_query.grow(sz * 2.5f);
+    bb_query.get_CD(bbc, bbd);
+    xrc.box_options(CDB::OPT_FULL_TEST);
+    xrc.box_query(g_pGameLevel->ObjectSpace.GetStaticModel(), bbc, bbd);
+    u32 triCount = xrc.r_count();
+    if (0 == triCount)
+        return;
 
-		CDB::TRI* tris = g_pGameLevel->ObjectSpace.GetStaticTris();
-		sml_collector.clear();
-		sml_collector.add_face_packed_D(pVerts[pTri->verts[0]], pVerts[pTri->verts[1]], pVerts[pTri->verts[2]], 0);
-		for (u32 t = 0; t < triCount; t++)
-		{
-			CDB::TRI* T = tris + xrc.r_begin()[t].id;
-			if (T == pTri) continue;
-			sml_collector.add_face_packed_D(pVerts[T->verts[0]], pVerts[T->verts[1]], pVerts[T->verts[2]], 0);
-		}
-		sml_collector.calc_adjacency(sml_adjacency);
-	}
+    u32 real_tcnt = triCount + 1u;
+    CDB::TRI* tris = g_pGameLevel->ObjectSpace.GetStaticTris();
+    sml_collector.clear();
+    sml_collector.reserve(real_tcnt);
+    sml_collector.add_face_packed_D(pVerts[pTri->verts[0]], pVerts[pTri->verts[1]], pVerts[pTri->verts[2]], 0);
+    for (u32 t = 0; t < triCount; t++)
+    {
+        CDB::TRI* T = tris + xrc.r_begin()[t].id;
+        if (T == pTri) continue;
+        sml_collector.add_face_packed_D(pVerts[T->verts[0]], pVerts[T->verts[1]], pVerts[T->verts[2]], 0);
+    }
+    sml_collector.calc_adjacency(sml_adjacency);
 
 	// calc face normal
 	Fvector N;
@@ -252,6 +252,7 @@ void CWallmarksEngine::AddWallmark_internal(CDB::TRI* pTri, const Fvector* pVert
 	// create wallmark
 	static_wallmark* W = static_wm_allocate();
 	if (ttl) W->m_fTimeEnd = ttl;
+	W->verts.reserve(real_tcnt * 3);
 	RecurseTri(0, mView, *W);
 
 	// calc sphere
