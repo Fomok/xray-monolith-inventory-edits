@@ -11081,9 +11081,6 @@
     <ClCompile Include="map_manager_script.cpp">
       <Filter>Core\Client\Objects\tasks_info_dialogs\map</Filter>
     </ClCompile>
-    <ClCompile Include="GametaskManager_script.cpp">
-      <Filter>Core\Client\Objects\tasks_info_dialogs\game tasks</Filter>
-    </ClCompile>
     <ClCompile Include="searchlight_script.cpp" />
     <ClCompile Include="searchlight_struct.cpp" />
     <ClCompile Include="player_hud_legs.cpp">

@@ -136,12 +136,12 @@ void UITaskListWnd::UpdateList()
 	m_list->Clear();
 
 	u32 count_for_check = 0;
-	vGameTasks& tasks = Level().GameTaskManager()->GetGameTasks();
+	vGameTasks& tasks = Level().GameTaskManager().GetGameTasks();
 	vGameTasks::iterator itb = tasks.begin();
 	vGameTasks::iterator ite = tasks.end();
 	for (; itb != ite; ++itb)
 	{
-		CGameTask* task = (*itb).getGameTask();
+		CGameTask* task = (*itb).game_task;
 		if (task && task->GetTaskState() == eTaskStateInProgress)
 		{
 			UITaskListWndItem* item = xr_new<UITaskListWndItem>();
@@ -266,7 +266,7 @@ void UITaskListWndItem::update_view()
 	h1 = _max(h1, GetHeight());
 	SetHeight(h1);
 
-	CGameTask* activ_task = Level().GameTaskManager()->ActiveTask();
+	CGameTask* activ_task = Level().GameTaskManager().ActiveTask();
 
 	if (m_task == activ_task)
 	{
@@ -312,7 +312,7 @@ void UITaskListWndItem::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 	{
 		if (msg == BUTTON_DOWN)
 		{
-			Level().GameTaskManager()->SetActiveTask(m_task);
+			Level().GameTaskManager().SetActiveTask(m_task);
 			return;
 		}
 

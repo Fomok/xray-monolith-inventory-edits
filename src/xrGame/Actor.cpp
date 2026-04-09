@@ -1381,7 +1381,7 @@ void CActor::UpdateCL()
 				snprintf(discord_gameinfo.gamemode, 128, xr_ToUTF8(*CStringTable().translate("st_cap_check_freeplay")));
 
 			//Update Active Task
-			Level().GameTaskManager()->RPC_UpdateTaskName();
+			Level().GameTaskManager().RPC_UpdateTaskName();
 
 			//Update Faction, Rank and Reputation
 			RPC_UpdateFaction();

@@ -371,10 +371,10 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp)
 
 		if (IsGameTypeSingle())
 		{
-			CGameTask* ml_task = Level().GameTaskManager()->HasGameTask(this, true);
+			CGameTask* ml_task = Level().GameTaskManager().HasGameTask(this, true);
 			if (ml_task)
 			{
-				CGameTask* active_task = Level().GameTaskManager()->ActiveTask();
+				CGameTask* active_task = Level().GameTaskManager().ActiveTask();
 				bool border_show = (ml_task == active_task);
 				if (m_minimap_spot)
 				{
@@ -551,7 +551,7 @@ void CMapLocation::UpdateSpotPointer(CUICustomMap* map, CMapSpotPointer* sp)
 		if (IsGameTypeSingle())
 		{
 			float dist_to_target = Level().CurrentEntity()->Position().distance_to(ttt);
-			CGameTask* task = Level().GameTaskManager()->HasGameTask(this, true);
+			CGameTask* task = Level().GameTaskManager().HasGameTask(this, true);
 			if (task)
 			{
 				map->SetPointerDistance(dist_to_target);

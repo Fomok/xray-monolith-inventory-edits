@@ -255,7 +255,6 @@ void export_classes	(lua_State *L)
 	CCustomOutfit::script_register(L);
 	CCustomZone::script_register(L);
 	CFoodItem::script_register(L);
-	CGameTaskManager::script_register(L);
 	CInventoryBox::script_register(L);
 	CInventoryOwner::script_register(L);
 	CMissile::script_register(L);
