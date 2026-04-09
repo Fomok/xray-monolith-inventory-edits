@@ -427,10 +427,10 @@ void CObjectList::ClearProcessDestroyQueueFromDevice()
 {
     auto Callback = xr_make_delegate(this, &CObjectList::ProcessDestroyQueue);
     Device.seqParallelBeforRender.erase(
-        std::remove_if(
+        std::remove(
             Device.seqParallelBeforRender.begin(),
             Device.seqParallelBeforRender.end(),
-            [Callback](const auto& cb) { return cb == Callback; }
+            Callback
         ), Device.seqParallelBeforRender.end()
     );
 }
