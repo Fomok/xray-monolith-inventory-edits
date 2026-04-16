@@ -18,9 +18,9 @@ protected:
 	bool m_bStopping; //вызвана функция Stop()
 
 	bool NeedUpdate = false;
+    virtual ~CParticlesObject();
 	
 public:
-	virtual ~CParticlesObject();
 	CParticlesObject(LPCSTR p_name, BOOL bAutoRemove, bool destroy_on_game_load);
 
 	virtual bool shedule_Needed() { return true; };

@@ -358,6 +358,7 @@ void CRenderDevice::on_idle()
 		Device.seqParallelBeforRender.clear();
 	}
 
+    secondary_tasks.run(&XRay::Engine::PreRenderThread);
 	FrameMove();
 
     if (g_pGamePersistent != nullptr)
@@ -436,9 +437,8 @@ void CRenderDevice::on_idle()
 
 	STOP_PROFILE;
 
-	// TODO: Try to move this upper
-	secondary_tasks.run(&XRay::Engine::PreRenderThread);
-
+    // TODO: Try to move this upper
+    secondary_tasks.run(&XRay::Engine::PreRenderPostTransformsThread);
 	if (mt_calc_bones)
 		secondary_tasks.run(&XRay::Engine::CalculateBonesThread);
 	else
@@ -612,7 +612,7 @@ void CRenderDevice::Run()
 	seqAppEnd.Process(rp_AppEnd);
 
 	secondary_tasks.wait();
-	ParticleWorkerCallback = nullptr;
+	ParticleWorkerCallback.clear();
 }
 
 u32 app_inactive_time = 0;

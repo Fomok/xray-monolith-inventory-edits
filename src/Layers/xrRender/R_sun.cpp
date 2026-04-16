@@ -284,45 +284,51 @@ void CRender::render_sun_cascade(u32 cascade_ind)
 	}
 
 	// Begin SMAP-render
-	PROF_EVENT("Render Cascade: SMAP");
-	phase = PHASE_SMAP;
-	cascade.GMCascade.traverse(pOutdoorSector, cascade.cull_frustum, cascade.cull_COP, cascade.cull_xform);
-	cascade.GMCascade.r_dsgraph_capture(false,true);
+    {
+        PROF_EVENT("Render Cascade: SMAP traverse");
+        phase = PHASE_SMAP;
+        cascade.GMCascade.traverse(pOutdoorSector, cascade.cull_frustum, cascade.cull_COP, cascade.cull_xform);
+        cascade.GMCascade.r_dsgraph_capture(false, true);
+    }
 
-	// Finalize & Cleanup
-	fuckingsun->X.D.combine = cull_xform;
+    // Finalize & Cleanup
+    {
+        PROF_EVENT("Render Cascade: SMAP Finalize");
 
-	// Render shadow-map
-	//. !!! We should clip based on shrinked frustum (again)
-	{
-		bool bDeffered_Shadows = cascade.GMCascade.RGraph.mapStaticPasses[0][0].size() || cascade.GMCascade.RGraph.mapDynamicPasses[0][0].size();
-		bool bForward_Shadows = cascade.GMCascade.RGraph.mapStaticPasses[1][0].size() || cascade.GMCascade.RGraph.mapDynamicPasses[1][0].size() || cascade.GMCascade.RGraph.mapStaticSorted.Sorted.size() || cascade.GMCascade.RGraph.mapDynamicSorted.Sorted.size();
-		if (bDeffered_Shadows || bForward_Shadows)
-		{
-			Target->phase_smap_direct(fuckingsun, SE_SUN_FAR);
-			RCache.set_xform_world(Fidentity);
-			RCache.set_xform_view(Fidentity);
-			RCache.set_xform_project(fuckingsun->X.D.combine);
-			cascade.GMCascade.r_dsgraph_render_graph(0);
+        fuckingsun->X.D.combine = cull_xform;
 
-			if (psDeviceFlags2.test(rsGrassShadow) && cascade_ind <= ps_ssfx_grass_shadows.x)
-			{
-				Details->fade_distance = dm_fade * dm_fade * ps_ssfx_grass_shadows.y;
-				Details->Render();
-			}
+        // Render shadow-map
+        //. !!! We should clip based on shrinked frustum (again)
+        {
+            bool bDeffered_Shadows = cascade.GMCascade.RGraph.mapStaticPasses[0][0].size() || cascade.GMCascade.RGraph.mapDynamicPasses[0][0].size();
+            bool bForward_Shadows = cascade.GMCascade.RGraph.mapStaticPasses[1][0].size() || cascade.GMCascade.RGraph.mapDynamicPasses[1][0].size() || cascade.GMCascade.RGraph.mapStaticSorted.Sorted.size() || cascade.GMCascade.RGraph.mapDynamicSorted.Sorted.size();
+            if (bDeffered_Shadows || bForward_Shadows)
+            {
+                Target->phase_smap_direct(fuckingsun, SE_SUN_FAR);
+                RCache.set_xform_world(Fidentity);
+                RCache.set_xform_view(Fidentity);
+                RCache.set_xform_project(fuckingsun->X.D.combine);
+                cascade.GMCascade.r_dsgraph_render_graph(0);
 
-			fuckingsun->X.D.transluent = FALSE;
-			if (bForward_Shadows)
-			{
-				fuckingsun->X.D.transluent = TRUE;
-				Target->phase_smap_direct_tsh(fuckingsun, SE_SUN_FAR);
-				cascade.GMCascade.r_dsgraph_render_graph(1);			// normal level, secondary priority
-				cascade.GMCascade.r_dsgraph_render_sorted();			// strict-sorted geoms
-			}
-		}
-	}
+                if (psDeviceFlags2.test(rsGrassShadow) && cascade_ind <= ps_ssfx_grass_shadows.x)
+                {
+                    Details->fade_distance = dm_fade * dm_fade * ps_ssfx_grass_shadows.y;
+                    Details->Render();
+                }
 
-	// End SMAP-render
+                fuckingsun->X.D.transluent = FALSE;
+                if (bForward_Shadows)
+                {
+                    fuckingsun->X.D.transluent = TRUE;
+                    Target->phase_smap_direct_tsh(fuckingsun, SE_SUN_FAR);
+                    cascade.GMCascade.r_dsgraph_render_graph(1);			// normal level, secondary priority
+                    cascade.GMCascade.r_dsgraph_render_sorted();			// strict-sorted geoms
+                }
+            }
+        }
+
+        // End SMAP-render
+    }	
 
 	// Accumulate
 	PROF_EVENT("Render Cascade: Accumulate");

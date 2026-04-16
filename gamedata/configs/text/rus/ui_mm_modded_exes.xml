@@ -934,6 +934,12 @@
 	<string id="ui_mm_modded_exes_optimizations_mt_update_weapon_sounds">
 		<text>Многопоточное обновление звуков оружия (mt_update_weapon_sounds)</text>
 	</string>
+	<string id="ui_mm_modded_exes_optimizations_r__optimize_torch">
+		<text>Оптимизировать апдейт налобных фонарей(r__optimize_torch)</text>
+	</string>
+	<string id="ui_mm_modded_exes_optimizations_r__optimize_torch_desc">
+		<text>Дальние объекты будут реже обновляться</text>
+	</string>
 	
 	<string id="ui_mm_modded_exes_optimizations_spawn_antifreeze">
 		<text>Меньше фризов при спавне (spawn_antifreeze)</text>

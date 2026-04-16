@@ -69,6 +69,10 @@ void CAgentMemberManager::remove(CEntity* member)
 	if (registered_in_combat(stalker))
 		unregister_in_combat(stalker);
 
+    // Force rebuild m_combat_members
+    m_actuality = false;
+    m_combat_members.clear();
+
 	squad_mask_type m = mask(stalker);
 	object().memory().update_memory_masks(m);
 	object().memory().update_memory_mask(m, m_combat_mask);
@@ -76,7 +80,7 @@ void CAgentMemberManager::remove(CEntity* member)
 	iterator I = std::find_if(m_members.begin(), m_members.end(), CMemberPredicate(stalker));
 	VERIFY(I != m_members.end());
 	xr_delete(*I);
-	m_members.erase_fast(I);
+	m_members.erase(I);
 }
 
 void CAgentMemberManager::update()

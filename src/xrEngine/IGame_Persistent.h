@@ -107,7 +107,7 @@ public:
 	} grass_shader_data;
 
 public:
-	void destroy_particles(const bool& all_particles);
+	void destroy_particles(bool all_particles);
 
 public:
 	virtual void PreStart(LPCSTR op);

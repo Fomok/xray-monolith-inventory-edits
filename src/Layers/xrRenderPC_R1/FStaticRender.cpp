@@ -181,7 +181,8 @@ IRenderVisual* CRender::model_Duplicate(IRenderVisual* V) { return Models->Insta
 void CRender::model_Delete(IRenderVisual* & V, BOOL bDiscard)
 {
 	dxRender_Visual* pVisual = (dxRender_Visual*)V;
-	Models->Delete(pVisual, bDiscard);
+    if (Models)
+        Models->Delete(pVisual, bDiscard);
 	V = 0;
 }
 

@@ -175,6 +175,8 @@ IC void CBackend::set_Matrices			(SMatrixList*	_M)
 IC void CBackend::set_Element(ShaderElement* S, u32 pass)
  {
 	PROF_EVENT("CBackend::set_Element");
+    if (!S->passes[pass])
+        return;
 	SPass& P = *(S->passes[pass]);
 	set_States(P.state);
 	set_PS(P.ps);

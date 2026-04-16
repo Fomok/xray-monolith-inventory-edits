@@ -62,7 +62,6 @@ public:
 	};
 
 	typedef xr_vector<Item> Items;
-	typedef xr_vector<Item> ItemsVec;
 	typedef Items::const_iterator SectCIt;
 	typedef Items::iterator SectIt_;
 

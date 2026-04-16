@@ -7,7 +7,7 @@
 
 class ENGINE_API CPS_Instance	:
 	public IRenderable,
-	public intrusive_base
+	public intrusive_base_strict
 {
 	friend class IGame_Persistent;
 	friend class CParticlesAsync;

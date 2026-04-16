@@ -593,6 +593,7 @@
     <ClCompile Include="..\xrRender\LightTrack.cpp" />
     <ClCompile Include="..\xrRender\Light_DB.cpp" />
     <ClCompile Include="..\xrRender\Light_Package.cpp" />
+    <ClCompile Include="..\xrRender\light_vis.cpp" />
     <ClCompile Include="..\xrRender\ModelPool.cpp" />
     <ClCompile Include="..\xrRender\NvTriStrip.cpp" />
     <ClCompile Include="..\xrRender\NvTriStripObjects.cpp" />
@@ -679,7 +680,6 @@
     <ClCompile Include="blender_ss_sunshafts.cpp" />
     <ClCompile Include="dx10MinMaxSMBlender.cpp" />
     <ClCompile Include="light_GI.cpp" />
-    <ClCompile Include="light_vis.cpp" />
     <ClCompile Include="r2_test_hw.cpp" />
     <ClCompile Include="r3.cpp" />
     <ClCompile Include="r3_loader.cpp" />

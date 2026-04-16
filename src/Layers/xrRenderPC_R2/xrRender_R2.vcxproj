@@ -537,6 +537,7 @@
     <ClCompile Include="..\xrRender\LightTrack.cpp" />
     <ClCompile Include="..\xrRender\Light_DB.cpp" />
     <ClCompile Include="..\xrRender\Light_Package.cpp" />
+    <ClCompile Include="..\xrRender\light_vis.cpp" />
     <ClCompile Include="..\xrRender\ModelPool.cpp" />
     <ClCompile Include="..\xrRender\NvTriStrip.cpp" />
     <ClCompile Include="..\xrRender\NvTriStripObjects.cpp" />
@@ -626,7 +627,6 @@
     <ClCompile Include="blender_ssao.cpp" />
     <ClCompile Include="blender_ss_sunshafts.cpp" />
     <ClCompile Include="light_GI.cpp" />
-    <ClCompile Include="light_vis.cpp" />
     <ClCompile Include="r2.cpp" />
     <ClCompile Include="r2_loader.cpp" />
     <ClCompile Include="r2_rendertarget.cpp" />

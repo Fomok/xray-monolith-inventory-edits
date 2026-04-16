@@ -937,6 +937,12 @@
 	<string id="ui_mm_modded_exes_optimizations_mt_update_weapon_sounds">
 		<text>Multithreaded weapon sounds updates (mt_update_weapon_sounds)</text>
 	</string>
+	<string id="ui_mm_modded_exes_optimizations_r__optimize_torch">
+		<text>Optimize headlamps update (r__optimize_torch)</text>
+	</string>
+	<string id="ui_mm_modded_exes_optimizations_r__optimize_torch_desc">
+		<text>Distant stalkers will have reduced frequency of updates</text>
+	</string>
 
 	<string id="ui_mm_modded_exes_optimizations_spawn_antifreeze">
 		<text>Spawn antifreeze (spawn_antifreeze)</text>

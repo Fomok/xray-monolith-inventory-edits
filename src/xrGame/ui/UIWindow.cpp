@@ -138,6 +138,11 @@ CUIWindow::~CUIWindow()
 	//if (m_pHint)
 	//	xr_delete(m_pHint);
 
+    if (CurrentGameUI())
+    {
+        CurrentGameUI()->RemoveDialogToRender(this);
+    }
+
 	CUIWindow* parent = GetParent();
 	bool ad = IsAutoDelete();
 	if (parent && !ad)

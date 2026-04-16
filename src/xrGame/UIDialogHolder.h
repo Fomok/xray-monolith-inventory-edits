@@ -34,7 +34,7 @@ class PROTECT_API CDialogHolder : public pureFrame
 	xr_vector<recvItem> m_input_receivers;
 	xr_vector<dlgItem> m_dialogsToRender;
 	xr_vector<dlgItem> m_dialogsToRender_new;
-	bool m_b_in_update;
+	volatile bool m_b_in_update;
 
 	void StartMenu(CUIDialogWnd* pDialog, bool bDoHideIndicators);
 	void StopMenu(CUIDialogWnd* pDialog);
@@ -42,7 +42,6 @@ class PROTECT_API CDialogHolder : public pureFrame
 protected:
 	void DoRenderDialogs();
 	void CleanInternals();
-	xrCriticalSection cs;
 public:
 	CDialogHolder();
 	virtual ~CDialogHolder();

@@ -189,6 +189,7 @@ extern float IK_CALC_DIST;
 extern float IK_CALC_SSA;
 extern float IK_ALWAYS_CALC_DIST;
 extern BOOL r_optimize_calculate_bones;
+extern BOOL r_optimize_torch;
 extern BOOL hud_frequent_updates;
 
 extern BOOL lua_use_functor_cache;
@@ -265,6 +266,9 @@ extern float recon_maxspeed;
 extern float wallmark_range_static;
 extern float wallmark_range_skeleton;
 
+extern float movement_manager_move_along_path_query_pos_threshold;
+extern float movement_manager_move_along_path_query_pos_threshold_sqr;
+
 ENGINE_API extern float g_console_sensitive;
 
 extern BOOL g_auto_reload;
@@ -331,6 +335,7 @@ extern		u32 game_lua_memory_usage();
 
 typedef void (*full_memory_stats_callback_type)();
 extern XRCORE_API full_memory_stats_callback_type g_full_memory_stats_callback;
+static xr_atomic_bool g_mem_stats_async_in_progress = false;
 
 static void full_memory_stats()
 {
@@ -399,7 +404,43 @@ public:
 
 	virtual void Execute(LPCSTR args)
 	{
+        if (g_mem_stats_async_in_progress.load(std::memory_order_acquire))
+        {
+            Msg("* [x-ray]: stat_memory_async is already running");
+            return;
+        }
+
 		full_memory_stats();
+	}
+};
+
+static void mem_stats_async_thread(void*)
+{
+	PROF_EVENT("mem_stats_async_thread");
+
+	full_memory_stats();
+
+	g_mem_stats_async_in_progress.store(false, std::memory_order_release);
+}
+
+class CCC_MemStatsAsync : public IConsole_Command
+{
+public:
+	CCC_MemStatsAsync(LPCSTR N) : IConsole_Command(N)
+	{
+		bEmptyArgsHandled = TRUE;
+	};
+
+	virtual void Execute(LPCSTR args)
+	{
+		if (g_mem_stats_async_in_progress.exchange(true, std::memory_order_acq_rel))
+		{
+			Msg("* [x-ray]: stat_memory_async is already running");
+			return;
+		}
+
+		thread_spawn(&mem_stats_async_thread, "stat_memory_async", 0, nullptr);
+		Msg("* [x-ray]: stat_memory_async started");
 	}
 };
 
@@ -2423,6 +2464,23 @@ public:
 	}
 };
 
+class CCC_MovePathQueryPosThreshold : public CCC_Float
+{
+public:
+    CCC_MovePathQueryPosThreshold(LPCSTR N) :
+        CCC_Float(N, &movement_manager_move_along_path_query_pos_threshold, 0.f, 2.f)
+    {
+    };
+
+    virtual void Execute(LPCSTR args)
+    {
+        CCC_Float::Execute(args);
+
+        movement_manager_move_along_path_query_pos_threshold = std::atof(args);
+        movement_manager_move_along_path_query_pos_threshold_sqr = movement_manager_move_along_path_query_pos_threshold * movement_manager_move_along_path_query_pos_threshold;
+    }
+};
+
 // Add after other includes, before command classes
 #include "../Include/xrRender/particles_systems_library_interface.hpp"
 #include "../Layers/xrRender/PSLibrary.h"
@@ -2476,6 +2534,7 @@ void CCC_RegisterCommands()
 	//g_OptConCom.Init();
 
 	CMD1(CCC_MemStats, "stat_memory");
+	CMD1(CCC_MemStatsAsync, "stat_memory_async");
 	CMD1(CCC_SharedStringDump, "stat_shared_string_dump");
 #ifdef DEBUG
 	CMD1(CCC_MemCheckpoint, "stat_memory_checkpoint");
@@ -3015,7 +3074,8 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Float, "ik_calc_dist", &IK_CALC_DIST, 50, 150);
 	CMD4(CCC_Float, "ik_calc_ssa", &IK_CALC_SSA, 0.001f, 0.02f);
 	CMD4(CCC_Float, "ik_always_calc_dist", &IK_ALWAYS_CALC_DIST, 10, 50);
-	CMD4(CCC_Integer, "r__optimize_calculate_bones", &r_optimize_calculate_bones, 0, 1);
+    CMD4(CCC_Integer, "r__optimize_calculate_bones", &r_optimize_calculate_bones, 0, 1);
+    CMD4(CCC_Integer, "r__optimize_torch", &r_optimize_torch, 0, 1);
 	CMD4(CCC_Integer, "hud_frequent_updates", &hud_frequent_updates, 0, 1);
 
 	CMD4(CCC_Integer, "g_progressive_stamina_cost", &progressiveStaminaCost, 0, 1);
@@ -3174,6 +3234,8 @@ void CCC_RegisterCommands()
 	// Wallmark distances
 	//CMD4(CCC_Float, "g_wallmark_range_static", &wallmark_range_static, 0.f, 1000.f);
 	//CMD4(CCC_Float, "g_wallmark_range_skeleton", &wallmark_range_skeleton, 0.f, 1000.f);
+
+    CMD1(CCC_MovePathQueryPosThreshold, "movement_manager_move_along_path_query_pos_threshold");
 
     CMD1(CCC_Particle_TEST,     "g_ps_test");
     CMD4(CCC_Integer, "show_actor_body", &showActorBody, 0, 2);

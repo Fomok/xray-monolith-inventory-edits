@@ -1154,7 +1154,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 #endif
 		//. InitInput ( );
 		Engine.External.Initialize();
-		Console->Execute("stat_memory");
+		Console->Execute("stat_memory_async");
 
 		Startup();
 		Core._destroy();
@@ -1527,7 +1527,7 @@ void CApplication::LoadEnd()
 	{
 		Msg("* phase time: %d ms", phase_timer.GetElapsed_ms());
 		Msg("* phase cmem: %lld K", Memory.mem_usage() / 1024);
-		Console->Execute("stat_memory");
+		Console->Execute("stat_memory_async");
 		g_appLoaded = TRUE;
 		// DUMP_PHASE;
 	}

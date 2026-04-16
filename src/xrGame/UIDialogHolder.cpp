@@ -16,6 +16,10 @@ dlgItem::dlgItem(CUIWindow* pWnd)
 
 bool dlgItem::operator <(const dlgItem& itm) const
 {
+    if (!wnd)
+        return false;
+    if (!itm.wnd)
+        return true;
 	return (int)enabled > (int)itm.enabled;
 }
 
@@ -119,7 +123,6 @@ void CDialogHolder::AddDialogToRender(CUIWindow* pDialog)
 {
 	dlgItem itm(pDialog);
 	itm.enabled = true;
-	xrCriticalSectionGuard g(cs);
 
 	bool bAdd = (m_dialogsToRender_new.end() == std::find(m_dialogsToRender_new.begin(), m_dialogsToRender_new.end(),
 	                                                      itm));
@@ -141,33 +144,38 @@ void CDialogHolder::RemoveDialogToRender(CUIWindow* pDialog)
 	if (TopInputReceiver() == pDialog)
 		SetMainInputReceiver(NULL, false);
 
-	dlgItem itm(pDialog);
-	itm.enabled = true;
-	xrCriticalSectionGuard g(cs);
-	xr_vector<dlgItem>::iterator it = std::find(m_dialogsToRender.begin(), m_dialogsToRender.end(), itm);
+    auto remove_from_list = [&](xr_vector<dlgItem>& list)
+    {
+        dlgItem itm(pDialog);
+        auto it = std::find(list.begin(), list.end(), itm);
 
-	if (it != m_dialogsToRender.end())
-	{
-		(*it).wnd->Show(false);
-		(*it).wnd->Enable(false);
-		(*it).enabled = false;
-		return;
-	}
-	
-	it = std::find(m_dialogsToRender_new.begin(), m_dialogsToRender_new.end(), itm);
+        if (it != list.end())
+        {
+            (*it).wnd->Show(false);
+            (*it).wnd->Enable(false);
+            (*it).enabled = false;
 
-	if (it != m_dialogsToRender_new.end())
-	{
-		(*it).wnd->Show(false);
-		(*it).wnd->Enable(false);
-		(*it).enabled = false;
-	}
+            // NEW: If we aren't currently updating, we can safely erase it now.
+            // Otherwise, we MUST nullify the pointer to prevent dangling access.
+            if (!m_b_in_update)
+                list.erase(it);
+            else
+                (*it).wnd = nullptr; // Crucial: stop OnFrame from touching this memory
+
+            return true;
+        }
+        return false;
+    };
+
+    if (!remove_from_list(m_dialogsToRender))
+    {
+        remove_from_list(m_dialogsToRender_new);
+    }
 }
 
 
 void CDialogHolder::DoRenderDialogs()
 {
-	xrCriticalSectionGuard g(cs);
 	xr_vector<dlgItem>::iterator it = m_dialogsToRender.begin();
 	for (; it != m_dialogsToRender.end(); ++it)
 	{
@@ -246,7 +254,6 @@ void CDialogHolder::StopDialog(CUIDialogWnd* pDialog)
 void CDialogHolder::OnFrame()
 {
 	PROF_EVENT("CDialogHolder::OnFrame");
-	xrCriticalSectionGuard g(cs);
 	m_b_in_update = true;
 	CUIDialogWnd* wnd = TopInputReceiver();
 	if (wnd && wnd->IsEnabled())
@@ -268,9 +275,18 @@ void CDialogHolder::OnFrame()
 		m_dialogsToRender_new.clear();
 	}
 
-	xr_sort(m_dialogsToRender.begin(), m_dialogsToRender.end());
-	while (!m_dialogsToRender.empty() && (!m_dialogsToRender[m_dialogsToRender.size() - 1].enabled))
-		m_dialogsToRender.pop_back();
+    static auto eraseFunc = [](const dlgItem& item)
+    {
+        return !item.enabled || !item.wnd;
+    };
+    m_dialogsToRender.erase(
+        std::remove_if(
+            m_dialogsToRender.begin(),
+            m_dialogsToRender.end(),
+            eraseFunc
+        ),
+        m_dialogsToRender.end()
+    );
 }
 
 void CDialogHolder::CleanInternals()
@@ -278,7 +294,6 @@ void CDialogHolder::CleanInternals()
 	while (!m_input_receivers.empty())
 		m_input_receivers.pop_back();
 
-	xrCriticalSectionGuard g(cs);
 	m_dialogsToRender.clear();
 	GetUICursor().Hide();
 }

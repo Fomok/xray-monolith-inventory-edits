@@ -296,10 +296,11 @@ void IGame_Persistent::UpdateParticles()
 		pInstance->Play(false);
 	}
 
-	for (intrusive_ptr<CPS_Instance>& Part : ps_active_deffer)
-	{
-		ps_active.push_back(Part);
-	}
+    ps_active.insert(
+        ps_active.end(),
+        std::make_move_iterator(ps_active_deffer.begin()),
+        std::make_move_iterator(ps_active_deffer.end())
+    );
 	ps_active_deffer.clear();
 
 	static auto eraseFunc = [](const intrusive_ptr<CPS_Instance>& Obj)
@@ -310,7 +311,7 @@ void IGame_Persistent::UpdateParticles()
 	ps_active.erase(std::remove_if(ps_active.begin(), ps_active.end(), eraseFunc), ps_active.end());
 }
 
-void IGame_Persistent::destroy_particles(const bool& all_particles)
+void IGame_Persistent::destroy_particles(bool all_particles)
 {
 #ifndef _EDITOR
 	ps_needtoplay.clear();

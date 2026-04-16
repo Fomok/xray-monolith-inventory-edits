@@ -193,11 +193,8 @@ void CLevelSoundManager::Load()
 				std::random_device rd;
 				std::mt19937 g(rd());
 
-				// copy set into vector, shuffle vector (set iterators are not random-access)
-				CInifile::ItemsVec items;
-				items.reserve(S.Data.size());
-				for (const auto& entry : S.Data)
-					items.push_back(entry);
+				// copy data and shuffle
+				CInifile::Items items = S.Data;
 				std::shuffle(items.begin(), items.end(), g);
 
 				m_MusicTracks.reserve(items.size());

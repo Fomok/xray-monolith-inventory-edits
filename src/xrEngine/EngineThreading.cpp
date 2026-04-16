@@ -16,23 +16,27 @@ void XRay::Engine::PreRenderThread()
 {
 	PROF_THREAD("Secondary Task 1");
 
-	{
-		PROF_EVENT("seqParallelRender");
-		for (auto& it : Device.seqParallelRender)
-			it();
-	}
-
 	if (g_pGamePersistent && g_pGamePersistent->pEnvironment && g_pGamePersistent->pEnvironment->eff_Rain)
 	{
 		PROF_EVENT("CEffect_Rain::UpdateItems");
 		g_pGamePersistent->pEnvironment->eff_Rain->UpdateItems();
 	}
 
-	if (Device.ParticleWorkerCallback)
+	if (g_pGamePersistent && Device.ParticleWorkerCallback)
 	{
 		PROF_EVENT("Process Particles");
 		Device.ParticleWorkerCallback();
 	}
+}
+
+void XRay::Engine::PreRenderPostTransformsThread()
+{
+    PROF_THREAD("Secondary Task 1.1");
+    {
+        PROF_EVENT("seqParallelRender");
+        for (auto& it : Device.seqParallelRender)
+            it();
+    }
 }
 
 struct SpatialSnapshot

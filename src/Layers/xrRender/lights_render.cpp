@@ -160,12 +160,6 @@ void CRender::render_lights(light_Package& LP)
 					PIX_EVENT(RENDER_SHADOWS);
 #endif
 					bool decorative_light = false;
-					if (L->flags.bHudMode)
-					{
-						L_spot_s.push_back(L);
-						decorative_light = true;
-					}
-					else
 					{
 						if ((L->decor_object[0] && !L->decor_object[0]->getDestroy()) || (L->decor_object[1] && !L->decor_object[1]->getDestroy()) || (L->decor_object[2] && !L->decor_object[2]->getDestroy()) || (L->decor_object[3] && !L->decor_object[3]->getDestroy()) || (L->decor_object[4] && !L->decor_object[4]->getDestroy()) || (L->decor_object[5] && !L->decor_object[5]->getDestroy()))
 						{

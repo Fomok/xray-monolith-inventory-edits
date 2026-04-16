@@ -1401,7 +1401,7 @@ void CScriptGameObject::SetShaderTexture(int id, LPCSTR shader, LPCSTR texture, 
 		}
 	}
 
-	if (!k)
+	if (!k && object().Visual())
 		k = object().Visual()->dcast_PKinematics();
 
 	if (!k) return;
