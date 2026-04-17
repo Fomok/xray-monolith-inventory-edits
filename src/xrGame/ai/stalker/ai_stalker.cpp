@@ -1356,6 +1356,9 @@ void CAI_Stalker::net_Relcase(CObject* O)
     if (O == m_throw_ignore_object)
         m_throw_ignore_object = nullptr;
 
+    if (m_best_item_to_kill && m_best_item_to_kill->object_id() == O->ID())
+        m_best_item_to_kill = nullptr;
+
 	if (!g_Alive())
 		return;    
 

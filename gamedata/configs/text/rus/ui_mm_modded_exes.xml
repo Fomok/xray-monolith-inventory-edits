@@ -65,6 +65,20 @@
 	<string id="ui_mm_modded_exes_visual_graphics_r_wallmarks_ssa_k_desc">
 		<text>ЅќЋ№Ў≈ значение - ћ≈Ќ№Ў≈ рассто€ние рендера</text>
 	</string>
+
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard">
+		<text>ќграничение отрисовки объектов по занимаемой зоне на дисплее (SSA) (r__ssa_discard)</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_desc">
+		<text>ЅќЋ№Ў≈ значение - ћ≈Ќ№Ў≈ объектов будет рендеритьс€ если они не проход€т проверку на SSA</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_exp">
+		<text>Ёкспонента ограничени€ отрисовки объектов (r__ssa_discard_exp)</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_exp_desc">
+		<text>Ќастраивает отрисовку объектов, меньшее значение увеличит кол-во отрисовываемых объектов ближе к камере, большее уменьшит</text>
+	</string>
+
 	<string id="ui_mm_modded_exes_visual_graphics_r__blood_decals_on_objects">
 		<text>ƒекали крови на существах (r__blood_decals_on_objects)</text>
 	</string>

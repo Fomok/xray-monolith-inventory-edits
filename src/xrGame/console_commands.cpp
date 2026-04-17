@@ -428,6 +428,7 @@ class CCC_MemStatsAsync : public IConsole_Command
 public:
 	CCC_MemStatsAsync(LPCSTR N) : IConsole_Command(N)
 	{
+        g_full_memory_stats_callback = &full_memory_stats;
 		bEmptyArgsHandled = TRUE;
 	};
 

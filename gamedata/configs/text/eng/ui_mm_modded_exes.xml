@@ -69,6 +69,19 @@
 		<text>Blood decals on living objects (r__blood_decals_on_objects)</text>
 	</string>
 
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard">
+		<text>Objects screen area limit (r__ssa_discard)</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_desc">
+		<text>MORE value means LESS draw distance of objects</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_exp">
+		<text>Objects screen area limit exponent (r__ssa_discard_exp)</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_exp_desc">
+		<text>Finetunes draw distance cutoff, less value will increase density of closer objects, more value decrease it</text>
+	</string>
+
 	<string id="ui_mm_modded_exes_visual_graphics_g_use_non_linear_inertia">
 		<text>Non linear animation inertia on movement (g_use_non_linear_inertia)</text>
 	</string>
