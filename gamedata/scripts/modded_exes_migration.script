@@ -1,7 +1,8 @@
 function on_game_start()
 	local modded_exes_operations_per_version = {
-		[20260406] = function()
-			exec_console_cmd("r_wallmarks_ssa_k 40")
+		[20260418] = function()
+			exec_console_cmd("r__ssa_discard 6")
+			exec_console_cmd("r__ssa_discard_exp 0.5")
 		end,
 		[20260405] = function()
 			exec_console_cmd("g_legs_fwd_offset -0.5")

@@ -237,7 +237,7 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
-**2026.04.17 (Prerelease)**
+**2026.04.18 (Prerelease)**
 
 * Main and MT:
   * `player_hud::StopScriptAnim()` hide warnings under `print_bone_warnings` flag
@@ -247,6 +247,7 @@ How to compile exes:
     * `r__optimize_torch` cvar to toggle optimization
   * Do not set thread description, fix https://github.com/themrdemonized/xray-monolith/issues/511
   * Legs: Disable shadow for DX8 and DX9
+  * Disable `alife_object that uses server_objects_registry, less calls to engine unless necessary` since i have paranoia and cant check if it doesn't lead to errors
   * erepb: 
     * Fix online transition squad teleport (https://github.com/themrdemonized/xray-monolith/pull/512)
     * Fix actualize fails (https://github.com/themrdemonized/xray-monolith/pull/513)
@@ -263,11 +264,13 @@ How to compile exes:
   * Optimization of discarding objects to render logic based on SSA
     * `CalcSSA` uses squared radius for static objects, smaller objects will be culled more aggressively
     * `r__ssa_discard` cvar to tune SSA discard
-    * Increased default SSA discard 3.5 -> 10
-    * `r_ssa_discard_exp` cvar to finetune discard logic. less < 1 will increase density of closer objects, > 1 will reduce
+    * Increased default SSA discard 3.5 -> 6
+    * `r_ssa_discard_exp` cvar to finetune discard logic. less < 1 will increase density of closer objects, > 1 will reduce, default is 0.5
     * Gradient culling of static objects and grass based on SSA and position hash:
       * Smaller objects that fail the SSA test will still render depending on how much smaller they are than the discard limit.
       * Reduces the "rendering radius" effect and makes pop-in less noticeable
+    * HUD geometry will skip SSA check
+  * Remove `r_wallmarks_ssa_k` cvar
 
 **2026.04.13**
 

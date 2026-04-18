@@ -38,7 +38,16 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 
 	float distSQ;
 	float SSA = CalcSSA(distSQ, Center, pVisual);
-	if (SSA < r_ssaDISCARD) return;
+    Flags16& flags = pVisual->flags;
+    if (!flags.test(IRenderVisualFlags::eIgnoreOptimization))
+    {
+        if (SSA < r_ssaDISCARD)
+        {
+            //Msg("SSA %.2f discarded", SSA);
+            return;
+        }
+    }
+    
 
 	// Distortive geometry should be marked and R2 special-cases it
 	// a) Allow to optimize RT order
@@ -208,37 +217,41 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 }
 
 extern float ps_r__ssaDISCARD_exp;
+extern float ps_r__ssaDISCARD_fade_k;
 void CDSGraphManager::r_dsgraph_insert_static(dxRender_Visual *pVisual)
 {
 	float distSQ;
 	float SSA = CalcSSA(distSQ, pVisual->vis.sphere.P, pVisual);
-    float r_ssaDISCARDHalf = r_ssaDISCARD * 0.5f;
-    if (SSA < r_ssaDISCARDHalf)
-        return;
-
-    // demonized: Replace hard cutoff with gradient cutoff
-    // Smaller objects that fail the SSA test will still render depending on how much smaller they are than the discard limit.
-    // Reduces the "rendering radius" effect and makes pop-in less noticeable
-    // Allows to increase the discard limit for better performance without making pop-in much worse
-    // Define where the "thinning" begins. 
-    // E.g., objects 4x the size of the discard limit start fading.
-    float fade_start = r_ssaDISCARDHalf * 4.0f;
-
-    // The Gradient Zone
-    if (SSA < fade_start)
+    Flags16& flags = pVisual->flags;
+    if (!flags.test(IRenderVisualFlags::eIgnoreOptimization))
     {
-        // Calculate a linear survival probability between 0.0 and 1.0
-        float survival_chance = (SSA - r_ssaDISCARDHalf) / (fade_start - r_ssaDISCARDHalf);
-
-        // Convert the 32-bit hash to a float between 0.0 and 1.0
-        // Multiplying by 1.0 / 2^32 is faster than float division
-        u32 hash = GetFvectorHash(pVisual->vis.sphere.P);
-        constexpr float hash_to_float = 1.0f / 4294967296.0f;
-        float val = hash * hash_to_float;
-
-        // If the object's hash value is higher than its survival chance, cull it
-        if (val > powf(survival_chance, ps_r__ssaDISCARD_exp))
+        if (SSA < r_ssaDISCARD)
             return;
+
+        // demonized: Replace hard cutoff with gradient cutoff
+        // Smaller objects that fail the SSA test will still render depending on how much smaller they are than the discard limit.
+        // Reduces the "rendering radius" effect and makes pop-in less noticeable
+        // Allows to increase the discard limit for better performance without making pop-in much worse
+        // Define where the "thinning" begins. 
+        // E.g., objects 4x the size of the discard limit start fading.
+        float fade_start = r_ssaDISCARD * ps_r__ssaDISCARD_fade_k;
+
+        // The Gradient Zone
+        if (SSA < fade_start)
+        {
+            // Calculate a linear survival probability between 0.0 and 1.0
+            float survival_chance = (SSA - r_ssaDISCARD) / (fade_start - r_ssaDISCARD);
+
+            // Convert the 32-bit hash to a float between 0.0 and 1.0
+            // Multiplying by 1.0 / 2^32 is faster than float division
+            u32 hash = GetFvectorHash(pVisual->vis.sphere.P);
+            constexpr float hash_to_float = 1.0f / 4294967296.0f;
+            float val = hash * hash_to_float;
+
+            // If the object's hash value is higher than its survival chance, cull it
+            if (val > powf(survival_chance, ps_r__ssaDISCARD_exp))
+                return;
+        }
     }
 
 	// Distortive geometry should be marked and R2 special-cases it

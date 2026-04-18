@@ -581,6 +581,23 @@ attachable_hud_item::~attachable_hud_item()
 	m_model = nullptr;
 }
 
+void markIgnoreOptimization(IRenderVisual* pVisual, BOOL value = TRUE)
+{
+    if (pVisual)
+    {
+        pVisual->flags.set(IRenderVisualFlags::eIgnoreOptimization, value);
+        xr_vector<IRenderVisual*>* children = pVisual->get_children();
+        if (children)
+        {
+            for (auto it = children->begin(); it != children->end(); it++)
+            {
+                IRenderVisual* v = *it;
+                markIgnoreOptimization(v, value);
+            }
+        }
+    }
+}
+
 void attachable_hud_item::load(const shared_str& sect_name)
 {
 	m_sect_name = sect_name;
@@ -592,6 +609,11 @@ void attachable_hud_item::load(const shared_str& sect_name)
 	::Render->hud_loading = false;
 	R_ASSERT2(visual, make_string("could not create model %s, section %s", visual_name, sect_name.c_str()));
 	m_model = smart_cast<IKinematics*>(visual);
+    if (m_model)
+    {
+        IRenderVisual* pVisual = m_model->dcast_RenderVisual();
+        markIgnoreOptimization(pVisual);
+    }    
 
 	m_attach_place_idx = pSettings->r_u16(sect_name, "attach_place_idx");
 	m_measures.load(sect_name, m_model);
@@ -827,6 +849,18 @@ void player_hud::load(const shared_str& player_hud_sect, bool force)
 	::Render->hud_loading = true;
 	m_model = smart_cast<IKinematicsAnimated*>(::Render->model_Create(model_name.c_str()));
 	m_model_2 = smart_cast<IKinematicsAnimated*>(::Render->model_Create(pSettings->line_exist(player_hud_sect, "visual_2") ? pSettings->r_string(player_hud_sect, "visual_2") : model_name.c_str()));
+
+    if (m_model)
+    {
+        IRenderVisual* pVisual = m_model->dcast_RenderVisual();
+        markIgnoreOptimization(pVisual);
+    }
+    if (m_model_2)
+    {
+        IRenderVisual* pVisual = m_model_2->dcast_RenderVisual();
+        markIgnoreOptimization(pVisual);
+    }
+
 	bool b_reload = (m_attached_items[0] != nullptr || m_attached_items[1] != nullptr);
 
 	::Render->hud_loading = false;

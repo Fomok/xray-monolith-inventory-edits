@@ -143,8 +143,9 @@ float ps_r__GLOD_ssa_start = 256.f;
 float ps_r__GLOD_ssa_end = 64.f;
 float ps_r__LOD = 0.75f;
 //. float		ps_r__LOD_Power				=  1.5f	;
-float ps_r__ssaDISCARD = 10.f; //RO
-float ps_r__ssaDISCARD_exp = 1.f; // demonized
+float ps_r__ssaDISCARD = 6.f; //RO
+float ps_r__ssaDISCARD_exp = 0.5f; // demonized
+float ps_r__ssaDISCARD_fade_k = 4.0f; // demonized
 float ps_r__ssaDONTSORT = 32.f; //RO
 float ps_r__ssaHZBvsTEX = 96.f; //RO
 
@@ -1576,8 +1577,9 @@ void xrRender_initconsole()
 
 	CMD4(CCC_Integer, "pfx_volumetric_mode", &ps_pfx_volumetric_mode, 0, 1);
 
-    CMD4(CCC_Float, "r__ssa_discard", &ps_r__ssaDISCARD, 0, 100);
+    CMD4(CCC_Float, "r__ssa_discard", &ps_r__ssaDISCARD, 0.f, 50.0f);
     CMD4(CCC_Float, "r__ssa_discard_exp", &ps_r__ssaDISCARD_exp, 0.1f, 3.0f);
+    CMD4(CCC_Float, "r__ssa_discard_fade_k", &ps_r__ssaDISCARD_fade_k, 1.f, 4.0f);
 
 	//	CMD3(CCC_Mask,		"r2_sun_ignore_portals",		&ps_r2_ls_flags,			R2FLAG_SUN_IGNORE_PORTALS);
     CMD4(CCC_Integer, "r_particles_real_dt", &ps_r2_particle_dt, 0, 1);

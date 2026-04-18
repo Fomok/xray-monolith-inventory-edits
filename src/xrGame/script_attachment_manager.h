@@ -184,7 +184,7 @@ public:
 	void RemoveChild(LPCSTR name, bool destroy = false);
 	void IterateAttachments(::luabind::functor<bool> functor);
 
-	void SetType(u16 type) { m_type = type < eSA_undefined ? type : eSA_World; }
+    void SetType(u16 type);
 	u16 GetType() { return m_type; }
 
 	u32 PlayMotion(LPCSTR name, bool mixin = true, float speed = 1.f);

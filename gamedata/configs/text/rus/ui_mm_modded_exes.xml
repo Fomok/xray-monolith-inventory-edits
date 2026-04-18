@@ -59,12 +59,6 @@
 	<string id="ui_mm_modded_exes_visual_graphics_g_wallmark_range_skeleton">
 		<text>Расстояние рендера следов от скелетных пуль (g_wallmark_range_skeleton)</text>
 	</string>
-	<string id="ui_mm_modded_exes_visual_graphics_r_wallmarks_ssa_k">
-		<text>Макс размер следов на экране (r_wallmarks_ssa_k)</text>
-	</string>
-	<string id="ui_mm_modded_exes_visual_graphics_r_wallmarks_ssa_k_desc">
-		<text>БОЛЬШЕ значение - МЕНЬШЕ расстояние рендера</text>
-	</string>
 
 	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard">
 		<text>Ограничение отрисовки объектов по занимаемой зоне на дисплее (SSA) (r__ssa_discard)</text>

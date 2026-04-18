@@ -33,7 +33,6 @@ xr_token vid_bpp_token[] =
 	{0, 0}
 };
 
-extern int r_wallmarks_ssa_k;
 //-----------------------------------------------------------------------
 
 void IConsole_Command::add_to_LRU(shared_str const& arg)
@@ -1004,8 +1003,6 @@ void CCC_Register()
 
 	// Render device states
 	CMD4(CCC_Integer, "r__supersample", &ps_r__Supersample, 1, 4);
-
-    CMD4(CCC_Integer, "r_wallmarks_ssa_k", &r_wallmarks_ssa_k, 1, 1000);
 
 	CMD4(CCC_Float, "r2_sunshafts_min", &ps_r2_sun_shafts_min, 0.0, 0.5);
 	CMD4(CCC_Float, "r2_sunshafts_value", &ps_r2_sun_shafts_value, 0.5, 2.0);

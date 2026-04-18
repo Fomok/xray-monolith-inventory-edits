@@ -286,6 +286,7 @@ void CDetailManager::Unload()
 
 extern ECORE_API float r_ssaDISCARD;
 extern float ps_r__ssaDISCARD_exp;
+extern float ps_r__ssaDISCARD_fade_k;
 void CDetailManager::UpdateVisibleM()
 {
 	Fvector EYE = RDEVICE.vCameraPosition_saved;
@@ -302,9 +303,8 @@ void CDetailManager::UpdateVisibleM()
 	float fade_start = 1.f;
 	fade_start = fade_start * fade_start;
 	float fade_range = fade_limit - fade_start;
-    float r_ssaDISCARD_half = r_ssaDISCARD * 0.5f;
-	float r_ssaCHEAP = 16 * r_ssaDISCARD_half;
-    float fade_start_ssa = r_ssaDISCARD_half * 4.0f;
+	float r_ssaCHEAP = 16 * r_ssaDISCARD;
+    float fade_start_ssa = r_ssaDISCARD * ps_r__ssaDISCARD_fade_k;
 
 	// Initialize 'vis' and 'cache'
 	// Collect objects for rendering
@@ -400,7 +400,7 @@ void CDetailManager::UpdateVisibleM()
 								              : (Item.scale * alpha_i);
 							Item.scale_calculated = scale;
 							float ssa = psDeviceFlags2.test(rsNoScale) ? scale : scale * scale * Rq_drcp;
-							if (ssa < r_ssaDISCARD_half)
+							if (ssa < r_ssaDISCARD)
 							{
 								Item.alpha_target = 0;
 								continue;
@@ -410,7 +410,7 @@ void CDetailManager::UpdateVisibleM()
                             if (ssa < fade_start_ssa)
                             {
                                 // Base probability of survival
-                                float survival_chance = (ssa - r_ssaDISCARD_half) / (fade_start_ssa - r_ssaDISCARD_half);
+                                float survival_chance = (ssa - r_ssaDISCARD) / (fade_start_ssa - r_ssaDISCARD);
 
                                 // Get the index of this specific grass blade inside the slot
                                 u32 item_index = (u32)(siIT - &(*sp.items.begin()));
