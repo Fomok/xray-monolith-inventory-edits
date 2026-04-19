@@ -44,6 +44,20 @@ public:
 	virtual void ResetShaderTexture() {};
 	virtual void MarkAsHot(bool is_hot) {};				//--DSR-- HeatVision
 	virtual void MarkAsGlowing(bool is_glowing) {};		//--DSR-- SilencerOverheat
+    virtual void MarkIgnoreOptimization(BOOL value)
+    {
+        flags.set(IRenderVisualFlags::eIgnoreOptimization, value);
+        xr_vector<IRenderVisual*>* children = get_children();
+        if (children)
+        {
+            for (auto it = children->begin(); it != children->end(); it++)
+            {
+                IRenderVisual* v = *it;
+                if (v)
+                    v->MarkIgnoreOptimization(value);
+            }
+        }
+    }
 
 	virtual IRenderVisual* _BCL dcast_RenderVisual() { return this; }
 	virtual IKinematics* _BCL dcast_PKinematics() { return 0; }

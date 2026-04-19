@@ -498,7 +498,7 @@ void __cdecl xrDebug::fatal(const char* file, int line, const char* function, co
 	backend(nullptr, "fatal error", buffer, 0, file, line, function, ignore_always);
 }
 
-typedef void (*full_memory_stats_callback_type)();
+typedef void (*full_memory_stats_callback_type)(bool);
 XRCORE_API full_memory_stats_callback_type g_full_memory_stats_callback = 0;
 
 int out_of_memory_handler(size_t size)
@@ -506,7 +506,7 @@ int out_of_memory_handler(size_t size)
 	Msg("* [x-ray]: OOM requesting %lld bytes", size);
 
 	if (g_full_memory_stats_callback)
-		g_full_memory_stats_callback();
+		g_full_memory_stats_callback(true);
 	else
 	{
 		Memory.mem_compact();

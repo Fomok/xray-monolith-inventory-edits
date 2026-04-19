@@ -202,6 +202,8 @@ extern BOOL legs_in_low_crouch;
 extern BOOL legs_attach_to_camera;
 extern BOOL legs_render_attachments_shadow;
 
+extern BOOL r__actor_shadow_in_demo_record;
+
 extern int enemy_manager_useful_cache_time;
 
 extern CrosshairSettings g_crosshair_camera_near;
@@ -333,16 +335,16 @@ CUIOptConCom g_OptConCom;
 extern		u32 game_lua_memory_usage();
 #endif // SEVERAL_ALLOCATORS
 
-typedef void (*full_memory_stats_callback_type)();
+typedef void (*full_memory_stats_callback_type)(bool);
 extern XRCORE_API full_memory_stats_callback_type g_full_memory_stats_callback;
 static xr_atomic_bool g_mem_stats_async_in_progress = false;
 
-static void full_memory_stats()
+static void full_memory_stats(bool assert = true)
 {
 	PROF_EVENT("full_memory_stats");
 	Msg("* [x-ray]: Full Memory Stats");
 	Memory.mem_compact();
-	size_t _process_heap = ::Memory.mem_usage();
+	size_t _process_heap = ::Memory.mem_usage(assert);
 #ifdef SEVERAL_ALLOCATORS
 	u32		_game_lua = game_lua_memory_usage();
 	u32		_render = ::Render->memory_usage();
@@ -416,10 +418,15 @@ public:
 
 static void mem_stats_async_thread(void*)
 {
-	PROF_EVENT("mem_stats_async_thread");
-
-	full_memory_stats();
-
+    try
+    {
+        PROF_EVENT("mem_stats_async_thread");
+        full_memory_stats(false);
+    }
+    catch (...)
+    {
+        // do nothing
+    }
 	g_mem_stats_async_in_progress.store(false, std::memory_order_release);
 }
 
@@ -2786,6 +2793,8 @@ void CCC_RegisterCommands()
     CMD4(CCC_Integer, "g_legs_in_low_crouch", &legs_in_low_crouch, 0, 1);
     CMD4(CCC_Integer, "g_legs_attach_to_camera", &legs_attach_to_camera, 0, 1);
     CMD4(CCC_Integer, "g_legs_render_attachments_shadow", &legs_render_attachments_shadow, 0, 1);
+
+    CMD4(CCC_Integer, "r__actor_shadow_in_demo_record", &r__actor_shadow_in_demo_record, 0, 1);
 
     CMD4(CCC_Integer, "g_enemy_manager_useful_cache_time", &enemy_manager_useful_cache_time, -1, 500);
 

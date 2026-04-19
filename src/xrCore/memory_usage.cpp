@@ -38,7 +38,7 @@ XRCORE_API void log_vminfo()
 	);
 }
 
-size_t xrMemory::mem_usage()
+size_t xrMemory::mem_usage(bool assert)
 {
 	PROF_EVENT("mem_usage");
 	_HEAPINFO hinfo = {};
@@ -56,13 +56,13 @@ size_t xrMemory::mem_usage()
 	case _HEAPEND:
 		break;
 	case _HEAPBADPTR:
-		FATAL("bad pointer to heap");
+		if (assert) FATAL("bad pointer to heap");
 		break;
 	case _HEAPBADBEGIN:
-		FATAL("bad start of heap");
+        if (assert) FATAL("bad start of heap");
 		break;
 	case _HEAPBADNODE:
-		FATAL("bad node in heap");
+        if (assert) FATAL("bad node in heap");
 		break;
 	}
 	return bytesUsed;

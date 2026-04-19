@@ -2115,10 +2115,13 @@ void CActor::RenderCamAttached(IDSGraphManager* DM)
 	}
 }
 
+#include "../xrEngine/FDemoRecord.h"
+extern xr_unordered_set<CDemoRecord*> pDemoRecords;
 extern Flags32 ps_actor_shadow_flags;
-
+BOOL r__actor_shadow_in_demo_record = TRUE;
 bool CActor::AllowActorShadow()
 {
+    if (!r__actor_shadow_in_demo_record && !pDemoRecords.empty()) return false;
 	if (!ps_actor_shadow_flags.test(1)) return false;
 	if (::Render->get_generation() != ::Render->GENERATION_R2) return false;
 
@@ -2130,8 +2133,6 @@ bool CActor::AllowActorShadow()
 }
 
 #include "debug_renderer.h"
-#include "../xrEngine/FDemoRecord.h"
-extern xr_unordered_set<CDemoRecord*> pDemoRecords;
 BOOL legs_in_demo_record = FALSE;
 BOOL legs_in_low_crouch = FALSE;
 BOOL legs_render_attachments_shadow = TRUE;

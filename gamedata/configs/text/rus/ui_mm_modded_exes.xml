@@ -70,7 +70,17 @@
 		<text>Экспонента ограничения отрисовки объектов (r__ssa_discard_exp)</text>
 	</string>
 	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_exp_desc">
-		<text>Настраивает отрисовку объектов, меньшее значение увеличит кол-во отрисовываемых объектов ближе к камере, большее уменьшит</text>
+		<text>Настраивает отрисовку объектов, меньшее значение увеличит кол-во отрисовываемых объектов ближе к камере, большее уменьшит. НЕ влияет на общую дистанцию отрисовки</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_fade_k">
+		<text>Fadeout отрисовки объектов (r__ssa_discard_fade_k)</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_fade_k_desc">
+		<text>Настраивает отрисовку объектов, меньшее значение увеличивает кол-во объектов вдалеке, НЕ влияет на близкие объекты, ВЛИЯЕТ на общую дистанцию отрисовки</text>
+	</string>
+
+	<string id="ui_mm_modded_exes_visual_graphics_r__actor_shadow_in_demo_record">
+		<text>Включить тень игрока при demo_record (r__actor_shadow_in_demo_record)</text>
 	</string>
 
 	<string id="ui_mm_modded_exes_visual_graphics_r__blood_decals_on_objects">

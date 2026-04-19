@@ -60,7 +60,7 @@ public:
 	void dbg_unregister(void* _p);
 	void dbg_check();
 
-	size_t mem_usage();
+	size_t mem_usage(bool assert = true);
 	void mem_compact();
 	void mem_counter_set(u32 _val) { stat_counter = _val; }
 	u32 mem_counter_get() { return stat_counter; }

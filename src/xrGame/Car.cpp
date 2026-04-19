@@ -288,17 +288,7 @@ BOOL CCar::net_Spawn(CSE_Abstract* DC)
 		m_memory->reload(pUserData->r_string("visual_memory_definition", "section"));
 	}
 	
-	renderable.visual->flags.set(IRenderVisualFlags::eIgnoreOptimization, TRUE);
-
-	xr_vector<IRenderVisual*>* children = renderable.visual->get_children();
-
-	if (children)
-	{
-		for (auto* child : *children)
-		{
-			child->flags.set(IRenderVisualFlags::eIgnoreOptimization, TRUE);
-		}
-	}
+    renderable.visual->MarkIgnoreOptimization(TRUE);
 
 #ifdef CAR_NEW
 	CInifile *ini = Visual()->dcast_PKinematics()->LL_UserData();

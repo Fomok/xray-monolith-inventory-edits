@@ -581,23 +581,6 @@ attachable_hud_item::~attachable_hud_item()
 	m_model = nullptr;
 }
 
-void markIgnoreOptimization(IRenderVisual* pVisual, BOOL value = TRUE)
-{
-    if (pVisual)
-    {
-        pVisual->flags.set(IRenderVisualFlags::eIgnoreOptimization, value);
-        xr_vector<IRenderVisual*>* children = pVisual->get_children();
-        if (children)
-        {
-            for (auto it = children->begin(); it != children->end(); it++)
-            {
-                IRenderVisual* v = *it;
-                markIgnoreOptimization(v, value);
-            }
-        }
-    }
-}
-
 void attachable_hud_item::load(const shared_str& sect_name)
 {
 	m_sect_name = sect_name;
@@ -612,7 +595,8 @@ void attachable_hud_item::load(const shared_str& sect_name)
     if (m_model)
     {
         IRenderVisual* pVisual = m_model->dcast_RenderVisual();
-        markIgnoreOptimization(pVisual);
+        if (pVisual)
+            pVisual->MarkIgnoreOptimization(TRUE);
     }    
 
 	m_attach_place_idx = pSettings->r_u16(sect_name, "attach_place_idx");
@@ -853,12 +837,14 @@ void player_hud::load(const shared_str& player_hud_sect, bool force)
     if (m_model)
     {
         IRenderVisual* pVisual = m_model->dcast_RenderVisual();
-        markIgnoreOptimization(pVisual);
+        if (pVisual)
+            pVisual->MarkIgnoreOptimization(TRUE);
     }
     if (m_model_2)
     {
         IRenderVisual* pVisual = m_model_2->dcast_RenderVisual();
-        markIgnoreOptimization(pVisual);
+        if (pVisual)
+            pVisual->MarkIgnoreOptimization(TRUE);
     }
 
 	bool b_reload = (m_attached_items[0] != nullptr || m_attached_items[1] != nullptr);

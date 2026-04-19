@@ -73,7 +73,17 @@
 		<text>Objects screen area limit exponent (r__ssa_discard_exp)</text>
 	</string>
 	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_exp_desc">
-		<text>Finetunes draw distance cutoff, less value will increase density of closer objects, more value decrease it</text>
+		<text>Finetunes draw distance cutoff, less value will increase density of closer objects, more value decrease it. Does NOT affect overall draw distance</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_fade_k">
+		<text>Objects screen area limit fade coeff (r__ssa_discard_fade_k)</text>
+	</string>
+	<string id="ui_mm_modded_exes_visual_graphics_r__ssa_discard_fade_k_desc">
+		<text>Finetunes draw distance cutoff, more value will increase the "fadeout" of objects, making bigger objects stop rendering sooner. DOES affect overall draw distance</text>
+	</string>
+
+	<string id="ui_mm_modded_exes_visual_graphics_r__actor_shadow_in_demo_record">
+		<text>Enable actor shadow in demo record (r__actor_shadow_in_demo_record)</text>
 	</string>
 
 	<string id="ui_mm_modded_exes_visual_graphics_g_use_non_linear_inertia">

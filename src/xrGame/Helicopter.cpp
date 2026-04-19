@@ -246,17 +246,7 @@ BOOL CHelicopter::net_Spawn(CSE_Abstract* DC)
 	Device.seqRender.Add(this,REG_PRIORITY_LOW-1);
 #endif
 
-	renderable.visual->flags.set(IRenderVisualFlags::eIgnoreOptimization, TRUE);
-
-	xr_vector<IRenderVisual*>* children = renderable.visual->get_children();
-
-	if (children)
-	{
-		for (auto* child : *children)
-		{
-			child->flags.set(IRenderVisualFlags::eIgnoreOptimization, TRUE);
-		}
-	}
+    renderable.visual->MarkIgnoreOptimization(TRUE);
 
 	return TRUE;
 }

@@ -721,12 +721,16 @@ LPCSTR script_attachment::bone_name(u16 bone_id)
 	return result;
 }
 
-extern void markIgnoreOptimization(IRenderVisual* pVisual, BOOL value = TRUE);
 void script_attachment::SetType(u16 type)
 {
-    m_type = type < eSA_undefined ? type : eSA_World;
+    type = type < eSA_undefined ? type : eSA_World;
+    if (m_type == type)
+        return;
+
+    m_type = type;
     IRenderVisual* pVisual = renderable.visual->dcast_RenderVisual();
-    markIgnoreOptimization(pVisual, m_type == eSA_HUD || m_type == eSA_CamAttached);
+    if (pVisual)
+        pVisual->MarkIgnoreOptimization(m_type == eSA_HUD || m_type == eSA_CamAttached);
 }
 
 void script_attachment::LoadModel(LPCSTR model_name, bool keep_bc)
