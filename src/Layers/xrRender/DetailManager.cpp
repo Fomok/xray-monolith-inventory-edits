@@ -424,7 +424,7 @@ void CDetailManager::UpdateVisibleM()
                                 float val = blade_hash * hash_to_float;
 
                                 // If the object's hash value is higher than its survival chance, cull it
-                                if (val > powf(survival_chance, ps_r__ssaDISCARD_exp))
+                                if (val > _powf(survival_chance, ps_r__ssaDISCARD_exp))
                                 {
                                     Item.alpha_target = 0;
                                     continue;

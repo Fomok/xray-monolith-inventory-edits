@@ -184,6 +184,20 @@ IC s64 _abs(s64 x) { return (x >= 0) ? x : s64(-x); }
 IC s64 _min(s64 x, s64 y) { return y + ((x - y) & ((x - y) >> (sizeof(s64) * 8 - 1))); };
 IC s64 _max(s64 x, s64 y) { return x - ((x - y) & ((x - y) >> (sizeof(s64) * 8 - 1))); };
 
+IC BOOL _fsimilar(float a, float b, float cmp = EPS) { return _abs(a - b) < cmp; }
+IC float _powf(float x, float y)
+{
+    if (_fsimilar(y, 2.0f))
+        return x * x;
+    if (_fsimilar(y, 0.5f))
+        return _sqrt(x);
+    if (_fsimilar(y, 1.0f))
+        return x;
+    if (_fsimilar(y, 0.0f))
+        return 1.0f;
+    return powf(x, y);
+}
+
 IC u32 xr_strlen(const char* S);
 
 // string management

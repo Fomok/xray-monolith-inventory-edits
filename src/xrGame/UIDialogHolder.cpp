@@ -42,6 +42,7 @@ bool operator ==(const recvItem& i1, const recvItem& i2)
 CDialogHolder::CDialogHolder()
 {
 	m_b_in_update = false;
+    m_b_in_render = false;
 }
 
 CDialogHolder::~CDialogHolder()
@@ -131,7 +132,7 @@ void CDialogHolder::AddDialogToRender(CUIWindow* pDialog)
 	bAdd = (m_dialogsToRender.end() == std::find(m_dialogsToRender.begin(), m_dialogsToRender.end(), itm));
 	if (!bAdd) return;
 
-	if (m_b_in_update)
+	if (m_b_in_update || m_b_in_render)
 		m_dialogsToRender_new.push_back(itm);
 	else
 		m_dialogsToRender.push_back(itm);
@@ -157,11 +158,11 @@ void CDialogHolder::RemoveDialogToRender(CUIWindow* pDialog)
 
             // NEW: If we aren't currently updating, we can safely erase it now.
             // Otherwise, we MUST nullify the pointer to prevent dangling access.
-            if (!m_b_in_update)
-                list.erase(it);
-            else
+            if (m_b_in_update || m_b_in_render)
                 (*it).wnd = nullptr; // Crucial: stop OnFrame from touching this memory
-
+            else
+                list.erase(it);
+                
             return true;
         }
         return false;
@@ -176,12 +177,14 @@ void CDialogHolder::RemoveDialogToRender(CUIWindow* pDialog)
 
 void CDialogHolder::DoRenderDialogs()
 {
+    m_b_in_render = true;
 	xr_vector<dlgItem>::iterator it = m_dialogsToRender.begin();
 	for (; it != m_dialogsToRender.end(); ++it)
 	{
 		if ((*it).enabled && (*it).wnd && (*it).wnd->IsShown())
 			(*it).wnd->Draw();
 	}
+    m_b_in_render = false;
 }
 
 void CDialogHolder::OnExternalHideIndicators()

@@ -249,7 +249,7 @@ void CDSGraphManager::r_dsgraph_insert_static(dxRender_Visual *pVisual)
             float val = hash * hash_to_float;
 
             // If the object's hash value is higher than its survival chance, cull it
-            if (val > powf(survival_chance, ps_r__ssaDISCARD_exp))
+            if (val > _powf(survival_chance, ps_r__ssaDISCARD_exp))
                 return;
         }
     }

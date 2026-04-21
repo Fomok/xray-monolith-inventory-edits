@@ -447,6 +447,7 @@ void CWallmarksEngine::UpdateWallmarks()
     }
 }
 
+float r_wallmarks_ssa_k = 0.5f;
 void CWallmarksEngine::Render()
 {
 	//	if (marks.empty())			return;
@@ -471,7 +472,7 @@ void CWallmarksEngine::Render()
 
     if (!marks.empty())
     {
-        const float ssaCLIP = r_ssaDISCARD * 0.25f;
+        const float ssaCLIP = r_ssaDISCARD * r_wallmarks_ssa_k;
         xrCriticalSectionGuard g(lock); // Physics may add wallmarks in parallel with rendering
 
         for (int i = 0; i < marks.size(); i++)
