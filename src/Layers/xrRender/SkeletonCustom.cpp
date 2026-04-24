@@ -247,8 +247,8 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags)
 		visimask.set(u64(1) << ID, TRUE);
 		hidden_bones.set(u64(1) << ID, TRUE);
 	}
-	xr_sort(bone_map_N->begin(), bone_map_N->end(), pred_sort_N);
-	xr_sort(bone_map_P->begin(), bone_map_P->end(), pred_sort_P);
+	std::sort(bone_map_N->begin(), bone_map_N->end(), pred_sort_N);
+	std::sort(bone_map_P->begin(), bone_map_P->end(), pred_sort_P);
 
 	// Attach bones to their parents
 	iRoot = BI_NONE;
@@ -315,7 +315,7 @@ void CKinematics::Load(const char* N, IReader* data, u32 dwFlags)
 			for (u32 child_idx = 0; child_idx < children.size(); child_idx++)
 			{
 				CBoneData::FacesVec faces = B->child_faces[child_idx];
-				xr_sort(faces.begin(), faces.end());
+				std::sort(faces.begin(), faces.end());
 				CBoneData::FacesVecIt new_end = std::unique(faces.begin(), faces.end());
 				faces.erase(new_end, faces.end());
 				B->child_faces[child_idx].clear_and_free();

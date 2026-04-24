@@ -403,6 +403,6 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 		parseResources(pReflection, ShaderDesc.BoundResources, destination);
 	}
 
-	xr_sort(table.begin(), table.end(), p_sort);
+	std::sort(table.begin(), table.end(), p_sort);
 	return TRUE;
 }

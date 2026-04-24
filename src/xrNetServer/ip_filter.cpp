@@ -92,7 +92,7 @@ u32 ip_filter::load()
 		tmp_item->subnet_mask = (u32(-1) >> zero_count) << zero_count;
 		m_all_subnets.push_back(tmp_item);
 	};
-	xr_sort(m_all_subnets.begin(), m_all_subnets.end(), subnet_comparator());
+	std::sort(m_all_subnets.begin(), m_all_subnets.end(), subnet_comparator());
 	return m_all_subnets.size();
 }
 

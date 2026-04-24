@@ -31,6 +31,7 @@
 #include "../xrCore/profiler.h"
 
 #include "xrSash.h"
+#include "MonitorList.h"
 
 extern "C" void XR_EARLY_INIT();
 
@@ -584,9 +585,51 @@ void clearDiscordPresence()
 
 void Startup()
 {
+#ifndef DEDICATED_SERVER
+	fill_vid_monitor_list();
+#endif
+
 	InitSound1();
 	execUserScript();
 	InitSound2();
+
+#ifndef DEDICATED_SERVER
+	{
+		LPCSTR p = strstr(Core.Params, "-vid_monitor ");
+		if (p)
+		{
+			p += xr_strlen("-vid_monitor ");
+			while (*p == ' ') ++p;
+			if (*p != '\0')
+			{
+				bool quoted = (*p == '"');
+				if (quoted) ++p;
+				const char* end = quoted ? strchr(p, '"') : strchr(p, ' ');
+				if (!end) end = p + xr_strlen(p);
+
+				string256 name_buf;
+				u32 len = (u32)(end - p);
+				if (len > 0 && len < sizeof(name_buf))
+				{
+					strncpy_s(name_buf, sizeof(name_buf), p, len);
+					name_buf[len] = '\0';
+					vid_monitor_name = name_buf;
+					Msg("* vid_monitor: CLI override -> '%s'", name_buf);
+				}
+				else
+				{
+					Msg("! vid_monitor: CLI flag ignored (malformed value)");
+				}
+			}
+			else
+			{
+				Msg("! vid_monitor: CLI flag ignored (no value)");
+			}
+		}
+	}
+
+	ResetStartupMonitor();
+#endif
 
 	// ...command line for auto start
 	{
@@ -661,6 +704,10 @@ void Startup()
 		Console->Destroy();
 
 	destroySound();
+
+#ifndef DEDICATED_SERVER
+	free_vid_monitor_list();
+#endif
 
 	destroyEngine();
 }
@@ -1527,7 +1574,7 @@ void CApplication::LoadEnd()
 	{
 		Msg("* phase time: %d ms", phase_timer.GetElapsed_ms());
 		Msg("* phase cmem: %lld K", Memory.mem_usage() / 1024);
-		Console->Execute("stat_memory_async");
+		Console->Execute("stat_memory");
 		g_appLoaded = TRUE;
 		// DUMP_PHASE;
 	}

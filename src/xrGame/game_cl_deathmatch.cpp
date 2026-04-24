@@ -413,7 +413,7 @@ int game_cl_Deathmatch::GetPlayersPlace(game_PlayerState* ps)
 	// create temporary map (sort by kills)
 	xr_vector<game_PlayerState*> Players;
 	for (; I != E; ++I) Players.push_back(I->second);
-	xr_sort(Players.begin(), Players.end(), DM_Compare_Players);
+	std::sort(Players.begin(), Players.end(), DM_Compare_Players);
 
 	int Place = 1;
 	for (u32 i = 0; i < Players.size(); i++)

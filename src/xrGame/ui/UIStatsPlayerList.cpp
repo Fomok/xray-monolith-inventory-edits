@@ -270,7 +270,7 @@ void CUIStatsPlayerList::Update()
 			ShowHeader(true);
 	}
 
-	xr_sort(items.begin(), items.end(), DM_Compare_Players);
+	std::sort(items.begin(), items.end(), DM_Compare_Players);
 
 	int n = (int)items.size();
 	n -= (int)m_pad->GetChildNum();

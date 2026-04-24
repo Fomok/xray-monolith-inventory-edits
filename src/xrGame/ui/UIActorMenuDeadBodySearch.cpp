@@ -66,7 +66,7 @@ void CUIActorMenu::FilterDeadBodyList(int mode)
 		m_pInvBox->AddAvailableItems(items_list);
 	}
 
-	xr_sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
 
 	TIItemContainer::iterator it = items_list.begin();
 	TIItemContainer::iterator it_e = items_list.end();
@@ -132,7 +132,7 @@ void CUIActorMenu::InitDeadBodySearchMode()
 		m_pInvBox->AddAvailableItems(items_list);
 	}
 
-	xr_sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
 
 	TIItemContainer::iterator it = items_list.begin();
 	TIItemContainer::iterator it_e = items_list.end();

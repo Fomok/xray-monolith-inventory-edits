@@ -228,7 +228,7 @@ void CMainMenu::Activate(bool bActivate)
 			CCameraManager::ResetPP();
 		}
         else
-            Console->Execute("stat_memory_async");
+            Console->Execute("stat_memory");
 
 		Device.seqRender.Add(this, 4); // 1-console 2-cursor 3-tutorial
 

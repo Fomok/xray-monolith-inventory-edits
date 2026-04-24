@@ -66,19 +66,19 @@ void CMonsterSquad::Idle_AssignAction(ENTITY_VEC& members)
 
 		Fvector dir = leader->Direction();
 		front_pos.mad(leader->Position(), dir, CENTER_CIRCLE_DIST);
-		xr_sort(front.begin(), front.end(), CPredicateSideSort(front_pos));
+		std::sort(front.begin(), front.end(), CPredicateSideSort(front_pos));
 
 		dir.invert();
 		back_pos.mad(leader->Position(), dir, CENTER_CIRCLE_DIST);
-		xr_sort(back.begin(), back.end(), CPredicateSideSort(back_pos));
+		std::sort(back.begin(), back.end(), CPredicateSideSort(back_pos));
 
 		dir = leader->XFORM().i;
 		right_pos.mad(leader->Position(), dir, CENTER_CIRCLE_DIST);
-		xr_sort(right.begin(), right.end(), CPredicateSideSort(right_pos));
+		std::sort(right.begin(), right.end(), CPredicateSideSort(right_pos));
 
 		dir.invert();
 		left_pos.mad(leader->Position(), dir, CENTER_CIRCLE_DIST);
-		xr_sort(left.begin(), left.end(), CPredicateSideSort(left_pos));
+		std::sort(left.begin(), left.end(), CPredicateSideSort(left_pos));
 
 		SSquadCommand command;
 		command.type = SC_FOLLOW;

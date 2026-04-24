@@ -90,7 +90,7 @@ void CUIActorMenu::FilterActorTradeBagList(int mode)
 
 	TIItemContainer ruck_list;
 	ruck_list = m_pActorInvOwner->inventory().m_ruck;
-	xr_sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
 
 	TIItemContainer::iterator itb = ruck_list.begin();
 	TIItemContainer::iterator ite = ruck_list.end();
@@ -139,7 +139,7 @@ void CUIActorMenu::InitPartnerInventoryContents()
 
 	TIItemContainer items_list;
 	m_pPartnerInvOwner->inventory().AddAvailableItems(items_list, true);
-	xr_sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
 
 	TIItemContainer::iterator itb = items_list.begin();
 	TIItemContainer::iterator ite = items_list.end();
@@ -160,7 +160,7 @@ void CUIActorMenu::FilterTraderList(int mode)
 
 	TIItemContainer items_list;
 	m_pPartnerInvOwner->inventory().AddAvailableItems(items_list, true);
-	xr_sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(items_list.begin(), items_list.end(), InventoryUtilities::GreaterRoomInRuck);
 
 	TIItemContainer::iterator itb = items_list.begin();
 	TIItemContainer::iterator ite = items_list.end();

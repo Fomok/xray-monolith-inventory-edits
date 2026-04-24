@@ -143,7 +143,7 @@ void CSpaceRestrictionShape::test_correctness	()
 	if (m_test_storage.empty()) return;
 
 	// leave only unique nodes in m_test_storage
-	xr_sort					(m_test_storage.begin(),m_test_storage.end());
+	std::sort					(m_test_storage.begin(),m_test_storage.end());
 	m_test_storage.erase		(
 		std::unique(
 			m_test_storage.begin(),

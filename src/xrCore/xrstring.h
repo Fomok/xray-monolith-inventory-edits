@@ -82,7 +82,7 @@ namespace std
 	class hash<xr_string>
 	{
 		public:
-			size_t operator()(const xr_string& s) const noexcept
+			size_t operator()(const xr_string& s) const
 			{
 				return xr_hash<std::string_view>()(std::string_view(s));
 			}
@@ -100,12 +100,12 @@ struct XRCORE_API str_value: public intrusive_base_impl<DeletionPolicy::Deferred
 	str_value(char* s) : value(s), hash(xr_hash<std::string_view>()(s)), length(xr_strlen(s)) {};
 	str_value(char* s, size_t hash, u32 length) : value(s), hash(hash), length(length)  {};
 
-	bool operator<(const str_value& other) const noexcept
+	bool operator<(const str_value& other) const
 	{
 		return value < other.value;
 	}
 
-	bool operator==(const str_value& other) const noexcept
+	bool operator==(const str_value& other) const
 	{
 		return hash == other.hash && value == other.value;
 	}
@@ -221,10 +221,10 @@ public:
 		return (shared_str&)*this;
 	}
 
-	str_c operator*() const noexcept { return p_ ? p_->value : 0; }
-	bool operator!() const noexcept { return p_ == 0; }
+	str_c operator*() const { return p_ ? p_->value : 0; }
+	bool operator!() const { return p_ == 0; }
 	char operator[](size_t id) { return p_->value[id]; }
-	str_c c_str() const noexcept { return p_ ? p_->value : 0; }
+	str_c c_str() const { return p_ ? p_->value : 0; }
 
 	// misc func
 	u32 size() const
@@ -260,7 +260,7 @@ namespace std
 	class hash<shared_str>
 	{
 	public:
-		size_t operator()(const shared_str& s) const noexcept
+		size_t operator()(const shared_str& s) const
 		{
 			return xr_hash<str_value*>()(const_cast<str_value*>(s._get()));
 		}
@@ -275,17 +275,17 @@ namespace std
 // ptr != const res_ptr
 // res_ptr < res_ptr
 // res_ptr > res_ptr
-IC bool operator ==(shared_str const& a, shared_str const& b) noexcept { return a._get() == b._get(); }
-IC bool operator !=(shared_str const& a, shared_str const& b) noexcept { return a._get() != b._get(); }
-IC bool operator <(shared_str const& a, shared_str const& b) noexcept { return a._get() < b._get(); }
-IC bool operator >(shared_str const& a, shared_str const& b) noexcept { return a._get() > b._get(); }
+IC bool operator ==(shared_str const& a, shared_str const& b) { return a._get() == b._get(); }
+IC bool operator !=(shared_str const& a, shared_str const& b) { return a._get() != b._get(); }
+IC bool operator <(shared_str const& a, shared_str const& b) { return a._get() < b._get(); }
+IC bool operator >(shared_str const& a, shared_str const& b) { return a._get() > b._get(); }
 
 // externally visible standart functionality
 IC void swap(shared_str& lhs, shared_str& rhs) { lhs.swap(rhs); }
 IC u32 xr_strlen(shared_str& a) { return a.size(); }
-IC int xr_strcmp(const shared_str& a, const char* b) noexcept { return xr_strcmp(*a, b); }
-IC int xr_strcmp(const char* a, const shared_str& b) noexcept { return xr_strcmp(a, *b); }
-IC int xr_strcmp(const shared_str& a, const shared_str& b) noexcept
+IC int xr_strcmp(const shared_str& a, const char* b) { return xr_strcmp(*a, b); }
+IC int xr_strcmp(const char* a, const shared_str& b) { return xr_strcmp(a, *b); }
+IC int xr_strcmp(const shared_str& a, const shared_str& b)
 {
 	if (a.equal(b)) return 0;
 	else return xr_strcmp(*a, *b);

@@ -233,7 +233,7 @@ public:
 			CSE_Abstract* pEntity = Level().Server->GetEntity(i);
 			SObjID.push_back(pEntity->ID);
 		};
-		xr_sort(SObjID.begin(), SObjID.end());
+		std::sort(SObjID.begin(), SObjID.end());
 
 		u32 CLObjNum	= Level().Objects.o_count();
 		xr_vector<u16>	CObjID;
@@ -241,7 +241,7 @@ public:
 		{
 			CObjID.push_back(Level().Objects.o_get_by_iterator(i)->ID());
 		};
-		xr_sort(CObjID.begin(), CObjID.end());
+		std::sort(CObjID.begin(), CObjID.end());
 
 		Msg("Client Objects : %d", CLObjNum);
 		Msg("Server Objects : %d", SVObjNum);

@@ -111,7 +111,7 @@ void XRay::Engine::CalculateBonesThread()
 	{
 		return _1.distSq < _2.distSq;
 	};
-	xr_sort(spatialsSnapshot.begin(), spatialsSnapshot.end(), sortFunc);
+	std::sort(spatialsSnapshot.begin(), spatialsSnapshot.end(), sortFunc);
 
     for (const auto& snapshot : spatialsSnapshot)
         snapshot.pKin->CalculateBones(TRUE);

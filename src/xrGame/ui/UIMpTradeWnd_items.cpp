@@ -649,7 +649,7 @@ void CUIMpTradeWnd::StorePreset(ETradePreset idx, bool bSilent, bool check_allow
 			_one.addon_names[2] = GetAddonNameSect(iinfo, at_silencer);
 	}
 
-	xr_sort(v.begin(), v.end(), preset_sorter(m_item_mngr));
+	std::sort(v.begin(), v.end(), preset_sorter(m_item_mngr));
 
 	if (flush_helpers)
 	{
@@ -894,7 +894,7 @@ struct items_sorter
 
 void CUIMpTradeWnd::DumpAllItems(LPCSTR s)
 {
-	xr_sort(m_all_items.begin(), m_all_items.end(), items_sorter());
+	std::sort(m_all_items.begin(), m_all_items.end(), items_sorter());
 
 #ifndef MASTER_GOLD
 	Msg("CUIMpTradeWnd::DumpAllItems.total[%d] reason [%s]", m_all_items.size(), s);

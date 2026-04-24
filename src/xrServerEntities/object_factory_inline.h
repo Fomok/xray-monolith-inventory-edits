@@ -131,7 +131,7 @@ IC void CObjectFactory::actualize() const
 		return;
 
 	m_actual = true;
-	xr_sort(m_clsids.begin(), m_clsids.end(), CObjectItemPredicate());
+	std::sort(m_clsids.begin(), m_clsids.end(), CObjectItemPredicate());
 }
 
 #endif

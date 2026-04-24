@@ -54,7 +54,7 @@ void mem_alloc_show_stats ()
         }
     };
 
-    xr_sort (strings,e,predicate::compare);
+    std::sort (strings,e,predicate::compare);
 
     int j = 0;
     for (i = strings; i != e; ++i, ++j)

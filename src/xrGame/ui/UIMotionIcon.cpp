@@ -106,7 +106,7 @@ void CUIMotionIcon::Update()
 		m_bchanged = false;
 		if (m_npc_visibility.size())
 		{
-			xr_sort(m_npc_visibility.begin(), m_npc_visibility.end());
+			std::sort(m_npc_visibility.begin(), m_npc_visibility.end());
 			SetLuminosity(m_npc_visibility.back().value);
 		}
 		else

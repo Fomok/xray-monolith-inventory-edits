@@ -191,7 +191,7 @@ namespace crash_saving {
                 return a.time_write > b.time_write;
             }
         } sortFilesDesc;
-        xr_sort(fset.begin(), fset.end(), sortFilesDesc);
+        std::sort(fset.begin(), fset.end(), sortFilesDesc);
 
         //Msg("save mask %s", path_mask.c_str());
 

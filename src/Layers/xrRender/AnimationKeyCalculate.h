@@ -31,7 +31,7 @@ IC bool operator <(const ConsistantKey& A, const ConsistantKey& B) // note: inve
 IC void MakeKeysConsistant(ConsistantKey *keys, int count)
 {
 	// sort in decreasing order
-	xr_sort(keys,keys+count);
+	std::sort(keys,keys+count);
 
 	// recalc
 	for (int i=0; i<count-1; i++) {
@@ -45,7 +45,7 @@ IC void MakeKeysConsistant(ConsistantKey *keys, int count)
 IC void MakeKeysSelected(ConsistantKey* keys, int count)
 {
 	// sort in decreasing order
-	xr_sort(keys, keys + count);
+	std::sort(keys, keys + count);
 }
 
 /*
@@ -239,7 +239,7 @@ IC void MixInterlerp(CKey& Result, const CKey* R, const CBlend* const BA[MAX_BLE
 			for (int i = 0; i < b_count; i++)
 				S[i].set(R + i, BA[i]->blendAmount);
 
-			xr_sort(S, S + b_count);
+			std::sort(S, S + b_count);
 			CKey tmp;
 			total = S[0].w;
 			tmp = *S[0].K;

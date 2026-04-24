@@ -411,6 +411,9 @@
     <ClInclude Include="device.h">
       <Filter>RenderRef\Execution &amp; 3D\Device</Filter>
     </ClInclude>
+    <ClInclude Include="MonitorList.h">
+      <Filter>RenderRef\Execution &amp; 3D\Device</Filter>
+    </ClInclude>
     <ClInclude Include="StatGraph.h">
       <Filter>RenderRef\Execution &amp; 3D\Device</Filter>
     </ClInclude>
@@ -712,6 +715,9 @@
       <Filter>Engine\text_editor\edit_actions</Filter>
     </ClCompile>
     <ClCompile Include="device.cpp">
+      <Filter>RenderRef\Execution &amp; 3D\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorList.cpp">
       <Filter>RenderRef\Execution &amp; 3D\Device</Filter>
     </ClCompile>
     <ClCompile Include="Device_create.cpp">

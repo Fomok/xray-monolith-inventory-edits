@@ -123,7 +123,7 @@ namespace CDB
             }
         }
 
-        xr_sort(edges.begin(), edges.end(), sort_predicate());
+        std::sort(edges.begin(), edges.end(), sort_predicate());
         dest.assign(edge_count, u32(-1));
 
         // Сопоставление рёбер между треугольниками

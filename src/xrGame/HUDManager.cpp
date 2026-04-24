@@ -526,8 +526,8 @@ void CHUDManager::net_Relcase(CObject* obj)
 
 	HitMarker.net_Relcase(obj);
 
-	VERIFY(g_player_hud);
-	g_player_hud->net_Relcase(obj);
+    if (g_player_hud)
+	    g_player_hud->net_Relcase(obj);
 
 #ifdef	DEBUG
     DBG_PH_NetRelcase( obj );

@@ -21,9 +21,9 @@ void CDSGraphManager::r_dsgraph_render_lods(bool _setup_zb, bool _clear)
 
     static auto sortFuncReverse = [](const auto& a, const auto& b) { return b < a; };
 	if (_setup_zb)
-        xr_sort(RGraph.mapLOD.begin(), RGraph.mapLOD.end());
+        std::sort(RGraph.mapLOD.begin(), RGraph.mapLOD.end());
     else
-        xr_sort(RGraph.mapLOD.begin(), RGraph.mapLOD.end(), sortFuncReverse);
+        std::sort(RGraph.mapLOD.begin(), RGraph.mapLOD.end(), sortFuncReverse);
 
 	// *** Fill VB and generate groups
 	u32 shid = _setup_zb ? SE_R1_LMODELS : SE_R1_NORMAL_LQ;
@@ -79,7 +79,7 @@ void CDSGraphManager::r_dsgraph_render_lods(bool _setup_zb, bool _clear)
 			svector<std::pair<float, u32>, 8> selector;
 			for (u32 s = 0; s < 8; s++) selector.push_back(mk_pair(Ldir.dotproduct(facets[s].N), s));
 			static auto sort_pred = [](const std::pair<float, u32>& _1, const std::pair<float, u32>& _2) { return _1.first < _2.first; };
-			xr_sort(selector.begin(), selector.end(), sort_pred);
+			std::sort(selector.begin(), selector.end(), sort_pred);
 
 			float dot_best = selector[selector.size() - 1].first;
 			float dot_next = selector[selector.size() - 2].first;

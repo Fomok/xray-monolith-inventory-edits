@@ -27,6 +27,58 @@ function on_xml_read()
 			v.restart = false
 			v.content = {cont_sound_device}
 		end
+
+		function cont_vid_monitor()
+			local cont = {}
+			local monitors = get_console():get_token_list("vid_monitor")
+			if monitors then
+				for i=1,#monitors do
+					cont[#cont + 1] = {monitors[i]}
+				end
+			end
+			if #cont == 0 then
+				local curr = get_console_cmd(0, "vid_monitor")
+				cont[1] = {curr ~= "" and curr or "Auto"}
+			end
+			return cont
+		end
+
+		local basic = nil
+		for _, top in ipairs(ui_options.options) do
+			if top.id == "video" and top.gr then
+				for _, sub in ipairs(top.gr) do
+					if sub.id == "basic" then basic = sub; break end
+				end
+				break
+			end
+		end
+		if basic and basic.gr then
+			local already_present = false
+			local renderer_idx = nil
+			for i, row in ipairs(basic.gr) do
+				if row.id == "monitor" then
+					already_present = true
+					break
+				end
+				if row.id == "renderer" then
+					renderer_idx = i
+				end
+			end
+			if not already_present and renderer_idx then
+				table.insert(basic.gr, renderer_idx + 1, {
+					id      = "monitor",
+					type    = "list",
+					val     = 0,
+					cmd     = "vid_monitor",
+					content = {cont_vid_monitor},
+					no_str  = true,
+					restart = true,
+				})
+				if ui_options.init_opt_coder then
+					ui_options.init_opt_coder()
+				end
+			end
+		end
 	end
 	ui_options.init_opt_base()
 end

@@ -203,7 +203,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 			L.cls = r_type;
 		}
 	}
-	xr_sort(table.begin(), table.end(), p_sort_constants);
+	std::sort(table.begin(), table.end(), p_sort_constants);
 	return TRUE;
 }
 #endif	//	USE_DX10
@@ -259,7 +259,7 @@ void R_constant_table::merge(R_constant_table* T)
 		std::move(table_tmp.begin(), table_tmp.end(), std::back_inserter(table));
 
 		// Sort
-		xr_sort(table.begin(), table.end(), p_sort_constants);
+		std::sort(table.begin(), table.end(), p_sort_constants);
 	}
 
 #if defined(USE_DX10) || defined(USE_DX11)

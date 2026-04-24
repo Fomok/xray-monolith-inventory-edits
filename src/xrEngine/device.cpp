@@ -209,14 +209,46 @@ ENGINE_API xr_list<LOADING_EVENT> g_loading_events;
 extern bool IsMainMenuActive(); //ECO_RENDER add
 
 static HMONITOR g_StartupMonitor = NULL;
-void InitMonitor()
+
+#include "MonitorList.h"
+
+static void InitMonitor()
 {
-	if (!g_StartupMonitor)
+	if (g_StartupMonitor)
+		return;
+
+	HMONITOR chosen = ResolveSelectedMonitor();
+	if (chosen)
 	{
-		POINT cursorPos;
-		GetCursorPos(&cursorPos);
-		g_StartupMonitor = MonitorFromPoint(cursorPos, MONITOR_DEFAULTTOPRIMARY);
+		MONITORINFO mi;
+		mi.cbSize = sizeof(mi);
+		if (GetMonitorInfoA(chosen, &mi))
+		{
+			g_StartupMonitor = chosen;
+			return;
+		}
+		Msg("! vid_monitor: resolved handle is invalid, using Auto");
 	}
+
+	POINT cursorPos;
+	GetCursorPos(&cursorPos);
+	g_StartupMonitor = MonitorFromPoint(cursorPos, MONITOR_DEFAULTTOPRIMARY);
+}
+
+ENGINE_API void ResetStartupMonitor()
+{
+	g_StartupMonitor = NULL;
+}
+
+ENGINE_API void SetStartupMonitor(HMONITOR h)
+{
+	g_StartupMonitor = h;
+}
+
+ENGINE_API HMONITOR GetStartupMonitor()
+{
+	InitMonitor();
+	return g_StartupMonitor;
 }
 
 void GetMonitorResolution(u32& horizontal, u32& vertical)

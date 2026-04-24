@@ -25,8 +25,10 @@ XRCORE_API void vminfo(size_t* _free, size_t* reserved, size_t* committed)
 	}
 }
 
+xrCriticalSection mem_lock;
 XRCORE_API void log_vminfo()
 {
+    xrCriticalSectionGuard g(mem_lock);
 	PROF_EVENT("log_vminfo");
 	size_t w_free, w_reserved, w_committed;
 	vminfo(&w_free, &w_reserved, &w_committed);
@@ -40,6 +42,7 @@ XRCORE_API void log_vminfo()
 
 size_t xrMemory::mem_usage(bool assert)
 {
+    xrCriticalSectionGuard g(mem_lock);
 	PROF_EVENT("mem_usage");
 	_HEAPINFO hinfo = {};
 	int status;

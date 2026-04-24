@@ -635,7 +635,7 @@ bool CLocatorAPI::Recurse(const char* path)
 	size_t newSize = rec_files.size();
 	if (newSize > oldSize)
 	{
-		xr_sort(rec_files.begin() + oldSize, rec_files.end(), pred_str_ff);
+		std::sort(rec_files.begin() + oldSize, rec_files.end(), pred_str_ff);
 		for (size_t i = oldSize; i < newSize; i++)
 			ProcessOne(path, rec_files[i]);
 		rec_files.erase(rec_files.begin() + oldSize, rec_files.end());

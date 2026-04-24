@@ -169,7 +169,7 @@ void CSpaceRestrictionComposition::test_correctness()
 	}
 
 	{
-		xr_sort					(m_test_storage.begin(),m_test_storage.end());
+		std::sort					(m_test_storage.begin(),m_test_storage.end());
 		m_test_storage.erase		(
 			std::unique(	
 				m_test_storage.begin(),

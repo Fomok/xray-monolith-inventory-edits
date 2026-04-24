@@ -216,7 +216,7 @@ void CAgentEnemyManager::compute_enemy_danger()
         }
     }
 
-	xr_sort(m_enemies.begin(), m_enemies.end());
+	std::sort(m_enemies.begin(), m_enemies.end());
 }
 
 void CAgentEnemyManager::assign_enemies()

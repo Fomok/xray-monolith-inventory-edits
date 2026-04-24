@@ -31,6 +31,7 @@ public:
 	static void InitLog();
 	static void FlushLog();
 	static void CloseLog();
+	static void SetImmediateMode(bool enable);
 
 	static void AddLogCallback(LogCallback logCb);
 	static void RemoveLogCallback(LogCallback logCb);
@@ -72,6 +73,7 @@ private:
 	bool bFastDebugLog;
 
 	std::atomic_bool bFlushRequested;
+	bool bImmediateMode;
 
 	//LogCallback onLogMsg;
 	xr_list<LogCallback> logCallbackList;

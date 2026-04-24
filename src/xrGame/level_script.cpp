@@ -2076,7 +2076,7 @@ void iterate_nearest(const Fvector& pos, float radius, const ::luabind::functor<
 	if (!m_nearest.size()) return;
 
 	// demonized: sort nearest by distance first
-	xr_sort(m_nearest.begin(), m_nearest.end(), [&pos](CObject* o1, CObject* o2) {
+	std::sort(m_nearest.begin(), m_nearest.end(), [&pos](CObject* o1, CObject* o2) {
 		return o1->Position().distance_to_sqr(pos) < o2->Position().distance_to_sqr(pos);
 	});
 

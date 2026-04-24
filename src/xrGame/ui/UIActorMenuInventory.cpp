@@ -480,7 +480,7 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 
 	TIItemContainer ruck_list;
 	ruck_list = m_pActorInvOwner->inventory().m_ruck;
-	xr_sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
 
 	curr_list = pBagList;
 
@@ -520,7 +520,7 @@ void CUIActorMenu::FilterActorBagList(int mode)
 
 	TIItemContainer ruck_list;
 	ruck_list = m_pActorInvOwner->inventory().m_ruck;
-	xr_sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	std::sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
 
 	TIItemContainer::iterator itb = ruck_list.begin();
 	TIItemContainer::iterator ite = ruck_list.end();

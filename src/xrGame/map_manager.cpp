@@ -296,7 +296,7 @@ void CMapManager::Update()
 		if ((*it).actual && bForce)
 			(*it).location->CalcPosition();
 	}
-	xr_sort(Locations().begin(), Locations().end());
+	std::sort(Locations().begin(), Locations().end());
 
 	while ((!Locations().empty()) && (!Locations().back().actual))
 	{

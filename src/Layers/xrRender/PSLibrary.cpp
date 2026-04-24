@@ -184,8 +184,8 @@ bool CPSLibrary::Load2()
 		}
 	}
 
-	xr_sort(m_PEDs.begin(), m_PEDs.end(), ped_sort_pred);
-	xr_sort(m_PGDs.begin(), m_PGDs.end(), pgd_sort_pred);
+	std::sort(m_PEDs.begin(), m_PEDs.end(), ped_sort_pred);
+	std::sort(m_PGDs.begin(), m_PGDs.end(), pgd_sort_pred);
 
 	for (PS::PEDIt e_it = m_PEDs.begin(); e_it != m_PEDs.end(); ++e_it)
 		(*e_it)->CreateShader();
@@ -330,8 +330,8 @@ bool CPSLibrary::Load(const char* nm)
 		FS.r_close(F);
 	}
 
-	xr_sort(m_PEDs.begin(), m_PEDs.end(), ped_sort_pred);
-	xr_sort(m_PGDs.begin(), m_PGDs.end(), pgd_sort_pred);
+	std::sort(m_PEDs.begin(), m_PEDs.end(), ped_sort_pred);
+	std::sort(m_PGDs.begin(), m_PGDs.end(), pgd_sort_pred);
 
 	for (PS::PEDIt e_it = m_PEDs.begin(); e_it != m_PEDs.end(); ++e_it)
 		(*e_it)->CreateShader();

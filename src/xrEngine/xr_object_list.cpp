@@ -442,7 +442,8 @@ void CObjectList::ClearProcessDestroyQueueFromDevice()
 void CObjectList::Unload()
 {
     ClearProcessDestroyQueueFromDevice();
-    ProcessDestroyQueue();
+    ProcessDestroyQueueImpl(force_destroy_queue);
+    ProcessDestroyQueueImpl(destroy_queue);
 
 	if (objects_sleeping.size() || objects_active.size())
 		Msg("! objects-leaked: %d", objects_sleeping.size() + objects_active.size());
@@ -474,6 +475,10 @@ void CObjectList::Unload()
 		O->net_Destroy();
 		Destroy(O);
 	}
+
+    // Clear the destroy_queues from dangling pointers
+    force_destroy_queue.clear();
+    destroy_queue.clear();
 }
 
 CObject* CObjectList::Create(LPCSTR name)

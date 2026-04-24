@@ -108,7 +108,7 @@ void CMonsterSquad::set_rat_squad_index(const CEntity* m_enemy)
 void CMonsterSquad::get_index_in_rat_squad(ENTITY_VEC& members, const CEntity* m_enemy)
 {
 	u8 m_index = 0;
-	xr_sort(members.begin(), members.end(), sort_predicate(m_enemy));
+	std::sort(members.begin(), members.end(), sort_predicate(m_enemy));
 	while (!members.empty())
 	{
 		CEntity* pEntity;
@@ -155,7 +155,7 @@ void CMonsterSquad::set_squad_index(const CEntity* m_enemy)
 void CMonsterSquad::get_index_in_squad(ENTITY_VEC& members, const CEntity* m_enemy)
 {
 	u8 m_index = 0;
-	xr_sort(members.begin(), members.end(), sort_predicate(m_enemy));
+	std::sort(members.begin(), members.end(), sort_predicate(m_enemy));
 	while (!members.empty())
 	{
 		CEntity* pEntity;
@@ -175,7 +175,7 @@ void CMonsterSquad::Attack_AssignTargetDir(ENTITY_VEC& members, const CEntity* e
 	lines.clear();
 
 	// сортировать по убыванию расстояния от npc до врага 
-	xr_sort(members.begin(), members.end(), sort_predicate(enemy));
+	std::sort(members.begin(), members.end(), sort_predicate(enemy));
 	if (members.empty()) return;
 
 	float delta_yaw = PI_MUL_2 / members.size();

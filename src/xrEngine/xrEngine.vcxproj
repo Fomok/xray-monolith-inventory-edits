@@ -862,6 +862,7 @@
     <ClInclude Include="dedicated_server_only.h" />
     <ClInclude Include="defines.h" />
     <ClInclude Include="device.h" />
+    <ClInclude Include="MonitorList.h" />
     <ClInclude Include="edit_actions.h" />
     <ClInclude Include="Effector.h" />
     <ClInclude Include="EffectorPP.h" />
@@ -968,6 +969,7 @@
     <ClCompile Include="CustomHUD.cpp" />
     <ClCompile Include="defines.cpp" />
     <ClCompile Include="device.cpp" />
+    <ClCompile Include="MonitorList.cpp" />
     <ClCompile Include="Device_create.cpp" />
     <ClCompile Include="Device_destroy.cpp" />
     <ClCompile Include="Device_Initialize.cpp" />

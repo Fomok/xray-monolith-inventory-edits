@@ -380,9 +380,6 @@ static void full_memory_stats(bool assert = true)
 	u64 DLTX_files_cached = 0;
 	CInifile::GetCacheStats(DLTX_files_cached, DLTX_total_bytes, DLTX_section_count);
 	Msg("* [x-ray]: DLTX Cache: Files Cached: %zu, Sections Total %zu, Usage: %.2f MB", DLTX_files_cached, DLTX_section_count, (double)DLTX_total_bytes / 1024 / 1024);
-	
-	size_t lua_mem = lua_gc(ai().script_engine().lua(), LUA_GCCOUNT, 0);
-	Msg("* [Lua]: Memory usage: %u K", lua_mem);
 
 	/*if (Console)
 	{

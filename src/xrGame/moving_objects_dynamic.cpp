@@ -172,7 +172,7 @@ void moving_objects::fill_nearest_moving(moving_object* object)
 	u32 size = m_nearest_moving.size();
 	moving_object** temp = (moving_object**)_alloca(size * sizeof(moving_object*));
 	std::copy(m_nearest_moving.begin(), m_nearest_moving.end(), temp);
-	xr_sort(temp, temp + size);
+	std::sort(temp, temp + size);
 	m_nearest_moving.erase(
 		std::set_difference(
 			temp,
@@ -201,10 +201,10 @@ void moving_objects::generate_emitters()
 {
 	remove_already_waited();
 
-	xr_sort(m_collision_emitters.begin(), m_collision_emitters.end());
+	std::sort(m_collision_emitters.begin(), m_collision_emitters.end());
 
 	// it should be alredy sorted here
-	//	xr_sort					(m_nearest_moving.begin(),m_nearest_moving.end());
+	//	std::sort					(m_nearest_moving.begin(),m_nearest_moving.end());
 #ifdef DEBUG
 	if (!m_nearest_moving.empty()) {
 		NEAREST_MOVING::const_iterator	I = m_nearest_moving.begin(), J = I + 1;
@@ -482,7 +482,7 @@ struct decision_predicate
 
 void moving_objects::resolve_collisions()
 {
-	xr_sort(m_collisions.begin(), m_collisions.end(), &priority::predicate2);
+	std::sort(m_collisions.begin(), m_collisions.end(), &priority::predicate2);
 
 	m_previous_collisions = m_collisions;
 
@@ -508,7 +508,7 @@ void moving_objects::resolve_collisions()
 				*J = *I;
 		}
 
-		xr_sort(collidees, collidees + collidee_count);
+		std::sort(collidees, collidees + collidee_count);
 		collidee_count = u32(std::unique(collidees, collidees + collidee_count) - collidees);
 	}
 

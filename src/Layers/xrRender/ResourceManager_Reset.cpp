@@ -71,7 +71,7 @@ void CResourceManager::reset_end()
 #pragma todo("container is created in stack!")
 		xr_vector<CRT*> rt;
 		for (map_RTIt rt_it = m_rtargets.begin(); rt_it != m_rtargets.end(); rt_it++) rt.push_back(rt_it->second);
-		xr_sort(rt.begin(), rt.end(), cmp_rt);
+		std::sort(rt.begin(), rt.end(), cmp_rt);
 		for (u32 _it = 0; _it < rt.size(); _it++) rt[_it]->reset_end();
 	}
 	{
@@ -79,7 +79,7 @@ void CResourceManager::reset_end()
 #pragma todo("container is created in stack!")
 		//	DX10 cut 		xr_vector<CRTC*>	rt;
 		//	DX10 cut 		for (map_RTCIt rt_it=m_rtargets_c.begin(); rt_it!=m_rtargets_c.end(); rt_it++)	rt.push_back(rt_it->second);
-		//	DX10 cut 		xr_sort(rt.begin(),rt.end(),cmp_rtc);
+		//	DX10 cut 		std::sort(rt.begin(),rt.end(),cmp_rtc);
 		//	DX10 cut 		for (u32 _it=0; _it<rt.size(); _it++)	rt[_it]->reset_end	();
 	}
 

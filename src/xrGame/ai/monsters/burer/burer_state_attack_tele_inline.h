@@ -433,7 +433,7 @@ public:
 template <typename Object>
 void CStateBurerAttackTele<Object>::SelectObjects()
 {
-	xr_sort(tele_objects.begin(), tele_objects.end(),
+	std::sort(tele_objects.begin(), tele_objects.end(),
 	          best_object_predicate2(object->Position(), object->EnemyMan.get_enemy()->Position()));
 
 	// выбрать объект

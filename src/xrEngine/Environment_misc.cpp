@@ -765,7 +765,7 @@ void CEnvironment::load_weathers()
 	for (; _I != _E; _I++)
 	{
 		R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", *_I->first);
-		xr_sort(_I->second.begin(), _I->second.end(), sort_env_etl_pred);
+		std::sort(_I->second.begin(), _I->second.end(), sort_env_etl_pred);
 	}
 	R_ASSERT2(!WeatherCycles.empty(), "Empty weathers.");
 	SetWeather((*WeatherCycles.begin()).first.c_str());
@@ -850,7 +850,7 @@ void CEnvironment::load_weather_effects()
 	for (; _I != _E; _I++)
 	{
 		R_ASSERT3(_I->second.size() > 1, "Environment in weather must >=2", *_I->first);
-		xr_sort(_I->second.begin(), _I->second.end(), sort_env_etl_pred);
+		std::sort(_I->second.begin(), _I->second.end(), sort_env_etl_pred);
 	}
 }
 

@@ -783,7 +783,7 @@ u32 CWeaponKnife::SelectHitsToShot(shot_targets_t& dst_dirs, Fvector const& f_po
 	{
 		fill_shapes_list(*i, fendpos, tmp_shapes_list);
 	}
-	xr_sort(tmp_shapes_list.begin(), tmp_shapes_list.end(), shapes_compare_predicate);
+	std::sort(tmp_shapes_list.begin(), tmp_shapes_list.end(), shapes_compare_predicate);
 	fill_shots_list(tmp_shapes_list, query_sphere, dst_dirs);
 
 	return static_cast<u32>(dst_dirs.size());

@@ -208,7 +208,7 @@ void CHOM::Render_DB(CFrustum& base)
 
 	Fvector COP = Device.vCameraPosition;
 	end = std::remove_if(it, end, pred_fb(m_pTris));
-	xr_sort(it, end, pred_fb(m_pTris, COP));
+	std::sort(it, end, pred_fb(m_pTris, COP));
 
 	// Build frustum with near plane only
 	CFrustum clip;

@@ -14,6 +14,7 @@
 #include "../Include/xrRender/RenderDeviceRender.h"
 
 #include "xr_object.h"
+#include "MonitorList.h"
 
 xr_token* vid_quality_token = NULL;
 
@@ -34,6 +35,8 @@ xr_token vid_bpp_token[] =
 };
 
 extern float r_wallmarks_ssa_k;
+extern BOOL r_wallmarks_static;
+extern BOOL r_wallmarks_dynamic;
 //-----------------------------------------------------------------------
 
 void IConsole_Command::add_to_LRU(shared_str const& arg)
@@ -475,8 +478,11 @@ public:
 		int cnt = sscanf(args, "%dx%d", &_w, &_h);
 		if (cnt == 2)
 		{
+			const bool changed = (psCurrentVidMode[0] != _w) || (psCurrentVidMode[1] != _h);
 			psCurrentVidMode[0] = _w;
 			psCurrentVidMode[1] = _h;
+			if (changed && Device.b_is_Ready)
+				Device.Reset();
 		}
 		else
 		{
@@ -815,6 +821,64 @@ public:
 	}
 };
 #endif
+
+
+#ifndef DEDICATED_SERVER
+class CCC_VidMonitor : public CCC_Token
+{
+	typedef CCC_Token inherited;
+	u32 _dummy;
+public:
+	CCC_VidMonitor(LPCSTR N) : inherited(N, &_dummy, NULL)
+	{
+		bLowerCaseArgs = FALSE;
+	}
+
+	virtual ~CCC_VidMonitor()
+	{
+	}
+
+	virtual void Execute(LPCSTR args) override
+	{
+		if (!Device.b_is_Ready)
+		{
+			vid_monitor_name = args;
+			ResetStartupMonitor();
+			return;
+		}
+
+		vid_monitor_name = args;
+
+		HMONITOR h = ResolveSelectedMonitor();
+		if (!h)
+		{
+			POINT p;
+			GetCursorPos(&p);
+			h = MonitorFromPoint(p, MONITOR_DEFAULTTOPRIMARY);
+		}
+
+		if (!Device.ChangeOutputMonitor(h))
+			Msg("! vid_monitor: live switch unavailable; restart to apply '%s'", args);
+	}
+
+	virtual void Status(TStatus& S)
+	{
+		xr_strcpy(S, sizeof(S), vid_monitor_name.c_str());
+	}
+
+	virtual xr_token* GetToken()
+	{
+		tokens = vid_monitor_token;
+		return inherited::GetToken();
+	}
+
+	virtual void Save(IWriter* F)
+	{
+		F->w_printf("%s %s\r\n", cName, vid_monitor_name.c_str());
+	}
+};
+#endif
+
 //-----------------------------------------------------------------------
 class CCC_ExclusiveMode : public IConsole_Command
 {
@@ -1005,6 +1069,8 @@ void CCC_Register()
 	// Render device states
 	CMD4(CCC_Integer, "r__supersample", &ps_r__Supersample, 1, 4);
 
+    CMD4(CCC_Integer, "r_wallmarks_static", &r_wallmarks_static, 0, 1);
+    CMD4(CCC_Integer, "r_wallmarks_dynamic", &r_wallmarks_dynamic, 0, 1);
     CMD4(CCC_Float, "r_wallmarks_ssa_k", &r_wallmarks_ssa_k, 0.25f, 10.f);
 
 	CMD4(CCC_Float, "r2_sunshafts_min", &ps_r2_sun_shafts_min, 0.0, 0.5);
@@ -1035,6 +1101,9 @@ void CCC_Register()
 
 	// General video control
 	CMD1(CCC_VidMode, "vid_mode");
+#ifndef DEDICATED_SERVER
+	CMD1(CCC_VidMonitor, "vid_monitor");
+#endif
 
 #ifdef DEBUG
     CMD3(CCC_Token, "vid_bpp", &psCurrentBPP, vid_bpp_token);

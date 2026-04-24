@@ -1026,7 +1026,7 @@ bool banned_client_comparer(IBannedClient* C1, IBannedClient* C2)
 void IPureServer::UpdateBannedList()
 {
 	if (!BannedAddresses.size()) return;
-	xr_sort(BannedAddresses.begin(), BannedAddresses.end(), banned_client_comparer);
+	std::sort(BannedAddresses.begin(), BannedAddresses.end(), banned_client_comparer);
 	time_t T;
 	time(&T);
 

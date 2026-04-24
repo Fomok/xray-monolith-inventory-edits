@@ -102,7 +102,7 @@ void CRender::render_lights(light_Package& LP)
 			for (u16 smap_ID = 0; refactored.size() != total; smap_ID++)
 			{
 				LP_smap_pool.initialize(o.smapsize);
-				xr_sort(source.begin(), source.end(), [](light* _1, light* _2) {return _1->X.S.size > _2->X.S.size; });
+				std::sort(source.begin(), source.end(), [](light* _1, light* _2) {return _1->X.S.size > _2->X.S.size; });
 				source.erase(std::remove_if(source.begin(), source.end(), [smap_ID](light* L)
 				{
 					SMAP_Rect R;

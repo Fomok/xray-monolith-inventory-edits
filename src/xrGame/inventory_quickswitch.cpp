@@ -316,7 +316,7 @@ PIItem CInventory::GetNextActiveGrenade()
 	if (count_types > 1)
 	{
 		int curr_num = 0; // íîìåð òèïà òåêóùåé ãðàíàòû
-		xr_sort(types_sect_grn.begin(), types_sect_grn.end());
+		std::sort(types_sect_grn.begin(), types_sect_grn.end());
 		xr_vector<shared_str>::const_iterator I = types_sect_grn.begin();
 		xr_vector<shared_str>::const_iterator E = types_sect_grn.end();
 		for (; I != E; ++I)

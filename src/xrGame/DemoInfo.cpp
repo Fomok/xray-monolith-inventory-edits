@@ -148,7 +148,7 @@ void demo_info::write_to_file(IWriter* file_to_write) const
 
 void demo_info::sort_players(sorting_less_comparator sorting_comparator)
 {
-	xr_sort(m_players.begin(), m_players.end(), sorting_comparator);
+	std::sort(m_players.begin(), m_players.end(), sorting_comparator);
 }
 
 void demo_info::load_from_game()

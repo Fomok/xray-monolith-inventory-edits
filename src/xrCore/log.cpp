@@ -164,7 +164,10 @@ void xrLogger::PauseLogging()
 
 void xrLogger::UnpauseLogging()
 {
-	SetEvent(hLogThread);
+    if (bImmediateMode)
+        InternalPrintAllRecords();
+    else
+	    SetEvent(hLogThread);
 }
 
 void xrLogger::SimpleMessage(LPCSTR Message, u32 MessageSize /*= 0*/)
@@ -255,6 +258,14 @@ void xrLogger::FlushLog()
 	theLogger->UnpauseLogging();
 }
 
+void xrLogger::SetImmediateMode(bool enable)
+{
+	if (theLogger == nullptr)
+		return;
+
+	theLogger->bImmediateMode = enable;		
+}
+
 void xrLogger::CloseLog()
 {
 	theLogger->InternalCloseLog();
@@ -295,7 +306,8 @@ void xrLogger::InternalCloseLog()
 xrLogger::xrLogger()
 	: logFile(nullptr), bFastDebugLog(false), 
 	bIsAlive(true),
-	bFlushRequested(false)
+	bFlushRequested(false),
+	bImmediateMode(false)
 {
 	hLogThread = CreateEvent(nullptr, TRUE, FALSE, nullptr);
 }
@@ -378,6 +390,8 @@ void xrLogger::InternalPrintRecord()
 			// write to file
 			mutableWritter->w(finalLine, FinalSize);
 			mutableWritter->w("\r\n", 2);
+			if (bImmediateMode)
+                InternalFlushLog();
 		}
 		else
 		{

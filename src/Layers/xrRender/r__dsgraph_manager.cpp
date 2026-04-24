@@ -90,7 +90,7 @@ void CDSGraphManager::fade_render	()
 	// re-sort, back to front
 	if(!psDeviceFlags.test(rsDrawPortals))
 	{
-		xr_sort(f_portals.begin(), f_portals.end(),
+		std::sort(f_portals.begin(), f_portals.end(),
 		[&](const auto& _1, const auto& _2)
 		{
 			float		d1 = i_vBase.distance_to_sqr(_1.key->S.P);
