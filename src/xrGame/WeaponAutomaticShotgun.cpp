@@ -7,6 +7,8 @@
 #include "actor.h"
 #include "script_game_object.h"
 
+#include "HudItem.h"
+
 CWeaponAutomaticShotgun::CWeaponAutomaticShotgun()
 {
 	m_eSoundClose = ESoundTypes(SOUND_TYPE_WEAPON_SHOOTING);
@@ -46,6 +48,10 @@ void CWeaponAutomaticShotgun::Load(LPCSTR section)
 
 bool CWeaponAutomaticShotgun::Action(u16 cmd, u32 flags)
 {
+    if (cmd == kWPN_FIRE && GetState() == eReload) // ver
+    {
+        ClickInterruptFlag = true; // ver
+    }
 	if (cmd == kWPN_FIRE && flags & CMD_START)
 	{
 		if (fShotTimeCounter > 0.f)
@@ -54,7 +60,7 @@ bool CWeaponAutomaticShotgun::Action(u16 cmd, u32 flags)
 	if (inherited::Action(cmd, flags)) return true;
 
 	if (m_bTriStateReload && GetState() == eReload &&
-		cmd == kWPN_FIRE && flags & CMD_START &&
+        ClickInterruptFlag && // ver
 		m_sub_state == eSubstateReloadInProcess || m_sub_state == eSubstateReloadInProcessEmptyEnd) //постановить перезагрузку
 	{	
 		AddCartridge(1);
@@ -70,6 +76,11 @@ void CWeaponAutomaticShotgun::OnAnimationEnd(u32 state)
 	if (!m_bTriStateReload || state != eReload)
 		return inherited::OnAnimationEnd(state);
 
+    if (ClickInterruptFlag && MotionMarked)
+    {
+        m_sub_state = eSubstateReloadEnd;
+    }
+
 	switch (m_sub_state)
 	{
 	case eSubstateReloadBegin:
@@ -84,10 +95,12 @@ void CWeaponAutomaticShotgun::OnAnimationEnd(u32 state)
 			if (0 != AddCartridge(1))
 			{
 				m_sub_state = eSubstateReloadEnd;
+                MotionMarked = false; // ver
 			}
 			else if (BeginReloadWasEmpty && IsCustomReloadAvaible)
 			{
 				m_sub_state = eSubstateReloadInProcessEmptyEnd;
+                MotionMarked = false; // ver 
 				
 			}
 			SwitchState(eReload);
@@ -99,6 +112,8 @@ void CWeaponAutomaticShotgun::OnAnimationEnd(u32 state)
 			BeginReloadWasEmpty = false;
 			m_sub_state = eSubstateReloadBegin;
 			SwitchState(eIdle);
+            ClickInterruptFlag = false; // ver
+            MotionMarked = false; // ver
 		}
 		break;
 	case eSubstateReloadInProcessEmptyEnd:
@@ -214,6 +229,9 @@ void CWeaponAutomaticShotgun::switch2_EndReload()
 void CWeaponAutomaticShotgun::PlayAnimOpenWeapon()
 {
 	VERIFY(GetState()==eReload);
+
+    ClickInterruptFlag = false; // ver
+
 	PlayHUDMotion("anm_open", TRUE, this, GetState(), 1.f, 0.f, false);
 }
 
@@ -226,6 +244,8 @@ void CWeaponAutomaticShotgun::PlayAnimAddOneCartridgeWeapon()
 void CWeaponAutomaticShotgun::PlayAnimCloseWeapon()
 {
 	VERIFY(GetState()==eReload);
+
+    ClickInterruptFlag = false; // ver
 
 	if (BeginReloadWasEmpty && HudAnimationExist("anm_close_empty"))
 		PlayHUDMotion("anm_close_empty", FALSE, this, GetState());
@@ -256,9 +276,40 @@ bool CWeaponAutomaticShotgun::HaveCartridgeInInventory(u8 cnt)
 }
 
 
+void CWeaponAutomaticShotgun::OnMotionMark(u32 state, const motion_marks& M)
+{
+    // edited by Verdatim 18.4.2026
+    // changed to allow motion marks on automatic shotgun reloads
+    // what the fuckkkk
+
+    //Msg("motion mark detected on reload!");
+    inherited::OnMotionMark(state, M);
+    if (state == eIdle)
+    {
+        bMisfire = false;
+        bClearJamOnly = false;
+        m_sub_state = eSubstateReloadEnd; // Verdatim, fix for anm_reload_misfire with motion marks causing reloads
+        //Msg("unjam detected! clearing unjam instead");
+        return;
+    }
+
+
+
+    if ((m_sub_state == eSubstateReloadInProcess || m_sub_state == eSubstateReloadBegin) && (state == eReload))
+    {
+        AddCartridge(1);
+        m_sub_state = eSubstateReloadBegin;
+        MotionMarked = true;
+        //Msg("AddCartridge from motion mark!");
+    }
+    //SwitchState(eReload);
+
+
+}
+
 u8 CWeaponAutomaticShotgun::AddCartridge(u8 cnt)
 {
-	if (IsMisfire()) bMisfire = false;
+	//if (IsMisfire()) bMisfire = false;
 
 	if (m_set_next_ammoType_on_reload != undefined_ammo_type)
 	{

@@ -654,6 +654,9 @@ void CRenderDevice::FrameMove()
 {
 	PROF_EVENT("Render: Frame Move");
 
+	if (InterlockedExchange(&g_monitor_list_dirty, 0))
+		refresh_vid_monitor_list();
+
 	dwFrame++;
 	Core.dwFrame = dwFrame;
 	dwTimeContinual = TimerMM.GetElapsed_ms() - app_inactive_time;

@@ -1612,6 +1612,8 @@ void CWeaponMagazined::LoadScopeKoeffs()
 		&& (!m_modular_attachments || (m_flagsAddOnState & CSE_ALifeItemWeapon::eWeaponAddonScope)))
 	{
 		LPCSTR sect = GetScopeName().c_str();
+        if (!sect)
+            Msg("!CWeaponMagazined::LoadScopeKoeffs ERROR: GetScopeName for %s returns null, m_scopes.size() %d, m_cur_scope %d", cNameSect_str(), m_scopes.size(), m_cur_scope);
 		m_scope_koef.cam_dispersion = READ_IF_EXISTS(pSettings, r_float, sect, "cam_dispersion_k", 1.0f);
 		m_scope_koef.cam_disper_inc = READ_IF_EXISTS(pSettings, r_float, sect, "cam_dispersion_inc_k", 1.0f);
 		m_scope_koef.pdm_base = READ_IF_EXISTS(pSettings, r_float, sect, "PDM_disp_base_k", 1.0f);
@@ -1753,12 +1755,14 @@ void CWeaponMagazined::OnMotionMark(u32 state, const motion_marks& M)
 {
 	inherited::OnMotionMark(state, M);
 
+    // Edited by Verdatim 18.4.2026
 	if (state == eReload)
 	{
 		if (bClearJamOnly)
 		{
 			bMisfire = false;
 			bClearJamOnly = false;
+            m_needReload = false; // Verdatim, fix for anm_reload_misfire with motion marks causing reloads
 			return;
 		}
 		
@@ -1780,6 +1784,21 @@ void CWeaponMagazined::OnMotionMark(u32 state, const motion_marks& M)
 		{
 			if (m_needReload)
 				ReloadMagazine();
+
+            // Verdatim, fix for lmg with non-(lmg_reload) motion marks causing belts to disappear
+
+            //Msg("reload motion mark detected! initiating reload.");
+
+            u8 ammo_type = m_ammoType;
+            int ae = CheckAmmoBeforeReload(ammo_type);
+
+            if (ammo_type == m_ammoType)
+            {
+                ae += iAmmoElapsed;
+            }
+            last_hide_bullet = ae >= bullet_cnt ? bullet_cnt : bullet_cnt - ae - 1;
+
+            HUD_VisualBulletUpdate();
 		}
 	}
 }

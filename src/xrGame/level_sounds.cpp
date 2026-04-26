@@ -35,9 +35,9 @@ void SStaticSound::Update(u32 game_time, u32 global_time)
 	{
 		if (0 == m_Source._feedback())
 		{
-			Fvector occ[3];
-			const float occluder_volume = Sound->get_occlusion(m_Position, .2f, occ);
-			const float vol = m_Volume * occluder_volume;
+			// Static level sounds are occluded again by the emitter, so keep the
+			// authored level volume here to avoid double attenuation.
+			const float vol = m_Volume;
 
 			if ((0 == m_PauseTime.x) && (0 == m_PauseTime.y))
 			{
