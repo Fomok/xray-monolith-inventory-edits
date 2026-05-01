@@ -21,12 +21,6 @@ void XRay::Engine::PreRenderThread()
 		PROF_EVENT("CEffect_Rain::UpdateItems");
 		g_pGamePersistent->pEnvironment->eff_Rain->UpdateItems();
 	}
-
-	if (g_pGamePersistent && Device.ParticleWorkerCallback)
-	{
-		PROF_EVENT("Process Particles");
-		Device.ParticleWorkerCallback();
-	}
 }
 
 void XRay::Engine::PreRenderPostTransformsThread()
@@ -36,6 +30,12 @@ void XRay::Engine::PreRenderPostTransformsThread()
         PROF_EVENT("seqParallelRender");
         for (auto& it : Device.seqParallelRender)
             it();
+    }
+
+    if (g_pGamePersistent && Device.ParticleWorkerCallback)
+    {
+        PROF_EVENT("Process Particles");
+        Device.ParticleWorkerCallback();
     }
 }
 
@@ -63,6 +63,7 @@ void XRay::Engine::CalculateBonesThread()
 	ViewBase.CreateFromMatrix(Device.mFullTransform_saved, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);
 
 	static xr_vector<ISpatialShared> spatials = {};
+    spatials.clear();
 	g_SpatialSpace->q_sphere(
 		spatials,
 		ISpatial_DB::O_ORDERED,

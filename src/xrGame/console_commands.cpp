@@ -176,6 +176,7 @@ extern BOOL mt_Scheduler;
 extern BOOL mt_calc_bones;
 extern BOOL mt_ph_commander;
 extern BOOL mt_TaskManager;
+extern BOOL mt_ui;
 extern int SchedulerBatchSize;
 extern BOOL SchedulerLog;
 
@@ -2817,6 +2818,9 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer, "g_decouple_horz_recoil", &g_decouple_horz_recoil, 0, 1);
 	CMD4(CCC_Integer, "g_use_non_linear_inertia", &g_use_non_linear_inertia, 0, 1);
 
+    extern XRPHYSICS_API BOOL g_clamp_actor_camera_collision;
+    CMD4(CCC_Integer, "g_clamp_actor_camera_collision", &g_clamp_actor_camera_collision, 0, 1);
+
 	CMD4(CCC_Float, "g_recon_show_speed", &recon_show_speed, 0.f, 20.f);
 	CMD4(CCC_Float, "g_recon_hide_speed", &recon_hide_speed, 0.f, 20.f);
 	CMD4(CCC_Float, "g_recon_mindist", &recon_mindist, 0.f, 300.f);
@@ -3071,6 +3075,7 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer, "mt_level_call", &mt_ph_commander, 0, 1);
     CMD4(CCC_Integer, "mt_calc_bones", &mt_calc_bones, 0, 1);
     CMD4(CCC_Integer, "mt_task_manager", &mt_TaskManager, 0, 1);
+    CMD4(CCC_Integer, "mt_ui", &mt_ui, 0, 1);
 
 	CMD4(CCC_Integer, "scheduler_batch_size", &SchedulerBatchSize, 32, 256);
 	CMD4(CCC_Integer, "scheduler_log", &SchedulerLog, 0, 1);

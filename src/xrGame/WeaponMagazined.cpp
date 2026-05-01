@@ -1013,8 +1013,8 @@ void CWeaponMagazined::switch2_Idle()
     if (m_pendingShot)
     {
         m_pendingShot = false;
-        if (Actor() && H_Parent() == Actor() && Actor()->cast_input_receiver())
-            Actor()->cast_input_receiver()->IR_OnKeyboardPress(kWPN_FIRE);
+        if (Actor() && H_Parent() == Actor())
+            Level().IR_OnKeyboardPress(get_action_dik(kWPN_FIRE));
     }
 }
 
@@ -1613,7 +1613,7 @@ void CWeaponMagazined::LoadScopeKoeffs()
 	{
 		LPCSTR sect = GetScopeName().c_str();
         if (!sect)
-            Msg("!CWeaponMagazined::LoadScopeKoeffs ERROR: GetScopeName for %s returns null, m_scopes.size() %d, m_cur_scope %d", cNameSect_str(), m_scopes.size(), m_cur_scope);
+            Debug.fatal(DEBUG_INFO, "!CWeaponMagazined::LoadScopeKoeffs ERROR: GetScopeName for `%s` returns null, check scope_name in ltx, m_scopes.size() %d, m_cur_scope %d", cNameSect_str(), m_scopes.size(), m_cur_scope);
 		m_scope_koef.cam_dispersion = READ_IF_EXISTS(pSettings, r_float, sect, "cam_dispersion_k", 1.0f);
 		m_scope_koef.cam_disper_inc = READ_IF_EXISTS(pSettings, r_float, sect, "cam_dispersion_inc_k", 1.0f);
 		m_scope_koef.pdm_base = READ_IF_EXISTS(pSettings, r_float, sect, "PDM_disp_base_k", 1.0f);

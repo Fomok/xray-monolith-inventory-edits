@@ -332,6 +332,9 @@ void CCustomMonster::shedule_Update(u32 DT)
 	while ((NET.size() > 2) && (NET[1].dwTimeStamp < dwTimeCL)) NET.pop_front();
 
 	float dt = float(DT) / 1000.f;
+
+    CScriptEntity::process_sound_callbacks();
+
 	// *** general stuff
 	if (g_Alive())
 	{
@@ -442,8 +445,6 @@ void CCustomMonster::UpdateCL()
 	if( animation_movement() )
 				animation_movement()->DBG_verify_position_not_chaged();
 #endif
-
-		CScriptEntity::process_sound_callbacks();
 
 		/*	//. hack just to skip 'CalculateBones'
 		if (sound().need_bone_data()) {

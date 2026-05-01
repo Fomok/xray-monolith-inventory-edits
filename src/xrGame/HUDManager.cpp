@@ -154,6 +154,7 @@ CHUDManager::~CHUDManager()
 }
 
 //--------------------------------------------------------------------
+BOOL mt_ui = FALSE;
 void CHUDManager::OnFrame()
 {
 	PROF_EVENT("CHUDManager::OnFrame");
@@ -163,8 +164,11 @@ void CHUDManager::OnFrame()
 	if (!b_online)
 		return;
 
-	if (pUIGame)
-		pUIGame->OnFrame();
+    if (!mt_ui)
+    {
+        if (pUIGame)
+            pUIGame->OnFrame();
+    }
 
 	PP.CameraPick();
 	g_player_hud->OnFrame();
@@ -175,10 +179,23 @@ xrCriticalSection ui_lock;
 extern BOOL mt_TaskManager;
 void CHUDManager::OnFrameMT()
 {
+    if (!b_online)
+        return;
+
 	PROF_EVENT("CHUDManager::OnFrameMT");
 
 	if (mt_TaskManager && Device.dwPrecacheFrame == 0)
 		Level().GameTaskManager().UpdateTasks();
+
+    if (!psHUD_Flags.is(HUD_DRAW_RT2))
+        return;
+
+    if (mt_ui)
+    {
+        xrCriticalSectionGuard guard(&ui_lock);
+        if (pUIGame)
+            pUIGame->OnFrame();
+    }
 }
 
 //--------------------------------------------------------------------
