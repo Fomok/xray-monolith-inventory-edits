@@ -5,7 +5,39 @@
 #include "../../xrEngine/xr_object.h"
 #include "../../xrEngine/PS_instance.h"
 #include "LightTrack.h"
+#include "xrRender_console.h"
 #include "../xrServerEntities/smart_cast.h"
+
+static PortalTraverseDebugStats g_portal_traverse_dbg_stats;
+static u32 g_portal_traverse_dbg_last_frame = u32(-1);
+
+bool PortalTraverseDbg_Enabled()
+{
+	return !!ps_r__portal_traverse_stats;
+}
+
+bool PortalTraverseDbg_IsOptions(u32 options)
+{
+	return !!(options & (CDSGraphManager::VQ_HOM | CDSGraphManager::VQ_SSA | CDSGraphManager::VQ_FADE));
+}
+
+PortalTraverseDebugStats& PortalTraverseDbg_Get()
+{
+	const u32 frame = Device.dwFrame;
+	if (g_portal_traverse_dbg_last_frame != frame)
+	{
+		g_portal_traverse_dbg_last_frame = frame;
+		g_portal_traverse_dbg_stats.reset(frame);
+	}
+
+	return g_portal_traverse_dbg_stats;
+}
+
+const PortalTraverseDebugStats& PortalTraverseDbg_Peek()
+{
+	return g_portal_traverse_dbg_stats;
+}
+
 void CDSGraphManager::traverse(CSector* start, CFrustum& F, Fvector& vBase, Fmatrix& mXFORM)
 {
 	if (!start) return;
@@ -31,6 +63,7 @@ void CDSGraphManager::traverse(CSector* start, CFrustum& F, Fvector& vBase, Fmat
 			pair.val.second.clear();
 		}
 	}
+	m_static_seen.clear();
 	i_start->traverse(std::move(F),*this);
 }
 

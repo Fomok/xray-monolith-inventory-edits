@@ -283,6 +283,7 @@ extern ECORE_API int ps_r3_dyn_wet_surf_sm_res; // 256
 extern ECORE_API int opt_static;
 extern ECORE_API int opt_dynamic;
 extern ECORE_API int ps_pfx_volumetric_mode;
+extern ECORE_API int ps_r__portal_traverse_stats;
 
 enum : u64
 {

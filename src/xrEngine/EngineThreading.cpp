@@ -21,6 +21,12 @@ void XRay::Engine::PreRenderThread()
 		PROF_EVENT("CEffect_Rain::UpdateItems");
 		g_pGamePersistent->pEnvironment->eff_Rain->UpdateItems();
 	}
+
+	if (g_pGamePersistent && Device.ParticleWorkerCallback)
+	{
+		PROF_EVENT("Process Particles");
+		Device.ParticleWorkerCallback();
+	}
 }
 
 void XRay::Engine::PreRenderPostTransformsThread()
@@ -30,12 +36,6 @@ void XRay::Engine::PreRenderPostTransformsThread()
         PROF_EVENT("seqParallelRender");
         for (auto& it : Device.seqParallelRender)
             it();
-    }
-
-    if (g_pGamePersistent && Device.ParticleWorkerCallback)
-    {
-        PROF_EVENT("Process Particles");
-        Device.ParticleWorkerCallback();
     }
 }
 

@@ -175,6 +175,9 @@ void CAI_Stalker::process_enemies()
 	typedef MemorySpace::squad_mask_type squad_mask_type;
 	typedef CVisualMemoryManager::VISIBLES VISIBLES;
 
+    if (!memory().visual().objectsPtr())
+        return;
+
 	squad_mask_type mask = memory().visual().mask();
 	VISIBLES::const_iterator I = memory().visual().objects().begin();
 	VISIBLES::const_iterator E = memory().visual().objects().end();

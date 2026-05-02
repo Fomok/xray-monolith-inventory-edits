@@ -419,16 +419,75 @@ void CDSGraphManager::r_dsgraph_render_distort()
 void CDSGraphManager::r_dsgraph_capture_static()
 {
 	PROF_EVENT("r_dsgraph_capture_static")
+	const bool dbg_enabled = PortalTraverseDbg_Enabled();
+	PortalTraverseDebugStats* dbg = dbg_enabled ? &PortalTraverseDbg_Get() : nullptr;
+	const bool opt_bucket = PortalTraverseDbg_IsOptions(i_options);
+
 	if (i_start)
 	{
 		// Traverse sector/portal structure
 		if (psDeviceFlags.test(rsDrawStatic))
 		{
+			if (dbg)
+			{
+				const u32 sector_nodes = u32(m_sector_frustums.size());
+				dbg->static_sector_nodes += sector_nodes;
+				if (opt_bucket)
+					dbg->static_sector_nodes_opt += sector_nodes;
+				else
+					dbg->static_sector_nodes_noopt += sector_nodes;
+			}
+
 			// Determine visibility for static geometry hierrarhy
 			for (auto& pair : m_sector_frustums)
 			{
-				for (auto& frustum_node : pair.val.first)
-					add_Static((IRenderVisual*)pair.key->root(), frustum_node, frustum_node.getMask());
+				xr_vector<CFrustum>& frustums = pair.val.first;
+				if (frustums.empty())
+					continue;
+
+				if (frustums.size() == 1)
+				{
+					if (dbg)
+					{
+						++dbg->static_frustum_nodes;
+						++dbg->static_add_root_calls;
+						if (opt_bucket)
+						{
+							++dbg->static_frustum_nodes_opt;
+							++dbg->static_add_root_calls_opt;
+						}
+						else
+						{
+							++dbg->static_frustum_nodes_noopt;
+							++dbg->static_add_root_calls_noopt;
+						}
+					}
+					add_Static((IRenderVisual*)pair.key->root(), frustums.front(), frustums.front().getMask());
+					continue;
+				}
+
+				xr_vector<u32> masks;
+				masks.reserve(frustums.size());
+				for (CFrustum& frustum_node : frustums)
+					masks.push_back(frustum_node.getMask());
+
+				if (dbg)
+				{
+					dbg->static_frustum_nodes += u32(frustums.size());
+					++dbg->static_add_root_calls;
+					if (opt_bucket)
+					{
+						dbg->static_frustum_nodes_opt += u32(frustums.size());
+						++dbg->static_add_root_calls_opt;
+					}
+					else
+					{
+						dbg->static_frustum_nodes_noopt += u32(frustums.size());
+						++dbg->static_add_root_calls_noopt;
+					}
+				}
+
+				add_Static_MultiFrustum((IRenderVisual*)pair.key->root(), frustums, masks);
 			}
 		}
 	}
@@ -483,6 +542,10 @@ void CDSGraphManager::r_dsgraph_capture_lights()
 void CDSGraphManager::r_dsgraph_capture_dynamic(CObject* O)
 {
 	PROF_EVENT("r_dsgraph_capture_dynamic")
+	const bool dbg_enabled = PortalTraverseDbg_Enabled();
+	PortalTraverseDebugStats* dbg = dbg_enabled ? &PortalTraverseDbg_Get() : nullptr;
+	const bool opt_bucket = PortalTraverseDbg_IsOptions(i_options);
+
 	if (i_start)
 	{
 		if (psDeviceFlags.test(rsDrawDynamic))
@@ -495,6 +558,15 @@ void CDSGraphManager::r_dsgraph_capture_dynamic(CObject* O)
 				i_doptions,
 				i_frustum
 			);
+			if (dbg)
+			{
+				const u32 spatial_count = u32(lstRenderables.size());
+				dbg->dynamic_spatials += spatial_count;
+				if (opt_bucket)
+					dbg->dynamic_spatials_opt += spatial_count;
+				else
+					dbg->dynamic_spatials_noopt += spatial_count;
+			}
 			set_Object();
 #if	RENDER==R_R1
 			if (i_mask[CDSGraphManager::fl_normal])//normal phase
@@ -589,8 +661,26 @@ void CDSGraphManager::r_dsgraph_capture_dynamic(CObject* O)
 
 				for (CFrustum& frustum : m_sector_frustums.find(sector)->val.first)
 				{
+					if (dbg)
+					{
+						++dbg->dynamic_frustum_tests;
+						if (opt_bucket)
+							++dbg->dynamic_frustum_tests_opt;
+						else
+							++dbg->dynamic_frustum_tests_noopt;
+					}
+
 					if (frustum.testSphere_dirty(spatial->spatial.sphere.P, spatial->spatial.sphere.R))
 					{
+						if (dbg)
+						{
+							++dbg->dynamic_frustum_hits;
+							if (opt_bucket)
+								++dbg->dynamic_frustum_hits_opt;
+							else
+								++dbg->dynamic_frustum_hits_noopt;
+						}
+
 						// renderable
 						IRenderable* renderable = spatial->dcast_Renderable();
 						if (0 == renderable) break;
@@ -610,6 +700,14 @@ void CDSGraphManager::r_dsgraph_capture_dynamic(CObject* O)
 							set_Object(renderable);
 
 						renderable->renderable_Render(dcast_IPortalTraverser());
+						if (dbg)
+						{
+							++dbg->dynamic_rendered;
+							if (opt_bucket)
+								++dbg->dynamic_rendered_opt;
+							else
+								++dbg->dynamic_rendered_noopt;
+						}
 
 						if (i_mask[CDSGraphManager::fl_normal] && !(spatial->spatial.type & STYPE_PARTICLE))
 							set_Object();

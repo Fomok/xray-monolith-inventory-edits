@@ -438,6 +438,9 @@ void CMapLocation::UpdateSpot(CUICustomMap* map, CMapSpot* sp)
 	}
 	else if (Level().name() == map->MapName() && GetSpotPointer(sp))
 	{
+        if (!m_owner_se_object)
+            return;
+
 		GameGraph::_GRAPH_ID dest_graph_id;
 
 		dest_graph_id = m_owner_se_object->m_tGraphID;

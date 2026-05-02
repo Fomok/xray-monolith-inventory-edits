@@ -525,6 +525,7 @@ int opt_static = 2;
 int opt_dynamic = 2;
 
 int ps_pfx_volumetric_mode = 0;
+int ps_r__portal_traverse_stats = 0;
 
 #ifndef _EDITOR
 #include	"../../xrEngine/xr_ioconsole.h"
@@ -1469,6 +1470,7 @@ void xrRender_initconsole()
 	// Geometry optimization
 	CMD4(CCC_Integer, "r__optimize_static_geom", &opt_static, 0, 4);
 	CMD4(CCC_Integer, "r__optimize_dynamic_geom", &opt_dynamic, 0, 4);
+	CMD4(CCC_Integer, "r__portal_traverse_stats", &ps_r__portal_traverse_stats, 0, 1);
 	psDeviceFlags2.set(rsOptShadowGeom, TRUE);
 	CMD3(CCC_Mask, "r__optimize_shadow_geom", &psDeviceFlags2, rsOptShadowGeom);
 

@@ -155,7 +155,13 @@ Fvector ISpatial::SectorPoint()
 
 Fvector ISpatial::OwnerSectorPoint()
 {
-	Fvector result = RawOwner ? RawOwner->spatial_sector_point() : spatial.sphere.P;
+    Fvector result = spatial.sphere.P;
+    ISpatialOwner* owner = RawOwner;
+    if (owner)
+    {
+        ISpatialShared ptr = owner->SpatialComponent;
+        result = owner->spatial_sector_point();
+    }
 
 	// Validate that position contains no NaN or infinity values
 	if (!_finite(result.x) || !_finite(result.y) || !_finite(result.z))

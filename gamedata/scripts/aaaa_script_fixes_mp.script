@@ -634,46 +634,48 @@ function smart_terrain.se_smart_terrain:task()
 end
 
 -- Remove stutter when raising PDA by iterating actual se_stalker and se_monster objects instead of whole alife
-function pda.calculate_rankings()
-	local t = {}
-	local sim = alife()
+if pda.coc_ranking_list then
+	function pda.calculate_rankings()
+		local t = {}
+		local sim = alife()
 
-	-- add actor to list
-	t[0] = sim:actor():rank()
-	
-	-- check all stalker server objects
-	for i, _ in pairs(db.offline_objects) do
-		if i ~= 65535 then
-			local se_obj = sim:object(i)
-			if (se_obj and IsStalker(nil,se_obj:clsid()) and se_obj:alive() and se_obj:community() ~= "zombied" and se_obj:community() ~= "trader") then
-				-- Check if object has a story id, if it does they are probably unique
-				local sid = story_objects.story_id_by_object_id[se_obj.id]
-				if not (sid) then
-					t[se_obj.id] = se_obj:rank()
+		-- add actor to list
+		t[0] = sim:actor():rank()
+		
+		-- check all stalker server objects
+		for i, _ in pairs(db.offline_objects) do
+			if i ~= 65535 then
+				local se_obj = sim:object(i)
+				if (se_obj and IsStalker(nil,se_obj:clsid()) and se_obj:alive() and se_obj:community() ~= "zombied" and se_obj:community() ~= "trader") then
+					-- Check if object has a story id, if it does they are probably unique
+					local sid = story_objects.story_id_by_object_id[se_obj.id]
+					if not (sid) then
+						t[se_obj.id] = se_obj:rank()
+					end
 				end
 			end
 		end
-	end
-	
-	local size_t = 0
-	local coc_ranking_list = pda.coc_ranking_list
-	local coc_ranking_array_size = pda.coc_ranking_array_size or 100
+		
+		local size_t = 0
+		local coc_ranking_list = pda.coc_ranking_list
+		local coc_ranking_array_size = pda.coc_ranking_array_size or 100
 
-	-- sort by highest rank first
-	for id, rank in spairs(t, sort_func_values_descend) do
-		size_t = size_t + 1
-		coc_ranking_list[size_t] = id
-		if (id == AC_ID) then
-			pda.actor_rank_place = size_t
+		-- sort by highest rank first
+		for id, rank in spairs(t, sort_func_values_descend) do
+			size_t = size_t + 1
+			coc_ranking_list[size_t] = id
+			if (id == AC_ID) then
+				pda.actor_rank_place = size_t
+			end
 		end
+		-- Trim excessive data
+		for i = coc_ranking_array_size, size_t + 1, -1 do
+			coc_ranking_list[i] = nil
+		end
+		
+		-- force actor into last visible slot + 1 on ranking list
+		coc_ranking_list[coc_ranking_array_size+1] = 0
 	end
-	-- Trim excessive data
-	for i = coc_ranking_array_size, size_t + 1, -1 do
-		coc_ranking_list[i] = nil
-	end
-	
-	-- force actor into last visible slot + 1 on ranking list
-	coc_ranking_list[coc_ranking_array_size+1] = 0
 end
 
 -- Saloeater: Fix/trade manager resupply sync

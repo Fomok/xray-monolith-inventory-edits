@@ -25,6 +25,7 @@ public:
 	xrSRWLock								S_LC;
 
 	FixedMAP<CSector*, std::pair<xr_vector<CFrustum>, FixedSet<CPortal*>>>		m_sector_frustums;
+	xr_unordered_flat_set<dxRender_Visual*>				m_static_seen;
 	xr_vector<ISpatialShared>				lstRenderables, lstLights;
 	FixedMAP<CPortal*, float>				f_portals;
 	sPoly S, D;
@@ -60,6 +61,7 @@ public:
 	virtual void set_Object(IRenderable* O = nullptr);
 
 	virtual void add_Static(IRenderVisual* pVisual, CFrustum& frustum, u32 planes);
+	virtual void add_Static_MultiFrustum(IRenderVisual* pVisual, const xr_vector<CFrustum>& frustums, const xr_vector<u32>& masks);
 	void add_leaf_Static(dxRender_Visual* pVisual);
 	void add_leafs_Static(xr_vector<dxRender_Visual*>& children);
 	void add_leafs_Static(xr_vector<IRenderVisual*>& children);
@@ -130,7 +132,87 @@ public:
 		lstRenderables.clear();
 		lstLights.clear();
 		f_portals.clear();
+		m_static_seen.clear();
 	}
 };
+
+struct PortalTraverseDebugStats
+{
+	u32 frame_id = 0;
+
+	u32 traverse_calls = 0;
+	u32 traverse_calls_with_options = 0;
+	u32 traverse_calls_without_options = 0;
+	u32 frustums_pushed = 0;
+	u32 max_frustums_in_sector = 0;
+	u32 frustums_pushed_opt = 0;
+	u32 frustums_pushed_noopt = 0;
+	u32 max_frustums_in_sector_opt = 0;
+	u32 max_frustums_in_sector_noopt = 0;
+
+	u32 portals_checked = 0;
+	u32 portals_checked_opt = 0;
+	u32 portals_checked_noopt = 0;
+	u32 portals_skipped_already_visited = 0;
+	u32 portals_rejected_sphere = 0;
+	u32 portals_rejected_sector = 0;
+	u32 portals_rejected_ssa = 0;
+	u32 portals_rejected_clip = 0;
+	u32 portals_rejected_hom = 0;
+	u32 portals_recursed = 0;
+	u32 portals_recursed_opt = 0;
+	u32 portals_recursed_noopt = 0;
+
+	u32 portals_debug_branch_taken = 0;
+	u32 portals_debug_branch_precedence_hits = 0;
+
+	u32 static_sector_nodes = 0;
+	u32 static_frustum_nodes = 0;
+	u32 static_add_root_calls = 0;
+	u32 static_sector_nodes_opt = 0;
+	u32 static_sector_nodes_noopt = 0;
+	u32 static_frustum_nodes_opt = 0;
+	u32 static_frustum_nodes_noopt = 0;
+	u32 static_add_root_calls_opt = 0;
+	u32 static_add_root_calls_noopt = 0;
+
+	u32 dynamic_spatials = 0;
+	u32 dynamic_frustum_tests = 0;
+	u32 dynamic_frustum_hits = 0;
+	u32 dynamic_rendered = 0;
+	u32 dynamic_spatials_opt = 0;
+	u32 dynamic_spatials_noopt = 0;
+	u32 dynamic_frustum_tests_opt = 0;
+	u32 dynamic_frustum_tests_noopt = 0;
+	u32 dynamic_frustum_hits_opt = 0;
+	u32 dynamic_frustum_hits_noopt = 0;
+	u32 dynamic_rendered_opt = 0;
+	u32 dynamic_rendered_noopt = 0;
+
+	u32 queue_static_packets = 0;
+	u32 queue_dynamic_packets = 0;
+	u32 queue_static_packets_opt = 0;
+	u32 queue_static_packets_noopt = 0;
+	u32 queue_dynamic_packets_opt = 0;
+	u32 queue_dynamic_packets_noopt = 0;
+
+	u32 static_dedup_seen = 0;
+	u32 static_dedup_skipped = 0;
+	u32 static_dedup_seen_opt = 0;
+	u32 static_dedup_seen_noopt = 0;
+	u32 static_dedup_skipped_opt = 0;
+	u32 static_dedup_skipped_noopt = 0;
+
+	void reset(u32 frame)
+	{
+		*this = {};
+		frame_id = frame;
+	}
+};
+
+bool PortalTraverseDbg_Enabled();
+bool PortalTraverseDbg_IsOptions(u32 options);
+PortalTraverseDebugStats& PortalTraverseDbg_Get();
+const PortalTraverseDebugStats& PortalTraverseDbg_Peek();
 
 #endif // !defined(AFX_PORTAL_H__1FC2D371_4A19_49EA_BD1E_2D0F8DEBBF15__INCLUDED_)

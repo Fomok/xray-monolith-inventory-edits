@@ -241,7 +241,8 @@ float CParticlesObject::shedule_Scale()
 
 void CParticlesObject::renderable_Render(IDSGraphManager* DM)
 {
-	VERIFY(renderable.visual);
+    if (!renderable.visual)
+        return;
 
 	DM->add_Dynamic(renderable.visual, &renderable.xform);
 	renderable.visual->getVisData().hom_frame = Device.dwFrame;

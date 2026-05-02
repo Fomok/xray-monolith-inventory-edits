@@ -220,6 +220,32 @@ extern float ps_r__ssaDISCARD_exp;
 extern float ps_r__ssaDISCARD_fade_k;
 void CDSGraphManager::r_dsgraph_insert_static(dxRender_Visual *pVisual)
 {
+	if (m_static_seen.find(pVisual) != m_static_seen.end())
+	{
+		if (PortalTraverseDbg_Enabled())
+		{
+			PortalTraverseDebugStats& dbg = PortalTraverseDbg_Get();
+			const bool opt_bucket = PortalTraverseDbg_IsOptions(i_options);
+			++dbg.static_dedup_skipped;
+			if (opt_bucket)
+				++dbg.static_dedup_skipped_opt;
+			else
+				++dbg.static_dedup_skipped_noopt;
+		}
+		return;
+	}
+	m_static_seen.insert(pVisual);
+	if (PortalTraverseDbg_Enabled())
+	{
+		PortalTraverseDebugStats& dbg = PortalTraverseDbg_Get();
+		const bool opt_bucket = PortalTraverseDbg_IsOptions(i_options);
+		++dbg.static_dedup_seen;
+		if (opt_bucket)
+			++dbg.static_dedup_seen_opt;
+		else
+			++dbg.static_dedup_seen_noopt;
+	}
+
 	float distSQ;
 	float SSA = CalcSSA(distSQ, pVisual->vis.sphere.P, pVisual);
     Flags16& flags = pVisual->flags;
@@ -317,6 +343,29 @@ void CDSGraphManager::r_dsgraph_insert_static(dxRender_Visual *pVisual)
 
 void CDSGraphManager::AddToRenderQueue(R_dsgraph::RenderQueue& queue, const R_dsgraph::DSGraphItem<u32, false>& item, const SPass& pass)
 {
+	if (PortalTraverseDbg_Enabled())
+	{
+		PortalTraverseDebugStats& dbg = PortalTraverseDbg_Get();
+		const bool opt_bucket = PortalTraverseDbg_IsOptions(i_options);
+		// Static items use nullptr matrix/object in current pipeline.
+		if (item.pMatrix == nullptr && item.pObject == nullptr)
+		{
+			++dbg.queue_static_packets;
+			if (opt_bucket)
+				++dbg.queue_static_packets_opt;
+			else
+				++dbg.queue_static_packets_noopt;
+		}
+		else
+		{
+			++dbg.queue_dynamic_packets;
+			if (opt_bucket)
+				++dbg.queue_dynamic_packets_opt;
+			else
+				++dbg.queue_dynamic_packets_noopt;
+		}
+	}
+
 	queue.emplace_back(item, pass);
 }
 
@@ -546,6 +595,116 @@ void CDSGraphManager::add_Static(IRenderVisual* piVisual, CFrustum& frustum, u32
 	default:
 	{
 		// General type of visual
+		r_dsgraph_insert_static(pVisual);
+	}return;
+	}
+}
+
+void CDSGraphManager::add_Static_MultiFrustum(IRenderVisual* piVisual, const xr_vector<CFrustum>& frustums, const xr_vector<u32>& masks)
+{
+	constexpr u32 FULLY_VISIBLE_MASK = u32(-1);
+
+	dxRender_Visual* pVisual = (dxRender_Visual*)piVisual;
+	if (!pVisual) return;
+
+	Flags16& flags = piVisual->flags;
+	if (!i_mask[CDSGraphManager::fl_normal] && !!flags.test(IRenderVisualFlags::eNoShadow))
+		return;
+
+	// Check visibility against all active frustums and propagate per-frustum masks.
+	vis_data& vis = pVisual->vis;
+	bool anyVisible = false;
+	bool hasFullyVisibleFrustum = false;
+	xr_vector<u32> childMasks;
+	childMasks.resize(masks.size(), 0);
+
+	for (u32 i = 0; i < masks.size(); ++i)
+	{
+		u32 planeMask = masks[i];
+		if (!planeMask)
+			continue;
+
+		// Propagated from parent: this visual is fully visible in this frustum.
+		if (planeMask == FULLY_VISIBLE_MASK)
+		{
+			anyVisible = true;
+			hasFullyVisibleFrustum = true;
+			childMasks[i] = FULLY_VISIBLE_MASK;
+			continue;
+		}
+
+		EFC_Visible VIS = frustums[i].testSAABB(vis.sphere.P, vis.sphere.R, vis.box.data(), planeMask);
+		if (VIS == fcvNone)
+		{
+			continue;
+		}
+
+		anyVisible = true;
+		if (VIS == fcvFully)
+		{
+			// In original per-frustum traversal this path immediately adds leafs.
+			// Preserve union semantics by marking this frustum as fully visible.
+			hasFullyVisibleFrustum = true;
+			childMasks[i] = FULLY_VISIBLE_MASK;
+		}
+		else
+		{
+			childMasks[i] = planeMask;
+		}
+	}
+
+	if (!anyVisible)
+		return;
+
+#if RENDER!=R_R1
+	if (i_mask[CDSGraphManager::fl_normal])//phase normal
+#endif
+		if (!RImplementation.HOM.visible(vis))
+			return;
+
+	// If we get here visual is visible in at least one frustum
+	switch (pVisual->Type)
+	{
+	case MT_HIERRARHY:
+	{
+		FHierrarhyVisual* pV = (FHierrarhyVisual*)pVisual;
+		if (hasFullyVisibleFrustum)
+			add_leafs_Static(pV->children);
+		else
+		{
+			for (auto V : pV->children)
+				add_Static_MultiFrustum(V, frustums, childMasks);
+		}
+	}break;
+
+	case MT_LOD:
+	{
+		FLOD* pV = (FLOD*)pVisual;
+		float D;
+		float ssa = CalcSSA(D, pV->vis.sphere.P, pV) * pV->lod_factor;
+
+		if (ssa < r_ssaLOD_A)
+		{
+			if (ssa < r_ssaDISCARD)
+				return;
+
+			RGraph.mapLOD.emplace_back(D, ssa, nullptr, pVisual, nullptr, nullptr, false);
+		}
+
+#if RENDER!=R_R1
+		if (ssa > r_ssaLOD_B || i_mask[CDSGraphManager::fl_shmap])//phase shmap
+#else
+		if (ssa > r_ssaLOD_B)
+#endif
+		{
+			add_leafs_Static(pV->children);
+		}
+	}break;
+
+	case MT_TREE_ST:
+	case MT_TREE_PM:
+	default:
+	{
 		r_dsgraph_insert_static(pVisual);
 	}return;
 	}

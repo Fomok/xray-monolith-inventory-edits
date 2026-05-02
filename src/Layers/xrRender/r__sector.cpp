@@ -101,9 +101,43 @@ IC CFrustum CreateFrustumFromPortal(sPoly* poly, Fvector& vBase, Fmatrix& mFullX
 void CSector::traverse(CFrustum &&F, CDSGraphManager& DM)
 {
 	PROF_EVENT("CSector::traverse")
+	const bool dbg_enabled = PortalTraverseDbg_Enabled();
+	PortalTraverseDebugStats* dbg = dbg_enabled ? &PortalTraverseDbg_Get() : nullptr;
+	const bool opt_bucket = PortalTraverseDbg_IsOptions(DM.i_options);
+	if (dbg)
+	{
+		++dbg->traverse_calls;
+		if (opt_bucket)
+			++dbg->traverse_calls_with_options;
+		else
+			++dbg->traverse_calls_without_options;
+	}
+
 	// Register traversal process
 	auto SNODE = DM.m_sector_frustums.insert(this);
     SNODE->val.first.push_back(F);
+	if (dbg)
+	{
+		++dbg->frustums_pushed;
+		if (opt_bucket)
+			++dbg->frustums_pushed_opt;
+		else
+			++dbg->frustums_pushed_noopt;
+
+		const u32 frustum_count = u32(SNODE->val.first.size());
+		if (frustum_count > dbg->max_frustums_in_sector)
+			dbg->max_frustums_in_sector = frustum_count;
+		if (opt_bucket)
+		{
+			if (frustum_count > dbg->max_frustums_in_sector_opt)
+				dbg->max_frustums_in_sector_opt = frustum_count;
+		}
+		else
+		{
+			if (frustum_count > dbg->max_frustums_in_sector_noopt)
+				dbg->max_frustums_in_sector_noopt = frustum_count;
+		}
+	}
 
 	// If the map reallocates, SNODE becomes invalid, but the Index stays correct.
 	u32 snode_idx = DM.m_sector_frustums.get_index(SNODE);
@@ -113,13 +147,31 @@ void CSector::traverse(CFrustum &&F, CDSGraphManager& DM)
 	// Search visible portals and go through them
 	for (CPortal* PORTAL : m_portals)
 	{
+		if (dbg)
+		{
+			++dbg->portals_checked;
+			if (opt_bucket)
+				++dbg->portals_checked_opt;
+			else
+				++dbg->portals_checked_noopt;
+		}
+
 		// Refresh pointer before use (in case previous loop iteration realloc'd)
 		SNODE = DM.m_sector_frustums.get_node(snode_idx);
 
-		if (SNODE->val.second.find(PORTAL)) continue;
+		if (SNODE->val.second.find(PORTAL))
+		{
+			if (dbg)
+				++dbg->portals_skipped_already_visited;
+			continue;
+		}
 		// Early-out sphere
 		if (!F.testSphere_dirty(PORTAL->S.P, PORTAL->S.R))
+		{
+			if (dbg)
+				++dbg->portals_rejected_sphere;
 			continue;
+		}
 
 		CSector* pSector = nullptr;
 
@@ -130,7 +182,11 @@ void CSector::traverse(CFrustum &&F, CDSGraphManager& DM)
 			pSector = PORTAL->getSectorBack(DM.i_vBase);
 
 		if (pSector == nullptr || pSector == this || pSector == DM.i_start)
+		{
+			if (dbg)
+				++dbg->portals_rejected_sector;
 			continue;
+		}
 
 		if (DM.i_options & CDSGraphManager::VQ_FADE | CDSGraphManager::VQ_SSA && psDeviceFlags.test(rsDrawPortals))
 			DM.fade_portal(PORTAL, 1.f);
@@ -146,7 +202,12 @@ void CSector::traverse(CFrustum &&F, CDSGraphManager& DM)
 				float ssa = R * R / distSQ;
 				dir2portal.div(_sqrt(distSQ));
 				ssa *= _abs(PORTAL->P.n.dotproduct(dir2portal));
-				if (ssa < r_ssaDISCARD)   continue;
+				if (ssa < r_ssaDISCARD)
+				{
+					if (dbg)
+						++dbg->portals_rejected_ssa;
+					continue;
+				}
 
 				if (DM.i_options & CDSGraphManager::VQ_FADE)
 				{
@@ -167,16 +228,32 @@ void CSector::traverse(CFrustum &&F, CDSGraphManager& DM)
 		sPoly* P = F.ClipPoly(DM.S, DM.D);
 
 		if (0 == P)
+		{
+			if (dbg)
+				++dbg->portals_rejected_clip;
 			continue;
+		}
 
 		// Cull by HOM (slower algo)
 		if ((DM.i_options & CDSGraphManager::VQ_HOM) && !RImplementation.HOM.visible(*P))
+		{
+			if (dbg)
+				++dbg->portals_rejected_hom;
 			continue;
+		}
 
 		if (pSector)
 		{
 			// Create _new_ frustum and recurse
 			SNODE->val.second.insert(PORTAL);
+			if (dbg)
+			{
+				++dbg->portals_recursed;
+				if (opt_bucket)
+					++dbg->portals_recursed_opt;
+				else
+					++dbg->portals_recursed_noopt;
+			}
 			pSector->traverse(CreateFrustumFromPortal(P, DM.i_vBase, DM.i_mXFORM), DM);
 		}
 	}
