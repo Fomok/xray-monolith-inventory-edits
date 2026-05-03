@@ -79,7 +79,10 @@ CPHMovementControl::CPHMovementControl(CObject* parent)
 CPHMovementControl::~CPHMovementControl(void)
 {
 	if (m_character)
+	{
 		m_character->Destroy();
+        m_character->SetPhysicsRefObject(NULL);
+	}
 	DeleteCharacterObject();
 	phcapture_destroy(m_capture);
 }
@@ -1004,6 +1007,7 @@ void CPHMovementControl::DestroyCharacter()
 		g_pGamePersistent->GrassBendersRemoveById(m_character->PhysicsRefObject()->ObjectID());
 
 	m_character->Destroy();
+    m_character->SetPhysicsRefObject(NULL);
 	phcapture_destroy(m_capture);
 }
 

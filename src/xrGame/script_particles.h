@@ -19,10 +19,9 @@ class CScriptParticlesCustom : public CParticlesObject
 {
 	CObjectAnimator* m_animator;
 	CScriptParticles* m_owner;
-protected:
-    virtual ~CScriptParticlesCustom();
 public:
 	CScriptParticlesCustom(CScriptParticles* owner, LPCSTR caParticlesName);
+	virtual ~CScriptParticlesCustom();
 	virtual void shedule_Update(u32 dt);
 
 	void LoadPath(LPCSTR caPathName);

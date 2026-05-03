@@ -45,6 +45,7 @@ void CPS_Instance::PSI_destroy()
 	m_bDead = TRUE;
 	m_iLifeTime = 0;
 	m_NeedDestroy = true;
+    ISpatialOwner::spatial_unregister();
 	//g_pGamePersistent->ps_destroy.push_back	(this);
 }
 

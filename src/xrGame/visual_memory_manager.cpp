@@ -705,8 +705,10 @@ void CVisualMemoryManager::update(float time_delta)
 
 		m_last_update_time = Device.dwTimeGlobal;
 
+        if (!m_objects)
+            return;
+
 		squad_mask_type mask = this->mask();
-		VERIFY(m_objects);
 		m_visible_objects.clear();
 
 		START_PROFILE("Memory Manager/visuals/update/feel_vision_get")

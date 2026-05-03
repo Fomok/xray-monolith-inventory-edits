@@ -259,7 +259,11 @@ void get_box(const CPhysicsBase* shell, const Fmatrix& form, Fvector& sz, Fvecto
 void __stdcall destroy_physics_shell(CPhysicsShell* & p)
 {
 	if (p)
+	{
+		// Drop back-reference first so contact callbacks won't observe a stale owner pointer.
 		p->Deactivate();
+        p->set_PhysicsRefObject(NULL);
+	}
 	xr_delete(p);
 }
 

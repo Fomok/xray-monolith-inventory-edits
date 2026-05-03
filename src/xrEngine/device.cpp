@@ -390,7 +390,6 @@ void CRenderDevice::on_idle()
 		Device.seqParallelBeforRender.clear();
 	}
 
-    secondary_tasks.run(&XRay::Engine::PreRenderThread);
 	FrameMove();
 
     if (g_pGamePersistent != nullptr)
@@ -398,6 +397,7 @@ void CRenderDevice::on_idle()
         PROF_EVENT("Update Particles");
         g_pGamePersistent->UpdateParticles();
     }
+    secondary_tasks.run(&XRay::Engine::PreRenderThread);
 
 	// Precache
 	if (dwPrecacheFrame)
