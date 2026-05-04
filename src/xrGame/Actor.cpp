@@ -2145,7 +2145,8 @@ bool canRenderLegs(CActor* actor, CHolderCustom* m_holder) noexcept
         && g_player_hud
         && !m_holder
         && (legs_in_demo_record || pDemoRecords.empty())
-        && showActorBody == 0;
+        && showActorBody == 0
+        && !actor->m_FPCam;
 };
 
 void CActor::renderable_Render(IDSGraphManager* DM)
