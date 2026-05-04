@@ -274,11 +274,11 @@ private:
 	float TimeDiff(float prev, float cur);
 	float TimeWeight(float val, float min_t, float max_t);
 	void SelectEnvs(EnvVec* envs, CEnvDescriptor*& e0, CEnvDescriptor*& e1, float tm);
-	void SelectEnv(EnvVec* envs, CEnvDescriptor*& e, float tm);
 
 	void calculate_dynamic_sun_dir();
 	void calculate_config_sun_dir();
 public:
+    void SelectEnv(EnvVec* envs, CEnvDescriptor*& e, float tm);
 	static bool sort_env_pred(const CEnvDescriptor* x, const CEnvDescriptor* y)
 	{
 		return x->exec_time < y->exec_time;

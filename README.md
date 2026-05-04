@@ -236,9 +236,10 @@ How to compile exes:
 
 ## Changelog
 
-**2026.05.03 (Prerelease)**
+**2026.05.05**
 * Main and MT:
   * More meaningful error messages in `CDamageManager::load_section` and `CWeaponMagazined::LoadScopeKoeffs`
+  * `level.set_cam_custom_position_direction` don't apply FPCam smoothing if custom smoothing is 0
   * Auto-fire after reload, use `Level().IR_OnKeyboardPress` instead of Actor's input receiver, fix https://github.com/themrdemonized/xray-monolith/issues/521
   * Disable caching in `utils_item.script`, fixes stale data issue
   * `luabind::detail::class_rep::function_dispatcher` has own try catch block that will reroute errors to BusyHandsDebug, potentially covering more script issues
@@ -249,13 +250,14 @@ How to compile exes:
     * Framerate independent buildup and cooldown
     * Possibility to work on npc weapons, currently disabled, doesn't look good enough
     * Baseline tuning is to start overheating after 80-85 rounds of non stop firing of PKM
-  * `level.get_weather_weight` and `level.set_weather_weight` to manipulate interpolation between weathers
   * Persistent weather implementation with using weather interpolation from engine
     * Storing last weather file, current weather file and interpolation between them from engine
     * On load first force apply previous weather, then apply new weather but not forced, then apply interpolation
+    * New engine exports for manipualting weather
   * Safer `pda.calculate_rankings` patch
   * leyten: clamp actor camera collision box at high FOV to fix ultrawide doorway snag, `g_clamp_actor_camera_collision 1` to enable ultrawide fix (https://github.com/themrdemonized/xray-monolith/pull/520)
   * erepb: route assign_smart via simulation_board to fix SIMBOARD.smarts orphans (https://github.com/themrdemonized/xray-monolith/pull/522)
+  * SaloEater: motion exists engine call (https://github.com/themrdemonized/xray-monolith/pull/524)
 
 * MT:
   * Move `process_sound_callbacks` Lua callbacks for NPCs to `shedule_update`, with `mt_scheduler 1` they will be on separate thread, slightly increasing performance when there are many NPCs
@@ -270,6 +272,10 @@ How to compile exes:
   * Safer procedure to deferred deletion of models in `ModelsToDeleteDefer`
   * Possible fix of `Physics.cpp (245): CollideIntoGroup` crash
   * Unregister particles from spatial database when `PSI_Destroy` is called
+  * Replace `_min` `_max` with `std::min` and `std::max`
+  * Rain:
+    * Fix items pool not reducing, leading to broken density reducing on transitions from rain weather
+    * `r__rain_exp` and `r__rain_k` commands to control rain buildup and max density
 
 **2026.04.26**
 

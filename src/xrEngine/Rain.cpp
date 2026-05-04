@@ -251,13 +251,21 @@ void CEffect_Rain::OnFrame()
 }
 
 extern xr_atomic_u32 current_items;
+extern float r_rain_exp;
+extern float r_rain_k;
 void CEffect_Rain::UpdateItems()
 {
 	PROF_EVENT("CEffect_Rain::UpdateItems");
 	xrCriticalSectionGuard guard(&rainCS);
 
 	float factor = g_pGamePersistent->Environment().CurrentEnv->rain_density;
-	if (factor < EPS_L)			return;
+	if (factor < EPS_L)
+	{
+		items.clear();
+		current_items.store(0, std::memory_order_relaxed);
+		return;
+	}
+    factor = _powf(factor, r_rain_exp);
 
 	float _drop_speed = 1.0f;
 	int rain_max_particles = max_desired_items;
@@ -274,7 +282,11 @@ void CEffect_Rain::UpdateItems()
 	}
 #endif
 
-	u32 desired_items = iFloor(0.01f * (1.f + factor * 99.0f) * float(rain_max_particles));
+	u32 desired_items = iFloor(0.01f * (1.f + factor * r_rain_k) * float(rain_max_particles));
+
+	// Shrink immediately when density goes down, so visual density follows weather in real time.
+	if (items.size() > desired_items)
+		items.resize(desired_items);
 
 	// born _new_ if needed
 	// owner.items.reserve		(desired_items);
@@ -282,6 +294,7 @@ void CEffect_Rain::UpdateItems()
 	{
 		Born(items.emplace_back(), rain_radius, _drop_speed);
 	}
+	current_items.store(desired_items, std::memory_order_relaxed);
 
 	// build source plane
 	Fplane src_plane;

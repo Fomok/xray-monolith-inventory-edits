@@ -527,6 +527,9 @@ int opt_dynamic = 2;
 int ps_pfx_volumetric_mode = 0;
 int ps_r__portal_traverse_stats = 0;
 
+float r_rain_exp = 2.f;
+float r_rain_k = 99.0f;
+
 #ifndef _EDITOR
 #include	"../../xrEngine/xr_ioconsole.h"
 #include	"../../xrEngine/xr_ioc_cmd.h"
@@ -1466,6 +1469,9 @@ void xrRender_initconsole()
 	//--DSR-- HeatVision_end
 
 	CMD4(CCC_Float, "particle_update_mod", &ps_particle_update_coeff, 0.04f, 10.f);
+
+    CMD4(CCC_Float, "r__rain_exp", &r_rain_exp, 0.1f, 5.f);
+    CMD4(CCC_Float, "r__rain_k", &r_rain_k, 10.f, 300.f);
 
 	// Geometry optimization
 	CMD4(CCC_Integer, "r__optimize_static_geom", &opt_static, 0, 4);

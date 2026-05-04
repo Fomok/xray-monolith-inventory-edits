@@ -178,6 +178,23 @@ void set_weather(LPCSTR weather_name, bool forced)
 	g_pGamePersistent->Environment().SetWeather(weather_name, forced);
 }
 
+// demonized: Sets weather and force updates next environment so the interpolation will happen between current environment and next weather's environment
+void set_weather_smooth(LPCSTR weather_name)
+{
+#ifdef INGAME_EDITOR
+    if (!Device.editor())
+#endif // #ifdef INGAME_EDITOR
+    g_pGamePersistent->Environment().SetWeather(weather_name, false);
+    if (g_pGamePersistent->Environment().Current[1] && g_pGamePersistent->Environment().CurrentWeather)
+    {
+        g_pGamePersistent->Environment().SelectEnv(
+            g_pGamePersistent->Environment().CurrentWeather,
+            g_pGamePersistent->Environment().Current[1],
+            g_pGamePersistent->Environment().GetGameTime());
+    }
+    
+}
+
 bool set_weather_fx(LPCSTR weather_name)
 {
 #ifdef INGAME_EDITOR
@@ -852,7 +869,7 @@ void set_cam_position_direction(Fvector& position, Fvector& direction, unsigned 
 	actor->initFPCam();
 	actor->m_FPCam->m_HPB.set(direction);
 	actor->m_FPCam->m_Position.set(position);
-	actor->m_FPCam->m_customSmoothing = smoothing;
+	actor->m_FPCam->m_customSmoothing = _max(1, smoothing);
 	actor->m_FPCam->hudEnabled = hudEnabled;
 	actor->m_FPCam->SetHudAffect(hudAffect);
 }
@@ -1583,6 +1600,18 @@ float MotionLength(LPCSTR section, LPCSTR name, float speed)
 bool AllowHudMotion()
 {
 	return g_player_hud->allow_script_anim();
+}
+
+bool MotionExists(LPCSTR model_path, LPCSTR motion_name)
+{
+	::Render->hud_loading = true;
+	IRenderVisual* vis = ::Render->model_Create(model_path);
+	::Render->hud_loading = false;
+	if (!vis) return false;
+	IKinematicsAnimated* ka = smart_cast<IKinematicsAnimated*>(vis);
+	bool found = ka && ka->ID_Cycle_Safe(motion_name).valid();
+	::Render->model_Delete(vis);
+	return found;
 }
 
 void PlayBlendAnm(LPCSTR name, u8 part, float speed, float power, bool bLooped, bool no_restart, LPCSTR pivot_bone)
@@ -2465,6 +2494,7 @@ void CLevel::script_register(lua_State* L)
 
             def("get_weather_weight", get_weather_weight),
             def("set_weather_weight", set_weather_weight),
+            def("set_weather_smooth", set_weather_smooth),
 
 			def("environment", environment),
 
@@ -2747,6 +2777,7 @@ void CLevel::script_register(lua_State* L)
 		def("stop_hud_motion", StopHudMotion),
 		def("get_motion_length", MotionLength),
 		def("hud_motion_allowed", AllowHudMotion),
+		def("motion_exists", MotionExists),
 		def("play_hud_anm", PlayBlendAnm),
 		def("stop_hud_anm", StopBlendAnm),
 		def("stop_all_hud_anms", StopAllBlendAnms),
