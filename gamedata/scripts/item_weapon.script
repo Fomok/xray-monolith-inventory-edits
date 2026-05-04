@@ -956,7 +956,7 @@ function update_overheat()
 			local parent = wpn:parent()
 			local active = not parent
 			if not active then
-				local parent_active_item = parent:active_item()
+				local parent_active_item = IsStalker(parent) and parent:active_item()
 				if parent_active_item and parent_active_item:id() == k then
 					active = true
 				end
