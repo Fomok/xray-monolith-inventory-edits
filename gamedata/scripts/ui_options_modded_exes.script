@@ -28,6 +28,10 @@ function on_xml_read()
 			v.content = {cont_sound_device}
 		end
 
+		-- Extra options in vanilla options (not Modded Exes Options)
+		local need_init_opt_coder = false
+
+		-- Monitor selection
 		function cont_vid_monitor()
 			local cont = {}
 			local monitors = get_console():get_token_list("vid_monitor")
@@ -74,10 +78,45 @@ function on_xml_read()
 					no_str  = true,
 					restart = true,
 				})
-				if ui_options.init_opt_coder then
-					ui_options.init_opt_coder()
+				need_init_opt_coder = true
+			end
+		end
+
+		-- Persistent weather switch
+		local weather = nil
+		for _, top in ipairs(ui_options.options) do
+			if top.id == "video" and top.gr then
+				for _, sub in ipairs(top.gr) do
+					if sub.id == "weather" then weather = sub; break end
+				end
+				break
+			end
+		end
+		if weather and weather.gr then
+			local already_present = false
+			local clear_slide = nil
+			for i, row in ipairs(weather.gr) do
+				if row.id == "persistent_weather" then
+					already_present = true
+					break
+				end
+				if row.id == "clear_slide" then
+					clear_slide = i
 				end
 			end
+			if not already_present and clear_slide then
+				table.insert(weather.gr, clear_slide, {
+					id      = "persistent_weather",
+					type    = "check",
+					val     = 1,
+					def 	= true,
+				})
+				need_init_opt_coder = true
+			end
+		end
+
+		if need_init_opt_coder and ui_options.init_opt_coder then
+			ui_options.init_opt_coder()
 		end
 	end
 	ui_options.init_opt_base()

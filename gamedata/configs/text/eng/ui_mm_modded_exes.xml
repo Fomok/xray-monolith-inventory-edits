@@ -12,6 +12,13 @@
 		<text>Monitor</text>
 	</string>
 
+	<string id="ui_mm_video_weather_persistent_weather">
+		<text>Persistent Weather</text>
+	</string>
+	<string id="ui_mm_video_weather_persistent_weather_desc">
+		<text>Saves current weather conditions so they will be exactly recreated on load</text>
+	</string>
+
 	<string id="ui_mm_lst_ON">
 		<text>ON</text>
 	</string>

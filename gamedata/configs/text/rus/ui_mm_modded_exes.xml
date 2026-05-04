@@ -12,6 +12,13 @@
 		<text>Монитор</text>
 	</string>
 
+	<string id="ui_mm_video_weather_persistent_weather">
+		<text>Сохранение погоды</text>
+	</string>
+	<string id="ui_mm_video_weather_persistent_weather_desc">
+		<text>Сохраняет состояние текущей погоды чтобы точно восстановить её при загрузке</text>
+	</string>
+
 	<string id="ui_mm_lst_ON">
 		<text>ВКЛ</text>
 	</string>

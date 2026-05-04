@@ -1004,6 +1004,19 @@ level_weathers.WeatherManager.get_next_weather_cycle = function(self, curr_weath
 	return level_weathers_WeatherManager_get_next_weather_cycle(self, curr_weather, ...)
 end
 
+level_weathers_WeatherManager_get_curr_weather = level_weathers.WeatherManager.get_curr_weather
+level_weathers.WeatherManager.get_curr_weather = function(self, ...)
+	-- if self.last_cycle then
+	-- 	local weight = level.get_weather_weight()
+	-- 	if weight < 0.5 then
+	-- 		return self.last_cycle
+	-- 	else
+	-- 		return self.cycle
+	-- 	end
+	-- end
+	return level_weathers_WeatherManager_get_curr_weather(self, ...)
+end
+
 function level_weathers.WeatherManager:select_custom_weather(now, custom_weather_file, smooth, custom_cycle, custom_next_weather, custom_preset)
 	printf("select_custom_weather (%s) | current hour: %s", tostring(now), tostring(level.get_time_hours()) )
 	
@@ -1146,7 +1159,9 @@ level_weathers.WeatherManager.reset = function(self, ...)
 	level_weathers_WeatherManager_reset(self, ...)
 	self.from_reset = false
 
-	if self.weather_file_saved and self.last_weather_file and self.weather_weight and self.weather_file_saved ~= self.last_weather_file and not (wfx) then
+	local enabled = ui_options.get("video/weather/persistent_weather")
+	-- printf([[ui_options.get("video/weather/persistent_weather") = %s]], enabled)
+	if enabled and self.weather_file_saved and self.last_weather_file and self.weather_weight and self.weather_file_saved ~= self.last_weather_file and not (wfx) then
 		self:select_custom_weather(true, self.last_weather_file, false, self.last_cycle, self.curr_weather_saved, self.preset_saved)
 	    self:select_custom_weather(false, self.weather_file_saved, true, nil, nil, self.preset_saved)
 	    level.set_weather_weight(self.weather_weight)
