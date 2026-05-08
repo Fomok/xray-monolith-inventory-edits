@@ -489,6 +489,9 @@ void CObject::setDestroy(BOOL _destroy)
 	if (_destroy == (BOOL)Props.bDestroy)
 		return;
 
+    if (_destroy)
+        setVisible(false);
+
 	Props.bDestroy = _destroy ? 1 : 0;
 	if (_destroy)
 	{

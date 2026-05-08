@@ -1082,9 +1082,7 @@ void xrRender_initconsole()
 	CMD3(CCC_Preset, "_preset", &ps_Preset, qpreset_token);
 
 	CMD4(CCC_Integer, "rs_skeleton_update", &psSkeletonUpdate, 2, 128);
-#ifdef	DEBUG
 	CMD1(CCC_DumpResources,		"dump_resources");
-#endif	//	 DEBUG
 
 	CMD4(CCC_Float, "r__dtex_range", &r__dtex_range, 5, 175);
 
@@ -1102,8 +1100,8 @@ void xrRender_initconsole()
 	CMD4(CCC_Float,		"r__ssa_glod_end",		&ps_r__GLOD_ssa_end,		16,		96		);
 	CMD4(CCC_Float,		"r__wallmark_shift_pp",	&ps_r__WallmarkSHIFT,		0.0f,	1.f		);
 	CMD4(CCC_Float,		"r__wallmark_shift_v",	&ps_r__WallmarkSHIFT_V,		0.0f,	1.f		);
-	CMD1(CCC_ModelPoolStat,"stat_models"		);
 #endif // DEBUG
+	CMD1(CCC_ModelPoolStat,"stat_models"		);
 	CMD4(CCC_Float, "r__wallmark_ttl", &ps_r__WallmarkTTL, 1.0f, 10.f*60.f);
 
 	CMD4(CCC_Integer, "r__supersample", &ps_r__Supersample, 1, 8);
@@ -1565,6 +1563,7 @@ void xrRender_initconsole()
 #ifdef DETAIL_RADIUS
 	CMD4(CCC_detail_radius, "r__detail_radius", &ps_r__detail_radius, 10, 350);
 	CMD3(CCC_Mask, "r__clear_models_on_unload", &psDeviceFlags2, rsClearModels); //Alundaio
+	CMD3(CCC_Mask, "r__clear_resources_on_unload", &psDeviceFlags2, rsClearAllResources);
 	CMD3(CCC_Mask, "r__use_precompiled_shaders", &psDeviceFlags2, rsPrecompiledShaders); //Alundaio
 	CMD3(CCC_Mask, "r__enable_grass_shadow", &psDeviceFlags2, rsGrassShadow); //Alundaio
 	CMD3(CCC_Mask, "r__no_scale_on_fade", &psDeviceFlags2, rsNoScale); //Alundaio

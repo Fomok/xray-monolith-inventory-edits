@@ -67,6 +67,7 @@ enum
 	rsAimSway = (1 << 10),
 	rsAlwaysActive = (1 << 11),
 	rsBlendMoveAnims = (1 << 12),
+	rsClearAllResources = (1 << 13),
 };
 
 // game path definition

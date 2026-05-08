@@ -63,6 +63,9 @@ void CDSGraphManager::traverse(CSector* start, CFrustum& F, Fvector& vBase, Fmat
 			pair.val.second.clear();
 		}
 	}
+	// Keep sector-frustum map frame-local: stale sector keys from previous
+	// frames create empty-frustum entries and skew static capture decisions.
+	m_sector_frustums.clear();
 	m_static_seen.clear();
 	i_start->traverse(std::move(F),*this);
 }

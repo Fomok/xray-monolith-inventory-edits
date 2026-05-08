@@ -2122,6 +2122,7 @@ BOOL r__actor_shadow_in_demo_record = TRUE;
 bool CActor::AllowActorShadow()
 {
     if (!r__actor_shadow_in_demo_record && !pDemoRecords.empty()) return false;
+    if (!r__actor_shadow_in_demo_record && m_FPCam) return false;
 	if (!ps_actor_shadow_flags.test(1)) return false;
 	if (::Render->get_generation() != ::Render->GENERATION_R2) return false;
 

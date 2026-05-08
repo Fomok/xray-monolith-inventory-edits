@@ -231,6 +231,7 @@ public:
 	void DeferredLoad(BOOL E) { bDeferredLoad = E; }
 	void DeferredUpload();
 	void DeferredUnload();
+	void UnloadAllTexturesOnLevelUnload();
 	void Evict();
 	void StoreNecessaryTextures();
 	void DestroyNecessaryTextures();

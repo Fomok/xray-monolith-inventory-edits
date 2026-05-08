@@ -14,6 +14,7 @@ str_container::str_container(str_container_constructor_key)
 	auto p = xr_malloc(block_size);
 	if (!p)
 		Debug.fatal(DEBUG_INFO, "str_container, failed to allocate block size %zu", block_size);
+    storage.reserve(16);
 	storage.emplace_back((char*)p, block_size);
     buffer.resize(buffer_size);
 }

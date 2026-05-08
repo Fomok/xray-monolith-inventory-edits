@@ -38,6 +38,7 @@ CTexture::CTexture()
 	seqMSPF = 0;
 	flags.MemoryUsage = 0;
 	flags.bLoaded = false;
+	flags.bLoading = false;
 	flags.bUser = false;
 	flags.seqCycles = FALSE;
 	flags.bLoadedAsStaging = FALSE;
@@ -55,7 +56,7 @@ CTexture::~CTexture()
 
 void CTexture::surface_set(ID3DBaseTexture* surf)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -123,7 +124,7 @@ void CTexture::surface_set(ID3DBaseTexture* surf)
 
 ID3DBaseTexture* CTexture::surface_get()
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -234,7 +235,7 @@ void CTexture::ProcessStaging()
 
 void CTexture::Apply(u32 dwStage)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -284,7 +285,7 @@ void CTexture::Apply(u32 dwStage)
 
 void CTexture::apply_theora(u32 dwStage)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -327,7 +328,7 @@ void CTexture::apply_theora(u32 dwStage)
 
 void CTexture::apply_avi(u32 dwStage)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -363,7 +364,7 @@ void CTexture::apply_avi(u32 dwStage)
 
 void CTexture::apply_seq(u32 dwStage)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -389,7 +390,7 @@ void CTexture::apply_seq(u32 dwStage)
 
 void CTexture::apply_normal(u32 dwStage)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -410,11 +411,13 @@ void CTexture::Load()
 {
 	PROF_EVENT("CTexture::Load");
 
-	if (flags.bLoaded) return;
+	if (flags.bLoaded || flags.bLoading) return;
+	flags.bLoading = true;
 	flags.bLoaded = false;
 	desc_cache = 0;
 	if (pSurface)
 	{
+		flags.bLoading = false;
 		flags.bLoaded = true;
 		return;
 	}
@@ -423,12 +426,14 @@ void CTexture::Load()
 	flags.MemoryUsage = 0;
 	if (0 == stricmp(*cName, "$null"))
 	{
+		flags.bLoading = false;
 		flags.bLoaded = true;
 		return;
 	}
 	if (0 != strstr(*cName, "$user$"))
 	{
 		flags.bUser = true;
+		flags.bLoading = false;
 		flags.bLoaded = true;
 		return;
 	}
@@ -602,16 +607,20 @@ void CTexture::Load()
 			CHK_DX(HW.pDevice->CreateShaderResourceView(pSurface, NULL, &m_pSRView));
 	}
 	PostLoad();
-	
+	flags.bLoading = false;
 	flags.bLoaded = true;
 }
 
 void CTexture::Unload()
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
+
+	// Already unloaded or never loaded: nothing to do.
+	if (!flags.bLoaded)
+		return;
 #ifdef DEBUG
 	string_path				msg_buff;
 	xr_sprintf				(msg_buff,sizeof(msg_buff),"* Unloading texture [%s] pSurface RefCount=",cName.c_str());
@@ -648,7 +657,7 @@ void CTexture::Unload()
 
 void CTexture::desc_update()
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -712,7 +721,7 @@ D3D_USAGE CTexture::GetUsage()
 
 void CTexture::video_Play(BOOL looped, u32 _time)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -721,7 +730,7 @@ void CTexture::video_Play(BOOL looped, u32 _time)
 
 void CTexture::video_Pause(BOOL state)
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -730,7 +739,7 @@ void CTexture::video_Pause(BOOL state)
 
 void CTexture::video_Stop()
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}
@@ -739,7 +748,7 @@ void CTexture::video_Stop()
 
 BOOL CTexture::video_IsPlaying()
 {
-	while (!flags.bLoaded)
+	while (flags.bLoading)
 	{
 		SwitchToThread();
 	}

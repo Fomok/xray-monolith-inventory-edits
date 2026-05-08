@@ -294,6 +294,7 @@ struct SCollisionHitCallback :
 	//	CollisionHitCallbackFun				*m_collision_hit_callback																																						;
 	CPhysicsShellHolder* m_object;
 	float m_pmt_object_collision_damage;
+    bool done = false;
 
 	SCollisionHitCallback(CPhysicsShellHolder* object, float pmt_object_collision_damage):
 		m_object(object), m_pmt_object_collision_damage(pmt_object_collision_damage)
@@ -303,11 +304,12 @@ struct SCollisionHitCallback :
 
 	void call(IPhysicsShellHolder* obj, float min_cs, float max_cs, float& cs, float& hl, ICollisionDamageInfo* di)
 	{
+        if (done) return;
 		if (cs > min_cs * 0.5f)
 			hl = m_pmt_object_collision_damage;
 		VERIFY(m_object);
 		di->SetInitiated();
-		m_object->set_collision_hit_callback(0); //delete this!!
+        done = true;
 	}
 };
 
