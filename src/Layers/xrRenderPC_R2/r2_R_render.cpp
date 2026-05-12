@@ -89,8 +89,7 @@ void CRender::Render()
 
 	// HOM
 	ViewBase.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB + FRUSTUM_P_FAR);
-	HOM.Enable();
-	HOM.Render(ViewBase);
+    HOM.MT_RENDER();
 
 	Target->phase_scene_prepare();
 

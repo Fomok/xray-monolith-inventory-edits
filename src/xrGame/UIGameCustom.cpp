@@ -44,6 +44,7 @@ CUIGameCustom::CUIGameCustom()
 	m_pMessagesWnd = nullptr;
 	ShowGameIndicators(true);
 	ShowCrosshair(true);
+    CustomStatics.reserve(64);
 }
 
 bool g_b_ClearGameCaptions = false;

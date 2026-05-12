@@ -40,6 +40,7 @@ float hclip(float v, float dim) { return 2.f * v / dim - 1.f; }
 void CRenderTarget::phase_combine()
 {
 	PIX_EVENT(phase_combine);
+    PROF_EVENT("phase_combine");
 	
 	bool ssfx_PrevPos_Requiered = false;
 

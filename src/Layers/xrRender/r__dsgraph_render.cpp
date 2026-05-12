@@ -529,7 +529,7 @@ void CDSGraphManager::r_dsgraph_capture_lights()
 #if	RENDER==R_R1
 				RImplementation.L_DB->add_light(L);
 #else
-				if (L->get_LOD() > EPS_L && L->has_light_visible_from_sectors(*this))
+				if (L->get_LOD() > ps_r2_shadow_lod_min && L->has_light_visible_from_sectors(*this))
 				{
 					RImplementation.Lights.add_light(L);
 				}

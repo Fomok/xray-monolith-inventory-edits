@@ -103,8 +103,7 @@ void CRender::Render()
 
 	// HOM
 	ViewBase.CreateFromMatrix(Device.mFullTransform, FRUSTUM_P_LRTB + FRUSTUM_P_FAR);
-	HOM.Enable();
-	HOM.Render(ViewBase);
+    HOM.MT_RENDER();
 
 	Target->phase_scene_prepare();
 
@@ -337,6 +336,7 @@ void CRender::Render()
 
 	if (g_hud)
 	{
+        PROF_EVENT("render_hud");
 		if (g_hud->RenderActiveItemUIQuery())
 			GMBase.r_dsgraph_render_hud_ui();
 		if (g_hud->RenderCamAttachedUIQuery())

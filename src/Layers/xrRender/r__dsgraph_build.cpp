@@ -39,7 +39,8 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 	float distSQ;
 	float SSA = CalcSSA(distSQ, Center, pVisual);
     Flags16& flags = pVisual->flags;
-    if (!flags.test(IRenderVisualFlags::eIgnoreOptimization))
+    ShaderElement* sh_d = &*pVisual->shader->E[4];
+    if (!(flags.test(IRenderVisualFlags::eIgnoreOptimization) || (sh_d && sh_d->flags.bEmissive)))
     {
         if (SSA < r_ssaDISCARD)
         {
@@ -54,7 +55,6 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 	// b) Should be rendered to special distort buffer in another pass
 	VERIFY(pVisual->shader._get());
 
-	ShaderElement* sh_d = &*pVisual->shader->E[4];
 	if (sh_d && sh_d->flags.bDistort && i_mask[sh_d->flags.iPriority/2])
 	{
 		if (i_mask[CDSGraphManager::fl_hud])
@@ -249,7 +249,8 @@ void CDSGraphManager::r_dsgraph_insert_static(dxRender_Visual *pVisual)
 	float distSQ;
 	float SSA = CalcSSA(distSQ, pVisual->vis.sphere.P, pVisual);
     Flags16& flags = pVisual->flags;
-    if (!flags.test(IRenderVisualFlags::eIgnoreOptimization))
+    ShaderElement* sh_d = &*pVisual->shader->E[4];
+    if (!(flags.test(IRenderVisualFlags::eIgnoreOptimization) || (sh_d && sh_d->flags.bEmissive)))
     {
         if (SSA < r_ssaDISCARD)
             return;
@@ -284,7 +285,6 @@ void CDSGraphManager::r_dsgraph_insert_static(dxRender_Visual *pVisual)
 	// a) Allow to optimize RT order
 	// b) Should be rendered to special distort buffer in another pass
 	VERIFY(pVisual->shader._get());
-	ShaderElement* sh_d = &*pVisual->shader->E[4];
 	if (sh_d && sh_d->flags.bDistort && i_mask[sh_d->flags.iPriority/2])
 		RGraph.mapStaticSorted.Distort.emplace_back(distSQ, SSA, nullptr, pVisual, &Fidentity, sh_d, false);
 

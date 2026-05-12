@@ -104,6 +104,17 @@ public:
 		s32 s_used, s_merged, s_finalclip;
 		u32 o_queries, o_culled;
 		u32 ic_total, ic_culled;
+		u32 ls_shadowed_in;
+		u32 ls_shadowed_after_vis;
+		u32 ls_shadowed_rendered;
+		u32 ls_shadowed_pending_skipped;
+		u32 ls_shadowed_invisible_skipped;
+		u32 ls_shadowed_peak_in;
+		u32 ls_shadowed_peak_after_vis;
+		u32 ls_unshadowed_point_in;
+		u32 ls_unshadowed_spot_in;
+		u32 ls_unshadowed_point_rendered;
+		u32 ls_unshadowed_spot_rendered;
 	} stats;
 
 public:

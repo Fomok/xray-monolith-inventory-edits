@@ -178,7 +178,8 @@ static void play_object(dxGeomUserData* data, SGameMtlPair* mtl_pair, const dCon
 
 	try
 	{
-		sp = data->ph_ref_object->ObjectPhSoundPlayer();
+        if (data->ph_ref_object)
+		    sp = data->ph_ref_object->ObjectPhSoundPlayer();
 	}
 	catch (...)
 	{

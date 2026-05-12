@@ -26,7 +26,7 @@ void DamageReceiverCollisionCallback(bool& do_colide, bool bo1, dContact& c, SGa
 	u16 source_id = o_damager ? o_damager->ObjectID() : u16(-1);
 
 	//CPHCollisionDamageReceiver	*dr	= static_cast<CPhysicsShellHolder*>( o_self )->PHCollisionDamageReceiver();
-	ICollisionDamageReceiver* dr = (o_self)->ObjectPhCollisionDamageReceiver();
+	ICollisionDamageReceiver* dr = o_self ? (o_self)->ObjectPhCollisionDamageReceiver() : nullptr;
 	VERIFY2(dr, "wrong callback");
 
 	float damager_material_factor = material_damager->fBounceDamageFactor;
@@ -47,8 +47,8 @@ void DamageReceiverCollisionCallback(bool& do_colide, bool bo1, dContact& c, SGa
 	pos.sub(*(Fvector*)c.geom.pos, *(Fvector*)dGeomGetPosition(bo1 ? c.geom.g1 : c.geom.g2));
 	//it is not true pos in bone space
 
-	dr->CollisionHit(source_id, ud_self->bone_id, E_NL(b1, b2, c.geom.normal) * damager_material_factor / dfs, dir,
-	                 pos);
+    if (dr)
+	    dr->CollisionHit(source_id, ud_self->bone_id, E_NL(b1, b2, c.geom.normal) * damager_material_factor / dfs, dir, pos);
 }
 
 

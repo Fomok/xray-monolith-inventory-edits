@@ -90,23 +90,16 @@ void light::vis_update()
 
     if (!vis.pending) return;
 
-    u32	frame = Device.dwFrame;
-    CTimer T;
-    T.Start();
+    u32 frame = Device.dwFrame;
     R_occlusion::occq_result fragments = 0;
-    HRESULT hr;
-    while (hr = GetData(vis.Q, &fragments, sizeof(fragments), 0x1 /*D3D11_ASYNC_GETDATA_DONOTFLUSH*/) == S_FALSE)
-    {
-        if (hr == D3DERR_DEVICELOST || T.GetElapsed_ms_f() > 0.5f)
-        {
-            fragments = R_occlusion::occq_result(-1);
-            break;
-        }
-    }
+    HRESULT hr = GetData(vis.Q, &fragments, sizeof(fragments), 0x1 /*D3D11_ASYNC_GETDATA_DONOTFLUSH*/);
+
+    if (hr != S_OK)
+        fragments = R_occlusion::occq_result(-1);  
 
     vis.visible = (fragments > cullfragments);
     vis.pending = false;
-    if (vis.visible)
+    if (vis.visible && hr == S_OK)
         vis.frame2test = frame + ::Random.randI(delay_large_min, delay_large_max);
     else
         vis.frame2test = frame + 1;

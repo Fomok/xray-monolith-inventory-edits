@@ -4,6 +4,8 @@
 #include "QueryHelper.h"
 #include "../../xrEngine/IGame_Level.h"
 
+extern int ps_r2_shadow_omnipart_vischeck;
+
 light::light()
 {
 	ISpatialOwner::spatial_create(g_SpatialSpaceLights, this, STYPE_LIGHTSOURCE);
@@ -577,8 +579,15 @@ void light::export_()
 					L->set_occq_mode(flags.bOccq);
 					L->set_hud_mode(flags.bHudMode);
 					L->xform_calc();
-					L->vis.pending = vis.pending;
-					L->vis.visible = vis.visible;
+					if (ps_r2_shadow_omnipart_vischeck)
+					{
+						L->vis_prepare();
+					}
+					else
+					{
+						L->vis.pending = vis.pending;
+						L->vis.visible = vis.visible;
+					}
 					if (L->vis.pending)
 						RImplementation.LP_pending.v_shadowed.push_back(L);
 					else

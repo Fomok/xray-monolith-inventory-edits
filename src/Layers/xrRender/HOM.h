@@ -24,7 +24,8 @@ private:
 	u32						tris_in_frame			;
 #endif
 
-	volatile u32 MT_frame_rendered;
+	xr_atomic_u32 MT_frame_rendered;
+	xrCriticalSection m_mt_render_guard;
 
 	void Render_DB(CFrustum& base);
 public:

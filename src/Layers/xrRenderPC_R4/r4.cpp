@@ -903,6 +903,22 @@ void CRender::Statistics(CGameFont* _F)
 	F.OutNext(" **** LT:%2d,LV:%2d **** ", stats.l_total, stats.l_visible);
 	stats.l_visible = 0;
 	F.OutNext("    S(%2d)   | (%2d)NS   ", stats.l_shadowed, stats.l_unshadowed);
+	F.OutNext("LP sh(in:%u,vis:%u,r:%u) pk(%u/%u)", stats.ls_shadowed_in, stats.ls_shadowed_after_vis,
+	          stats.ls_shadowed_rendered, stats.ls_shadowed_peak_in, stats.ls_shadowed_peak_after_vis);
+	F.OutNext("LP uns p(in:%u,r:%u) s(in:%u,r:%u)", stats.ls_unshadowed_point_in, stats.ls_unshadowed_point_rendered,
+	          stats.ls_unshadowed_spot_in, stats.ls_unshadowed_spot_rendered);
+	F.OutNext("LP sh skip: pend[%u] inv[%u]", stats.ls_shadowed_pending_skipped, stats.ls_shadowed_invisible_skipped);
+	stats.ls_shadowed_in = 0;
+	stats.ls_shadowed_after_vis = 0;
+	stats.ls_shadowed_rendered = 0;
+	stats.ls_shadowed_pending_skipped = 0;
+	stats.ls_shadowed_invisible_skipped = 0;
+	stats.ls_shadowed_peak_in = 0;
+	stats.ls_shadowed_peak_after_vis = 0;
+	stats.ls_unshadowed_point_in = 0;
+	stats.ls_unshadowed_spot_in = 0;
+	stats.ls_unshadowed_point_rendered = 0;
+	stats.ls_unshadowed_spot_rendered = 0;
 	F.OutNext("smap use[%2d], merge[%2d], finalclip[%2d]", stats.s_used, stats.s_merged - stats.s_used,
 	          stats.s_finalclip);
 	stats.s_used = 0;

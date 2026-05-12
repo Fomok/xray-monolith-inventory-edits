@@ -43,6 +43,8 @@ CDialogHolder::CDialogHolder()
 {
 	m_b_in_update = false;
     m_b_in_render = false;
+    m_dialogsToRender.reserve(64);
+    m_dialogsToRender_new.reserve(64);
 }
 
 CDialogHolder::~CDialogHolder()
