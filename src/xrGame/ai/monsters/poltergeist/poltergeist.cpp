@@ -413,6 +413,7 @@ void CPoltergeist::Die(CObject* who)
 	}
 
 	inherited::Die(who);
+    CTelekinesis::remove_object_callbacks();
 	CTelekinesis::deactivate();
 	Energy::disable();
 

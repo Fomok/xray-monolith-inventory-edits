@@ -71,7 +71,7 @@ IC bool is_imotion(interactive_motion* im)
 
 CCharacterPhysicsSupport::~CCharacterPhysicsSupport()
 {
-	set_collision_hit_callback(0);
+	xr_delete(m_collision_hit_callback);
 	if (m_flags.test(fl_skeleton_in_shell))
 	{
 		if (m_physics_skeleton)

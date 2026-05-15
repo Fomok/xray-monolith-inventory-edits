@@ -10,11 +10,11 @@ CTelekinesis::CTelekinesis()
 
 CTelekinesis::~CTelekinesis()
 {
-	for (TELE_OBJECTS_IT it = objects.begin(); it != objects.end(); ++it)
-	{
-		(*it)->release();
-		xr_delete(*it);
-	}
+    for (CTelekineticObject* obj : objects)
+    {
+        obj->release();
+        xr_delete(obj);
+    }
 }
 
 CTelekineticObject* CTelekinesis::activate(CPhysicsShellHolder* obj, float strength, float height, u32 max_time_keep,
@@ -26,7 +26,7 @@ CTelekineticObject* CTelekinesis::activate(CPhysicsShellHolder* obj, float stren
 	if (!tele_object->init(this, obj, strength, height, max_time_keep, rot))
 	{
 		xr_delete(tele_object);
-		return 0;
+		return nullptr;
 	}
 
 	// добавить объект
@@ -44,11 +44,13 @@ void CTelekinesis::clear()
 
 void CTelekinesis::remove_object_callbacks()
 {
-    for (auto it : objects)
+    for (CTelekineticObject* it : objects)
     {
-        auto obj = it->get_object();
+        CPhysicsShellHolder* const obj = it->get_object();
         if (obj)
-            obj->set_collision_hit_callback(0);
+        {
+            obj->set_collision_hit_callback(nullptr);
+        }
     }
 }
 
@@ -58,10 +60,10 @@ void CTelekinesis::deactivate()
 
 	// отпустить все объекты
 	// 
-	for (TELE_OBJECTS_IT it = objects.begin(); it != objects.end(); ++it)
+	for (CTelekineticObject* obj : objects)
 	{
-		(*it)->release();
-		xr_delete(*it);
+		obj->release();
+		xr_delete(obj);
 	}
 
 	clear();
@@ -114,7 +116,7 @@ void CTelekinesis::remove_object(CPhysicsShellHolder* obj)
 	TELE_OBJECTS_IT it = std::find_if(objects.begin(), objects.end(), SFindPred(obj));
 	if (it == objects.end()) return;
 	//remove from list, delete...
-    obj->set_collision_hit_callback(0);
+    obj->set_collision_hit_callback(nullptr);
 	remove_object(it);
 }
 

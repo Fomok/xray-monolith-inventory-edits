@@ -235,15 +235,18 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
-**2026.05.12 (Prerelease)**
+**2026.05.15**
 
 * Main and MT:
   * First Person Death improvements:
     * Increase collision size of `bip01_head` on death to prevent camera clipping into the ground
     * `first_person_death_head_scale` cvar to adjust
   * `BusyHandsDebug`: do not engage UI when busy hands was triggered while in main menu
+  * `CSE_ALifeOnlineOfflineGroup::update` is in try catch block
   * damiansirbu: Guard empty m_members in CSE_ALifeOnlineOfflineGroup::update and synchronize_location (https://github.com/themrdemonized/xray-monolith/pull/527)
   * Lucy: Fix models not compiling the correct shader when set_shader is used (https://github.com/themrdemonized/xray-monolith/pull/529)
+  * Orleon: Added 'actor_on_item_sell' and 'actor_on_item_buy' callbacks
+  * GhenTuong: Revert xr_combat_ignore.script, fix CCar drone, export functions for physics_shell and CUIProgressBar (https://github.com/themrdemonized/xray-monolith/pull/532)
 
 * MT:
   * Lights:

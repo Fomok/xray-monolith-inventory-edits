@@ -999,6 +999,12 @@
 	<string id="ui_mm_modded_exes_optimizations_r__optimize_torch_desc">
 		<text>ƒальние объекты будут реже обновл€тьс€</text>
 	</string>
+	<string id="ui_mm_modded_exes_optimizations_r2_shadow_omnipart_vischeck">
+		<text>ѕроверка видимости дл€ omni света (r2_shadow_omnipart_vischeck)</text>
+	</string>
+	<string id="ui_mm_modded_exes_optimizations_r2_shadow_omnipart_vischeck_desc">
+		<text>ѕовышает производительность за счет проверки видимости источников света, созданных из точечных источников, и не рендеринга невидимых источников</text>
+	</string>
 	
 	<string id="ui_mm_modded_exes_optimizations_spawn_antifreeze">
 		<text>ћеньше фризов при спавне (spawn_antifreeze)</text>

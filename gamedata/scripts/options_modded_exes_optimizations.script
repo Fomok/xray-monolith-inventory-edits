@@ -28,6 +28,7 @@ PAGE = filter_false(page {
 	get_item_if_exists(list_bool { id = "mt_ui"}),
 	list_bool { id = "mt_update_weapon_sounds" },
 	list_bool { id = "r__optimize_torch" },
+	list_bool { id = "r2_shadow_omnipart_vischeck" },
 
 	line{},
 

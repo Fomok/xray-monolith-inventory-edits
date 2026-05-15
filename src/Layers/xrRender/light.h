@@ -105,6 +105,7 @@ public:
 		ID3DQuery*	Q;
 		bool		visible;		// visible/invisible
 		bool		pending;		// test is still pending
+		bool		query_active;	// GPU query is in-flight
 		u16			smap_ID;
 		float		distance;
 	}				vis;
