@@ -91,11 +91,6 @@ void CRender::render_lights(light_Package& LP)
 				}
 				else
 					L->vis_update();
-				if (L->vis.pending)
-				{
-					RImplementation.stats.ls_shadowed_pending_skipped++;
-					return true;
-				}
 				if (!L->vis.visible)
 				{
 					RImplementation.stats.ls_shadowed_invisible_skipped++;

@@ -485,6 +485,19 @@ void CALifeSimulator__iterate_objects_without_actor(const CALifeSimulator* self,
 	}
 }
 
+// iterate alife objects on actor's current level filtered by script clsid;
+// functor must not release iterated object (would invalidate iterator)
+void CALifeSimulator__iterate_level_objects_of_clsid(
+	const CALifeSimulator* self, int script_clsid_val, const luabind::functor<bool>& functor)
+{
+	if (!self->graph().level_exists()) return;
+	const auto& level_reg = self->graph().level();
+	for (const auto& entry : level_reg.objects()) {
+		if (entry.second->m_script_clsid != script_clsid_val) continue;
+		if (functor(entry.second)) break;
+	}
+}
+
 struct alife_object_iterator {
 	const CALifeObjectRegistry::OBJECT_REGISTRY* container;
 	CALifeObjectRegistry::OBJECT_REGISTRY::const_iterator it;
@@ -654,6 +667,7 @@ void CALifeSimulator::script_register(lua_State* L)
 		.def("object_ids", &alife_object_ids)
 		.def("objects", &alife_objects)
 		.def("iterate_objects", &CALifeSimulator__iterate_objects)
+		.def("iterate_level_objects_of_clsid", &CALifeSimulator__iterate_level_objects_of_clsid)
 		/*.def("iterate_objects_without_actor", &CALifeSimulator__iterate_objects_without_actor)
 		.def("objects_iter", &alife_object_iter)
 		.def("objects_without_actor_iter", &alife_object_without_actor_iter)*/

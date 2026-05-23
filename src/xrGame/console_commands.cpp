@@ -146,6 +146,7 @@ namespace crash_saving {
 }
 extern BOOL pda_map_zoom_in_to_mouse;
 extern BOOL pda_map_zoom_out_to_mouse;
+extern BOOL pda_show_map_labels;
 extern BOOL mouseWheelChangeWeapon;
 extern BOOL mouseWheelInvertZoom;
 extern BOOL mouseWheelInvertChangeWeapons;
@@ -206,6 +207,23 @@ extern BOOL legs_render_attachments_shadow;
 extern BOOL r__actor_shadow_in_demo_record;
 
 extern int enemy_manager_useful_cache_time;
+
+extern u32 ENEMY_INERTIA_TIME_TO_SOMEBODY;
+extern u32 ENEMY_INERTIA_TIME_TO_ACTOR;
+extern u32 ENEMY_INERTIA_TIME_FROM_ACTOR;
+extern u32 ENEMY_INERTIA_TIME_SEARCH;
+
+extern float g_ai_vision_speed_boost;
+extern float g_ai_reload_threshold;
+extern float g_ai_aim_fire_angle;
+int g_ai_hold_position_inertia_base = 1000;
+int g_ai_hold_position_inertia_random = 2000;
+int g_ai_grenade_throw_delay_base = 1000;
+int g_ai_grenade_throw_delay_step = 500;
+extern u32 g_ai_aim_inertia_time;
+extern u32 g_ai_aim_queue_inertia_time;
+extern float g_ai_danger_ricochet_score;
+BOOL g_ai_move_to_cover_run = FALSE;
 
 extern CrosshairSettings g_crosshair_camera_near;
 extern CrosshairSettings g_crosshair_camera_far;
@@ -2797,6 +2815,29 @@ void CCC_RegisterCommands()
 
     CMD4(CCC_Integer, "g_enemy_manager_useful_cache_time", &enemy_manager_useful_cache_time, -1, 500);
 
+    CMD4(CCC_Integer, "ai_enemy_inertia_time_to_somebody", (int*)&ENEMY_INERTIA_TIME_TO_SOMEBODY, 0, 120000);
+    CMD4(CCC_Integer, "ai_enemy_inertia_time_to_actor", (int*)&ENEMY_INERTIA_TIME_TO_ACTOR, 0, 120000);
+    CMD4(CCC_Integer, "ai_enemy_inertia_time_from_actor", (int*)&ENEMY_INERTIA_TIME_FROM_ACTOR, 0, 120000);
+    CMD4(CCC_Integer, "ai_search_inertia_time", (int*)&ENEMY_INERTIA_TIME_SEARCH, 0, 120000);
+
+    CMD4(CCC_Integer, "ai_hold_position_inertia_base", &g_ai_hold_position_inertia_base, 0, 120000);
+    CMD4(CCC_Integer, "ai_hold_position_inertia_random", &g_ai_hold_position_inertia_random, 0, 120000);
+    CMD4(CCC_Integer, "ai_grenade_throw_delay_base", &g_ai_grenade_throw_delay_base, 0, 10000);
+    CMD4(CCC_Integer, "ai_grenade_throw_delay_step", &g_ai_grenade_throw_delay_step, 0, 10000);
+
+    extern u32 g_ai_aim_inertia_time;
+    extern u32 g_ai_aim_queue_inertia_time;
+    CMD4(CCC_Integer, "ai_aim_inertia_time", (int*)&g_ai_aim_inertia_time, 0, 10000);
+    CMD4(CCC_Integer, "ai_aim_queue_inertia_time", (int*)&g_ai_aim_queue_inertia_time, 0, 10000);
+    CMD4(CCC_Float, "ai_danger_ricochet_score", &g_ai_danger_ricochet_score, 0.0f, 10000.0f);
+	
+	extern BOOL g_ai_move_to_cover_run;
+	CMD4(CCC_Integer, "ai_move_to_cover_run", &g_ai_move_to_cover_run, 0, 1);
+
+    CMD4(CCC_Float, "ai_vision_speed_boost", &g_ai_vision_speed_boost, 0.1f, 10.0f);
+    CMD4(CCC_Float, "ai_reload_threshold", &g_ai_reload_threshold, 0.01f, 1.0f);
+    CMD4(CCC_Float, "ai_aim_fire_angle", &g_ai_aim_fire_angle, 0.0f, PI);
+
 	CMD3(CCC_Mask, "g_firepos", &psActorFlags, AF_FIREPOS);
 	CMD3(CCC_Mask, "g_firepos_zoom", &psActorFlags, AF_FIREPOS_ZOOM);
 	CMD3(CCC_Mask, "g_firedir_third_person", &psActorFlags, AF_FIREDIR_THIRD_PERSON);
@@ -3172,6 +3213,7 @@ void CCC_RegisterCommands()
 	// PDA commands
 	CMD4(CCC_Integer, "pda_map_zoom_in_to_mouse", &pda_map_zoom_in_to_mouse, 0, 1);
 	CMD4(CCC_Integer, "pda_map_zoom_out_to_mouse", &pda_map_zoom_out_to_mouse, 0, 1);
+	CMD4(CCC_Integer, "pda_show_map_labels", &pda_show_map_labels, 0, 1);
 
 	// Mouse Wheel
 	CMD4(CCC_Integer, "mouse_wheel_change_weapon", &mouseWheelChangeWeapon, 0, 1);

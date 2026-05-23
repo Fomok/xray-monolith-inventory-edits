@@ -172,7 +172,7 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 		return;
 
 	// strict-sorting selection
-	if (sh->flags.bStrictB2F)
+	if (sh->flags.bStrictB2F && !pVisual->dcast_ParticleCustom())
 	{
 		RGraph.mapDynamicSorted.Sorted.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
 		return;

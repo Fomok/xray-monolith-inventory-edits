@@ -529,7 +529,7 @@ int opt_dynamic = 2;
 int ps_pfx_volumetric_mode = 0;
 int ps_r__portal_traverse_stats = 0;
 
-float r_rain_exp = 2.f;
+float r_rain_exp = 1.f;
 float r_rain_k = 99.0f;
 
 #ifndef _EDITOR

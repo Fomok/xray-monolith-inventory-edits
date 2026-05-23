@@ -56,7 +56,7 @@ void CSE_ALifeOnlineOfflineGroup::update()
 {
     try
     {
-        if (m_bOnline && !m_members.empty())
+        if (m_bOnline)
         {
             MEMBER* commander = (*m_members.begin()).second;
             if (commander)
@@ -181,13 +181,16 @@ CSE_ALifeOnlineOfflineGroup::MEMBER* CSE_ALifeOnlineOfflineGroup::member(ALife::
 
 bool CSE_ALifeOnlineOfflineGroup::synchronize_location()
 {
-	if (m_bOnline && !m_members.empty())
+	if (m_bOnline)
 	{
 		MEMBER* member = (*m_members.begin()).second;
-		o_Position = member->o_Position;
-		m_tNodeID = member->m_tNodeID;
-		m_tGraphID = member->m_tGraphID;
-		m_fDistance = member->m_fDistance;
+        if (member)
+        {
+            o_Position = member->o_Position;
+            m_tNodeID = member->m_tNodeID;
+            m_tGraphID = member->m_tGraphID;
+            m_fDistance = member->m_fDistance;
+        }
 	}
 
 	return (true);

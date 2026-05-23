@@ -48,7 +48,7 @@ void CWeaponAutomaticShotgun::Load(LPCSTR section)
 
 bool CWeaponAutomaticShotgun::Action(u16 cmd, u32 flags)
 {
-    if (cmd == kWPN_FIRE && GetState() == eReload) // ver
+    if (cmd == kWPN_FIRE && flags & CMD_START && GetState() == eReload) // ver
     {
         ClickInterruptFlag = true; // ver
     }

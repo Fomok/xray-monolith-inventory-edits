@@ -9,6 +9,7 @@
 
 #include "../../xrEngine/tntQAVI.h"
 #include "../../xrEngine/xrTheora_Surface.h"
+#include "gifPlayer.h"
 
 #include "dxRenderDeviceRender.h"
 
@@ -31,6 +32,7 @@ CTexture::CTexture()
 	pSurface = NULL;
 	pAVI = NULL;
 	pTheora = NULL;
+    gifPlayer = nullptr;
 	desc_cache = 0;
 	seqMSPF = 0;
 	flags.MemoryUsage = 0;
@@ -78,15 +80,26 @@ void CTexture::PostLoad()
 	if (pTheora) bind = xr_make_delegate(this, &CTexture::apply_theora);
 	else if (pAVI) bind = xr_make_delegate(this, &CTexture::apply_avi);
 	else if (!seqDATA.empty()) bind = xr_make_delegate(this, &CTexture::apply_seq);
+	else if (gifPlayer) bind = xr_make_delegate(this, &CTexture::apply_gif);
 	else bind = xr_make_delegate(this, &CTexture::apply_normal);
 }
 
 void CTexture::apply_load(u32 dwStage)
 {
-	if (!flags.bLoaded) Load();
-	else PostLoad();
-	bind(dwStage);
+    if (!flags.bLoaded) Load();
+    else PostLoad();
+    if (bind == xr_make_delegate(this, &CTexture::apply_load))
+    {
+        // This should not happen - if bind is still apply_load, fall back to apply_normal
+        // which will just apply the (potentially unloaded) surface
+        apply_normal(dwStage);
+    }
+    else
+    {
+        bind(dwStage);
+    }
 };
+
 
 void CTexture::apply_theora(u32 dwStage)
 {
@@ -165,6 +178,22 @@ void CTexture::apply_seq(u32 dwStage)
 	}
 	CHK_DX(HW.pDevice->SetTexture(dwStage,pSurface));
 };
+
+void CTexture::apply_gif(u32 dwStage)
+{
+    while (flags.bLoading)
+    {
+	SwitchToThread();
+    }
+    if (gifPlayer->UpdateFrame())
+    {
+        const CGIFAnimationPlayer::Frame* const gifFrame = gifPlayer->GetActiveFrame();
+        R_ASSERT(gifFrame);
+
+        pSurface = gifFrame->surface;
+    }
+    CHK_DX(HW.pDevice->SetTexture(dwStage, pSurface));
+}
 
 void CTexture::apply_normal(u32 dwStage)
 {
@@ -320,6 +349,24 @@ void CTexture::Load()
 			pSurface = 0;
 			FS.r_close(_fs);
 		}
+        else if (FS.exist(fn, "$game_textures$", *cName, ".gif"))
+        {
+            gifPlayer = xr_new<CGIFAnimationPlayer>();
+            if (!gifPlayer->Load(fn))
+            {
+                xr_delete(gifPlayer);
+                pSurface = nullptr;
+            }
+            else
+            {
+                flags.MemoryUsage = gifPlayer->GetUsedMemory();
+
+                gifPlayer->Play();
+
+                const CGIFAnimationPlayer::Frame* const gifFrame = gifPlayer->GetActiveFrame();
+                pSurface = gifFrame->surface;
+            }
+        }
 		else
 		{
 			// Normal texture
@@ -369,6 +416,12 @@ void CTexture::Unload()
 		pSurface = 0;
 	}
 	flags.MemoryUsage = 0;
+
+    if (gifPlayer)
+    {
+        xr_delete(gifPlayer);
+        pSurface = nullptr;
+    }
 
 #ifdef DEBUG
 	_SHOW_REF		(msg_buff, pSurface);

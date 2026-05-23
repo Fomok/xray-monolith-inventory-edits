@@ -7,7 +7,7 @@
 
 using Feel::Vision;
 
-Vision::Vision(CObject const* owner) :
+Vision::Vision(CObject* owner) :
 	pure_relcase(&Vision::feel_vision_relcase),
     pure_relcase_visual(&Vision::feel_vision_relcase),
 	m_owner(owner)
@@ -28,22 +28,6 @@ struct SFeelParam
 
 	SFeelParam(Vision* _parent, Vision::feel_visible_Item* _item, float _vis_threshold) : parent(_parent), item(_item), vis(1.f), vis_threshold(_vis_threshold) {}
 };
-
-IC BOOL feel_vision_callback(collide::rq_result& result, LPVOID params)
-{
-	SFeelParam* fp = (SFeelParam*)params;
-	float vis = fp->parent->feel_vision_mtl_transp(result.O, result.element);
-	fp->vis *= vis;
-	if (nullptr == result.O && fis_zero(vis))
-	{
-		CDB::TRI* T = g_pGameLevel->ObjectSpace.GetStaticTris() + result.element;
-		Fvector* V = g_pGameLevel->ObjectSpace.GetStaticVerts();
-		fp->item->Cache.verts[0].set(V[T->verts[0]]);
-		fp->item->Cache.verts[1].set(V[T->verts[1]]);
-		fp->item->Cache.verts[2].set(V[T->verts[2]]);
-	}
-	return (fp->vis > fp->vis_threshold);
-}
 
 #ifdef SPATIAL_CHANGE
 IC BOOL feel_vision_test_callback(const collide::ray_defs& rd, CObject* object, LPVOID user_data)
@@ -112,14 +96,13 @@ void Vision::feel_vision_relcase(CObject* object)
 	}
 }
 
-void Vision::feel_vision_query(Fmatrix& mFull, Fvector& P)
+void Vision::feel_vision_query(Fmatrix& mFull)
 {
 	xrSRWLockGuard guard(&lock_query, false);
 	
 	Frustum.CreateFromMatrix(mFull, FRUSTUM_P_LRTB | FRUSTUM_P_FAR);
 
 	// Traverse object database
-	r_spatial.clear();
 	g_SpatialSpace->q_frustum
 	(
 		r_spatial,
@@ -134,7 +117,8 @@ void Vision::feel_vision_query(Fmatrix& mFull, Fvector& P)
 	{
 		ISpatialShared spatial = r_spatial[o_it];
 		CObject* object = spatial->dcast_CObject();
-		if (object && feel_vision_isRelevant(object)) seen.push_back(object);
+		if (object && feel_vision_isRelevant(object))
+			seen.push_back(object);
 	}
 	if (seen.size() > 1)
 	{
@@ -144,7 +128,7 @@ void Vision::feel_vision_query(Fmatrix& mFull, Fvector& P)
 	}
 }
 
-void Vision::feel_vision_update(CObject* parent, Fvector& P, float dt, float vis_threshold)
+void Vision::feel_vision_update(Fvector& P, float dt, float vis_threshold)
 {
 	PROF_EVENT("feel_vision_update");
 	{
@@ -152,7 +136,7 @@ void Vision::feel_vision_update(CObject* parent, Fvector& P, float dt, float vis
 		// B-A = objects, that become visible
 		if (!seen.empty())
 		{
-			xr_vector<CObject*>::iterator E = std::remove(seen.begin(), seen.end(), parent);
+			xr_vector<CObject*>::iterator E = std::remove(seen.begin(), seen.end(), m_owner);
 			seen.resize(E - seen.begin());
 
 			{
@@ -245,10 +229,26 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
 					// cache outdated. real query.
 					VERIFY(!fis_zero(RD.dir.magnitude()));
 
+					auto cb = [](collide::rq_result& result, LPVOID params) -> BOOL
+					{
+						SFeelParam* fp = (SFeelParam*)params;
+						float vis = fp->parent->feel_vision_mtl_transp(result.O, result.element);
+						fp->vis *= vis;
+						if (nullptr == result.O && fis_zero(vis))
+						{
+							CDB::TRI* T = g_pGameLevel->ObjectSpace.GetStaticTris() + result.element;
+							Fvector* V = g_pGameLevel->ObjectSpace.GetStaticVerts();
+							fp->item->Cache.verts[0].set(V[T->verts[0]]);
+							fp->item->Cache.verts[1].set(V[T->verts[1]]);
+							fp->item->Cache.verts[2].set(V[T->verts[2]]);
+						}
+						return BOOL(fp->vis > fp->vis_threshold);
+					};
+
 #ifdef SPATIAL_CHANGE
-					if (g_pGameLevel->ObjectSpace.RayQuery(RQR, RD, feel_vision_callback, &feel_params, feel_vision_test_callback, const_cast<CObject*>(m_owner)))
+					if (g_pGameLevel->ObjectSpace.RayQuery(RQR, RD, cb, &feel_params, feel_vision_test_callback, m_owner))
 #else
-					if (g_pGameLevel->ObjectSpace.RayQuery(RQR, RD, feel_vision_callback, &feel_params, NULL, const_cast<CObject*>(m_owner)))
+					if (g_pGameLevel->ObjectSpace.RayQuery(RQR, RD, cb, &feel_params, nullptr, m_owner))
 #endif
 					{
 						I->Cache_vis = feel_params.vis;
@@ -264,7 +264,6 @@ void Vision::o_trace(Fvector& P, float dt, float vis_threshold)
 				}
 			}
 			// Log("Vis",feel_params.vis);
-			r_spatial.clear_not_free();
 			g_SpatialSpace->q_ray(r_spatial, 0, STYPE_VISIBLEFORAI, P, D, f);
 
 			RD.flags = CDB::OPT_ONLYFIRST;

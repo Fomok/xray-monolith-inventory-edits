@@ -15,7 +15,6 @@
 #include "inventory.h"
 #include "../xrEngine/CameraBase.h"
 #include "Actor.h"
-void aim_target(shared_str const& aim_bone_id, Fvector &result, const CGameObject *object);
 
 //#define SIGHT_TEST
 
@@ -180,9 +179,17 @@ void CSightAction::execute_object()
 		}
 		else
 		{
-			::aim_target("bip01_head", look_pos, pActor);
+			IKinematics* kinematics = PKinematics(pActor->Visual());
+			VERIFY(kinematics);
+
+			u16 bone_id = kinematics->LL_BoneID("bip01_head");
+			VERIFY2(bone_id != BI_NONE, make_string("Cannot find bone %s", bone_id));
+			Fvector pos;
+			kinematics->LL_GetBoneWorldPosition(bone_id, pActor->XFORM(), pos);
+			look_pos = pos;
 			look_pos.y -= 0.9f;
 		}
+		m_object->Visual()->dcast_PKinematics()->CalculateBBox(FALSE);
 	}
 	else
 		m_object_to_look->Center(look_pos);
@@ -401,9 +408,7 @@ void CSightAction::predict_object_position(bool use_exact_position)
 				offset.y = 0.f;
 				Fvector const velocity = Fvector(offset).div(
 					float(current_position.dwTime - previous_position.dwTime) / 1000.f);
-				extern float g_aim_predict_time;
-				float const predict_time = g_aim_predict_time; //*Device.fTimeDelta;
-				m_vector3d.mad(velocity, predict_time);
+				m_vector3d.mad(velocity, Device.fTimeDelta);
 			}
 		}
 	}

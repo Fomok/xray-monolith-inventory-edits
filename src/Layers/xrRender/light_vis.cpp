@@ -22,19 +22,17 @@ void light::vis_prepare()
     {
         vis.visible = false;
         vis.pending = false;
-        vis.query_active = false;
         return;
     }
     if (!flags.bOccq || flags.bHudMode)
     {
         vis.visible = true;
         vis.pending = false;
-        vis.query_active = false;
         return;
     }
 
     u32 frame = Device.dwFrame;
-    if (frame < vis.frame2test || vis.query_active)
+    if (frame < vis.frame2test)
         return;
 
     float safe_area = VIEWPORT_NEAR;
@@ -63,14 +61,15 @@ void light::vis_prepare()
         // small error
         vis.visible = true;
         vis.pending = false;
-        vis.query_active = false;
         vis.frame2test = frame + ::Random.randI(delay_small_min, delay_small_max);
         return;
     }
 
     // testing
+    if (vis.pending)
+        return;
+
     vis.pending = true;
-    vis.query_active = true;
     RCache.set_xform_world(m_xform);
     CHK_DX(BeginQuery(vis.Q));
     //	Hack: Igor. Light is visible if it's frutum is visible. (Only for volumetric)
@@ -92,25 +91,26 @@ void light::vis_update()
     //	. test-result:	invisible:
     //		. shedule for 'next-frame' interval
 
-    if (!vis.pending && !vis.query_active) return;
+    if (!vis.pending) return;
 
     u32 frame = Device.dwFrame;
     R_occlusion::occq_result fragments = 0;
     HRESULT hr = GetData(vis.Q, &fragments, sizeof(fragments), 0x1 /*D3D11_ASYNC_GETDATA_DONOTFLUSH*/);
 
-    vis.pending = false;
+    vis.pending = hr != S_OK;
     if (hr != S_OK)
     {
-        bool sfalse = (hr == S_FALSE);
-        vis.query_active = sfalse; // Still pending result from GetData to not call BeginQuery and EndQuery again in vis_prepare, different from vis.pending 
         vis.frame2test = frame + 1;
-        if (!sfalse)
+        if (hr != S_FALSE)
+        {
             // Fail-open on timeout/device/query errors to avoid popping.
             vis.visible = true;
+            vis.pending = false;
+            vis.frame2test = frame + ::Random.randI(delay_small_min, delay_small_max);
+        }  
         return;
     }
     
-    vis.query_active = false;
     vis.visible = (fragments > cullfragments);
     vis.frame2test = vis.visible ? (frame + ::Random.randI(delay_large_min, delay_large_max)) : (frame + 1);
 }

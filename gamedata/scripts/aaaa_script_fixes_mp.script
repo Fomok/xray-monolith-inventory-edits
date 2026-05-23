@@ -597,6 +597,8 @@ function item_weapon.detach_scope(weapon)
 end
 
 -- Fixed 65534 loop in this
+-- Make npcs not blind when they got hit
+local transparent_gg_ignore_id = {}
 function trans_outfit.transparent_gg()
 	if not trans_outfit.ReadOutfitBlindnessKoeff then return end
 
@@ -609,20 +611,31 @@ function trans_outfit.transparent_gg()
 		range1 = trans_outfit.ReadOutfitBlindnessKoeff(outfit_in_slot:section())
 	else 
 		range1 = 80 
-	end  
+	end
+
+	local is_blind = range1 < 80
 
 	for i = 1, #db.OnlineStalkers do
 		local id = db.OnlineStalkers[i]
 		local obj_around = gameobjects_registry[id]
 		if obj_around and IsStalker(obj_around) and id ~= AC_ID then
 			local dist_act_npc = db.actor:position():distance_to_sqr(obj_around:position())
-			if dist_act_npc <= 120^2 then  
+			local is_ignore = not is_blind and transparent_gg_ignore_id[id] and transparent_gg_ignore_id[id].stop_ignore_time > time_global()
+			if is_ignore then
+				obj_around:set_range(math.max(200, range1))
+			elseif dist_act_npc <= math.max(range1^2, is_blind and 120^2 or 100^2) then  
 				obj_around:set_range(range1)
 			else 
 				obj_around:set_range(80) 
 			end 
 		end 
 	end
+end
+
+function transparent_gg_add_to_ignore_ids(npc, amount, local_direction, who, bone_index)
+	transparent_gg_ignore_id[npc:id()] = {
+		stop_ignore_time = time_global() + 120 * 1000
+	}
 end
 
 -- Lander:
@@ -1218,6 +1231,7 @@ function on_game_start()
 	-- RegisterScriptCallback("actor_on_first_update", actor_on_first_update_prefetch)
 
 	RegisterScriptCallback("npc_on_update", npc_on_update_force_trader_update)
+	RegisterScriptCallback("npc_on_hit_callback", transparent_gg_add_to_ignore_ids)
 	RegisterScriptCallback("anomaly_on_before_activate", anomaly_on_before_activate_pathfinding)
 
 	-- Force Lua GC and flush LuaJIT trace cache after "first update" calls which will be never executed again

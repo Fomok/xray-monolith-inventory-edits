@@ -49,7 +49,6 @@ light::light()
 	CHK_DX(CreateQuery(&vis.Q, D3DQUERYTYPE_OCCLUSION));
 	vis.visible = true;
 	vis.pending = false;
-	vis.query_active = false;
 	m_sectors = {};
 	X.S.posX = 0;
 	X.S.posY = 0;
@@ -589,7 +588,7 @@ void light::export_()
 						L->vis.pending = vis.pending;
 						L->vis.visible = vis.visible;
 					}
-					if (L->vis.pending)
+					if (L->vis.pending && !L->vis.visible)
 						RImplementation.LP_pending.v_shadowed.push_back(L);
 					else
 						RImplementation.LP_normal.v_shadowed.push_back(L);
@@ -601,7 +600,7 @@ void light::export_()
 				this->set_volumetric_intensity(m_volumetric_intensity);
 				vis_prepare();
 
-				if (vis.pending)
+				if (vis.pending && !vis.visible)
 					RImplementation.LP_pending.v_shadowed.push_back(this);
 				else
 					RImplementation.LP_normal.v_shadowed.push_back(this);
@@ -616,7 +615,7 @@ void light::export_()
 			case IRender_Light::POINT:
 				{
 					vis_prepare();
-					if (vis.pending)
+					if (vis.pending && !vis.visible)
 						RImplementation.LP_pending.v_point.push_back(this);
 					else
 						RImplementation.LP_normal.v_point.push_back(this);
@@ -625,7 +624,7 @@ void light::export_()
 			case IRender_Light::SPOT:
 				{
 					vis_prepare();
-					if (vis.pending)
+					if (vis.pending && !vis.visible)
 						RImplementation.LP_pending.v_spot.push_back(this);
 					else
 						RImplementation.LP_normal.v_spot.push_back(this);				

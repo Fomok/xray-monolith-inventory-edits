@@ -34,6 +34,7 @@
 
         pda_map_zoom_in_to_mouse // Enable map zoom in relative to cursor
         pda_map_zoom_out_to_mouse // Enable map zoom out relative to cursor
+        pda_show_map_labels // Show level name labels on the global PDA map if configured in game_maps_single.ltx
 
         mouse_wheel_change_weapon // Enable changing weapons with mouse wheel
         mouse_wheel_invert_zoom // Invert mouse wheel
@@ -118,6 +119,7 @@
     alife() {
         number object_count()
         void iterate_objects(function(se_obj))
+        void iterate_level_objects_of_clsid(number script_clsid, function(se_obj)) -- walks actor's current-level CSE registry filtered by m_script_clsid; functor returns true to stop early; must not release the currently iterated entity
         void force_update() -- forces an immediate alife scheduled update cycle
     }
 
@@ -160,6 +162,13 @@
     // MT only
     class cse_alife_item_weapon {
         function clone_upgrades(cse_alife_item_weapon*)
+    }
+
+    // MT only
+    class cse_alife_level_changer : cse_alife_space_restrictor {
+        property dest_game_vertex_id    // u16
+        property dest_level_vertex_id   // u32
+        property dest_position          // Fvector
     }
 
     class CUIProgressBar {
@@ -349,6 +358,9 @@
             spot_type: string, icon ID from map_spots XML
             text: string, text when spot is hovered
         // }
+
+        void map_pan_to(LPCSTR level_name, float x, float z, bool zoom_in)
+        void map_pan_to_level(LPCSTR level_name, bool zoom_in)
 
         // MT only
         CMapManager* get_map_manager()

@@ -119,9 +119,12 @@ void ISpatial::Unregister()
 	{
 		// remove
 		xrSRWLockGuard guard(&spatial.space->db_lock, false);
-		spatial.space->remove(this);
-		spatial.node_ptr = nullptr;
-		spatial.sector = nullptr;
+        if (spatial.node_ptr)
+        {
+            spatial.space->remove(this);
+            spatial.node_ptr = nullptr;
+            spatial.sector = nullptr;
+        }
 	}
 	else
 	{
@@ -133,13 +136,16 @@ void ISpatial::Move()
 {
 	if (spatial.node_ptr)
 	{
-		//*** check if we are supposed to correct it's spatial location
-		if (spatial_inside())	
-			return;		// ???
+        xrSRWLockGuard guard(&spatial.space->db_lock, false);
+        if (spatial.node_ptr)
+        {
+            //*** check if we are supposed to correct it's spatial location
+            if (spatial_inside())
+                return;		// ???
 
-		xrSRWLockGuard guard(&spatial.space->db_lock, false);
-		spatial.space->remove(this);
-		spatial.space->insert(this);
+            spatial.space->remove(this);
+            spatial.space->insert(this);
+        }
 	}
 	else
 	{

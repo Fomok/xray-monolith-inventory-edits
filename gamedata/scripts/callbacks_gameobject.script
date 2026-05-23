@@ -272,6 +272,21 @@ _G.COnRightClickMap = function(property_ui, map_table)
 	SendScriptCallback("on_map_right_click", property_ui, map_table)
 end
 
+--[[
+
+On left click on PDA map spot callback
+Params are id, level_name, spot_type
+	id - alife object id of the spot, 65535 if none
+	level_name - name of the level the spot belongs to
+	spot_type - icon id from map_spots XML
+
+--]]
+
+AddScriptCallback("on_map_spot_selected")
+function pda.map_spot_selected(id, level_name, spot_type)
+	SendScriptCallback("on_map_spot_selected", id, level_name, spot_type)
+end
+
 -- On receive game news callback
 AddScriptCallback("on_news_received")
 _G.CUIMessagesWindow__AddIconedPdaMessage = function(UIMessageView, UITimeText, UICaptionText, UIMsgText, UIIconStatic, UIMessagesScrollView)

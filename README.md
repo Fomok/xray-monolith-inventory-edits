@@ -235,6 +235,32 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.05.23**
+
+* Main and MT:
+  * DEFAULT_SAMPLE_COUNT is 32, fix https://github.com/themrdemonized/xray-monolith/issues/534
+  * Fixed incorrect Modded Exes options strings
+  * Remove empty checks in `CSE_ALifeOnlineOfflineGroup::synchronize_location` and `CSE_ALifeOnlineOfflineGroup::update` in favor of `actualize` calls inside begin
+  * trans_outfit.transparent_gg improvement (not relevant to GAMMA) 
+    * When NPC gets hit by anything, boost vision to 200m for 2 minutes except if actor is in stealth suit
+    * Reduce blindness check from 120 to 100 meters
+  * Apply random offset for weather's `ambient_particles` in `CGamePersistent::WeathersUpdate`
+  * Skyki15: AI Configuration & Fixes (https://github.com/themrdemonized/xray-monolith/pull/523)
+  * Leyths: PDA Map QoL features (https://github.com/themrdemonized/xray-monolith/pull/535)
+  * Verdatim25: Fix for tri state reload weapons reload interrupting due to UI menu open (https://github.com/themrdemonized/xray-monolith/pull/536)
+  * Orleonn: CTexture: GIF animation support (https://github.com/themrdemonized/xray-monolith/pull/537)
+  * damiansirbu: per-actor-level clsid-filtered object iteration to Lua (https://github.com/themrdemonized/xray-monolith/pull/538)
+
+* MT:
+  * Unstable MT optimizations are moved below others with warning label
+  * Fix double particle rendering (https://github.com/ixray-team/ixray-1.6-stcop/commit/30832c945e18f08a4f2279682b06e1b3c149b2b9)
+  * Topological sort bones, 33% perf increase (https://github.com/OpenXRay/xray-16/commit/797ba9236bb4b2e6f4f914f71bf684f0888a9479)
+  * Fix NPC shaking when aiming at nearby player (https://github.com/ixray-team/ixray-1.6-stcop/commit/7e2fbfdaa8c26aa87aac9abf97cd805ff4db5463)
+  * Thread safety for CModelPool
+  * Simplified `light_vis`, fixed flickering lights in some places
+  * Fixed potential stack overflow when loading textures if `r__clear_resource_on_unload 0`
+  * Edited `phase_ssfx_sss_ext` to work correctly with `r2_shadow_omnipart_vischeck 1`
+
 **2026.05.15**
 
 * Main and MT:
@@ -250,7 +276,6 @@ How to compile exes:
 
 * MT:
   * Lights:
-    * Increase lower limit of `r2_slight_fade` cvar to increase lights' fadeout with distance
     * `r2_shadow_lod_min` cvar to hard limit lights' rendering distance independently of `r2_slight_fade`, more value will limit rendering distance sooner, default 0.02
     * `r2_shadow_omnipart_vischeck` to enable visibility checks for additional 6 lights that are created for each point light, increases performance by not rendering invisible lights, default enabled
     * Removed while loop in light visibility tests, the visibility result will be retrieved next frame. Pending results are treated as visible.

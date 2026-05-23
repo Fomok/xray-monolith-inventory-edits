@@ -577,6 +577,8 @@ void CCustomMonster::UpdatePositionAnimation()
 		if (!bfScriptAnimation())
 			SelectAnimation(XFORM().k, movement().detail().direction(), movement().speed());
 	STOP_PROFILE
+
+	eye_pp_s0();
 }
 
 BOOL CCustomMonster::feel_visible_isRelevant(CObject* O)
@@ -623,7 +625,8 @@ void CCustomMonster::update_range_fov(float& new_range, float& new_fov, float st
 
 	float current_fog_density = GamePersistent().Environment().CurrentEnv->fog_density;
 	// 0=no_fog, 1=full_fog, >1 = super-fog
-	float current_far_plane = GamePersistent().Environment().CurrentEnv->far_plane;
+#pragma todo("v2v3v4: Let's see, maybe it will stay like this because it's much cheaper and more logical.")
+	float current_far_plane = ai().get_alife() ? ai().alife().online_distance() : GamePersistent().Environment().CurrentEnv->far_plane;
 	// 300=standart, 50=super-fog
 
 #ifdef HOLDERCUSTOM_NEW
@@ -677,7 +680,7 @@ void CCustomMonster::eye_pp_s1()
 	VERIFY(_valid(eye_matrix));
 	mProject.build_projection(deg2rad(new_fov), 1, 0.1f, new_range);
 	mFull.mul(mProject, mView);
-	feel_vision_query(mFull, eye_matrix.c);
+	feel_vision_query(mFull);
 	Device.Statistic->AI_Vis_Query.End();
 }
 
@@ -693,7 +696,7 @@ void CCustomMonster::eye_pp_s2()
 	Device.secondary_tasks.run([=]()
 	{
 		if (this_thread_id != GetCurrentThreadId()) { PROF_THREAD("X-Ray PPL Thread") }
-		feel_vision_update(this,eye_matrix.c,float(dwDT)/1000.f,memory().visual().transparency_threshold());
+		feel_vision_update(eye_matrix.c,float(dwDT)/1000.f,memory().visual().transparency_threshold());
 
 	});
 	Device.Statistic->AI_Vis_RayTests.End();
@@ -711,7 +714,6 @@ void CCustomMonster::Exec_Visibility()
 	switch (eye_pp_stage % 2)
 	{
 	case 0:
-		eye_pp_s0();
 		eye_pp_s1();
 		break;
 	case 1: eye_pp_s2();

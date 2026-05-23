@@ -10,6 +10,7 @@
 #include "object_broker.h"
 #include "ui/UITextureMaster.h"
 #include "ui/UIHelper.h"
+#include "UICursor.h"
 
 #include "../Include/xrRender/UIShader.h"
 #include "gametaskmanager.h"
@@ -23,6 +24,8 @@ CMapSpot::CMapSpot(CMapLocation* ml)
 	m_location_level = 0;
 	m_border_static = NULL;
 	m_scale_bounds.set(-1.0f, -1.0f);
+	m_lbtn_down_pos.set(0.0f, 0.0f);
+	m_lbtn_armed = false;
 }
 
 CMapSpot::~CMapSpot()
@@ -41,9 +44,9 @@ void CMapSpot::Load(CUIXml* xml, LPCSTR path)
 	int i = xml->ReadAttribInt(path, 0, "scale", 0);
 	m_bScale = (i == 1);
 	m_scale_bounds.x = xml->ReadAttribFlt(path, 0, "scale_min", -1.0f);
+	m_scale_bounds.y = xml->ReadAttribFlt(path, 0, "scale_max", -1.0f);
 	if (m_bScale)
 	{
-		m_scale_bounds.y = xml->ReadAttribFlt(path, 0, "scale_max", -1.0f);
 		R_ASSERT2(m_scale_bounds.x>0 && m_scale_bounds.y>0, path);
 	}
 	m_location_level = xml->ReadAttribInt(path, 0, "location_level", 0);
@@ -95,32 +98,49 @@ void CMapSpot::Update()
 	}
 }
 
-bool CMapSpot::OnMouseDown(int mouse_btn)
+// Cursor must stay within this radius between MOUSE_1 down and up for the
+// press to count as a click rather than a map-pan drag.
+static const float MAP_SPOT_CLICK_THRESHOLD_SQ = 25.0f; // 5px squared
+
+bool CMapSpot::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
-	if (mouse_btn == MOUSE_1)
+	if (mouse_action == WINDOW_LBUTTON_DOWN)
 	{
-		CGameTask* t = Level().GameTaskManager().HasGameTask(m_map_location, true);
-		if (t)
+		m_lbtn_down_pos = GetUICursor().GetCursorPosition();
+		m_lbtn_armed    = true;
+		// Don't return true — the map needs the DOWN to begin pan tracking.
+	}
+	else if (mouse_action == WINDOW_LBUTTON_UP && m_lbtn_armed)
+	{
+		m_lbtn_armed = false;
+		Fvector2 up = GetUICursor().GetCursorPosition();
+		float dx = up.x - m_lbtn_down_pos.x;
+		float dy = up.y - m_lbtn_down_pos.y;
+		if ((dx * dx + dy * dy) < MAP_SPOT_CLICK_THRESHOLD_SQ)
 		{
 			GetMessageTarget()->SendMessage(this, MAP_SELECT_SPOT);
 			return true;
 		}
-		return false;
 	}
-	else if (mouse_btn == MOUSE_2)
+	return inherited::OnMouseAction(x, y, mouse_action);
+}
+
+bool CMapSpot::OnMouseDown(int mouse_btn)
+{
+	if (mouse_btn == MOUSE_2)
 	{
 		GetMessageTarget()->SendMessage(this, MAP_SELECT_SPOT2);
 		return true;
 	}
-	else
-	{
-		return false;
-	}
+	// MOUSE_1 is handled in OnMouseAction (down arms, up fires if no drag).
+	return false;
 }
 
 
 void CMapSpot::OnFocusLost()
 {
+	// Disarm so a later UP after the cursor re-enters can't fire a stale click.
+	m_lbtn_armed = false;
 	inherited::OnFocusLost();
 	GetMessageTarget()->SendMessage(this, MAP_HIDE_HINT, NULL);
 }

@@ -152,6 +152,9 @@
 	<string id="ui_mm_modded_exes_visual_ui_hud_use_english_text_for_missing_translations">
 		<text>Использовать английский язык для отсуствующего перевода (use_english_text_for_missing_translations)</text>
 	</string>
+	<string id="ui_mm_modded_exes_visual_ui_hud_pda_show_map_labels">
+		<text>Показывать названия локаций на ПДА (pda_show_map_labels)</text>
+	</string>
 
 	<!-- Crosshair -->
 	<string id="ui_mm_crosshair_modded_exes">
@@ -855,10 +858,100 @@
 		<text>Сталкеры</text>
 	</string>
 	<string id="ui_mm_modded_exes_gameplay_stalkers_g_npcs_look_at_actor">
-		<text>Сталкеры смотрят на игрока при приближении (g_npcs_look_at_actor)</text>
+		<text>Сталкеры смотрят на игрока вблизи (g_npcs_look_at_actor)</text>
 	</string>
 	<string id="ui_mm_modded_exes_gameplay_stalkers_g_npcs_look_at_actor_min_distance">
-		<text>Минимальная дистанция для анимации (g_npcs_look_at_actor_min_distance)</text>
+		<text>Мин. дистанция для взгляда (g_npcs_look_at_actor_min_distance)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_vision_speed_boost">
+		<text>Множитель скорости зрения ИИ (ai_vision_speed_boost)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_vision_speed_boost_desc">
+		<text>Умножает скорость, с которой NPC распознают цели, попавшие в их поле зрения.\n \nВысокие значения (например, 2.0x) заставляют NPC замечать врагов гораздо быстрее. Низкие значения дают игроку больше времени, чтобы нырнуть в укрытие до того, как его обнаружат.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_reload_threshold">
+		<text>Порог патронов для отхода/перезарядки (ai_reload_threshold)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_reload_threshold_desc">
+		<text>Процент оставшихся патронов в магазине, при котором NPC решает отступить, найти укрытие или прекратить стрельбу для перезарядки.\n \nСнижение этого значения (например, 0.2 = 20%) делает NPC более агрессивными и склонными опустошать магазин перед отходом.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_aim_fire_angle">
+		<text>Угол открытия огня ИИ (радианы) (ai_aim_fire_angle)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_aim_fire_angle_desc">
+		<text>Максимальный угол (в радианах), на который NPC должен быть повернут к цели, прежде чем начнет стрельбу.\n \nСправочные значения:\n - 0.17 (10 град.)\n - 0.35 (20 град.)\n - 0.39 (22.5 град. — По умолчанию)\n - 0.52 (30 град.)\n - 0.70 (40 град.)\n - 1.04 (60 град.)\n - 1.57 (90 град.)\n \nВысокие значения делают NPC более реактивными, позволяя им вести беспорядочный огонь во время поворота, не дожидаясь идеального совмещения мушки с целью.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_enemy_inertia_time_to_somebody">
+		<text>Инерция врага ИИ: К другому NPC (мс) (ai_enemy_inertia_time_to_somebody)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_enemy_inertia_time_to_somebody_desc">
+		<text>Определяет, как долго NPC «привязан» к своей текущей цели-NPC, прежде чем ему будет разрешено переключиться на другого NPC.\n \nВысокие значения предотвращают частое переключение целей в крупных отрядных сражениях (эффект «дергания»). Низкие значения делают их чрезвычайно отзывчивыми на новые угрозы со стороны других NPC.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_enemy_inertia_time_to_actor">
+		<text>Инерция врага ИИ: К игроку (мс) (ai_enemy_inertia_time_to_actor)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_enemy_inertia_time_to_actor_desc">
+		<text>Определяет задержку, прежде чем NPC сможет переключить внимание с другой цели на игрока.\n \nЗначение 0 (по умолчанию) означает, что NPC бросит все дела, чтобы выстрелить в игрока в момент его обнаружения. Увеличение этого параметра дает игроку «период благодати», если NPC уже занят боем с кем-то другим.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_enemy_inertia_time_from_actor">
+		<text>Инерция врага ИИ: От игрока (мс) (ai_enemy_inertia_time_from_actor)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_enemy_inertia_time_from_actor_desc">
+		<text>Определяет, как долго NPC остается сфокусированным на игроке, прежде чем он решит переключиться на другую угрозу (например, на мутанта или другого NPC).\n \nВысокие значения делают NPC «одержимыми» игроком, игнорируя других врагов, пока игрок не погибнет или не скроется из виду на долгое время. Низкие значения позволяют им легко отвлекаться на другие стычки.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_search_inertia_time">
+		<text>Время инерции поиска ИИ (мс) (ai_search_inertia_time)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_search_inertia_time_desc">
+		<text>Устанавливает время, в течение которого NPC будет находиться в состоянии «Поиск/Засада» после потери визуального контакта с целью.\n \nВысокие значения (по умолчанию 15с) заставляют NPC долго оставаться начеку и выжидать за углами или в укрытии. Низкие значения заставляют их быстрее сдаваться и возвращаться в режим ожидания или патрулирования.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_hold_position_inertia_base">
+		<text>База инерции удержания позиции ИИ (мс) (ai_hold_position_inertia_base)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_hold_position_inertia_base_desc">
+		<text>Минимальное базовое время, в течение которого NPC будет удерживать позицию в бою перед принятием решения о перемещении, фланговом обходе или отступлении.\n \nПо умолчанию: 1000. \n \nБолее низкие значения заставляют NPC гораздо быстрее пересматривать свою тактическую позицию, что приводит к более динамичным и менее статичным перестрелкам.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_hold_position_inertia_random">
+		<text>Рандом инерции удержания позиции ИИ (мс) (ai_hold_position_inertia_random)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_hold_position_inertia_random_desc">
+		<text>Случайное количество времени, добавляемое к базовой инерции, чтобы сделать время удержания позиции непредсказуемым.\n \nПо умолчанию: 2000. \n \nНизкие значения делают NPC более стабильно агрессивными, тогда как высокие значения вносят больше разнообразия (кто-то пойдет в наступление быстро, кто-то будет ждать дольше).</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_grenade_throw_delay_base">
+		<text>База задержки броска гранаты ИИ (мс) (ai_grenade_throw_delay_base)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_grenade_throw_delay_base_desc">
+		<text>Базовое время инерции (в миллисекундах), необходимое NPC для броска гранаты, когда цель находится близко (менее 15 м).\n \nПо умолчанию: 1000. \n \nБолее низкие значения значительно ускоряют бросок гранаты, сокращая время, в течение которого NPC остается открытым.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_grenade_throw_delay_step">
+		<text>Шаг задержки броска гранаты ИИ (мс) (ai_grenade_throw_delay_step)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_grenade_throw_delay_step_desc">
+		<text>Дополнительная задержка, добавляемая для каждых 15 м дистанции (например, 15-30 м, 30-45 м, 45 м+).\n \nПо умолчанию: 500. \n \nЭто имитирует дополнительное время, необходимое для прицеливания и размаха при более дальнем броске.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_aim_inertia_time">
+		<text>Скорость прицеливания ИИ (мс) (ai_aim_inertia_time)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_aim_inertia_time_desc">
+		<text>Время инерции, необходимое NPC для прицеливания из оружия перед выстрелом.\n \nПо умолчанию: 500. \n \nБолее низкие значения позволяют NPC вскидывать оружие и открывать огонь гораздо быстрее.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_aim_queue_inertia_time">
+		<text>Задержка очереди ИИ (мс) (ai_aim_queue_inertia_time)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_aim_queue_inertia_time_desc">
+		<text>Задержка между очередями при стрельбе NPC.\n \nПо умолчанию: 300. \n \nБолее низкие значения делают стрельбу NPC очередями значительно быстрее.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_danger_ricochet_score">
+		<text>Приоритет опасности рикошета ИИ (ai_danger_ricochet_score)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_danger_ricochet_score_desc">
+		<text>Оценка значимости рикошетов пуль/ножей рядом с NPC.\n \nПо умолчанию: 3000. \n \nВ движке БОЛЕЕ НИЗКИЙ балл означает БОЛЕЕ ВЫСОКИЙ приоритет. Снижение этого значения заставляет ИИ относиться к промахам рядом с ними с большей срочностью, мгновенно переходя в состояние боевой готовности вместо медленного изучения места попадания.</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_move_to_cover_run">
+		<text>Бег ИИ в укрытие (ai_move_to_cover_run)</text>
+	</string>
+	<string id="ui_mm_modded_exes_gameplay_stalkers_ai_move_to_cover_run_desc">
+		<text>Если включено, NPC будут бежать, а не идти шагом при поиске укрытия во время боя. Это делает перестрелки более динамичными и не дает NPC медленно прогуливаться под огнем.</text>
 	</string>
 
 	<!-- Monsters -->
@@ -1069,10 +1162,10 @@
 		<text>Lua Parallel GC Debug (lua_parallel_gc_debug)</text>
 	</string>
 
-	<string id="ui_mm_modded_exes_visual_graphics_r__clear_resources_on_unload">
+	<string id="ui_mm_modded_exes_optimizations_r__clear_resources_on_unload">
 		<text>Очистить ресурсы во время загрузки уровня (r__clear_resources_on_unload)</text>
 	</string>
-	<string id="ui_mm_modded_exes_visual_graphics_r__clear_resources_on_unload_desc">
+	<string id="ui_mm_modded_exes_optimizations_r__clear_resources_on_unload_desc">
 		<text>Уменьшает потребление RAM и VRAM но увеличивает время загрузки уровней</text>
 	</string>
 
@@ -1088,5 +1181,9 @@
 	</string>
 	<string id="ui_mm_modded_exes_optimizations_keyboard_buffer_size">
 		<text>Буфер ввода для клавиатуры (keyboard_buffer_size)</text>
+	</string>
+
+	<string id="ui_mm_modded_exes_optimizations_unstable_text">
+		<text>Опции ниже нестабильны и приводят к багам и вылетам, включать их не рекомендуется</text>
 	</string>
 </string_table>

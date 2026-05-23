@@ -91,7 +91,15 @@ void CKinematics::CalculateBones(BOOL bForceExact)
 	RDEVICE.Statistic->Animation.Begin();
 #endif
 
-	Bone_Calculate(bones->at(iRoot), &Fidentity);
+    for (u16 id : m_bones_topo)
+    {
+        CBoneData* bd = (*bones)[id];
+        CBoneInstance& bi = bone_instances[id];
+        const Fmatrix* parent = (bd->GetParentID() == BI_NONE)
+            ? &Fidentity : &bone_instances[bd->GetParentID()].mTransform;
+        CLBone(bd, bi, parent, u8(-1));
+    }
+
 #ifdef DEBUG
 	check_kinematics				(this, dbg_name.c_str() );
 	RDEVICE.Statistic->Animation.End	();
@@ -104,54 +112,7 @@ void CKinematics::CalculateBones(BOOL bForceExact)
 		// mark
 		UCalc_Visibox = -(::Random.randI(psSkeletonUpdate - 1));
 		UCalc_ThisFrame = true;
-
-		// the update itself
-		Fbox Box;
-		Box.invalidate();
-		for (u32 b = 0; b < bones->size(); b++)
-		{
-			if (!LL_GetBoneVisible(u16(b))) continue;
-			Fobb& obb = (*bones)[b]->obb;
-			Fmatrix& Mbone = LL_GetBoneInstance(b).mTransform;
-			Fmatrix Mbox;
-			obb.xform_get(Mbox);
-			Fmatrix X;
-			X.mul_43(Mbone, Mbox);
-			Fvector& S = obb.m_halfsize;
-
-			Fvector P, A;
-			A.set(-S.x, -S.y, -S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-			A.set(-S.x, -S.y, S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-			A.set(S.x, -S.y, S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-			A.set(S.x, -S.y, -S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-			A.set(-S.x, S.y, -S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-			A.set(-S.x, S.y, S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-			A.set(S.x, S.y, S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-			A.set(S.x, S.y, -S.z);
-			X.transform_tiny(P, A);
-			Box.modify(P);
-		}
-		if (bones->size())
-		{
-			// previous frame we have updated box - update sphere
-			vis.box.min = (Box.min);
-			vis.box.max = (Box.max);
-			vis.box.getsphere(vis.sphere.P, vis.sphere.R);
-		}
+		CalculateBBox();
 #ifdef DEBUG
 		// Validate
 		VERIFY3(_valid(vis.box.min) && _valid(vis.box.max), "Invalid bones-xform in model", dbg_name.c_str());

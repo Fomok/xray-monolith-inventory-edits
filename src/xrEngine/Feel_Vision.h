@@ -25,7 +25,7 @@ namespace Feel
 		xr_vector<CObject*> diff;
 		collide::rq_results RQR;
 		xr_vector<ISpatialShared> r_spatial;
-		CObject const* m_owner;
+		CObject* m_owner;
 		CFrustum Frustum;
 		xrSRWLock lock_query, lock_visible;
 
@@ -33,7 +33,7 @@ namespace Feel
 		void o_delete(CObject* E);
 		void o_trace(Fvector& P, float dt, float vis_threshold);
 	public:
-		Vision(CObject const* owner);
+		Vision(CObject* owner);
 		virtual ~Vision();
 
 		struct feel_visible_Item
@@ -52,8 +52,8 @@ namespace Feel
 		xr_vector<feel_visible_Item> feel_visible;
 	public:
 		void feel_vision_clear();
-		void feel_vision_query(Fmatrix& mFull, Fvector& P);
-		void feel_vision_update(CObject* parent, Fvector& P, float dt, float vis_threshold);
+		void feel_vision_query(Fmatrix& mFull);
+		void feel_vision_update(Fvector& P, float dt, float vis_threshold);
 		void __stdcall feel_vision_relcase(CObject* object);
 
 		void feel_vision_get(xr_vector<CObject*>& R)
@@ -75,14 +75,15 @@ namespace Feel
 
 		Fvector feel_vision_get_vispoint(CObject* _O)
 		{
-			static Fvector feel_zero_point = { 0.f,0.f,0.f };
+			Fvector feel_zero_point = { flt_max, flt_max, flt_max };
 			if (!_O || _O->getDestroy() || feel_visible.empty())
 				return feel_zero_point;
 
 			xrSRWLockGuard guard(&lock_visible, true);
 			auto it = std::find_if(feel_visible.begin(), feel_visible.end(),
 				[_O](const feel_visible_Item& item) {
-					return _O == item.O && positive(item.fuzzy);
+					VERIFY(positive(item.fuzzy));
+					return _O == item.O;
 				});
 
 			if (it != feel_visible.end())

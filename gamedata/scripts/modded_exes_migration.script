@@ -1,6 +1,6 @@
 function on_game_start()
 	local modded_exes_operations_per_version = {
-		[20260508] = function()
+		[20260523] = function()
 			if get_modded_exes_name():find("MT") then
 				exec_console_cmd("r__rain_exp 1")
 			end
