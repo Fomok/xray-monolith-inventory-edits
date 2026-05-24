@@ -435,15 +435,8 @@ void CUILevelMap::Draw()
 					sz.mul(k);
 					sp->SetWndSize(sz);
 				}
-				else if (sp->m_scale_bounds.x > 0.0f || sp->m_scale_bounds.y > 0.0f)
-				{
-					bool visible = true;
-					if (sp->m_scale_bounds.x > 0.0f && gmz <= sp->m_scale_bounds.x)
-						visible = false;
-					if (sp->m_scale_bounds.y > 0.0f && gmz >= sp->m_scale_bounds.y)
-						visible = false;
-					sp->SetVisible(visible);
-				}
+				else if (sp->m_scale_bounds.x > 0.0f)
+					sp->SetVisible(sp->m_scale_bounds.x < gmz);
 			}
 		}
 	}
