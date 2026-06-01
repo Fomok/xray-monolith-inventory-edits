@@ -1071,6 +1071,9 @@
 	<string id="ui_mm_modded_exes_optimizations_mt_scheduler">
 		<text>Многопоточный планировщик (mt_scheduler)</text>
 	</string>
+	<string id="ui_mm_modded_exes_optimizations_mt_schedulerRT">
+		<text>Многопоточный планировщик для объектов реального времени (mt_schedulerRT)</text>
+	</string>
 	<string id="ui_mm_modded_exes_optimizations_scheduler_batch_size">
 		<text>Макс кол-во объектов на фрейм для планировщика (scheduler_batch_size)</text>
 	</string>
@@ -1097,6 +1100,12 @@
 	</string>
 	<string id="ui_mm_modded_exes_optimizations_r2_shadow_omnipart_vischeck_desc">
 		<text>Повышает производительность за счет проверки видимости источников света, созданных из точечных источников, и не рендеринга невидимых источников</text>
+	</string>
+	<string id="ui_mm_modded_exes_optimizations_r2_shadow_omnipart_vischeck">
+		<text>Проверка видимости через HOM для динамических объектов (r__hom_dynamic)</text>
+	</string>
+	<string id="ui_mm_modded_exes_optimizations_r2_shadow_omnipart_vischeck_desc">
+		<text>Может повысить производительность благодаря проверке видимости через HOM</text>
 	</string>
 	
 	<string id="ui_mm_modded_exes_optimizations_spawn_antifreeze">

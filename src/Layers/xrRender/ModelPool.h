@@ -56,7 +56,6 @@ private:
 	BOOL bForceDiscard;
 	BOOL bAllowChildrenDuplicate;
 	xrCriticalSection deffered_del_lock;
-    xrCriticalSection ModelPoolLock;
 	xrSRWLock ModelsLock;
 
 	void Destroy();

@@ -50,6 +50,20 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
     }
     
 
+	// HOM occlusion culling for dynamic objects
+    if (ps_r__common_flags.test(RFLAG_HOM_DYNAMIC))
+    {
+#if RENDER!=R_R1
+        if (i_mask[CDSGraphManager::fl_normal])
+#endif
+        {
+            Fbox world_bb;
+            world_bb.xform(pVisual->vis.box, *xform);
+            if (!RImplementation.HOM.visible(world_bb))
+                return;
+        }
+    }
+
 	// Distortive geometry should be marked and R2 special-cases it
 	// a) Allow to optimize RT order
 	// b) Should be rendered to special distort buffer in another pass

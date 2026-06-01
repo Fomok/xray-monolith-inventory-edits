@@ -174,6 +174,7 @@ extern BOOL interruptFireOnAimToggle;
 
 extern BOOL mt_UpdateWeaponSounds;
 extern BOOL mt_Scheduler;
+extern BOOL mt_SchedulerRT;
 extern BOOL mt_calc_bones;
 extern BOOL mt_ph_commander;
 extern BOOL mt_TaskManager;
@@ -224,6 +225,7 @@ extern u32 g_ai_aim_inertia_time;
 extern u32 g_ai_aim_queue_inertia_time;
 extern float g_ai_danger_ricochet_score;
 BOOL g_ai_move_to_cover_run = FALSE;
+BOOL g_ai_enhanced_vision = FALSE;
 
 extern CrosshairSettings g_crosshair_camera_near;
 extern CrosshairSettings g_crosshair_camera_far;
@@ -294,6 +296,8 @@ ENGINE_API extern float g_console_sensitive;
 
 extern BOOL g_auto_reload;
 u32 g_dead_body_collision = 1;
+
+extern int RESTRICTION_REBUILD_SMOOTH_FRAMES;
 
 xr_token dead_body_collision_tokens[] =
 {
@@ -1011,9 +1015,33 @@ bool valid_saved_game_name(LPCSTR file_name)
 	return (true);
 }
 
-void get_files_list(xr_vector<shared_str>& files, LPCSTR dir, LPCSTR file_ext)
+void get_files_list(xr_vector<shared_str>& files, LPCSTR dir, LPCSTR file_ext, bool force_rescan = false)
 {
 	VERIFY(dir && file_ext);
+
+	struct SFilesListCache
+	{
+		shared_str dir;
+		shared_str ext;
+		xr_vector<shared_str> files;
+		u32 updated_at = 0;
+	};
+
+	static SFilesListCache cache;
+
+	// Tooltips call this every frame while typing. Avoid forcing a full file-system
+	// rescan each frame by caching results for a short period.
+	constexpr u32 kCacheLifetimeMs = 10000;
+
+	const bool same_request = (cache.dir == dir) && (cache.ext == file_ext);
+	const bool cache_valid = !force_rescan && same_request && (Device.dwTimeGlobal >= cache.updated_at) &&
+		(Device.dwTimeGlobal - cache.updated_at < kCacheLifetimeMs);
+	if (cache_valid)
+	{
+		files = cache.files;
+		return;
+	}
+
 	files.clear_not_free();
 
 	FS_Path* P = FS.get_path(dir);
@@ -1040,6 +1068,11 @@ void get_files_list(xr_vector<shared_str>& files, LPCSTR dir, LPCSTR file_ext)
 		files.push_back(fn);
 	}
 	FS.m_Flags.set(CLocatorAPI::flNeedCheck, FALSE);
+
+	cache.dir = dir;
+	cache.ext = file_ext;
+	cache.files = files;
+	cache.updated_at = Device.dwTimeGlobal;
 }
 
 #include "UIGameCustom.h"
@@ -1120,6 +1153,9 @@ public:
 #ifdef DEBUG
 		Msg("Screenshot overhead : %f milliseconds", timer.GetElapsed_sec()*1000.f);
 #endif
+		// Keep "save"/"load" autocomplete current right after saving.
+		xr_vector<shared_str> refreshed_saves;
+		get_files_list(refreshed_saves, "$game_saves$", SAVE_EXTENSION, true);
 	} //virtual void Execute
 
 	virtual void fill_tips(vecTips& tips, u32 mode)
@@ -2825,14 +2861,11 @@ void CCC_RegisterCommands()
     CMD4(CCC_Integer, "ai_grenade_throw_delay_base", &g_ai_grenade_throw_delay_base, 0, 10000);
     CMD4(CCC_Integer, "ai_grenade_throw_delay_step", &g_ai_grenade_throw_delay_step, 0, 10000);
 
-    extern u32 g_ai_aim_inertia_time;
-    extern u32 g_ai_aim_queue_inertia_time;
     CMD4(CCC_Integer, "ai_aim_inertia_time", (int*)&g_ai_aim_inertia_time, 0, 10000);
     CMD4(CCC_Integer, "ai_aim_queue_inertia_time", (int*)&g_ai_aim_queue_inertia_time, 0, 10000);
     CMD4(CCC_Float, "ai_danger_ricochet_score", &g_ai_danger_ricochet_score, 0.0f, 10000.0f);
-	
-	extern BOOL g_ai_move_to_cover_run;
-	CMD4(CCC_Integer, "ai_move_to_cover_run", &g_ai_move_to_cover_run, 0, 1);
+    CMD4(CCC_Integer, "ai_move_to_cover_run", &g_ai_move_to_cover_run, 0, 1);
+    CMD4(CCC_Integer, "ai_enhanced_vision", &g_ai_enhanced_vision, 0, 1);
 
     CMD4(CCC_Float, "ai_vision_speed_boost", &g_ai_vision_speed_boost, 0.1f, 10.0f);
     CMD4(CCC_Float, "ai_reload_threshold", &g_ai_reload_threshold, 0.01f, 1.0f);
@@ -3113,13 +3146,14 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask, "blend_move_anims", &psDeviceFlags2, rsBlendMoveAnims);
 
 	CMD4(CCC_Integer, "mt_update_weapon_sounds", &mt_UpdateWeaponSounds, 0, 1);
-	CMD4(CCC_Integer, "mt_scheduler", &mt_Scheduler, 0, 1);
+    CMD4(CCC_Integer, "mt_scheduler", &mt_Scheduler, 0, 1);
+    CMD4(CCC_Integer, "mt_schedulerRT", &mt_SchedulerRT, 0, 1);
 	CMD4(CCC_Integer, "mt_level_call", &mt_ph_commander, 0, 1);
     CMD4(CCC_Integer, "mt_calc_bones", &mt_calc_bones, 0, 1);
     CMD4(CCC_Integer, "mt_task_manager", &mt_TaskManager, 0, 1);
     CMD4(CCC_Integer, "mt_ui", &mt_ui, 0, 1);
 
-	CMD4(CCC_Integer, "scheduler_batch_size", &SchedulerBatchSize, 32, 256);
+	CMD4(CCC_Integer, "scheduler_batch_size", &SchedulerBatchSize, 32, 65536);
 	CMD4(CCC_Integer, "scheduler_log", &SchedulerLog, 0, 1);
 
 	CMD4(CCC_Integer, "spawn_antifreeze", &spawn_antifreeze, 0, 1);
@@ -3136,6 +3170,8 @@ void CCC_RegisterCommands()
 	CMD4(CCC_Integer, "g_npcs_look_at_actor", &NPCsLookAtActor, 0, 1);
 	CMD4(CCC_Float, "g_npcs_look_at_actor_min_distance", &NPCsLookAtActorMinDistance, 1.f, 8.f);
 	CMD4(CCC_Integer, "g_interrupt_fire_on_aim_toggle", &interruptFireOnAimToggle, 0, 1);
+
+    CMD4(CCC_Integer, "g_restriction_rebuild_frames", &RESTRICTION_REBUILD_SMOOTH_FRAMES, 5, 60);
 
 	// demonized: Restores fun physics bugs like lift
 	CMD4(CCC_Integer, "fun_allowed", &fun_allowed, 0, 1);

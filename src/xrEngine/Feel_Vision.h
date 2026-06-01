@@ -8,6 +8,8 @@
 class IRender_Sector;
 class ISpatial;
 
+extern BOOL g_ai_enhanced_vision;
+
 namespace Feel
 {
 	const float fuzzy_update_vis = 1000.f; // speed of fuzzy-logic desisions
@@ -75,15 +77,17 @@ namespace Feel
 
 		Fvector feel_vision_get_vispoint(CObject* _O)
 		{
-			Fvector feel_zero_point = { flt_max, flt_max, flt_max };
+			Fvector feel_zero_point = { 0.f,0.f,0.f };
 			if (!_O || _O->getDestroy() || feel_visible.empty())
 				return feel_zero_point;
 
 			xrSRWLockGuard guard(&lock_visible, true);
 			auto it = std::find_if(feel_visible.begin(), feel_visible.end(),
 				[_O](const feel_visible_Item& item) {
-					VERIFY(positive(item.fuzzy));
-					return _O == item.O;
+                    if (g_ai_enhanced_vision)
+                        return _O == item.O;
+                    else
+                        return _O == item.O && positive(item.fuzzy);
 				});
 
 			if (it != feel_visible.end())

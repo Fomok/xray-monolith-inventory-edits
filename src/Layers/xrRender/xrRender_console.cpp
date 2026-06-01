@@ -118,7 +118,7 @@ xr_token screenshot_mode_token [ ] = {
 extern int psSkeletonUpdate;
 extern float r__dtex_range;
 
-Flags32 ps_r__common_flags = {/*RFLAG_NO_RAM_TEXTURES*/ }; // All renders
+Flags32 ps_r__common_flags = {/*RFLAG_NO_RAM_TEXTURES*/ RFLAG_HOM_DYNAMIC}; // All renders
 
 //int		ps_r__Supersample			= 1		;
 int ps_r__LightSleepFrames = 10;
@@ -1137,6 +1137,7 @@ void xrRender_initconsole()
 	CMD4(CCC_Integer, "r__occq_debug", &occq_debug, 0, 1);
 
 	CMD3(CCC_Mask, "r__no_ram_textures", &ps_r__common_flags, RFLAG_NO_RAM_TEXTURES);
+	CMD3(CCC_Mask, "r__hom_dynamic", &ps_r__common_flags, RFLAG_HOM_DYNAMIC);
 	CMD2(CCC_tf_Aniso, "r__tf_aniso", &ps_r__tf_Anisotropic); //	{1..16}
 	CMD2(CCC_tf_MipBias, "r__tf_mipbias", &ps_r__tf_Mipbias); // {-3 +3}
 

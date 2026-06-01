@@ -36,6 +36,7 @@ namespace PAPI
 		IC ~ParticleActions();
 
 		IC void			clear();
+        IC void         reserve(u32 capacity);
 
 		IC void			append(ParticleAction* pa) { actions.push_back(pa); }
 		IC bool			empty() { return	actions.empty(); }
@@ -62,6 +63,11 @@ IC void PAPI::ParticleActions::clear()
 		xr_delete(pPAction);
 
 	actions.clear();
+}
+
+IC void PAPI::ParticleActions::reserve(u32 capacity)
+{
+    actions.reserve(capacity);
 }
 
 //---------------------------------------------------------------------------

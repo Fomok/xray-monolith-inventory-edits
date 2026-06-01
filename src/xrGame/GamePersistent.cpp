@@ -41,6 +41,7 @@
 #include "gametype_chooser.h"
 
 extern BOOL mt_Scheduler;
+extern BOOL mt_SchedulerRT;
 
 //#ifdef DEBUG_MEMORY_MANAGER
 //	static	void *	ode_alloc	(size_t size)								{ return Memory.mem_alloc(size,"ODE");			}
@@ -66,7 +67,7 @@ CGamePersistent::CGamePersistent(void)
 	ambient_effect_wind_out_time = 0.f;
 	ambient_effect_wind_on = false;
 
-    ambient_sound_next_time.reserve(32);
+    ambient_sound_next_time.assign(32, 0);
 
 	m_pUI_core = NULL;
 	m_pMainMenu = NULL;
@@ -299,11 +300,6 @@ void CGamePersistent::WeathersUpdate()
 			
 			for (size_t idx = 0; I != E; ++I, ++idx)
 			{
-                if (ambient_sound_next_time.empty())
-                {
-                    break;
-                }
-
 				CEnvAmbient::SSndChannel& ch = **I;
 				if (ambient_sound_next_time[idx] == 0)
 				{
@@ -350,8 +346,8 @@ void CGamePersistent::WeathersUpdate()
 					ambient_particles	= Particles::Details::Create(eff->particles.c_str(),FALSE,false);
 					Fvector pos;
                     Fvector offset = eff->offset;
-                    offset.x += Random.randF(-5.f, 5.f);
-                    offset.z += Random.randF(-5.f, 5.f);
+                    offset.x += Random.randF(0.5f, 5.f) * (Random.randF(0.f, 1.f) < 0.5f ? -1.f : 1.f);
+                    offset.z += Random.randF(0.5f, 5.f) * (Random.randF(0.f, 1.f) < 0.5f ? -1.f : 1.f);
 					pos.add(Device.vCameraPosition, offset);
 					ambient_particles->play_at_pos(pos);
 					if (eff->sound._handle()) eff->sound.play_at_pos(0, pos);
@@ -730,9 +726,12 @@ void CGamePersistent::OnFrame()
 		}
 		else
 		{
-			PROF_EVENT("Sheduler RT");
-			::Engine.Sheduler.UpdateInit();
-			::Engine.Sheduler.UpdateRT();
+            if (!mt_SchedulerRT)
+            {
+                PROF_EVENT("Sheduler RT");
+                ::Engine.Sheduler.UpdateInit();
+                ::Engine.Sheduler.UpdateRT();
+            }
 		}
 
 		// update weathers ambient

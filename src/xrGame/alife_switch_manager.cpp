@@ -80,18 +80,6 @@ void CALifeSwitchManager::remove_online(CSE_ALifeDynamicObject* object, bool upd
 		object->m_bOnline = false;
 
 		m_saved_chidren = object->children;
-		CSE_ALifeTraderAbstract* inventory_owner = smart_cast<CSE_ALifeTraderAbstract*>(object);
-		if (inventory_owner)
-		{
-			m_saved_chidren.erase(
-				std::remove_if(
-					m_saved_chidren.begin(),
-					m_saved_chidren.end(),
-					remove_non_savable_predicate(&server())
-				),
-				m_saved_chidren.end()
-			);
-		}
 
 		server().Perform_destroy(object, net_flags(TRUE,TRUE));
 		VERIFY(object->children.empty());

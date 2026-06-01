@@ -203,7 +203,6 @@ dxRender_Visual* CModelPool::Instance_Register(LPCSTR N, dxRender_Visual* V)
 void CModelPool::Destroy()
 {
 	// Pool
-    xrCriticalSectionGuard g(ModelPoolLock);
 	Pool.clear();
 
 	// Registry
@@ -280,7 +279,6 @@ dxRender_Visual* CModelPool::Create(const char* name, IReader* data, bool assert
 	if (strext(low_name)) *strext(low_name) = 0;
 	
 	// 0. Search POOL
-    xrCriticalSectionGuard g(ModelPoolLock);
 	POOL_IT it = Pool.find(low_name);
 	if (it != Pool.end())
 	{
@@ -352,7 +350,7 @@ void CModelPool::DeleteInternal(dxRender_Visual* & V, BOOL bDiscard)
 	}
 	else
 	{
-        xrCriticalSectionGuard g(ModelPoolLock);
+		//
 		REGISTRY_IT it = Registry.find(V);
 		if (it != Registry.end())
 		{
@@ -504,7 +502,6 @@ bool CModelPool::Exists(LPCSTR N)
 	if (strext(low_name)) *strext(low_name) = 0;
 
 	// Search pool and return early if exists
-    xrCriticalSectionGuard g(ModelPoolLock);
 	POOL_IT it = Pool.find(low_name);
 	if (it != Pool.end())
 		return true;
@@ -541,7 +538,6 @@ dxRender_Visual* CModelPool::CreatePG(PS::CPGDef* source)
 
 void CModelPool::ClearPool(BOOL b_complete)
 {
-    xrCriticalSectionGuard g(ModelPoolLock);
 	POOL_IT _I = Pool.begin();
 	POOL_IT _E = Pool.end();
 	for (; _I != _E; _I++)
@@ -577,7 +573,6 @@ void CModelPool::dump()
 		VERIFY(K);
 		if (K)
 		{
-            xrCriticalSectionGuard g(ModelPoolLock);
 			u32 cur = K->mem_usage(true);
 			sz += cur;
 			bool b_free = (Pool.find(it->second) != Pool.end());

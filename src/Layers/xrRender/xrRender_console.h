@@ -99,6 +99,7 @@ extern ECORE_API float ps_r__tf_Mipbias;
 enum
 {
 	RFLAG_NO_RAM_TEXTURES = (1 << 0),
+	RFLAG_HOM_DYNAMIC = (1 << 1),
 };
 
 extern ECORE_API Flags32 ps_r__common_flags;

@@ -79,7 +79,9 @@ Fvector const& actor::get_position() const
 
 bool actor::need_update() const
 {
-	return !m_open_doors.empty() && !m_closed_doors.empty();
+	// Continue door state maintenance while at least one pending queue exists.
+	// Using && can leave a single queue "orphaned", preventing initiator release.
+	return !m_open_doors.empty() || !m_closed_doors.empty();
 }
 
 class passed_doors_predicate

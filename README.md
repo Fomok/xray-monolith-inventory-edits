@@ -235,6 +235,56 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.06.01**
+
+* Main and MT:
+  * Possibility to set shadow, volumetric, ambient_shadow, ambient_volumetric properties for lights of CHangingLamp, such as signal lights
+  * Signal lights are volumetric and cast shadows, hanging lamps cast shadows
+  * `obj:force_set_restrictor_type` for space restrictors and `obj:invalidate_restrictions` for living creatures
+  * `obj:is_enabled_anomaly` export for anomalies
+  * `g_restriction_rebuild_frames` cvar to tune amount of frames to wait for pathing rebuild until it forces to wait, default 20
+  * Fixed `ai_move_to_cover` Modded Exe option
+  * Anomalies evasion for monsters:
+    * When monster is near any anomaly, the anomaly registers itself as space restrictor and forces a monster to calculate new path
+    * Depending on if monster's path was recalculated in time, it will move around the anomaly
+  * Fix stutter when typing `load`/`save` in console
+  * Safer transfer money script functions, thanks `damiansirbu` for the idea
+  * Make splash logo window not overlap other windows, thanks `AzuNar` for the idea
+  * `CSE_ALifeOnlineOfflineGroup` force `actualize` before update and syncronize locations calls
+  * `xr_weapon_jam` refactor
+    * Engine calls `GetConditionMisfireProbability`
+    * `npc_get_misfire_probability` callback to set probability
+    * old code ported to the new callback system
+  * Leyths: PDA map: cap zoom easing and cancel on user pan (https://github.com/themrdemonized/xray-monolith/pull/542)
+  * erepb:
+    * Fix generate available tasks for warfare traders (https://github.com/themrdemonized/xray-monolith/pull/547)
+    * Fix double online transition crash (https://github.com/themrdemonized/xray-monolith/pull/552)
+    * Fix busyhands: remove non-savable children (https://github.com/themrdemonized/xray-monolith/pull/553)
+    * Skip member-less squad update (https://github.com/themrdemonized/xray-monolith/pull/554)
+  * Skyki15: Re-enable NPC misfire and description fixes (https://github.com/themrdemonized/xray-monolith/pull/550)
+
+* MT:
+  * Implement automatic invalid `level_vertex_id` correction in paths (https://github.com/ixray-team/ixray-1.6-stcop/commit/a8d8d9bd97d77d90c8282bee41afaf6cea16c39c)
+  * Fix invalid position recovery when going online (https://github.com/ixray-team/ixray-1.6-stcop/commit/5f8b2c47632e302730be1cede843d61c8e8aadd8)
+  * `r__hom_dynamic` command to enable HOM visibility tests for dynamic objects, default disabled
+  * `mt_SchedulerRT` command to toggle actor's and other RT objects scheduler to second thread, will increase performance but will cause problems, default disabled
+  * Increased range of `scheduler_batch_size`.
+  * Default batch size is 256. GAMMA players are recommended to increase batch size to 512 or more
+  * `level.scheduler_flush` to force maximum size of scheduler batch size
+  * On first few seconds after loading, scheduler will be forced to max batch size, then it will go back to the value of `scheduler_batch_size`, fixes occasional bugs of some mods
+  * Optimize particle loading with memory reservation (https://github.com/ixray-team/ixray-1.6-stcop/commit/04459cdaf9665857a2353351ac8bd928d12306a8)
+  * Possible fix for stuck doors
+  * Improved wait loops for particle system
+  * `ai_enhanced_vision` cvar to remove "fuzzy" check for AI visibility. Enabling it makes them see more aggresively but might lead to seeing through walls. Default disabled
+
+**2026.05.24**
+
+* Main and MT:
+  * Revert label scaling behaviour changes introduced in https://github.com/themrdemonized/xray-monolith/pull/535 due to bugs in GAMMA
+
+* MT:
+   * Revert `Topological sort bones, 33% perf increase (https://github.com/OpenXRay/xray-16/commit/797ba9236bb4b2e6f4f914f71bf684f0888a9479)`
+
 **2026.05.23**
 
 * Main and MT:

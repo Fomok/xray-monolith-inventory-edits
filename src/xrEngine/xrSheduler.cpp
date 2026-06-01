@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "xrSheduler.h"
 #include "xr_object.h"
+#include "IGame_Level.h"
 
 #include "../xrCore/profiler.h"
 
@@ -250,22 +251,11 @@ void CSheduler::Unregister(ISheduled* A)
 	// wait until done with m_current_step_obj
 	if (m_current_step_obj == A)
 	{
-		int spin_count = 0;
-
 		// Loop until the worker releases the object
+        xrSpinWait w;
 		while (m_current_step_obj == A)
 		{
-			// Phase 1: Spin briefly (fast reaction if it finishes instantly)
-			if (spin_count < 16)
-			{
-				_mm_pause();
-				spin_count++;
-			}
-			// Phase 2: Yield CPU (don't burn 100% CPU waiting for a heavy update)
-			else
-			{
-				std::this_thread::yield();
-			}
+            w();
 		}
 	}
 
@@ -335,8 +325,9 @@ void CSheduler::Pop()
 	PopImpl();
 }
 
-int SchedulerBatchSize = 128;
+int SchedulerBatchSize = 256;
 BOOL SchedulerLog = FALSE;
+extern ENGINE_API IGame_Level* g_pGameLevel;
 void CSheduler::ProcessStep()
 {
 	// Normal priority
@@ -346,9 +337,11 @@ void CSheduler::ProcessStep()
 	u32 ItemsCount = Items.size();
 	float target = psShedulerTarget;
 
+    u32 batchSize = g_pGameLevel && g_pGameLevel->schedulerFlush ? 65536 : SchedulerBatchSize;
+
 	{
 		xrSRWLockGuard g(ItemsLock);
-		while (!Items.empty() && Top().dwTimeForExecute < dwTime && ItemsBatch.size() < SchedulerBatchSize)
+		while (!Items.empty() && Top().dwTimeForExecute < dwTime && ItemsBatch.size() < batchSize)
 		{
 			// Optional: Also stop collecting if we are already out of time
 			// (Prevents grabbing items we won't even touch)

@@ -130,9 +130,7 @@ PAGE = page {
 		cmd = "ai_danger_ricochet_score",
 	},
 	line {},
-	check {
+	list_bool {
 		id = "ai_move_to_cover_run",
-		def = false,
-		cmd = "ai_move_to_cover_run",
 	},
 }

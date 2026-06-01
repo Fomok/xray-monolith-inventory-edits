@@ -620,6 +620,11 @@ bool is_level_present()
 	return (!!g_pGameLevel);
 }
 
+void scheduler_flush(bool b)
+{
+    g_pGameLevel->schedulerFlush = b;
+}
+
 void add_call(const ::luabind::functor<bool>& condition, const ::luabind::functor<void>& action)
 {
 	::luabind::functor<bool> _condition = condition;
@@ -2589,6 +2594,8 @@ void CLevel::script_register(lua_State* L)
 			def("disable_input", disable_input),
 			def("enable_input", enable_input),
 			def("spawn_phantom", spawn_phantom),
+
+            def("scheduler_flush", scheduler_flush),
 
 			def("get_bounding_volume", get_bounding_volume),
 

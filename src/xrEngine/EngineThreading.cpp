@@ -11,6 +11,7 @@
 #include "../../Include/xrRender/Kinematics.h"
 
 BOOL mt_Scheduler = TRUE;
+BOOL mt_SchedulerRT = FALSE;
 
 void XRay::Engine::PreRenderThread()
 {
@@ -142,8 +143,15 @@ void XRay::Engine::GameThread()
 		if (mt_Scheduler)
 		{
 			PROF_EVENT("Sheduler Deferred");
-			::Engine.Sheduler.UpdateDeferred();
-			::Engine.Sheduler.UpdateFinalize();
+            if (mt_SchedulerRT)
+            {
+                ::Engine.Sheduler.Update();
+            }
+            else
+            {
+                ::Engine.Sheduler.UpdateDeferred();
+                ::Engine.Sheduler.UpdateFinalize();
+            }
 		}
 	}
 

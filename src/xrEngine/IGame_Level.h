@@ -82,6 +82,8 @@ public:
 	BOOL bReady;
 
 	CInifile* pLevel;
+
+    bool schedulerFlush;
 public: // deferred sound events
 	struct _esound_delegate
 	{
