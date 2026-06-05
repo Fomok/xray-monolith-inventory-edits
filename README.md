@@ -235,6 +235,11 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.06.05**
+* Main and MT:
+  * Bugfixes to Modded Exes options
+  * erepb: Fix `[TR] can't switch child [%d] offline, it's null` spam (https://github.com/themrdemonized/xray-monolith/pull/553)
+
 **2026.06.01**
 
 * Main and MT:
