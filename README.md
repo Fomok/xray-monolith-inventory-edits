@@ -238,6 +238,7 @@ How to compile exes:
 **2026.06.05**
 * Main and MT:
   * Bugfixes to Modded Exes options
+  * `db.actor:cast_Actor():conditions():GetAlcohol()` export to get current alcohol level
   * erepb: Fix `[TR] can't switch child [%d] offline, it's null` spam (https://github.com/themrdemonized/xray-monolith/pull/553)
 
 **2026.06.01**
