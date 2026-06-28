@@ -111,9 +111,10 @@ namespace text_editor
 		return (GetKeyState(VK_CAPITAL) & 1) != 0;
 	}
 
+    // demonized: use DISABLED numlock for scrolling, like in normal apps
     bool line_edit_control::get_num_lock_state()
     {
-        return (GetKeyState(VK_NUMLOCK) & 1) != 0;
+        return (GetKeyState(VK_NUMLOCK) & 1) == 0;
     }
 
 	void line_edit_control::update_key_states()

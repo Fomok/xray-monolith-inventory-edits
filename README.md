@@ -235,13 +235,20 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.06.28**
+* Main and MT:
+  * Less verbose logging on mismatched shader cache
+  * GhenTuong: Export CScriptGameObject and CWeapon (https://github.com/themrdemonized/xray-monolith/pull/584)
+  * antglobes: Numpad Support for Console (https://github.com/themrdemonized/xray-monolith/pull/583)
+  * erepb: Normalize map spot sizes for army and ecolog factions (https://github.com/themrdemonized/xray-monolith/pull/582)
+
 **2026.06.21**
 * Main and MT:
   * New Lua exports to get/set hud fire bone/pos(silencer)
   * Possibility to change new fields with upgrades:
 fire_point, fire_point2, fire_point_silencer, hud_fire_point, hud_fire_point2, hud_fire_point_silencer
   * `motion_mark_reload` ltx to Specify motion mark to trigger reload logic, when empty or unspecified uses any motion mark like vanilla code
-  * shader cache: check and save source CRC, (after shader editing) if it does not match, recompile the shader, inspired by openxray
+  * shader cache: Automatic shader cache invalidation, no need to clean it manually. It checks and saves source CRC, if after changes CRC dont match, shader will be recompiled, inspired by openxray
   * Priler: infinite/super long bolts throwing issue workaround (https://github.com/themrdemonized/xray-monolith/pull/575)
   * Leyths: CCar Lua surface + physics-island opt-in for >4-wheel vehicles (https://github.com/themrdemonized/xray-monolith/pull/569)
 
