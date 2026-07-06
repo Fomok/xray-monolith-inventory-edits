@@ -141,6 +141,40 @@ IC bool CAI_Stalker::sniper_fire_mode() const
 	return (m_sniper_fire_mode);
 }
 
+IC void CAI_Stalker::set_aim_params(float max_angle, float min_angle, float min_speed, float predict_time)
+{
+	m_aim_max_angle    = max_angle;
+	m_aim_min_angle    = min_angle;
+	m_aim_min_speed    = min_speed;
+	m_aim_predict_time = predict_time;
+}
+
+// Negative = unset: follow the live console vars, so an unset NPC and existing
+// cvar consumers (e.g. per-rank aim tuning mods) keep exact vanilla behavior.
+IC float CAI_Stalker::aim_min_speed() const
+{
+	extern float g_ai_aim_min_speed;
+	return (m_aim_min_speed < 0.f ? g_ai_aim_min_speed : m_aim_min_speed);
+}
+
+IC float CAI_Stalker::aim_min_angle() const
+{
+	extern float g_ai_aim_min_angle;
+	return (m_aim_min_angle < 0.f ? g_ai_aim_min_angle : m_aim_min_angle);
+}
+
+IC float CAI_Stalker::aim_max_angle() const
+{
+	extern float g_ai_aim_max_angle;
+	return (m_aim_max_angle < 0.f ? g_ai_aim_max_angle : m_aim_max_angle);
+}
+
+IC float CAI_Stalker::aim_predict_time() const
+{
+	extern float g_aim_predict_time;
+	return (m_aim_predict_time < 0.f ? g_aim_predict_time : m_aim_predict_time);
+}
+
 IC void CAI_Stalker::take_items_enabled(bool value)
 {
 	m_take_items_enabled = value;

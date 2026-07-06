@@ -819,11 +819,27 @@ private:
 	bool m_sniper_update_rate;
 	bool m_sniper_fire_mode;
 
+	// Per-NPC aim params, read per frame in CSightManager::Exec_Look (swing speed + firing cone)
+	// and CSightAction (target lead). Negative = unset: the getters fall back to the live console
+	// vars (ai_aim_min_speed / ai_aim_min_angle / ai_aim_max_angle / ai_aim_predict_time), so an
+	// unset NPC and existing cvar consumers keep exact vanilla behavior. set_aim_params with a
+	// negative component reverts that component to the global.
+	float m_aim_min_speed;
+	float m_aim_min_angle;
+	float m_aim_max_angle;
+	float m_aim_predict_time;
+
 public:
 	IC void sniper_update_rate(bool value);
 	IC bool sniper_update_rate() const;
 	IC void sniper_fire_mode(bool value);
 	IC bool sniper_fire_mode() const;
+
+	IC void  set_aim_params(float max_angle, float min_angle, float min_speed, float predict_time);
+	IC float aim_min_speed() const;
+	IC float aim_min_angle() const;
+	IC float aim_max_angle() const;
+	IC float aim_predict_time() const;
 
 private:
 	shared_str m_aim_bone_id;

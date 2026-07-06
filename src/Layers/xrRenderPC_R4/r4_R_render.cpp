@@ -8,6 +8,8 @@
 
 #include "../xrRender/QueryHelper.h"
 
+#include	"../xrRender/dxRenderDeviceRender.h"
+
 void CRender::render_menu()
 {
 	PIX_EVENT(render_menu);
@@ -91,6 +93,9 @@ void CRender::Render()
 		m_bFirstFrameAfterReset = false;
 		return;
 	}
+
+	if ((Device.dwFrame % (u32)ps_r__tex_evict_interval) == 0)
+		dxRenderDeviceRender::Instance().Resources->EvictStalledTextures();
 
 	//.	VERIFY					(g_pGameLevel && g_pGameLevel->pHUD);
 

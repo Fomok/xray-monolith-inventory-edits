@@ -1361,6 +1361,15 @@
 	<string id="ui_mm_modded_exes_optimizations_r__clear_resources_on_unload_desc">
 		<text>Reduces RAM and VRAM usage but increases loading times</text>
 	</string>
+	<string id="ui_mm_modded_exes_optimizations_r__tex_evict_enabled">
+		<text>Periodically clear unused textures (r__tex_evict_enabled)</text>
+	</string>
+	<string id="ui_mm_modded_exes_optimizations_r__tex_evict_age_frames">
+		<text>Wait n frames to clear (r__tex_evict_age_frames)</text>
+	</string>
+	<string id="ui_mm_modded_exes_optimizations_r__tex_evict_batch_size">
+		<text>Batch size to clear (r__tex_evict_batch_size)</text>
+	</string>
 
 	<string id="ui_mm_modded_exes_optimizations_dltx_use_cache">
 		<text>DLTX Cache (dltx_use_cache)</text>

@@ -235,6 +235,23 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.07.06**
+* Main and MT:
+  * Fix `CPatrolPoint::load_from_config` not working properly
+  * erepb:
+    * feat: PDA context menu from multiple spots (https://github.com/themrdemonized/xray-monolith/pull/585)
+    * feat: add submenu support to PDA context menu (https://github.com/themrdemonized/xray-monolith/pull/591)
+  * damiansirbu:
+    * feat(ai): per-NPC aim params and vision speed setters (https://github.com/themrdemonized/xray-monolith/pull/594)
+    * feat(ai): combat action-switch veto callback (npc_on_combat_action_switch) (https://github.com/themrdemonized/xray-monolith/pull/595)
+    * feat(ai): bind can_kill_enemy/member and fire_make_sense fire gates (https://github.com/themrdemonized/xray-monolith/pull/596)
+
+MT:
+  * address crash `burer_state_attack_inline.h (89): CStateBurerAttack<CBurer>::execute`
+  * Don't clear ui and `$user` textures on `r__clear_resources_on_unload`
+  * Leyths: alife: guard against `_SPAWN_ID(-1)` in spawn graph traversal (https://github.com/themrdemonized/xray-monolith/pull/590)
+  * noisethanks: feat(renderer): mid-session texture eviction system (https://github.com/themrdemonized/xray-monolith/pull/592)
+
 **2026.06.28**
 * Main and MT:
   * Less verbose logging on mismatched shader cache
