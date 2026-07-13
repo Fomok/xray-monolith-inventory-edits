@@ -1056,6 +1056,7 @@
     <ClInclude Include="Car.h" />
     <ClInclude Include="CarDamageParticles.h" />
     <ClInclude Include="CarLights.h" />
+    <ClInclude Include="CarDrone.h" />
     <ClInclude Include="CarWeapon.h" />
     <ClInclude Include="car_memory.h" />
     <ClInclude Include="cdkey_ban_list.h" />
@@ -2738,6 +2739,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="CarSound.cpp" />
+    <ClCompile Include="CarDrone.cpp" />
     <ClCompile Include="CarWeapon.cpp" />
     <ClCompile Include="CarWheels.cpp" />
     <ClCompile Include="car_memory.cpp" />
