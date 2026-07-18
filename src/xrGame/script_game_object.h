@@ -849,6 +849,7 @@ public:
 
 	void register_in_combat();
 	void unregister_in_combat();
+	void make_enemy_visible(CScriptGameObject* enemy);
 	CCoverPoint const* find_best_cover(Fvector position_to_cover_from);
 
 	// approved by Dima smart covers functions
