@@ -165,6 +165,11 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		// demonized: list all bones
 		.def("list_bones", SAFE_WRAP(&CScriptGameObject::list_bones))
 
+#ifdef CBULLETMANAGER_EX
+		.def("GetBulletCheckVisual", SAFE_WRAP(&CScriptGameObject::GetBulletCheckVisual))
+		.def("SetBulletCheckVisual", SAFE_WRAP(&CScriptGameObject::SetBulletCheckVisual))
+#endif
+
 		//////////////////////////////////////////////////////////////////////////
 		// Space restrictions
 		//////////////////////////////////////////////////////////////////////////

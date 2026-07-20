@@ -1106,6 +1106,11 @@ public:
 
 	::luabind::object list_bones(bool bHud = false);
 
+#ifdef CBULLETMANAGER_EX
+    bool GetBulletCheckVisual();
+    void SetBulletCheckVisual(bool value);
+#endif
+
 	bool IsBoneVisible(LPCSTR bone_name, bool bHud = false);	
 	void SetBoneVisible(LPCSTR bone_name, bool bVisibility, bool bRecursive = true, bool bHud = false);	
 	//CAI_Stalker
