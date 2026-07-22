@@ -235,6 +235,22 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.07.22**
+* Main and MT:
+  * fix non working `on_loading_screen_dismissed` callback when `keypress_on_start 0`
+  * fixed missing fields in `ammo_base` mentioned in https://github.com/themrdemonized/xray-monolith/pull/612
+  * Bookshelf9854: replace level.iterate_nearest with pre-filtered monsters registry in anomaly_restrictor_update (https://github.com/themrdemonized/xray-monolith/pull/605)
+  * damiansirbu:
+    * Cover re-pick veto callback (npc_on_best_cover_repick) (https://github.com/themrdemonized/xray-monolith/pull/607)
+    * NPC weapon reload event callbacks (npc_on_weapon_reload_start/stop) (https://github.com/themrdemonized/xray-monolith/pull/611)
+    * Bind make_enemy_visible (force seen-class enemy memory for stalkers)  (https://github.com/themrdemonized/xray-monolith/pull/613)
+  * emgComplex: feat(HudItem):lua binding for toggle fl_inertion_enable (https://github.com/themrdemonized/xray-monolith/pull/619)
+  * GhenTuong: Add an option "bullet_check_visual" in object section to validate bullet hit. (https://github.com/themrdemonized/xray-monolith/pull/620)
+
+* MT:
+  * Possible crash fix on level change in LocatorAPI
+  * noisethanks: Address a race condition with reloading evicted textures by using texture_load_tasks PPL group. (https://github.com/themrdemonized/xray-monolith/pull/604)
+
 **2026.07.13**
 * Main and MT:
   * erepb: fix: replay spot add-properties at click... (https://github.com/themrdemonized/xray-monolith/pull/598)
