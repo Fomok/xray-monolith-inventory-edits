@@ -527,6 +527,8 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("set_hud_fire_bone2", SAFE_WRAP((void (CScriptGameObject::*)(LPCSTR))(&CScriptGameObject::set_hud_fire_bone2)))
 		.def("set_hud_fire_bone_silencer", SAFE_WRAP((void (CScriptGameObject::*)(u16))(&CScriptGameObject::set_hud_fire_bone_silencer)))
 		.def("set_hud_fire_bone_silencer", SAFE_WRAP((void (CScriptGameObject::*)(LPCSTR))(&CScriptGameObject::set_hud_fire_bone_silencer)))
+		.def("hud_inertion_enabled", SAFE_WRAP(&CScriptGameObject::hud_inertion_enabled))
+		.def("set_hud_inertion_enabled", SAFE_WRAP(&CScriptGameObject::set_hud_inertion_enabled))
 		// For EatableItem
 		.def("set_remaining_uses", SAFE_WRAP(&CScriptGameObject::SetRemainingUses))
 		.def("get_remaining_uses", SAFE_WRAP(&CScriptGameObject::GetRemainingUses))

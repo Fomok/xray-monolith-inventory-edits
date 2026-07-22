@@ -749,6 +749,9 @@
         void set_hud_fire_bone2(string bone_name)
         void set_hud_fire_bone_silencer(u16 id)
         void set_hud_fire_bone_silencer(string bone_name)
+        // HUD item inertia
+        bool set_hud_inertion_enabled()
+        void hud_inertion_enabled(bool value)
 
         // Torch
         function update_torch()

@@ -1069,6 +1069,8 @@ public:
 	void set_hud_fire_bone2(LPCSTR bone_name);
 	void set_hud_fire_bone_silencer(u16 bone_id);
 	void set_hud_fire_bone_silencer(LPCSTR bone_name);
+	bool hud_inertion_enabled() const;
+	void set_hud_inertion_enabled(bool value);
 	//Works for anything with visual
 	u16 bone_id(LPCSTR bone_name, bool bHud);
 	u16 bone_id(LPCSTR bone_name) { return bone_id(bone_name, false); }
