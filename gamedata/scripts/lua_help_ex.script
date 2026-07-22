@@ -935,6 +935,8 @@
 
 		// Forcibly set the zoom type for the weapon
 		function ForceSetZoomType(float)
+
+        callbacks (see callbacks_gameobject.script): npc_on_weapon_reload_start, npc_on_weapon_reload_stop -- (npc, wpn), fired on a stalker's weapon entering/leaving the reload state; actor reloads fire actor_on_weapon_reload instead
     }
 
     class CWeaponKnife : CWeapon {

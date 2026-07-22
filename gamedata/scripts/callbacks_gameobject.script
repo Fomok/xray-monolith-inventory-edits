@@ -391,6 +391,23 @@ _G.CAI_Stalker__OnWeaponShotStop = function(npc)
 	SendScriptCallback("npc_on_weapon_shot_stop", npc)
 end
 
+-- NPC weapon reload start callback. Fires when a stalker's weapon enters the reload state, on every
+-- reload path (planner reload, scripted state, tri-state shotgun shell loading, misfire clear).
+-- The actor is excluded: actor reloads already fire actor_on_weapon_reload.
+AddScriptCallback("npc_on_weapon_reload_start")
+_G.CAI_Stalker__OnWeaponReloadStart = function(npc, weapon)
+	SendScriptCallback("npc_on_weapon_reload_start", npc, weapon)
+end
+
+-- NPC weapon reload stop callback. Fires when the weapon leaves the reload state for any reason
+-- (finished, interrupted by a weapon or state switch). Best-effort: a weapon detached mid-reload
+-- (owner died, weapon dropped) has no stalker parent and fires nothing - where the truth matters,
+-- poll wpn:get_state() == 7 (CWeapon::eReload; eFire=5, eFire2=6, eReload=7 from eLastBaseState=4).
+AddScriptCallback("npc_on_weapon_reload_stop")
+_G.CAI_Stalker__OnWeaponReloadStop = function(npc, weapon)
+	SendScriptCallback("npc_on_weapon_reload_stop", npc, weapon)
+end
+
 -- NPC grenade throw gate. Return false to prevent the throw. Use npc:rank_name() to scale by rank
 -- Note: only fires when throw trajectory is clear, after engine validity checks pass
 AddScriptCallback("npc_on_should_throw")
