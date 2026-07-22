@@ -754,6 +754,18 @@ bool CScriptGameObject::is_bone_visible(u16 bone_id, bool bHud)
 	return result;
 }
 
+#ifdef CBULLETMANAGER_EX
+bool CScriptGameObject::GetBulletCheckVisual()
+{
+    return object().GetBulletCheckVisual();
+}
+
+void CScriptGameObject::SetBulletCheckVisual(bool value)
+{
+    object().SetBulletCheckVisual(value);
+}
+#endif
+
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////

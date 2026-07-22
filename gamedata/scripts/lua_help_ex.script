@@ -728,6 +728,9 @@
         function set_bone_visible(string bone_name, bool bVisibility, bool bRecursive, bool bHud)
 
         function list_bones(bool bHud = false)
+		
+		bool GetBulletCheckVisual()
+		void SetBulletCheckVisual(bool)
 
         // HUD item fire points/bones
         Fvector hud_fire_point()
