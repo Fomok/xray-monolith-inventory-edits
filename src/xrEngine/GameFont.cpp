@@ -352,7 +352,7 @@ void CGameFont::OutSkip(float val)
 
 float CGameFont::SizeOf_(const char cChar)
 {
-	return (GetCharTC((u16)(u8)(((IsMultibyte() && cChar == ' ')) ? 0 : cChar)).z * vInterval.x);
+	return (GetCharTC((u16)(u8)(((IsMultibyte() && cChar == ' ')) ? 0 : cChar)).z * WidthScale() * vInterval.x);
 }
 
 float CGameFont::SizeOf_(LPCSTR s)
@@ -375,7 +375,7 @@ float CGameFont::SizeOf_(LPCSTR s)
 		for (int j = 0; j < len; j++)
 			X += GetCharTC((u16)(u8)s[j]).z;
 
-	return (X * vInterval.x);
+	return (X * WidthScale() * vInterval.x);
 }
 
 float CGameFont::SizeOf_(const wide_char* wsStr)
@@ -395,7 +395,7 @@ float CGameFont::SizeOf_(const wide_char* wsStr)
 			X += fDelta;
 		}
 
-	return (X * vInterval.x);
+	return (X * WidthScale() * vInterval.x);
 }
 
 float CGameFont::CurrentHeight_()

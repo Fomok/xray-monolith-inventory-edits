@@ -78,6 +78,8 @@ public:
 	void SetHeight(float S);
 
 	IC float GetHeight() { return fCurrentHeight; };
+
+	IC float WidthScale() { return (fHeight > 0.f) ? (fCurrentHeight / fHeight) : 1.f; };
 	IC void SetInterval(float x, float y) { vInterval.set(x, y); };
 	IC void SetInterval(const Fvector2& v) { vInterval.set(v); };
 	IC void SetAligment(EAligment aligment) { eCurrentAlignment = aligment; }
