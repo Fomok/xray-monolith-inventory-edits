@@ -117,4 +117,7 @@ public:
 #endif
 };
 
+// Resolves which atlas key of `section` to load for the current Device.dwHeight.
+ENGINE_API LPCSTR GetFontTextureName(LPCSTR section);
+
 #endif // _XR_GAMEFONT_H_
