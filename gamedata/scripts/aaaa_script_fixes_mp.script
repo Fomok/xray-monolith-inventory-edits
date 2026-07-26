@@ -1225,6 +1225,25 @@ utils_item.check_cache = function(...)
 	return false
 end
 
+-- Disable sim when in Warfare
+local old_axr_generate_available_tasks = axr_task_manager.generate_available_tasks
+function axr_task_manager.generate_available_tasks(npc, is_sim)
+	if is_sim and _G.WARFARE and warfare.is_warfare_trader(npc) then
+		is_sim = false
+	end
+	return old_axr_generate_available_tasks(npc, is_sim)
+end
+
+-- Fix possible busy hands due to storing objects in ui_debug_launcher
+function game_object_on_net_destroy_ui_debug_launcher(obj)
+	if ui_debug_launcher.o1 and obj:id() == ui_debug_launcher.o1:id() then
+		ui_debug_launcher.o1 = nil
+	end
+	if ui_debug_launcher.o2 and obj:id() == ui_debug_launcher.o2:id() then
+		ui_debug_launcher.o2 = nil
+	end
+end
+
 -- Actually persistent weather
 -- Storing last weather file, current weather file and interpolation between them from engine
 -- On load first force apply previous weather, then apply new weather but not forced, then apply interpolation
@@ -1479,14 +1498,6 @@ function luagc_cleanup()
 	printf("~[luagc_cleanup] collectgarbage after=%sKb",collectgarbage("count")*1024)
 end
 
-local old_axr_generate_available_tasks = axr_task_manager.generate_available_tasks
-function axr_task_manager.generate_available_tasks(npc, is_sim)
-	if is_sim and _G.WARFARE and warfare.is_warfare_trader(npc) then
-		is_sim = false
-	end
-	return old_axr_generate_available_tasks(npc, is_sim)
-end
-
 -- Bump scheduler batch size on first update for flushing, then reduce it after some time
 function actor_on_first_update_scheduler_flush()
 	if not level.scheduler_flush then
@@ -1520,6 +1531,8 @@ function on_game_start()
 
 	RegisterScriptCallback("npc_on_update", npc_on_update_force_trader_update)
 	RegisterScriptCallback("npc_on_hit_callback", transparent_gg_add_to_ignore_ids)
+
+	RegisterScriptCallback("game_object_on_net_destroy", game_object_on_net_destroy_ui_debug_launcher)
 
 	-- Reduce anomaly radius for entities, doesn't change pathfinding
 	RegisterScriptCallback("anomaly_on_before_activate", anomaly_on_before_activate_pathfinding)
