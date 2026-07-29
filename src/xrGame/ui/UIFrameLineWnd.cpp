@@ -4,7 +4,8 @@
 
 CUIFrameLineWnd::CUIFrameLineWnd()
 	: bHorizontal(true),
-	  m_bTextureVisible(false)
+	  m_bTextureVisible(false),
+	  m_cap_scaled(false)
 {
 	m_texture_color = color_argb(255, 255, 255, 255);
 }
@@ -41,6 +42,11 @@ void CUIFrameLineWnd::InitTexture(LPCSTR texture, LPCSTR sh_name)
 		R_ASSERT2(fsimilar(m_tex_rect[flFirst].width(), m_tex_rect[flSecond].width()), texture);
 		R_ASSERT2(fsimilar(m_tex_rect[flFirst].width(), m_tex_rect[flBack].width()), texture);
 	}
+}
+
+void CUIFrameLineWnd::SetCapScaled(bool b)
+{
+	m_cap_scaled = b;
 }
 
 void CUIFrameLineWnd::Draw()
@@ -105,14 +111,23 @@ void CUIFrameLineWnd::DrawElements()
 
 	Frect rect;
 	GetAbsoluteRect(rect);
+	Frect ui_rect = rect;
 	UI().ClientToScreenScaled(rect.lt);
 	UI().ClientToScreenScaled(rect.rb);
 
+	float scale_cap = 1.0f;
+	if (m_cap_scaled && bHorizontal && ui_rect.width() > 0.0f && m_tex_rect[flFirst].height() > 0.0f)
+	{
+		const float scale_tex = ui_rect.height() / m_tex_rect[flFirst].height();
+		const float scale_res = rect.width()     / ui_rect.width();
+		scale_cap = scale_tex * scale_res;
+	}
+
 	float back_len = 0.0f;
-	u32 prim_count = 6 * 2; //first&second 
+	u32 prim_count = 6 * 2; //first&second
 	if (bHorizontal)
 	{
-		back_len = rect.width() - m_tex_rect[flFirst].width() - m_tex_rect[flSecond].width();
+		back_len = rect.width() - (m_tex_rect[flFirst].width() + m_tex_rect[flSecond].width()) * scale_cap;
 		if (back_len < 0.0f)
 			rect.x2 -= back_len;
 
@@ -140,7 +155,7 @@ void CUIFrameLineWnd::DrawElements()
 		Fvector2 LTp, RBp;
 		int counter = 0;
 
-		while (inc_pos(rect, counter, i, LTp, RBp, LTt, RBt))
+		while (inc_pos(rect, counter, i, LTp, RBp, LTt, RBt, scale_cap))
 		{
 			draw_rect(LTp, RBp, LTt, RBt, m_texture_color, ts);
 			++counter;
@@ -151,7 +166,7 @@ void CUIFrameLineWnd::DrawElements()
 
 
 bool CUIFrameLineWnd::inc_pos(Frect& rect, int counter, int i, Fvector2& LTp, Fvector2& RBp, Fvector2& LTt,
-                              Fvector2& RBt)
+                              Fvector2& RBt, float scale_cap)
 {
 	if (i == flFirst || i == flSecond)
 	{
@@ -163,12 +178,12 @@ bool CUIFrameLineWnd::inc_pos(Frect& rect, int counter, int i, Fvector2& LTp, Fv
 		LTp = rect.lt;
 
 		RBp = rect.lt;
-		RBp.x += m_tex_rect[i].width();
+		RBp.x += m_tex_rect[i].width() * scale_cap;
 		RBp.y += m_tex_rect[i].height();
 	}
 	else //i==flBack
 	{
-		if ((bHorizontal && rect.lt.x + m_tex_rect[flSecond].width() + EPS_L >= rect.rb.x) ||
+		if ((bHorizontal && rect.lt.x + m_tex_rect[flSecond].width() * scale_cap + EPS_L >= rect.rb.x) ||
 			(!bHorizontal && rect.lt.y + m_tex_rect[flSecond].height() + EPS_L >= rect.rb.y))
 			return false;
 
@@ -176,14 +191,14 @@ bool CUIFrameLineWnd::inc_pos(Frect& rect, int counter, int i, Fvector2& LTp, Fv
 		LTp = rect.lt;
 
 		bool b_draw_reminder = (bHorizontal)
-			                       ? (rect.lt.x + m_tex_rect[flBack].width() > rect.rb.x - m_tex_rect[flSecond].width())
+			                       ? (rect.lt.x + m_tex_rect[flBack].width() > rect.rb.x - m_tex_rect[flSecond].width() * scale_cap)
 			                       : (rect.lt.y + m_tex_rect[flBack].height() > rect.rb.y - m_tex_rect[flSecond].
 				                       height());
 		if (b_draw_reminder)
 		{
 			//draw reminder
 			float rem_len = (bHorizontal)
-				                ? rect.rb.x - m_tex_rect[flSecond].width() - rect.lt.x
+				                ? rect.rb.x - m_tex_rect[flSecond].width() * scale_cap - rect.lt.x
 				                : rect.rb.y - m_tex_rect[flSecond].height() - rect.lt.y;
 
 			if (bHorizontal)

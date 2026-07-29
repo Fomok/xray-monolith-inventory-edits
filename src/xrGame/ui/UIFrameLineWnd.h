@@ -17,9 +17,15 @@ public:
 	void SetTextureColor(u32 cl) { m_texture_color = cl; }
 	bool IsHorizontal() { return bHorizontal; }
 	void SetHorizontal(bool horiz) { bHorizontal = horiz; }
+	// When true, caps are scaled to fit the element -- texture->UI by height, then UI->screen for
+	// resolution -- so the caps keep their authored shape. When false the cap width is the texture's own
+	// pixel width used as-is on screen (never scaled) while its height stretches to fill the element, so
+	// the cap's proportions are not preserved.
+	void SetCapScaled(bool b);
 protected:
 	bool bHorizontal;
-	bool inc_pos(Frect& rect, int counter, int i, Fvector2& LTp, Fvector2& RBp, Fvector2& LTt, Fvector2& RBt);
+	bool inc_pos(Frect& rect, int counter, int i, Fvector2& LTp, Fvector2& RBp, Fvector2& LTt, Fvector2& RBt,
+	             float scale_cap);
 
 	enum
 	{
@@ -34,6 +40,7 @@ protected:
 
 	u32 m_texture_color;
 	bool m_bTextureVisible;
+	bool m_cap_scaled;
 	void DrawElements();
 
 	ui_shader m_shader;
