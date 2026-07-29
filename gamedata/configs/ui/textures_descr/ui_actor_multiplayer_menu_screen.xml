@@ -15,13 +15,13 @@
 	    <texture id="ui_inGame2_edit_box_back" 	x="10" 	y="531" width="467" height="29" />
 	    <texture id="ui_inGame2_edit_box_e" 	x="477" y="531" width="10" height="29" />
 
-	    <texture id="ui_inGame2_edit_box_1_b" 		x="209" y="613" width="3" height="25" />
-	    <texture id="ui_inGame2_edit_box_1_back" 	x="212" y="613" width="275" height="25" />
-	    <texture id="ui_inGame2_edit_box_1_e" 		x="487" y="613" width="3" height="25" />
+	    <texture id="ui_inGame2_edit_box_1_b" 		x="209" y="613" width="3" height="25"   border_l="3" border_t="3" border_r="0" border_b="2" />
+	    <texture id="ui_inGame2_edit_box_1_back" 	x="212" y="613" width="276" height="25" border_l="0" border_t="3" border_r="0" border_b="2" />
+	    <texture id="ui_inGame2_edit_box_1_e" 		x="488" y="613" width="1" height="25"   border_l="0" border_t="3" border_r="1" border_b="2" />
 
-	    <texture id="ui_inGame2_edit_box_2_b" 		x="209" y="640" width="3" height="29" />
-	    <texture id="ui_inGame2_edit_box_2_back" 	x="212" y="640" width="237" height="29" />
-	    <texture id="ui_inGame2_edit_box_2_e" 		x="449" y="640" width="3" height="29" />
+	    <texture id="ui_inGame2_edit_box_2_b" 		x="209" y="640" width="3" height="29"   border_l="3" border_t="4" border_r="0" border_b="2" />
+	    <texture id="ui_inGame2_edit_box_2_back" 	x="212" y="640" width="236" height="29" border_l="0" border_t="4" border_r="0" border_b="2" />
+	    <texture id="ui_inGame2_edit_box_2_e" 		x="448" y="640" width="4" height="29"   border_l="0" border_t="4" border_r="4" border_b="2" />
 
 	    <texture id="ui_inGame2_arrow_button_e" x="454" y="640" width="36" height="20" />
 	    <texture id="ui_inGame2_arrow_button_h" x="491" y="635" width="36" height="20" />
@@ -47,9 +47,9 @@
 	    <texture id="ui_radio_t" x="902" y="154" width="47" height="28" />
 	    <texture id="ui_radio_d" x="902" y="214" width="47" height="28" />
 -->
-	    <texture id="ui_inGame2_spin_box_b"		x="209" y="693" width="3" height="20" />
-	    <texture id="ui_inGame2_spin_box_back" 	x="212" y="693" width="265" height="20" />
-	    <texture id="ui_inGame2_spin_box_e" 	x="477" y="693" width="13" height="20" />
+	    <texture id="ui_inGame2_spin_box_b"		x="209" y="693" width="3" height="20"   border_l="3" border_t="3" border_r="0" border_b="2" />
+	    <texture id="ui_inGame2_spin_box_back" 	x="212" y="693" width="265" height="20" border_l="0" border_t="3" border_r="0" border_b="2"/>
+	    <texture id="ui_inGame2_spin_box_e" 	x="477" y="693" width="13" height="20"  border_l="0" border_t="3" border_r="2" border_b="2"/>
 
 	    <texture id="ui_inGame2_spin_box_button_top_d" x="477" y="694" width="11" height="8" />
 	    <texture id="ui_inGame2_spin_box_button_top_e" x="477" y="694" width="11" height="8" />
@@ -89,9 +89,9 @@
 	    <texture id="ui_inGame2_combobox_line_e" 	x="170" y="670" width="4" height="18" />
 
 
-	    <texture id="ui_inGame2_combobox_linetext_b" 	x="209" y="671" width="3" height="20" />
-	    <texture id="ui_inGame2_combobox_linetext_back" x="212" y="671" width="72" height="20" />
-	    <texture id="ui_inGame2_combobox_linetext_e" 	x="284" y="671" width="17" height="20" />
+	    <texture id="ui_inGame2_combobox_linetext_b" 	x="209" y="671" width="3"  height="20" border_l="3" border_t="2" border_r="0" border_b="3" />
+	    <texture id="ui_inGame2_combobox_linetext_back" x="212" y="671" width="72" height="20" border_l="0" border_t="2" border_r="0" border_b="3" />
+	    <texture id="ui_inGame2_combobox_linetext_e" 	x="284" y="671" width="17" height="20" border_l="1" border_t="2" border_r="2" border_b="3" />
 
 	    <texture id="ui_inGame2_demo_player_stats" x="543" y="502" width="437" height="148" />
 
