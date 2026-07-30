@@ -83,6 +83,7 @@ protected:
 	int BandsMajor(int i) const { return bHorizontal ? m_border[i].l + m_border[i].r : m_border[i].t + m_border[i].b; }
 	float Major(const Frect& r) const { return bHorizontal ? r.width() : r.height(); }
 	float Minor(const Frect& r) const { return bHorizontal ? r.height() : r.width(); }
+	float BackTilePx(const SDraw& d) const { return _max(1.0f, TexMajor(flBack) * d.content_scale); }
 
 	void DrawElements();
 	void ReadBorder(LPCSTR id, int i);

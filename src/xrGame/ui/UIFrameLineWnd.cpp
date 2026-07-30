@@ -257,7 +257,7 @@ void CUIFrameLineWnd::DrawElements()
 	}
 
 	if (back_len > 0.0f)
-		prim_count += 6 * CellCount(flBack, d) * iCeil(back_len / TexMajor(flBack));
+		prim_count += 6 * CellCount(flBack, d) * iCeil(back_len / BackTilePx(d));
 
 	if (UI().HasCustomClip())
 		prim_count = (prim_count / 6) * UI().ActiveClipFrustum().ClipBudget(4);
@@ -334,32 +334,32 @@ bool CUIFrameLineWnd::inc_pos(Frect& rect, int counter, int i, Fvector2& LTp, Fv
 		LTt = m_tex_rect[i].lt;
 		LTp = rect.lt;
 
+		const float tile_px = BackTilePx(d);
 		bool b_draw_reminder = (bHorizontal)
-			                       ? (rect.lt.x + m_tex_rect[flBack].width() > rect.rb.x - cap_second)
-			                       : (rect.lt.y + m_tex_rect[flBack].height() > rect.rb.y - cap_second);
+			                       ? (rect.lt.x + tile_px > rect.rb.x - cap_second)
+			                       : (rect.lt.y + tile_px > rect.rb.y - cap_second);
 		if (b_draw_reminder)
 		{
 			//draw reminder
 			float rem_len = (bHorizontal)
 				                ? rect.rb.x - cap_second - rect.lt.x
 				                : rect.rb.y - cap_second - rect.lt.y;
+			const float rem_tex = rem_len / (tile_px / TexMajor(flBack));
 
 			if (bHorizontal)
 			{
 				RBt.y = m_tex_rect[i].rb.y;
-				RBt.x = m_tex_rect[i].lt.x + rem_len;
+				RBt.x = m_tex_rect[i].lt.x + rem_tex;
 
 				RBp = rect.lt;
 				RBp.x += rem_len;
-				RBp.y += m_tex_rect[i].height();
 			}
 			else
 			{
-				RBt.y = m_tex_rect[i].lt.y + rem_len;
+				RBt.y = m_tex_rect[i].lt.y + rem_tex;
 				RBt.x = m_tex_rect[i].rb.x;
 
 				RBp = rect.lt;
-				RBp.x += m_tex_rect[i].width();
 				RBp.y += rem_len;
 			}
 		}
@@ -369,8 +369,8 @@ bool CUIFrameLineWnd::inc_pos(Frect& rect, int counter, int i, Fvector2& LTp, Fv
 			RBt = m_tex_rect[i].rb;
 
 			RBp = rect.lt;
-			RBp.x += m_tex_rect[i].width();
-			RBp.y += m_tex_rect[i].height();
+			if (bHorizontal) RBp.x += tile_px;
+			else RBp.y += tile_px;
 		}
 	}
 
