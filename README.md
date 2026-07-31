@@ -235,6 +235,12 @@ How to compile exes:
 13. A short video demonstration of the entire process: https://youtu.be/MmZwyM2QO38
 
 ## Changelog
+**2026.07.31**
+* Main and MT:
+  * Fix issue https://github.com/themrdemonized/xray-monolith/issues/622
+  * Possibility to add new mountable scopes to weapons via upgrades
+  * erepb: dynamic PDA tab support (https://github.com/themrdemonized/xray-monolith/pull/608) (https://github.com/themrdemonized/xray-monolith/pull/609)
+
 **2026.07.22**
 * Main and MT:
   * fix non working `on_loading_screen_dismissed` callback when `keypress_on_start 0`
