@@ -230,6 +230,20 @@
         // Ncenka - allow to change PDA UI XML file
 		function SetPdaXml(string)
 		function GetPdaXml()
+
+        // Sync the PDA tab strip with the pda_dynamic_tabs.script registry. Not for mod code:
+        // register/unregister call it themselves.
+        void RebuildTabs()
+    }
+
+    // Dynamic tabs + tab-strip overflow scrolling. For internal use only, use the pda_dynamic_tabs.script registry
+    // to manage dynamic tabs
+    class CUITabControl : CUIWindow {
+        // Insert a tab after the tab `after_id` ("" or unknown = append); size/art/font copy the
+        // strip's own tabs. Tab width is fixed, so a too-long caption may clip. False on a control
+        // with no tabs. Call RecalcScroll after.
+        bool AddTab(string id, string caption, string after_id)
+        void RecalcScroll() // recompute strip geometry; scrolling engages only on overflow
     }
 
     class CUIMessagesWindow : CUIWindow {
