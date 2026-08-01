@@ -843,6 +843,7 @@ public:
 	bool can_kill_enemy();
 	bool can_kill_member();
 	bool fire_make_sense();
+	bool is_hit_anim_playing();
 
 	void aim_bone_id(LPCSTR value);
 	LPCSTR aim_bone_id() const;

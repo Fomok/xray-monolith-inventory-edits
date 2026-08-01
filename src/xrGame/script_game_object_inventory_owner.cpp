@@ -1942,6 +1942,19 @@ void CScriptGameObject::set_fire_queue_scale(float size_k, float interval_k)
 	stalker->set_fire_queue_scale(size_k, interval_k);
 }
 
+bool CScriptGameObject::is_hit_anim_playing()
+{
+	CEntityAlive* entity_alive = smart_cast<CEntityAlive*>(&object());
+	if (!entity_alive || !entity_alive->character_physics_support())
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		                                "CEntityAlive : cannot access class member is_hit_anim_playing!");
+		return (false);
+	}
+
+	return (entity_alive->character_physics_support()->is_hit_anim_playing());
+}
+
 bool CScriptGameObject::can_kill_enemy()
 {
 	CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
