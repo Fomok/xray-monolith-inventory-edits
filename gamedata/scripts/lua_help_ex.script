@@ -663,6 +663,7 @@
         // Stalker and Monster
         function invalidate_restrictions()
         void set_vision_speed(float factor) // Per-object vision-speed factor multiplied into get_visible_value on top of the ai_vision_speed_boost cvar. 1.0 = vanilla, higher spots faster, negative clamps to 0. Persists while online; re-set on spawn (memory manager is rebuilt when the NPC comes back online).
+        void set_view_distance_factor(float factor) // Per-object view-DISTANCE factor, the range sibling of set_vision_speed: multiplies object_visible_distance's return, composing with the per-state max_view_distance LTX multiplier. 1.0 = vanilla, higher sees farther, negative clamps to 0. Persists while online; re-set on spawn.
 
         // Stalker NPCs
         function get_enable_anomalies_pathfinding()
