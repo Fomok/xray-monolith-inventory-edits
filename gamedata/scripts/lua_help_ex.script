@@ -663,6 +663,7 @@
         // Stalker and Monster
         function invalidate_restrictions()
         void set_vision_speed(float factor) // Per-object vision-speed factor multiplied into get_visible_value on top of the ai_vision_speed_boost cvar. 1.0 = vanilla, higher spots faster, negative clamps to 0. Persists while online; re-set on spawn (memory manager is rebuilt when the NPC comes back online).
+        void set_health_restore_boost(float value) // Per-object additive passive health-restore boost: adds value to the condition's m_fV_HealthRestore velocity applied every UpdateHealth while alive (base ~0.00003/s for stalkers), so the entity regenerates HP over time with no item. 0 = vanilla, higher = faster idle regen, negative clamps to 0. Stalkers and monsters (any CEntityAlive). Persists while online; re-set on spawn (condition rebuilt on re-online).
 
         // Stalker NPCs
         function get_enable_anomalies_pathfinding()
