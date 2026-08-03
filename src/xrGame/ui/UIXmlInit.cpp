@@ -1034,8 +1034,7 @@ bool CUIXmlInit::InitMultiTexture(CUIXml& xml_doc, LPCSTR path, int index, CUI3t
 		}
 		else if (pWnd->m_back_frameline)
 		{
-			pWnd->m_back_frameline->InitState(S_Enabled, texture.c_str());
-			pWnd->m_back_frameline->Get(S_Enabled)->SetHorizontal(!(pWnd->vertical));
+			pWnd->m_back_frameline->InitState(S_Enabled, texture.c_str(), pWnd->vertical);
 		}
 		success = true;
 	}
@@ -1050,8 +1049,7 @@ bool CUIXmlInit::InitMultiTexture(CUIXml& xml_doc, LPCSTR path, int index, CUI3t
 		}
 		else if (pWnd->m_back_frameline)
 		{
-			pWnd->m_back_frameline->InitState(S_Touched, texture.c_str());
-			pWnd->m_back_frameline->Get(S_Touched)->SetHorizontal(!(pWnd->vertical));
+			pWnd->m_back_frameline->InitState(S_Touched, texture.c_str(), pWnd->vertical);
 		}
 		success = true;
 	}
@@ -1066,8 +1064,7 @@ bool CUIXmlInit::InitMultiTexture(CUIXml& xml_doc, LPCSTR path, int index, CUI3t
 		}
 		else if (pWnd->m_back_frameline)
 		{
-			pWnd->m_back_frameline->InitState(S_Disabled, texture.c_str());
-			pWnd->m_back_frameline->Get(S_Disabled)->SetHorizontal(!(pWnd->vertical));
+			pWnd->m_back_frameline->InitState(S_Disabled, texture.c_str(), pWnd->vertical);
 		}
 		success = true;
 	}
@@ -1082,8 +1079,7 @@ bool CUIXmlInit::InitMultiTexture(CUIXml& xml_doc, LPCSTR path, int index, CUI3t
 		}
 		else if (pWnd->m_back_frameline)
 		{
-			pWnd->m_back_frameline->InitState(S_Highlighted, texture.c_str());
-			pWnd->m_back_frameline->Get(S_Highlighted)->SetHorizontal(!(pWnd->vertical));
+			pWnd->m_back_frameline->InitState(S_Highlighted, texture.c_str(), pWnd->vertical);
 		}
 		success = true;
 	}
