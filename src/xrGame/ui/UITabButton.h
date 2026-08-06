@@ -18,16 +18,17 @@ public:
 	float Overlap() const { return m_overlap; }
 	void  SetOverlap(float v) { m_overlap = v; }
 	float Pitch() const { return GetWndSize().x - m_overlap; }
+	float Seam() const { return (m_overlap > 0.0f && m_overlap < GetWndSize().x) ? m_overlap : 0.0f; }
 
 	float CapWidthUI() const;
-	float CapOverlapUI() const;
 
 	const shared_str& ArtBase() const { return m_art_base; }
 	using inherited::InitTexture;
 	virtual void InitTexture(LPCSTR tex_name);
 
-	// Reproduce this tab at (pos,size): background kind, art, seam overlap, text colours. Caller fills id/caption.
-	CUITabButton* Clone(const Fvector2& pos, const Fvector2& size) const;
+	// Reproduce this tab at (pos,size): background kind, art, seam overlap, text style and caption placement.
+	// Caller fills id/caption.
+	CUITabButton* Clone(const Fvector2& pos, const Fvector2& size);
 
 	static u32 SlantPoly(Fvector2* out, u32 max, const Fvector2& pos, const Fvector2& size, float slant);
 	u32 HitPoly(Fvector2* out, u32 max) const;

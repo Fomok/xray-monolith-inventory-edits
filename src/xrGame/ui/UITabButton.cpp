@@ -55,11 +55,6 @@ float CUITabButton::CapWidthUI() const
 	return (art.width() > 0.0f) ? art.height() * GetWndSize().x / art.width() : 0.0f;
 }
 
-float CUITabButton::CapOverlapUI() const
-{
-	return CapWidthUI();
-}
-
 Frect CUITabButton::ArtRegion() const
 {
 	if (m_background)
@@ -79,7 +74,7 @@ void CUITabButton::InitTexture(LPCSTR tex_name)
 	inherited::InitTexture(tex_name);
 }
 
-CUITabButton* CUITabButton::Clone(const Fvector2& pos, const Fvector2& size) const
+CUITabButton* CUITabButton::Clone(const Fvector2& pos, const Fvector2& size)
 {
 	CUITabButton* b = xr_new<CUITabButton>();
 	b->SetAutoDelete(true);
@@ -92,6 +87,12 @@ CUITabButton* CUITabButton::Clone(const Fvector2& pos, const Fvector2& size) con
 		b->m_dwTextColor[st] = m_dwTextColor[st];
 		b->m_bUseTextColor[st] = m_bUseTextColor[st];
 	}
+	CUILines* src = TextItemControl();
+	CUILines* dst = b->TextItemControl();
+	dst->SetFont(src->GetFont());
+	dst->SetTextAlignment(src->GetTextAlignment());
+	dst->SetVTextAlignment(src->GetVTextAlignment());
+	dst->m_TextOffset = src->m_TextOffset;
 	return b;
 }
 
@@ -112,5 +113,5 @@ u32 CUITabButton::SlantPoly(Fvector2* out, u32 max, const Fvector2& pos, const F
 
 u32 CUITabButton::HitPoly(Fvector2* out, u32 max) const
 {
-	return SlantPoly(out, max, GetWndPos(), GetWndSize(), Overlap());
+	return SlantPoly(out, max, GetWndPos(), GetWndSize(), Seam());
 }

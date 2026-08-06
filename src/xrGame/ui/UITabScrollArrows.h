@@ -40,7 +40,7 @@ public:
 	void Init(CUIWindow* parent, CUIWindow* msg_target);
 
 	void  EnsureBuilt(CUITabButton* ref);
-	void  Layout(float view_right, float strip_y);
+	void  Layout(float view_left, float view_right, float strip_y);
 	void  Show(bool visible);
 	void  Draw();
 	void  ApplyHitClips(const Fvector2& origin);

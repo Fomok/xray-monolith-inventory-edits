@@ -15,7 +15,7 @@ CUITabControl::CUITabControl()
 	  m_strip_w(0.0f),
 	  m_view_left(0.0f),
 	  m_view_right(0.0f),
-	  m_margin(0.0f),
+	  m_origin_x(0.0f),
 	  m_arrows(NULL)
 {
 	m_arrows = xr_new<CUITabScrollArrows>();
@@ -94,40 +94,8 @@ bool CUITabControl::InsertItem(CUITabButton* pButton, u32 at)
 
 	AttachChild(pButton);
 	m_TabsArr.insert(m_TabsArr.begin() + at, pButton);
-	// Seam geometry (pitch = width - overlap + margin) is authored: overlap is the drawn end cap (from the
-	// art), the leftover pitch is the strip margin, fixed once from the XML rest positions before any scroll.
-	// Seed from the first two non-parked non-dynamic tabs
-	// (index-agnostic, so a parked zero-width stub anywhere in the strip can't defeat it); every later strip
-	// tab inherits it; dynamic tabs arrive pre-seeded (AddTab copies the reference tab's). Non-dynamic tabs
-	// are only ever appended, so `pButton` is the second such tab when the count first reaches 2. The strip
-	// is assumed to be single-overlap packed from layout x 0 -- laying it out that way is the caller's
-	// responsibility. Each tab then owns its shape.
-	if (!pButton->m_dynamic && pButton->GetWndSize().x > 0.0f)
-	{
-		CUITabButton* first = NULL;
-		u32 strip_n = 0;
-		for (u32 i = 0; i < m_TabsArr.size(); ++i)
-		{
-			CUITabButton* t = m_TabsArr[i];
-			if (t->m_dynamic || t->GetWndSize().x <= 0.0f)
-				continue;
-			if (!first)
-				first = t;
-			++strip_n;
-		}
-		if (strip_n == 2)
-		{
-			// Split the authored pitch: overlap is the drawn end cap (from the art); the leftover is the strip
-			// margin. Deriving overlap as width - pitch would fold the gap in (that value is overlap - margin).
-			const float overlap = first->CapOverlapUI();
-			const float pitch = pButton->GetWndPos().x - first->GetWndPos().x;
-			m_margin = pitch - (first->GetWndSize().x - overlap);
-			first->SetOverlap(overlap);
-			pButton->SetOverlap(overlap);
-		}
-		else if (strip_n > 2)
-			pButton->SetOverlap(first->Overlap()); // inherit the strip overlap
-	}
+	if (!pButton->m_dynamic)
+		RebuildTabOverlaps();
 	R_ASSERT(pButton->m_btn_id.size());
 	return true;
 }
@@ -141,7 +109,7 @@ void CUITabControl::RemoveAll()
 	}
 	m_TabsArr.clear();
 	m_content_w = 0.0f;
-	m_margin = 0.0f;
+	m_origin_x = 0.0f;
 	if (m_arrows)
 		m_arrows->Show(false);
 }

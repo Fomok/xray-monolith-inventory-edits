@@ -161,11 +161,11 @@ void CUITabScrollArrows::Build(CUITabButton* ref)
 	}
 }
 
-void CUITabScrollArrows::Layout(float view_right, float strip_y)
+void CUITabScrollArrows::Layout(float view_left, float view_right, float strip_y)
 {
 	for (int s = 0; s < 2; ++s)
 		if (m_arrow[s])
-			m_arrow[s]->SetWndPos(Fvector2().set((s == eLeft) ? 0.0f : view_right, strip_y));
+			m_arrow[s]->SetWndPos(Fvector2().set((s == eLeft) ? view_left : view_right, strip_y));
 }
 
 void CUITabScrollArrows::Show(bool visible)

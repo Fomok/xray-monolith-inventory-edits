@@ -96,17 +96,16 @@ protected:
 	float m_view_left;
 	float m_view_right;
 
-	float m_margin;
+	float m_origin_x;
 
 	bool InsertItem(CUITabButton* pButton, u32 at);
+	void RebuildTabOverlaps();
 	CUITabButton* FirstStripTab() const;
-	float StripPitch(const CUITabButton* t) const;
-	float Tuck(const CUITabButton* t) const;
 	void DrawTabsClipped();
 	void ApplyStripHitClips();
 	float CurrentScroll() const;
 	float MaxScroll() const;
-	void ApplyScroll(float scroll);
+	void ApplyScroll(float scroll, float squeeze = 1.0f);
 	void ClampScroll(float scroll);
 	float ScrollStep() const;
 
