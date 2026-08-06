@@ -736,6 +736,9 @@
 	<string id="ui_mm_modded_exes_gameplay_gameplay_general_disable_actor_body_rotation_delay">
 		<text>ћгновенный поворот модели игрока (disable_actor_body_rotation_delay)</text>
 	</string>
+	<string id="ui_mm_modded_exes_gameplay_gameplay_general_allow_accel_during_lookout">
+		<text>Allow Acceleration During Lookout (allow_accel_during_lookout)</text>
+	</string>
 
 	<!-- Aim -->
 	<string id="ui_mm_menu_aim">
