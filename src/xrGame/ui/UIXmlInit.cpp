@@ -21,6 +21,7 @@
 #include "UIDragDropListEx.h"
 #include "UIDragDropReferenceList.h"
 #include "UItabButtonMP.h"
+#include "UITabScrollArrows.h"
 #include "UILines.h"
 
 extern int keyname_to_dik(LPCSTR);
@@ -831,6 +832,31 @@ bool CUIXmlInit::InitTabControl(CUIXml& xml_doc, LPCSTR path, int index, CUITabC
 		newButton->m_btn_id = xml_doc.ReadAttrib("button", i, "id");
 		R_ASSERT3(newButton->m_btn_id.size(), xml_doc.m_xml_file_name, path);
 		pWnd->AddItem(newButton);
+	}
+
+	// Optional skin-authored scroll arrows, written as plain buttons. A non-zero x or y pins that axis
+	// where the skin put it, zero leaves it to the strip; a node without its own <text> stays glyphless,
+	// the art being the arrow itself.
+	static const LPCSTR arrow_node[2] = {"arrow_left", "arrow_right"};
+	for (int s = 0; s < 2; ++s)
+	{
+		if (!xml_doc.NavigateToNode(arrow_node[s], 0))
+			continue;
+
+		CUIScrollArrowButton* arrow = xr_new<CUIScrollArrowButton>();
+		status &= Init3tButton(xml_doc, arrow_node[s], 0, arrow);
+
+		LPCSTR glyph = arrow->TextItemControl()->GetText();
+		const bool sized = arrow->GetWndSize().x > 0.0f && arrow->GetWndSize().y > 0.0f;
+		const bool faced = arrow->m_bTextureEnable || (glyph && xr_strlen(glyph));
+		if (sized && faced)
+			pWnd->SetScrollArrow(s, arrow);
+		else
+		{
+			Msg("! [%s] <%s> needs a positive width/height and a texture or text, ignored",
+				xml_doc.m_xml_file_name, arrow_node[s]);
+			xr_delete(arrow);
+		}
 	}
 
 	xml_doc.SetLocalRoot(xml_doc.GetRoot());

@@ -302,13 +302,16 @@ void CUITabControl::DrawTabsClipped()
 		frustum.AddEdgePlane(rt, rb);
 	}
 
-	Frect clip_txt = abs_rect;
-	clip_txt.x1 = abs_rect.x1 + m_origin_x + m_arrows->Width(CUITabScrollArrows::eLeft);
-	clip_txt.x2 = abs_rect.x1 + m_view_right;
+	const float laid = LaidOverlap(ref);
+	const float tuck = laid > 0.0f ? laid : 0.0f;
 
-	Frect clip_bg = clip_txt;
-	clip_bg.x1 -= seam;
-	clip_bg.x2 += seam;
+	Frect clip_bg = abs_rect;
+	clip_bg.x1 = abs_rect.x1 + m_view_left;
+	clip_bg.x2 = abs_rect.x1 + m_view_right + laid;
+
+	Frect clip_txt = clip_bg;
+	clip_txt.x1 += tuck;
+	clip_txt.x2 -= tuck;
 
 	UI().PushScissor(clip_bg);
 	for (u32 i = 0; i < m_TabsArr.size(); ++i)

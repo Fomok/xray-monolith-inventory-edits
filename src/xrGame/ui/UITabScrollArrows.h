@@ -4,8 +4,8 @@
 class CUIStatic;
 class CUIWindow;
 
-// Scroll arrow for the tab strip: a tab-style button whose face is built from two mirrored halves of
-// the strip tabs' own cap art.
+// Scroll arrow for the tab strip. Its face is either skin-authored, or a tab-style one built from two
+// mirrored halves of the strip tabs' own cap art, or -- when the art affords neither -- a bare glyph.
 class CUIScrollArrowButton : public CUITabButton
 {
 	typedef CUITabButton inherited;
@@ -39,19 +39,21 @@ public:
 
 	void Init(CUIWindow* parent, CUIWindow* msg_target);
 
+	void  Adopt(int side, CUIScrollArrowButton* arrow);
 	void  EnsureBuilt(CUITabButton* ref);
 	void  Layout(float view_left, float view_right, float strip_y);
 	void  Show(bool visible);
 	void  Draw();
 	void  ApplyHitClips(const Fvector2& origin);
 	int   SideOf(const CUIWindow* clicked) const;
-	float Width(int side) const { return m_arrow[side] ? m_arrow[side]->GetWndSize().x : 0.0f; }
+	float Width(int side) const { return (m_arrow[side] && m_pin[side].x == 0.0f) ? m_arrow[side]->GetWndSize().x : 0.0f; }
 
 private:
-	void Build(CUITabButton* ref);
+	CUIScrollArrowButton* NewArrow(int side, const Fvector2& size, CUITabButton* ref);
 
 	CUIWindow* m_parent;
 	CUIWindow* m_msg_target;
 
 	CUIScrollArrowButton* m_arrow[2];
+	Fvector2              m_pin[2];
 };

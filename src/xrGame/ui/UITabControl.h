@@ -6,6 +6,7 @@
 
 class CUITabButton;
 class CUITabScrollArrows;
+class CUIScrollArrowButton;
 
 DEF_VECTOR(TABS_VECTOR, CUITabButton*)
 
@@ -44,6 +45,10 @@ public:
 	bool AddTab(LPCSTR id, LPCSTR caption, LPCSTR after_id);
 	// Remove the AddTab-added tabs, restoring the XML positions. Call RecalcScroll afterwards.
 	void RemoveDynamicTabs();
+
+	// Hand over a skin-authored scroll arrow; side is CUITabScrollArrows::eLeft/eRight. That side is then
+	// used as-is instead of being built from the strip's art.
+	void SetScrollArrow(int side, CUIScrollArrowButton* arrow);
 
 	void RecalcScroll();
 	void ScrollBy(float dx);

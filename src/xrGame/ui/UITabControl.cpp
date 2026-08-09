@@ -85,6 +85,11 @@ bool CUITabControl::AddItem(CUITabButton* pButton)
 	return InsertItem(pButton, m_TabsArr.size());
 }
 
+void CUITabControl::SetScrollArrow(int side, CUIScrollArrowButton* arrow)
+{
+	m_arrows->Adopt(side, arrow);
+}
+
 bool CUITabControl::InsertItem(CUITabButton* pButton, u32 at)
 {
 	pButton->SetAutoDelete(true);
