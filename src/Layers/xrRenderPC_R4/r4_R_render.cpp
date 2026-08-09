@@ -307,7 +307,10 @@ void CRender::Render()
 		FLOAT ColorRGBA[4] = { 0,0,0,0 };
 		HW.pContext->ClearRenderTargetView(Target->rt_ssfx_bloom_emissive->pRT, ColorRGBA);
 		Target->u_setrt(Target->rt_ssfx_bloom_emissive, NULL, NULL, !RImplementation.o.dx10_msaa ? HW.pBaseZB : Target->rt_MSAADepth->pZRT);
-		GMBase.r_dsgraph_render_emissive(true, true);
+		// Keep regular HUD geometry out of the emissive target. It is already
+		// present in the scene texture sampled by the bloom build pass; drawing it
+		// here again treats every strict-sorted HUD surface as an emissive source.
+		GMBase.r_dsgraph_render_emissive(true, false);
 	}
 
 	// Lighting, non dependant on OCCQ
