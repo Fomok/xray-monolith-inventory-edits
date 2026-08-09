@@ -441,7 +441,7 @@ public:
 	u32 Money();
 	void MakeItemActive(CScriptGameObject* pItem);
 	void MoveItemToRuck(CScriptGameObject* pItem);
-	void MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id);
+	void MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id, bool doNotActivate);
 	void MoveItemToBelt(CScriptGameObject* pItem);
 	void ItemAllowTrade(CScriptGameObject* pItem);
 	void ItemDenyTrade(CScriptGameObject* pItem);
