@@ -79,7 +79,7 @@ void CUIScrollArrowButton::ApplyHalfArt(int ib_state)
 		CUIStatic* half = m_half[i];
 		half->InitTexture(art.c_str());
 		Frect r = half->GetTextureRect();
-		const float cap = r.height();
+		const float cap = CapWidthTexels(r);
 		if (i == 0)
 			r.x2 = r.x1 + cap;
 		else

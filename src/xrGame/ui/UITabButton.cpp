@@ -52,7 +52,7 @@ void CUITabButton::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 float CUITabButton::CapWidthUI() const
 {
 	const Frect art = ArtRegion();
-	return (art.width() > 0.0f) ? art.height() * GetWndSize().x / art.width() : 0.0f;
+	return (art.width() > 0.0f) ? CapWidthTexels(art) * GetWndSize().x / art.width() : 0.0f;
 }
 
 Frect CUITabButton::ArtRegion() const

@@ -20,6 +20,14 @@ public:
 	float Pitch() const { return GetWndSize().x - m_overlap; }
 	float Seam() const { return (m_overlap > 0.0f && m_overlap < GetWndSize().x) ? m_overlap : 0.0f; }
 
+	// The one place that assumes a 45-degree cap. Tab art has slanted ends, but nothing declares how
+	// wide the slant is: the atlas rect carries no cap boundary, and the layout cannot recover one
+	// either -- pitch = width - cap + margin is one equation in two unknowns. So we take the cap to be
+	// as wide as the art is tall. That is a hack fitted to the vanilla art; getting it exact requires
+	// the caps to be declared, i.e. tabs rebuilt as CUIFrameLineWnd, whose m_tex_rect[flFirst] and
+	// [flSecond] state the cap widths outright.
+	static float CapWidthTexels(const Frect& art) { return art.height(); }
+
 	float CapWidthUI() const;
 
 	const shared_str& ArtBase() const { return m_art_base; }
