@@ -243,6 +243,12 @@
         // strip's own tabs. Tab width is fixed, so a too-long caption may clip. False on a control
         // with no tabs. Call RecalcScroll after.
         bool AddTab(string id, string caption, string after_id)
+        // Give a tab an icon drawn over its background art, fitted into the slot the strip's XML
+        // declares (<icon_layout> on the <tab> node). `art` is a base name: art_e/_d/_h/_t are used
+        // when present, a missing state falls back to _e, and a bare `art` alone is tinted with the
+        // caption colour instead. False if the tab or the art is unknown. Must be re-applied after
+        // AddTab, which builds the tab fresh.
+        bool SetTabIcon(string id, string art)
         void RecalcScroll() // recompute strip geometry; scrolling engages only on overflow
     }
 

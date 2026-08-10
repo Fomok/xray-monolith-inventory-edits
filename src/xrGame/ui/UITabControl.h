@@ -50,6 +50,15 @@ public:
 	// used as-is instead of being built from the strip's art.
 	void SetScrollArrow(int side, CUIScrollArrowButton* arrow);
 
+	void SetIconLayout(const Fvector2& pos, const Fvector2& box, const Fvector2& anchor)
+	{
+		m_icon_pos = pos;
+		m_icon_box = box;
+		m_icon_anchor = anchor;
+	}
+
+	bool SetTabIcon(LPCSTR id, LPCSTR art);
+
 	void RecalcScroll();
 	void ScrollBy(float dx);
 	void EnsureVisible(const shared_str& id);
@@ -103,6 +112,11 @@ protected:
 
 	float m_origin_x;
 
+	Fvector2 m_icon_pos;
+	Fvector2 m_icon_box;
+	Fvector2 m_icon_anchor;
+
+	Fvector2 IconBox(const CUITabButton* b) const;
 	bool InsertItem(CUITabButton* pButton, u32 at);
 	void RebuildTabOverlaps();
 	CUITabButton* FirstStripTab() const;

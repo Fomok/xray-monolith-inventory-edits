@@ -18,6 +18,9 @@ CUITabControl::CUITabControl()
 	  m_origin_x(0.0f),
 	  m_arrows(NULL)
 {
+	m_icon_pos.set(0.0f, 0.0f);
+	m_icon_box.set(0.0f, 0.0f);
+	m_icon_anchor.set(0.5f, 0.5f);
 	m_arrows = xr_new<CUITabScrollArrows>();
 	m_arrows->Init(this, this);
 }
@@ -88,6 +91,32 @@ bool CUITabControl::AddItem(CUITabButton* pButton)
 void CUITabControl::SetScrollArrow(int side, CUIScrollArrowButton* arrow)
 {
 	m_arrows->Adopt(side, arrow);
+}
+
+bool CUITabControl::SetTabIcon(LPCSTR id, LPCSTR art)
+{
+	CUITabButton* b = GetButtonById(id);
+	if (!b)
+	{
+		Msg("! [CUITabControl] SetTabIcon: tab [%s] not found", id);
+		return false;
+	}
+	if (!b->SetIcon(art))
+		return false;
+	b->FitIcon(IconBox(b), m_icon_pos, m_icon_anchor);
+	return true;
+}
+
+Fvector2 CUITabControl::IconBox(const CUITabButton* b) const
+{
+	const Fvector2 tab = b->GetWndSize();
+
+	Fvector2 box = m_icon_box;
+	if (box.x <= 0.0f)
+		box.x = tab.y;
+	if (box.y <= 0.0f)
+		box.y = tab.y;
+	return box;
 }
 
 bool CUITabControl::InsertItem(CUITabButton* pButton, u32 at)

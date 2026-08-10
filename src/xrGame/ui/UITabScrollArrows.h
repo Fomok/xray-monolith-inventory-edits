@@ -21,12 +21,11 @@ public:
 	virtual void Update();
 
 protected:
-	int  CurrentIBState();
-	void ApplyHalfArt(int ib_state);
+	void ApplyHalfArt(IBState ib_state);
 
 	CUIStatic* m_half[2];
 	shared_str m_half_base;
-	int        m_applied_state;
+	IBState    m_applied_state;
 };
 
 class CUITabScrollArrows

@@ -34,6 +34,14 @@ public:
 	using inherited::InitTexture;
 	virtual void InitTexture(LPCSTR tex_name);
 
+	bool SetIcon(LPCSTR base_name);
+	void ClearIcon();
+	void FitIcon(const Fvector2& box, const Fvector2& pos, const Fvector2& anchor);
+	bool IconHasStateArt() const;
+
+	virtual void DrawTexture();
+	virtual void Update();
+
 	// Reproduce this tab at (pos,size): background kind, art, seam overlap, text style and caption placement.
 	// Caller fills id/caption.
 	CUITabButton* Clone(const Fvector2& pos, const Fvector2& size);
@@ -44,6 +52,7 @@ public:
 protected:
 	float m_overlap = 0.0f;
 	shared_str m_art_base;
+	CUI_IB_Static* m_icon = nullptr;
 
 private:
 	Frect ArtRegion() const; // background art rect, in atlas texels (internal to CapWidthUI)

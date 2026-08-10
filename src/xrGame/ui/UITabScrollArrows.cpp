@@ -15,7 +15,7 @@ bool CUIScrollArrowButton::OnMouseAction(float x, float y, EUIMessages mouse_act
 	return CUIButton::OnMouseAction(x, y, mouse_action);
 }
 
-static shared_str StateArt(const shared_str& base, int ib_state)
+static shared_str StateArt(const shared_str& base, IBState ib_state)
 {
 	LPCSTR suffix;
 	switch (ib_state)
@@ -64,14 +64,7 @@ void CUIScrollArrowButton::LayoutHalves()
 	}
 }
 
-int CUIScrollArrowButton::CurrentIBState()
-{
-	if (GetButtonState() == CUIButton::BUTTON_PUSHED)
-		return S_Touched;
-	return CursorOverWindow() ? S_Highlighted : S_Enabled;
-}
-
-void CUIScrollArrowButton::ApplyHalfArt(int ib_state)
+void CUIScrollArrowButton::ApplyHalfArt(IBState ib_state)
 {
 	shared_str art = StateArt(m_half_base, ib_state);
 	for (int i = 0; i < 2; ++i)
@@ -94,7 +87,7 @@ void CUIScrollArrowButton::Update()
 	inherited::Update();
 	if (!m_half[0])
 		return;
-	const int state = CurrentIBState();
+	const IBState state = CurrentIBState();
 	if (state == m_applied_state)
 		return;
 	ApplyHalfArt(state);

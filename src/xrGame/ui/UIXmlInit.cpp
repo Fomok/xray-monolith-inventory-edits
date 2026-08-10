@@ -809,6 +809,15 @@ bool CUIXmlInit::InitFont(CUIXml& xml_doc, LPCSTR path, int index, u32& color, C
 	return true;
 }
 
+static float AnchorFactor(LPCSTR align, LPCSTR lead, LPCSTR trail)
+{
+	if (0 == xr_strcmp(align, lead))
+		return 0.0f;
+	if (0 == xr_strcmp(align, trail))
+		return 1.0f;
+	return 0.5f;
+}
+
 bool CUIXmlInit::InitTabControl(CUIXml& xml_doc, LPCSTR path, int index, CUITabControl* pWnd)
 {
 	R_ASSERT4(xml_doc.NavigateToNode(path,index), "XML node not found", path, xml_doc.m_xml_file_name);
@@ -823,6 +832,19 @@ bool CUIXmlInit::InitTabControl(CUIXml& xml_doc, LPCSTR path, int index, CUITabC
 	XML_NODE* tab_node = xml_doc.NavigateToNode(path, index);
 	xml_doc.SetLocalRoot(tab_node);
 
+	// Optional icon slot shared by every tab: width/height cap the icon size, the per-tab <icon> art
+	// being fitted inside with aspect kept; align/vert_align snap the fitted icon's own anchor point
+	// onto the same point of the tab, and x/y offset it from there. Every default centres, so a strip
+	// declaring no slot needs no special case here. Must be read before the first SetTabIcon.
+	Fvector2 icon_pos, icon_box, icon_anchor;
+	icon_pos.set(xml_doc.ReadAttribFlt("icon_layout", 0, "x", 0.0f),
+	             xml_doc.ReadAttribFlt("icon_layout", 0, "y", 0.0f));
+	icon_box.set(xml_doc.ReadAttribFlt("icon_layout", 0, "width", 0.0f),
+	             xml_doc.ReadAttribFlt("icon_layout", 0, "height", 0.0f));
+	icon_anchor.set(AnchorFactor(xml_doc.ReadAttrib("icon_layout", 0, "align", ""), "l", "r"),
+	                AnchorFactor(xml_doc.ReadAttrib("icon_layout", 0, "vert_align", ""), "t", "b"));
+	pWnd->SetIconLayout(icon_pos, icon_box, icon_anchor);
+
 	CUITabButton* newButton;
 
 	for (int i = 0; i < tabsCount; ++i)
@@ -832,6 +854,11 @@ bool CUIXmlInit::InitTabControl(CUIXml& xml_doc, LPCSTR path, int index, CUITabC
 		newButton->m_btn_id = xml_doc.ReadAttrib("button", i, "id");
 		R_ASSERT3(newButton->m_btn_id.size(), xml_doc.m_xml_file_name, path);
 		pWnd->AddItem(newButton);
+
+		LPCSTR icon = xml_doc.Read("button:icon", i, NULL);
+		if (icon && !pWnd->SetTabIcon(newButton->m_btn_id.c_str(), icon))
+			Msg("! [%s] tab [%s]: <icon> art [%s] not found", xml_doc.m_xml_file_name,
+			    newButton->m_btn_id.c_str(), icon);
 	}
 
 	// Optional skin-authored scroll arrows, written as plain buttons. A non-zero x or y pins that axis
