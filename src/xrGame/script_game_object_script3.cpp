@@ -274,7 +274,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 
 		.def("item_allow_trade", &CScriptGameObject::ItemAllowTrade)
 		.def("item_deny_trade", &CScriptGameObject::ItemDenyTrade)
-	
+
 		.def("switch_to_trade", &CScriptGameObject::SwitchToTrade)
 		.def("switch_to_upgrade", &CScriptGameObject::SwitchToUpgrade)
 		.def("switch_to_talk", &CScriptGameObject::SwitchToTalk)
@@ -632,8 +632,9 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("update_weight", SAFE_WRAP(&CScriptGameObject::UpdateWeight))
 		.def("get_total_weight_force_update", SAFE_WRAP(&CScriptGameObject::GetTotalWeightForceUpdate))
 
-		// demonized: get luminosity as displayed in ui
-		.def("get_actor_ui_luminosity", &CScriptGameObject::GetActorUILuminosity)
+        // NLTP_ASHES : get_actor_ui_luminosity deprecated. Prefer using get_actor_visibility, which better describes what the value represents
+		.def("get_actor_ui_luminosity", &CScriptGameObject::GetActorVisibility)
+        .def("get_actor_visibility", &CScriptGameObject::GetActorVisibility)
 
 		.def("weight", SAFE_WRAP(&CScriptGameObject::Weight))
 
