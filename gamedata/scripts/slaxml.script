@@ -146,6 +146,7 @@ function SLAXML()
 		local currentAttributes = {}
 		local currentAttributeCt -- manually track length since the table is re-used
 		local nsStack = {}
+		local elementStack = {}
 		local anyElement = false
 
 		local utf8markers = { { 0x7FF, 192 }, { 0xFFFF, 224 }, { 0x1FFFFF, 240 } }
@@ -336,6 +337,9 @@ function SLAXML()
 					if self._call.closeElement then
 						self._call.closeElement(unpack(currentElement))
 					end
+				else
+					local elementName = currentElement[3] and (currentElement[3] .. ":" .. currentElement[1]) or currentElement[1]
+					push(elementStack, elementName)
 				end
 				return true
 			end
@@ -358,6 +362,15 @@ function SLAXML()
 				end
 			end
 			if first then
+				local closingName = match2 and (match2 .. ":" .. match1) or match1
+				local openingName = elementStack[#elementStack]
+				if not openingName then
+					error(("Unexpected closing element </%s> at position %d"):format(closingName, pos))
+				end
+				if openingName ~= closingName then
+					error(("Mismatched closing element at position %d: expected </%s>, found </%s>"):format(pos, openingName, closingName))
+				end
+
 				finishText()
 				if self._call.closeElement then
 					self._call.closeElement(match1, nsURI)
@@ -365,6 +378,7 @@ function SLAXML()
 				pos = last + 1
 				textStart = pos
 				pop(nsStack)
+				pop(elementStack)
 				return true
 			end
 		end
@@ -390,6 +404,9 @@ function SLAXML()
 
 		if not anyElement then
 			error("Parsing did not discover any elements")
+		end
+		if #elementStack > 0 then
+			error(("Parsing ended with unclosed element <%s>"):format(elementStack[#elementStack]))
 		end
 		if #nsStack > 0 then
 			error("Parsing ended with unclosed elements")
@@ -644,6 +661,7 @@ function SLAXML()
 			pi = function(name, value)
 				local el = {
 					el = "?xml " .. trim(value),
+					parent = current,
 				}
 				push(current.kids, el)
 			end,
