@@ -840,6 +840,7 @@ public:
 	void set_aim_params(float max_angle, float min_angle, float min_speed, float predict_time);
 	void set_fire_queue_scale(float size_k, float interval_k);
 	void set_vision_speed(float value);
+	void set_visible_enemy_bias(float actor_bias, float npc_bias);
 	void set_view_distance_factor(float value);
 	void set_health_restore_boost(float value);
 	bool can_kill_enemy();

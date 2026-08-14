@@ -64,6 +64,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("patrol_path_make_inactual", SAFE_WRAP(&CScriptGameObject::patrol_path_make_inactual))
 		.def("enable_memory_object", SAFE_WRAP(&CScriptGameObject::enable_memory_object))
 		.def("set_vision_speed", SAFE_WRAP(&CScriptGameObject::set_vision_speed))
+		.def("set_visible_enemy_bias", SAFE_WRAP(&CScriptGameObject::set_visible_enemy_bias))
 		.def("set_view_distance_factor", SAFE_WRAP(&CScriptGameObject::set_view_distance_factor))
 		.def("set_health_restore_boost", SAFE_WRAP(&CScriptGameObject::set_health_restore_boost))
 		.def("active_sound_count", SAFE_WRAP((int (CScriptGameObject::*)())(&CScriptGameObject::active_sound_count)))

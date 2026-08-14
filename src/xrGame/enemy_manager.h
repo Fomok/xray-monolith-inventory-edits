@@ -34,6 +34,8 @@ private:
 	CAI_Stalker* m_stalker;
 	float m_ignore_monster_threshold;
 	float m_max_ignore_distance;
+	float m_visible_enemy_bias_actor;
+	float m_visible_enemy_bias_npc;
 	mutable bool m_ready_to_save;
 	u32 m_last_enemy_time;
 	const CEntityAlive* m_last_enemy;
@@ -77,6 +79,7 @@ public:
 	void max_ignore_monster_distance(const float& max_ignore_monster_distance);
 	void restore_max_ignore_monster_distance();
 	float max_ignore_monster_distance() const;
+	void set_visible_enemy_bias(float actor_bias, float npc_bias);
 
 public:
 	void wounded(const CEntityAlive* wounded_enemy);

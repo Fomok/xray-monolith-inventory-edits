@@ -50,6 +50,14 @@ CEnemyManager::CEnemyManager(CCustomMonster* object)
 	m_stalker = smart_cast<CAI_Stalker*>(object);
 	m_enable_enemy_change = true;
 	m_smart_cover_enemy = 0;
+	m_visible_enemy_bias_actor = -1.f;
+	m_visible_enemy_bias_npc = -1.f;
+}
+
+void CEnemyManager::set_visible_enemy_bias(float actor_bias, float npc_bias)
+{
+	m_visible_enemy_bias_actor = actor_bias;
+	m_visible_enemy_bias_npc = npc_bias;
 }
 
 bool CEnemyManager::is_useful(const CEntityAlive* entity_alive) const
@@ -152,13 +160,13 @@ float CEnemyManager::evaluate(const CEntityAlive* object) const
 	// if object is actor and he/she sees us
 	if (actor) {
 		if (actor->memory().visual().visible_now(m_object))
-			penalty -= 900.f;
+			penalty -= (m_visible_enemy_bias_actor >= 0.f) ? m_visible_enemy_bias_actor : 900.f;
 	}
 	else {
 		// if object is npc and it sees us
 		const CCustomMonster	*monster = smart_cast<const CCustomMonster*>(object);
 		if (monster && monster->memory().visual().visible_now(m_object))
-			penalty -= 300.f;
+			penalty -= (m_visible_enemy_bias_npc >= 0.f) ? m_visible_enemy_bias_npc : 300.f;
 	}
 
 #ifdef USE_EVALUATOR
