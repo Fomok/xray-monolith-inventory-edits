@@ -2097,6 +2097,10 @@ void SetActorVisibility(u16 who_id, float value)
         return;
 
     CActor* pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+
+    if (!pActor)
+        return;
+
     pActor->SetVisibilityFromObject(who_id, value);
 }
 
@@ -2106,6 +2110,10 @@ float GetActorVisibility()
         return 0.f;
 
     CActor* pActor = smart_cast<CActor*>(Level().CurrentViewEntity());
+
+    if (!pActor)
+        return 0.f;
+
     float lum = pActor->GetVisibility();
     clamp(lum, 0.f, 1.f);
     return lum;
