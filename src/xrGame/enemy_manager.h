@@ -34,6 +34,8 @@ private:
 	CAI_Stalker* m_stalker;
 	float m_ignore_monster_threshold;
 	float m_max_ignore_distance;
+	float m_visible_enemy_bias_actor;
+	float m_visible_enemy_bias_npc;
 	float m_hit_redirect_max;
 	float m_hit_redirect_falloff;
 	mutable bool m_ready_to_save;
@@ -79,6 +81,7 @@ public:
 	void max_ignore_monster_distance(const float& max_ignore_monster_distance);
 	void restore_max_ignore_monster_distance();
 	float max_ignore_monster_distance() const;
+	void set_visible_enemy_bias(float actor_bias, float npc_bias);
 	void set_hit_redirect(float max, float falloff);
 
 public:
