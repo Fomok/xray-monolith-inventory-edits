@@ -155,8 +155,14 @@ float CEnemyManager::evaluate(const CEntityAlive* object) const
 			if (d2 < falloff2)
 				penalty -= m_hit_redirect_max * (1.f - d2 / falloff2);
 		}
+		// In CQB (< 30m), the distance score variance is only 0 to 9 points.
+		// A tiny -5 penalty ensures they turn to a flanker at 15m, 
+		// but WON'T ignore a guy actively fighting them at 5m just because they got shot!
 		else if (m_object->Position().distance_to(object->Position()) < 30.f)
 			penalty -= 5.f;
+			
+		// For medium/long range, give a standard 100m aggro advantage
+		// so they still react to snipers if they aren't busy with a close target.
 		else
 			penalty -= 100.f;
 	}

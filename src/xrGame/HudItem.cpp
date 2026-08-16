@@ -27,7 +27,7 @@ int g_nearwall = NW_FOV;
 int g_nearwall_trace = NT_CAM;
 
 // verdatim
-BOOL scale_hud_motion_marks_by_speed = false;
+BOOL scale_hud_motion_marks_by_speed = FALSE;
 
 CHudItem::CHudItem()
 {
