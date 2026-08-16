@@ -167,9 +167,19 @@ void CScriptGameObject::set_visible_enemy_bias(float actor_bias, float npc_bias)
 	CCustomMonster* custom_monster = smart_cast<CCustomMonster*>(&object());
 	if (!custom_monster)
 		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
-		                                "CCustomMonster : cannot access class member set_visible_enemy_bias!");
+                                    "CCustomMonster : cannot access class member set_visible_enemy_bias!");
 	else
 		custom_monster->memory().enemy().set_visible_enemy_bias(actor_bias, npc_bias);
+}
+
+void CScriptGameObject::set_hit_redirect(float max, float falloff)
+{
+	CCustomMonster* custom_monster = smart_cast<CCustomMonster*>(&object());
+	if (!custom_monster)
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		                                "CCustomMonster : cannot access class member set_hit_redirect!");
+	else
+		custom_monster->memory().enemy().set_hit_redirect(max, falloff);
 }
 
 void CScriptGameObject::set_view_distance_factor(float value)

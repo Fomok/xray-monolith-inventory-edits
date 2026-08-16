@@ -65,6 +65,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("enable_memory_object", SAFE_WRAP(&CScriptGameObject::enable_memory_object))
 		.def("set_vision_speed", SAFE_WRAP(&CScriptGameObject::set_vision_speed))
 		.def("set_visible_enemy_bias", SAFE_WRAP(&CScriptGameObject::set_visible_enemy_bias))
+		.def("set_hit_redirect", SAFE_WRAP(&CScriptGameObject::set_hit_redirect))
 		.def("set_view_distance_factor", SAFE_WRAP(&CScriptGameObject::set_view_distance_factor))
 		.def("set_health_restore_boost", SAFE_WRAP(&CScriptGameObject::set_health_restore_boost))
 		.def("active_sound_count", SAFE_WRAP((int (CScriptGameObject::*)())(&CScriptGameObject::active_sound_count)))
@@ -275,7 +276,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 
 		.def("item_allow_trade", &CScriptGameObject::ItemAllowTrade)
 		.def("item_deny_trade", &CScriptGameObject::ItemDenyTrade)
-	
+
 		.def("switch_to_trade", &CScriptGameObject::SwitchToTrade)
 		.def("switch_to_upgrade", &CScriptGameObject::SwitchToUpgrade)
 		.def("switch_to_talk", &CScriptGameObject::SwitchToTalk)
@@ -633,8 +634,9 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("update_weight", SAFE_WRAP(&CScriptGameObject::UpdateWeight))
 		.def("get_total_weight_force_update", SAFE_WRAP(&CScriptGameObject::GetTotalWeightForceUpdate))
 
-		// demonized: get luminosity as displayed in ui
-		.def("get_actor_ui_luminosity", &CScriptGameObject::GetActorUILuminosity)
+        // NLTP_ASHES : get_actor_ui_luminosity deprecated. Prefer using get_actor_visibility, which better describes what the value represents
+		.def("get_actor_ui_luminosity", &CScriptGameObject::GetActorVisibility)
+        .def("get_actor_visibility", &CScriptGameObject::GetActorVisibility)
 
 		.def("weight", SAFE_WRAP(&CScriptGameObject::Weight))
 
