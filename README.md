@@ -238,6 +238,7 @@ How to compile exes:
 **2026.08.17**
 * Main and MT:
   * DXML: Revert "Malformed closing tags are silently accepted" due to errors with mods
+  * erepb: support for hi-res fonts (https://github.com/themrdemonized/xray-monolith/pull/623)
 
 **2026.08.16**
 * Main and MT:
