@@ -1234,6 +1234,7 @@
     <ClInclude Include="..\interactive_motion.h" />
     <ClInclude Include="..\Inventory.h" />
     <ClInclude Include="..\InventoryBox.h" />
+    <ClInclude Include="..\InventoryContainer.h" />
     <ClInclude Include="..\InventoryOwner.h" />
     <ClInclude Include="..\inventory_item.h" />
     <ClInclude Include="..\inventory_item_impl.h" />
@@ -2993,6 +2994,10 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="..\InventoryBox_script.cpp">
+      <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
+    </ClCompile>
+    <ClCompile Include="..\InventoryContainer.cpp">
       <PrecompiledHeaderFile>pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
