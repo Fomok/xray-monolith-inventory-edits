@@ -550,6 +550,11 @@ void CSE_ALifeItemWeapon::clone_addons(CSE_ALifeItemWeapon* parent)
 	m_addon_flags = parent->m_addon_flags;
 }
 
+void CSE_ALifeItemWeapon::clone_upgrades(CSE_ALifeItemWeapon* parent)
+{
+	m_upgrades = parent->m_upgrades;
+}
+
 void CSE_ALifeItemWeapon::UPDATE_Write(NET_Packet& tNetPacket)
 {
 	inherited::UPDATE_Write(tNetPacket);
@@ -1112,6 +1117,47 @@ void CSE_ALifeItemDocument::FillProps		(LPCSTR pref, PropItemVec& items)
 	inherited::FillProps			(pref,items);
 //	PHelper().CreateU16			(items, PrepareKey(pref, *s_name, "Document index :"), &m_wDocIndex, 0, 65535);
 	PHelper().CreateRText		(items, PrepareKey(pref, *s_name, "Info portion :"), &m_wDoc);
+}
+#endif // #ifndef XRGAME_EXPORTS
+
+////////////////////////////////////////////////////////////////////////////
+// CSE_ALifeItemContainer
+// AMP: nothing of its own in the packets - the container's identity is
+// its class; its contents are ordinary child objects, saved by the
+// registry's recursive walk like everyone else's.
+////////////////////////////////////////////////////////////////////////////
+CSE_ALifeItemContainer::CSE_ALifeItemContainer(LPCSTR caSection): CSE_ALifeItem(caSection)
+{
+}
+
+CSE_ALifeItemContainer::~CSE_ALifeItemContainer()
+{
+}
+
+void CSE_ALifeItemContainer::STATE_Read(NET_Packet& tNetPacket, u16 size)
+{
+	inherited::STATE_Read(tNetPacket, size);
+}
+
+void CSE_ALifeItemContainer::STATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::STATE_Write(tNetPacket);
+}
+
+void CSE_ALifeItemContainer::UPDATE_Read(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Read(tNetPacket);
+}
+
+void CSE_ALifeItemContainer::UPDATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Write(tNetPacket);
+}
+
+#ifndef XRGAME_EXPORTS
+void CSE_ALifeItemContainer::FillProps(LPCSTR pref, PropItemVec& items)
+{
+	inherited::FillProps(pref, items);
 }
 #endif // #ifndef XRGAME_EXPORTS
 

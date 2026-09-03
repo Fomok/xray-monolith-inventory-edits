@@ -199,6 +199,8 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon, CSE_ALifeItem)
 	u16 get_ammo_magsize();
 	void clone_addons(CSE_ALifeItemWeapon* parent);
 
+	void clone_upgrades(CSE_ALifeItemWeapon* parent);
+
 	virtual BOOL Net_Relevant();
 
 	virtual CSE_ALifeItemWeapon* cast_item_weapon() { return this; }
@@ -264,6 +266,19 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDocument, CSE_ALifeItem)
 	shared_str m_wDoc;
 	CSE_ALifeItemDocument(LPCSTR caSection);
 	virtual ~CSE_ALifeItemDocument();
+SERVER_ENTITY_DECLARE_END
+
+// AMP: the server half of the carryable container (CInventoryContainer).
+// A CSE_ALifeItem so it can be carried, with the inventory box's
+// online/offline handling so a container lying on the ground far from
+// the actor does not lose its contents to the one-level default.
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemContainer, CSE_ALifeItem)
+	CSE_ALifeItemContainer(LPCSTR caSection);
+	virtual ~CSE_ALifeItemContainer();
+#ifdef XRGAME_EXPORTS
+	virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children, const bool& update_registries);
+	virtual void add_online(const bool& update_registries);
+#endif
 SERVER_ENTITY_DECLARE_END
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemGrenade, CSE_ALifeItem)

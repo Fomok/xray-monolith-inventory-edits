@@ -35,6 +35,18 @@ void CSE_ALifeItemDocument::script_register(lua_State* L)
 	];
 }
 
+// AMP: the carryable container's server half.
+void CSE_ALifeItemContainer::script_register(lua_State* L)
+{
+	module(L)[
+		luabind_class_item1(
+			CSE_ALifeItemContainer,
+			"cse_alife_item_container",
+			CSE_ALifeItem
+		)
+	];
+}
+
 void CSE_ALifeItemGrenade::script_register(lua_State* L)
 {
 	module(L)[
