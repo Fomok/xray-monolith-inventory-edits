@@ -234,7 +234,24 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			const shared_str& item_name = g_quick_use_slots[cmd - kQUICK_USE_1];
 			if (item_name.size())
 			{
-				PIItem itm = inventory().GetAny(item_name.c_str());
+				// AMP hooks: a script may choose which object answers a
+				// quick-use key, refuse the press, or stand aside.
+				// Answers: -1 stand aside (stock lookup), 0 refuse the
+				// press, >0 the id of the item to use. With no functor
+				// defined, behaviour is exactly the stock one.
+				PIItem itm = NULL;
+				bool amp_refused = false;
+				::luabind::functor<int> amp_pick;
+				if (ai().script_engine().functor("_G.AMP__quick_use_pick", amp_pick))
+				{
+					int r = amp_pick(int(cmd - kQUICK_USE_1) + 1, item_name.c_str());
+					if (r == 0)
+						amp_refused = true;
+					else if (r > 0)
+						itm = smart_cast<CInventoryItem*>(Level().Objects.net_Find(u16(r)));
+				}
+				if (!itm && !amp_refused)
+					itm = inventory().GetAny(item_name.c_str());
 
 				::luabind::functor<bool> funct;
 				if (itm && ai().script_engine().functor("_G.CInventory__eat", funct))
