@@ -266,6 +266,8 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("iterate_ruck", &CScriptGameObject::IterateRuck)
 		.def("iterate_belt", &CScriptGameObject::IterateBelt)
 		.def("iterate_inventory_box", &CScriptGameObject::IterateInventoryBox)
+		.def("iterate_container", &CScriptGameObject::IterateContainer) // AMP
+		.def("is_container", &CScriptGameObject::IsContainer) // AMP
 		.def("make_item_active", SAFE_WRAP(&CScriptGameObject::MakeItemActive))
 		.def("move_to_ruck", &CScriptGameObject::MoveItemToRuck)
 		.def("move_to_slot", &CScriptGameObject::MoveItemToSlot)

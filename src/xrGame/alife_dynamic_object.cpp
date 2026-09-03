@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "xrServer_Objects_ALife.h"
+#include "xrServer_Objects_ALife_Items.h" // AMP: CSE_ALifeItemContainer
 #include "alife_simulator.h"
 #include "alife_schedule_registry.h"
 #include "alife_graph_registry.h"
@@ -289,6 +290,90 @@ void CSE_ALifeInventoryBox::add_offline(const xr_vector<ALife::_OBJECT_ID>& save
 
 
 	CSE_ALifeDynamicObjectVisual::add_offline(saved_children, update_registries);
+}
+
+////////////////////////////////////////////////////////////////////////////
+// AMP: CSE_ALifeItemContainer - the carryable container's switch
+// handling, copied from the inventory box above, which is the engine's
+// one proven owner of items through the online/offline boundary.
+//
+// Two deliberate differences from the box's code:
+//   * the !can_save() branch uses `continue` (the box's `--i; --n;`
+//     mutates the bounds of a loop over a vector it does not own and
+//     skips the child after every release);
+//   * no visual asserts - a container is a plain item.
+//
+// These run when the container itself crosses the boundary as a ROOT
+// object (dropped on the ground, the actor walks away). A container in
+// the ACTOR's inventory never crosses it - the actor never switches
+// offline in single player - and containers are never given to NPCs
+// (V1 constraint, enforced by the mod's scripts), because an NPC's own
+// add_offline walks children one level deep and would strand the
+// contents.
+////////////////////////////////////////////////////////////////////////////
+void CSE_ALifeItemContainer::add_online(const bool& update_registries)
+{
+	NET_Packet tNetPacket;
+	ClientID clientID;
+	clientID.set(
+		alife().server().GetServerClient() ? alife().server().GetServerClient()->ID.value() : 0);
+
+	ALife::OBJECT_IT I = children.begin();
+	ALife::OBJECT_IT E = children.end();
+	for (; I != E; ++I)
+	{
+		CSE_ALifeDynamicObject* child = ai().alife().objects().object(*I);
+		CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(child);
+		R_ASSERT2(item, "Non inventory item object inside a container?!");
+		item->base()->s_flags.or(M_SPAWN_UPDATE);
+		CSE_Abstract* abstract = smart_cast<CSE_Abstract*>(item);
+		alife().server().entity_Destroy(abstract);
+
+		child->o_Position = o_Position;
+		child->m_tNodeID = m_tNodeID;
+		alife().server().Process_spawn(tNetPacket, clientID, FALSE, item->base());
+		child->s_flags.and(u16(-1) ^ M_SPAWN_UPDATE);
+		child->m_bOnline = true;
+	}
+
+	CSE_ALifeItem::add_online(update_registries);
+}
+
+void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
+                                         const bool& update_registries)
+{
+	for (u32 i = 0, n = saved_children.size(); i < n; ++i)
+	{
+		CSE_ALifeDynamicObject* child = smart_cast<CSE_ALifeDynamicObject*>(
+			ai().alife().objects().object(saved_children[i], true));
+		if (!child)
+		{
+			Msg("[AMP] container: can't switch child [%d] offline, it's null", saved_children[i]);
+			continue;
+		}
+		child->m_bOnline = false;
+
+		CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(child);
+		VERIFY2(item, "Non inventory item object inside a container?!");
+		if (!item)
+			continue;
+
+		ALife::_OBJECT_ID item_id = item->base()->ID;
+		item->base()->ID = alife().server().PerformIDgen(item_id);
+
+		if (!child->can_save())
+		{
+			alife().release(child);
+			continue;
+		}
+		child->clear_client_data();
+		alife().graph().add(child, child->m_tGraphID, false);
+		alife().graph().remove(child, child->m_tGraphID);
+		children.push_back(child->ID);
+		child->ID_Parent = ID;
+	}
+
+	CSE_ALifeItem::add_offline(saved_children, update_registries);
 }
 
 void CSE_ALifeDynamicObject::clear_client_data()

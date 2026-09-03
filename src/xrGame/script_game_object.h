@@ -423,6 +423,10 @@ public:
 	void IterateRuck(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateBelt(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateInventoryBox(::luabind::functor<bool> functor, ::luabind::object object);
+	// AMP: the carryable container - same shape as the box's iterator,
+	// plus a cheap way for a script to ask whether an object IS one.
+	void IterateContainer(::luabind::functor<bool> functor, ::luabind::object object);
+	bool IsContainer();
 	void MarkItemDropped(CScriptGameObject* item, bool flag);
 	bool MarkedDropped(CScriptGameObject* item);
 	void UnloadMagazine(bool bKeepAmmo);
