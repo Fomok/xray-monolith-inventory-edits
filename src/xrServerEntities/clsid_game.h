@@ -134,6 +134,8 @@
 #define CLSID_OBJECT_PHYSIC			MK_CLSID('O','_','P','H','Y','S','I','C')
 #define CLSID_PHYSICS_DESTROYABLE	MK_CLSID('P','_','D','S','T','R','B','L')
 #define CLSID_INVENTORY_BOX			MK_CLSID('O','_','I','N','V','B','O','X')
+// AMP: the carryable container - LTX `class = II_CONTR`
+#define CLSID_IITEM_CONTAINER		MK_CLSID('I','I','_','C','O','N','T','R')
 
 // Zones 
 #define CLSID_ZONE					MK_CLSID('Z','_','Z','O','N','E',' ',' ')

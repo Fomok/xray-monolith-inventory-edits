@@ -268,6 +268,19 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDocument, CSE_ALifeItem)
 	virtual ~CSE_ALifeItemDocument();
 SERVER_ENTITY_DECLARE_END
 
+// AMP: the server half of the carryable container (CInventoryContainer).
+// A CSE_ALifeItem so it can be carried, with the inventory box's
+// online/offline handling so a container lying on the ground far from
+// the actor does not lose its contents to the one-level default.
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemContainer, CSE_ALifeItem)
+	CSE_ALifeItemContainer(LPCSTR caSection);
+	virtual ~CSE_ALifeItemContainer();
+#ifdef XRGAME_EXPORTS
+	virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children, const bool& update_registries);
+	virtual void add_online(const bool& update_registries);
+#endif
+SERVER_ENTITY_DECLARE_END
+
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemGrenade, CSE_ALifeItem)
 	u32 m_ef_weapon_type;
 	CSE_ALifeItemGrenade(LPCSTR caSection);

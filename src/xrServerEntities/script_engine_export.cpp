@@ -13,6 +13,7 @@
 
 #include "PHSimpleCalls.h"
 #include "eatable_item.h"
+#include "InventoryContainer.h" // AMP: carryable container
 #include "RadioactiveZone.h"
 #include "ZoneCampfire.h"
 #include "alife_online_offline_group_brain.h"
@@ -200,6 +201,7 @@ void export_classes	(lua_State *L)
 	CSE_ALifeItemArtefact::script_register(L);
 	CSE_ALifeItemPDA::script_register(L);
 	CSE_ALifeItemDocument::script_register(L);
+	CSE_ALifeItemContainer::script_register(L); // AMP: carryable container
 	CSE_ALifeItemGrenade::script_register(L);
 	CSE_ALifeItemExplosive::script_register(L);
 	CSE_ALifeItemBolt::script_register(L);
@@ -257,6 +259,7 @@ void export_classes	(lua_State *L)
 	CCustomZone::script_register(L);
 	CFoodItem::script_register(L);
 	CInventoryBox::script_register(L);
+	CInventoryContainer::script_register(L); // AMP: carryable container
 	CInventoryOwner::script_register(L);
 	CMissile::script_register(L);
 	CWeaponAmmo::script_register(L);

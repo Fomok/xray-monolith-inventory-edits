@@ -1121,6 +1121,47 @@ void CSE_ALifeItemDocument::FillProps		(LPCSTR pref, PropItemVec& items)
 #endif // #ifndef XRGAME_EXPORTS
 
 ////////////////////////////////////////////////////////////////////////////
+// CSE_ALifeItemContainer
+// AMP: nothing of its own in the packets - the container's identity is
+// its class; its contents are ordinary child objects, saved by the
+// registry's recursive walk like everyone else's.
+////////////////////////////////////////////////////////////////////////////
+CSE_ALifeItemContainer::CSE_ALifeItemContainer(LPCSTR caSection): CSE_ALifeItem(caSection)
+{
+}
+
+CSE_ALifeItemContainer::~CSE_ALifeItemContainer()
+{
+}
+
+void CSE_ALifeItemContainer::STATE_Read(NET_Packet& tNetPacket, u16 size)
+{
+	inherited::STATE_Read(tNetPacket, size);
+}
+
+void CSE_ALifeItemContainer::STATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::STATE_Write(tNetPacket);
+}
+
+void CSE_ALifeItemContainer::UPDATE_Read(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Read(tNetPacket);
+}
+
+void CSE_ALifeItemContainer::UPDATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Write(tNetPacket);
+}
+
+#ifndef XRGAME_EXPORTS
+void CSE_ALifeItemContainer::FillProps(LPCSTR pref, PropItemVec& items)
+{
+	inherited::FillProps(pref, items);
+}
+#endif // #ifndef XRGAME_EXPORTS
+
+////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeItemGrenade
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemGrenade::CSE_ALifeItemGrenade(LPCSTR caSection): CSE_ALifeItem(caSection)
