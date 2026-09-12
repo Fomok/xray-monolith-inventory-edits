@@ -66,6 +66,7 @@ class CTorch;
 class CBolt;
 class CPda;
 class CInventoryBox;
+class CInventoryContainer; // AMP
 class CSpectator;
 class CSilencer;
 class CScope;
@@ -151,6 +152,7 @@ public:
 	virtual CBolt* cast_bolt() { return nullptr; }
 	virtual CPda* cast_pda() { return nullptr; }
 	virtual CInventoryBox* cast_inventory_box() { return nullptr; }
+	virtual CInventoryContainer* cast_inventory_container() { return nullptr; } // AMP
 	virtual CSpectator* cast_spectator() { return nullptr; }
 	virtual CSilencer* cast_addon_silencer() { return nullptr; }
 	virtual CScope* cast_addon_scope() { return nullptr; }

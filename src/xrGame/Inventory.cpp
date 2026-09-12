@@ -1118,6 +1118,23 @@ bool CInventory::Eat(PIItem pIItem)
 	if (pInventory != IO->m_inventory) return false;
 	if (pItemToEat->object().H_Parent()->ID() != entity_alive->ID()) return false;
 
+	// AMP hooks: ask the script before the actor consumes anything,
+	// whatever path the consumption came by - a quick-use key, the Use
+	// menu, or another script calling eat() directly. A false answer
+	// refuses the use and nothing below runs. With no functor defined,
+	// behaviour is exactly the stock one. Actor only: NPCs eat too, and
+	// their meals are none of the script's business here.
+	if (Actor() && Actor()->m_inventory == this)
+	{
+		::luabind::functor<bool> amp_veto;
+		if (ai().script_engine().functor("_G.AMP__before_eat", amp_veto))
+		{
+			CGameObject* go = smart_cast<CGameObject*>(pIItem);
+			if (go && !amp_veto(go->lua_game_object()))
+				return false;
+		}
+	}
+
 	if (!pItemToEat->UseBy(entity_alive))
 		return false;
 

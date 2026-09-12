@@ -325,6 +325,37 @@ void CScriptGameObject::IterateInventoryBox(::luabind::functor<bool> functor, ::
 	}
 }
 
+// AMP: the carryable container's mirror of IterateInventoryBox.
+#include "InventoryContainer.h"
+void CScriptGameObject::IterateContainer(::luabind::functor<bool> functor, ::luabind::object object)
+{
+	CInventoryContainer* container = smart_cast<CInventoryContainer*>(&this->object());
+	if (!container)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		                                "CScriptGameObject::IterateContainer non-CInventoryContainer object !!!");
+		return;
+	}
+
+	// Over a COPY: the functor is script and may take things out of
+	// the container mid-walk, which edits m_items under the iterator.
+	xr_vector<u16> items = container->m_items;
+	xr_vector<u16>::const_iterator I = items.begin();
+	xr_vector<u16>::const_iterator E = items.end();
+	for (; I != E; ++I)
+	{
+		CGameObject* GO = smart_cast<CGameObject*>(Level().Objects.net_Find(*I));
+		if (GO)
+			if (functor(object, GO->lua_game_object()))
+				return;
+	}
+}
+
+bool CScriptGameObject::IsContainer()
+{
+	return smart_cast<CInventoryContainer*>(&this->object()) != NULL;
+}
+
 void CScriptGameObject::MarkItemDropped(CScriptGameObject* item, bool flag)
 {
 	CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(&object());
