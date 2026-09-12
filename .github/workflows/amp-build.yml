@@ -1,0 +1,65 @@
+# AMP hooks build: DX11-AVX only (the one exe the user's GAMMA runs,
+# c:\anomaly\bin\anomalydx11avx.exe), built from this branch on every
+# push. The stock msbuild.yml is untouched - its triggers only watch
+# upstream's branches, so it stays quiet here.
+name: AMP-Build
+
+on:
+  push:
+    branches: [ "amp-hooks-mt" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SOLUTION_FILE_PATH: src/engine-vs2022.sln
+
+jobs:
+  build:
+    name: build-dx11avx
+    runs-on: windows-latest
+
+    steps:
+    - name: Configure Pagefile
+      uses: al-cheb/configure-pagefile-action@v1.3
+      with:
+        minimum-size: 8GB
+        maximum-size: 8GB
+        disk-root: "C:"
+
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Init submodules
+      uses: snickerbockers/submodules-init@v4
+
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.3.1
+      with:
+        msbuild-architecture: "x64"
+
+    - name: Build DX11-AVX
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: msbuild /p:Configuration=DX11-AVX ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Upload Exe
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: AMP-hooks_DX11-AVX_exe
+        path: ./_build/_game/bin_dbg/*.exe
+        if-no-files-found: "error"
+        retention-days: 7
+
+    - name: Zip PDB
+      run: |
+        cd ./_build/_game/bin_dbg
+        compress-archive -DestinationPath "AMP-hooks_DX11-AVX_pdb.zip" -Path "./*.pdb"
+
+    - name: Upload PDB
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: AMP-hooks_DX11-AVX_pdb
+        path: ./_build/_game/bin_dbg/*.zip
+        if-no-files-found: "error"
+        retention-days: 7
