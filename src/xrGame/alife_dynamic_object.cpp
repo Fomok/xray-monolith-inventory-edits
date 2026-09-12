@@ -304,12 +304,15 @@ void CSE_ALifeInventoryBox::add_offline(const xr_vector<ALife::_OBJECT_ID>& save
 //   * no visual asserts - a container is a plain item.
 //
 // These run when the container itself crosses the boundary as a ROOT
-// object (dropped on the ground, the actor walks away). A container in
-// the ACTOR's inventory never crosses it - the actor never switches
-// offline in single player - and containers are never given to NPCs
-// (V1 constraint, enforced by the mod's scripts), because an NPC's own
-// add_offline walks children one level deep and would strand the
-// contents.
+// object - dropped on the ground and the actor walks away.
+//
+// A container carried in somebody's inventory crosses it a different
+// way: the OWNER switches, and the switch manager saves one level of
+// children and lets Perform_destroy wipe the rest. That was the bug
+// behind an emptied container after a level change. The fix is in
+// CALifeSwitchManager::remove_online (deep save) and add_online_impl in
+// alife_trader_abstract.cpp (deep spawn), which call the two functions
+// below for the carried case as well.
 ////////////////////////////////////////////////////////////////////////////
 void CSE_ALifeItemContainer::add_online(const bool& update_registries)
 {
@@ -318,28 +321,31 @@ void CSE_ALifeItemContainer::add_online(const bool& update_registries)
 	clientID.set(
 		alife().server().GetServerClient() ? alife().server().GetServerClient()->ID.value() : 0);
 
-	// AMP DIAG: what the container believes it is carrying at the moment
-	// it comes back into the world.
-	Msg("[AMP-S] container %d add_online with %d child(ren)", ID,
-	    (int)children.size());
+	// DIAG: what the container believes it is carrying at the moment it
+	// comes back into the world.
+	Msg("[AMP-S] container %d add_online with %d child(ren)", ID, (int)children.size());
+
+	// A list of ids is a promise that each one still names something.
+	// Keep only the ones that do: an id left behind by an earlier fault
+	// would otherwise sit in children until xrServer::Perform_destroy
+	// walks it at shutdown and asserts "child registered but not found".
+	// Losing an item is bad; crashing the game on the way out is worse.
+	ALife::OBJECT_VECTOR survivors;
+	survivors.reserve(children.size());
 
 	ALife::OBJECT_IT I = children.begin();
 	ALife::OBJECT_IT E = children.end();
 	for (; I != E; ++I)
 	{
-		CSE_ALifeDynamicObject* child = ai().alife().objects().object(*I);
-		if (!child)
-		{
-			Msg("[AMP-S]   child %d IS NOT IN THE REGISTRY - lost here", *I);
-			continue;
-		}
-		CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(child);
+		CSE_ALifeDynamicObject* child = ai().alife().objects().object(*I, true);
+		CSE_ALifeInventoryItem* item = child ? smart_cast<CSE_ALifeInventoryItem*>(child) : NULL;
 		if (!item)
 		{
-			Msg("[AMP-S]   child %d is not an inventory item", *I);
+			Msg("[AMP-S] container [%d]: child [%d] IS NOT IN THE REGISTRY - dropping the id", ID, *I);
 			continue;
 		}
 		Msg("[AMP-S]   spawning child %d back", *I);
+
 		item->base()->s_flags.or(M_SPAWN_UPDATE);
 		CSE_Abstract* abstract = smart_cast<CSE_Abstract*>(item);
 		alife().server().entity_Destroy(abstract);
@@ -349,7 +355,16 @@ void CSE_ALifeItemContainer::add_online(const bool& update_registries)
 		alife().server().Process_spawn(tNetPacket, clientID, FALSE, item->base());
 		child->s_flags.and(u16(-1) ^ M_SPAWN_UPDATE);
 		child->m_bOnline = true;
+		survivors.push_back(child->ID);
+
+		// a container inside a container - not allowed in V1, but the
+		// recursion costs a branch and stops it being a silent loss.
+		if (!child->children.empty())
+			child->add_online(false);
 	}
+
+	children.swap(survivors);
+	Msg("[AMP-S] container %d came online holding %d", ID, (int)children.size());
 
 	CSE_ALifeItem::add_online(update_registries);
 }
@@ -357,9 +372,8 @@ void CSE_ALifeItemContainer::add_online(const bool& update_registries)
 void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
                                          const bool& update_registries)
 {
-	// AMP DIAG: what the switch manager handed us on the way out. If this
-	// says nought, the contents were already gone before this ran and the
-	// fault is upstream of the container entirely.
+	// DIAG: what the switch manager handed us on the way out. If this says
+	// nought, the contents were gone before this ran.
 	Msg("[AMP-S] container %d add_offline with %d saved child(ren)", ID,
 	    (int)saved_children.size());
 
@@ -369,8 +383,7 @@ void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& sav
 			ai().alife().objects().object(saved_children[i], true));
 		if (!child)
 		{
-			Msg("[AMP-S]   child %d IS NULL on the way offline - lost here",
-			    saved_children[i]);
+			Msg("[AMP-S]   child %d IS NULL on the way offline - lost here", saved_children[i]);
 			continue;
 		}
 		child->m_bOnline = false;
@@ -398,6 +411,7 @@ void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& sav
 	}
 
 	Msg("[AMP-S] container %d went offline holding %d", ID, (int)children.size());
+
 	CSE_ALifeItem::add_offline(saved_children, update_registries);
 }
 

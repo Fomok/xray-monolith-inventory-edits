@@ -40,6 +40,45 @@ struct remove_non_alife_controlled_predicate
 	}
 };
 
+////////////////////////////////////////////////////////////////////////////
+// AMP: one level is not enough when an item can own items.
+//
+// The switch manager saves the children of the object it is switching,
+// then lets xrServer::Perform_destroy walk the WHOLE tree destroying as
+// it goes, then hands the saved list back to add_offline. That is sound
+// while children are leaves. A container in the actor's backpack is not
+// a leaf: its own contents are destroyed by the recursion and nothing
+// remembers them.
+//
+// collect_deep_children records, in pre-order, every descendant that
+// owns children together with the ids it owns. Pre-order matters: a
+// parent must be put back before its children can be attached to it.
+//
+// Nothing in a stock game reaches the recursive branch - ordinary
+// inventory items have no children - so the vector comes back empty and
+// the caller's restore loop has nothing to do.
+////////////////////////////////////////////////////////////////////////////
+void CALifeSwitchManager::collect_deep_children(const OBJECT_VECTOR& ids,
+                                                xr_vector<deep_children_entry>& result)
+{
+	for (u32 i = 0, n = ids.size(); i < n; ++i)
+	{
+		CSE_ALifeDynamicObject* child = objects().object(ids[i], true);
+		if (!child || child->children.empty())
+			continue;
+
+		deep_children_entry entry;
+		entry.parent = child;
+		entry.children = child->children;
+		result.push_back(entry);
+
+		Msg("[AMP-S] deep save: [%d] holds %d item(s) below the top level",
+		    child->ID, (u32)child->children.size());
+
+		collect_deep_children(entry.children, result);
+	}
+}
+
 CALifeSwitchManager::~CALifeSwitchManager()
 {
 }
@@ -88,6 +127,20 @@ void CALifeSwitchManager::remove_online(CSE_ALifeDynamicObject* object, bool upd
 			m_saved_chidren.end()
 		);
 
+		// AMP: save the child lists of any DESCENDANT that owns children
+		// of its own - a container carried in an inventory.
+		//
+		// Perform_destroy below is recursive: it empties every children
+		// list in the whole tree. add_offline is not - it restores one
+		// level only, the list we saved above. So a container's contents
+		// are wiped from the server with nothing left holding their ids,
+		// and come back as nothing.
+		//
+		// In a stock game no inventory item owns children, so this walk
+		// records nothing and the restore loop below does not run.
+		xr_vector<deep_children_entry> deep_children;
+		collect_deep_children(m_saved_chidren, deep_children);
+
 		server().Perform_destroy(object, net_flags(TRUE,TRUE));
 		VERIFY(object->children.empty());
 
@@ -100,6 +153,13 @@ void CALifeSwitchManager::remove_online(CSE_ALifeDynamicObject* object, bool upd
 #endif
 
 		object->add_offline(m_saved_chidren, update_registries);
+
+		// AMP: now the deeper levels, parents before their children -
+		// the order collect_deep_children recorded them in. Each parent
+		// has already been re-registered by the add_offline above it, so
+		// its own add_offline can re-adopt the ids it used to hold.
+		for (u32 i = 0, n = deep_children.size(); i < n; ++i)
+			deep_children[i].parent->add_offline(deep_children[i].children, false);
 	STOP_PROFILE
 }
 
