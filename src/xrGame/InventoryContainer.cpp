@@ -10,6 +10,7 @@
 #include "game_object_space.h"
 #include "inventory_item.h"
 #include "Inventory.h"
+#include "xrServer_Objects_ALife.h" // AMP DIAG
 
 CInventoryContainer::CInventoryContainer()
 {
@@ -36,6 +37,8 @@ void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
 			CObject* itm = Level().Objects.net_Find(id);
 			VERIFY(itm);
 			if (!itm) break;
+			Msg("[AMP-C] TAKE child=%d into %d (now %d)", id, ID(),
+			    (int)m_items.size() + 1);
 			m_items.push_back(id);
 			itm->H_SetParent(this);
 			itm->setVisible(FALSE);
@@ -57,6 +60,8 @@ void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
 			if (it != m_items.end())
 				m_items.erase(it);
 
+			Msg("[AMP-C] REJECT child=%d from %d (now %d)", id, ID(),
+			    (int)m_items.size());
 			bool just_before_destroy = !P.r_eof() && P.r_u8();
 			bool dont_create_shell = (type == GE_TRADE_SELL) || just_before_destroy;
 
@@ -70,12 +75,23 @@ void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
 BOOL CInventoryContainer::net_Spawn(CSE_Abstract* DC)
 {
 	if (!inherited::net_Spawn(DC)) return FALSE;
+	// AMP DIAG: the client list is filled by TAKE events as the children
+	// spawn - so what matters here is what the SERVER still believes.
+	// A container that comes back from a level change with no children
+	// lost them on the server, before any of this ran.
+	CSE_ALifeDynamicObject* se = smart_cast<CSE_ALifeDynamicObject*>(DC);
+	Msg("[AMP-C] net_Spawn id=%d, server children=%d", ID(),
+	    se ? (int)se->children.size() : -1);
 	return TRUE;
 }
 
 void CInventoryContainer::net_Destroy()
 {
+	// AMP DIAG: the freeze happened somewhere inside releasing a
+	// container. These two lines say which side of inherited it is on.
+	Msg("[AMP-C] net_Destroy ENTER id=%d, m_items=%d", ID(), (int)m_items.size());
 	inherited::net_Destroy();
+	Msg("[AMP-C] net_Destroy LEAVE id=%d", ID());
 }
 
 float CInventoryContainer::Weight() const

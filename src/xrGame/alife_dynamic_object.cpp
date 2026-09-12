@@ -318,13 +318,28 @@ void CSE_ALifeItemContainer::add_online(const bool& update_registries)
 	clientID.set(
 		alife().server().GetServerClient() ? alife().server().GetServerClient()->ID.value() : 0);
 
+	// AMP DIAG: what the container believes it is carrying at the moment
+	// it comes back into the world.
+	Msg("[AMP-S] container %d add_online with %d child(ren)", ID,
+	    (int)children.size());
+
 	ALife::OBJECT_IT I = children.begin();
 	ALife::OBJECT_IT E = children.end();
 	for (; I != E; ++I)
 	{
 		CSE_ALifeDynamicObject* child = ai().alife().objects().object(*I);
+		if (!child)
+		{
+			Msg("[AMP-S]   child %d IS NOT IN THE REGISTRY - lost here", *I);
+			continue;
+		}
 		CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(child);
-		R_ASSERT2(item, "Non inventory item object inside a container?!");
+		if (!item)
+		{
+			Msg("[AMP-S]   child %d is not an inventory item", *I);
+			continue;
+		}
+		Msg("[AMP-S]   spawning child %d back", *I);
 		item->base()->s_flags.or(M_SPAWN_UPDATE);
 		CSE_Abstract* abstract = smart_cast<CSE_Abstract*>(item);
 		alife().server().entity_Destroy(abstract);
@@ -342,13 +357,20 @@ void CSE_ALifeItemContainer::add_online(const bool& update_registries)
 void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
                                          const bool& update_registries)
 {
+	// AMP DIAG: what the switch manager handed us on the way out. If this
+	// says nought, the contents were already gone before this ran and the
+	// fault is upstream of the container entirely.
+	Msg("[AMP-S] container %d add_offline with %d saved child(ren)", ID,
+	    (int)saved_children.size());
+
 	for (u32 i = 0, n = saved_children.size(); i < n; ++i)
 	{
 		CSE_ALifeDynamicObject* child = smart_cast<CSE_ALifeDynamicObject*>(
 			ai().alife().objects().object(saved_children[i], true));
 		if (!child)
 		{
-			Msg("[AMP] container: can't switch child [%d] offline, it's null", saved_children[i]);
+			Msg("[AMP-S]   child %d IS NULL on the way offline - lost here",
+			    saved_children[i]);
 			continue;
 		}
 		child->m_bOnline = false;
@@ -363,6 +385,7 @@ void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& sav
 
 		if (!child->can_save())
 		{
+			Msg("[AMP-S]   child %d cannot be saved - released", child->ID);
 			alife().release(child);
 			continue;
 		}
@@ -371,8 +394,10 @@ void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& sav
 		alife().graph().remove(child, child->m_tGraphID);
 		children.push_back(child->ID);
 		child->ID_Parent = ID;
+		Msg("[AMP-S]   child kept, new id %d, parent %d", child->ID, ID);
 	}
 
+	Msg("[AMP-S] container %d went offline holding %d", ID, (int)children.size());
 	CSE_ALifeItem::add_offline(saved_children, update_registries);
 }
 
