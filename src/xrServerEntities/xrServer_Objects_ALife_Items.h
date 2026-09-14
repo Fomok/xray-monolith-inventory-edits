@@ -51,6 +51,61 @@ public:
 	u32 m_last_update_time;
 	xr_vector<shared_str> m_upgrades;
 
+	// ============================================================
+	//  ITEM DATA: a small store a script may keep ON the item
+	//
+	//  Saved with the item, so it survives the things an object id does
+	//  not: going offline, being carried to another level, sitting in a
+	//  stash or inside a container. A mod that files its bookkeeping by
+	//  id has to cope with that id being handed to something else later;
+	//  a mod that keeps it here does not, because the data goes wherever
+	//  the item goes.
+	//
+	//  A VECTOR OF PAIRS, not a map. A handful of keys per item is a
+	//  linear scan either way, the order is stable so the same state
+	//  saves as the same bytes, and object_saver/object_loader already
+	//  serialise a container of std::pair<shared_str, shared_str> with no
+	//  help at all - which is what keeps STATE_Write to one line.
+	// ============================================================
+	typedef std::pair<shared_str, shared_str> item_data_pair;
+	typedef xr_vector<item_data_pair> item_data_store;
+	item_data_store m_item_data;
+
+public:
+	//  LIMITS, because a store with no ceiling is a save file with no
+	//  ceiling. The whole of an object's state has to fit ONE NET_Packet,
+	//  and that is 16 KB for everything the object has to say - so the
+	//  budget here is a quarter of it and set_data refuses rather than
+	//  building a packet that cannot be sent. Measured on the SERIALISED
+	//  length, which is the number that actually decides.
+	enum
+	{
+		item_data_max_key = 63,
+		item_data_max_value = 2047,
+		item_data_max_keys = 32,
+		item_data_max_bytes = 4096,
+	};
+
+	//  ABSENT AND EMPTY ARE DIFFERENT ANSWERS, so there are two calls
+	//  rather than one that overloads "" to mean both. That exact
+	//  conflation has cost this pack a bug already.
+	bool has_data(LPCSTR key) const;
+	LPCSTR get_data(LPCSTR key) const;
+	//  false when refused - key too long, too many keys, over budget -
+	//  so a caller is never left believing it stored something.
+	bool set_data(LPCSTR key, LPCSTR value);
+	bool remove_data(LPCSTR key);
+	void clear_data();
+	//  For walking what is there: a migration, a debug dump, a mod
+	//  tidying up after an older version of itself.
+	u32 data_count() const;
+	LPCSTR data_key(u32 index) const;
+	//  What the store costs in the packet as it stands.
+	u32 data_bytes() const;
+
+private:
+	const item_data_pair* find_data(LPCSTR key) const;
+
 public:
 	CSE_ALifeInventoryItem(LPCSTR caSection);
 	virtual ~CSE_ALifeInventoryItem();
@@ -199,6 +254,8 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWeapon, CSE_ALifeItem)
 	u16 get_ammo_magsize();
 	void clone_addons(CSE_ALifeItemWeapon* parent);
 
+	void clone_upgrades(CSE_ALifeItemWeapon* parent);
+
 	virtual BOOL Net_Relevant();
 
 	virtual CSE_ALifeItemWeapon* cast_item_weapon() { return this; }
@@ -264,6 +321,19 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDocument, CSE_ALifeItem)
 	shared_str m_wDoc;
 	CSE_ALifeItemDocument(LPCSTR caSection);
 	virtual ~CSE_ALifeItemDocument();
+SERVER_ENTITY_DECLARE_END
+
+// AMP: the server half of the carryable container (CInventoryContainer).
+// A CSE_ALifeItem so it can be carried, with the inventory box's
+// online/offline handling so a container lying on the ground far from
+// the actor does not lose its contents to the one-level default.
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemContainer, CSE_ALifeItem)
+	CSE_ALifeItemContainer(LPCSTR caSection);
+	virtual ~CSE_ALifeItemContainer();
+#ifdef XRGAME_EXPORTS
+	virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children, const bool& update_registries);
+	virtual void add_online(const bool& update_registries);
+#endif
 SERVER_ENTITY_DECLARE_END
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemGrenade, CSE_ALifeItem)

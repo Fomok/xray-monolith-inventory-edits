@@ -88,6 +88,11 @@ void CSE_ALifeInventoryItem::STATE_Write(NET_Packet& tNetPacket)
 {
 	tNetPacket.w_float(m_fCondition);
 	save_data(m_upgrades, tNetPacket);
+	// ITEM DATA, last, so the fields before it are where they have always
+	// been and an older reader that stops early still gets a valid item.
+	// One line, because object_saver already knows how to write a container
+	// of pairs of shared_str - see the note in the header.
+	save_data(m_item_data, tNetPacket);
 	State.position = base()->o_Position;
 }
 
@@ -100,6 +105,15 @@ void CSE_ALifeInventoryItem::STATE_Read(NET_Packet& tNetPacket, u16 size)
 	if (m_wVersion > 123)
 	{
 		load_data(m_upgrades, tNetPacket);
+	}
+
+	// A SAVE MADE BEFORE 129 HAS NOTHING HERE, and must not be asked for it -
+	// the same gate m_upgrades got when it was added at 124. This is the whole
+	// of the backward compatibility: an old save loads, the store comes up
+	// empty, and the first write puts something in it.
+	if (m_wVersion > 128)
+	{
+		load_data(m_item_data, tNetPacket);
 	}
 
 	State.position = base()->o_Position;
@@ -317,6 +331,172 @@ void CSE_ALifeInventoryItem::add_upgrade(const shared_str& upgrade_id)
 		return;
 	}
 	FATAL(make_string( "Can`t add existent upgrade (%s)!", upgrade_id.c_str() ).c_str());
+}
+
+////////////////////////////////////////////////////////////////////////////
+// ITEM DATA
+//
+// A small key/value store kept on the item and saved with it. See the note
+// in the header for why it lives here rather than in a table filed by
+// object id, and for the limits.
+//
+// EVERY ENTRY POINT TOLERATES A NULL KEY. These are called from Lua, and a
+// script passing nil where a string was meant must come back as "no" rather
+// than as a crash in the middle of somebody's save.
+////////////////////////////////////////////////////////////////////////////
+
+static IC u32 item_data_entry_bytes(LPCSTR key, LPCSTR value)
+{
+	// What object_saver actually puts in the packet for one pair. It writes a
+	// shared_str with w_stringZ - the characters and a terminator - so the
+	// cost is the two lengths plus two bytes, and an empty value still costs
+	// its terminator. Read out of object_saver.h rather than assumed; the
+	// first version of this line guessed a u32 length prefix and was wrong.
+	return u32(xr_strlen(key ? key : "") + 1 + xr_strlen(value ? value : "") + 1);
+}
+
+const CSE_ALifeInventoryItem::item_data_pair* CSE_ALifeInventoryItem::find_data(LPCSTR key) const
+{
+	if (!key || !key[0])
+		return 0;
+
+	item_data_store::const_iterator I = m_item_data.begin();
+	item_data_store::const_iterator E = m_item_data.end();
+	for (; I != E; ++I)
+		if (0 == xr_strcmp((*I).first.c_str(), key))
+			return &*I;
+
+	return 0;
+}
+
+bool CSE_ALifeInventoryItem::has_data(LPCSTR key) const
+{
+	return (0 != find_data(key));
+}
+
+LPCSTR CSE_ALifeInventoryItem::get_data(LPCSTR key) const
+{
+	const item_data_pair* found = find_data(key);
+	if (!found)
+		return "";
+
+	// A key that was stored with an empty value answers "", which is also
+	// what an absent key answers. has_data is what tells the two apart -
+	// deliberately, because a caller that needs to know is made to ask.
+	return found->second.size() ? found->second.c_str() : "";
+}
+
+u32 CSE_ALifeInventoryItem::data_bytes() const
+{
+	u32 total = u32(sizeof(u32)); // object_saver writes the entry count first
+	item_data_store::const_iterator I = m_item_data.begin();
+	item_data_store::const_iterator E = m_item_data.end();
+	for (; I != E; ++I)
+		total += item_data_entry_bytes((*I).first.c_str(), (*I).second.c_str());
+
+	return total;
+}
+
+bool CSE_ALifeInventoryItem::set_data(LPCSTR key, LPCSTR value)
+{
+	if (!key || !key[0])
+		return false;
+
+	if (xr_strlen(key) > u32(item_data_max_key))
+	{
+		Msg("! [item_data] key is longer than %d characters, refused: %s",
+		    int(item_data_max_key), key);
+		return false;
+	}
+
+	if (!value)
+		value = "";
+
+	if (xr_strlen(value) > u32(item_data_max_value))
+	{
+		Msg("! [item_data] value for [%s] is longer than %d characters, refused",
+		    key, int(item_data_max_value));
+		return false;
+	}
+
+	// REPLACING IS ALWAYS ALLOWED, whatever the budget says, as long as the
+	// new value is no bigger than the old one. Otherwise a store that has
+	// reached its ceiling could not be corrected - only emptied - and the
+	// commonest write of all is an item's position changing.
+	item_data_store::iterator I = m_item_data.begin();
+	item_data_store::iterator E = m_item_data.end();
+	for (; I != E; ++I)
+	{
+		if (0 != xr_strcmp((*I).first.c_str(), key))
+			continue;
+
+		const u32 was = item_data_entry_bytes((*I).first.c_str(), (*I).second.c_str());
+		const u32 now = item_data_entry_bytes(key, value);
+
+		if (now > was && (data_bytes() - was + now) > u32(item_data_max_bytes))
+		{
+			Msg("! [item_data] [%s] would put this item over %d bytes, refused",
+			    key, int(item_data_max_bytes));
+			return false;
+		}
+
+		(*I).second = value;
+		return true;
+	}
+
+	if (m_item_data.size() >= u32(item_data_max_keys))
+	{
+		Msg("! [item_data] this item already has %d keys, [%s] refused",
+		    int(item_data_max_keys), key);
+		return false;
+	}
+
+	if ((data_bytes() + item_data_entry_bytes(key, value)) > u32(item_data_max_bytes))
+	{
+		Msg("! [item_data] [%s] would put this item over %d bytes, refused",
+		    key, int(item_data_max_bytes));
+		return false;
+	}
+
+	m_item_data.push_back(std::make_pair(shared_str(key), shared_str(value)));
+	return true;
+}
+
+bool CSE_ALifeInventoryItem::remove_data(LPCSTR key)
+{
+	if (!key || !key[0])
+		return false;
+
+	item_data_store::iterator I = m_item_data.begin();
+	item_data_store::iterator E = m_item_data.end();
+	for (; I != E; ++I)
+		if (0 == xr_strcmp((*I).first.c_str(), key))
+		{
+			m_item_data.erase(I);
+			return true;
+		}
+
+	return false;
+}
+
+void CSE_ALifeInventoryItem::clear_data()
+{
+	m_item_data.clear();
+}
+
+u32 CSE_ALifeInventoryItem::data_count() const
+{
+	return u32(m_item_data.size());
+}
+
+LPCSTR CSE_ALifeInventoryItem::data_key(u32 index) const
+{
+	// Out of range answers "" rather than raising: this is the loop bound
+	// a script gets wrong, and it must not be the thing that ends the game.
+	if (index >= m_item_data.size())
+		return "";
+
+	return m_item_data[index].first.c_str();
 }
 
 
@@ -548,6 +728,11 @@ void CSE_ALifeItemWeapon::UPDATE_Read(NET_Packet& tNetPacket)
 void CSE_ALifeItemWeapon::clone_addons(CSE_ALifeItemWeapon* parent)
 {
 	m_addon_flags = parent->m_addon_flags;
+}
+
+void CSE_ALifeItemWeapon::clone_upgrades(CSE_ALifeItemWeapon* parent)
+{
+	m_upgrades = parent->m_upgrades;
 }
 
 void CSE_ALifeItemWeapon::UPDATE_Write(NET_Packet& tNetPacket)
@@ -1112,6 +1297,47 @@ void CSE_ALifeItemDocument::FillProps		(LPCSTR pref, PropItemVec& items)
 	inherited::FillProps			(pref,items);
 //	PHelper().CreateU16			(items, PrepareKey(pref, *s_name, "Document index :"), &m_wDocIndex, 0, 65535);
 	PHelper().CreateRText		(items, PrepareKey(pref, *s_name, "Info portion :"), &m_wDoc);
+}
+#endif // #ifndef XRGAME_EXPORTS
+
+////////////////////////////////////////////////////////////////////////////
+// CSE_ALifeItemContainer
+// AMP: nothing of its own in the packets - the container's identity is
+// its class; its contents are ordinary child objects, saved by the
+// registry's recursive walk like everyone else's.
+////////////////////////////////////////////////////////////////////////////
+CSE_ALifeItemContainer::CSE_ALifeItemContainer(LPCSTR caSection): CSE_ALifeItem(caSection)
+{
+}
+
+CSE_ALifeItemContainer::~CSE_ALifeItemContainer()
+{
+}
+
+void CSE_ALifeItemContainer::STATE_Read(NET_Packet& tNetPacket, u16 size)
+{
+	inherited::STATE_Read(tNetPacket, size);
+}
+
+void CSE_ALifeItemContainer::STATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::STATE_Write(tNetPacket);
+}
+
+void CSE_ALifeItemContainer::UPDATE_Read(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Read(tNetPacket);
+}
+
+void CSE_ALifeItemContainer::UPDATE_Write(NET_Packet& tNetPacket)
+{
+	inherited::UPDATE_Write(tNetPacket);
+}
+
+#ifndef XRGAME_EXPORTS
+void CSE_ALifeItemContainer::FillProps(LPCSTR pref, PropItemVec& items)
+{
+	inherited::FillProps(pref, items);
 }
 #endif // #ifndef XRGAME_EXPORTS
 
