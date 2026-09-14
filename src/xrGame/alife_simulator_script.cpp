@@ -49,6 +49,47 @@ CSE_ALifeDynamicObject* alife_object(const CALifeSimulator* self, ALife::_OBJECT
 	return (self->objects().object(object_id, true));
 }
 
+// ============================================================
+//  AN ITEM, TYPED AS AN ITEM
+//
+//  alife():object(id) is DECLARED to return CSE_ALifeDynamicObject*, and
+//  luabind hands the object to Lua wearing the type the function was
+//  declared with - not the type the object actually is. That is not a
+//  guess: pointer_converter in luabind/detail/policy.hpp asks
+//  get_class_rep<T> for the static T, and there is no typeid(*p) anywhere
+//  in that path.
+//
+//  So every server object a script fetches arrives as a bare
+//  cse_alife_dynamic_object, and everything further down the hierarchy is
+//  simply not there. has_upgrade and add_upgrade have been registered on
+//  cse_alife_inventory_item since 2004 and have never once been reachable
+//  from a script for this reason - nothing in a whole GAMMA gamedata
+//  folder calls either of them, which is what an unreachable call looks
+//  like from the outside.
+//
+//  This says the type out loud. Same pointer, same object, same lifetime,
+//  no copy: only the label Lua puts on it changes.
+// ============================================================
+CSE_ALifeInventoryItem* alife_inventory_item(const CALifeSimulator* self, ALife::_OBJECT_ID object_id)
+{
+	VERIFY(self);
+	if (object_id == 0xffff)
+		return (0);
+
+	// A CROSS-CAST, so it has to go through RTTI: the inventory-item side
+	// of a server object is a separate base from the dynamic-object side,
+	// and a static_cast between them would not merely be unchecked but
+	// wrong - the two bases sit at different offsets in the object.
+	// smart_cast is what the rest of the alife code already uses for
+	// exactly this step; see alife_group_abstract.cpp:180 and
+	// alife_communication_manager.cpp:177.
+	//
+	// It answers 0 for anything that is not an inventory item - a stalker,
+	// a smart terrain, an anomaly - so a script asking for one of those
+	// gets nil rather than a wrongly labelled object.
+	return (smart_cast<CSE_ALifeInventoryItem*>(self->objects().object(object_id, true)));
+}
+
 bool valid_object_id(const CALifeSimulator* self, ALife::_OBJECT_ID object_id)
 {
 	VERIFY(self);
@@ -624,6 +665,10 @@ void CALifeSimulator::script_register(lua_State* L)
 		.def("level_name", &get_level_name)
 		.def("object", (CSE_ALifeDynamicObject *(*)(const CALifeSimulator*, ALife::_OBJECT_ID))(alife_object))
 		.def("object", (CSE_ALifeDynamicObject *(*)(const CALifeSimulator*, ALife::_OBJECT_ID, bool))(alife_object))
+		// The same object as :object(id), labelled as the inventory item
+		// it is, so the calls that live on that class can be reached.
+		// nil for anything that is not an item.
+		.def("item", &alife_inventory_item)
 		.def("story_object", (CSE_ALifeDynamicObject *(*)(const CALifeSimulator*, ALife::_STORY_ID))(alife_story_object))
 		.def("set_switch_online", (void (CALifeSimulator::*)(ALife::_OBJECT_ID, bool))(&CALifeSimulator::set_switch_online))
 		.def("set_switch_offline", (void (CALifeSimulator::*)(ALife::_OBJECT_ID, bool))(&CALifeSimulator::set_switch_offline))
