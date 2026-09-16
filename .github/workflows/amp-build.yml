@@ -2,6 +2,32 @@
 # c:\anomaly\bin\anomalydx11avx.exe), built from this branch on every
 # push. The stock msbuild.yml is untouched - its triggers only watch
 # upstream's branches, so it stays quiet here.
+#
+# ============================================================
+# AND THE DB, WHICH WAS MISSING AND DID NOT MATTER UNTIL IT DOES
+#
+# An upstream release ships bin/ AND db/. The db is one file -
+# 00_modded_exes_gamedata.db0 - and it is the 156 files under this
+# repo's own gamedata/ (engine scripts, shaders, materials, the level
+# sound envs) packed by xrCompress. The exe expects it; it is not
+# optional, it is half the release.
+#
+# This workflow built only the exe, so every AMP build so far has had
+# to borrow the db from whichever upstream release was installed. That
+# WORKS, and it works for a precise reason: not one of the AMP commits
+# touches gamedata/, so the db this repo would build is byte-identical
+# to the one upstream shipped from the same commit.
+#
+# THE DAY IT STOPS WORKING IS A MERGE. Pull a newer upstream in, let it
+# change one script under gamedata/, and the installed db is now older
+# than the exe - and nothing anywhere says so. That is a thing that has
+# to match with nothing checking it, which is the shape of half the
+# bugs in the mod this fork exists for.
+#
+# So the db is built here too, from the same commit as the exe, and the
+# two come out of one run. Free: the pack job needs no compiler and
+# runs beside the build rather than after it.
+# ============================================================
 name: AMP-Build
 
 on:
@@ -14,8 +40,37 @@ permissions:
 
 env:
   SOLUTION_FILE_PATH: src/engine-vs2022.sln
+  # THE NAME IS THE UPSTREAM NAME, deliberately. It is what the exe
+  # looks for and what any installed copy is already called, so this
+  # one replaces that one rather than sitting beside it under a name
+  # nothing loads.
+  PACK_GAMEDATA_NAME: 00_modded_exes_gamedata.db0
 
 jobs:
+  pack_gamedata:
+    name: pack_gamedata
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Pack gamedata
+      run: |
+        new-item -path "./compressor/gamedata" -itemtype directory -force
+        copy-item -path "./gamedata/*" -destination "./compressor/gamedata" -recurse -force
+        cd ./compressor
+        start-process -filepath "./! compress_gamedata.cmd" -Wait
+        rename-item -path gamedata.db0 -newname ${{env.PACK_GAMEDATA_NAME}}
+
+    - name: Upload gamedata
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: AMP-hooks_${{env.PACK_GAMEDATA_NAME}}
+        path: ./compressor/${{env.PACK_GAMEDATA_NAME}}
+        if-no-files-found: "error"
+        retention-days: 7
+
   build:
     name: build-dx11avx
     runs-on: windows-latest
