@@ -195,6 +195,10 @@ public:
 	void Process_save(NET_Packet& P, ClientID sender);
 	void Process_event(NET_Packet& P, ClientID sender);
 	void Process_event_ownership(NET_Packet& P, ClientID sender, u32 time, u16 ID, BOOL bForced = FALSE);
+
+	// AMP: who is really holding this item - see xrServer_process_event_reject.cpp
+	u16 amp_holder_of(const u16 id_parent, const u16 id_entity);
+
 	bool Process_event_reject(NET_Packet& P, const ClientID sender, const u32 time, const u16 id_parent,
 	                          const u16 id_entity, bool send_message = true);
 	void Process_event_destroy(NET_Packet& P, ClientID sender, u32 time, u16 ID, NET_Packet* pEPack);

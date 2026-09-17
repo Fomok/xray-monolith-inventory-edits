@@ -1503,6 +1503,44 @@ void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_tr
 			}
 		}
 	}
+
+	// ============================================================
+	// AMP: ...AND WHAT IS INSIDE THE CASES
+	//
+	// This list is what `inventory_for_each` hands a script, and
+	// GAMMA's fetch hand-in walks exactly that to find the item it is
+	// taking off you. Without this the hand-in finds nothing, takes
+	// nothing - and the task pays anyway, because completion is decided
+	// elsewhere. That is the duplication, by its last road.
+	//
+	// NOT FOR TRADE. The same list dressed for a trader is what the
+	// trade window shows, and a case's contents appearing in the sell
+	// list - beside the case, which already weighs them - is two
+	// entries for one item and a way to sell something out from under
+	// the case that holds it. A hand-in is not a trade; the flag is
+	// already here to tell them apart.
+	// ============================================================
+	if (!for_trade)
+	{
+		for (TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
+		{
+			CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
+			if (!box)
+				continue;
+
+			for (xr_vector<u16>::const_iterator ci = box->m_items.begin();
+			     box->m_items.end() != ci; ++ci)
+			{
+				CObject* O = Level().Objects.net_Find(*ci);
+				if (!O)
+					continue;
+
+				PIItem child = smart_cast<CInventoryItem*>(O);
+				if (child)
+					items_container.push_back(child);
+			}
+		}
+	}
 }
 
 bool CInventory::isBeautifulForActiveSlot(CInventoryItem* pIItem)

@@ -46,6 +46,13 @@ void xrServer::Process_event_destroy(NET_Packet& P, ClientID sender, u32 time, u
 	R_ASSERT(c_dest == c_from); // assure client ownership of event
 	u16 parent_id = e_dest->ID_Parent;
 
+	// AMP: an item inside a carried case can still have the actor written
+	// down as its parent. Ask who is really holding it before detaching:
+	// the reject below has to come off the case, and the client is told
+	// the same id, so the case's own list stays in step.
+	if (0xffff != parent_id)
+		parent_id = amp_holder_of(parent_id, id_dest);
+
 #ifdef MP_LOGGING
 	Msg("--- SV: Process destroy: parent [%d] item [%d][%s]", 
 		parent_id, id_dest, e_dest->name());
@@ -82,6 +89,11 @@ void xrServer::Process_event_destroy(NET_Packet& P, ClientID sender, u32 time, u
 			pEventPack->w_u8(u8(tmpP.B.count));
 			pEventPack->w(&tmpP.B.data, tmpP.B.count);
 		};
+
+		// AMP: a refused reject used to leave this null and the next line
+		// wrote through it. Nothing here needs the pack to be the one the
+		// reject made, only that there is one.
+		if (!pEventPack) pEventPack = &P2;
 
 		game->u_EventGen(tmpP, GE_DESTROY, id_dest);
 
