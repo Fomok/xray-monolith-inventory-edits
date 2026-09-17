@@ -1,32 +1,46 @@
-# AMP hooks build: DX11-AVX only (the one exe the user's GAMMA runs,
-# c:\anomaly\bin\anomalydx11avx.exe), built from this branch on every
-# push. The stock msbuild.yml is untouched - its triggers only watch
-# upstream's branches, so it stays quiet here.
+# AMP hooks build: every exe this tree can make, from one push.
+#
+# ============================================================
+# WHY THIS STOPPED BEING ONE CONFIGURATION
+#
+# It built DX11-AVX and nothing else, because that is the one exe the
+# author's own GAMMA runs. That was fine while the fork was private. It
+# is not fine the moment anybody else wants these changes: DX11-AVX is
+# the newest machine's exe, and a fork that only ships it is a fork most
+# people cannot try.
+#
+# The eight names below are not invented here - they are the eight
+# solution configurations in engine-vs2022.sln, and the same eight
+# src/batch_build.bat has always walked. If upstream adds a ninth, this
+# list is where it goes, and nothing else changes.
+# ============================================================
+#
+# ============================================================
+# WHY A MATRIX AND NOT ONE JOB WALKING THE EIGHT
+#
+# batch_build.bat runs them in a row because it runs on one desk. Here
+# there are eight runners for the asking, and the intermediate directory
+# is per-configuration ($(xrIntDir) ends in $(Configuration)), so a
+# second configuration on the same runner shares nothing with the first
+# and saves nothing. In a row this is eight build times end to end and
+# one late failure loses all of it; side by side it is one build time
+# and a failure names its own configuration.
+# ============================================================
 #
 # ============================================================
 # AND THE DB, WHICH WAS MISSING AND DID NOT MATTER UNTIL IT DOES
 #
 # An upstream release ships bin/ AND db/. The db is one file -
-# 00_modded_exes_gamedata.db0 - and it is the 156 files under this
-# repo's own gamedata/ (engine scripts, shaders, materials, the level
-# sound envs) packed by xrCompress. The exe expects it; it is not
-# optional, it is half the release.
+# 00_modded_exes_gamedata.db0 - and it is the files under this repo's
+# own gamedata/ (engine scripts, shaders, materials, the level sound
+# envs) packed by xrCompress. The exe expects it; it is not optional, it
+# is half the release.
 #
-# This workflow built only the exe, so every AMP build so far has had
-# to borrow the db from whichever upstream release was installed. That
-# WORKS, and it works for a precise reason: not one of the AMP commits
-# touches gamedata/, so the db this repo would build is byte-identical
-# to the one upstream shipped from the same commit.
-#
-# THE DAY IT STOPS WORKING IS A MERGE. Pull a newer upstream in, let it
-# change one script under gamedata/, and the installed db is now older
-# than the exe - and nothing anywhere says so. That is a thing that has
-# to match with nothing checking it, which is the shape of half the
-# bugs in the mod this fork exists for.
-#
-# So the db is built here too, from the same commit as the exe, and the
-# two come out of one run. Free: the pack job needs no compiler and
-# runs beside the build rather than after it.
+# THE DAY IT STOPS MATTERING IS NEVER; the day it starts is a merge.
+# Pull a newer upstream in, let it change one script under gamedata/,
+# and an installed db is now older than the exe with nothing anywhere
+# saying so. So the db is built here, from the same commit as the exes,
+# and the whole set comes out of one run.
 # ============================================================
 name: AMP-Build
 
@@ -41,14 +55,14 @@ permissions:
 env:
   SOLUTION_FILE_PATH: src/engine-vs2022.sln
   # THE NAME IS THE UPSTREAM NAME, deliberately. It is what the exe
-  # looks for and what any installed copy is already called, so this
-  # one replaces that one rather than sitting beside it under a name
-  # nothing loads.
+  # looks for and what any installed copy is already called, so this one
+  # replaces that one rather than sitting beside it under a name nothing
+  # loads.
   PACK_GAMEDATA_NAME: 00_modded_exes_gamedata.db0
 
 jobs:
   pack_gamedata:
-    name: pack_gamedata
+    name: pack gamedata
     runs-on: windows-latest
 
     steps:
@@ -72,8 +86,24 @@ jobs:
         retention-days: 7
 
   build:
-    name: build-dx11avx
+    name: build ${{ matrix.config }}
     runs-on: windows-latest
+
+    # ONE FAILURE MUST NOT CANCEL THE OTHER SEVEN. A configuration that
+    # upstream has left broken is a thing to find out about, not a
+    # reason to come away from the run with nothing.
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - DX8
+          - DX9
+          - DX10
+          - DX11
+          - DX8-AVX
+          - DX9-AVX
+          - DX10-AVX
+          - DX11-AVX
 
     steps:
     - name: Configure Pagefile
@@ -94,27 +124,177 @@ jobs:
       with:
         msbuild-architecture: "x64"
 
-    - name: Build DX11-AVX
+    - name: Build ${{ matrix.config }}
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /p:Configuration=DX11-AVX ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /p:Configuration=${{ matrix.config }} ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Upload Exe
+    # WHAT CAME OUT, SAID OUT LOUD. Every configuration maps xrGame onto
+    # the same two project configurations (Release and Release-AVX) and
+    # writes into the same bin_dbg, so "which files are actually this
+    # configuration's" is a real question. Printing it per job is how a
+    # collision downstream gets explained rather than guessed at.
+    - name: List output
+      shell: pwsh
+      run: |
+        $out = "./_build/_game/bin_dbg"
+        if (!(Test-Path $out)) { throw "no output directory at $out" }
+        Get-ChildItem -Path $out -File |
+          Select-Object Name, Length |
+          Sort-Object Name |
+          Format-Table -AutoSize |
+          Out-String -Width 200
+
+    - name: Upload exe
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: AMP-hooks_DX11-AVX_exe
+        name: AMP-hooks_${{ matrix.config }}_exe
         path: ./_build/_game/bin_dbg/*.exe
         if-no-files-found: "error"
         retention-days: 7
 
-    - name: Zip PDB
-      run: |
-        cd ./_build/_game/bin_dbg
-        compress-archive -DestinationPath "AMP-hooks_DX11-AVX_pdb.zip" -Path "./*.pdb"
-
-    - name: Upload PDB
+    # PDBs ARE A WARNING AND NOT AN ERROR, and the exe upload is above
+    # this on purpose. Common.props turns debug information off in its
+    # shared block and each configuration decides for itself whether to
+    # turn it back on; a configuration that does not is a thing to be
+    # told about, not a reason to throw away an exe that built fine.
+    # The collect job below names every configuration that produced
+    # none, so a missing pdb is never silent either.
+    - name: Upload pdb
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: AMP-hooks_DX11-AVX_pdb
-        path: ./_build/_game/bin_dbg/*.zip
+        name: AMP-hooks_${{ matrix.config }}_pdb
+        path: ./_build/_game/bin_dbg/*.pdb
+        if-no-files-found: "warn"
+        retention-days: 7
+
+  collect:
+    name: collect bin and pdb
+    runs-on: windows-latest
+    needs: build
+    # THE EIGHT ARE ALLOWED TO DISAGREE. fail-fast is off above, so this
+    # runs on whatever built - seven exes are worth collecting, and the
+    # summary says which one is missing.
+    if: always()
+
+    steps:
+    - name: Download every build artifact
+      uses: actions/download-artifact@v4
+      with:
+        pattern: AMP-hooks_*_exe
+        path: ./staged/exe
+
+    - name: Download every pdb artifact
+      uses: actions/download-artifact@v4
+      with:
+        pattern: AMP-hooks_*_pdb
+        path: ./staged/pdb
+
+    # ============================================================
+    # MERGING IS WHERE THINGS GO MISSING QUIETLY
+    #
+    # Eight configurations write into one bin_dbg, so the same file name
+    # turns up in more than one artifact. Most of the time that is the
+    # same bytes twice - this is a monolith, xrGame is a static library,
+    # and DX8 through DX11 all link the same Release lib - and dropping
+    # the duplicate is right.
+    #
+    # BUT NOT ALWAYS, AND A COPY THAT OVERWRITES CANNOT TELL THE
+    # DIFFERENCE. So nothing is overwritten on a name alone: identical
+    # bytes are skipped, different bytes for the same name are kept
+    # aside under _conflicts/<configuration>/ and named in the summary.
+    # A merged bin/ that silently held one of two different files would
+    # be exactly the kind of bug this fork exists to stop.
+    # ============================================================
+    - name: Merge into one bin
+      shell: pwsh
+      run: |
+        $ErrorActionPreference = "Stop"
+        New-Item -ItemType Directory -Force -Path ./out/bin | Out-Null
+
+        $seen = @{}
+        $conflicts = @()
+        $perConfig = @{}
+
+        Get-ChildItem -Path ./staged/exe -Directory | ForEach-Object {
+          $cfg = $_.Name -replace '^AMP-hooks_', '' -replace '_exe$', ''
+          $files = Get-ChildItem -Path $_.FullName -File -Recurse
+          $perConfig[$cfg] = @($files).Count
+
+          foreach ($f in $files) {
+            $hash = (Get-FileHash -Algorithm SHA256 -Path $f.FullName).Hash
+            if (-not $seen.ContainsKey($f.Name)) {
+              $seen[$f.Name] = $hash
+              Copy-Item $f.FullName -Destination ./out/bin/$($f.Name)
+            }
+            elseif ($seen[$f.Name] -ne $hash) {
+              $dir = "./out/_conflicts/$cfg"
+              New-Item -ItemType Directory -Force -Path $dir | Out-Null
+              Copy-Item $f.FullName -Destination "$dir/$($f.Name)"
+              $conflicts += "$cfg/$($f.Name)"
+            }
+          }
+        }
+
+        New-Item -ItemType Directory -Force -Path ./out/pdb | Out-Null
+        $withPdb = @()
+        Get-ChildItem -Path ./staged/pdb -Directory | ForEach-Object {
+          $cfg = $_.Name -replace '^AMP-hooks_', '' -replace '_pdb$', ''
+          $files = Get-ChildItem -Path $_.FullName -File -Recurse
+          if (@($files).Count -gt 0) {
+            $withPdb += $cfg
+            New-Item -ItemType Directory -Force -Path ./out/pdb/$cfg | Out-Null
+            foreach ($f in $files) { Copy-Item $f.FullName -Destination ./out/pdb/$cfg/$($f.Name) }
+          }
+        }
+
+        $want = @("DX8","DX9","DX10","DX11","DX8-AVX","DX9-AVX","DX10-AVX","DX11-AVX")
+        $missing    = $want | Where-Object { -not $perConfig.ContainsKey($_) }
+        $missingPdb = $want | Where-Object { $withPdb -notcontains $_ }
+
+        $s = @()
+        $s += "## AMP build"
+        $s += ""
+        $s += "| configuration | files | pdb |"
+        $s += "|---|---|---|"
+        foreach ($c in $want) {
+          $n   = if ($perConfig.ContainsKey($c)) { $perConfig[$c] } else { "**did not build**" }
+          $pdb = if ($withPdb -contains $c) { "yes" } else { "**none**" }
+          $s += "| $c | $n | $pdb |"
+        }
+        $s += ""
+        $s += "$(@(Get-ChildItem ./out/bin -File).Count) distinct file(s) in the merged bin/."
+        if ($conflicts.Count -gt 0) {
+          $s += ""
+          $s += "### Same name, different bytes"
+          $s += "Kept under ``_conflicts/`` rather than overwritten:"
+          foreach ($c in $conflicts) { $s += "- $c" }
+        }
+        if ($missing.Count -gt 0)    { $s += ""; $s += "**Did not build: $($missing -join ', ')**" }
+        if ($missingPdb.Count -gt 0) { $s += ""; $s += "**No pdb from: $($missingPdb -join ', ')**" }
+        $s -join "`n" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+
+        if ($missing.Count -gt 0) { throw "missing configuration(s): $($missing -join ', ')" }
+
+    - name: Upload merged bin
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: AMP-hooks_bin_all
+        path: ./out/bin
+        if-no-files-found: "error"
+        retention-days: 7
+
+    - name: Upload conflicts, if any
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: AMP-hooks_bin_conflicts
+        path: ./out/_conflicts
+        if-no-files-found: "ignore"
+        retention-days: 7
+
+    - name: Upload every pdb
+      uses: actions/upload-artifact@v4.6.0
+      with:
+        name: AMP-hooks_pdb_all
+        path: ./out/pdb
         if-no-files-found: "error"
         retention-days: 7
