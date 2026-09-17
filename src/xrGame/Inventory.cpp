@@ -978,7 +978,12 @@ PIItem CInventory::SameSlot(const u16 slot, PIItem pIItem, bool bSearchRuck) con
 // SECOND, AND ONLY ON FAILURE. Anything loose in the ruck answers
 // first and this costs nothing at all in the ordinary case - which is
 // most calls, on a hot path.
-static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name)
+// `need_useful` matches whatever the caller's own loop asked for.
+// CInventory::Get requires Useful(); GetItemFromInventory does not, and a
+// helper that quietly added the test would make the two disagree about an
+// item one of them can see.
+static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name,
+                                     bool need_useful)
 {
 	for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
 	{
@@ -1000,9 +1005,13 @@ static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name)
 			if (!child)
 				continue;
 
-			if (!xr_strcmp(child->object().cNameSect(), name) &&
-				child->Useful())
-				return child;
+			if (xr_strcmp(child->object().cNameSect(), name))
+				continue;
+
+			if (need_useful && !child->Useful())
+				continue;
+
+			return child;
 		}
 	}
 	return NULL;
@@ -1025,7 +1034,7 @@ PIItem CInventory::Get(LPCSTR name, bool bSearchRuck) const
 	// not a thing this game has, and the belt is asked on a far hotter
 	// path than the ruck is.
 	if (bSearchRuck)
-		return amp_find_in_containers(list, name);
+		return amp_find_in_containers(list, name, true);
 
 	return NULL;
 }
@@ -1351,7 +1360,24 @@ CInventoryItem* CInventory::GetItemFromInventory(LPCSTR caItemName)
 	for (TIItemContainer::iterator l_it = l_list.begin(); l_list.end() != l_it; ++l_it)
 		if (xr_strcmp((*l_it)->object().cNameSect().c_str(), caItemName) == 0)
 			return (*l_it);
-	return (0);
+
+	// ============================================================
+	// AMP: ...AND INSIDE THE CASES. THIS IS THE ONE actor:object USES.
+	//
+	// CScriptGameObject::GetObjectByName - which is `actor:object(sec)`
+	// in script, and so is every "have you got one of these" a dialogue
+	// condition or a task functor asks - comes HERE, not to
+	// CInventory::Get. Teaching only Get left the counting fixed and the
+	// asking still blind: the taskboard saw the artefact in the pouch
+	// and the hand-in dialogue still would not appear.
+	//
+	// SECOND, AND ONLY ON FAILURE, for the same reason as Get: anything
+	// loose answers first and the ordinary case costs nothing.
+	//
+	// m_all, not m_ruck - this function's own list, so a container is
+	// found wherever the owner is carrying it.
+	// ============================================================
+	return amp_find_in_containers(l_list, caItemName, false);
 }
 
 CInventoryItem* CInventory::GetItemFromInventory(u16 id)
