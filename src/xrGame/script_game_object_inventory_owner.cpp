@@ -6,6 +6,7 @@
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
 #include "InventoryOwner.h"
+#include "InventoryContainer.h"	// AMP: needed by IterateInventory as well now
 #include "Pda.h"
 #include "xrMessages.h"
 #include "character_info.h"
@@ -268,6 +269,39 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 	for (; I != E; ++I)
 		if (functor(object, (*I)->object().lua_game_object()) == true)
 			return;
+
+	// ============================================================
+	// AMP: ...AND WHAT IS INSIDE THE CASES
+	//
+	// The same blind spot as CInventory::Get, on the other door. Every
+	// script that counts what the player has walks this, so a task that
+	// wants five bandages counts none of the five in a med case.
+	//
+	// AFTER the loose items, so anything that stops early sees the
+	// ordinary inventory first and in the order it always did.
+	//
+	// OVER A COPY of each id list, for the reason IterateContainer
+	// gives: the functor is script and may take things out mid-walk.
+	//
+	// ONE LEVEL. A container never holds another container.
+	// ============================================================
+	TIItemContainer boxes = inventory_owner->inventory().m_all;
+	for (TIItemContainer::iterator bi = boxes.begin(); boxes.end() != bi; ++bi)
+	{
+		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*bi);
+		if (!box)
+			continue;
+
+		xr_vector<u16> items = box->m_items;
+		for (xr_vector<u16>::const_iterator ci = items.begin();
+		     items.end() != ci; ++ci)
+		{
+			CGameObject* GO = smart_cast<CGameObject*>(Level().Objects.net_Find(*ci));
+			if (GO)
+				if (functor(object, GO->lua_game_object()) == true)
+					return;
+		}
+	}
 }
 
 void CScriptGameObject::IterateRuck(::luabind::functor<bool> functor, ::luabind::object object)
@@ -326,7 +360,6 @@ void CScriptGameObject::IterateInventoryBox(::luabind::functor<bool> functor, ::
 }
 
 // AMP: the carryable container's mirror of IterateInventoryBox.
-#include "InventoryContainer.h"
 void CScriptGameObject::IterateContainer(::luabind::functor<bool> functor, ::luabind::object object)
 {
 	CInventoryContainer* container = smart_cast<CInventoryContainer*>(&this->object());

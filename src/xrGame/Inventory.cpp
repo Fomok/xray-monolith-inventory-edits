@@ -23,6 +23,7 @@
 #include "game_base_space.h"
 #include "uigamecustom.h"
 #include "clsid_game.h"
+#include "InventoryContainer.h"	// AMP
 #include "static_cast_checked.hpp"
 #include "player_hud.h"
 #include "PDA.h"
@@ -961,6 +962,52 @@ PIItem CInventory::SameSlot(const u16 slot, PIItem pIItem, bool bSearchRuck) con
 	return NULL;
 }
 
+// AMP: ...AND INSIDE THE CASES YOU ARE CARRYING
+//
+// A carried container owns real objects - see CInventoryContainer - but
+// they are H_SetParent'ed to IT, not to the owner, so they are in no
+// list this function walks. Every "have you got one of these" in the
+// game therefore says no about a thing the player is plainly carrying:
+// a quest hand-in takes nothing and pays anyway, a craft says you are
+// short, a trader cannot see it.
+//
+// ONE LEVEL, which is not a simplification: a container never holds
+// another container (see the V1 constraints in InventoryContainer.h),
+// so one level IS all of them.
+//
+// SECOND, AND ONLY ON FAILURE. Anything loose in the ruck answers
+// first and this costs nothing at all in the ordinary case - which is
+// most calls, on a hot path.
+static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name)
+{
+	for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
+	{
+		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
+		if (!box)
+			continue;
+
+		for (xr_vector<u16>::const_iterator ci = box->m_items.begin();
+		     box->m_items.end() != ci; ++ci)
+		{
+			CObject* O = Level().Objects.net_Find(*ci);
+			if (!O)
+				continue;
+
+			// NOT smart_cast<CInventoryItem*>(O). A CObject is not an
+			// item; the item is its inventory_item interface, and that
+			// is what every caller of this function expects back.
+			PIItem child = smart_cast<CInventoryItem*>(O);
+			if (!child)
+				continue;
+
+			if (!xr_strcmp(child->object().cNameSect(), name) &&
+				child->Useful())
+				return child;
+		}
+	}
+	return NULL;
+}
+
 //найти в инвенторе вещь с указанным именем
 PIItem CInventory::Get(LPCSTR name, bool bSearchRuck) const
 {
@@ -973,6 +1020,13 @@ PIItem CInventory::Get(LPCSTR name, bool bSearchRuck) const
 			pIItem->Useful())
 			return pIItem;
 	}
+
+	// AMP: the cases, and the ruck only - a container on the belt is
+	// not a thing this game has, and the belt is asked on a far hotter
+	// path than the ruck is.
+	if (bSearchRuck)
+		return amp_find_in_containers(list, name);
+
 	return NULL;
 }
 
