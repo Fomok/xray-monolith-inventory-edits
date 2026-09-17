@@ -1,0 +1,287 @@
+# One button: take mrdemonized's latest, keep our changes, build the exes.
+#
+# Actions tab -> "AMP-Sync" -> Run workflow. Nothing else.
+#
+# ============================================================
+# WHY A MERGE AND NOT "RESET TO UPSTREAM, RE-APPLY OUR PATCH"
+#
+# The patch road looks simpler and is worse in the one way that counts.
+# It needs a patch file kept in the repo, and a patch file is a second
+# copy of the truth: change the engine on the branch, forget to update
+# the patch, and the next sync quietly reverts the change. That shape -
+# two things that must match with nothing checking - is the shape of
+# most of the bugs this fork exists for.
+#
+# amp-hooks-mt descends directly from upstream (merge-base ad9d841, the
+# branch is six commits on top of it), so git already knows what "our
+# changes" are and does not need to be told. Nothing to keep in step.
+#
+# IT ALSO KEEPS THE OLD BRANCH. A merge adds a commit; it does not
+# rewrite what was there, so a sync that turns out badly is undone by
+# pushing the previous commit back. A reset-and-reapply would have
+# thrown that away before anyone could look at it.
+# ============================================================
+#
+# ============================================================
+# WHAT THIS WILL NOT DO
+#
+# It will not push a half-done merge. Conflicts abort it, the branch is
+# left exactly as it was, and the summary names the files. That is when
+# to come back to me with the list - a conflict is upstream editing the
+# same lines we did, and resolving it needs someone who knows which of
+# the two lines still has to be true.
+#
+# It will not push a merge that lost our work either. See the checks
+# below: git is allowed to merge, but not to quietly hand a file back to
+# upstream's version.
+# ============================================================
+name: AMP-Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_branch:
+        description: "Upstream branch to take"
+        required: true
+        default: "all-in-one-vs2022-wpo-mt"
+      build_after:
+        description: "Build the exes after a successful sync"
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: write     # to push the merge
+  actions: write      # to start the build afterwards
+
+env:
+  UPSTREAM_REPO: https://github.com/themrdemonized/xray-monolith.git
+  OUR_BRANCH: amp-hooks-mt
+
+jobs:
+  sync:
+    name: take upstream, keep ours
+    # No compiler here, only git - so the quick runner, not the Windows one.
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout our branch
+      uses: actions/checkout@v4
+      with:
+        ref: amp-hooks-mt
+        fetch-depth: 0          # a merge needs the history, not a snapshot
+
+    - name: Fetch upstream
+      run: |
+        set -eu
+        git remote add upstream "$UPSTREAM_REPO"
+        git fetch --no-tags upstream "${{ inputs.upstream_branch }}"
+        git config user.name  "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+    # ============================================================
+    # WHAT OURS EVEN IS, WORKED OUT RATHER THAN WRITTEN DOWN
+    #
+    # Everything between the merge-base and our branch tip is our work,
+    # by definition, and git can say so. No list to maintain, no list to
+    # get out of date, and a file we add tomorrow is covered the day it
+    # is added with nobody remembering to say so.
+    # ============================================================
+    - name: Work out what is ours
+      id: ours
+      run: |
+        set -eu
+        BASE=$(git merge-base HEAD upstream/${{ inputs.upstream_branch }})
+        TIP=$(git rev-parse upstream/${{ inputs.upstream_branch }})
+        echo "base=$BASE" >> "$GITHUB_OUTPUT"
+        echo "tip=$TIP"   >> "$GITHUB_OUTPUT"
+        echo "was=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+        git diff --name-only "$BASE" HEAD | sort > /tmp/ours_before.txt
+        NEW=$(git rev-list --count "$BASE..$TIP")
+        echo "new_commits=$NEW" >> "$GITHUB_OUTPUT"
+
+        {
+          echo "## AMP sync"
+          echo
+          echo "- our base so far: \`${BASE:0:10}\`"
+          echo "- upstream now at: \`${TIP:0:10}\`"
+          echo "- new upstream commits: **$NEW**"
+          echo "- files that are ours: **$(wc -l < /tmp/ours_before.txt)**"
+        } >> "$GITHUB_STEP_SUMMARY"
+
+        if [ "$NEW" = "0" ]; then
+          echo "already=yes" >> "$GITHUB_OUTPUT"
+          echo >> "$GITHUB_STEP_SUMMARY"
+          echo "Nothing new upstream. Stopping here." >> "$GITHUB_STEP_SUMMARY"
+        else
+          echo "already=no" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Merge upstream
+      if: steps.ours.outputs.already == 'no'
+      run: |
+        set -eu
+        if git merge --no-edit --no-ff \
+             -m "Merge upstream ${{ inputs.upstream_branch }} into amp-hooks-mt" \
+             upstream/${{ inputs.upstream_branch }}; then
+          echo "merged cleanly"
+          exit 0
+        fi
+
+        # A HALF-DONE MERGE IS NOT A STATE TO LEAVE A BRANCH IN. Back out
+        # first, then say what happened - so a failure here costs a run
+        # and nothing else.
+        CONFLICTS=$(git diff --name-only --diff-filter=U | sort)
+        git merge --abort
+        {
+          echo
+          echo "### Conflicts - nothing was pushed"
+          echo
+          echo "Upstream changed the same lines we did in these files:"
+          echo
+          echo '```'
+          echo "$CONFLICTS"
+          echo '```'
+          echo
+          echo "The branch is untouched. Bring this list to Claude."
+        } >> "$GITHUB_STEP_SUMMARY"
+        exit 1
+
+    # ============================================================
+    # DID OUR WORK SURVIVE IT
+    #
+    # A clean merge is not the same as a correct one. Where upstream
+    # rewrote a file we also changed, git can settle it in upstream's
+    # favour without calling it a conflict, and the result compiles
+    # perfectly while doing less than it did yesterday. That is precisely
+    # the failure this fork keeps meeting: something that looks installed
+    # and is not.
+    #
+    # TWO CHECKS, AND THEY CATCH DIFFERENT THINGS.
+    #
+    # The first is arithmetic and needs no upkeep: after merging upstream,
+    # the difference between us and upstream IS our work, so every file
+    # that was ours before must still be different from upstream after. A
+    # file that has quietly gone back to upstream's version drops off that
+    # list and is named here.
+    #
+    # The second is a handful of landmarks, because a file can still
+    # differ while having lost the line that mattered. These are the ones
+    # whose loss would be SILENT - a dropped registration or an unbumped
+    # save version does not fail the build, it fails in somebody's game.
+    # A missing InventoryContainer.cpp would at least break the link.
+    # ============================================================
+    - name: Check our work survived
+      if: steps.ours.outputs.already == 'no'
+      run: |
+        set -eu
+        git diff --name-only "${{ steps.ours.outputs.tip }}" HEAD | sort > /tmp/ours_after.txt
+        LOST=$(comm -23 /tmp/ours_before.txt /tmp/ours_after.txt || true)
+
+        FAIL=0
+        if [ -n "$LOST" ]; then
+          FAIL=1
+          {
+            echo
+            echo "### These files went back to upstream's version"
+            echo
+            echo '```'
+            echo "$LOST"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        # file | text that must still be in it | what it is
+        LANDMARKS=(
+          "src/xrGame/InventoryContainer.cpp|CInventoryContainer|the carryable container"
+          "src/xrGame/InventoryContainer.h|CInventoryContainer|the container header"
+          "src/xrGame/xrGame.vcxproj|InventoryContainer.cpp|the container in the build"
+          "src/xrGame/vs2022/xrGame.vcxproj|InventoryContainer.cpp|the container in the vs2022 build"
+          "src/xrGame/xrServer.h|amp_holder_of|who is really holding it (declaration)"
+          "src/xrGame/xrServer_process_event_reject.cpp|amp_holder_of|the detach fix"
+          "src/xrGame/xrServer_process_event_destroy.cpp|amp_holder_of|the destroy-path detach fix"
+          "src/xrGame/Inventory.cpp|amp_find_in_containers|looking inside cases"
+          "src/xrGame/script_game_object_inventory_owner.cpp|CInventoryContainer|iterate_inventory and transfer_item"
+          "src/xrGame/script_game_object_script3.cpp|iterate_container|the two script calls"
+          "src/xrGame/alife_switch_manager.cpp|AMP|the deep save"
+          "src/xrGame/alife_trader_abstract.cpp|AMP|the deep spawn"
+          "src/xrGame/alife_dynamic_object.cpp|CSE_ALifeItemContainer|the container going online"
+          "src/xrGame/alife_simulator_script.cpp|alife_inventory_item|alife():item"
+          "src/xrServerEntities/clsid_game.h|II_CONTR|the container class id"
+          "src/xrServerEntities/object_factory_register.cpp|CLSID_IITEM_CONTAINER|the container registration"
+          "src/xrServerEntities/smart_cast.h|CInventoryContainer|the container cast"
+          "src/xrServerEntities/xrServer_Objects.h|SPAWN_VERSION.*129|the item-data save version"
+          "src/xrServerEntities/xrServer_Objects_ALife_Items.h|CSE_ALifeItemContainer|the container's server half"
+        )
+        for L in "${LANDMARKS[@]}"; do
+          f=${L%%|*}; rest=${L#*|}; pat=${rest%%|*}; what=${rest##*|}
+          if ! grep -qE -- "$pat" "$f" 2>/dev/null; then
+            FAIL=1
+            echo "- **$what** is gone from \`$f\`" >> "$GITHUB_STEP_SUMMARY"
+          fi
+        done
+
+        if [ "$FAIL" = "1" ]; then
+          {
+            echo
+            echo "**Nothing was pushed.** The merge was clean but it dropped"
+            echo "something of ours. Bring this list to Claude."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+        fi
+        echo "everything of ours is still there" >> "$GITHUB_STEP_SUMMARY"
+
+    # ============================================================
+    # A NINTH CONFIGURATION WOULD OTHERWISE JUST NOT GET BUILT
+    #
+    # The build workflow lists the eight by name. If upstream adds one,
+    # nothing breaks and nothing complains - there would simply be an exe
+    # that never gets made, and no way to notice except by missing it.
+    # The solution file is the source of truth, so read it and say so.
+    # ============================================================
+    - name: Check the build still covers every configuration
+      if: steps.ours.outputs.already == 'no'
+      continue-on-error: true
+      run: |
+        set -eu
+        SLN=$(grep -oE '^[[:space:]]*(DX[0-9]+(-AVX)?)\|x64 = ' src/engine-vs2022.sln \
+              | grep -oE 'DX[0-9]+(-AVX)?' | sort -u)
+        YML=$(grep -oE '^ +- DX[0-9]+(-AVX)?$' .github/workflows/amp-build.yml \
+              | grep -oE 'DX[0-9]+(-AVX)?' | sort -u)
+        MISSING=$(comm -23 <(echo "$SLN") <(echo "$YML") || true)
+        if [ -n "$MISSING" ]; then
+          {
+            echo
+            echo "### Upstream added a configuration the build does not make"
+            echo '```'
+            echo "$MISSING"
+            echo '```'
+            echo "Add it to the matrix in amp-build.yml."
+          } >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+    - name: Push
+      if: steps.ours.outputs.already == 'no'
+      run: |
+        set -eu
+        git push origin HEAD:"$OUR_BRANCH"
+        {
+          echo
+          echo "Pushed. Previous tip was \`${{ steps.ours.outputs.was }}\` -"
+          echo "push that back if this sync turns out badly."
+        } >> "$GITHUB_STEP_SUMMARY"
+
+    # A PUSH MADE WITH GITHUB_TOKEN STARTS NOTHING. GitHub will not let a
+    # workflow trigger a workflow by pushing - that is its loop guard - so
+    # the build has to be asked for by name. This is why amp-build.yml
+    # keeps its workflow_dispatch even though nobody presses it by hand.
+    - name: Start the build
+      if: steps.ours.outputs.already == 'no' && inputs.build_after
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        set -eu
+        gh workflow run amp-build.yml --ref "$OUR_BRANCH"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "Build started - it is the **AMP-Build** run in the Actions tab." >> "$GITHUB_STEP_SUMMARY"
