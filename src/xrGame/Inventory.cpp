@@ -100,6 +100,7 @@ CInventory::CInventory()
 	m_fTotalWeight = -1.f;
 	m_dwModifyFrame = 0;
 	m_drop_last_frame = false;
+	m_amp_box_drop = false;	// AMP
 
 	InitPriorityGroupsForQSwitch();
 	m_next_item_iteration_time = 0;
@@ -904,10 +905,43 @@ void CInventory::UpdateDropTasks()
 		}
 	}
 
+	// AMP: ...AND THE CHILDREN OF THE CASES, on the frames where one of
+	// them is waiting. See the note where the flag is set.
+	if (m_amp_box_drop)
+	{
+		m_amp_box_drop = false;
+		AmpUpdateBoxDrops();
+	}
+
 	if (m_drop_last_frame)
 	{
 		m_drop_last_frame = false;
 		m_pOwner->OnItemDropUpdate();
+	}
+}
+
+// AMP: the same UpdateDropItem every other item gets, over the children of
+// the cases in the ruck.
+//
+// OVER A COPY OF THE ID LIST, and that is not caution for its own sake:
+// UpdateDropItem sends the reject that makes CInventoryContainer::OnEvent
+// erase the id from this very vector, which would leave the loop walking
+// a container that changed under it.
+void CInventory::AmpUpdateBoxDrops()
+{
+	for (TIItemContainer::iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
+	{
+		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
+		if (!box)
+			continue;
+
+		xr_vector<u16> ids = box->m_items;
+		for (xr_vector<u16>::const_iterator ci = ids.begin(); ids.end() != ci; ++ci)
+		{
+			PIItem child = smart_cast<CInventoryItem*>(Level().Objects.net_Find(*ci));
+			if (child)
+				UpdateDropItem(child);
+		}
 	}
 }
 
@@ -1015,6 +1049,53 @@ static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name,
 		}
 	}
 	return NULL;
+}
+
+// ============================================================
+// AMP: IS THIS PARTICULAR THING IN A CASE YOU ARE CARRYING
+//
+// amp_find_in_containers answers "have you got a <name>". This answers it
+// about ONE OBJECT, which is what a GATE needs - the places that do not
+// search for anything but are handed an item and have to decide whether
+// its owner may act on it. CInventory::Eat is the first of those.
+//
+// ONE LEVEL, for the reason given above: a container never holds another
+// container, so one level IS all of them.
+//
+// THE FAST NO COMES FIRST. Nearly every call is about something loose in
+// the ruck, whose parent is the owner and not a case at all, and that
+// answers before any list is walked.
+//
+// THE RUCK ONLY, like the lookups, and for the same two reasons: a
+// container on the belt is not a thing this game has, and the belt is
+// asked on a far hotter path.
+//
+// BY ID, NOT BY POINTER. A CInventoryContainer is a CGameObject and a
+// CInventoryItem by two different paths; comparing against an id is the
+// one comparison that cannot be quietly wrong about which base class it
+// is looking through.
+// ============================================================
+bool CInventory::AmpInCarriedBox(const CInventoryItem* item) const
+{
+	if (!item)
+		return false;
+
+	CObject* holder = item->object().H_Parent();
+	if (!holder)
+		return false;
+
+	CInventoryContainer* box = smart_cast<CInventoryContainer*>(holder);
+	if (!box)
+		return false;
+
+	const u16 box_id = box->ID();
+	for (TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
+	{
+		if ((*it)->object().ID() == box_id)
+			return true;
+	}
+
+	return false;
 }
 
 //найти в инвенторе вещь с указанным именем
@@ -1176,10 +1257,37 @@ bool CInventory::Eat(PIItem pIItem)
 	CInventoryOwner* IO = smart_cast<CInventoryOwner*>(entity_alive);
 	if (!IO) return false;
 
-	CInventory* pInventory = pItemToEat->m_pInventory;
-	if (!pInventory || pInventory != this) return false;
-	if (pInventory != IO->m_inventory) return false;
-	if (pItemToEat->object().H_Parent()->ID() != entity_alive->ID()) return false;
+	// ============================================================
+	// AMP: ...OR IN A CASE YOU ARE CARRYING
+	//
+	//   "item in box have context menu and i could 'use' it, i tried
+	//    drinking canteen of water and fdda animation played but the use
+	//    wasnt consumed and i didnt get hydrated"
+	//
+	// The animation is script-side and ran. The swallow is HERE, and it
+	// did not - silently, with no message and no log line, because all
+	// three of the tests below answer no for a thing in a case and the
+	// function simply returns false.
+	//
+	// A case owns its contents: they are H_SetParent'ed to IT and never
+	// go through CInventory::Take, so a child has NO m_pInventory at all
+	// and a parent that is not the actor. Three noes for one fact.
+	//
+	// This is the seventh door of the same kind. Get,
+	// GetItemFromInventory, AddAvailableItems, IterateInventory,
+	// TransferItem and the server-side detach were the other six, and one
+	// sentence is behind all of them: WHAT IS IN A CASE YOU ARE CARRYING
+	// IS SOMETHING YOU ARE CARRYING.
+	// ============================================================
+	const bool amp_boxed = AmpInCarriedBox(pItemToEat);
+
+	if (!amp_boxed)
+	{
+		CInventory* pInventory = pItemToEat->m_pInventory;
+		if (!pInventory || pInventory != this) return false;
+		if (pInventory != IO->m_inventory) return false;
+		if (pItemToEat->object().H_Parent()->ID() != entity_alive->ID()) return false;
+	}
 
 	// AMP hooks: ask the script before the actor consumes anything,
 	// whatever path the consumption came by - a quick-use key, the Use
@@ -1229,6 +1337,22 @@ bool CInventory::Eat(PIItem pIItem)
 			return false;
 
 		pIItem->SetDropManual(TRUE);
+
+		// AMP: AND SOMEBODY HAS TO ANSWER THAT FLAG.
+		//
+		// UpdateDropTasks walks the slots, the belt and the ruck, and a
+		// case's child is in none of them - so an emptied thing in a case
+		// would set the flag and wait for a loop that never visits it.
+		// That is worse than it sounds: IsInvalid() is `getDestroy() ||
+		// GetDropManual()`, so the item would read as half-destroyed to
+		// every other piece of code, for the rest of the save.
+		//
+		// The flag says "look in the cases next frame" and nothing else
+		// can set it, because Eat is the only door into a case's child.
+		// So the extra walk costs nothing on the frames - which is all of
+		// them - where nobody drank the last of something out of a case.
+		if (amp_boxed)
+			m_amp_box_drop = true;
 	}
 
 	return true;
