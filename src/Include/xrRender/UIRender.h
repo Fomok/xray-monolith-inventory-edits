@@ -64,6 +64,9 @@ public:
 
 	virtual void CacheSetXformWorld(const Fmatrix& M) = 0;
 	virtual void CacheSetCullMode(CullMode) = 0;
+	// Depth test for UI drawn inside the 3D passes (script attachment UI).
+	// No effect on ordinary 2D UI, which is drawn with no depth buffer.
+	virtual void CacheSetDepthTest(bool enable) = 0;
 };
 
 #endif	//	UIRender_included
