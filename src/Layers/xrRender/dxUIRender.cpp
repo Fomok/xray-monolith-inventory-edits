@@ -291,3 +291,10 @@ void dxUIRender::CacheSetCullMode(CullMode m)
 {
 	RCache.set_CullMode(CULL_NONE + m);
 }
+
+void dxUIRender::CacheSetDepthTest(bool enable)
+{
+	RCache.set_Z(enable ? TRUE : FALSE);
+	if (enable)
+		RCache.set_ZFunc(D3DCMP_LESSEQUAL);
+}
