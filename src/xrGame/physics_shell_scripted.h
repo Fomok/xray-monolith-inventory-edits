@@ -46,6 +46,14 @@ public:
 	void set_LinearVel(Fvector& velocity) { physics_impl().set_LinearVel(velocity); }
 	void get_AngularVel(Fvector& velocity) const { physics_impl().get_AngularVel(velocity); }
 	void set_AngularVel(Fvector& velocity) { physics_impl().set_AngularVel(velocity); }
+
+	// Collision control. Lets a script take an object out of the collision
+	// world without destroying it: display copies, props, ghosts, markers.
+	void DisableCollision() { physics_impl().DisableCollision(); }
+	void EnableCollision() { physics_impl().EnableCollision(); }
+	void SetIgnoreStatic() { physics_impl().SetIgnoreStatic(); }
+	void SetIgnoreDynamic() { physics_impl().SetIgnoreDynamic(); }
+
 	void freeze();
 	void unfreeze();
 DECLARE_SCRIPT_REGISTER_FUNCTION

@@ -92,6 +92,8 @@ void script_attachment::script_register(lua_State* L)
 		//Script 3D UI
 		.def("set_ui", &script_attachment::SetScriptUI)
 		.def("get_ui", &script_attachment::GetScriptUI)
+		.def("set_ui_depth", &script_attachment::SetScriptUIDepth)
+		.def("get_ui_depth", &script_attachment::GetScriptUIDepth)
 		.def("set_ui_bone", (void (script_attachment::*)(u16)) &script_attachment::SetScriptUIBone)
 		.def("set_ui_bone", (void (script_attachment::*)(LPCSTR)) &script_attachment::SetScriptUIBone)
 		.def("get_ui_bone", &script_attachment::GetScriptUIBone)
