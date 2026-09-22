@@ -46,7 +46,7 @@ name: AMP-Build
 
 on:
   push:
-    branches: [ "amp-hooks-mt" ]
+    branches: [ "amp-hooks-mt", "feature/ui-render-depth" ]
   workflow_dispatch:
 
 permissions:
