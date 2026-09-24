@@ -38,10 +38,13 @@ public:
 
 	virtual void CacheSetXformWorld(const Fmatrix& M);
 	virtual void CacheSetCullMode(CullMode);
+	virtual bool SupportsFlatBackground() const;
+	virtual void DrawFlatBackground(u32 color, float distance);
 
 private:
 	ref_geom hGeom_TL;
 	ref_geom hGeom_LIT;
+	ref_shader m_flatBackgroundShader;
 
 	ePrimitiveType PrimitiveType;
 	ePointType m_PointType;

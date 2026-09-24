@@ -68,6 +68,8 @@ script_attachment::script_attachment(LPCSTR name, LPCSTR model_name)
 	m_script_ui_offset[3].set(0, 0, 0);
 	m_script_ui_scale.set(1, 1);
 	m_script_ui_bone = 0;
+	m_ui_background_color = 0;
+	m_ui_background_distance = 0.f;
 	m_script_light = nullptr;
 	m_script_light_bone = 0;
 	m_parent_bone = 0;
@@ -295,8 +297,23 @@ void script_attachment::Update()
 	}
 }
 
+bool script_attachment::SetUIBackground(u32 color, float distance)
+{
+	// Zero disables it; invalid values must not leave an old background active.
+	m_ui_background_distance = 0.f;
+	if (!_valid(distance) || distance < 0.f) return false;
+	if (distance == 0.f) return true;
+	if (GetType() != eSA_CamAttached || !UIRender->SupportsFlatBackground()) return false;
+	m_ui_background_color = color;
+	m_ui_background_distance = distance;
+	return true;
+}
+
 void script_attachment::RenderUI()
 {
+	if (GetType() == eSA_CamAttached && m_ui_background_distance > 0.f)
+		UIRender->DrawFlatBackground(m_ui_background_color, m_ui_background_distance);
+
 	if (m_script_ui)
 	{
 		IUIRender::ePointType bk;

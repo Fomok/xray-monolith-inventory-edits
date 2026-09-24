@@ -65,6 +65,8 @@ private:
 	Fvector m_script_ui_offset[4];
 	Fvector2 m_script_ui_scale;
 	u16 m_script_ui_bone;
+	u32 m_ui_background_color;
+	float m_ui_background_distance;
 
 	AttachmentScriptLight* m_script_light;
 	u16 m_script_light_bone;
@@ -105,6 +107,7 @@ public:
 	void Render(IKinematics* model, Fmatrix* mat, IDSGraphManager* DM);
 	void Update();
 	void RenderUI();
+	bool SetUIBackground(u32 color, float distance);
 
 	void AttachLight(AttachmentScriptLight* light);
 	AttachmentScriptLight* DetachLight();

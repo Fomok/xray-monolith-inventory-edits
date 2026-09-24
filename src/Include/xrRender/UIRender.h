@@ -64,6 +64,10 @@ public:
 
 	virtual void CacheSetXformWorld(const Fmatrix& M) = 0;
 	virtual void CacheSetCullMode(CullMode) = 0;
+
+	// Opt-in camera inspection background, drawn after scene postprocessing.
+	virtual bool SupportsFlatBackground() const { return false; }
+	virtual void DrawFlatBackground(u32 color, float distance) {}
 };
 
 #endif	//	UIRender_included

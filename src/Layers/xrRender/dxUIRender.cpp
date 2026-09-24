@@ -20,6 +20,7 @@ void dxUIRender::DestroyUIGeom()
 
 	hGeom_TL = NULL;
 	hGeom_LIT = NULL;
+	m_flatBackgroundShader.destroy();
 }
 
 void dxUIRender::SetShader(IUIShader& shader)
@@ -290,4 +291,69 @@ void dxUIRender::CacheSetXformWorld(const Fmatrix& M)
 void dxUIRender::CacheSetCullMode(CullMode m)
 {
 	RCache.set_CullMode(CULL_NONE + m);
+}
+
+// Keep this pass out of the scene's lighting, bloom, tone mapping and SSR.
+// It runs in the camera-attachment UI pass, after phase_combine. The
+// attachment geometry has already populated the near (0..0.02) depth range.
+#if defined(USE_DX11)
+class CBlender_FlatUIBackground : public IBlender
+{
+public:
+	virtual LPCSTR getComment() { return "Flat inspection background"; }
+	virtual BOOL canBeLMAPped() { return FALSE; }
+	virtual void Compile(CBlender_Compile& C)
+	{
+		IBlender::Compile(C);
+		if (C.iElement != 0) return;
+		const bool msaa = RImplementation.o.dx10_msaa;
+		C.r_Pass("fmk_ui_background", "fmk_ui_background", false, !msaa, FALSE,
+			msaa, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		if (msaa) C.r_dx10Texture("s_inspection_depth", "$user$msaadepth");
+		C.r_End();
+	}
+};
+#endif
+
+bool dxUIRender::SupportsFlatBackground() const
+{
+#if defined(USE_DX11)
+	return HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0;
+#else
+	return false;
+#endif
+}
+
+void dxUIRender::DrawFlatBackground(u32 color, float distance)
+{
+#if defined(USE_DX11)
+	if (!SupportsFlatBackground() || !_valid(distance) || distance <= 0.f) return;
+	VERIFY(PrimitiveType == ptNone);
+	if (!m_flatBackgroundShader)
+	{
+		CBlender_FlatUIBackground blender;
+		m_flatBackgroundShader.create(&blender, "fmk_ui_background");
+	}
+	// Use the same camera projection and viewport depth range as the gun.
+	// Full-screen clip coordinates avoid the ordinary 2D UI transform path.
+	const Fmatrix& P = Device.mProject;
+	const float w = P._34 * distance + P._44;
+	if (w <= EPS) return;
+	const float z = (P._33 * distance + P._43) / w;
+	if (z < 0.f || z > 1.f) return;
+	u32 offset;
+	FVF::LIT* v = (FVF::LIT*)RCache.Vertex.Lock(4, hGeom_LIT.stride(), offset);
+	color |= 0xff000000;
+	v[0].set(-1.f, -1.f, z, color, 0.f, 1.f);
+	v[1].set(-1.f,  1.f, z, color, 0.f, 0.f);
+	v[2].set( 1.f, -1.f, z, color, 1.f, 1.f);
+	v[3].set( 1.f,  1.f, z, color, 1.f, 0.f);
+	RCache.Vertex.Unlock(4, hGeom_LIT.stride());
+	RCache.set_Element(m_flatBackgroundShader->E[0]);
+	RCache.set_Geometry(hGeom_LIT);
+	RCache.set_CullMode(CULL_NONE);
+	RCache.set_Stencil(FALSE);
+	RCache.Render(D3DPT_TRIANGLESTRIP, offset, 2);
+	RCache.set_CullMode(CULL_CCW);
+#endif
 }
