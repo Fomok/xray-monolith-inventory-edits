@@ -30,6 +30,7 @@ void ScriptLight::script_register(lua_State *L)
 			.property("volumetric_distance", &ScriptLight::GetVolumetricDistance, &ScriptLight::SetVolumetricDistance)
 			.property("volumetric_intensity", &ScriptLight::GetVolumetricIntensity, &ScriptLight::SetVolumetricIntensity)
 			.property("hud_mode", &ScriptLight::GetHudMode, &ScriptLight::SetHudMode)
+			.property("inspection", &ScriptLight::GetInspection, &ScriptLight::SetInspection)
 			,
 			
 			class_<AttachmentScriptLight, ScriptLight>("attachment_script_light")

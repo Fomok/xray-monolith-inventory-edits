@@ -111,6 +111,7 @@ public:
 	virtual void RenderCamAttachedUI();
 	virtual bool RenderActiveItemUIQuery();
 	virtual bool RenderCamAttachedUIQuery();
+	virtual bool InspectionLightingQuery();
 
 	//Lain: added
 	void SetRenderable(bool renderable)

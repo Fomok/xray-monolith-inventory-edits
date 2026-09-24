@@ -515,7 +515,17 @@ void CDSGraphManager::r_dsgraph_capture_lights()
 
 	for (ISpatialShared spatial : lstLights)
 	{
-		if (0 == spatial) continue; spatial->spatial_updatesector();
+		if (0 == spatial) continue;
+#if RENDER == R_R4
+		if (RImplementation.inspectionLighting)
+		{
+			light* studio = (light*)spatial->dcast_Light();
+			if (studio && studio->get_inspection_light())
+				RImplementation.Lights.add_light(studio);
+			continue;
+		}
+#endif
+		spatial->spatial_updatesector();
 		CSector* sector = (CSector*)spatial->spatial.sector;
 		if (0 == sector) continue;
 

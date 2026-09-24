@@ -67,6 +67,7 @@ private:
 	u16 m_script_ui_bone;
 	u32 m_ui_background_color;
 	float m_ui_background_distance;
+	bool m_ui_studio_lighting;
 
 	AttachmentScriptLight* m_script_light;
 	u16 m_script_light_bone;
@@ -108,6 +109,8 @@ public:
 	void Update();
 	void RenderUI();
 	bool SetUIBackground(u32 color, float distance);
+	bool SetUIStudioLighting(bool enable);
+	bool HasUIStudioLighting() const { return m_ui_studio_lighting && m_ui_background_distance > 0.f; }
 
 	void AttachLight(AttachmentScriptLight* light);
 	AttachmentScriptLight* DetachLight();

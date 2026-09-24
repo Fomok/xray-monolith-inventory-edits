@@ -64,6 +64,7 @@ extern u32 g_r;
 
 void CRender::Render()
 {
+	inspectionLighting = g_hud && g_hud->InspectionLightingQuery();
 	PIX_EVENT_C(CRender_Render, dx10_marker_frame);
 	dx10_annotate_frame();
 
@@ -104,7 +105,7 @@ void CRender::Render()
 	RImplementation.o.distortion = FALSE; // disable distorion
 	Fcolor sun_color = ((light*)Lights.sun_adapted._get())->color;
 	BOOL bSUN = ps_r2_ls_flags.test(R2FLAG_SUN) && (u_diffuse2s(sun_color.r, sun_color.g, sun_color.b)>EPS) && !Core.ParamsData.test(ECoreParams::r4_dev);
-	if (o.sunstatic) bSUN = FALSE;
+	if (o.sunstatic || inspectionLighting) bSUN = FALSE;
 	// Msg						("sstatic: %s, sun: %s",o.sunstatic?;"true":"false", bSUN?"true":"false");
 
 	// HOM
