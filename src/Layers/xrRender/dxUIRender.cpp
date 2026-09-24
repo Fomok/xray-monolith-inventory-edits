@@ -307,8 +307,12 @@ public:
 		IBlender::Compile(C);
 		if (C.iElement != 0) return;
 		const bool msaa = RImplementation.o.dx10_msaa;
-		C.r_Pass("fmk_ui_background", "fmk_ui_background", false, !msaa, FALSE,
-			msaa, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		// Use the three-argument overload, then set states explicitly. Passing
+		// bool/BOOL values in the longer call is ambiguous with the GS overload
+		// on MSVC (false can also match the geometry-shader name argument).
+		C.r_Pass("fmk_ui_background", "fmk_ui_background", false);
+		C.PassSET_ZB(!msaa, FALSE);
+		C.PassSET_Blend(msaa, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA, FALSE, 0);
 		if (msaa) C.r_dx10Texture("s_inspection_depth", "$user$msaadepth");
 		C.r_End();
 	}
