@@ -42,6 +42,7 @@
 #include "UITabButton.h"
 #include "UITabControl.h"
 #include "UITrackBar.h"
+#include "../../Include/xrRender/UIRender.h"
 
 
 // Presents a full logical UI on a PDA subrectangle. The source is Lua-owned,
@@ -59,9 +60,9 @@ class CUIWorkbenchPortal : public CUIStatic
             Frect r;p->GetAbsoluteRect(r);
             Fvector2 mapped;mapped.set((saved.x-r.left)*1024.f/_max(1.f,r.width()),
                 (saved.y-r.top)*768.f/_max(1.f,r.height()));
-            c.SetUICursorPosition(mapped);
+            c.SetLogicalPosition(mapped);
         }
-        ~CursorScope() { UI().GetUICursor().SetUICursorPosition(saved); }
+        ~CursorScope() { UI().GetUICursor().SetLogicalPosition(saved); }
     };
 public:
     static bool Supported() { return UIRender->SupportsWorkbench(); }
@@ -84,7 +85,8 @@ public:
         UI().RenderFont();
         if(UIRender->BeginWorkbenchUI())
         {
-            m_source->Draw();UI().RenderFont();UIRender->EndWorkbenchPass();
+            Frect full;full.set(0,0,1024,768);UI().PushScissor(full,true);
+            m_source->Draw();UI().RenderFont();UI().PopScissor();UIRender->EndWorkbenchPass();
         }
         if(!m_texture) { InitTexture("$user$fmk_workbench");SetStretchTexture(true);m_texture=true; }
         CUIStatic::Draw();

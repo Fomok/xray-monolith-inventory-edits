@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../../Include/xrRender/UIRender.h"
 
 #include "../../xrEngine/render.h"
 #include "../../xrEngine/irenderable.h"
