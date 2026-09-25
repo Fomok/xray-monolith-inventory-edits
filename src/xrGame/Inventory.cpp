@@ -26,7 +26,6 @@
 #include "static_cast_checked.hpp"
 #include "player_hud.h"
 #include "PDA.h"
-#include "../Include/xrRender/UIRender.h"
 
 using namespace InventoryUtilities;
 //Alundaio
@@ -562,14 +561,6 @@ void CInventory::Activate(u16 slot, bool bForce)
 	PIItem tmp_item = NULL;
 	if (slot != NO_ACTIVE_SLOT)
 		tmp_item = ItemFromSlot(slot);
-
-	// Scope variants replace the inventory weapon and can request activation
-	// while the PDA portal is inspecting it. Reject that equip request before
-	// SendDeactivateItem starts lowering the PDA. Slot placement itself remains
-	// unchanged, and holstering/closing the PDA is still allowed.
-	if (!bForce && UIRender->WorkbenchActive() && GetActiveSlot() == PDA_SLOT &&
-		smart_cast<CActor*>(m_pOwner) && tmp_item && smart_cast<CWeapon*>(tmp_item))
-		return;
 
 	if (tmp_item && IsSlotBlocked(tmp_item) && (!bForce))
 	{
