@@ -110,6 +110,7 @@ public:
 	void RenderUI();
 	bool SetUIBackground(u32 color, float distance);
 	bool SetUIStudioLighting(bool enable);
+	bool HasUIBackground() const { return m_ui_background_distance > 0.f; }
 	bool HasUIStudioLighting() const { return m_ui_studio_lighting && m_ui_background_distance > 0.f; }
 
 	void AttachLight(AttachmentScriptLight* light);

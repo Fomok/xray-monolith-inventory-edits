@@ -244,6 +244,18 @@ bool CHUDManager::RenderActiveItemUIQuery()
 	return (g_player_hud && g_player_hud->render_item_ui_query());
 }
 
+bool CHUDManager::InspectionBackgroundQuery()
+{
+	if (!g_actor) return false;
+	for (auto& pair : *g_actor->GetAttachments())
+	{
+		script_attachment* att = pair.second;
+		if (att->GetType() == eSA_CamAttached && att->HasUIBackground())
+			return true;
+	}
+	return false;
+}
+
 bool CHUDManager::InspectionLightingQuery()
 {
 	if (!g_actor) return false;

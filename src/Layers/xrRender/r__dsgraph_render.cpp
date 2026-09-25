@@ -235,6 +235,13 @@ void CDSGraphManager::r_dsgraph_render_cam_ui()
 	// Rendering
 	RImplementation.rmNear();
 	g_hud->RenderCamAttachedUI();
+#if defined(USE_DX11)
+	// A flat background preserves opaque depth but overwrites transparent
+	// pixels. Composite deferred glass/reticles after it, using the same
+	// camera attachment projection and near depth range.
+	if (RGraph.mapCamAttachedSorted.Sorted.size())
+		r_dsgraph_render_graph_sorted(RGraph.mapCamAttachedSorted.Sorted, true);
+#endif
 	RImplementation.rmNormal();
 }
 
@@ -252,8 +259,14 @@ void CDSGraphManager::r_dsgraph_render_sorted(bool render_hud)
 	if (render_hud)
 		r_dsgraph_render_sorted_hud();
 
+	// Keep transparent camera surfaces for the late camera UI pass whenever
+	// a flat background is active. Ordinary gameplay keeps its existing order.
+	bool deferCamTransparency = false;
+#if defined(USE_DX11)
+	deferCamTransparency = g_hud && g_hud->InspectionBackgroundQuery();
+#endif
 	// Camera Script Attachments
-	if (RGraph.mapCamAttachedSorted.Sorted.size())
+	if (!deferCamTransparency && RGraph.mapCamAttachedSorted.Sorted.size())
 	{
 		RImplementation.rmNear();
 		// Change projection
