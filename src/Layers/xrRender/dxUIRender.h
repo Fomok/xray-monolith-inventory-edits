@@ -52,12 +52,12 @@ public:
 private:
     bool m_workbenchActive = false;
 #if defined(USE_DX11)
-    ref_rt m_wbPosition, m_wbColor, m_wbHeat, m_wbMotion, m_wbDepth, m_wbModel, m_wbUI;
+    ref_rt m_wbPosition, m_wbColor, m_wbDepth, m_wbModel, m_wbUI;
     ref_shader m_wbCompose;
     ID3DRenderTargetView* m_wbSavedRT[4] = {};
     ID3DDepthStencilView* m_wbSavedDepth = nullptr;
     bool m_wbPass = false;
-    void EnsureWorkbenchTargets();
+    void EnsureWorkbenchTargets(bool model);
     void SaveWorkbenchTargets();
     void DrawWorkbenchQuad();
 #endif

@@ -51,6 +51,7 @@ class CUIWorkbenchPortal : public CUIStatic
 {
     CUIDialogWndEx* m_source = nullptr;
     bool m_texture=false;
+    u32 m_updateFrame = u32(-1);
     struct CursorScope
     {
         Fvector2 saved;
@@ -66,10 +67,19 @@ class CUIWorkbenchPortal : public CUIStatic
     };
 public:
     static bool Supported() { return UIRender->SupportsWorkbench(); }
-    void SetSource(CUIDialogWndEx* source) { m_source=source; }
+    void SetSource(CUIDialogWndEx* source)
+    {
+        if (m_source != source) m_updateFrame = u32(-1);
+        m_source=source;
+    }
     void SetActive(bool active) { UIRender->SetWorkbenchActive(active); }
     virtual void Update()
     {
+        // CUIPdaWnd updates its attached active dialog both through the child
+        // tree and explicitly. Run the embedded workshop only once per frame.
+        if (m_updateFrame == Device.dwFrame) return;
+        m_updateFrame = Device.dwFrame;
+        PROF_EVENT("PDA workbench update");
         CUIStatic::Update();
         if(m_source && IsShown()) { CursorScope cursor(this);m_source->Update(); }
     }
@@ -82,6 +92,7 @@ public:
     virtual void Draw()
     {
         if(!m_source || !Supported()) return;
+        PROF_EVENT("PDA workbench UI draw");
         UI().RenderFont();
         if(UIRender->BeginWorkbenchUI())
         {
