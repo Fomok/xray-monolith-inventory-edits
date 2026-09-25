@@ -43,6 +43,54 @@
 #include "UITabControl.h"
 #include "UITrackBar.h"
 
+
+// Presents a full logical UI on a PDA subrectangle. The source is Lua-owned,
+// never adopted; pointer mapping is scoped and restored before PDA processing.
+class CUIWorkbenchPortal : public CUIStatic
+{
+    CUIDialogWndEx* m_source = nullptr;
+    bool m_texture=false;
+    struct CursorScope
+    {
+        Fvector2 saved;
+        CursorScope(CUIWorkbenchPortal* p)
+        {
+            CUICursor& c=UI().GetUICursor();saved=c.GetCursorPosition();
+            Frect r;p->GetAbsoluteRect(r);
+            Fvector2 mapped;mapped.set((saved.x-r.left)*1024.f/_max(1.f,r.width()),
+                (saved.y-r.top)*768.f/_max(1.f,r.height()));
+            c.SetUICursorPosition(mapped);
+        }
+        ~CursorScope() { UI().GetUICursor().SetUICursorPosition(saved); }
+    };
+public:
+    static bool Supported() { return UIRender->SupportsWorkbench(); }
+    void SetSource(CUIDialogWndEx* source) { m_source=source; }
+    void SetActive(bool active) { UIRender->SetWorkbenchActive(active); }
+    virtual void Update()
+    {
+        CUIStatic::Update();
+        if(m_source && IsShown()) { CursorScope cursor(this);m_source->Update(); }
+    }
+    virtual bool OnMouseAction(float x,float y,EUIMessages action)
+    {
+        if(!m_source) return false;
+        CursorScope cursor(this);
+        return m_source->OnMouseAction(x*1024.f/_max(1.f,GetWidth()),y*768.f/_max(1.f,GetHeight()),action);
+    }
+    virtual void Draw()
+    {
+        if(!m_source || !Supported()) return;
+        UI().RenderFont();
+        if(UIRender->BeginWorkbenchUI())
+        {
+            m_source->Draw();UI().RenderFont();UIRender->EndWorkbenchPass();
+        }
+        if(!m_texture) { InitTexture("$user$fmk_workbench");SetStretchTexture(true);m_texture=true; }
+        CUIStatic::Draw();
+    }
+};
+
 CFontManager& mngr()
 {
 	return UI().Font();
@@ -316,7 +364,12 @@ void CUIWindow::script_register(lua_State* L)
 		.def("ShowPage", &CUIMMShniaga::ShowPage),
 
 
-		class_<CUIScrollView, CUIWindow>("CUIScrollView")
+		class_<CUIWorkbenchPortal, CUIWindow>("CUIWorkbenchPortal")
+        .def(constructor<>())
+        .def("SetSource", &CUIWorkbenchPortal::SetSource)
+        .def("SetActive", &CUIWorkbenchPortal::SetActive),
+        def("fmk_pda_workbench_supported", &CUIWorkbenchPortal::Supported),
+        class_<CUIScrollView, CUIWindow>("CUIScrollView")
 		.def(constructor<>())
 		.def("AddWindow", &CUIScrollView::AddWindow)
 		.def("RemoveWindow", &CUIScrollView::RemoveWindow)

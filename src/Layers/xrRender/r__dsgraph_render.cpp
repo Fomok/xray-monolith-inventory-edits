@@ -209,7 +209,9 @@ void CDSGraphManager::r_dsgraph_render_hud()
 		initializer.SetCamMode();
 
 		// Rendering
-		r_dsgraph_render_graph_sorted(RGraph.mapCamAttached);
+        const bool pdaPass=UIRender->BeginWorkbenchModel(false);
+        r_dsgraph_render_graph_sorted(RGraph.mapCamAttached);
+        if(pdaPass) UIRender->EndWorkbenchPass();
 
 		RImplementation.rmNormal();
 	}
@@ -234,7 +236,8 @@ void CDSGraphManager::r_dsgraph_render_cam_ui()
 	
 	// Rendering
 	RImplementation.rmNear();
-	g_hud->RenderCamAttachedUI();
+    const bool pdaPass=UIRender->BeginWorkbenchModel(true);
+    if(!pdaPass) g_hud->RenderCamAttachedUI();
 #if defined(USE_DX11)
 	// A flat background preserves opaque depth but overwrites transparent
 	// pixels. Composite deferred glass/reticles after it, using the same
@@ -242,6 +245,7 @@ void CDSGraphManager::r_dsgraph_render_cam_ui()
 	if (RGraph.mapCamAttachedSorted.Sorted.size())
 		r_dsgraph_render_graph_sorted(RGraph.mapCamAttachedSorted.Sorted, true);
 #endif
+    if(pdaPass) UIRender->EndWorkbenchPass();
 	RImplementation.rmNormal();
 }
 

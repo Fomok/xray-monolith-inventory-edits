@@ -135,6 +135,9 @@ void CUIPdaWnd::RebuildExtraTabs()
 	::luabind::functor<void> build_tabs;
 	if (ai().script_engine().functor("pda_dynamic_tabs.build_extra_tabs", build_tabs))
 		build_tabs(UITabControl);
+    // Optional mod hook; absent in normal installations.
+    if(ai().script_engine().functor("fmk_workshop_pda.build_tabs",build_tabs))
+        build_tabs(UITabControl);
 	UITabControl->RecalcScroll();
 
 	if (active.size())

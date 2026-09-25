@@ -41,7 +41,27 @@ public:
 	virtual bool SupportsFlatBackground() const;
 	virtual void DrawFlatBackground(u32 color, float distance);
 
+
+    virtual bool SupportsWorkbench() const;
+    virtual void SetWorkbenchActive(bool active) { m_workbenchActive = active; }
+    virtual bool WorkbenchActive() const { return m_workbenchActive && SupportsWorkbench(); }
+    virtual bool BeginWorkbenchUI();
+    virtual bool BeginWorkbenchModel(bool compose);
+    virtual void EndWorkbenchPass();
+
 private:
+    bool m_workbenchActive = false;
+#if defined(USE_DX11)
+    ref_rt m_wbPosition, m_wbColor, m_wbHeat, m_wbMotion, m_wbDepth, m_wbModel, m_wbUI;
+    ref_shader m_wbCompose;
+    ID3DRenderTargetView* m_wbSavedRT[4] = {};
+    ID3DDepthStencilView* m_wbSavedDepth = nullptr;
+    bool m_wbPass = false;
+    void EnsureWorkbenchTargets();
+    void SaveWorkbenchTargets();
+    void DrawWorkbenchQuad();
+#endif
+
 	ref_geom hGeom_TL;
 	ref_geom hGeom_LIT;
 	ref_shader m_flatBackgroundShader;

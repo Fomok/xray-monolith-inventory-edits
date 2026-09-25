@@ -64,7 +64,7 @@ extern u32 g_r;
 
 void CRender::Render()
 {
-	inspectionLighting = g_hud && g_hud->InspectionLightingQuery();
+	inspectionLighting = g_hud && g_hud->InspectionLightingQuery() && !UIRender->WorkbenchActive();
 	PIX_EVENT_C(CRender_Render, dx10_marker_frame);
 	dx10_annotate_frame();
 

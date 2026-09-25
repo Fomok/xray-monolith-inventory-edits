@@ -21,6 +21,11 @@ void dxUIRender::DestroyUIGeom()
 	hGeom_TL = NULL;
 	hGeom_LIT = NULL;
 	m_flatBackgroundShader.destroy();
+#if defined(USE_DX11)
+    m_wbCompose.destroy();m_wbPosition.destroy();m_wbColor.destroy();
+    m_wbHeat.destroy();m_wbMotion.destroy();m_wbDepth.destroy();m_wbModel.destroy();m_wbUI.destroy();
+    m_wbPass=false;
+#endif
 }
 
 void dxUIRender::SetShader(IUIShader& shader)
@@ -359,5 +364,114 @@ void dxUIRender::DrawFlatBackground(u32 color, float distance)
 	RCache.set_Stencil(FALSE);
 	RCache.Render(D3DPT_TRIANGLESTRIP, offset, 2);
 	RCache.set_CullMode(CULL_CCW);
+#endif
+}
+
+// Experimental PDA workbench: separate single-sample model G-buffer and UI
+// texture. The world/PDA render targets are restored after every pass.
+bool dxUIRender::SupportsWorkbench() const
+{
+#if defined(USE_DX11)
+    return SupportsFlatBackground() && !RImplementation.o.dx10_msaa;
+#else
+    return false;
+#endif
+}
+#if defined(USE_DX11)
+class CBlender_Workbench : public IBlender
+{
+public:
+    virtual LPCSTR getComment() { return "PDA workbench studio"; }
+    virtual BOOL canBeLMAPped() { return FALSE; }
+    virtual void Compile(CBlender_Compile& C)
+    {
+        IBlender::Compile(C);
+        C.r_Pass("fmk_ui_background", "fmk_pda_workbench", false);
+        C.PassSET_ZB(FALSE,FALSE);
+        C.PassSET_Blend(FALSE,D3DBLEND_ONE,D3DBLEND_ZERO,FALSE,0);
+        C.r_dx10Texture("s_wb_position","$user$fmk_wb_position");
+        C.r_dx10Texture("s_wb_color","$user$fmk_wb_color");
+        C.r_End();
+    }
+};
+void dxUIRender::EnsureWorkbenchTargets()
+{
+    if (m_wbUI) return;
+    const u32 w=Device.dwWidth,h=Device.dwHeight;
+    m_wbPosition.create("$user$fmk_wb_position",w,h,D3DFMT_A16B16G16R16F);
+    m_wbColor.create("$user$fmk_wb_color",w,h,D3DFMT_A16B16G16R16F);
+    m_wbHeat.create("$user$fmk_wb_heat",w,h,D3DFMT_A16B16G16R16F);
+    m_wbMotion.create("$user$fmk_wb_motion",w,h,D3DFMT_A16B16G16R16F);
+    m_wbDepth.create("$user$fmk_wb_depth",w,h,D3DFMT_D24S8);
+    m_wbModel.create("$user$fmk_wb_model",w,h,D3DFMT_A8R8G8B8);
+    m_wbUI.create("$user$fmk_workbench",w,h,D3DFMT_A8R8G8B8);
+    const FLOAT clear[4]={0.025f,0.026f,0.024f,1.f};
+    HW.pContext->ClearRenderTargetView(m_wbModel->pRT,clear);
+    CBlender_Workbench blender;m_wbCompose.create(&blender,"fmk_pda_workbench");
+}
+void dxUIRender::SaveWorkbenchTargets()
+{
+    VERIFY(!m_wbPass);m_wbPass=true;
+    for(u32 i=0;i<4;++i) m_wbSavedRT[i]=RCache.get_RT(i);
+    m_wbSavedDepth=RCache.get_ZB();
+}
+void dxUIRender::DrawWorkbenchQuad()
+{
+    u32 offset;FVF::LIT* v=(FVF::LIT*)RCache.Vertex.Lock(4,hGeom_LIT.stride(),offset);
+    v[0].set(-1,-1,0,0xffffffff,0,1);v[1].set(-1,1,0,0xffffffff,0,0);
+    v[2].set(1,-1,0,0xffffffff,1,1);v[3].set(1,1,0,0xffffffff,1,0);
+    RCache.Vertex.Unlock(4,hGeom_LIT.stride());
+    RCache.set_Element(m_wbCompose->E[0]);RCache.set_Geometry(hGeom_LIT);
+    RCache.set_CullMode(CULL_NONE);RCache.set_Stencil(FALSE);
+    RCache.Render(D3DPT_TRIANGLESTRIP,offset,2);
+}
+#endif
+bool dxUIRender::BeginWorkbenchModel(bool compose)
+{
+#if defined(USE_DX11)
+    if(!WorkbenchActive()) return false;
+    EnsureWorkbenchTargets();SaveWorkbenchTargets();
+    const FLOAT clear[4]={0,0,0,0};
+    if(!compose)
+    {
+        HW.pContext->ClearRenderTargetView(m_wbPosition->pRT,clear);
+        HW.pContext->ClearRenderTargetView(m_wbColor->pRT,clear);
+        HW.pContext->ClearDepthStencilView(m_wbDepth->pZRT,D3D_CLEAR_DEPTH|D3D_CLEAR_STENCIL,1.f,0);
+        RCache.set_RT(m_wbPosition->pRT,0);RCache.set_RT(m_wbColor->pRT,1);
+        RCache.set_RT(m_wbHeat->pRT,2);RCache.set_RT(m_wbMotion->pRT,3);
+        RCache.set_ZB(m_wbDepth->pZRT);
+    }
+    else
+    {
+        RCache.set_RT(m_wbModel->pRT,0);
+        for(u32 i=1;i<4;++i) RCache.set_RT(nullptr,i);
+        RCache.set_ZB(m_wbDepth->pZRT);
+        DrawWorkbenchQuad();
+    }
+    return true;
+#else
+    return false;
+#endif
+}
+bool dxUIRender::BeginWorkbenchUI()
+{
+#if defined(USE_DX11)
+    if(!SupportsWorkbench()) return false;
+    EnsureWorkbenchTargets();SaveWorkbenchTargets();
+    RCache.set_RT(m_wbUI->pRT,0);
+    for(u32 i=1;i<4;++i) RCache.set_RT(nullptr,i);
+    RCache.set_ZB(nullptr);RCache.set_Stencil(FALSE);
+    HW.pContext->CopyResource(m_wbUI->pSurface,m_wbModel->pSurface);
+    return true;
+#else
+    return false;
+#endif
+}
+void dxUIRender::EndWorkbenchPass()
+{
+#if defined(USE_DX11)
+    if(!m_wbPass) return;
+    for(u32 i=0;i<4;++i) RCache.set_RT(m_wbSavedRT[i],i);
+    RCache.set_ZB(m_wbSavedDepth);RCache.set_CullMode(CULL_CCW);m_wbPass=false;
 #endif
 }

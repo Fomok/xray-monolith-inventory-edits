@@ -65,6 +65,14 @@ public:
 	virtual void CacheSetXformWorld(const Fmatrix& M) = 0;
 	virtual void CacheSetCullMode(CullMode) = 0;
 
+
+    virtual bool SupportsWorkbench() const { return false; }
+    virtual void SetWorkbenchActive(bool active) {}
+    virtual bool WorkbenchActive() const { return false; }
+    virtual bool BeginWorkbenchUI() { return false; }
+    virtual bool BeginWorkbenchModel(bool compose) { return false; }
+    virtual void EndWorkbenchPass() {}
+
 	// Opt-in camera inspection background, drawn after scene postprocessing.
 	virtual bool SupportsFlatBackground() const { return false; }
 	virtual void DrawFlatBackground(u32 color, float distance) {}
