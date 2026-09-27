@@ -213,7 +213,7 @@ void CHUDManager::Render_Last(IDSGraphManager* DM)
 {
 	if (0 == pUIGame) return;
 	if (g_actor) g_actor->RenderCamAttached(DM);
-    if (UIRender->InspectionWorldHidden()) return;
+    if (UIRender->SceneSuppressed()) return;
 	if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2 | HUD_DRAW_RT2))return;
 	if (!need_render_hud()) return;
 
@@ -246,7 +246,18 @@ bool CHUDManager::RenderActiveItemUIQuery()
 	return (g_player_hud && g_player_hud->render_item_ui_query());
 }
 
-bool CHUDManager::InspectionBackgroundQuery()
+bool CHUDManager::PreviewDryQuery()
+{
+    if (UIRender->PreviewDry()) return true;
+    if (!g_actor) return false;
+    for (auto& pair : *g_actor->GetAttachments()) {
+        script_attachment* att=pair.second;
+        if (att->GetType()==eSA_CamAttached && att->HasUIPreviewDry()) return true;
+    }
+    return false;
+}
+
+bool CHUDManager::PreviewBackgroundQuery()
 {
 	if (!g_actor) return false;
 	for (auto& pair : *g_actor->GetAttachments())
@@ -258,7 +269,7 @@ bool CHUDManager::InspectionBackgroundQuery()
 	return false;
 }
 
-bool CHUDManager::InspectionLightingQuery()
+bool CHUDManager::PreviewLightingQuery()
 {
 	if (!g_actor) return false;
 	for (auto& pair : *g_actor->GetAttachments())

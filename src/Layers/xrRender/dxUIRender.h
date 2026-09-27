@@ -39,34 +39,42 @@ public:
 	virtual void CacheSetXformWorld(const Fmatrix& M);
 	virtual void CacheSetCullMode(CullMode);
 	virtual bool SupportsFlatBackground() const;
-	virtual void DrawFlatBackground(u32 color, float distance);
+	virtual void DrawFlatBackground(u32 color, float distance, LPCSTR texture);
 
 
-    virtual bool SupportsWorkbench() const;
-    virtual void SetWorkbenchActive(bool active) { m_workbenchActive = active; }
-    virtual bool WorkbenchActive() const { return m_workbenchActive && SupportsWorkbench(); }
-    virtual bool BeginWorkbenchUI();
-    virtual bool BeginWorkbenchModel(bool compose);
-    virtual void EndWorkbenchPass();
-    virtual void RequestInspectionWorldHidden(bool active);
-    virtual bool InspectionWorldHidden() const;
-    virtual void PresentInspectionModel();
-    virtual void ReleaseUnusedWorkbench();
+    virtual bool SupportsModelPreview() const;
+    virtual bool AcquirePreview(const void* owner, bool embedded);
+    virtual void ReleasePreview(const void* owner);
+    virtual bool IsPreviewOwner(const void* owner) const;
+    virtual void ConfigurePreview(const void* owner, u32 color, LPCSTR texture, bool dry, float gain);
+    virtual bool PreviewDry() const;
+    virtual bool PreviewEmbedded() const;
+    virtual bool BeginPreviewUI();
+    virtual bool BeginPreviewModel(bool compose);
+    virtual void EndPreviewPass();
+    virtual bool SceneSuppressed() const;
+    virtual void PresentPreviewModel();
+    virtual void ReleaseUnusedPreview();
 
 private:
-    bool m_workbenchActive = false;
-    bool m_hideInspectionWorld = false;
-    u32 m_hideInspectionFrame = 0;
+    const void* m_previewOwner = nullptr;
+    bool m_previewEmbedded = false;
+    bool m_previewDry = false;
+    u32 m_previewFrame = 0;
+    u32 m_previewBackgroundColor = 0xff060706;
+    float m_previewGain = 1.f;
+    shared_str m_previewTexture;
+    shared_str m_backgroundTexture;
 #if defined(USE_DX11)
-    ref_rt m_wbPosition, m_wbColor, m_wbDepth, m_wbModel, m_wbUI;
-    ref_shader m_wbCompose;
-    ref_shader m_wbPresent;
-    ID3DRenderTargetView* m_wbSavedRT[4] = {};
-    ID3DDepthStencilView* m_wbSavedDepth = nullptr;
-    bool m_wbPass = false;
-    void EnsureWorkbenchTargets(bool model);
-    void SaveWorkbenchTargets();
-    void DrawWorkbenchQuad(bool present = false);
+    ref_rt m_previewPosition, m_previewColor, m_previewDepth, m_previewModel, m_previewUI;
+    ref_shader m_previewCompose;
+    ref_shader m_previewPresent;
+    ID3DRenderTargetView* m_previewSavedRT[4] = {};
+    ID3DDepthStencilView* m_previewSavedDepth = nullptr;
+    bool m_previewPass = false;
+    void EnsurePreviewTargets(bool model);
+    void SavePreviewTargets();
+    void DrawPreviewQuad(bool present = false);
 #endif
 
 	ref_geom hGeom_TL;

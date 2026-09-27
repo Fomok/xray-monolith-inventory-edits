@@ -66,21 +66,24 @@ public:
 	virtual void CacheSetCullMode(CullMode) = 0;
 
 
-    virtual bool SupportsWorkbench() const { return false; }
-    virtual void SetWorkbenchActive(bool active) {}
-    virtual bool WorkbenchActive() const { return false; }
-    virtual bool BeginWorkbenchUI() { return false; }
-    virtual bool BeginWorkbenchModel(bool compose) { return false; }
-    virtual void EndWorkbenchPass() {}
+    virtual bool SupportsModelPreview() const { return false; }
+    virtual bool AcquirePreview(const void* owner, bool embedded) { return false; }
+    virtual void ReleasePreview(const void* owner) {}
+    virtual bool IsPreviewOwner(const void* owner) const { return false; }
+    virtual void ConfigurePreview(const void* owner, u32 color, LPCSTR texture, bool dry, float gain) {}
+    virtual bool PreviewDry() const { return false; }
+    virtual bool PreviewEmbedded() const { return false; }
+    virtual bool BeginPreviewUI() { return false; }
+    virtual bool BeginPreviewModel(bool compose) { return false; }
+    virtual void EndPreviewPass() {}
     // Renewed by a visible fullscreen UI; expires if its script stops updating.
-    virtual void RequestInspectionWorldHidden(bool active) {}
-    virtual bool InspectionWorldHidden() const { return false; }
-    virtual void PresentInspectionModel() {}
-    virtual void ReleaseUnusedWorkbench() {}
+    virtual bool SceneSuppressed() const { return false; }
+    virtual void PresentPreviewModel() {}
+    virtual void ReleaseUnusedPreview() {}
 
 	// Opt-in camera inspection background, drawn after scene postprocessing.
 	virtual bool SupportsFlatBackground() const { return false; }
-	virtual void DrawFlatBackground(u32 color, float distance) {}
+	virtual void DrawFlatBackground(u32 color, float distance, LPCSTR texture) {}
 };
 
 #endif	//	UIRender_included

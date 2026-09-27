@@ -44,7 +44,7 @@ void CDSGraphManager::r_dsgraph_render_graph_sorted(R_dsgraph::mapDSGraphItems<T
     const bool dryInspection =
         (static_cast<const void*>(&graph) == static_cast<const void*>(&RGraph.mapCamAttached) ||
          static_cast<const void*>(&graph) == static_cast<const void*>(&RGraph.mapCamAttachedSorted.Sorted)) &&
-        g_hud && g_hud->InspectionBackgroundQuery();
+        g_hud && g_hud->PreviewDryQuery();
 #endif
 
     std::sort(graph.begin(), graph.end());
@@ -230,9 +230,9 @@ void CDSGraphManager::r_dsgraph_render_hud()
 		initializer.SetCamMode();
 
 		// Rendering
-        const bool pdaPass=UIRender->BeginWorkbenchModel(false);
+        const bool pdaPass=UIRender->BeginPreviewModel(false);
         r_dsgraph_render_graph_sorted(RGraph.mapCamAttached);
-        if(pdaPass) UIRender->EndWorkbenchPass();
+        if(pdaPass) UIRender->EndPreviewPass();
 
 		RImplementation.rmNormal();
 	}
@@ -257,7 +257,7 @@ void CDSGraphManager::r_dsgraph_render_cam_ui()
 	
 	// Rendering
 	RImplementation.rmNear();
-    const bool pdaPass=UIRender->BeginWorkbenchModel(true);
+    const bool pdaPass=UIRender->BeginPreviewModel(true);
     if(!pdaPass) g_hud->RenderCamAttachedUI();
 #if defined(USE_DX11)
 	// A flat background preserves opaque depth but overwrites transparent
@@ -266,7 +266,7 @@ void CDSGraphManager::r_dsgraph_render_cam_ui()
 	if (RGraph.mapCamAttachedSorted.Sorted.size())
 		r_dsgraph_render_graph_sorted(RGraph.mapCamAttachedSorted.Sorted, true);
 #endif
-    if(pdaPass) UIRender->EndWorkbenchPass();
+    if(pdaPass) UIRender->EndPreviewPass();
 	RImplementation.rmNormal();
 }
 
@@ -288,7 +288,7 @@ void CDSGraphManager::r_dsgraph_render_sorted(bool render_hud)
 	// a flat background is active. Ordinary gameplay keeps its existing order.
 	bool deferCamTransparency = false;
 #if defined(USE_DX11)
-	deferCamTransparency = g_hud && g_hud->InspectionBackgroundQuery();
+	deferCamTransparency = g_hud && g_hud->PreviewBackgroundQuery();
 #endif
 	// Camera Script Attachments
 	if (!deferCamTransparency && RGraph.mapCamAttachedSorted.Sorted.size())
@@ -555,10 +555,10 @@ void CDSGraphManager::r_dsgraph_capture_lights()
 	{
 		if (0 == spatial) continue;
 #if RENDER == R_R4
-		if (RImplementation.inspectionLighting)
+		if (RImplementation.previewLighting)
 		{
 			light* studio = (light*)spatial->dcast_Light();
-			if (studio && studio->get_inspection_light())
+			if (studio && studio->get_preview_light())
 				RImplementation.Lights.add_light(studio);
 			continue;
 		}

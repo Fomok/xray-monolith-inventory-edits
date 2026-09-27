@@ -126,8 +126,8 @@ public:
 		m_light.destroy();
 	}
 
-	IC void SetInspection(bool enabled) { m_light->set_inspection_light(enabled); }
-	IC bool GetInspection() const { return m_light->get_inspection_light(); }
+	IC void SetPreviewLight(bool enabled) { m_light->set_preview_light(enabled); }
+	IC bool GetPreviewLight() const { return m_light->get_preview_light(); }
 
 	IC void SetLanim(LPCSTR name)						{ m_light_anim = LALib.FindItem(name); }
 	IC LPCSTR GetLanim() const							{ return m_light_anim != nullptr ? *m_light_anim->cName : nullptr; }

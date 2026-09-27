@@ -176,8 +176,8 @@ public:
 	virtual void set_color(float r, float g, float b) { color.set(r, g, b, 1); }
 	virtual void set_texture(LPCSTR name);
 	virtual void set_hud_mode(bool b) { flags.bHudMode = b; }
-	virtual void set_inspection_light(bool b) { flags.bInspection = b; }
-	virtual bool get_inspection_light() const { return flags.bInspection != 0; }
+	virtual void set_preview_light(bool b) { flags.bInspection = b; }
+	virtual bool get_preview_light() const { return flags.bInspection != 0; }
 	virtual bool get_hud_mode() { return flags.bHudMode; };
 
 	virtual void set_occq_mode(bool b) { flags.bOccq = b; }

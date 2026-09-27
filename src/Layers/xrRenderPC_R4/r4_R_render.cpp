@@ -65,7 +65,7 @@ extern u32 g_r;
 
 void CRender::Render()
 {
-	inspectionLighting = g_hud && g_hud->InspectionLightingQuery() && !UIRender->WorkbenchActive();
+	previewLighting = g_hud && g_hud->PreviewLightingQuery() && !UIRender->PreviewEmbedded();
 	PIX_EVENT_C(CRender_Render, dx10_marker_frame);
 	dx10_annotate_frame();
 
@@ -100,12 +100,12 @@ void CRender::Render()
 	if ((Device.dwFrame % (u32)ps_r__tex_evict_interval) == 0)
 		dxRenderDeviceRender::Instance().Resources->EvictStalledTextures();
 
-    UIRender->ReleaseUnusedWorkbench();
+    UIRender->ReleaseUnusedPreview();
 
     // Explicit fullscreen opt-in. Render only camera attachments through the
     // isolated workbench targets; the ordinary UI is drawn by the level later.
     // No world visibility traversal, geometry, grass, shadows, lights or effects.
-    if (UIRender->InspectionWorldHidden())
+    if (UIRender->SceneSuppressed())
     {
         PROF_EVENT("Fullscreen workbench isolated render");
         phase=PHASE_NORMAL;
@@ -122,7 +122,7 @@ void CRender::Render()
         {
             GMBase.r_dsgraph_render_hud();
             GMBase.r_dsgraph_render_cam_ui();
-            UIRender->PresentInspectionModel();
+            UIRender->PresentPreviewModel();
         }
         GMBase.RGraph.clear<false>();
         if (Details) Details->details_clear();
@@ -137,7 +137,7 @@ void CRender::Render()
 	RImplementation.o.distortion = FALSE; // disable distorion
 	Fcolor sun_color = ((light*)Lights.sun_adapted._get())->color;
 	BOOL bSUN = ps_r2_ls_flags.test(R2FLAG_SUN) && (u_diffuse2s(sun_color.r, sun_color.g, sun_color.b)>EPS) && !Core.ParamsData.test(ECoreParams::r4_dev);
-	if (o.sunstatic || inspectionLighting) bSUN = FALSE;
+	if (o.sunstatic || previewLighting) bSUN = FALSE;
 	// Msg						("sstatic: %s, sun: %s",o.sunstatic?;"true":"false", bSUN?"true":"false");
 
 	// HOM

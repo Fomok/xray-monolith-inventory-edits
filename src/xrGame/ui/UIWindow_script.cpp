@@ -44,72 +44,7 @@
 #include "UITrackBar.h"
 #include "../../Include/xrRender/UIRender.h"
 
-static bool inspection_world_hidden() { return UIRender->InspectionWorldHidden(); }
-
-static void request_inspection_world_hidden(bool active)
-{
-    UIRender->RequestInspectionWorldHidden(active);
-}
-
-
-// Presents a full logical UI on a PDA subrectangle. The source is Lua-owned,
-// never adopted; pointer mapping is scoped and restored before PDA processing.
-class CUIWorkbenchPortal : public CUIStatic
-{
-    CUIDialogWndEx* m_source = nullptr;
-    bool m_texture=false;
-    u32 m_updateFrame = u32(-1);
-    struct CursorScope
-    {
-        Fvector2 saved;
-        CursorScope(CUIWorkbenchPortal* p)
-        {
-            CUICursor& c=UI().GetUICursor();saved=c.GetCursorPosition();
-            Frect r;p->GetAbsoluteRect(r);
-            Fvector2 mapped;mapped.set((saved.x-r.left)*1024.f/_max(1.f,r.width()),
-                (saved.y-r.top)*768.f/_max(1.f,r.height()));
-            c.SetLogicalPosition(mapped);
-        }
-        ~CursorScope() { UI().GetUICursor().SetLogicalPosition(saved); }
-    };
-public:
-    static bool Supported() { return UIRender->SupportsWorkbench(); }
-    void SetSource(CUIDialogWndEx* source)
-    {
-        if (m_source != source) m_updateFrame = u32(-1);
-        m_source=source;
-    }
-    void SetActive(bool active) { UIRender->SetWorkbenchActive(active); }
-    virtual void Update()
-    {
-        // CUIPdaWnd updates its attached active dialog both through the child
-        // tree and explicitly. Run the embedded workshop only once per frame.
-        if (m_updateFrame == Device.dwFrame) return;
-        m_updateFrame = Device.dwFrame;
-        PROF_EVENT("PDA workbench update");
-        CUIStatic::Update();
-        if(m_source && IsShown()) { CursorScope cursor(this);m_source->Update(); }
-    }
-    virtual bool OnMouseAction(float x,float y,EUIMessages action)
-    {
-        if(!m_source) return false;
-        CursorScope cursor(this);
-        return m_source->OnMouseAction(x*1024.f/_max(1.f,GetWidth()),y*768.f/_max(1.f,GetHeight()),action);
-    }
-    virtual void Draw()
-    {
-        if(!m_source || !Supported()) return;
-        PROF_EVENT("PDA workbench UI draw");
-        UI().RenderFont();
-        if(UIRender->BeginWorkbenchUI())
-        {
-            Frect full;full.set(0,0,1024,768);UI().PushScissor(full,true);
-            m_source->Draw();UI().RenderFont();UI().PopScissor();UIRender->EndWorkbenchPass();
-        }
-        if(!m_texture) { InitTexture("$user$fmk_workbench");SetStretchTexture(true);m_texture=true; }
-        CUIStatic::Draw();
-    }
-};
+#include "UIRenderPortal.h"
 
 CFontManager& mngr()
 {
@@ -241,6 +176,8 @@ using namespace luabind;
 #pragma optimize("s",on)
 void CUIWindow::script_register(lua_State* L)
 {
+    module(L,"ui_preview")[def("supports", &UIPreviewSupports)];
+
 	module(L)
 	[
 		def("GetARGB", &GetARGB),
@@ -384,13 +321,24 @@ void CUIWindow::script_register(lua_State* L)
 		.def("ShowPage", &CUIMMShniaga::ShowPage),
 
 
-		class_<CUIWorkbenchPortal, CUIWindow>("CUIWorkbenchPortal")
+		class_<CUIPreviewContext>("CUIPreviewContext")
         .def(constructor<>())
-        .def("SetSource", &CUIWorkbenchPortal::SetSource)
-        .def("SetActive", &CUIWorkbenchPortal::SetActive),
-        def("fmk_pda_workbench_supported", &CUIWorkbenchPortal::Supported),
-        def("fmk_workbench_hide_world", &request_inspection_world_hidden),
-        def("fmk_workbench_world_hidden", &inspection_world_hidden),
+        .def("request_scene_suppression", &CUIPreviewContext::RequestSceneSuppression)
+        .def("release", &CUIPreviewContext::Release)
+        .def("is_active", &CUIPreviewContext::Active)
+        .def("is_scene_suppressed", &CUIPreviewContext::SceneSuppressed)
+        .def("set_background_color", &CUIPreviewContext::SetBackgroundColor)
+        .def("set_background_texture", &CUIPreviewContext::SetBackgroundTexture)
+        .def("set_dry", &CUIPreviewContext::SetDry)
+        .def("set_lighting_gain", &CUIPreviewContext::SetLightingGain),
+        class_<CUIRenderPortal, CUIWindow>("CUIRenderPortal")
+        .def(constructor<>())
+        .def("SetSource", &CUIRenderPortal::SetSource)
+        .def("SetActive", &CUIRenderPortal::SetActive)
+        .def("SetBackgroundTexture", &CUIRenderPortal::SetBackgroundTexture)
+        .def("SetBackgroundColor", &CUIRenderPortal::SetBackgroundColor)
+        .def("SetDry", &CUIRenderPortal::SetDry)
+        .def("SetLightingGain", &CUIRenderPortal::SetLightingGain),
         class_<CUIScrollView, CUIWindow>("CUIScrollView")
 		.def(constructor<>())
 		.def("AddWindow", &CUIScrollView::AddWindow)

@@ -29,7 +29,7 @@ class CRender : public IRender_interface, public pureFrame
 {
 public:
 	// Recomputed from the live inspection attachment every rendered frame.
-	bool inspectionLighting = false;
+	bool previewLighting = false;
 	enum
 	{
 		MSAA_ATEST_NONE = 0x0,

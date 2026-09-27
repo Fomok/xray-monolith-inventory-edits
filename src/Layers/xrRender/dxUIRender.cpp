@@ -22,10 +22,11 @@ void dxUIRender::DestroyUIGeom()
 	hGeom_LIT = NULL;
 	m_flatBackgroundShader.destroy();
 #if defined(USE_DX11)
-    m_wbPresent.destroy();m_wbCompose.destroy();m_wbPosition.destroy();m_wbColor.destroy();
-    m_wbDepth.destroy();m_wbModel.destroy();m_wbUI.destroy();
-    m_wbPass=false;
+    m_previewPresent.destroy();m_previewCompose.destroy();m_previewPosition.destroy();m_previewColor.destroy();
+    m_previewDepth.destroy();m_previewModel.destroy();m_previewUI.destroy();
+    m_previewPass=false;
 #endif
+    m_previewOwner=nullptr;
 }
 
 void dxUIRender::SetShader(IUIShader& shader)
@@ -305,6 +306,8 @@ void dxUIRender::CacheSetCullMode(CullMode m)
 class CBlender_FlatUIBackground : public IBlender
 {
 public:
+    LPCSTR texture;
+    explicit CBlender_FlatUIBackground(LPCSTR value) : texture(value) {}
 	virtual LPCSTR getComment() { return "Flat inspection background"; }
 	virtual BOOL canBeLMAPped() { return FALSE; }
 	virtual void Compile(CBlender_Compile& C)
@@ -315,11 +318,11 @@ public:
 		// Use the three-argument overload, then set states explicitly. Passing
 		// bool/BOOL values in the longer call is ambiguous with the GS overload
 		// on MSVC (false can also match the geometry-shader name argument).
-		C.r_Pass("fmk_ui_background", "fmk_ui_background", false);
+		C.r_Pass("ui_preview_background", "ui_preview_background", false);
 		C.PassSET_ZB(!msaa, FALSE);
 		C.PassSET_Blend(msaa, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA, FALSE, 0);
 		if (msaa) C.r_dx10Texture("s_inspection_depth", "$user$msaadepth");
-        C.r_dx10Texture("s_wb_background","fmk\\fmk_wb_background");
+        C.r_dx10Texture("s_preview_background",texture);
         C.r_dx10Sampler("smp_rtlinear");
 		C.r_End();
 	}
@@ -335,15 +338,16 @@ bool dxUIRender::SupportsFlatBackground() const
 #endif
 }
 
-void dxUIRender::DrawFlatBackground(u32 color, float distance)
+void dxUIRender::DrawFlatBackground(u32 color, float distance, LPCSTR texture)
 {
 #if defined(USE_DX11)
 	if (!SupportsFlatBackground() || !_valid(distance) || distance <= 0.f) return;
 	VERIFY(PrimitiveType == ptNone);
+	if (m_backgroundTexture!=texture) { m_flatBackgroundShader.destroy();m_backgroundTexture=texture; }
 	if (!m_flatBackgroundShader)
 	{
-		CBlender_FlatUIBackground blender;
-		m_flatBackgroundShader.create(&blender, "fmk_ui_background");
+		CBlender_FlatUIBackground blender(texture);
+		m_flatBackgroundShader.create(&blender, "ui_preview_background");
 	}
 	// Use the same camera projection and viewport depth range as the gun.
 	// Full-screen clip coordinates avoid the ordinary 2D UI transform path.
@@ -361,6 +365,7 @@ void dxUIRender::DrawFlatBackground(u32 color, float distance)
 	v[3].set( 1.f,  1.f, z, color, 1.f, 0.f);
 	RCache.Vertex.Unlock(4, hGeom_LIT.stride());
 	RCache.set_Element(m_flatBackgroundShader->E[0]);
+    RCache.set_c("preview_options",texture ? 1.f : 0.f,1.f,0.f,0.f);
 	RCache.set_Geometry(hGeom_LIT);
 	RCache.set_CullMode(CULL_NONE);
 	RCache.set_Stencil(FALSE);
@@ -369,9 +374,9 @@ void dxUIRender::DrawFlatBackground(u32 color, float distance)
 #endif
 }
 
-// Experimental PDA workbench: separate single-sample model G-buffer and UI
+// Scriptable UI previews: separate single-sample model G-buffer and UI
 // texture. The world/PDA render targets are restored after every pass.
-bool dxUIRender::SupportsWorkbench() const
+bool dxUIRender::SupportsModelPreview() const
 {
 #if defined(USE_DX11)
     return SupportsFlatBackground() && !RImplementation.o.dx10_msaa;
@@ -380,25 +385,27 @@ bool dxUIRender::SupportsWorkbench() const
 #endif
 }
 #if defined(USE_DX11)
-class CBlender_Workbench : public IBlender
+class CBlender_Preview : public IBlender
 {
 public:
-    virtual LPCSTR getComment() { return "PDA workbench studio"; }
+    LPCSTR texture;
+    explicit CBlender_Preview(LPCSTR value) : texture(value) {}
+    virtual LPCSTR getComment() { return "Isolated preview studio"; }
     virtual BOOL canBeLMAPped() { return FALSE; }
     virtual void Compile(CBlender_Compile& C)
     {
         IBlender::Compile(C);
-        C.r_Pass("fmk_ui_background", "fmk_pda_workbench", false);
+        C.r_Pass("ui_preview_background", "ui_preview_model", false);
         C.PassSET_ZB(FALSE,FALSE);
         C.PassSET_Blend(FALSE,D3DBLEND_ONE,D3DBLEND_ZERO,FALSE,0);
-        C.r_dx10Texture("s_wb_position","$user$fmk_wb_position");
-        C.r_dx10Texture("s_wb_color","$user$fmk_wb_color");
-        C.r_dx10Texture("s_wb_background","fmk\\fmk_wb_background");
+        C.r_dx10Texture("s_preview_position","$user$ui_preview_position");
+        C.r_dx10Texture("s_preview_color","$user$ui_preview_color");
+        C.r_dx10Texture("s_preview_background",texture);
         C.r_dx10Sampler("smp_rtlinear");
         C.r_End();
     }
 };
-class CBlender_WorkbenchPresent : public IBlender
+class CBlender_PreviewPresent : public IBlender
 {
 public:
     virtual LPCSTR getComment() { return "Fullscreen inspection model"; }
@@ -406,131 +413,158 @@ public:
     virtual void Compile(CBlender_Compile& C)
     {
         IBlender::Compile(C);
-        C.r_Pass("fmk_ui_background", "fmk_workbench_present", false);
+        C.r_Pass("ui_preview_background", "ui_preview_present", false);
         C.PassSET_ZB(FALSE,FALSE);
         C.PassSET_Blend(FALSE,D3DBLEND_ONE,D3DBLEND_ZERO,FALSE,0);
-        C.r_dx10Texture("s_wb_model","$user$fmk_wb_model");
+        C.r_dx10Texture("s_preview_model","$user$ui_preview_model");
         C.r_End();
     }
 };
-void dxUIRender::EnsureWorkbenchTargets(bool model)
+void dxUIRender::EnsurePreviewTargets(bool model)
 {
     const u32 w=Device.dwWidth,h=Device.dwHeight;
-    if (!model && !m_wbUI) m_wbUI.create("$user$fmk_workbench",w,h,D3DFMT_A8R8G8B8);
+    if (!model && !m_previewUI) m_previewUI.create("$user$ui_preview_surface",w,h,D3DFMT_A8R8G8B8);
     // Status, crafting and showcase need only the UI target. Defer the model
     // buffers until the first actual preview, then reuse them across tabs.
-    if (!model || m_wbModel) return;
-    m_wbPosition.create("$user$fmk_wb_position",w,h,D3DFMT_A16B16G16R16F);
-    m_wbColor.create("$user$fmk_wb_color",w,h,D3DFMT_A16B16G16R16F);
-    m_wbDepth.create("$user$fmk_wb_depth",w,h,D3DFMT_D24S8);
-    m_wbModel.create("$user$fmk_wb_model",w,h,D3DFMT_A8R8G8B8);
+    if (!model) return;
+    if (!m_previewCompose) { CBlender_Preview blender(m_previewTexture.c_str());m_previewCompose.create(&blender,"ui_preview_model"); }
+    if (m_previewModel) return;
+    m_previewPosition.create("$user$ui_preview_position",w,h,D3DFMT_A16B16G16R16F);
+    m_previewColor.create("$user$ui_preview_color",w,h,D3DFMT_A16B16G16R16F);
+    m_previewDepth.create("$user$ui_preview_depth",w,h,D3DFMT_D24S8);
+    m_previewModel.create("$user$ui_preview_model",w,h,D3DFMT_A8R8G8B8);
     const FLOAT clear[4]={0.025f,0.026f,0.024f,1.f};
-    HW.pContext->ClearRenderTargetView(m_wbModel->pRT,clear);
-    CBlender_Workbench blender;m_wbCompose.create(&blender,"fmk_pda_workbench");
+    HW.pContext->ClearRenderTargetView(m_previewModel->pRT,clear);
+
 }
-void dxUIRender::SaveWorkbenchTargets()
+void dxUIRender::SavePreviewTargets()
 {
-    VERIFY(!m_wbPass);m_wbPass=true;
-    for(u32 i=0;i<4;++i) m_wbSavedRT[i]=RCache.get_RT(i);
-    m_wbSavedDepth=RCache.get_ZB();
+    VERIFY(!m_previewPass);m_previewPass=true;
+    for(u32 i=0;i<4;++i) m_previewSavedRT[i]=RCache.get_RT(i);
+    m_previewSavedDepth=RCache.get_ZB();
 }
-void dxUIRender::DrawWorkbenchQuad(bool present)
+void dxUIRender::DrawPreviewQuad(bool present)
 {
     u32 offset;FVF::LIT* v=(FVF::LIT*)RCache.Vertex.Lock(4,hGeom_LIT.stride(),offset);
     v[0].set(-1,-1,0,0xffffffff,0,1);v[1].set(-1,1,0,0xffffffff,0,0);
     v[2].set(1,-1,0,0xffffffff,1,1);v[3].set(1,1,0,0xffffffff,1,0);
     RCache.Vertex.Unlock(4,hGeom_LIT.stride());
-    RCache.set_Element(present ? m_wbPresent->E[0] : m_wbCompose->E[0]);RCache.set_Geometry(hGeom_LIT);
+    RCache.set_Element(present ? m_previewPresent->E[0] : m_previewCompose->E[0]);RCache.set_Geometry(hGeom_LIT);
+    if (!present) {
+        Fcolor color;color.set(m_previewBackgroundColor);
+        RCache.set_c("preview_background",color);
+        RCache.set_c("preview_options",m_previewTexture.size() ? 1.f : 0.f,m_previewGain,0.f,0.f);
+    }
     RCache.set_CullMode(CULL_NONE);RCache.set_Stencil(FALSE);
     RCache.Render(D3DPT_TRIANGLESTRIP,offset,2);
 }
 #endif
-bool dxUIRender::BeginWorkbenchModel(bool compose)
+bool dxUIRender::BeginPreviewModel(bool compose)
 {
 #if defined(USE_DX11)
-    if(!WorkbenchActive() && !InspectionWorldHidden()) return false;
-    PROF_EVENT("PDA workbench model pass");
-    EnsureWorkbenchTargets(true);SaveWorkbenchTargets();
+    if(!PreviewEmbedded() && !SceneSuppressed()) return false;
+    PROF_EVENT("Isolated preview model pass");
+    EnsurePreviewTargets(true);SavePreviewTargets();
     const FLOAT clear[4]={0,0,0,0};
     if(!compose)
     {
-        HW.pContext->ClearRenderTargetView(m_wbPosition->pRT,clear);
-        HW.pContext->ClearRenderTargetView(m_wbColor->pRT,clear);
-        HW.pContext->ClearDepthStencilView(m_wbDepth->pZRT,D3D_CLEAR_DEPTH|D3D_CLEAR_STENCIL,1.f,0);
-        RCache.set_RT(m_wbPosition->pRT,0);RCache.set_RT(m_wbColor->pRT,1);
+        HW.pContext->ClearRenderTargetView(m_previewPosition->pRT,clear);
+        HW.pContext->ClearRenderTargetView(m_previewColor->pRT,clear);
+        HW.pContext->ClearDepthStencilView(m_previewDepth->pZRT,D3D_CLEAR_DEPTH|D3D_CLEAR_STENCIL,1.f,0);
+        RCache.set_RT(m_previewPosition->pRT,0);RCache.set_RT(m_previewColor->pRT,1);
         // The isolated studio shader reads only position and color. Discard
         // heat/motion outputs instead of writing two unused FP16 surfaces.
         RCache.set_RT(nullptr,2);RCache.set_RT(nullptr,3);
-        RCache.set_ZB(m_wbDepth->pZRT);
+        RCache.set_ZB(m_previewDepth->pZRT);
     }
     else
     {
-        RCache.set_RT(m_wbModel->pRT,0);
+        RCache.set_RT(m_previewModel->pRT,0);
         for(u32 i=1;i<4;++i) RCache.set_RT(nullptr,i);
-        RCache.set_ZB(m_wbDepth->pZRT);
-        DrawWorkbenchQuad();
+        RCache.set_ZB(m_previewDepth->pZRT);
+        DrawPreviewQuad();
     }
     return true;
 #else
     return false;
 #endif
 }
-void dxUIRender::RequestInspectionWorldHidden(bool active)
+bool dxUIRender::IsPreviewOwner(const void* owner) const
 {
-    m_hideInspectionWorld=active;
-    m_hideInspectionFrame=Device.dwFrame;
+    return owner && owner==m_previewOwner && u32(Device.dwFrame-m_previewFrame)<=1 && SupportsModelPreview();
 }
-bool dxUIRender::InspectionWorldHidden() const
+bool dxUIRender::AcquirePreview(const void* owner, bool embedded)
 {
-    return m_hideInspectionWorld && u32(Device.dwFrame-m_hideInspectionFrame)<=1 &&
-        SupportsWorkbench() && !WorkbenchActive();
+    if (!owner || !SupportsModelPreview()) return false;
+    if (IsPreviewOwner(m_previewOwner) && owner!=m_previewOwner) return false;
+    m_previewOwner=owner;m_previewEmbedded=embedded;m_previewFrame=Device.dwFrame;
+    return true;
 }
-void dxUIRender::ReleaseUnusedWorkbench()
+void dxUIRender::ReleasePreview(const void* owner)
 {
-#if defined(USE_DX11)
-    if (WorkbenchActive() || InspectionWorldHidden() || m_wbPass) return;
-    m_wbPresent.destroy();m_wbCompose.destroy();
-    m_wbPosition.destroy();m_wbColor.destroy();m_wbDepth.destroy();
-    m_wbModel.destroy();m_wbUI.destroy();
-#endif
+    if (owner==m_previewOwner) { m_previewOwner=nullptr;m_previewDry=false; }
 }
-void dxUIRender::PresentInspectionModel()
+bool dxUIRender::PreviewEmbedded() const { return IsPreviewOwner(m_previewOwner) && m_previewEmbedded; }
+bool dxUIRender::SceneSuppressed() const { return IsPreviewOwner(m_previewOwner) && !m_previewEmbedded; }
+bool dxUIRender::PreviewDry() const { return IsPreviewOwner(m_previewOwner) && m_previewDry; }
+void dxUIRender::ConfigurePreview(const void* owner, u32 color, LPCSTR texture, bool dry, float gain)
 {
-#if defined(USE_DX11)
-    if (!InspectionWorldHidden() || !m_wbModel) return;
-    if (!m_wbPresent)
+    if (!IsPreviewOwner(owner)) return;
+    if (m_previewTexture!=texture)
     {
-        CBlender_WorkbenchPresent blender;
-        m_wbPresent.create(&blender,"fmk_workbench_present");
-    }
-    DrawWorkbenchQuad(true);
+        m_previewTexture=texture;
+#if defined(USE_DX11)
+        m_previewCompose.destroy();
 #endif
+    }
+    m_previewBackgroundColor=color;m_previewDry=dry;m_previewGain=gain;
 }
-bool dxUIRender::BeginWorkbenchUI()
+void dxUIRender::ReleaseUnusedPreview()
 {
 #if defined(USE_DX11)
-    if(!SupportsWorkbench()) return false;
-    EnsureWorkbenchTargets(false);SaveWorkbenchTargets();
-    RCache.set_RT(m_wbUI->pRT,0);
+    if (PreviewEmbedded() || SceneSuppressed() || m_previewPass) return;
+    m_previewPresent.destroy();m_previewCompose.destroy();
+    m_previewPosition.destroy();m_previewColor.destroy();m_previewDepth.destroy();
+    m_previewModel.destroy();m_previewUI.destroy();
+#endif
+}
+void dxUIRender::PresentPreviewModel()
+{
+#if defined(USE_DX11)
+    if (!SceneSuppressed() || !m_previewModel) return;
+    if (!m_previewPresent)
+    {
+        CBlender_PreviewPresent blender;
+        m_previewPresent.create(&blender,"ui_preview_present");
+    }
+    DrawPreviewQuad(true);
+#endif
+}
+bool dxUIRender::BeginPreviewUI()
+{
+#if defined(USE_DX11)
+    if(!SupportsModelPreview()) return false;
+    EnsurePreviewTargets(false);SavePreviewTargets();
+    RCache.set_RT(m_previewUI->pRT,0);
     for(u32 i=1;i<4;++i) RCache.set_RT(nullptr,i);
     RCache.set_ZB(nullptr);RCache.set_Stencil(FALSE);
-    if (m_wbModel)
-        HW.pContext->CopyResource(m_wbUI->pSurface,m_wbModel->pSurface);
+    if (m_previewModel)
+        HW.pContext->CopyResource(m_previewUI->pSurface,m_previewModel->pSurface);
     else
     {
         const FLOAT clear[4]={0.025f,0.026f,0.024f,1.f};
-        HW.pContext->ClearRenderTargetView(m_wbUI->pRT,clear);
+        HW.pContext->ClearRenderTargetView(m_previewUI->pRT,clear);
     }
     return true;
 #else
     return false;
 #endif
 }
-void dxUIRender::EndWorkbenchPass()
+void dxUIRender::EndPreviewPass()
 {
 #if defined(USE_DX11)
-    if(!m_wbPass) return;
-    for(u32 i=0;i<4;++i) RCache.set_RT(m_wbSavedRT[i],i);
-    RCache.set_ZB(m_wbSavedDepth);RCache.set_CullMode(CULL_CCW);m_wbPass=false;
+    if(!m_previewPass) return;
+    for(u32 i=0;i<4;++i) RCache.set_RT(m_previewSavedRT[i],i);
+    RCache.set_ZB(m_previewSavedDepth);RCache.set_CullMode(CULL_CCW);m_previewPass=false;
 #endif
 }

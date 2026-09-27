@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "ui/UIPreviewTexture.h"
 #include "script_attachment_manager.h"
 #include "player_hud.h"
 #include "actor.h"
@@ -70,6 +71,7 @@ script_attachment::script_attachment(LPCSTR name, LPCSTR model_name)
 	m_script_ui_bone = 0;
 	m_ui_background_color = 0;
 	m_ui_studio_lighting = false;
+    m_ui_preview_dry = false;
 	m_ui_background_distance = 0.f;
 	m_script_light = nullptr;
 	m_script_light_bone = 0;
@@ -318,10 +320,18 @@ bool script_attachment::SetUIBackground(u32 color, float distance)
 	return true;
 }
 
+bool script_attachment::SetUIBackgroundTexture(LPCSTR texture)
+{
+    m_ui_background_texture=nullptr;
+    if (!ValidatePreviewTexture(texture)) return false;
+    if (texture && *texture) m_ui_background_texture=texture;
+    return true;
+}
+
 void script_attachment::RenderUI()
 {
 	if (GetType() == eSA_CamAttached && m_ui_background_distance > 0.f)
-		UIRender->DrawFlatBackground(m_ui_background_color, m_ui_background_distance);
+		UIRender->DrawFlatBackground(m_ui_background_color, m_ui_background_distance, m_ui_background_texture.c_str());
 
 	if (m_script_ui)
 	{

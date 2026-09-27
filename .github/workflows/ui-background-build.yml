@@ -1,8 +1,8 @@
-name: UI-Background-Build
+name: Scriptable-UI-Previews
 
 on:
   push:
-    branches: [ "experiment/pda-workbench" ]
+    branches: [ "feature/scriptable-ui-previews" ]
   workflow_dispatch:
 
 permissions:
@@ -32,7 +32,7 @@ jobs:
     - name: Upload gamedata
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: UI-background_${{env.PACK_GAMEDATA_NAME}}
+        name: UI-previews_${{env.PACK_GAMEDATA_NAME}}
         path: ./compressor/${{env.PACK_GAMEDATA_NAME}}
         if-no-files-found: "error"
         retention-days: 7
@@ -91,7 +91,7 @@ jobs:
     - name: Upload exe
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: UI-background_${{ matrix.config }}_exe
+        name: UI-previews_${{ matrix.config }}_exe
         path: ./_build/_game/bin_dbg/*.exe
         if-no-files-found: "error"
         retention-days: 7
@@ -99,7 +99,7 @@ jobs:
     - name: Upload pdb
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: UI-background_${{ matrix.config }}_pdb
+        name: UI-previews_${{ matrix.config }}_pdb
         path: ./_build/_game/bin_dbg/*.pdb
         if-no-files-found: "warn"
         retention-days: 7
@@ -114,13 +114,13 @@ jobs:
     - name: Download every build artifact
       uses: actions/download-artifact@v4
       with:
-        pattern: UI-background_*_exe
+        pattern: UI-previews_*_exe
         path: ./staged/exe
 
     - name: Download every pdb artifact
       uses: actions/download-artifact@v4
       with:
-        pattern: UI-background_*_pdb
+        pattern: UI-previews_*_pdb
         path: ./staged/pdb
 
     - name: Merge into one bin
@@ -134,7 +134,7 @@ jobs:
         $perConfig = @{}
 
         Get-ChildItem -Path ./staged/exe -Directory | ForEach-Object {
-          $cfg = $_.Name -replace '^UI-background_', '' -replace '_exe$', ''
+          $cfg = $_.Name -replace '^UI-previews_', '' -replace '_exe$', ''
           $files = Get-ChildItem -Path $_.FullName -File -Recurse
           $perConfig[$cfg] = @($files).Count
 
@@ -156,7 +156,7 @@ jobs:
         New-Item -ItemType Directory -Force -Path ./out/pdb | Out-Null
         $withPdb = @()
         Get-ChildItem -Path ./staged/pdb -Directory | ForEach-Object {
-          $cfg = $_.Name -replace '^UI-background_', '' -replace '_pdb$', ''
+          $cfg = $_.Name -replace '^UI-previews_', '' -replace '_pdb$', ''
           $files = Get-ChildItem -Path $_.FullName -File -Recurse
           if (@($files).Count -gt 0) {
             $withPdb += $cfg
@@ -196,7 +196,7 @@ jobs:
     - name: Upload merged bin
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: UI-background_bin_all
+        name: UI-previews_bin_all
         path: ./out/bin
         if-no-files-found: "error"
         retention-days: 7
@@ -204,7 +204,7 @@ jobs:
     - name: Upload conflicts, if any
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: UI-background_bin_conflicts
+        name: UI-previews_bin_conflicts
         path: ./out/_conflicts
         if-no-files-found: "ignore"
         retention-days: 7
@@ -212,7 +212,7 @@ jobs:
     - name: Upload every pdb
       uses: actions/upload-artifact@v4.6.0
       with:
-        name: UI-background_pdb_all
+        name: UI-previews_pdb_all
         path: ./out/pdb
         if-no-files-found: "error"
         retention-days: 7
