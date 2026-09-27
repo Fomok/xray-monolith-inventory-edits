@@ -423,6 +423,17 @@ public:
 void dxUIRender::EnsurePreviewTargets(bool model)
 {
     const u32 w=Device.dwWidth,h=Device.dwHeight;
+    // CRT reset recreates resources at their original dimensions. A preview
+    // follows the display, so discard the complete target set after resizing.
+    if ((m_previewUI && (m_previewUI->dwWidth!=w || m_previewUI->dwHeight!=h)) ||
+        (m_previewModel && (m_previewModel->dwWidth!=w || m_previewModel->dwHeight!=h)))
+    {
+        VERIFY(!m_previewPass);
+        m_previewPresent.destroy();m_previewCompose.destroy();
+        m_previewPosition.destroy();m_previewColor.destroy();m_previewDepth.destroy();
+        m_previewModel.destroy();m_previewUI.destroy();
+        m_previewModelFrame=u32(-1);
+    }
     if (!model && !m_previewUI) m_previewUI.create("$user$ui_preview_surface",w,h,D3DFMT_A8R8G8B8);
     // Status, crafting and showcase need only the UI target. Defer the model
     // buffers until the first actual preview, then reuse them across tabs.

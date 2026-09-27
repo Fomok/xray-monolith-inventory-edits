@@ -133,6 +133,10 @@ public:
             m_source->Draw();UI().RenderFont();
         }
         if(!m_texture) { InitTexture("$user$ui_preview_surface");SetStretchTexture(true);m_texture=true; }
+        // CUIStaticItem caches a pixel-space texture rectangle on first draw.
+        // The named surface is recreated after display changes; update the
+        // rectangle as well so UVs still cover exactly the complete surface.
+        SetTextureRect(Frect().set(0.f,0.f,float(Device.dwWidth),float(Device.dwHeight)));
         CUIStatic::Draw();
     }
 };
