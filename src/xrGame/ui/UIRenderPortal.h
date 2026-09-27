@@ -1,5 +1,6 @@
 #pragma once
 #include "UIPreviewTexture.h"
+#include <memory>
 
 // A single owner is admitted by the renderer. Renewal expires after one frame
 // without updates. Destruction/release cannot cancel another owner's request.
@@ -41,7 +42,7 @@ class CUIRenderPortal : public CUIStatic
 {
     // Strong Lua reference. Source must be Lua-owned (SetAutoDelete(false));
     // native-parent-owned windows must be detached before native destruction.
-    luabind::object m_sourceRef;
+    std::unique_ptr<luabind::object> m_sourceRef;
     CUIDialogWndEx* m_source=nullptr;
     CUIPreviewContext m_context;
     bool m_texture=false,m_active=false;
@@ -63,12 +64,22 @@ class CUIRenderPortal : public CUIStatic
 public:
     bool SetSource(const luabind::object& source)
     {
-        m_context.Release();m_source=nullptr;m_sourceRef=luabind::object();m_updateFrame=u32(-1);
-        if (!source || source.type()==LUA_TNIL) return true;
-        CUIDialogWndEx* candidate=luabind::object_cast<CUIDialogWndEx*>(source);
-        if (!candidate || candidate->IsAutoDelete()) return false;
-        for (CUIWindow* p=this;p;p=p->GetParent()) if (p==candidate) return false;
-        m_sourceRef=source;m_source=candidate;return true;
+        CUIDialogWndEx* candidate=nullptr;
+        if (source && source.type()!=LUA_TNIL)
+        {
+            candidate=luabind::object_cast<CUIDialogWndEx*>(source);
+            if (!candidate || candidate->IsAutoDelete()) return false;
+            for (CUIWindow* p=this;p;p=p->GetParent()) if (p==candidate) return false;
+        }
+        if (candidate==m_source) return true;
+        // This luabind version cannot assign a default (stateless) object:
+        // operator= pushes its registry reference through a null Lua state.
+        // Copy-construct the new reference before releasing the old owner.
+        std::unique_ptr<luabind::object> reference;
+        if (candidate) reference.reset(new luabind::object(source));
+        m_context.Release();m_active=false;m_source=candidate;
+        m_sourceRef=std::move(reference);m_updateFrame=u32(-1);
+        return true;
     }
     bool SetActive(bool active)
     {

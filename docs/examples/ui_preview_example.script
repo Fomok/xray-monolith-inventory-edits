@@ -37,3 +37,22 @@ function show(section)
     window:ShowDialog(true);return true
 end
 function close() if window then window:Close() end end
+
+-- In-game native binding regression. Install the example XML first, then call
+-- ui_preview_example.portal_source_smoke_test() from the developer console.
+function portal_source_smoke_test()
+    if not ui_preview or not ui_preview.supports('ui_portal') then return false end
+    local portal=CUIRenderPortal();portal:SetAutoDelete(false)
+    local source=Example();source:Show(false)
+    assert(portal:SetSource(nil))
+    for i=1,20 do
+        assert(portal:SetSource(source))
+        assert(portal:SetSource(source))
+        assert(portal:SetSource(nil))
+    end
+    assert(portal:SetSource(source))
+    source=nil;collectgarbage('collect') -- only the portal now retains the source
+    assert(portal:SetSource(nil))
+    portal=nil;collectgarbage('collect')
+    return true
+end
