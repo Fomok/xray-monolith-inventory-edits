@@ -2,7 +2,7 @@ name: Scriptable-UI-Previews
 
 on:
   push:
-    branches: [ "feature/scriptable-ui-previews" ]
+    branches: [ "feature/scriptable-ui-previews", "submission/scriptable-ui-previews-mt" ]
   workflow_dispatch:
 
 permissions:
