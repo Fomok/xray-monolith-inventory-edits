@@ -103,11 +103,11 @@ void CRender::Render()
     UIRender->ReleaseUnusedPreview();
 
     // Explicit fullscreen opt-in. Render only camera attachments through the
-    // isolated workbench targets; the ordinary UI is drawn by the level later.
+    // isolated preview targets; the ordinary UI is drawn by the level later.
     // No world visibility traversal, geometry, grass, shadows, lights or effects.
     if (UIRender->SceneSuppressed())
     {
-        PROF_EVENT("Fullscreen workbench isolated render");
+        PROF_EVENT("Fullscreen isolated UI preview");
         phase=PHASE_NORMAL;
         RImplementation.o.distortion=FALSE;
         GMBase.RGraph.clear<false>();

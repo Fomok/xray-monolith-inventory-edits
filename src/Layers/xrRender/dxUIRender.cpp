@@ -452,7 +452,7 @@ void dxUIRender::DrawPreviewQuad(bool present)
     RCache.set_Element(present ? m_previewPresent->E[0] : m_previewCompose->E[0]);RCache.set_Geometry(hGeom_LIT);
     if (!present) {
         Fcolor color;color.set(m_previewBackgroundColor);
-        RCache.set_c("preview_background",color);
+        RCache.set_c("preview_background",color.r,color.g,color.b,color.a);
         RCache.set_c("preview_options",m_previewTexture.size() ? 1.f : 0.f,m_previewGain,0.f,0.f);
     }
     RCache.set_CullMode(CULL_NONE);RCache.set_Stencil(FALSE);
@@ -468,6 +468,7 @@ bool dxUIRender::BeginPreviewModel(bool compose)
     const FLOAT clear[4]={0,0,0,0};
     if(!compose)
     {
+        m_previewModelFrame=Device.dwFrame;
         HW.pContext->ClearRenderTargetView(m_previewPosition->pRT,clear);
         HW.pContext->ClearRenderTargetView(m_previewColor->pRT,clear);
         HW.pContext->ClearDepthStencilView(m_previewDepth->pZRT,D3D_CLEAR_DEPTH|D3D_CLEAR_STENCIL,1.f,0);
@@ -525,7 +526,7 @@ void dxUIRender::ReleaseUnusedPreview()
     if (PreviewEmbedded() || SceneSuppressed() || m_previewPass) return;
     m_previewPresent.destroy();m_previewCompose.destroy();
     m_previewPosition.destroy();m_previewColor.destroy();m_previewDepth.destroy();
-    m_previewModel.destroy();m_previewUI.destroy();
+    m_previewModel.destroy();m_previewUI.destroy();m_previewModelFrame=u32(-1);
 #endif
 }
 void dxUIRender::PresentPreviewModel()
@@ -548,7 +549,7 @@ bool dxUIRender::BeginPreviewUI()
     RCache.set_RT(m_previewUI->pRT,0);
     for(u32 i=1;i<4;++i) RCache.set_RT(nullptr,i);
     RCache.set_ZB(nullptr);RCache.set_Stencil(FALSE);
-    if (m_previewModel)
+    if (m_previewModel && m_previewModelFrame==Device.dwFrame)
         HW.pContext->CopyResource(m_previewUI->pSurface,m_previewModel->pSurface);
     else
     {

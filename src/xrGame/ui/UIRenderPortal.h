@@ -61,11 +61,14 @@ class CUIRenderPortal : public CUIStatic
         ~CursorScope() { UI().GetUICursor().SetLogicalPosition(saved); }
     };
 public:
-    void SetSource(const luabind::object& source)
+    bool SetSource(const luabind::object& source)
     {
-        m_context.Release();m_source=nullptr;m_sourceRef=source;m_updateFrame=u32(-1);
-        if (luabind::type(source)!=LUA_TNIL)
-            m_source=luabind::object_cast<CUIDialogWndEx*>(source);
+        m_context.Release();m_source=nullptr;m_sourceRef=luabind::object();m_updateFrame=u32(-1);
+        if (!source || source.type()==LUA_TNIL) return true;
+        CUIDialogWndEx* candidate=luabind::object_cast<CUIDialogWndEx*>(source);
+        if (!candidate || candidate->IsAutoDelete()) return false;
+        for (CUIWindow* p=this;p;p=p->GetParent()) if (p==candidate) return false;
+        m_sourceRef=source;m_source=candidate;return true;
     }
     bool SetActive(bool active)
     {
