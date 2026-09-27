@@ -46,7 +46,7 @@ class CUIRenderPortal : public CUIStatic
     CUIDialogWndEx* m_source=nullptr;
     CUIPreviewContext m_context;
     bool m_texture=false,m_active=false;
-    bool CanForward() const
+    bool CanForward()
     {
         return m_active && m_source && IsShown() && m_source->IsShown() && m_context.Active();
     }
