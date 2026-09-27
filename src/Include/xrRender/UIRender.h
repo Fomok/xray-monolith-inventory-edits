@@ -76,6 +76,7 @@ public:
     virtual void RequestInspectionWorldHidden(bool active) {}
     virtual bool InspectionWorldHidden() const { return false; }
     virtual void PresentInspectionModel() {}
+    virtual void ReleaseUnusedWorkbench() {}
 
 	// Opt-in camera inspection background, drawn after scene postprocessing.
 	virtual bool SupportsFlatBackground() const { return false; }

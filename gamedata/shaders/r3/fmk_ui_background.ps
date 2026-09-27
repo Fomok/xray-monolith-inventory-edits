@@ -1,9 +1,11 @@
+Texture2D<float4> s_wb_background;
+SamplerState smp_rtlinear;
 // Runs after scene effects. MSAA uses original near-range depth, not
 // combine's reconstructed world-projection depth. No depth buffer writes.
 #ifdef USE_MSAA
 Texture2DMS<float> s_inspection_depth;
 #endif
-struct pin { float4 position : SV_Position; float4 color : COLOR0; };
+struct pin { float4 position : SV_Position; float4 color : COLOR0; float2 uv : TEXCOORD0; };
 float4 main(pin I) : SV_Target
 {
     float coverage = 1.0;
@@ -16,5 +18,5 @@ float4 main(pin I) : SV_Target
         coverage += I.position.z <= s_inspection_depth.Load(pixel, sampleIndex) ? 1.0 : 0.0;
     coverage /= max(samples, 1u);
 #endif
-    return float4(I.color.rgb, coverage);
+    return float4(s_wb_background.SampleLevel(smp_rtlinear,I.uv,0).rgb,coverage);
 }

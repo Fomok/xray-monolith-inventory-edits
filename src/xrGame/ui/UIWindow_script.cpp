@@ -44,6 +44,8 @@
 #include "UITrackBar.h"
 #include "../../Include/xrRender/UIRender.h"
 
+static bool inspection_world_hidden() { return UIRender->InspectionWorldHidden(); }
+
 static void request_inspection_world_hidden(bool active)
 {
     UIRender->RequestInspectionWorldHidden(active);
@@ -388,6 +390,7 @@ void CUIWindow::script_register(lua_State* L)
         .def("SetActive", &CUIWorkbenchPortal::SetActive),
         def("fmk_pda_workbench_supported", &CUIWorkbenchPortal::Supported),
         def("fmk_workbench_hide_world", &request_inspection_world_hidden),
+        def("fmk_workbench_world_hidden", &inspection_world_hidden),
         class_<CUIScrollView, CUIWindow>("CUIScrollView")
 		.def(constructor<>())
 		.def("AddWindow", &CUIScrollView::AddWindow)

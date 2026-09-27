@@ -319,6 +319,8 @@ public:
 		C.PassSET_ZB(!msaa, FALSE);
 		C.PassSET_Blend(msaa, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA, FALSE, 0);
 		if (msaa) C.r_dx10Texture("s_inspection_depth", "$user$msaadepth");
+        C.r_dx10Texture("s_wb_background","fmk\\fmk_wb_background");
+        C.r_dx10Sampler("smp_rtlinear");
 		C.r_End();
 	}
 };
@@ -391,6 +393,8 @@ public:
         C.PassSET_Blend(FALSE,D3DBLEND_ONE,D3DBLEND_ZERO,FALSE,0);
         C.r_dx10Texture("s_wb_position","$user$fmk_wb_position");
         C.r_dx10Texture("s_wb_color","$user$fmk_wb_color");
+        C.r_dx10Texture("s_wb_background","fmk\\fmk_wb_background");
+        C.r_dx10Sampler("smp_rtlinear");
         C.r_End();
     }
 };
@@ -412,7 +416,7 @@ public:
 void dxUIRender::EnsureWorkbenchTargets(bool model)
 {
     const u32 w=Device.dwWidth,h=Device.dwHeight;
-    if (!m_wbUI) m_wbUI.create("$user$fmk_workbench",w,h,D3DFMT_A8R8G8B8);
+    if (!model && !m_wbUI) m_wbUI.create("$user$fmk_workbench",w,h,D3DFMT_A8R8G8B8);
     // Status, crafting and showcase need only the UI target. Defer the model
     // buffers until the first actual preview, then reuse them across tabs.
     if (!model || m_wbModel) return;
@@ -480,6 +484,15 @@ bool dxUIRender::InspectionWorldHidden() const
 {
     return m_hideInspectionWorld && u32(Device.dwFrame-m_hideInspectionFrame)<=1 &&
         SupportsWorkbench() && !WorkbenchActive();
+}
+void dxUIRender::ReleaseUnusedWorkbench()
+{
+#if defined(USE_DX11)
+    if (WorkbenchActive() || InspectionWorldHidden() || m_wbPass) return;
+    m_wbPresent.destroy();m_wbCompose.destroy();
+    m_wbPosition.destroy();m_wbColor.destroy();m_wbDepth.destroy();
+    m_wbModel.destroy();m_wbUI.destroy();
+#endif
 }
 void dxUIRender::PresentInspectionModel()
 {

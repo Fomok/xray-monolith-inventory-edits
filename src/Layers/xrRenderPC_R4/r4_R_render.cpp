@@ -100,6 +100,8 @@ void CRender::Render()
 	if ((Device.dwFrame % (u32)ps_r__tex_evict_interval) == 0)
 		dxRenderDeviceRender::Instance().Resources->EvictStalledTextures();
 
+    UIRender->ReleaseUnusedWorkbench();
+
     // Explicit fullscreen opt-in. Render only camera attachments through the
     // isolated workbench targets; the ordinary UI is drawn by the level later.
     // No world visibility traversal, geometry, grass, shadows, lights or effects.

@@ -51,6 +51,7 @@ public:
     virtual void RequestInspectionWorldHidden(bool active);
     virtual bool InspectionWorldHidden() const;
     virtual void PresentInspectionModel();
+    virtual void ReleaseUnusedWorkbench();
 
 private:
     bool m_workbenchActive = false;
