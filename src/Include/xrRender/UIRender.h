@@ -72,6 +72,7 @@ public:
     virtual bool IsPreviewOwner(const void* owner) const { return false; }
     virtual void ConfigurePreview(const void* owner, u32 color, LPCSTR texture, bool dry, float gain) {}
     virtual bool PreviewDry() const { return false; }
+    virtual u32 PreviewBackgroundColor() const { return 0xff060706; }
     virtual bool PreviewEmbedded() const { return false; }
     virtual bool BeginPreviewUI() { return false; }
     virtual bool BeginPreviewModel(bool compose) { return false; }

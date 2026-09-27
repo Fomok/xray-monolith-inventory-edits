@@ -433,7 +433,8 @@ void dxUIRender::EnsurePreviewTargets(bool model)
     m_previewColor.create("$user$ui_preview_color",w,h,D3DFMT_A16B16G16R16F);
     m_previewDepth.create("$user$ui_preview_depth",w,h,D3DFMT_D24S8);
     m_previewModel.create("$user$ui_preview_model",w,h,D3DFMT_A8R8G8B8);
-    const FLOAT clear[4]={0.025f,0.026f,0.024f,1.f};
+    Fcolor background;background.set(m_previewBackgroundColor);
+    const FLOAT clear[4]={background.r,background.g,background.b,1.f};
     HW.pContext->ClearRenderTargetView(m_previewModel->pRT,clear);
 
 }
@@ -553,7 +554,8 @@ bool dxUIRender::BeginPreviewUI()
         HW.pContext->CopyResource(m_previewUI->pSurface,m_previewModel->pSurface);
     else
     {
-        const FLOAT clear[4]={0.025f,0.026f,0.024f,1.f};
+        Fcolor background;background.set(m_previewBackgroundColor);
+    const FLOAT clear[4]={background.r,background.g,background.b,1.f};
         HW.pContext->ClearRenderTargetView(m_previewUI->pRT,clear);
     }
     return true;
