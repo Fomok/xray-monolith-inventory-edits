@@ -230,9 +230,9 @@ void CDSGraphManager::r_dsgraph_render_hud()
 		initializer.SetCamMode();
 
 		// Rendering
-        const bool pdaPass=UIRender->BeginPreviewModel(false);
+        const bool previewPass=UIRender->BeginPreviewModel(false);
         r_dsgraph_render_graph_sorted(RGraph.mapCamAttached);
-        if(pdaPass) UIRender->EndPreviewPass();
+        if(previewPass) UIRender->EndPreviewPass();
 
 		RImplementation.rmNormal();
 	}
@@ -257,8 +257,8 @@ void CDSGraphManager::r_dsgraph_render_cam_ui()
 	
 	// Rendering
 	RImplementation.rmNear();
-    const bool pdaPass=UIRender->BeginPreviewModel(true);
-    if(!pdaPass) g_hud->RenderCamAttachedUI();
+    const bool previewPass=UIRender->BeginPreviewModel(true);
+    if(!previewPass) g_hud->RenderCamAttachedUI();
 #if defined(USE_DX11)
 	// A flat background preserves opaque depth but overwrites transparent
 	// pixels. Composite deferred glass/reticles after it, using the same
@@ -266,7 +266,7 @@ void CDSGraphManager::r_dsgraph_render_cam_ui()
 	if (RGraph.mapCamAttachedSorted.Sorted.size())
 		r_dsgraph_render_graph_sorted(RGraph.mapCamAttachedSorted.Sorted, true);
 #endif
-    if(pdaPass) UIRender->EndPreviewPass();
+    if(previewPass) UIRender->EndPreviewPass();
 	RImplementation.rmNormal();
 }
 
@@ -285,10 +285,12 @@ void CDSGraphManager::r_dsgraph_render_sorted(bool render_hud)
 		r_dsgraph_render_sorted_hud();
 
 	// Keep transparent camera surfaces for the late camera UI pass whenever
-	// a flat background is active. Ordinary gameplay keeps its existing order.
+	// a flat background or isolated target is active. An isolated model does
+    // not require an attachment background. Gameplay keeps its existing order.
 	bool deferCamTransparency = false;
 #if defined(USE_DX11)
-	deferCamTransparency = g_hud && g_hud->PreviewBackgroundQuery();
+	deferCamTransparency = (g_hud && g_hud->PreviewBackgroundQuery()) ||
+        UIRender->PreviewEmbedded() || UIRender->SceneSuppressed();
 #endif
 	// Camera Script Attachments
 	if (!deferCamTransparency && RGraph.mapCamAttachedSorted.Sorted.size())

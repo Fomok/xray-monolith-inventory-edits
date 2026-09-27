@@ -46,6 +46,18 @@ class CUIRenderPortal : public CUIStatic
     CUIDialogWndEx* m_source=nullptr;
     CUIPreviewContext m_context;
     bool m_texture=false,m_active=false;
+    bool CanForward() const
+    {
+        return m_active && m_source && IsShown() && m_source->IsShown() && m_context.Active();
+    }
+    struct RenderScope
+    {
+        ~RenderScope()
+        {
+            UI().PopScissor();
+            UIRender->EndPreviewPass();
+        }
+    };
     float m_width=1024.f,m_height=768.f;
     u32 m_updateFrame=u32(-1);
     struct CursorScope
@@ -83,7 +95,7 @@ public:
     }
     bool SetActive(bool active)
     {
-        m_active=active && m_source && IsShown() && m_context.Activate(true);
+        m_active=active && m_source && IsShown() && m_source->IsShown() && m_context.Activate(true);
         if (!m_active) m_context.Release();
         return m_active;
     }
@@ -102,22 +114,23 @@ public:
     }
     virtual bool OnMouseAction(float x,float y,EUIMessages action)
     {
-        if(!m_source || !m_context.Active()) return false;
+        if(!CanForward()) return false;
         CursorScope cursor(this);
         return m_source->OnMouseAction(x*m_width/_max(1.f,GetWidth()),y*m_height/_max(1.f,GetHeight()),action);
     }
     virtual bool OnKeyboardAction(int dik,EUIMessages action)
     {
-        return m_source && m_context.Active() ? m_source->OnKeyboardAction(dik,action) : false;
+        return CanForward() ? m_source->OnKeyboardAction(dik,action) : false;
     }
     virtual void Draw()
     {
-        if(!m_source || !m_context.Active() || !IsShown()) return;
+        if(!CanForward()) return;
         UI().RenderFont();
         if(UIRender->BeginPreviewUI())
         {
             Frect full;full.set(0,0,m_width,m_height);UI().PushScissor(full,true);
-            m_source->Draw();UI().RenderFont();UI().PopScissor();UIRender->EndPreviewPass();
+            RenderScope renderScope;
+            m_source->Draw();UI().RenderFont();
         }
         if(!m_texture) { InitTexture("$user$ui_preview_surface");SetStretchTexture(true);m_texture=true; }
         CUIStatic::Draw();

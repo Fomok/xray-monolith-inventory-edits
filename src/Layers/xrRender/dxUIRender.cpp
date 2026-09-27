@@ -443,9 +443,11 @@ void dxUIRender::SavePreviewTargets()
     VERIFY(!m_previewPass);m_previewPass=true;
     for(u32 i=0;i<4;++i) m_previewSavedRT[i]=RCache.get_RT(i);
     m_previewSavedDepth=RCache.get_ZB();
+    m_previewSavedCull=RCache.get_CullMode();
 }
 void dxUIRender::DrawPreviewQuad(bool present)
 {
+    const u32 savedCull=RCache.get_CullMode();
     u32 offset;FVF::LIT* v=(FVF::LIT*)RCache.Vertex.Lock(4,hGeom_LIT.stride(),offset);
     v[0].set(-1,-1,0,0xffffffff,0,1);v[1].set(-1,1,0,0xffffffff,0,0);
     v[2].set(1,-1,0,0xffffffff,1,1);v[3].set(1,1,0,0xffffffff,1,0);
@@ -458,6 +460,7 @@ void dxUIRender::DrawPreviewQuad(bool present)
     }
     RCache.set_CullMode(CULL_NONE);RCache.set_Stencil(FALSE);
     RCache.Render(D3DPT_TRIANGLESTRIP,offset,2);
+    RCache.set_CullMode(savedCull);
 }
 #endif
 bool dxUIRender::BeginPreviewModel(bool compose)
@@ -581,6 +584,6 @@ void dxUIRender::EndPreviewPass()
 #if defined(USE_DX11)
     if(!m_previewPass) return;
     for(u32 i=0;i<4;++i) RCache.set_RT(m_previewSavedRT[i],i);
-    RCache.set_ZB(m_previewSavedDepth);RCache.set_CullMode(CULL_CCW);m_previewPass=false;
+    RCache.set_ZB(m_previewSavedDepth);RCache.set_CullMode(m_previewSavedCull);m_previewPass=false;
 #endif
 }

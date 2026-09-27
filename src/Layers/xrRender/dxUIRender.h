@@ -73,6 +73,7 @@ private:
     ID3DRenderTargetView* m_previewSavedRT[4] = {};
     ID3DDepthStencilView* m_previewSavedDepth = nullptr;
     bool m_previewPass = false;
+    u32 m_previewSavedCull = CULL_CCW;
     u32 m_previewModelFrame = u32(-1);
     void EnsurePreviewTargets(bool model);
     void SavePreviewTargets();
