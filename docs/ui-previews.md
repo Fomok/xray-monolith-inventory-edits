@@ -70,7 +70,11 @@ The stock/SSS-compatible shader path is tested by compilation, not every third-p
 
 ## Validation status
 
-Shader Model 5 compilation covers standard/AMD normal decoding and background MSAA branches. The adapted mod passes Lua 5.1 compilation and existing controller, camera, repeated-install, scrolling and PDA lifecycle regressions. Native EXEs build in the branch workflow. In-game visual, performance and stability results must be collected before upstream submission.
+Shader Model 5 compilation covers standard/AMD normal decoding and background MSAA branches. The adapted mod passes Lua 5.1 compilation and existing controller, camera, repeated-install, scrolling and PDA lifecycle regressions. The earlier candidate (1d4fccee) built successfully and was tested by the consuming mod author in fullscreen/PDA modes and with the mod disabled. That feedback does not validate every generic API configuration. The submission candidate changes transparency routing, portal visibility guards and culling restoration; it requires a fresh native build and in-game regression checks.
+
+Run `portal_source_smoke_test()` and `portal_lifecycle_smoke_test()` from the example script separately with other previews closed. The latter covers hidden sources/portals and competing owners. Test transparent scope glass with the standalone model example, which deliberately has no attachment background. Repeat opening/closing and change resolution before testing again.
+
+Render-target/depth bindings and culling are restored. Stencil/shader state still follows the engine UI pass conventions; this is not an arbitrary GPU-state sandbox. Device-reset, source destruction by native parents, and additional renderer configurations remain review/test requirements.
 
 ## Suggested contribution title
 

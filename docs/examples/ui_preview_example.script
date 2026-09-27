@@ -56,3 +56,30 @@ function portal_source_smoke_test()
     portal=nil;collectgarbage('collect')
     return true
 end
+
+-- Run separately with no other preview open. Exercises visibility and competing
+-- ownership through the real Lua/native API; no inventory items are created.
+function portal_lifecycle_smoke_test()
+    if not ui_preview or not ui_preview.supports('ui_portal') then return false end
+    local portal=CUIRenderPortal();portal:SetAutoDelete(false);portal:Show(true)
+    local source=Example();source:Show(true)
+    local other=CUIPreviewContext()
+    assert(portal:SetSource(source))
+    assert(portal:SetActive(true))
+    assert(not other:request_scene_suppression())
+    portal:SetActive(false)
+    source:Show(false)
+    assert(not portal:SetActive(true))
+    source:Show(true)
+    assert(portal:SetActive(true))
+    portal:Show(false)
+    assert(not portal:SetActive(true))
+    portal:Show(true)
+    assert(portal:SetActive(true))
+    assert(portal:SetSource(nil))
+    assert(other:request_scene_suppression())
+    assert(not portal:SetActive(true))
+    other:release();other:release()
+    portal=nil;source=nil;other=nil;collectgarbage('collect')
+    return true
+end
