@@ -100,6 +100,35 @@ void CRender::Render()
 	if ((Device.dwFrame % (u32)ps_r__tex_evict_interval) == 0)
 		dxRenderDeviceRender::Instance().Resources->EvictStalledTextures();
 
+    // Explicit fullscreen opt-in. Render only camera attachments through the
+    // isolated workbench targets; the ordinary UI is drawn by the level later.
+    // No world visibility traversal, geometry, grass, shadows, lights or effects.
+    if (UIRender->InspectionWorldHidden())
+    {
+        PROF_EVENT("Fullscreen workbench isolated render");
+        phase=PHASE_NORMAL;
+        RImplementation.o.distortion=FALSE;
+        GMBase.RGraph.clear<false>();
+        LP_normal.clear();LP_pending.clear();
+        Target->u_setrt(Device.dwWidth,Device.dwHeight,HW.pBaseRT,NULL,NULL,HW.pBaseZB);
+        const FLOAT background[4]={0.025f,0.026f,0.024f,1.f};
+        HW.pContext->ClearRenderTargetView(HW.pBaseRT,background);
+        HW.pContext->ClearDepthStencilView(HW.pBaseZB,D3D_CLEAR_DEPTH|D3D_CLEAR_STENCIL,1.f,0);
+        GMBase.r_dsgraph_capture_hud();
+        const bool hasModel=!GMBase.RGraph.mapCamAttached.empty();
+        if (hasModel)
+        {
+            GMBase.r_dsgraph_render_hud();
+            GMBase.r_dsgraph_render_cam_ui();
+            UIRender->PresentInspectionModel();
+        }
+        GMBase.RGraph.clear<false>();
+        if (Details) Details->details_clear();
+        rmNormal();
+        Target->DoAsyncScreenshot();
+        return;
+    }
+
 	//.	VERIFY					(g_pGameLevel && g_pGameLevel->pHUD);
 
 	// Configure

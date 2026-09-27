@@ -44,6 +44,11 @@
 #include "UITrackBar.h"
 #include "../../Include/xrRender/UIRender.h"
 
+static void request_inspection_world_hidden(bool active)
+{
+    UIRender->RequestInspectionWorldHidden(active);
+}
+
 
 // Presents a full logical UI on a PDA subrectangle. The source is Lua-owned,
 // never adopted; pointer mapping is scoped and restored before PDA processing.
@@ -382,6 +387,7 @@ void CUIWindow::script_register(lua_State* L)
         .def("SetSource", &CUIWorkbenchPortal::SetSource)
         .def("SetActive", &CUIWorkbenchPortal::SetActive),
         def("fmk_pda_workbench_supported", &CUIWorkbenchPortal::Supported),
+        def("fmk_workbench_hide_world", &request_inspection_world_hidden),
         class_<CUIScrollView, CUIWindow>("CUIScrollView")
 		.def(constructor<>())
 		.def("AddWindow", &CUIScrollView::AddWindow)

@@ -48,18 +48,24 @@ public:
     virtual bool BeginWorkbenchUI();
     virtual bool BeginWorkbenchModel(bool compose);
     virtual void EndWorkbenchPass();
+    virtual void RequestInspectionWorldHidden(bool active);
+    virtual bool InspectionWorldHidden() const;
+    virtual void PresentInspectionModel();
 
 private:
     bool m_workbenchActive = false;
+    bool m_hideInspectionWorld = false;
+    u32 m_hideInspectionFrame = 0;
 #if defined(USE_DX11)
     ref_rt m_wbPosition, m_wbColor, m_wbDepth, m_wbModel, m_wbUI;
     ref_shader m_wbCompose;
+    ref_shader m_wbPresent;
     ID3DRenderTargetView* m_wbSavedRT[4] = {};
     ID3DDepthStencilView* m_wbSavedDepth = nullptr;
     bool m_wbPass = false;
     void EnsureWorkbenchTargets(bool model);
     void SaveWorkbenchTargets();
-    void DrawWorkbenchQuad();
+    void DrawWorkbenchQuad(bool present = false);
 #endif
 
 	ref_geom hGeom_TL;

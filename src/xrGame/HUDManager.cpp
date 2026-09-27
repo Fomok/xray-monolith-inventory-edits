@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "HUDManager.h"
+#include "../Include/xrRender/UIRender.h"
 #include "hudtarget.h"
 #include "actor.h"
 #include "../xrEngine/igame_level.h"
@@ -212,6 +213,7 @@ void CHUDManager::Render_Last(IDSGraphManager* DM)
 {
 	if (0 == pUIGame) return;
 	if (g_actor) g_actor->RenderCamAttached(DM);
+    if (UIRender->InspectionWorldHidden()) return;
 	if (!psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2 | HUD_DRAW_RT2))return;
 	if (!need_render_hud()) return;
 

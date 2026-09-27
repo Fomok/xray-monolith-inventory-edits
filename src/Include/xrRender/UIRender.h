@@ -72,6 +72,10 @@ public:
     virtual bool BeginWorkbenchUI() { return false; }
     virtual bool BeginWorkbenchModel(bool compose) { return false; }
     virtual void EndWorkbenchPass() {}
+    // Renewed by a visible fullscreen UI; expires if its script stops updating.
+    virtual void RequestInspectionWorldHidden(bool active) {}
+    virtual bool InspectionWorldHidden() const { return false; }
+    virtual void PresentInspectionModel() {}
 
 	// Opt-in camera inspection background, drawn after scene postprocessing.
 	virtual bool SupportsFlatBackground() const { return false; }

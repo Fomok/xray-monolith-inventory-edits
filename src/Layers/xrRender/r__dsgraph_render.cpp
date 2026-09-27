@@ -23,6 +23,9 @@ extern float r_ssaDISCARD;
 extern float r_ssaDONTSORT;
 extern float r_ssaHZBvsTEX;
 extern float r_ssaGLOD_start, r_ssaGLOD_end;
+#if defined(USE_DX11)
+extern Fvector4 ps_ssfx_hud_drops_1;
+#endif
 
 ICF float calcLOD(float ssa/*fDistSq*/, float R)
 {
@@ -34,6 +37,15 @@ void CDSGraphManager::r_dsgraph_render_graph_sorted(R_dsgraph::mapDSGraphItems<T
 {
     if (graph.empty())
         return;
+
+#if defined(USE_DX11)
+    // HUD and camera copies may share a shader/constant table. Override only
+    // camera inspection draws, then restore even when the next shader is cached.
+    const bool dryInspection =
+        (static_cast<const void*>(&graph) == static_cast<const void*>(&RGraph.mapCamAttached) ||
+         static_cast<const void*>(&graph) == static_cast<const void*>(&RGraph.mapCamAttachedSorted.Sorted)) &&
+        g_hud && g_hud->InspectionBackgroundQuery();
+#endif
 
     std::sort(graph.begin(), graph.end());
 
@@ -49,7 +61,15 @@ void CDSGraphManager::r_dsgraph_render_graph_sorted(R_dsgraph::mapDSGraphItems<T
 		//{
 		//	//new feature
 		//}
+#if defined(USE_DX11)
+        if (dryInspection)
+            RCache.set_c("ssfx_hud_drops_1", ps_ssfx_hud_drops_1.x, 0.f,
+                ps_ssfx_hud_drops_1.z, ps_ssfx_hud_drops_1.w);
+#endif
 		V->Render(calcLOD(item.ssa, V->vis.sphere.R));
+#if defined(USE_DX11)
+        if (dryInspection) RCache.set_c("ssfx_hud_drops_1", ps_ssfx_hud_drops_1);
+#endif
 	}
 
 	if (_clear)

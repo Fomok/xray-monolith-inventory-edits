@@ -22,7 +22,7 @@ void dxUIRender::DestroyUIGeom()
 	hGeom_LIT = NULL;
 	m_flatBackgroundShader.destroy();
 #if defined(USE_DX11)
-    m_wbCompose.destroy();m_wbPosition.destroy();m_wbColor.destroy();
+    m_wbPresent.destroy();m_wbCompose.destroy();m_wbPosition.destroy();m_wbColor.destroy();
     m_wbDepth.destroy();m_wbModel.destroy();m_wbUI.destroy();
     m_wbPass=false;
 #endif
@@ -394,6 +394,21 @@ public:
         C.r_End();
     }
 };
+class CBlender_WorkbenchPresent : public IBlender
+{
+public:
+    virtual LPCSTR getComment() { return "Fullscreen inspection model"; }
+    virtual BOOL canBeLMAPped() { return FALSE; }
+    virtual void Compile(CBlender_Compile& C)
+    {
+        IBlender::Compile(C);
+        C.r_Pass("fmk_ui_background", "fmk_workbench_present", false);
+        C.PassSET_ZB(FALSE,FALSE);
+        C.PassSET_Blend(FALSE,D3DBLEND_ONE,D3DBLEND_ZERO,FALSE,0);
+        C.r_dx10Texture("s_wb_model","$user$fmk_wb_model");
+        C.r_End();
+    }
+};
 void dxUIRender::EnsureWorkbenchTargets(bool model)
 {
     const u32 w=Device.dwWidth,h=Device.dwHeight;
@@ -415,13 +430,13 @@ void dxUIRender::SaveWorkbenchTargets()
     for(u32 i=0;i<4;++i) m_wbSavedRT[i]=RCache.get_RT(i);
     m_wbSavedDepth=RCache.get_ZB();
 }
-void dxUIRender::DrawWorkbenchQuad()
+void dxUIRender::DrawWorkbenchQuad(bool present)
 {
     u32 offset;FVF::LIT* v=(FVF::LIT*)RCache.Vertex.Lock(4,hGeom_LIT.stride(),offset);
     v[0].set(-1,-1,0,0xffffffff,0,1);v[1].set(-1,1,0,0xffffffff,0,0);
     v[2].set(1,-1,0,0xffffffff,1,1);v[3].set(1,1,0,0xffffffff,1,0);
     RCache.Vertex.Unlock(4,hGeom_LIT.stride());
-    RCache.set_Element(m_wbCompose->E[0]);RCache.set_Geometry(hGeom_LIT);
+    RCache.set_Element(present ? m_wbPresent->E[0] : m_wbCompose->E[0]);RCache.set_Geometry(hGeom_LIT);
     RCache.set_CullMode(CULL_NONE);RCache.set_Stencil(FALSE);
     RCache.Render(D3DPT_TRIANGLESTRIP,offset,2);
 }
@@ -429,7 +444,7 @@ void dxUIRender::DrawWorkbenchQuad()
 bool dxUIRender::BeginWorkbenchModel(bool compose)
 {
 #if defined(USE_DX11)
-    if(!WorkbenchActive()) return false;
+    if(!WorkbenchActive() && !InspectionWorldHidden()) return false;
     PROF_EVENT("PDA workbench model pass");
     EnsureWorkbenchTargets(true);SaveWorkbenchTargets();
     const FLOAT clear[4]={0,0,0,0};
@@ -454,6 +469,28 @@ bool dxUIRender::BeginWorkbenchModel(bool compose)
     return true;
 #else
     return false;
+#endif
+}
+void dxUIRender::RequestInspectionWorldHidden(bool active)
+{
+    m_hideInspectionWorld=active;
+    m_hideInspectionFrame=Device.dwFrame;
+}
+bool dxUIRender::InspectionWorldHidden() const
+{
+    return m_hideInspectionWorld && u32(Device.dwFrame-m_hideInspectionFrame)<=1 &&
+        SupportsWorkbench() && !WorkbenchActive();
+}
+void dxUIRender::PresentInspectionModel()
+{
+#if defined(USE_DX11)
+    if (!InspectionWorldHidden() || !m_wbModel) return;
+    if (!m_wbPresent)
+    {
+        CBlender_WorkbenchPresent blender;
+        m_wbPresent.create(&blender,"fmk_workbench_present");
+    }
+    DrawWorkbenchQuad(true);
 #endif
 }
 bool dxUIRender::BeginWorkbenchUI()
