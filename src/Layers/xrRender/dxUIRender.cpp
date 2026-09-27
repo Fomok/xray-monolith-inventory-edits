@@ -499,12 +499,21 @@ bool dxUIRender::AcquirePreview(const void* owner, bool embedded)
 {
     if (!owner || !SupportsModelPreview()) return false;
     if (IsPreviewOwner(m_previewOwner) && owner!=m_previewOwner) return false;
+#if defined(USE_DX11)
+    // A recycled target must not show another owner's completed image.
+    if (owner!=m_previewOwner || !IsPreviewOwner(owner)) m_previewModelFrame=u32(-1);
+#endif
     m_previewOwner=owner;m_previewEmbedded=embedded;m_previewFrame=Device.dwFrame;
     return true;
 }
 void dxUIRender::ReleasePreview(const void* owner)
 {
-    if (owner==m_previewOwner) { m_previewOwner=nullptr;m_previewDry=false; }
+    if (owner==m_previewOwner) {
+        m_previewOwner=nullptr;m_previewDry=false;
+#if defined(USE_DX11)
+        m_previewModelFrame=u32(-1);
+#endif
+    }
 }
 bool dxUIRender::PreviewEmbedded() const { return IsPreviewOwner(m_previewOwner) && m_previewEmbedded; }
 bool dxUIRender::SceneSuppressed() const { return IsPreviewOwner(m_previewOwner) && !m_previewEmbedded; }
@@ -550,7 +559,11 @@ bool dxUIRender::BeginPreviewUI()
     RCache.set_RT(m_previewUI->pRT,0);
     for(u32 i=1;i<4;++i) RCache.set_RT(nullptr,i);
     RCache.set_ZB(nullptr);RCache.set_Stencil(FALSE);
-    if (m_previewModel && m_previewModelFrame==Device.dwFrame)
+    // Physical PDA UI is captured by CLevel before this frame's scene/model
+    // pass. Its surface therefore consumes the last completed frame, whereas
+    // an ordinary UI portal can consume the current one. Reject anything older.
+    if (m_previewModel && m_previewModelFrame!=u32(-1) &&
+        u32(Device.dwFrame-m_previewModelFrame)<=1)
         HW.pContext->CopyResource(m_previewUI->pSurface,m_previewModel->pSurface);
     else
     {
