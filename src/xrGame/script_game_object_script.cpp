@@ -11,6 +11,7 @@
 #include "game_object_space.h"
 #include "script_ini_file.h"
 #include "sight_manager_space.h"
+#include "inventory_grid_script.h"
 
 using namespace luabind;
 
@@ -22,6 +23,15 @@ extern class_<CScriptGameObject> script_register_game_object_trader(class_<CScri
 void CScriptGameObject::script_register(lua_State* L)
 {
 	class_<CScriptGameObject> instance("game_object");
+
+    module(L)
+    [
+        class_<inventory_grid::ScriptGrid>("sqa_grid")
+        .def(constructor<>())
+        .def("resize", &inventory_grid::ScriptGrid::resize)
+        .def("fits", &inventory_grid::ScriptGrid::fits)
+        .def("occupy", &inventory_grid::ScriptGrid::occupy)
+    ];
 
 	module(L)
 	[
