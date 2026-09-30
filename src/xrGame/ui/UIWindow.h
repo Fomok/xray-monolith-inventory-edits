@@ -318,7 +318,7 @@ public:
 			if (!p->m_clip_children) continue;
 			Frect rect;
 			p->GetAbsoluteRect(rect);
-			if (!p->IsShown() || !p->IsEnabled() || !rect.in(abs_pos))
+			if (!p->IsShown() || !p->IsEnabled() || !rect.in(abs_pos.x, abs_pos.y))
 				return false;
 		}
 		const u32 n = m_hit_clip_poly.size();

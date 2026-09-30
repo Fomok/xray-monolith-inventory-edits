@@ -15,6 +15,12 @@ h=(engine/'src/xrGame/ui/UIWindow.h').read_text(encoding='utf-8')
 reparent=function(cpp,'bool CUIWindow::Reparent(')
 hit=function(h,'IC bool HitClipPass(').replace('IC bool','bool')
 draw=function(cpp,'void CUIWindow::Draw()')
+# Match the production rectangle overloads, including their reference qualifiers.
+rect_header=(engine/'src/xrCore/_rect.h').read_text(encoding='utf-8')
+rect_methods=re.findall(r'IC BOOL in\([^\n]+',rect_header)
+assert len(rect_methods)==2
+rect_methods='\n'.join(rect_methods).replace('IC BOOL','bool').replace('Tvector','Fvector2')
+rect_methods=re.sub(r'\bT\b','float',rect_methods)
 head=r'''
 #include <vector>
 #include <algorithm>
@@ -23,7 +29,7 @@ head=r'''
 using u32=unsigned;
 #define PROF_EVENT(x)
 struct Fvector2 {float x,y;};
-struct Frect {float x1=0,y1=0,x2=100,y2=100;bool in(const Fvector2& p)const{return p.x>=x1&&p.x<=x2&&p.y>=y1&&p.y<=y2;}};
+struct Frect {float x1=0,y1=0,x2=100,y2=100; RECT_METHODS };
 struct Render {int depth=0,pushes=0;void PushScissor(Frect){++depth;++pushes;}void PopScissor(){assert(depth>0);--depth;}} renderer;
 Render& UI(){return renderer;}
 struct xrCriticalSectionGuard {xrCriticalSectionGuard(int){}};
@@ -63,7 +69,13 @@ int main(){
 }
 '''
 with tempfile.TemporaryDirectory(prefix='sqa-ui-') as tmp:
-    src=Path(tmp)/'ui.cpp'; exe=Path(tmp)/'ui.exe';src.write_text(head+hit+tail.split('int main()')[0]+reparent+'\n'+draw+'\nint main()'+tail.split('int main()')[1])
+    src=Path(tmp)/'ui.cpp'; exe=Path(tmp)/'ui.exe';source=head.replace('RECT_METHODS',rect_methods)+hit+tail.split('int main()')[0]+reparent+'\n'+draw+'\nint main()'+tail.split('int main()')[1]
+    src.write_text(source.replace('rect.in(abs_pos.x, abs_pos.y)','rect.in(abs_pos)'))
+    command=[args.compiler]+(['c++'] if Path(args.compiler).stem=='zig' else [])+['-std=c++17',str(src),'-o',str(exe)]
+    baseline=subprocess.run(command,capture_output=True,text=True)
+    assert baseline.returncode!=0 and 'const' in baseline.stderr, 'Expected original const-reference compile failure'
+    print('PASS: original build failure reproduced with production rectangle overloads')
+    src.write_text(source)
     result=subprocess.run([args.compiler]+(['c++'] if Path(args.compiler).stem=='zig' else [])+['-std=c++17',str(src),'-o',str(exe)],capture_output=True,text=True)
     assert result.returncode==0,result.stderr[-3000:]
     subprocess.run([str(exe)],check=True)
