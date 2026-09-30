@@ -111,10 +111,7 @@ public:
 	bool Eat(PIItem pIItem);
 	bool ClientEat(PIItem pIItem);
 
-	// AMP: is this PARTICULAR thing inside one of the cases this owner is
-	// carrying? The lookups answer "have you got a <name>"; this one is
-	// for the GATES - the places that are handed one object and have to
-	// decide whether its owner may act on it. See the definition.
+	// Possession check for contents of carried containers, including equipped rigs.
 	bool AmpInCarriedBox(const CInventoryItem* item) const;
 
 	IC u16 GetActiveSlot() const { return m_iActiveSlot; }

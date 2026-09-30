@@ -241,15 +241,19 @@ void CScriptGameObject::ForEachInventoryItems(const ::luabind::functor<bool>& fu
 	TIItemContainer item_list;
 	pInv->AddAvailableItems(item_list, false);
 
-	TIItemContainer::iterator it;
-	for (it = item_list.begin(); item_list.end() != it; ++it)
+	// Quest callbacks may remove items or drop their enclosing container.
+	// Resolve the snapshot again and check possession before each callback.
+	xr_vector<u16> ids;
+	for (PIItem item : item_list)
+		ids.push_back(item->object().ID());
+
+	for (u16 id : ids)
 	{
-		CGameObject* inv_go = smart_cast<CGameObject*>(*it);
-		if (inv_go)
-		{
+		CGameObject* inv_go = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+		CInventoryItem* item = smart_cast<CInventoryItem*>(inv_go);
+		if (item && (inv_go->H_Parent() == &object() || pInv->AmpInCarriedBox(item)))
 			if (functor(inv_go->lua_game_object(), this) == true)
 				return;
-		}
 	}
 }
 
@@ -292,43 +296,40 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 		return;
 	}
 
-	TIItemContainer::iterator I = inventory_owner->inventory().m_all.begin();
-	TIItemContainer::iterator E = inventory_owner->inventory().m_all.end();
-	for (; I != E; ++I)
-		if (functor(object, (*I)->object().lua_game_object()) == true)
-			return;
-
-	// ============================================================
-	// AMP: ...AND WHAT IS INSIDE THE CASES
-	//
-	// The same blind spot as CInventory::Get, on the other door. Every
-	// script that counts what the player has walks this, so a task that
-	// wants five bandages counts none of the five in a med case.
-	//
-	// AFTER the loose items, so anything that stops early sees the
-	// ordinary inventory first and in the order it always did.
-	//
-	// OVER A COPY of each id list, for the reason IterateContainer
-	// gives: the functor is script and may take things out mid-walk.
-	//
-	// ONE LEVEL. A container never holds another container.
-	// ============================================================
-	TIItemContainer boxes = inventory_owner->inventory().m_all;
-	for (TIItemContainer::iterator bi = boxes.begin(); boxes.end() != bi; ++bi)
+	CInventory& inventory = inventory_owner->inventory();
+	// Capture both lists before invoking Lua. A callback can destroy or move
+	// a later item (including a whole box), invalidating inventory pointers.
+	xr_vector<u16> direct_ids;
+	xr_vector<u16> contained_ids;
+	for (PIItem item : inventory.m_all)
 	{
-		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*bi);
+		if (item->object().H_Parent() != &this->object())
+			continue;
+		direct_ids.push_back(item->object().ID());
+		CInventoryContainer* box = smart_cast<CInventoryContainer*>(item);
 		if (!box)
 			continue;
-
-		xr_vector<u16> items = box->m_items;
-		for (xr_vector<u16>::const_iterator ci = items.begin();
-		     items.end() != ci; ++ci)
+		for (u16 id : box->m_items)
 		{
-			CGameObject* GO = smart_cast<CGameObject*>(Level().Objects.net_Find(*ci));
-			if (GO)
-				if (functor(object, GO->lua_game_object()) == true)
-					return;
+			CGameObject* child = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+			if (child && child->H_Parent() == &box->object())
+				contained_ids.push_back(id);
 		}
+	}
+
+	// Keep loose items first, with the same early-stop behavior as before.
+	xr_vector<u16> visited;
+	direct_ids.insert(direct_ids.end(), contained_ids.begin(), contained_ids.end());
+	for (u16 id : direct_ids)
+	{
+		if (std::find(visited.begin(), visited.end(), id) != visited.end())
+			continue;
+		visited.push_back(id);
+		CGameObject* current = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+		CInventoryItem* item = smart_cast<CInventoryItem*>(current);
+		if (item && (current->H_Parent() == &this->object() || inventory.AmpInCarriedBox(item)))
+			if (functor(object, current->lua_game_object()) == true)
+				return;
 	}
 }
 
@@ -406,7 +407,7 @@ void CScriptGameObject::IterateContainer(::luabind::functor<bool> functor, ::lua
 	for (; I != E; ++I)
 	{
 		CGameObject* GO = smart_cast<CGameObject*>(Level().Objects.net_Find(*I));
-		if (GO)
+		if (GO && GO->H_Parent() == &this->object())
 			if (functor(object, GO->lua_game_object()))
 				return;
 	}

@@ -1051,50 +1051,20 @@ static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name,
 	return NULL;
 }
 
-// ============================================================
-// AMP: IS THIS PARTICULAR THING IN A CASE YOU ARE CARRYING
-//
-// amp_find_in_containers answers "have you got a <name>". This answers it
-// about ONE OBJECT, which is what a GATE needs - the places that do not
-// search for anything but are handed an item and have to decide whether
-// its owner may act on it. CInventory::Eat is the first of those.
-//
-// ONE LEVEL, for the reason given above: a container never holds another
-// container, so one level IS all of them.
-//
-// THE FAST NO COMES FIRST. Nearly every call is about something loose in
-// the ruck, whose parent is the owner and not a case at all, and that
-// answers before any list is walked.
-//
-// THE RUCK ONLY, like the lookups, and for the same two reasons: a
-// container on the belt is not a thing this game has, and the belt is
-// asked on a far hotter path.
-//
-// BY ID, NOT BY POINTER. A CInventoryContainer is a CGameObject and a
-// CInventoryItem by two different paths; comparing against an id is the
-// one comparison that cannot be quietly wrong about which base class it
-// is looking through.
-// ============================================================
+// Check both sides of the ownership link. Equipped rigs are carried too.
+// This query describes possession, not permission to reload or quick-use.
 bool CInventory::AmpInCarriedBox(const CInventoryItem* item) const
 {
 	if (!item)
 		return false;
-
-	CObject* holder = item->object().H_Parent();
-	if (!holder)
+	CInventoryContainer* box = smart_cast<CInventoryContainer*>(item->object().H_Parent());
+	if (!box || box->H_Parent() != m_pOwner->cast_game_object())
 		return false;
-
-	CInventoryContainer* box = smart_cast<CInventoryContainer*>(holder);
-	if (!box)
+	if (std::find(box->m_items.begin(), box->m_items.end(), item->object().ID()) == box->m_items.end())
 		return false;
-
-	const u16 box_id = box->ID();
-	for (TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
-	{
-		if ((*it)->object().ID() == box_id)
+	for (PIItem carried : m_all)
+		if (carried->object().ID() == box->ID())
 			return true;
-	}
-
 	return false;
 }
 
@@ -1646,17 +1616,17 @@ void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_tr
 	// ============================================================
 	if (!for_trade)
 	{
-		for (TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
+		for (TIItemContainer::const_iterator it = m_all.begin(); m_all.end() != it; ++it)
 		{
 			CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
-			if (!box)
+			if (!box || box->H_Parent() != m_pOwner->cast_game_object())
 				continue;
 
 			for (xr_vector<u16>::const_iterator ci = box->m_items.begin();
 			     box->m_items.end() != ci; ++ci)
 			{
 				CObject* O = Level().Objects.net_Find(*ci);
-				if (!O)
+				if (!O || O->H_Parent() != box)
 					continue;
 
 				PIItem child = smart_cast<CInventoryItem*>(O);
