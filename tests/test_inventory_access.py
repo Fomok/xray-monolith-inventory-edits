@@ -26,10 +26,11 @@ source=r"""
 using u16=unsigned short;
 template<class T> using xr_vector=std::vector<T>;
 struct CObject { u16 id; CObject* parent=nullptr; virtual ~CObject()=default; u16 ID()const{return id;} CObject* H_Parent()const{return parent;} };
-struct CGameObject: CObject { CGameObject* lua_game_object(){return this;} };
+struct CGameObject: CObject { CGameObject* lua_game_object(){return this;} CGameObject& object(){return *this;} };
 struct CInventoryItem {virtual ~CInventoryItem()=default; virtual CGameObject& object()const=0;};
 using PIItem=CInventoryItem*; using TIItemContainer=std::vector<PIItem>;
-struct Item: CGameObject,CInventoryItem {CGameObject& object()const override{return *const_cast<Item*>(this);}};
+struct ItemInterface: CInventoryItem {CGameObject& object()const override{return *dynamic_cast<CGameObject*>(const_cast<ItemInterface*>(this));}};
+struct Item: CGameObject,ItemInterface {};
 struct CInventoryContainer: Item {std::vector<u16> m_items;};
 template<class T,class U> T smart_cast(U* p){return dynamic_cast<T>(p);}
 struct Objects {std::map<u16,CObject*> live; CObject* net_Find(u16 id){auto i=live.find(id);return i==live.end()?nullptr:i->second;}};

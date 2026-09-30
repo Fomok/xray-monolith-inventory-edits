@@ -312,7 +312,7 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 		for (u16 id : box->m_items)
 		{
 			CGameObject* child = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
-			if (child && child->H_Parent() == &box->object())
+			if (child && child->H_Parent() == box)
 				contained_ids.push_back(id);
 		}
 	}
