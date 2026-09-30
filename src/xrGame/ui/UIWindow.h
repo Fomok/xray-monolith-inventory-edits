@@ -147,6 +147,10 @@ public:
 	//работа с дочерними и родительскими окнами
 	virtual void AttachChild(CUIWindow* pChild);
 	virtual void DetachChild(CUIWindow* pChild);
+	// Move an existing engine-owned control without queuing it for deletion.
+	bool Reparent(CUIWindow* parent);
+	void SetClipChildren(bool value) { m_clip_children = value; }
+	bool GetClipChildren() const { return m_clip_children; }
 	virtual bool IsChild(CUIWindow* pChild) const;
 	virtual void DetachAll();
 	int GetChildNum()
@@ -307,6 +311,16 @@ public:
 	}
 	IC bool HitClipPass(const Fvector2& abs_pos) const
 	{
+		// A scrolling inventory can contain equipment controls owned by another
+		// logical container. Render and input must agree on every viewport.
+		for (CUIWindow* p = GetParent(); p; p = p->GetParent())
+		{
+			if (!p->m_clip_children) continue;
+			Frect rect;
+			p->GetAbsoluteRect(rect);
+			if (!p->IsShown() || !p->IsEnabled() || !rect.in(abs_pos))
+				return false;
+		}
 		const u32 n = m_hit_clip_poly.size();
 		if (n < 3)
 			return true;
@@ -372,6 +386,7 @@ protected:
 
 	// Если курсор над окном
 	bool m_bCursorOverWindow;
+	bool m_clip_children = false;
 	bool m_bCustomDraw;
 
 	xr_vector<Fvector2> m_hit_clip_poly;
