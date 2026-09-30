@@ -253,6 +253,34 @@ void CScriptGameObject::ForEachInventoryItems(const ::luabind::functor<bool>& fu
 	}
 }
 
+// Enumerate direct ownership for layout/capacity calculations. The existing
+// IterateInventory also visits carried container contents for quest consumers.
+void CScriptGameObject::IterateInventoryDirect(::luabind::functor<bool> functor, ::luabind::object object)
+{
+	CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(&this->object());
+	if (!inventory_owner)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		    "CScriptGameObject::IterateInventoryDirect non-CInventoryOwner object !!!");
+		return;
+	}
+
+	// A callback may transfer or destroy an item. Snapshot IDs, not pointers,
+	// and recheck ownership before visiting each surviving object.
+	xr_vector<u16> ids;
+	const TIItemContainer& items = inventory_owner->inventory().m_all;
+	for (TIItemContainer::const_iterator it = items.begin(); it != items.end(); ++it)
+		ids.push_back((*it)->object().ID());
+
+	for (xr_vector<u16>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+	{
+		CGameObject* item = smart_cast<CGameObject*>(Level().Objects.net_Find(*it));
+		if (item && item->H_Parent() == &this->object())
+			if (functor(object, item->lua_game_object()) == true)
+				return;
+	}
+}
+
 //1
 void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::luabind::object object)
 {

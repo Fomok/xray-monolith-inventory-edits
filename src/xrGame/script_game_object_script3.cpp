@@ -264,6 +264,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 
 		// Tronex
 		.def("iterate_inventory", &CScriptGameObject::IterateInventory)
+		.def("iterate_inventory_direct", &CScriptGameObject::IterateInventoryDirect)
 		.def("iterate_ruck", &CScriptGameObject::IterateRuck)
 		.def("iterate_belt", &CScriptGameObject::IterateBelt)
 		.def("iterate_inventory_box", &CScriptGameObject::IterateInventoryBox)

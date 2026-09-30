@@ -423,6 +423,7 @@ public:
 	void ActorLookAtPoint(Fvector point);
 	void ActorStopLookAtPoint();
 	void IterateInventory(::luabind::functor<bool> functor, ::luabind::object object);
+	void IterateInventoryDirect(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateRuck(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateBelt(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateInventoryBox(::luabind::functor<bool> functor, ::luabind::object object);
