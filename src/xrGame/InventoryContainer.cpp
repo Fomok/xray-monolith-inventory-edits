@@ -66,6 +66,15 @@ void CInventoryContainer::OnEvent(NET_Packet& P, u16 type)
 			bool dont_create_shell = (type == GE_TRADE_SELL) || just_before_destroy;
 
 			itm->H_SetParent(NULL, dont_create_shell);
+			// Contents transferred out are cargo, not newly acquired equipment.
+			// Detaching clears placement; restore ruck placement afterwards so
+			// the actor's strict Take does not auto-slot a pocketed weapon.
+			if (type == GE_TRADE_SELL)
+			{
+				CInventoryItem* item = smart_cast<CInventoryItem*>(itm);
+				if (item)
+					item->m_ItemCurrPlace.type = eItemPlaceRuck;
+			}
 			RecalcOwnerWeight();
 		}
 		break;
