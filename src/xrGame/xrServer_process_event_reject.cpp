@@ -93,7 +93,8 @@ bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const 
 		xr_string clildrenList;
 		for (const u16& childID : e_parent->children)
 		{
-			clildrenList.append("! ").append(game->get_entity_from_eid(childID)->name_replace()).append("\n");
+			CSE_Abstract* listed_child = game->get_entity_from_eid(childID);
+			clildrenList.append("! ").append(listed_child ? listed_child->name_replace() : "<missing>").append("\n");
 		}
 		Msg("! WARNING: SV: can't find child [%s] of parent [%s]! Children list:\n%s", e_entity->name_replace(),
 		    e_parent->name_replace(), clildrenList.c_str());
@@ -137,7 +138,9 @@ bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const 
 
 	//R_ASSERT3(C.end()!=c,e_entity->name_replace(),e_parent->name_replace());
 	e_entity->ID_Parent = 0xffff;
-	C.erase(c);
+	// OnDetach can modify the list; re-find rather than using its old iterator.
+	// Remove duplicate registrations too, so no stale id survives a detach.
+	C.erase(std::remove(C.begin(), C.end(), id_entity), C.end());
 
 	// Signal to everyone (including sender)
 	if (send_message)
