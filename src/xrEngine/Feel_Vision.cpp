@@ -53,7 +53,12 @@ void Vision::o_new(CObject* O)
 	I.Cache.verts[2].set(0, 0, 0);
 	I.fuzzy = -EPS_S;
 	I.cp_LP = O->get_new_local_point_on_mesh(I.bone_id);
-	I.cp_LAST = O->get_last_local_point_on_mesh(I.cp_LP, I.bone_id);
+	// Some visible script helpers have no collision form. o_trace already
+	// skips those objects; initial registration must not sample their bbox.
+	// Keep the entry so tracing can resume if a collision form appears later.
+	I.cp_LAST = O->Position();
+	if (O->CFORM())
+		I.cp_LAST = O->get_last_local_point_on_mesh(I.cp_LP, I.bone_id);
 }
 
 void Vision::o_delete(CObject* O)
