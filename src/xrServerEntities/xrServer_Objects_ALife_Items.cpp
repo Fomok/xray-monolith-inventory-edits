@@ -88,11 +88,10 @@ void CSE_ALifeInventoryItem::STATE_Write(NET_Packet& tNetPacket)
 {
 	tNetPacket.w_float(m_fCondition);
 	save_data(m_upgrades, tNetPacket);
-	// ITEM DATA, last, so the fields before it are where they have always
-	// been and an older reader that stops early still gets a valid item.
-	// One line, because object_saver already knows how to write a container
-	// of pairs of shared_str - see the note in the header.
+	// Existing script data precedes the typed layout. Both are part of this
+	// base component, before any fields written by derived item classes.
 	save_data(m_item_data, tNetPacket);
+	m_inventory_layout.write(tNetPacket);
 	State.position = base()->o_Position;
 }
 
@@ -115,6 +114,15 @@ void CSE_ALifeInventoryItem::STATE_Read(NET_Packet& tNetPacket, u16 size)
 	{
 		load_data(m_item_data, tNetPacket);
 	}
+
+    // Stock spawn records are older than saves. They still need to load when
+    // starting a new game; they have no stored player layout to migrate.
+    m_inventory_layout.clear();
+    if (m_wVersion >= 130)
+    {
+        const bool valid_layout = m_inventory_layout.read(tNetPacket);
+        R_ASSERT2(valid_layout, "Invalid native inventory layout record");
+    }
 
 	State.position = base()->o_Position;
 }

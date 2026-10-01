@@ -167,7 +167,8 @@
 //									m_wVersion > 128, so every older save loads with
 //									an empty store and nothing else changes.
 //------------------------------------------------------------------------------
-#define SPAWN_VERSION	u16(129)
+// 130  CSE_ALifeInventoryItem: typed native outer-inventory placement.
+#define SPAWN_VERSION	u16(130)
 
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_Shape, ISE_Shape, CShapeData)
 public:

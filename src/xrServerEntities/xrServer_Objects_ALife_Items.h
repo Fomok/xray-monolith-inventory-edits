@@ -11,6 +11,7 @@
 #include "xrServer_Objects_ALife.h"
 #include "PHSynchronize.h"
 #include "inventory_space.h"
+#include "inventory_layout.h"
 
 #include "character_info_defs.h"
 #include "infoportiondefs.h"
@@ -70,6 +71,12 @@ public:
 	typedef std::pair<shared_str, shared_str> item_data_pair;
 	typedef xr_vector<item_data_pair> item_data_store;
 	item_data_store m_item_data;
+
+    inventory_layout::Placement m_inventory_layout;
+    inventory_layout::Placement inventory_layout() const { return m_inventory_layout; }
+    bool set_inventory_layout(int x, int y, int width, int height, bool rotated, bool manual)
+    { return m_inventory_layout.set(x, y, width, height, rotated, manual); }
+    void clear_inventory_layout() { m_inventory_layout.clear(); }
 
 public:
 	//  LIMITS, because a store with no ceiling is a save file with no
