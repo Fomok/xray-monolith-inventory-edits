@@ -791,9 +791,16 @@ void CInventoryItem::load(IReader& packet)
 		const int configured_slot = READ_IF_EXISTS(pSettings, r_s32, object().cNameSect(), "slot", -1) + 1;
 		if (configured_slot > 0 && configured_slot < 64)
 		{
-			if (m_ItemCurrPlace.type == eItemPlaceSlot &&
-				m_ItemCurrPlace.slot_id == m_ItemCurrPlace.base_slot_id)
+			// Old scripts could force equipment into a slot without updating its
+			// saved base slot. Opted-in items use their configured slot regardless.
+			if (m_ItemCurrPlace.type == eItemPlaceSlot)
+			{
+				if (m_ItemCurrPlace.slot_id != configured_slot)
+					Msg("[inventory-slot] %s: saved slot %u (base %u) -> configured slot %d",
+						object().cNameSect().c_str(), (unsigned)m_ItemCurrPlace.slot_id,
+						(unsigned)m_ItemCurrPlace.base_slot_id, configured_slot);
 				m_ItemCurrPlace.slot_id = configured_slot;
+			}
 			m_ItemCurrPlace.base_slot_id = configured_slot;
 		}
 	}

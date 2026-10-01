@@ -9,6 +9,7 @@ head=r'''
 #include <cstdio>
 #include <cstring>
 using u16=unsigned short;
+#define Msg(...) ((void)0)
 enum{eItemPlaceUndefined,eItemPlaceSlot,eItemPlaceBelt,eItemPlaceRuck};
 PLACE
 struct Settings {bool enabled=true;int slot=15;} settings;
@@ -34,9 +35,11 @@ int main(){
  settings.enabled=false;Item ordinary{};SInvItemPlace saved{};
  saved.type=eItemPlaceSlot;saved.slot_id=14;saved.base_slot_id=14;Packet p{saved.value};
  ordinary.load(p);assert(ordinary.m_ItemCurrPlace.value==p.value);++cases;
- // Do not move items intentionally placed into an alternative slot.
+ // Opted-in equipment also migrates when its saved base disagrees with placement.
  settings.enabled=true;saved.slot_id=3;p.value=saved.value;ordinary.load(p);
- assert(ordinary.m_ItemCurrPlace.slot_id==3&&ordinary.m_ItemCurrPlace.base_slot_id==16);++cases;
+ assert(ordinary.m_ItemCurrPlace.slot_id==16&&ordinary.m_ItemCurrPlace.base_slot_id==16);++cases;
+ for(int base:{0,7,14,16}){saved.base_slot_id=base;saved.slot_id=14;p.value=saved.value;ordinary.load(p);
+  assert(ordinary.m_ItemCurrPlace.slot_id==16&&ordinary.m_ItemCurrPlace.base_slot_id==16);++cases;}
  // Invalid configuration must not truncate into the 6-bit slot field.
  for(int slot:{-1,63,64}){settings.slot=slot;ordinary.load(p);assert(ordinary.m_ItemCurrPlace.value==p.value);++cases;}
  printf("PASS: %d migration, round-trip, opt-out and invalid-config cases\n",cases);
@@ -45,8 +48,8 @@ int main(){
 head='#include <initializer_list>\n'+head
 with tempfile.TemporaryDirectory() as tmp:
  tmp=Path(tmp)
- for label,code,success in [('baseline',head.replace(load,'m_ItemCurrPlace.value=packet.r_u16();'),False),('fixed',head,True)]:
+ for label,code,success in [('baseline',head.replace(load,'m_ItemCurrPlace.value=packet.r_u16();'),False),('preview9',head.replace('if (m_ItemCurrPlace.type == eItemPlaceSlot)', 'if (m_ItemCurrPlace.type == eItemPlaceSlot && m_ItemCurrPlace.slot_id == m_ItemCurrPlace.base_slot_id)'),False),('fixed',head,True)]:
   cpp=tmp/(label+'.cpp');exe=tmp/(label+'.exe');cpp.write_text(code+main)
   build=subprocess.run([args.compiler,'c++','-std=c++17',str(cpp),'-o',str(exe)],capture_output=True,text=True);assert build.returncode==0,build.stderr
   run=subprocess.run([str(exe)],capture_output=True,text=True);assert (run.returncode==0)==success,(label,run.stderr)
-  print(run.stdout.strip() if success else 'PASS: original saved placement stays in animation slot (baseline failure reproduced)')
+  print(run.stdout.strip() if success else 'PASS: '+label+' migration failure reproduced')
