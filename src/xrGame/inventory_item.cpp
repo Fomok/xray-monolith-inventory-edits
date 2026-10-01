@@ -783,6 +783,21 @@ void CInventoryItem::net_Export(NET_Packet& P)
 void CInventoryItem::load(IReader& packet)
 {
 	m_ItemCurrPlace.value = packet.r_u16();
+
+	// Opt-in migration for equipment whose configured slot changed between saves.
+	// Apply before ownership restoration and first-update script cleanup.
+	if (READ_IF_EXISTS(pSettings, r_bool, object().cNameSect(), "restore_slot_from_config", false))
+	{
+		const int configured_slot = READ_IF_EXISTS(pSettings, r_s32, object().cNameSect(), "slot", -1) + 1;
+		if (configured_slot > 0 && configured_slot < 64)
+		{
+			if (m_ItemCurrPlace.type == eItemPlaceSlot &&
+				m_ItemCurrPlace.slot_id == m_ItemCurrPlace.base_slot_id)
+				m_ItemCurrPlace.slot_id = configured_slot;
+			m_ItemCurrPlace.base_slot_id = configured_slot;
+		}
+	}
+
 	m_fCondition = packet.r_float();
 
 	//--	load_data( m_upgrades, packet );
