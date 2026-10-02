@@ -80,6 +80,7 @@ u32 item_data_bytes_script(CSE_ALifeInventoryItem* ta)
 int sqa_inventory_layout_version() { return 1; }
 int sqa_rig_transfer_version() { return 1; }
 int sqa_rig_membership_version() { return 1; }
+int sqa_rig_pouches_version() { return 1; }
 
 using namespace luabind;
 
@@ -90,6 +91,7 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
         def("sqa_inventory_layout_version", &sqa_inventory_layout_version),
         def("sqa_rig_transfer_version", &sqa_rig_transfer_version),
         def("sqa_rig_membership_version", &sqa_rig_membership_version),
+        def("sqa_rig_pouches_version", &sqa_rig_pouches_version),
         class_<inventory_layout::Placement>("sqa_inventory_placement")
         .def_readonly("valid", &inventory_layout::Placement::valid)
         .def_readonly("x", &inventory_layout::Placement::x)
@@ -106,6 +108,10 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
 		class_<CSE_ALifeInventoryItem>
 		("cse_alife_inventory_item")
 		//			.def(		constructor<LPCSTR>())
+        .def("rig_pouches_initialized", &CSE_ALifeInventoryItem::rig_pouches_initialized)
+        .def("rig_pouch", &CSE_ALifeInventoryItem::rig_pouch)
+        .def("set_rig_pouch", &CSE_ALifeInventoryItem::set_rig_pouch)
+        .def("set_rig_pouches", &CSE_ALifeInventoryItem::set_rig_pouches)
         .def("rig_membership", &CSE_ALifeInventoryItem::rig_membership)
         .def("rig_membership_matches", &CSE_ALifeInventoryItem::rig_membership_matches)
         .def("set_rig_membership", &CSE_ALifeInventoryItem::set_rig_membership)

@@ -13,6 +13,7 @@
 #include "inventory_space.h"
 #include "inventory_layout.h"
 #include "inventory_membership.h"
+#include "inventory_pouches.h"
 
 #include "character_info_defs.h"
 #include "infoportiondefs.h"
@@ -82,6 +83,7 @@ public:
 private:
     inventory_membership::Identity m_rig_identity = 0;
     inventory_membership::Membership m_rig_membership;
+    inventory_pouches::Attachments m_rig_pouches;
 public:
     inventory_membership::Membership rig_membership() const { return m_rig_membership; }
     bool rig_membership_matches(const CSE_ALifeInventoryItem* rig) const
@@ -89,6 +91,10 @@ public:
     bool set_rig_membership(CSE_ALifeInventoryItem* rig, LPCSTR key, int x, int y,
         int w, int h, bool rotated, int order);
     void clear_rig_membership() { m_rig_membership.clear(); }
+    bool rig_pouches_initialized() const { return m_rig_pouches.initialized; }
+    LPCSTR rig_pouch(int slot) const { return m_rig_pouches.get(slot); }
+    bool set_rig_pouch(int slot, LPCSTR section);
+    bool set_rig_pouches(LPCSTR first, LPCSTR second);
 
 public:
 	//  LIMITS, because a store with no ceiling is a save file with no

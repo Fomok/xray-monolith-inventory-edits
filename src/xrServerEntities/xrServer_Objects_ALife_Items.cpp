@@ -100,6 +100,18 @@ bool CSE_ALifeInventoryItem::set_rig_membership(CSE_ALifeInventoryItem* rig, LPC
     return true;
 }
 
+bool CSE_ALifeInventoryItem::set_rig_pouches(LPCSTR first, LPCSTR second)
+{
+    if (!smart_cast<CSE_ALifeItemContainer*>(this)) return false;
+    return m_rig_pouches.replace(first, second);
+}
+
+bool CSE_ALifeInventoryItem::set_rig_pouch(int slot, LPCSTR section)
+{
+    if (!smart_cast<CSE_ALifeItemContainer*>(this)) return false;
+    return m_rig_pouches.set(slot, section);
+}
+
 void CSE_ALifeInventoryItem::STATE_Write(NET_Packet& tNetPacket)
 {
 	tNetPacket.w_float(m_fCondition);
@@ -110,6 +122,7 @@ void CSE_ALifeInventoryItem::STATE_Write(NET_Packet& tNetPacket)
 	m_inventory_layout.write(tNetPacket);
     inventory_membership::write_identity(tNetPacket, m_rig_identity);
     m_rig_membership.write(tNetPacket);
+    m_rig_pouches.write(tNetPacket);
 	State.position = base()->o_Position;
 }
 
@@ -150,6 +163,13 @@ void CSE_ALifeInventoryItem::STATE_Read(NET_Packet& tNetPacket, u16 size)
         inventory_membership::observe(m_rig_identity);
         const bool valid_membership = m_rig_membership.read(tNetPacket);
         R_ASSERT2(valid_membership, "Invalid native rig membership record");
+    }
+
+    m_rig_pouches.clear();
+    if (m_wVersion >= 132)
+    {
+        const bool valid_pouches = m_rig_pouches.read(tNetPacket);
+        R_ASSERT2(valid_pouches, "Invalid native rig pouch record");
     }
 
 	State.position = base()->o_Position;
