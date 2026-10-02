@@ -78,6 +78,7 @@ u32 item_data_bytes_script(CSE_ALifeInventoryItem* ta)
 }
 
 int sqa_inventory_layout_version() { return 1; }
+int sqa_rig_transfer_version() { return 1; }
 
 using namespace luabind;
 
@@ -86,6 +87,7 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
 {
 	module(L)[
         def("sqa_inventory_layout_version", &sqa_inventory_layout_version),
+        def("sqa_rig_transfer_version", &sqa_rig_transfer_version),
         class_<inventory_layout::Placement>("sqa_inventory_placement")
         .def_readonly("valid", &inventory_layout::Placement::valid)
         .def_readonly("x", &inventory_layout::Placement::x)

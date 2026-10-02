@@ -114,6 +114,7 @@ CInventory::~CInventory()
 
 void CInventory::Clear()
 {
+	sqa_rig_transfers.clear();
 	m_all.clear();
 	m_ruck.clear();
 	m_belt.clear();

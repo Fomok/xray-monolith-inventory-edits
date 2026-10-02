@@ -60,6 +60,8 @@
 #include "./xrServerEntities/inventory_space.h"
 #include "ai_space.h"
 #include "ActorBackpack.h"
+#include "alife_simulator.h"
+#include "alife_object_registry.h"
 
 //
 //-Alundaio
@@ -747,6 +749,123 @@ void CScriptGameObject::TransferItem(CScriptGameObject* pItem, CScriptGameObject
 	CGameObject::u_EventGen(P, GE_TRADE_BUY, pForWho->object().ID());
 	P.w_u16(pIItem->object().ID());
 	CGameObject::u_EventSend(P);
+}
+
+
+// Native lifecycle for Squared Away rig handovers. The ordinary transfer API
+// stays unchanged for other mods; only this path owns a pending registry.
+namespace
+{
+using inventory_rig_transfer::Entry;
+using inventory_rig_transfer::Observation;
+using inventory_rig_transfer::Registry;
+using inventory_rig_transfer::Request;
+
+Observation sqa_observe_transfer(const Entry& e)
+{
+    Observation state;
+    if (!ai().get_alife()) return state;
+    auto& objects = ai().alife().objects();
+    if (!objects.object(e.item, true) || !objects.object(e.from, true) || !objects.object(e.to, true))
+        return state;
+    auto* obj = Level().Objects.net_Find(e.item);
+    auto* rig = Level().Objects.net_Find(e.rig);
+    auto* item = smart_cast<CInventoryItem*>(obj);
+    auto* container = smart_cast<CInventoryContainer*>(rig);
+    if (!obj || !rig || obj->getDestroy() || rig->getDestroy() || !item || !container)
+        return state;
+    state.endpoints_live = Level().Objects.net_Find(e.from) && Level().Objects.net_Find(e.to);
+    state.item_token = item->sqa_transfer_generation;
+    state.rig_token = container->sqa_transfer_generation;
+    state.parent = obj->H_Parent() ? u16(obj->H_Parent()->ID()) : inventory_rig_transfer::none;
+    return state;
+}
+
+Registry* sqa_transfer_registry(CScriptGameObject& self)
+{
+    auto* actor = smart_cast<CActor*>(&self.object());
+    if (!actor) return nullptr;
+    auto& registry = actor->inventory().sqa_rig_transfers;
+    registry.settle(sqa_observe_transfer, [](const Entry& e)
+    {
+        Msg("[SQA-transfer] waiting for item %u to reach owner %u; rig toggle remains queued",
+            unsigned(e.item), unsigned(e.to));
+    }, Device.dwTimeGlobal);
+    return &registry;
+}
+}
+
+bool CScriptGameObject::SqaRigTransfer(CScriptGameObject* item_object, CScriptGameObject* rig_object, bool to_rig)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry || !item_object || !rig_object) return false;
+    auto* item = smart_cast<CInventoryItem*>(&item_object->object());
+    auto* rig = smart_cast<CInventoryContainer*>(&rig_object->object());
+    if (!item || !rig || item_object == rig_object ||
+        smart_cast<CInventoryContainer*>(&item_object->object())) return false;
+    const u16 actor_id = u16(object().ID());
+    const u16 rig_id = u16(rig_object->object().ID());
+    const Entry e{u16(item_object->object().ID()), to_rig ? actor_id : rig_id,
+        to_rig ? rig_id : actor_id, rig_id,
+        item->sqa_transfer_generation, rig->sqa_transfer_generation, Device.dwTimeGlobal};
+    const auto result = registry->request(e, sqa_observe_transfer(e));
+    if (result == Request::refused) return false;
+    if (result != Request::queued) return true;
+    NET_Packet packet;
+    CGameObject::u_EventGen(packet, GE_TRADE_SELL, e.from);
+    packet.w_u16(e.item);
+    CGameObject::u_EventSend(packet);
+    CGameObject::u_EventGen(packet, GE_TRADE_BUY, e.to);
+    packet.w_u16(e.item);
+    CGameObject::u_EventSend(packet);
+    return true;
+}
+
+bool CScriptGameObject::SqaRigTransferPending(u16 id)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    return registry && registry->pending(id);
+}
+
+bool CScriptGameObject::SqaRigTransferRigPending(u16 id)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    return registry && registry->rig_pending(id);
+}
+
+u32 CScriptGameObject::SqaRigTransferCount()
+{
+    auto* registry = sqa_transfer_registry(*this);
+    return registry ? u32(registry->entries().size()) : 0;
+}
+
+u16 CScriptGameObject::SqaRigTransferAt(u32 index)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry || index == 0 || index > registry->entries().size()) return inventory_rig_transfer::none;
+    return registry->entries()[index - 1].item;
+}
+
+u16 CScriptGameObject::SqaRigTransferFinished()
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry) return inventory_rig_transfer::none;
+    Entry e{};
+    while (registry->take_finished(e))
+    {
+        const auto state = sqa_observe_transfer(e);
+        // Only arrived actor-owned items need the magazine integration callback.
+        if (e.to == object().ID() && state.endpoints_live && state.parent == e.to &&
+            state.item_token == e.item_token && state.rig_token == e.rig_token)
+            return e.item;
+    }
+    return inventory_rig_transfer::none;
+}
+
+void CScriptGameObject::SqaRigTransferForget(u16 id)
+{
+    auto* actor = smart_cast<CActor*>(&object());
+    if (actor) actor->inventory().sqa_rig_transfers.forget(id);
 }
 
 void CScriptGameObject::TakeItem(CScriptGameObject* pItem)

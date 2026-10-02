@@ -443,6 +443,13 @@ public:
 	void DropItemAndTeleport(CScriptGameObject* pItem, Fvector position);
 	void ForEachInventoryItems(const ::luabind::functor<bool>& functor);
 	void TransferItem(CScriptGameObject* pItem, CScriptGameObject* pForWho);
+    bool SqaRigTransfer(CScriptGameObject* item, CScriptGameObject* rig, bool to_rig);
+    bool SqaRigTransferPending(u16 id);
+    bool SqaRigTransferRigPending(u16 id);
+    u32 SqaRigTransferCount();
+    u16 SqaRigTransferAt(u32 index);
+    u16 SqaRigTransferFinished();
+    void SqaRigTransferForget(u16 id);
 	void TakeItem(CScriptGameObject* pItem);
 	void TransferMoney(int money, CScriptGameObject* pForWho);
 	void GiveMoney(int money);

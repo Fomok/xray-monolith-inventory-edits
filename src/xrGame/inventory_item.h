@@ -12,6 +12,7 @@
 #pragma once
 
 #include "inventory_space.h"
+#include "inventory_rig_transfer.h"
 #include "hit_immunity.h"
 #include "attachable_item.h"
 #include "xrserver_objects_alife.h"
@@ -241,6 +242,7 @@ protected:
 	float m_fControlInertionFactor;
 	shared_str m_icon_name;
 	// Negative components use the base config; x2/y2 store width/height.
+	inventory_rig_transfer::Token sqa_transfer_generation = 0;
 	Irect m_inv_grid_rect = Irect().set(-1, -1, -1, -1);
 	Irect m_upgr_icon_rect = Irect().set(-1, -1, -1, -1);
 

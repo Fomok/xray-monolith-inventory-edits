@@ -342,6 +342,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item)
 /////////// network ///////////////////////////////
 BOOL CInventoryItem::net_Spawn(CSE_Abstract* DC)
 {
+	sqa_transfer_generation = inventory_rig_transfer::next_identity();
 	VERIFY(!m_pInventory);
 
 	m_flags.set(FInInterpolation, FALSE);

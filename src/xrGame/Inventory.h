@@ -46,6 +46,7 @@ public:
 	//if just_before_destroy is true, then activate will be forced (because deactivate message will not deliver)
 	bool DropItem(CGameObject* pObj, bool just_before_destroy, bool dont_create_shell);
 	void Clear();
+	inventory_rig_transfer::Registry sqa_rig_transfers;
 
 	u16 m_last_slot;
 	IC u16 FirstSlot() const { return KNIFE_SLOT; }
