@@ -7,7 +7,7 @@ a=s.index('bool CSE_ALifeInventoryItem::set_rig_membership');b=s.index('\nstatic
 methods=s[a:b]
 h=(E/'src/xrServerEntities/xrServer_Objects_ALife_Items.h').read_text(encoding="utf-8-sig");a=h.index('    inventory_layout::Placement m_inventory_layout;');b=h.index('\npublic:\n\t//  LIMITS',a)
 api=h[a:b]
-head='\n#include <vector>\n#include <stdexcept>\n#include <cstring>\n#include <cstdio>\n#include <climits>\n#include "../engine/src/xrServerEntities/inventory_membership.h"\n#include "../engine/src/xrServerEntities/inventory_pouches.h"\nusing u8=unsigned char;using u16=unsigned short;using LPCSTR=const char*;\n#define CHECK(v) do { if(!(v)) throw std::runtime_error(#v); } while(0)\n#define R_ASSERT2(v,msg) CHECK(v)\nstruct NET_Packet {\n std::vector<u8> data;size_t pos=0;\n void w_u8(unsigned v){data.push_back(static_cast<u8>(v));}\n void w_u16(unsigned v){w_u8(v);w_u8(v>>8);}\n unsigned r_u8(){if(pos>=data.size()) throw std::runtime_error("packet underflow");return data[pos++];}\n unsigned r_u16(){unsigned a=r_u8();return a|(r_u8()<<8);}\n void w_float(float f){u8 bytes[4];std::memcpy(bytes,&f,4);for(auto b:bytes) w_u8(b);}\n void r_float(float& f){u8 bytes[4];for(auto& b:bytes)b=static_cast<u8>(r_u8());std::memcpy(&f,bytes,4);}\n};\nvoid save_data(const std::vector<u16>& v,NET_Packet& p){p.w_u16(v.size());for(auto x:v)p.w_u16(x);}\nvoid load_data(std::vector<u16>& v,NET_Packet& p){v.clear();unsigned n=p.r_u16();for(unsigned i=0;i<n;++i)v.push_back(p.r_u16());}\ntemplate<class T,class U>T smart_cast(U* p){return dynamic_cast<T>(p);}\nstruct CSE_ALifeInventoryItem {\n virtual ~CSE_ALifeInventoryItem()=default;\n struct Base{u16 m_wVersion=132;int o_Position=17;} self;\n struct{int position=0;}State;float m_fCondition=0.5f;\n std::vector<u16>m_upgrades{21,34},m_item_data{56};\n Base* base(){return &self;}\n void STATE_Write(NET_Packet&);void STATE_Read(NET_Packet&,u16);\n'
+head='\n#include <vector>\n#include <stdexcept>\n#include <cstring>\n#include <cstdio>\n#include <climits>\n#include "../engine/src/xrServerEntities/inventory_membership.h"\n#include "../engine/src/xrServerEntities/inventory_pouches.h"\nusing u8=unsigned char;using u16=unsigned short;using LPCSTR=const char*;\n#define CHECK(v) do { if(!(v)) throw std::runtime_error(#v); } while(0)\n#define R_ASSERT2(v,msg) CHECK(v)\nstruct NET_Packet {\n std::vector<u8> data;size_t pos=0;\n void w_u8(unsigned v){data.push_back(static_cast<u8>(v));}\n void w_u16(unsigned v){w_u8(v);w_u8(v>>8);}\n unsigned r_u8(){if(pos>=data.size()) throw std::runtime_error("packet underflow");return data[pos++];}\n unsigned r_u16(){unsigned a=r_u8();return a|(r_u8()<<8);}\n void w_float(float f){u8 bytes[4];std::memcpy(bytes,&f,4);for(auto b:bytes) w_u8(b);}\n void r_float(float& f){u8 bytes[4];for(auto& b:bytes)b=static_cast<u8>(r_u8());std::memcpy(&f,bytes,4);}\n};\nvoid save_data(const std::vector<u16>& v,NET_Packet& p){p.w_u16(v.size());for(auto x:v)p.w_u16(x);}\nvoid load_data(std::vector<u16>& v,NET_Packet& p){v.clear();unsigned n=p.r_u16();for(unsigned i=0;i<n;++i)v.push_back(p.r_u16());}\ntemplate<class T,class U>T smart_cast(U* p){return dynamic_cast<T>(p);}\nstruct CSE_ALifeInventoryItem {\n virtual ~CSE_ALifeInventoryItem()=default;\n struct Base{u16 m_wVersion=133;int o_Position=17;} self;\n struct{int position=0;}State;float m_fCondition=0.5f;\n std::vector<u16>m_upgrades{21,34},m_item_data{56};\n Base* base(){return &self;}\n void STATE_Write(NET_Packet&);void STATE_Read(NET_Packet&,u16);\n'
 source=head+api+'\n};\nstruct CSE_ALifeItemContainer:CSE_ALifeInventoryItem {};\n'+methods
 bridge=r'''
 extern "C" {
@@ -22,6 +22,10 @@ __declspec(dllexport) const char* pouches_get(CSE_ALifeInventoryItem* p,int slot
 __declspec(dllexport) int pouches_ready(CSE_ALifeInventoryItem* p){return p->rig_pouches_initialized();}
 __declspec(dllexport) int pouches_set(CSE_ALifeInventoryItem* p,int slot,const char* section){return p->set_rig_pouch(slot,section);}
 __declspec(dllexport) int pouches_replace(CSE_ALifeInventoryItem* p,const char* a,const char* b){return p->set_rig_pouches(a,b);}
+__declspec(dllexport) int box_set(CSE_ALifeInventoryItem* p,CSE_ALifeInventoryItem* box,int x,int y,int w,int h,int rot,int rank){return p->set_box_layout(box,x,y,w,h,rot!=0,rank);}
+__declspec(dllexport) int box_matches(CSE_ALifeInventoryItem* p,CSE_ALifeInventoryItem* box){return p->box_layout_matches(box);}
+__declspec(dllexport) void box_clear(CSE_ALifeInventoryItem* p){p->clear_box_layout();}
+__declspec(dllexport) int box_get(CSE_ALifeInventoryItem* p,int i){auto m=p->box_layout();switch(i){case 0:return m.valid();case 1:return m.layout.x;case 2:return m.layout.y;case 3:return m.layout.width;case 4:return m.layout.height;case 5:return m.layout.rotated;default:return m.order;}}
 __declspec(dllexport) void membership_load_copy(CSE_ALifeInventoryItem* p,CSE_ALifeInventoryItem* source){NET_Packet packet;source->STATE_Write(packet);p->STATE_Read(packet,0);CHECK(packet.pos==packet.data.size());}
 }
 '''
@@ -60,6 +64,21 @@ int main(){try{
  for(unsigned flag:{2,4,6,8,255}){NET_Packet bad;bad.w_u8(flag);CHECK(!at.read(bad));}
  {NET_Packet bad;bad.w_u8(3);bad.w_u8(128);CHECK(!at.read(bad));}
  puts("PASS: actual native pouch API, atomic replacement, both slots, explicit removals, v131 framing, invalid values and truncated records");
+
+ CSE_ALifeItemContainer box,loadedbox,reusedbox;CSE_ALifeInventoryItem cargo,loadedcargo;
+ CHECK(cargo.set_inventory_layout(9,8,1,2,false,true));CHECK(cargo.set_rig_membership(&rig,"b1",1,2,1,2,false,1));
+ CHECK(cargo.set_box_layout(&box,3,4,1,2,true,7));
+ CHECK(!cargo.set_box_layout(&cargo,0,0,1,1,false,0));CHECK(!cargo.set_box_layout(&other,0,0,1,1,false,0));
+ CHECK(!cargo.set_box_layout(&box,-1,0,1,1,false,0));CHECK(!cargo.set_box_layout(&box,0,0,1,1,false,65536));
+ CHECK(cargo.box_layout().layout.x==3&&cargo.box_layout().order==7);
+ NET_Packet bp,cp;box.STATE_Write(bp);cargo.STATE_Write(cp);cp.w_u16(0xabcd);
+ loadedcargo.STATE_Read(cp,0);loadedbox.STATE_Read(bp,0);
+ CHECK(cp.r_u16()==0xabcd&&loadedcargo.box_layout_matches(&loadedbox)&&!loadedcargo.box_layout_matches(&reusedbox));
+ CHECK(loadedcargo.box_layout().layout.rotated&&loadedcargo.box_layout().order==7);
+ CHECK(loadedcargo.inventory_layout().x==9&&loadedcargo.rig_membership_matches(&rig));
+ loadedcargo.clear_box_layout();CHECK(!loadedcargo.box_layout().valid()&&loadedcargo.inventory_layout().valid&&loadedcargo.rig_membership().valid());
+ {CSE_ALifeInventoryItem old;old.self.m_wVersion=132;NET_Packet p; p.w_float(1);save_data(old.m_upgrades,p);save_data(old.m_item_data,p);old.m_inventory_layout.write(p);inventory_membership::write_identity(p,0);inventory_membership::Membership{}.write(p);inventory_pouches::Attachments{}.write(p);p.w_u16(0xbeef);old.STATE_Read(p,0);CHECK(!old.box_layout().valid()&&p.r_u16()==0xbeef);}
+ puts("PASS: independent native box layout, owner identity, rotated coordinates, order, clear, rejected writes and v132 framing");
  auto before=item.rig_membership();for(const char* key:{"","bad key","bad:key","bad/key"})CHECK(!item.set_rig_membership(&rig,key,0,0,1,1,false,0));
  CHECK(!item.set_rig_membership(&rig,std::string(64,'b').c_str(),0,0,1,1,false,0));CHECK(!item.set_rig_membership(&rig,"b1",-1,0,1,1,false,0));CHECK(!item.set_rig_membership(&rig,"b1",0,0,1,1,false,65536));CHECK(item.rig_membership().pocket==before.pocket);
  for(unsigned version:{123,128,129,130}){

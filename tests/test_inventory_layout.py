@@ -31,7 +31,7 @@ struct NET_Packet {
 void save_data(const std::vector<u16>& v,NET_Packet& p){p.w_u16(v.size());for(auto x:v)p.w_u16(x);}
 void load_data(std::vector<u16>& v,NET_Packet& p){v.clear();unsigned n=p.r_u16();for(unsigned i=0;i<n;++i)v.push_back(p.r_u16());}
 struct CSE_ALifeInventoryItem {
- struct Base{u16 m_wVersion=132;int o_Position=17;} self;
+ struct Base{u16 m_wVersion=133;int o_Position=17;} self;
  struct{int position=0;}State;float m_fCondition=0.5f;
  std::vector<u16>m_upgrades{21,34},m_item_data{56};
  Base* base(){return &self;}

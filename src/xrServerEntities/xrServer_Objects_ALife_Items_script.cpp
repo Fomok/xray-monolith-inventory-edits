@@ -81,6 +81,7 @@ int sqa_inventory_layout_version() { return 1; }
 int sqa_rig_transfer_version() { return 1; }
 int sqa_rig_membership_version() { return 1; }
 int sqa_rig_pouches_version() { return 1; }
+int sqa_box_layout_version() { return 1; }
 
 using namespace luabind;
 
@@ -92,6 +93,7 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
         def("sqa_rig_transfer_version", &sqa_rig_transfer_version),
         def("sqa_rig_membership_version", &sqa_rig_membership_version),
         def("sqa_rig_pouches_version", &sqa_rig_pouches_version),
+        def("sqa_box_layout_version", &sqa_box_layout_version),
         class_<inventory_layout::Placement>("sqa_inventory_placement")
         .def_readonly("valid", &inventory_layout::Placement::valid)
         .def_readonly("x", &inventory_layout::Placement::x)
@@ -112,6 +114,10 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
         .def("rig_pouch", &CSE_ALifeInventoryItem::rig_pouch)
         .def("set_rig_pouch", &CSE_ALifeInventoryItem::set_rig_pouch)
         .def("set_rig_pouches", &CSE_ALifeInventoryItem::set_rig_pouches)
+        .def("box_layout", &CSE_ALifeInventoryItem::box_layout)
+        .def("box_layout_matches", &CSE_ALifeInventoryItem::box_layout_matches)
+        .def("set_box_layout", &CSE_ALifeInventoryItem::set_box_layout)
+        .def("clear_box_layout", &CSE_ALifeInventoryItem::clear_box_layout)
         .def("rig_membership", &CSE_ALifeInventoryItem::rig_membership)
         .def("rig_membership_matches", &CSE_ALifeInventoryItem::rig_membership_matches)
         .def("set_rig_membership", &CSE_ALifeInventoryItem::set_rig_membership)

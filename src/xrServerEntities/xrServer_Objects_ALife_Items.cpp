@@ -100,6 +100,19 @@ bool CSE_ALifeInventoryItem::set_rig_membership(CSE_ALifeInventoryItem* rig, LPC
     return true;
 }
 
+bool CSE_ALifeInventoryItem::set_box_layout(CSE_ALifeInventoryItem* box,
+    int x, int y, int w, int h, bool rotated, int order)
+{
+    if (!box || box == this || !smart_cast<CSE_ALifeItemContainer*>(box)) return false;
+    inventory_membership::Membership candidate;
+    if (!candidate.set(1,"box",x,y,w,h,rotated,order)) return false;
+    if (!box->m_rig_identity) box->m_rig_identity = inventory_membership::allocate();
+    if (!box->m_rig_identity) return false;
+    candidate.owner = box->m_rig_identity;
+    m_box_layout = candidate;
+    return true;
+}
+
 bool CSE_ALifeInventoryItem::set_rig_pouches(LPCSTR first, LPCSTR second)
 {
     if (!smart_cast<CSE_ALifeItemContainer*>(this)) return false;
@@ -123,6 +136,7 @@ void CSE_ALifeInventoryItem::STATE_Write(NET_Packet& tNetPacket)
     inventory_membership::write_identity(tNetPacket, m_rig_identity);
     m_rig_membership.write(tNetPacket);
     m_rig_pouches.write(tNetPacket);
+    m_box_layout.write(tNetPacket);
 	State.position = base()->o_Position;
 }
 
@@ -170,6 +184,12 @@ void CSE_ALifeInventoryItem::STATE_Read(NET_Packet& tNetPacket, u16 size)
     {
         const bool valid_pouches = m_rig_pouches.read(tNetPacket);
         R_ASSERT2(valid_pouches, "Invalid native rig pouch record");
+    }
+    m_box_layout.clear();
+    if (m_wVersion >= 133)
+    {
+        const bool valid_box = m_box_layout.read(tNetPacket);
+        R_ASSERT2(valid_box, "Invalid native box layout record");
     }
 
 	State.position = base()->o_Position;

@@ -84,6 +84,7 @@ private:
     inventory_membership::Identity m_rig_identity = 0;
     inventory_membership::Membership m_rig_membership;
     inventory_pouches::Attachments m_rig_pouches;
+    inventory_membership::Membership m_box_layout;
 public:
     inventory_membership::Membership rig_membership() const { return m_rig_membership; }
     bool rig_membership_matches(const CSE_ALifeInventoryItem* rig) const
@@ -91,6 +92,13 @@ public:
     bool set_rig_membership(CSE_ALifeInventoryItem* rig, LPCSTR key, int x, int y,
         int w, int h, bool rotated, int order);
     void clear_rig_membership() { m_rig_membership.clear(); }
+    // Separate from outer inventory and rig-pocket placement. Container identity
+    // uses the same native allocator, never a recyclable ALife object ID.
+    inventory_membership::Membership box_layout() const { return m_box_layout; }
+    bool box_layout_matches(const CSE_ALifeInventoryItem* box) const
+    { return box && box->m_rig_identity && m_box_layout.valid() && m_box_layout.owner == box->m_rig_identity; }
+    bool set_box_layout(CSE_ALifeInventoryItem* box, int x, int y, int w, int h, bool rotated, int order);
+    void clear_box_layout() { m_box_layout.clear(); }
     bool rig_pouches_initialized() const { return m_rig_pouches.initialized; }
     LPCSTR rig_pouch(int slot) const { return m_rig_pouches.get(slot); }
     bool set_rig_pouch(int slot, LPCSTR section);
