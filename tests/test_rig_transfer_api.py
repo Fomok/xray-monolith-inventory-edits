@@ -4,6 +4,17 @@ p=argparse.ArgumentParser();p.add_argument('--compiler',required=True);args=p.pa
 E=Path(__file__).resolve().parents[1];B=E.parent/'build';B.mkdir(exist_ok=True)
 s=(E/'src/xrGame/script_game_object_inventory_owner.cpp').read_text(encoding='utf-8-sig')
 a=s.index('// Native lifecycle for Squared Away');b=s.index('void CScriptGameObject::TakeItem(',a);methods=s[a:b]
+# Keep fixture visibility aligned with the real item class. The first fixture
+# accidentally made this protected member public and masked MSVC C2248.
+import re
+item_header=(E/'src/xrGame/inventory_item.h').read_text(encoding='utf-8-sig')
+def visibility(symbol):
+ prefix=item_header[:item_header.index(symbol)]
+ return re.findall(r'\b(public|protected|private)\s*:',prefix)[-1]
+assert visibility('SqaTransferGeneration()')=='public'
+assert visibility('inventory_rig_transfer::Token sqa_transfer_generation')=='protected'
+assert 'SqaTransferGeneration() const { return sqa_transfer_generation; }' in item_header
+assert '->sqa_transfer_generation' not in methods
 head='#include '+json.dumps((E/'tests/rig_transfer_test_host.h').as_posix())+'\n'
 bridge=r'''
 extern "C" {

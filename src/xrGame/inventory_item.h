@@ -112,6 +112,8 @@ protected:
 	Flags16 m_flags;
 	BOOL m_can_trade;
 public:
+	inventory_rig_transfer::Token SqaTransferGeneration() const { return sqa_transfer_generation; }
+
 	CInventoryItem();
 	virtual ~CInventoryItem();
 

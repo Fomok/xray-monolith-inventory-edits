@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////////////////////
 // script_game_object_inventory_owner.сpp :	функции для inventory owner
 //////////////////////////////////////////////////////////////////////////
 
@@ -775,8 +775,8 @@ Observation sqa_observe_transfer(const Entry& e)
     if (!obj || !rig || obj->getDestroy() || rig->getDestroy() || !item || !container)
         return state;
     state.endpoints_live = Level().Objects.net_Find(e.from) && Level().Objects.net_Find(e.to);
-    state.item_token = item->sqa_transfer_generation;
-    state.rig_token = container->sqa_transfer_generation;
+    state.item_token = item->SqaTransferGeneration();
+    state.rig_token = container->SqaTransferGeneration();
     state.parent = obj->H_Parent() ? u16(obj->H_Parent()->ID()) : inventory_rig_transfer::none;
     return state;
 }
@@ -807,7 +807,7 @@ bool CScriptGameObject::SqaRigTransfer(CScriptGameObject* item_object, CScriptGa
     const u16 rig_id = u16(rig_object->object().ID());
     const Entry e{u16(item_object->object().ID()), to_rig ? actor_id : rig_id,
         to_rig ? rig_id : actor_id, rig_id,
-        item->sqa_transfer_generation, rig->sqa_transfer_generation, Device.dwTimeGlobal};
+        item->SqaTransferGeneration(), rig->SqaTransferGeneration(), Device.dwTimeGlobal};
     const auto result = registry->request(e, sqa_observe_transfer(e));
     if (result == Request::refused) return false;
     if (result != Request::queued) return true;

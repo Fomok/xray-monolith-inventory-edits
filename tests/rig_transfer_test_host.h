@@ -13,7 +13,12 @@ inline unsigned warnings=0;
 inline void Msg(const char*,...){++warnings;}
 struct CObject{u16 id;CObject* parent=nullptr;bool dying=false;virtual ~CObject()=default;explicit CObject(u16 n):id(n){} u16 ID()const{return id;}CObject* H_Parent(){return parent;}bool getDestroy(){return dying;}};
 struct CGameObject:CObject{using CObject::CObject;static void u_EventGen(NET_Packet& p,int type,u16 dest){p={type,dest,0};}static void u_EventSend(NET_Packet& p){sent_events.push_back(p);}};
-struct CInventoryItem{virtual ~CInventoryItem()=default;inventory_rig_transfer::Token sqa_transfer_generation=inventory_rig_transfer::next_identity();};
+struct CInventoryItem{
+ virtual ~CInventoryItem()=default;
+ inventory_rig_transfer::Token SqaTransferGeneration() const { return sqa_transfer_generation; }
+protected:
+ inventory_rig_transfer::Token sqa_transfer_generation=inventory_rig_transfer::next_identity();
+};
 struct Item:CGameObject,CInventoryItem{using CGameObject::CGameObject;};
 struct CInventoryContainer:Item{using Item::Item;};
 struct Inventory{inventory_rig_transfer::Registry sqa_rig_transfers;};
