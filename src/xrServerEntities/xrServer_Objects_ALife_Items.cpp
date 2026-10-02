@@ -84,6 +84,22 @@ CSE_ALifeInventoryItem::~CSE_ALifeInventoryItem()
 {
 }
 
+bool CSE_ALifeInventoryItem::set_rig_membership(CSE_ALifeInventoryItem* rig, LPCSTR key,
+    int x, int y, int w, int h, bool rotated, int order)
+{
+    if (!rig || rig == this || !smart_cast<CSE_ALifeItemContainer*>(rig)) return false;
+    // Logical placement may be recorded while SELL/BUY is in flight. This
+    // setter stores metadata only; it cannot change ownership or grant access.
+    inventory_membership::Membership candidate;
+    // Validate before allocating a persistent identity or modifying either item.
+    if (!candidate.set(1,key,x,y,w,h,rotated,order)) return false;
+    if (!rig->m_rig_identity) rig->m_rig_identity = inventory_membership::allocate();
+    if (!rig->m_rig_identity) return false;
+    candidate.owner = rig->m_rig_identity;
+    m_rig_membership = candidate;
+    return true;
+}
+
 void CSE_ALifeInventoryItem::STATE_Write(NET_Packet& tNetPacket)
 {
 	tNetPacket.w_float(m_fCondition);
@@ -92,6 +108,8 @@ void CSE_ALifeInventoryItem::STATE_Write(NET_Packet& tNetPacket)
 	// base component, before any fields written by derived item classes.
 	save_data(m_item_data, tNetPacket);
 	m_inventory_layout.write(tNetPacket);
+    inventory_membership::write_identity(tNetPacket, m_rig_identity);
+    m_rig_membership.write(tNetPacket);
 	State.position = base()->o_Position;
 }
 
@@ -122,6 +140,16 @@ void CSE_ALifeInventoryItem::STATE_Read(NET_Packet& tNetPacket, u16 size)
     {
         const bool valid_layout = m_inventory_layout.read(tNetPacket);
         R_ASSERT2(valid_layout, "Invalid native inventory layout record");
+    }
+
+    m_rig_identity = 0;
+    m_rig_membership.clear();
+    if (m_wVersion >= 131)
+    {
+        m_rig_identity = inventory_membership::read_identity(tNetPacket);
+        inventory_membership::observe(m_rig_identity);
+        const bool valid_membership = m_rig_membership.read(tNetPacket);
+        R_ASSERT2(valid_membership, "Invalid native rig membership record");
     }
 
 	State.position = base()->o_Position;

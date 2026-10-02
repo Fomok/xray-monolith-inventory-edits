@@ -12,6 +12,7 @@
 #include "PHSynchronize.h"
 #include "inventory_space.h"
 #include "inventory_layout.h"
+#include "inventory_membership.h"
 
 #include "character_info_defs.h"
 #include "infoportiondefs.h"
@@ -77,6 +78,17 @@ public:
     bool set_inventory_layout(int x, int y, int width, int height, bool rotated, bool manual)
     { return m_inventory_layout.set(x, y, width, height, rotated, manual); }
     void clear_inventory_layout() { m_inventory_layout.clear(); }
+
+private:
+    inventory_membership::Identity m_rig_identity = 0;
+    inventory_membership::Membership m_rig_membership;
+public:
+    inventory_membership::Membership rig_membership() const { return m_rig_membership; }
+    bool rig_membership_matches(const CSE_ALifeInventoryItem* rig) const
+    { return rig && rig->m_rig_identity && m_rig_membership.valid() && m_rig_membership.owner == rig->m_rig_identity; }
+    bool set_rig_membership(CSE_ALifeInventoryItem* rig, LPCSTR key, int x, int y,
+        int w, int h, bool rotated, int order);
+    void clear_rig_membership() { m_rig_membership.clear(); }
 
 public:
 	//  LIMITS, because a store with no ceiling is a save file with no

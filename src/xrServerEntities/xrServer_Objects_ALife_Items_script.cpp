@@ -79,6 +79,7 @@ u32 item_data_bytes_script(CSE_ALifeInventoryItem* ta)
 
 int sqa_inventory_layout_version() { return 1; }
 int sqa_rig_transfer_version() { return 1; }
+int sqa_rig_membership_version() { return 1; }
 
 using namespace luabind;
 
@@ -88,6 +89,7 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
 	module(L)[
         def("sqa_inventory_layout_version", &sqa_inventory_layout_version),
         def("sqa_rig_transfer_version", &sqa_rig_transfer_version),
+        def("sqa_rig_membership_version", &sqa_rig_membership_version),
         class_<inventory_layout::Placement>("sqa_inventory_placement")
         .def_readonly("valid", &inventory_layout::Placement::valid)
         .def_readonly("x", &inventory_layout::Placement::x)
@@ -96,9 +98,18 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
         .def_readonly("height", &inventory_layout::Placement::height)
         .def_readonly("rotated", &inventory_layout::Placement::rotated)
         .def_readonly("manual", &inventory_layout::Placement::manual),
+        class_<inventory_membership::Membership>("sqa_rig_membership_record")
+        .def("valid", &inventory_membership::Membership::valid)
+        .def("key", &inventory_membership::Membership::key)
+        .def_readonly("layout", &inventory_membership::Membership::layout)
+        .def_readonly("order", &inventory_membership::Membership::order),
 		class_<CSE_ALifeInventoryItem>
 		("cse_alife_inventory_item")
 		//			.def(		constructor<LPCSTR>())
+        .def("rig_membership", &CSE_ALifeInventoryItem::rig_membership)
+        .def("rig_membership_matches", &CSE_ALifeInventoryItem::rig_membership_matches)
+        .def("set_rig_membership", &CSE_ALifeInventoryItem::set_rig_membership)
+        .def("clear_rig_membership", &CSE_ALifeInventoryItem::clear_rig_membership)
         .def("inventory_layout", &CSE_ALifeInventoryItem::inventory_layout)
         .def("set_inventory_layout", &CSE_ALifeInventoryItem::set_inventory_layout)
         .def("clear_inventory_layout", &CSE_ALifeInventoryItem::clear_inventory_layout)
