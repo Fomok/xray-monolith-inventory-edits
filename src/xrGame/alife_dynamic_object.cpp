@@ -231,6 +231,17 @@ void CSE_ALifeInventoryBox::add_online(const bool& update_registries)
 		object->alife().server().Process_spawn(tNetPacket, clientID,FALSE, l_tpALifeInventoryItem->base());
 		l_tpALifeDynamicObject->s_flags.and(u16(-1) ^ M_SPAWN_UPDATE);
 		l_tpALifeDynamicObject->m_bOnline = true;
+
+		// A portable container in a stash owns another level of inventory.
+		// Spawn that level just as the trader/actor path does. Otherwise its
+		// children remain offline with an online parent and never reach the UI.
+		if (!l_tpALifeDynamicObject->children.empty())
+		{
+			Msg("[AMP-S] stash deep spawn: [%d] bringing %d item(s) online",
+			    l_tpALifeDynamicObject->ID, (u32)l_tpALifeDynamicObject->children.size());
+			l_tpALifeDynamicObject->add_online(false);
+		}
+
 	}
 
 	CSE_ALifeDynamicObjectVisual::add_online(update_registries);
