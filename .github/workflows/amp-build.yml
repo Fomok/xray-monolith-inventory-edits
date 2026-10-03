@@ -13,32 +13,14 @@ env:
   PACK_GAMEDATA_NAME: 00_modded_exes_gamedata.db0
 
 jobs:
-  build:
-    name: DX11-AVX and gamedata
+  gamedata:
+    name: Pack matching gamedata
     runs-on: windows-latest
     defaults:
       run:
         shell: pwsh
-
     steps:
-    - name: Configure Pagefile
-      uses: al-cheb/configure-pagefile-action@v1.3
-      with:
-        minimum-size: 8GB
-        maximum-size: 8GB
-        disk-root: "C:"
-
-    - name: Checkout repo
-      uses: actions/checkout@v4
-
-    - name: Init submodules
-      uses: snickerbockers/submodules-init@v4
-
-    - name: setup-msbuild
-      uses: microsoft/setup-msbuild@v1.3.1
-      with:
-        msbuild-architecture: "x64"
-
+    - uses: actions/checkout@v4
     - name: Pack gamedata
       working-directory: compressor
       run: |
@@ -48,34 +30,85 @@ jobs:
         $packer = Start-Process -FilePath "./! compress_gamedata.cmd" -WindowStyle Hidden -Wait -PassThru
         if ($packer.ExitCode -ne 0) { throw "gamedata packing failed: $($packer.ExitCode)" }
         if (!(Test-Path -LiteralPath ./gamedata.db0 -PathType Leaf)) { throw "gamedata.db0 was not produced" }
-        Rename-Item -LiteralPath ./gamedata.db0 -NewName $env:PACK_GAMEDATA_NAME
+        if ((Get-Item -LiteralPath ./gamedata.db0).Length -eq 0) { throw "gamedata.db0 is empty" }
+        New-Item -ItemType Directory -Force -Path ../stage/db/mods | Out-Null
+        Copy-Item -LiteralPath ./gamedata.db0 -Destination "../stage/db/mods/$env:PACK_GAMEDATA_NAME"
+    - uses: actions/upload-artifact@v4.6.0
+      with:
+        name: amp-build-gamedata
+        path: ./stage/
+        if-no-files-found: error
+        retention-days: 1
 
-    - name: Build DX11-AVX
-      run: msbuild /p:Configuration=DX11-AVX $env:SOLUTION_FILE_PATH
-
-    - name: Stage install package
+  build:
+    name: Build ${{ matrix.configuration }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [DX8, DX8-AVX, DX9, DX9-AVX, DX10, DX10-AVX, DX11, DX11-AVX]
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - name: Configure Pagefile
+      uses: al-cheb/configure-pagefile-action@v1.3
+      with:
+        minimum-size: 8GB
+        maximum-size: 8GB
+        disk-root: "C:"
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - uses: microsoft/setup-msbuild@v1.3.1
+      with:
+        msbuild-architecture: "x64"
+    - name: Build executable
+      env:
+        BUILD_CONFIGURATION: ${{ matrix.configuration }}
+      run: |
+        msbuild /p:Configuration=$env:BUILD_CONFIGURATION /p:Platform=x64 $env:SOLUTION_FILE_PATH
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    - name: Stage executable and symbols
+      env:
+        BUILD_CONFIGURATION: ${{ matrix.configuration }}
       run: |
         $ErrorActionPreference = "Stop"
-        $files = @(
-          @{ Source = "./_build/_game/bin_dbg/AnomalyDX11AVX.exe"; Target = "./package/bin/AnomalyDX11AVX.exe" },
-          @{ Source = "./_build/_game/bin_dbg/AnomalyDX11AVX.pdb"; Target = "./package/bin/AnomalyDX11AVX.pdb" },
-          @{ Source = "./compressor/$env:PACK_GAMEDATA_NAME"; Target = "./package/db/mods/$env:PACK_GAMEDATA_NAME" }
-        )
-        foreach ($file in $files) {
-          if (!(Test-Path -LiteralPath $file.Source -PathType Leaf)) { throw "Missing required file: $($file.Source)" }
-          if ((Get-Item -LiteralPath $file.Source).Length -eq 0) { throw "Empty required file: $($file.Source)" }
+        $stem = "Anomaly" + $env:BUILD_CONFIGURATION.Replace("-", "")
+        New-Item -ItemType Directory -Force -Path ./stage/bin | Out-Null
+        foreach ($ext in @("exe", "pdb")) {
+          $source = "./_build/_game/bin_dbg/$stem.$ext"
+          if (!(Test-Path -LiteralPath $source -PathType Leaf)) { throw "Missing required file: $source" }
+          if ((Get-Item -LiteralPath $source).Length -eq 0) { throw "Empty required file: $source" }
+          Copy-Item -LiteralPath $source -Destination ./stage/bin/
         }
-        foreach ($file in $files) {
-          New-Item -ItemType Directory -Force -Path (Split-Path -Parent $file.Target) | Out-Null
-          Copy-Item -LiteralPath $file.Source -Destination $file.Target
-        }
-        Get-ChildItem -LiteralPath ./package -Recurse -File | Select-Object FullName, Length
-
-    # GitHub downloads this directory as one ZIP, with bin/ and db/ at its root.
-    - name: Upload install ZIP
-      uses: actions/upload-artifact@v4.6.0
+    - uses: actions/upload-artifact@v4.6.0
       with:
-        name: Squared-Away-DX11-AVX
+        name: amp-build-${{ matrix.configuration }}
+        path: ./stage/
+        if-no-files-found: error
+        retention-days: 1
+
+  package:
+    name: Package all DX variants
+    needs: [build, gamedata]
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: amp-build-*
+        merge-multiple: true
+        path: ./incoming
+    - name: Validate and stage complete install package
+      run: ./.github/scripts/package-all-dx.ps1 -SourceRoot ./incoming -DestinationRoot ./package
+    # Download this artifact for one ZIP with bin/ and db/ at its root.
+    - uses: actions/upload-artifact@v4.6.0
+      with:
+        name: Squared-Away-2.0-All-DX
         path: ./package/
         if-no-files-found: error
-        retention-days: 7
+        retention-days: 14
