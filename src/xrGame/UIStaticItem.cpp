@@ -124,15 +124,7 @@ void CUIStaticItem::RenderInternal(const Fvector2& in_pos)
 		R = UI().ScreenFrustumLIT().ClipPoly(S, D);
 	}
 
-	if (R && R->size())
-	{
-		for (u32 k = 0; k < R->size() - 2; ++k)
-		{
-			UIRender->PushPoint((*R)[0 + 0].pt.x, (*R)[0 + 0].pt.y, 0, dwColor, (*R)[0 + 0].uv.x, (*R)[0 + 0].uv.y);
-			UIRender->PushPoint((*R)[k + 1].pt.x, (*R)[k + 1].pt.y, 0, dwColor, (*R)[k + 1].uv.x, (*R)[k + 1].uv.y);
-			UIRender->PushPoint((*R)[k + 2].pt.x, (*R)[k + 2].pt.y, 0, dwColor, (*R)[k + 2].uv.x, (*R)[k + 2].uv.y);
-		}
-	}
+	RenderPolygon(R);
 }
 
 void CUIStaticItem::RenderInternal(float angle)
@@ -199,15 +191,28 @@ void CUIStaticItem::RenderInternal(float angle)
 
 	sPoly2D D;
 	sPoly2D* R = UI().ActiveClipFrustum().ClipPoly(S, D);
-	if (R && R->size())
-	{
-		for (u32 k = 0; k < R->size() - 2; k++)
-		{
-			UIRender->PushPoint((*R)[0 + 0].pt.x, (*R)[0 + 0].pt.y, 0, dwColor, (*R)[0 + 0].uv.x, (*R)[0 + 0].uv.y);
-			UIRender->PushPoint((*R)[k + 1].pt.x, (*R)[k + 1].pt.y, 0, dwColor, (*R)[k + 1].uv.x, (*R)[k + 1].uv.y);
-			UIRender->PushPoint((*R)[k + 2].pt.x, (*R)[k + 2].pt.y, 0, dwColor, (*R)[k + 2].uv.x, (*R)[k + 2].uv.y);
-		}
-	}
+	RenderPolygon(R);
+}
+
+// Allocate GPU vertices only after clipping. Hidden icons used to lock and
+// unlock a vertex buffer even when clipping produced no triangles.
+void CUIStaticItem::RenderPolygon(const sPoly2D* polygon)
+{
+    if (!polygon || polygon->size() < 3)
+        return;
+
+    const u32 vertexCount = 3 * (polygon->size() - 2);
+    UIRender->StartPrimitive(vertexCount, IUIRender::ptTriList, UI().m_currentPointType);
+    for (u32 k = 0; k < polygon->size() - 2; ++k)
+    {
+        const S2DVert& a = (*polygon)[0];
+        const S2DVert& b = (*polygon)[k + 1];
+        const S2DVert& c = (*polygon)[k + 2];
+        UIRender->PushPoint(a.pt.x, a.pt.y, 0, dwColor, a.uv.x, a.uv.y);
+        UIRender->PushPoint(b.pt.x, b.pt.y, 0, dwColor, b.uv.x, b.uv.y);
+        UIRender->PushPoint(c.pt.x, c.pt.y, 0, dwColor, c.uv.x, c.uv.y);
+    }
+    UIRender->FlushPrimitive();
 }
 
 //---from static-item
@@ -216,9 +221,7 @@ void CUIStaticItem::Render()
 {
 	VERIFY(g_bRendering);
 	UIRender->SetShader(*hShader);
-	UIRender->StartPrimitive(UI().HasCustomClip() ? UI().ActiveClipFrustum().ClipBudget(4) : 8, IUIRender::ptTriList, UI().m_currentPointType);
 	RenderInternal(vPos);
-	UIRender->FlushPrimitive();
 }
 
 void CUIStaticItem::Render(float angle)
@@ -226,9 +229,7 @@ void CUIStaticItem::Render(float angle)
 	VERIFY(g_bRendering);
 
 	UIRender->SetShader(*hShader);
-	UIRender->StartPrimitive(32, IUIRender::ptTriList, UI().m_currentPointType);
 	RenderInternal(angle);
-	UIRender->FlushPrimitive();
 }
 
 
