@@ -779,6 +779,8 @@ Observation sqa_observe_transfer(const Entry& e)
     state.endpoints_live = Level().Objects.net_Find(e.from) && Level().Objects.net_Find(e.to);
     state.item_token = item->SqaTransferGeneration();
     state.rig_token = container ? container->SqaTransferGeneration() : stash->SqaTransferGeneration();
+    auto* destination = smart_cast<CInventoryContainer*>(Level().Objects.net_Find(e.to));
+    state.destination_token = destination ? destination->SqaTransferGeneration() : 0;
     state.parent = obj->H_Parent() ? u16(obj->H_Parent()->ID()) : inventory_rig_transfer::none;
     return state;
 }
@@ -820,6 +822,43 @@ bool CScriptGameObject::SqaRigTransfer(CScriptGameObject* item_object, CScriptGa
     CGameObject::u_EventGen(packet, GE_TRADE_BUY, e.to);
     packet.w_u16(e.item);
     CGameObject::u_EventSend(packet);
+    return true;
+}
+
+// Packing and source access are checked by the UI before this call. Transfer
+// the same object directly between owners, never via a temporary actor pickup.
+bool CScriptGameObject::SqaStorageTransfer(CScriptGameObject* item_object, CScriptGameObject* destination)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry || !item_object || !destination) return false;
+    auto* item = smart_cast<CInventoryItem*>(&item_object->object());
+    auto* from = item_object->object().H_Parent();
+    auto* to = &destination->object();
+    if (!item || !from || from == to || to == &item_object->object() ||
+        smart_cast<CInventoryContainer*>(&item_object->object()) || to->getDestroy()) return false;
+    auto* source_container = smart_cast<CInventoryContainer*>(from);
+    auto* source_stash = smart_cast<CInventoryBox*>(from);
+    auto* target_container = smart_cast<CInventoryContainer*>(to);
+    if ((!source_container && !source_stash && from != &object()) ||
+        (!target_container && to != &object()) ||
+        (source_stash && !source_stash->can_take())) return false;
+    auto* anchor = source_container ? static_cast<CInventoryItem*>(source_container) :
+        static_cast<CInventoryItem*>(target_container);
+    const u16 anchor_id = source_stash ? u16(source_stash->ID()) : u16(anchor->object().ID());
+    const auto token = source_stash ? source_stash->SqaTransferGeneration() : anchor->SqaTransferGeneration();
+    Entry e{u16(item_object->object().ID()), u16(from->ID()), u16(to->ID()), anchor_id,
+        item->SqaTransferGeneration(), token, Device.dwTimeGlobal};
+    e.destination_token = target_container ? target_container->SqaTransferGeneration() : 0;
+    e.storage_ruck = to == &object();
+    if (e.storage_ruck && !smart_cast<CActor*>(&object())->inventory().CanTakeItem(item)) return false;
+    const auto result = registry->request(e, sqa_observe_transfer(e));
+    if (result == Request::refused) return false;
+    if (result != Request::queued) return true;
+    NET_Packet packet;
+    CGameObject::u_EventGen(packet, GE_TRADE_SELL, e.from);
+    packet.w_u16(e.item); CGameObject::u_EventSend(packet);
+    CGameObject::u_EventGen(packet, GE_TRADE_BUY, e.to);
+    packet.w_u16(e.item); CGameObject::u_EventSend(packet);
     return true;
 }
 

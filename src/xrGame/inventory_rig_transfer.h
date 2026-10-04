@@ -19,6 +19,8 @@ struct Entry
     Token item_token, rig_token;
     std::uint32_t started;
     bool warned = false;
+    Token destination_token = 0; // Optional second container lifetime for direct storage moves.
+    bool storage_ruck = false; // Actor-owned rig contents must not auto-equip.
     Id target_slot = none; // Equip directly on arrival, before pickup callbacks.
 };
 struct Observation
@@ -26,6 +28,7 @@ struct Observation
     bool endpoints_live = false;
     Token item_token = 0, rig_token = 0;
     Id parent = none;
+    Token destination_token = 0;
 };
 enum class Request { refused, arrived, pending, queued };
 
@@ -42,7 +45,7 @@ public:
     }
     bool rig_pending(Id id) const
     {
-        for (const auto& e : pending_) if (e.rig == id) return true;
+        for (const auto& e : pending_) if (e.rig == id || e.from == id || e.to == id) return true;
         return false;
     }
     template<class Lookup, class Warn> void settle(Lookup lookup, Warn warn, std::uint32_t now)
@@ -51,7 +54,8 @@ public:
         {
             const auto state = lookup(*it);
             const bool live = state.endpoints_live && state.item_token == it->item_token
-                && state.rig_token == it->rig_token;
+                && state.rig_token == it->rig_token
+                && (!it->destination_token || state.destination_token == it->destination_token);
             if (!live || state.parent == it->to ||
                 (state.parent != none && state.parent != it->from))
             {
@@ -72,7 +76,8 @@ public:
     {
         if (e.item == none || e.from == none || e.to == none || e.rig == none ||
             e.from == e.to || e.item == e.rig || !e.item_token || !e.rig_token ||
-            !state.endpoints_live || state.item_token != e.item_token || state.rig_token != e.rig_token)
+            !state.endpoints_live || state.item_token != e.item_token || state.rig_token != e.rig_token ||
+            (e.destination_token && state.destination_token != e.destination_token))
             return Request::refused;
         for (const auto& old : pending_)
             if (old.item == e.item)

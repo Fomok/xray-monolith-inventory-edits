@@ -75,6 +75,14 @@ int main(){try{
  setup();host_add(14,4,65535);host_parent(21,14);host_add(30,2,1);actor=dynamic_cast<CActor*>(get(1));actor->inventory().slots[1]=dynamic_cast<CInventoryItem*>(get(30));CHECK(equip(1,true));CHECK(sent_events.size()==4&&sent_events[0].item==30&&sent_events[1].dest==14&&sent_events[3].dest==1);CHECK(host_query(0,0)==2);
  setup();host_add(14,4,65535);host_parent(21,14);dynamic_cast<CInventoryBox*>(get(14))->allowed=false;CHECK(!equip(1,false)&&sent_events.empty());
  setup();host_add(14,4,65535);host_parent(21,14);CHECK(equip(1,false));host_add(14,4,65535);actor=dynamic_cast<CActor*>(get(1));host_parent(21,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==0&&host_query(0,0)==0);
+ auto storage=[](int to){CScriptGameObject self(get(1)),item(get(21)),dest(get(u16(to)));return self.SqaStorageTransfer(&item,&dest);};
+ setup();host_add(40,1,1);CHECK(storage(40));CHECK(sent_events.size()==2&&sent_events[0].dest==14&&sent_events[1].dest==40);CHECK(host_query(2,14)&&host_query(2,40));CHECK(storage(40)&&sent_events.size()==2);CHECK(!storage(1));host_parent(21,40);CHECK(host_query(0,0)==0);
+ setup();host_add(40,1,1);CHECK(storage(40));host_add(40,1,1);CHECK(host_query(0,0)==0); // replaced destination lifetime
+ setup();CHECK(storage(1));host_parent(21,1);actor=dynamic_cast<CActor*>(get(1));host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==2);CHECK(host_query(0,0)==0);
+ setup();host_add(14,4,65535);host_parent(21,14);CHECK(storage(1));host_parent(21,1);actor=dynamic_cast<CActor*>(get(1));host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==2);
+ setup();host_add(14,4,65535);host_parent(21,14);host_add(40,1,1);CHECK(storage(40));CHECK(sent_events[1].dest==40);host_parent(21,40);CHECK(host_query(0,0)==0);
+ setup();host_add(14,4,65535);host_parent(21,14);dynamic_cast<CInventoryBox*>(get(14))->allowed=false;CHECK(!storage(1)&&sent_events.empty());
+ setup();CHECK(!storage(14)&&sent_events.empty());host_add(40,3,65535);CHECK(!storage(40)&&sent_events.empty());
  puts("PASS: production dispatch/status/completion, async gaps, duplicates, conflicts, destruction, ID reuse, external owners, teardown and 100 handover cycles");return 0;
 }catch(const std::exception& e){puts(e.what());return 1;}}
 '''
@@ -82,8 +90,8 @@ int main(){try{
 arrival=(E/'src/xrGame/Actor_Events.cpp').read_text(encoding='utf-8-sig')
 a=arrival.index('                // Resolve the reserved destination')
 b=arrival.index('                inventory().Take(_GO, false, true);',a)
-arrival=arrival[a:b].replace('inventory()', 'self.inventory()').replace('transfer.to == ID()', 'transfer.to == self.ID()')
-bridge+='\nconstexpr int eItemPlaceSlot=1;\nvoid host_arrival(CActor& self,CGameObject* _GO){const auto id=_GO->ID();\n'+arrival+'\n}\n'
+arrival=arrival[a:b].replace('inventory()', 'self.inventory()').replace('transfer.to == ID()', 'transfer.to == self.ID()').replace('transfer.to != ID()', 'transfer.to != self.ID()')
+bridge+='\nconstexpr int eItemPlaceSlot=1,eItemPlaceRuck=2;\nvoid host_arrival(CActor& self,CGameObject* _GO){const auto id=_GO->ID();\n'+arrival+'\n}\n'
 tests=tests.replace(' puts("PASS: production dispatch/status/completion', ''' setup();CHECK(equip(2,false));actor=dynamic_cast<CActor*>(get(1));host_parent(21,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==eItemPlaceSlot);CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.slot_id==2);
  setup();CHECK(equip(2,false));actor=dynamic_cast<CActor*>(get(1));host_add(30,2,1);actor->inventory().slots[2]=dynamic_cast<CInventoryItem*>(get(30));host_parent(21,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==0);
  setup();CHECK(equip(2,false));actor=dynamic_cast<CActor*>(get(1));host_add(21,2,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==0);

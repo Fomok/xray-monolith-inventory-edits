@@ -55,6 +55,7 @@ inline struct Clock{u32 dwTimeGlobal=0;}Device;
 struct CScriptGameObject{
  CGameObject* ptr;explicit CScriptGameObject(CGameObject* o):ptr(o){} CGameObject& object(){return *ptr;}
  bool SqaRigTransfer(CScriptGameObject*,CScriptGameObject*,bool);
+ bool SqaStorageTransfer(CScriptGameObject*,CScriptGameObject*);
  bool SqaEquipFromContainer(CScriptGameObject*,CScriptGameObject*,u16,bool);
  bool SqaRigTransferPending(u16);bool SqaRigTransferRigPending(u16);
  u32 SqaRigTransferCount();u16 SqaRigTransferAt(u32);u16 SqaRigTransferFinished();void SqaRigTransferForget(u16);

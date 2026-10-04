@@ -74,10 +74,14 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
                     auto* stash = smart_cast<CInventoryBox*>(Level().Objects.net_Find(transfer.rig));
                     const auto source_token = source ? source->SqaTransferGeneration() :
                         (stash ? stash->SqaTransferGeneration() : 0);
-                    if (source_token == transfer.rig_token &&
-                        transfer.item == id && transfer.to == ID() &&
-                        transfer.target_slot != inventory_rig_transfer::none &&
-                        incoming->SqaTransferGeneration() == transfer.item_token &&
+                    if (source_token != transfer.rig_token || transfer.item != id ||
+                        transfer.to != ID() || incoming->SqaTransferGeneration() != transfer.item_token) continue;
+                    if (transfer.storage_ruck)
+                    {
+                        incoming->m_ItemCurrPlace.type = eItemPlaceRuck;
+                        break;
+                    }
+                    if (transfer.target_slot != inventory_rig_transfer::none &&
                         inventory().CanPutInSlot(incoming, transfer.target_slot))
                     {
                         incoming->m_ItemCurrPlace.type = eItemPlaceSlot;
