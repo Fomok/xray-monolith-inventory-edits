@@ -110,6 +110,7 @@ void CInventoryOwner::reinit()
 //call this after CGameObject::net_Spawn
 BOOL CInventoryOwner::net_Spawn(CSE_Abstract* DC)
 {
+    sqa_owner_transfer_generation = inventory_rig_transfer::next_identity();
 	if (!m_pTrade)
 		m_pTrade = xr_new<CTrade>(this);
 

@@ -21,7 +21,7 @@ extern "C" {
 __declspec(dllexport) void host_reset(){live.clear();server_ids.clear();sent_events.clear();warnings=0;Device.dwTimeGlobal=0;}
 __declspec(dllexport) void host_add(int id,int kind,int parent){
  CGameObject* o=nullptr;
- if(kind==0)o=new CActor(u16(id));else if(kind==1)o=new CInventoryContainer(u16(id));else if(kind==2)o=new Item(u16(id));else if(kind==4)o=new CInventoryBox(u16(id));else o=new CGameObject(u16(id));
+ if(kind==0)o=new CActor(u16(id));else if(kind==1)o=new CInventoryContainer(u16(id));else if(kind==2)o=new Item(u16(id));else if(kind==4)o=new CInventoryBox(u16(id));else if(kind==5)o=new CAI_Stalker(u16(id));else o=new CGameObject(u16(id));
  o->parent=get(u16(parent));live[u16(id)].reset(o);server_ids.insert(u16(id));
 }
 __declspec(dllexport) void host_parent(int id,int parent){if(auto* o=get(u16(id)))o->parent=get(u16(parent));}
@@ -83,6 +83,20 @@ int main(){try{
  setup();host_add(14,4,65535);host_parent(21,14);host_add(40,1,1);CHECK(storage(40));CHECK(sent_events[1].dest==40);host_parent(21,40);CHECK(host_query(0,0)==0);
  setup();host_add(14,4,65535);host_parent(21,14);dynamic_cast<CInventoryBox*>(get(14))->allowed=false;CHECK(!storage(1)&&sent_events.empty());
  setup();CHECK(!storage(14)&&sent_events.empty());host_add(40,3,65535);CHECK(!storage(40)&&sent_events.empty());
+
+ setup();host_add(14,5,65535);host_parent(21,14);CHECK(equip(2,false));
+ CHECK(sent_events.size()==2&&sent_events[0].dest==14&&sent_events[1].dest==1);
+ actor=dynamic_cast<CActor*>(get(1));host_parent(21,1);host_arrival(*actor,get(21));
+ CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==eItemPlaceSlot);
+ CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.slot_id==2);
+ CHECK(host_query(0,0)==0&&host_query(4,0)==21);
+ setup();host_add(14,5,65535);host_parent(21,14);dynamic_cast<CAI_Stalker*>(get(14))->alive=true;CHECK(!equip(2,false)&&sent_events.empty());
+ setup();host_add(14,5,65535);host_parent(21,14);host_add(30,2,1);actor=dynamic_cast<CActor*>(get(1));actor->inventory().slots[2]=dynamic_cast<CInventoryItem*>(get(30));
+ CHECK(equip(2,true));CHECK(sent_events.size()==4&&sent_events[1].dest==14&&sent_events[1].item==30);
+ setup();host_add(14,5,65535);host_parent(21,14);CHECK(equip(2,false));host_add(14,5,65535);CHECK(host_query(0,0)==0&&host_query(4,0)==65535);
+ setup();host_add(14,5,65535);host_parent(21,14);CHECK(equip(2,false));host_parent(21,65535);CHECK(host_query(1,21));host_parent(21,1);host_add(14,5,65535);
+ actor=dynamic_cast<CActor*>(get(1));host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==0);
+ setup();host_add(14,5,65535);host_parent(21,14);get(14)->dying=true;CHECK(!equip(2,false)&&sent_events.empty());
  puts("PASS: production dispatch/status/completion, async gaps, duplicates, conflicts, destruction, ID reuse, external owners, teardown and 100 handover cycles");return 0;
 }catch(const std::exception& e){puts(e.what());return 1;}}
 '''

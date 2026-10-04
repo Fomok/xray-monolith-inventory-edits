@@ -8,6 +8,7 @@
 #include "grenadelauncher.h"
 #include "inventory.h"
 #include "InventoryBox.h"
+#include "InventoryOwner.h"
 #include "level.h"
 #include "xr_level_controller.h"
 #include "FoodItem.h"
@@ -72,8 +73,9 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
                 {
                     auto* source = smart_cast<CInventoryItem*>(Level().Objects.net_Find(transfer.rig));
                     auto* stash = smart_cast<CInventoryBox*>(Level().Objects.net_Find(transfer.rig));
+                    auto* owner = smart_cast<CInventoryOwner*>(Level().Objects.net_Find(transfer.rig));
                     const auto source_token = source ? source->SqaTransferGeneration() :
-                        (stash ? stash->SqaTransferGeneration() : 0);
+                        (stash ? stash->SqaTransferGeneration() : (owner ? owner->SqaOwnerTransferGeneration() : 0));
                     if (source_token != transfer.rig_token || transfer.item != id ||
                         transfer.to != ID() || incoming->SqaTransferGeneration() != transfer.item_token) continue;
                     if (transfer.storage_ruck)

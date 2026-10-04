@@ -38,6 +38,14 @@ struct Inventory{
  bool CanTakeItem(CInventoryItem*){return take;}
  bool CanPutInSlot(CInventoryItem*,u16 slot,CInventoryItem* old=nullptr){return allow&&SqaValidSlot(slot)&&(!slots[slot]||slots[slot]==old);}
 };
+struct CInventoryOwner {
+ virtual ~CInventoryOwner()=default;
+ inventory_rig_transfer::Token owner_generation=inventory_rig_transfer::next_identity();
+ auto SqaOwnerTransferGeneration()const{return owner_generation;}
+};
+struct CAI_Stalker:CGameObject,CInventoryOwner {
+ using CGameObject::CGameObject;bool alive=false;bool g_Alive()const{return alive;}
+};
 struct CActor:CGameObject{using CGameObject::CGameObject;Inventory bag;Inventory& inventory(){return bag;}};
 template<class T,class U>T smart_cast(U* p){return dynamic_cast<T>(p);}
 inline std::map<u16,std::unique_ptr<CGameObject>> live;

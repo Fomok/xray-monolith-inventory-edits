@@ -774,11 +774,13 @@ Observation sqa_observe_transfer(const Entry& e)
     auto* item = smart_cast<CInventoryItem*>(obj);
     auto* container = smart_cast<CInventoryContainer*>(rig);
     auto* stash = smart_cast<CInventoryBox*>(rig);
-    if (!obj || !rig || obj->getDestroy() || rig->getDestroy() || !item || (!container && !stash))
+    auto* corpse = smart_cast<CAI_Stalker*>(rig);
+    if (!obj || !rig || obj->getDestroy() || rig->getDestroy() || !item || (!container && !stash && !corpse))
         return state;
     state.endpoints_live = Level().Objects.net_Find(e.from) && Level().Objects.net_Find(e.to);
     state.item_token = item->SqaTransferGeneration();
-    state.rig_token = container ? container->SqaTransferGeneration() : stash->SqaTransferGeneration();
+    state.rig_token = container ? container->SqaTransferGeneration() :
+        (stash ? stash->SqaTransferGeneration() : corpse->SqaOwnerTransferGeneration());
     auto* destination = smart_cast<CInventoryContainer*>(Level().Objects.net_Find(e.to));
     state.destination_token = destination ? destination->SqaTransferGeneration() : 0;
     state.parent = obj->H_Parent() ? u16(obj->H_Parent()->ID()) : inventory_rig_transfer::none;
@@ -874,7 +876,10 @@ bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
     auto* item = smart_cast<CInventoryItem*>(&item_object->object());
     auto* container = smart_cast<CInventoryContainer*>(&container_object->object());
     auto* stash = smart_cast<CInventoryBox*>(&container_object->object());
-    if (!item || (!container && !stash) || (stash && !stash->can_take()) ||
+    auto* corpse = smart_cast<CAI_Stalker*>(&container_object->object());
+    if (!item || (!container && !stash && !corpse) || (stash && !stash->can_take()) ||
+        (corpse && corpse->g_Alive()) || container_object->object().getDestroy() ||
+        item_object->object().getDestroy() ||
         smart_cast<CInventoryContainer*>(&item_object->object()) ||
         item_object->object().H_Parent() != &container_object->object()) return false;
     auto& inv = actor->inventory();
@@ -883,7 +888,8 @@ bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
     if (!inv.CanTakeItem(item) || !inv.CanPutInSlot(item, slot, old)) return false;
     if (old && return_to_source && smart_cast<CInventoryContainer*>(&old->object())) return false;
     const u16 actor_id = u16(object().ID()), container_id = u16(container_object->object().ID());
-    const auto source_token = container ? container->SqaTransferGeneration() : stash->SqaTransferGeneration();
+    const auto source_token = container ? container->SqaTransferGeneration() :
+        (stash ? stash->SqaTransferGeneration() : corpse->SqaOwnerTransferGeneration());
     Entry incoming{u16(item_object->object().ID()), container_id, actor_id, container_id,
         item->SqaTransferGeneration(), source_token, Device.dwTimeGlobal};
     incoming.target_slot = slot;
