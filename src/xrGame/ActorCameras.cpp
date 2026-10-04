@@ -27,6 +27,10 @@
 #include "GamePersistent.h"
 #include "player_hud.h"
 #include "Missile.h"
+#include "WeaponKnife.h"
+#include "bodycam_camera.h"
+#include "bodycam_math.h"
+#include "bodycam_settings.h"
 
 #include "EffectorBobbing.h"
 class CFPCamEffector;
@@ -35,8 +39,316 @@ ENGINE_API extern float psHUD_FOV;
 ENGINE_API extern float psHUD_FOV_def;
 BOOL g_freelook_while_reloading = 1;
 
+namespace
+{
+constexpr float kMaxScriptLookDelta = PI_DIV_2;
+
+u32 NextScriptCameraDeltaId()
+{
+	static u32 next_id = 1;
+	const u32 id = next_id++;
+	if (next_id == 0)
+		next_id = 1;
+	return id;
+}
+
+struct BodycamAdsState
+{
+	bool active = false;
+	float blend = 0.f;
+};
+
+CWeapon* ActiveBodycamWeapon(const CActor& actor)
+{
+	return actor.inventory().ActiveItem() ? actor.inventory().ActiveItem()->cast_weapon() : nullptr;
+}
+
+bool HasActiveFirearm(const CActor& actor)
+{
+	const CWeapon* weapon = ActiveBodycamWeapon(actor);
+	return weapon && !smart_cast<const CWeaponKnife*>(weapon);
+}
+
+BodycamAdsState GetBodycamAdsState(const CActor& actor)
+{
+	const CWeapon* weapon = ActiveBodycamWeapon(actor);
+	if (!weapon)
+		return {};
+
+	const Bodycam::AdsState ads = Bodycam::ResolveAdsState(weapon->IsZoomed(), weapon->GetZRotatingFactor());
+	return { ads.active, ads.blend };
+}
+}
+
+void CActor::cam_BodycamVisualReset(const CCameraBase* camera)
+{
+	m_bodycam.Reset(camera, mstate_real, GetBodycamAdsState(*this).blend);
+}
+
+bool CActor::cam_BodycamVisualUpdate(const CCameraBase* camera, float dt, float viewport_near, bool apply_camera)
+{
+	if (!camera || this != Level().CurrentEntity() || !m_bodycam.AnyFeatureEnabled())
+	{
+		cam_BodycamVisualReset(camera);
+		return false;
+	}
+
+	if (cam_active != eacFirstEye || !g_Alive() || m_holder ||
+		Level().Cameras().GetCamEffector(cefDemo) || cam_freelook != eflDisabled)
+	{
+		cam_BodycamVisualReset(camera);
+		return false;
+	}
+
+	float target_yaw, target_pitch;
+	camera->vDirection.getHP(target_yaw, target_pitch);
+
+	Bodycam::UpdateInput input;
+	input.target_yaw = target_yaw;
+	input.target_pitch = target_pitch;
+	input.dt = dt;
+	input.mstate = MovingState();
+	const BodycamAdsState ads = GetBodycamAdsState(*this);
+	input.ads = ads.active;
+	input.ads_blend = ads.blend;
+	input.weapon_lowered = is_safemode();
+	input.combat = m_sndShockEffector && m_sndShockEffector->InWork();
+	input.firearm_equipped = HasActiveFirearm(*this);
+	input.actor_speed_fraction = m_bodycam_movement_response.speed_fraction;
+
+	Bodycam::VisualOutput output;
+	m_bodycam.Update(input, output);
+	if (!m_bodycam.CameraEnabled() || !apply_camera)
+		return false;
+
+	Fvector visual_dir, visual_up, visual_right;
+	Bodycam::BuildCameraBasis(output.yaw, output.pitch, output.roll, visual_dir, visual_up, visual_right);
+
+	Fvector raw_dir, raw_up, raw_right;
+	Bodycam::BuildCameraBasis(target_yaw, target_pitch, 0.f, raw_dir, raw_up, raw_right);
+
+	Fvector zero;
+	zero.set(0.f, 0.f, 0.f);
+	Fmatrix raw_basis, visual_basis, raw_inv, visual_delta, effector_basis, final_basis;
+	raw_basis.set(raw_right, raw_up, raw_dir, zero);
+	visual_basis.set(visual_right, visual_up, visual_dir, zero);
+	raw_inv.invert(raw_basis);
+	visual_delta.mul(raw_inv, visual_basis);
+	effector_basis.set(Cameras().BaseRight(), Cameras().BaseUp(), Cameras().BaseDirection(), Cameras().BasePosition());
+	final_basis.mul(effector_basis, visual_delta);
+
+	Fvector visual_pos = Cameras().BasePosition();
+	visual_pos.mad(final_basis.i, output.pos.x);
+	visual_pos.mad(final_basis.j, output.pos.y);
+	visual_pos.mad(final_basis.k, output.pos.z);
+	const float fov = clampr(Cameras().BaseFov() + output.fov_offset, 1.f, 175.f);
+	Cameras().ApplyDeviceOverride(visual_pos, final_basis.k, final_basis.j, fov, Cameras().BaseAspect(),
+		g_pGamePersistent->Environment().CurrentEnv->far_plane, viewport_near);
+	return true;
+}
+
+void CActor::cam_BodycamAddFireImpulse(float power)
+{
+	if (this == Level().CurrentEntity())
+		m_bodycam.AddFireImpulse(power, GetBodycamAdsState(*this).active);
+}
+
+void CActor::cam_BodycamAddImpulse(LPCSTR kind, float power)
+{
+	if (this == Level().CurrentEntity())
+		m_bodycam.AddImpulse(kind, power, GetBodycamAdsState(*this).active);
+}
+
+void CActor::cam_BodycamSetViewmodelProfile(const Fvector& pos, const Fvector& rot, float blend_speed)
+{
+	m_bodycam.SetViewmodelProfile(pos, rot, blend_speed);
+}
+
+void CActor::cam_BodycamClearViewmodelProfile(float blend_speed)
+{
+	m_bodycam.ClearViewmodelProfile(blend_speed);
+}
+
+void CActor::cam_BodycamDumpState()
+{
+	m_bodycam.Dump(GetBodycamAdsState(*this).active, MovingState());
+	if (g_player_hud)
+		g_player_hud->DumpStalker2AuthoredMotionProfile();
+}
+
+bool CActor::cam_BodycamGetHudOffset(Fvector& pos, Fvector& rot) const
+{
+	return m_bodycam.GetHudOffset(pos, rot);
+}
+
+bool CActor::cam_BodycamGetArmPose(Bodycam::ArmPose& pose) const
+{
+	return m_bodycam.GetArmPose(pose);
+}
+
+bool CActor::cam_BodycamSprintAnimReady() const
+{
+	if (!cam_BodycamOwnsSprintTransition())
+		return true;
+	if (!(mstate_real & mcSprint))
+		return true;
+	return m_bodycam_sprint_anim_ready;
+}
+
+bool CActor::cam_BodycamOwnsSprintTransition() const
+{
+	const Bodycam::RuntimeConfig& config = Bodycam::GetConfig();
+	return m_bodycam.HudEnabled() && config.features.sprint_transition_enable &&
+		config.movement.enable && HasActiveFirearm(*this);
+}
+
+u32 CActor::cam_QueueScriptCameraDelta(float yaw_delta, float pitch_delta)
+{
+	if (!_valid(yaw_delta) || !_valid(pitch_delta) || this != Level().CurrentControlEntity() ||
+		!g_Alive() || m_holder || cam_active != eacFirstEye || cam_freelook != eflDisabled ||
+		!cam_CanQueueScriptCameraDelta())
+	{
+		return 0;
+	}
+
+	SScriptCameraDeltaRequest& request = m_script_camera_delta_pending[m_script_camera_delta_pending_count++];
+	request.id = NextScriptCameraDeltaId();
+	request.delta.set(
+		clampr(yaw_delta, -kMaxScriptLookDelta, kMaxScriptLookDelta),
+		clampr(pitch_delta, -kMaxScriptLookDelta, kMaxScriptLookDelta));
+	return request.id;
+}
+
+bool CActor::cam_PollScriptCameraDelta(
+	u32 request_id, EScriptCameraDeltaStatus& status, Fvector2& applied)
+{
+	if (request_id == 0)
+		return false;
+
+	for (u32 i = 0; i < m_script_camera_delta_pending_count; ++i)
+	{
+		if (m_script_camera_delta_pending[i].id != request_id)
+			continue;
+
+		status = eScriptCameraDeltaPending;
+		applied.set(0.f, 0.f);
+		return true;
+	}
+
+	for (u32 i = 0; i < m_script_camera_delta_result_count; ++i)
+	{
+		SScriptCameraDeltaResult& result = m_script_camera_delta_results[i];
+		if (result.id != request_id)
+			continue;
+
+		status = result.status;
+		applied = result.applied;
+		for (u32 j = i + 1; j < m_script_camera_delta_result_count; ++j)
+			m_script_camera_delta_results[j - 1] = m_script_camera_delta_results[j];
+		m_script_camera_delta_results[--m_script_camera_delta_result_count] = {};
+		return true;
+	}
+
+	return false;
+}
+
+bool CActor::cam_CanQueueScriptCameraDelta() const
+{
+	if (m_script_camera_delta_pending_count >= kScriptCameraDeltaPendingCapacity)
+		return false;
+
+	return m_script_camera_delta_pending_count + m_script_camera_delta_result_count <
+		kScriptCameraDeltaResultCapacity;
+}
+
+bool CActor::cam_CancelScriptCameraDelta(u32 request_id)
+{
+	for (u32 i = 0; i < m_script_camera_delta_pending_count; ++i)
+	{
+		if (m_script_camera_delta_pending[i].id != request_id)
+			continue;
+
+		Fvector2 applied = { 0.f, 0.f };
+		if (!cam_StoreScriptCameraDeltaResult(request_id, eScriptCameraDeltaCancelled, applied))
+			return false;
+		for (u32 j = i + 1; j < m_script_camera_delta_pending_count; ++j)
+			m_script_camera_delta_pending[j - 1] = m_script_camera_delta_pending[j];
+		m_script_camera_delta_pending[--m_script_camera_delta_pending_count] = {};
+		return true;
+	}
+
+	return false;
+}
+
+bool CActor::cam_StoreScriptCameraDeltaResult(
+	u32 request_id, EScriptCameraDeltaStatus status, const Fvector2& applied)
+{
+	if (m_script_camera_delta_result_count >= kScriptCameraDeltaResultCapacity)
+		return false;
+
+	SScriptCameraDeltaResult& result =
+		m_script_camera_delta_results[m_script_camera_delta_result_count++];
+	result.id = request_id;
+	result.status = status;
+	result.applied = applied;
+	return true;
+}
+
+void CActor::cam_CancelScriptCameraDeltas()
+{
+	Fvector2 applied = { 0.f, 0.f };
+	for (u32 i = 0; i < m_script_camera_delta_pending_count; ++i)
+	{
+		const bool stored = cam_StoreScriptCameraDeltaResult(
+			m_script_camera_delta_pending[i].id, eScriptCameraDeltaCancelled, applied);
+		R_ASSERT2(stored, "Script camera delta result capacity exhausted");
+		m_script_camera_delta_pending[i] = {};
+	}
+	m_script_camera_delta_pending_count = 0;
+}
+
+void CActor::cam_ApplyScriptCameraDeltas(CCameraBase* camera)
+{
+	if (m_script_camera_delta_pending_count == 0)
+		return;
+
+	if (!camera || this != Level().CurrentControlEntity() || !g_Alive() || m_holder ||
+		cam_active != eacFirstEye || cam_freelook != eflDisabled)
+	{
+		cam_CancelScriptCameraDeltas();
+		return;
+	}
+
+	Fvector2 total_applied = { 0.f, 0.f };
+	for (u32 i = 0; i < m_script_camera_delta_pending_count; ++i)
+	{
+		const SScriptCameraDeltaRequest& request = m_script_camera_delta_pending[i];
+		const float old_yaw = camera->yaw;
+		const float old_pitch = camera->pitch;
+		if (!fis_zero(request.delta.x))
+			camera->Move(request.delta.x > 0.f ? kRIGHT : kLEFT, _abs(request.delta.x));
+		if (!fis_zero(request.delta.y))
+			camera->Move(request.delta.y > 0.f ? kUP : kDOWN, _abs(request.delta.y));
+
+		Fvector2 applied;
+		applied.set(
+			angle_difference_signed(camera->yaw, old_yaw),
+			angle_difference_signed(camera->pitch, old_pitch));
+		total_applied.add(applied);
+		const bool stored =
+			cam_StoreScriptCameraDeltaResult(request.id, eScriptCameraDeltaApplied, applied);
+		R_ASSERT2(stored, "Script camera delta result capacity exhausted");
+		m_script_camera_delta_pending[i] = {};
+	}
+	m_script_camera_delta_pending_count = 0;
+
+	m_bodycam.RebaseLookDelta(total_applied.x, total_applied.y);
+}
+
 void CActor::cam_Set(EActorCameras style)
 {
+	if (style != cam_active)
+		cam_CancelScriptCameraDeltas();
 	CCameraBase* old_cam = cam_Active();
 	cam_active = style;
 	old_cam->OnDeactivate();
@@ -111,6 +423,7 @@ void CActor::cam_UnsetLadder()
 
 void CActor::cam_SetFreelook()
 {
+	cam_CancelScriptCameraDeltas();
 	cam_freelook = eflEnabling;
 }
 
@@ -478,7 +791,19 @@ float firstPersonDeathHeadScale = 3.f;
 
 void CActor::cam_Update(float dt, float fFOV)
 {
-	if (m_holder) return;
+	if (m_holder)
+	{
+		cam_CancelScriptCameraDeltas();
+		return;
+	}
+
+	CWeapon* bodycam_weapon = ActiveBodycamWeapon(*this);
+	Bodycam::PipInput pip_input;
+	pip_input.weapon_zoomed = bodycam_weapon && bodycam_weapon->IsZoomed();
+	pip_input.primary_sight = bodycam_weapon && bodycam_weapon->GetZoomType() == 0;
+	pip_input.requested_fov = fFOV;
+	const Bodycam::PipView pip = m_bodycam.UpdatePipView(pip_input);
+	fFOV = pip.main_fov;
 
 	// HUD FOV Update
 	if (this == Level().CurrentControlEntity())
@@ -587,6 +912,7 @@ void CActor::cam_Update(float dt, float fFOV)
 
 	CCameraBase* C = cam_Active();
 
+	cam_ApplyScriptCameraDeltas(C);
 	C->Update(point, dangle);
 	C->f_fov = fFOV;
 
@@ -699,9 +1025,25 @@ void CActor::cam_Update(float dt, float fFOV)
 	if (Level().CurrentEntity() == this)
 	{
 		Level().Cameras().UpdateFromCamera(C);
-		if (eacFirstEye == cam_active && !Level().Cameras().GetCamEffector(cefDemo) && !Device.m_SecondViewport.IsSVPActive())
+		if (eacFirstEye == cam_active && !Level().Cameras().GetCamEffector(cefDemo) && !pip.freeze_world_pose)
 		{
-			Cameras().ApplyDevice(_viewport_near);
+			if (!cam_BodycamVisualUpdate(C, dt, _viewport_near, true))
+				Cameras().ApplyDevice(_viewport_near);
+		}
+		else if (pip.freeze_world_pose && eacFirstEye == cam_active &&
+			!Level().Cameras().GetCamEffector(cefDemo))
+		{
+			cam_BodycamVisualUpdate(C, dt, _viewport_near, false);
+			Cameras().ApplyPP();
+		}
+		// pip the effector driven actor camera keeps the main view while scoped, 0 = frozen surround, ppe only
+		else if (Device.true_pip_on && eacFirstEye == cam_active && !Level().Cameras().GetCamEffector(cefDemo))
+		{
+			extern int g_svp_world_cam_fx;
+			if (g_svp_world_cam_fx)
+				Cameras().ApplyDevice(_viewport_near);
+			else
+				Cameras().ApplyPP();
 		}
 	}
 }

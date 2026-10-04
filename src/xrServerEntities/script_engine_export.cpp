@@ -23,6 +23,7 @@
 #include "ui/UIActorMenu.h"
 #include "ui/UIMainIngameWnd.h"
 #include "ui/UIPdaWnd.h"
+#include "../xrGame/bodycam_camera.h"
 
 void export_classes	(lua_State *L)
 {
@@ -60,6 +61,7 @@ void export_classes	(lua_State *L)
 	CClientSpawnManager::script_register(L);
 	console_registrator::script_register(L);
 	shader_bus_registrator::script_register(L);
+	Bodycam::script_register(L);
 	CCoverPoint::script_register(L);
 	demo_player_info::script_register(L);
 	demo_info::script_register(L);

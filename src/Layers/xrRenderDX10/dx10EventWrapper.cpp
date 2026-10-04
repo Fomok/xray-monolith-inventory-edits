@@ -2,6 +2,8 @@
 #pragma hdrstop
 #include "dx10EventWrapper.h"
 #include "../xrRender/HW.h"
+#include "../xrRender/xrRender_console.h"
+#include <stdarg.h>
 #include "../../xrEngine/renderdoc_integration.h"
 
 namespace
@@ -113,4 +115,29 @@ void dx10_annotate_frame()
         ps_dev_param_5, ps_dev_param_6, ps_dev_param_7, ps_dev_param_8};
 
     renderdoc_annotate_frame(shader_params, u32(std::size(shader_params)));
+}
+
+// per-batch marker, skipped when r__gpu_markers is off
+dxPixEventScope::dxPixEventScope(const char* fmt, ...) : active(false)
+{
+    if (!r__gpu_markers || !HW.pAnnotation)
+        return;
+
+    char nbuf[256];
+    va_list ap;
+    va_start(ap, fmt);
+    _vsnprintf_s(nbuf, sizeof(nbuf), _TRUNCATE, fmt, ap);
+    va_end(ap);
+
+    wchar_t wbuf[256];
+    ::MultiByteToWideChar(CP_ACP, 0, nbuf, -1, wbuf, (int)(sizeof(wbuf) / sizeof(wbuf[0])));
+
+    HW.pAnnotation->BeginEvent(wbuf);
+    active = true;
+}
+
+dxPixEventScope::~dxPixEventScope()
+{
+    if (active)
+        HW.pAnnotation->EndEvent();
 }

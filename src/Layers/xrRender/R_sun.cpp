@@ -81,6 +81,7 @@ void CRender::render_sun_cascades()
 void CRender::render_sun_cascade(u32 cascade_ind)
 {
 	PROF_EVENT("Render Cascade");
+	if (ps_r__svp_stats) ++svp_stats_shadow; // overlay tally of cascade shadow-map renders
 	light* fuckingsun = (light*)Lights.sun_adapted._get();
 	sun::cascade& cascade = m_sun_cascades[cascade_ind];
 
@@ -357,6 +358,27 @@ void CRender::render_sun_cascade(u32 cascade_ind)
 	else
 		Target->accum_direct_cascade(SE_SUN_FAR, cascade.xform,
 		                             m_sun_cascades[cascade_ind - 1].xform, cascade.bias);
+
+	// pip shared-shadow, the cascade smap was just built on the main atlas, re-accumulate it into the
+	// SVP (the hook re-points the atlas at the main maps so this reads them, no second smap render),
+	// the minmax SM above is generation and is skipped, the SVP reads the shared minmax
+	if (Device.m_SecondViewport.dual_accum)
+	{
+		auto svp_accum = [&]
+		{
+			Target->phase_accumulator();
+			if (cascade_ind == 0)
+				Target->accum_direct_cascade(SE_SUN_NEAR, cascade.xform, cascade.xform,
+				                             cascade.bias);
+			else if (cascade_ind < m_sun_cascades.size() - 1)
+				Target->accum_direct_cascade(SE_SUN_MIDDLE, cascade.xform,
+				                             m_sun_cascades[cascade_ind - 1].xform, cascade.bias);
+			else
+				Target->accum_direct_cascade(SE_SUN_FAR, cascade.xform,
+				                             m_sun_cascades[cascade_ind - 1].xform, cascade.bias);
+		};
+		Device.m_SecondViewport.dual_accum(svp_accum);
+	}
 
 	// Restore XForms
 	RCache.set_xform_world(Fidentity);

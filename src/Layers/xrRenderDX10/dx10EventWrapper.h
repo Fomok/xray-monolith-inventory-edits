@@ -26,3 +26,20 @@ public:
     dxPixEventWrapper(LPCWSTR wszName, u32 color = 0);
     ~dxPixEventWrapper();
 };
+
+// uniqued by __LINE__ so several can share one block
+#define PIX_EVENT_F_CAT_(a, b) a##b
+#define PIX_EVENT_F_CAT(a, b) PIX_EVENT_F_CAT_(a, b)
+#define PIX_EVENT_F(...) dxPixEventScope PIX_EVENT_F_CAT(pixScope_, __LINE__)(__VA_ARGS__)
+
+class dxPixEventScope
+{
+    bool active;
+
+public:
+    explicit dxPixEventScope(const char* fmt, ...);
+    ~dxPixEventScope();
+};
+
+
+#include "dx10DebugName.h"

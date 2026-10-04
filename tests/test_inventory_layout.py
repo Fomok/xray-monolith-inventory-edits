@@ -14,8 +14,8 @@ head=r"""
 #include <cstring>
 #include <cstdio>
 #include <climits>
-#include "../engine/src/xrServerEntities/inventory_membership.h"
-#include "../engine/src/xrServerEntities/inventory_pouches.h"
+#include "xrServerEntities/inventory_membership.h"
+#include "xrServerEntities/inventory_pouches.h"
 using u8=unsigned char;using u16=unsigned short;using LPCSTR=const char*;
 #define CHECK(v) do { if(!(v)) throw std::runtime_error(#v); } while(0)
 #define R_ASSERT2(v,msg) CHECK(v)
@@ -62,12 +62,12 @@ int main(){try{
 }catch(const std::exception& e){puts(e.what());return 1;}}
 """
 cpp=B/'inventory_layout_test.cpp';exe=B/'inventory_layout_test.exe';cpp.write_text(head+api+'\n};\n'+methods+tail)
-subprocess.run([args.compiler,'c++','-std=c++17',str(cpp),'-o',str(exe)],check=True)
+subprocess.run([args.compiler,'c++','-std=c++17','-I'+str(E/'src'),str(cpp),'-o',str(exe)],check=True)
 subprocess.run([str(exe)],check=True)
 # A tiny bridge lets the Lua regression suite use the real native validation.
 bridge=B/'inventory_layout_bridge.cpp';dll=B/'inventory_layout_bridge.dll'
 bridge.write_text(r"""
-#include "../engine/src/xrServerEntities/inventory_layout.h"
+#include "xrServerEntities/inventory_layout.h"
 using inventory_layout::Placement;
 extern "C" {
 __declspec(dllexport) Placement* layout_new(){return new Placement;}
@@ -77,6 +77,6 @@ __declspec(dllexport) int layout_get(Placement* p,int i){switch(i){case 0:return
 __declspec(dllexport) void layout_clear(Placement* p){p->clear();}
 }
 """)
-subprocess.run([args.compiler,'c++','-std=c++17','-shared',str(bridge),'-o',str(dll)],check=True)
+subprocess.run([args.compiler,'c++','-std=c++17','-I'+str(E/'src'),'-shared',str(bridge),'-o',str(dll)],check=True)
 print('PASS: native bridge built for Lua persistence tests')
 

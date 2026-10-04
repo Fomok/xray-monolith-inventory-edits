@@ -1,0 +1,122 @@
+name: AMP-Bodycam-Build
+
+on:
+  push:
+    branches: [ "amp-hooks-bodycam-mt" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SOLUTION_FILE_PATH: src/engine-vs2022.sln
+  PACK_GAMEDATA_NAME: 00_modded_exes_gamedata.db0
+
+jobs:
+  gamedata:
+    name: Pack matching gamedata
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - uses: actions/checkout@v4
+    - name: Pack gamedata
+      working-directory: compressor
+      run: |
+        $ErrorActionPreference = "Stop"
+        New-Item -ItemType Directory -Force -Path ./gamedata | Out-Null
+        Copy-Item -Path ../gamedata/* -Destination ./gamedata -Recurse -Force
+        $packer = Start-Process -FilePath "./! compress_gamedata.cmd" -WindowStyle Hidden -Wait -PassThru
+        if ($packer.ExitCode -ne 0) { throw "gamedata packing failed: $($packer.ExitCode)" }
+        if (!(Test-Path -LiteralPath ./gamedata.db0 -PathType Leaf)) { throw "gamedata.db0 was not produced" }
+        if ((Get-Item -LiteralPath ./gamedata.db0).Length -eq 0) { throw "gamedata.db0 is empty" }
+        New-Item -ItemType Directory -Force -Path ../stage/db/mods | Out-Null
+        Copy-Item -LiteralPath ./gamedata.db0 -Destination "../stage/db/mods/$env:PACK_GAMEDATA_NAME"
+    - uses: actions/upload-artifact@v4.6.0
+      with:
+        name: amp-bodycam-gamedata
+        path: ./stage/
+        if-no-files-found: error
+        retention-days: 1
+
+  build:
+    name: Build ${{ matrix.configuration }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [DX11-AVX]
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - name: Configure Pagefile
+      uses: al-cheb/configure-pagefile-action@v1.3
+      with:
+        minimum-size: 8GB
+        maximum-size: 8GB
+        disk-root: "C:"
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - uses: microsoft/setup-msbuild@v1.3.1
+      with:
+        msbuild-architecture: "x64"
+    - name: Build executable
+      env:
+        BUILD_CONFIGURATION: ${{ matrix.configuration }}
+      run: |
+        msbuild /p:Configuration=$env:BUILD_CONFIGURATION /p:Platform=x64 $env:SOLUTION_FILE_PATH
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    - name: Stage executable and symbols
+      env:
+        BUILD_CONFIGURATION: ${{ matrix.configuration }}
+      run: |
+        $ErrorActionPreference = "Stop"
+        $stem = "Anomaly" + $env:BUILD_CONFIGURATION.Replace("-", "")
+        New-Item -ItemType Directory -Force -Path ./stage/bin | Out-Null
+        foreach ($ext in @("exe", "pdb")) {
+          $source = "./_build/_game/bin_dbg/$stem.$ext"
+          if (!(Test-Path -LiteralPath $source -PathType Leaf)) { throw "Missing required file: $source" }
+          if ((Get-Item -LiteralPath $source).Length -eq 0) { throw "Empty required file: $source" }
+          Copy-Item -LiteralPath $source -Destination ./stage/bin/
+        }
+    - uses: actions/upload-artifact@v4.6.0
+      with:
+        name: amp-bodycam-${{ matrix.configuration }}
+        path: ./stage/
+        if-no-files-found: error
+        retention-days: 1
+
+  package:
+    name: Package Bodycam compatibility build
+    needs: [build, gamedata]
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: amp-bodycam-*
+        merge-multiple: true
+        path: ./incoming
+    - name: Validate and stage complete install package
+      run: |
+        $ErrorActionPreference = "Stop"
+        foreach ($file in @("bin/AnomalyDX11AVX.exe", "bin/AnomalyDX11AVX.pdb", "db/mods/00_modded_exes_gamedata.db0")) {
+          $source = Join-Path ./incoming $file
+          if (!(Test-Path -LiteralPath $source -PathType Leaf)) { throw "Missing required file: $file" }
+          if ((Get-Item -LiteralPath $source).Length -eq 0) { throw "Empty required file: $file" }
+        }
+        New-Item -ItemType Directory -Force -Path ./package | Out-Null
+        Copy-Item -Path ./incoming/* -Destination ./package -Recurse -Force
+    # Download this artifact for one ZIP with bin/ and db/ at its root.
+    - uses: actions/upload-artifact@v4.6.0
+      with:
+        name: Squared-Away-Bodycam-DX11-AVX
+        path: ./package/
+        if-no-files-found: error
+        retention-days: 14

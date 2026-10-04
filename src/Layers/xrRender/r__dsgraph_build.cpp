@@ -2,6 +2,7 @@
 
 #include "fhierrarhyvisual.h"
 #include "SkeletonCustom.h"
+#include "SkeletonX.h"
 #include "../../xrEngine/fmesh.h"
 #include "../../xrEngine/irenderable.h"
 
@@ -42,7 +43,20 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
     ShaderElement* sh_d = &*pVisual->shader->E[4];
     if (!(flags.test(IRenderVisualFlags::eIgnoreOptimization) || (sh_d && sh_d->flags.bEmissive)))
     {
-        if (SSA < r_ssaDISCARD)
+		// pip the ssa is main-view, the magnified scope replays this shared graph and resolves
+		// mag-times smaller parts (distant NPC heads), scale the discard by the scope coverage
+		float ssa_discard = r_ssaDISCARD;
+		{
+			extern float g_pip_scope_ratio;
+			extern float g_pip_scope_magnification;
+			if (ps_r__svp_npc_detail && Device.true_pip_on && Device.m_SecondViewport.IsSVPActive()
+				&& g_pip_scope_magnification > 1.f)
+			{
+				const float m = g_pip_scope_ratio * g_pip_scope_magnification;
+				ssa_discard /= m * m;
+			}
+		}
+        if (SSA < ssa_discard)
         {
             //Msg("SSA %.2f discarded", SSA);
             return;
@@ -71,10 +85,22 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 
 	if (sh_d && sh_d->flags.bDistort && i_mask[sh_d->flags.iPriority/2])
 	{
-		if (i_mask[CDSGraphManager::fl_hud])
-			RGraph.mapHUDSorted.Distort.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d, i_mask[CDSGraphManager::fl_hud]);
-		else
-			RGraph.mapDynamicSorted.Distort.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d, i_mask[CDSGraphManager::fl_hud]);
+		// pip the weapon's own hud-mode heat haze paints its warp across the composited lens while
+		// scoped, drop just that, psi and controller filter overlays keep rendering
+		bool drop = false;
+		if (ps_r__svp_skip_hud_distort && Device.true_pip_on && Device.m_SecondViewport.IsSVPActive())
+		{
+			IParticleCustom* pc = pVisual->dcast_ParticleCustom();
+			drop = pc && pc->GetHudMode() && pc->GetWeaponFX();
+		}
+		if (!drop)
+		{
+			if (i_mask[CDSGraphManager::fl_hud])
+				RGraph.mapHUDSorted.Distort.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d,
+					i_mask[CDSGraphManager::fl_hud], val_hud_role);
+			else
+				RGraph.mapDynamicSorted.Distort.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d, i_mask[CDSGraphManager::fl_hud]);
+		}
 	}
 
 	// Select shader
@@ -89,13 +115,112 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 	// Create common node
 	// NOTE: Invisible elements exist only in R1
 
-#if defined(USE_DX11) //  Redotix99: for 3D Shader Based Scopes 		
-	switch (sh->flags.iScopeLense) {	
+#if defined(USE_DX11) //  Redotix99: for 3D Shader Based Scopes
+	// pip true-PiP scope capture, keep the eye-nearest eyepiece lens (==3) for the SVP composite, and
+	// once the SVP is active drop the back-glass (==1) / zwrite (==2) since the SVP draws the whole lens
+	if (Device.true_pip_on && sh->flags.iScopeLense > 0)
+	{
+		if (sh->flags.iScopeLense == 3)
+		{
+			auto lens_center = [](dxRender_Visual* visual, Fmatrix* root, Fvector& center)
+			{
+				Fmatrix world = *root;
+				if (CSkeletonX* skeleton = fast_dynamic_cast<CSkeletonX*>(visual))
+				{
+					if (!skeleton->SVP_LensBoneVisible())
+						return false;
+					Fmatrix bone;
+					if (skeleton->SVP_LensBoneXform(bone))
+						world.mulB_43(bone);
+				}
+				world.transform_tiny(center, visual->getVisData().sphere.P);
+				return true;
+			};
+			// HUD lens animation may cross the eye plane
+			Fvector lp;
+			if (!lens_center(pVisual, xform, lp))
+				return;
+			// lens roles order along the weapon forward axis, the camera plays no part
+			Fvector wfwd;
+			wfwd.set(xform->k);
+			wfwd.normalize_safe();
+			const float lens_axial = lp.dotproduct(wfwd);
+			if (!_valid(lens_axial))
+				return;
+
+			// The ocular is the rear lens along the weapon axis
+			auto& M = RGraph.mapScopeHUDSorted;
+			bool keep_oc = M.empty();
+			if (!keep_oc)
+			{
+				auto& f = M.front();
+				Fvector ep;
+				if (!lens_center(f.pVisual, f.pMatrix, ep))
+				{
+					M.clear();
+					keep_oc = true;
+				}
+				else
+				{
+					const float previous_axial = ep.dotproduct(wfwd);
+					keep_oc = !_valid(previous_axial) || lens_axial < previous_axial;
+				}
+			}
+			if (keep_oc)
+			{
+				M.clear();
+				M.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+					i_mask[CDSGraphManager::fl_hud], val_hud_role);
+			}
+
+			// The objective is the front lens along the weapon axis
+			auto& O = RGraph.mapScopeHUDObjective;
+			bool keep_obj = O.empty();
+			if (!keep_obj)
+			{
+				auto& f = O.front();
+				Fvector op;
+				if (!lens_center(f.pVisual, f.pMatrix, op))
+				{
+					O.clear();
+					keep_obj = true;
+				}
+				else
+				{
+					const float previous_axial = op.dotproduct(wfwd);
+					keep_obj = !_valid(previous_axial) || lens_axial > previous_axial;
+				}
+			}
+			if (keep_obj)
+			{
+				O.clear();
+				O.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+					i_mask[CDSGraphManager::fl_hud], val_hud_role);
+			}
+			return;
+		}
+		if (sh->flags.iScopeLense == 10)
+		{
+			// dedup per visual, the HUD capture inserts the same reflex mesh many times per frame and
+			// draw_reflex would otherwise draw it hundreds of times
+			for (const auto& n : RGraph.mapReflexHUDSorted)
+				if (n.pVisual == pVisual)
+					return;
+			RGraph.mapReflexHUDSorted.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+				i_mask[CDSGraphManager::fl_hud], val_hud_role);
+			return;
+		}
+		if (Device.m_SecondViewport.IsSVPActive())
+			return; // the SVP composite draws the whole lens, skip the back-glass / zwrite
+		// a fake / not-yet-active optic, fall through to the legacy ==1/==2 handling below
+	}
+	switch (sh->flags.iScopeLense) {
 		case 0:
 			break;
 
 		case 1: {
-			RGraph.mapHUD.emplace_back(EPS, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
+			RGraph.mapHUD.emplace_back(EPS, SSA, val_pObject, pVisual, xform, sh,
+				i_mask[CDSGraphManager::fl_hud], val_hud_role);
 
 			// SSS: Deprecated
 			/*if (!sh->passes[0]->ps->hud_disabled)
@@ -111,12 +236,14 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 		}
 
 		case 2: {
-			RGraph.mapScopeHUD.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
+			RGraph.mapScopeHUD.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+				i_mask[CDSGraphManager::fl_hud], val_hud_role);
 			return;
 		}
 
 		case 3: {
-			RGraph.mapScopeHUDSorted.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
+			RGraph.mapScopeHUDSorted.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+				i_mask[CDSGraphManager::fl_hud], val_hud_role);
 			return;
 		}
 	}
@@ -132,13 +259,15 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 				if (i_mask[CDSGraphManager::fl_cam])
 					RGraph.mapCamAttachedSorted.Emissive.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d, i_mask[CDSGraphManager::fl_cam]);
 				else
-					RGraph.mapHUDSorted.Emissive.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d, i_mask[CDSGraphManager::fl_hud]);
+					RGraph.mapHUDSorted.Emissive.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d,
+						i_mask[CDSGraphManager::fl_hud], val_hud_role);
 			}
 #endif // RENDER!=R_R1
 			if (i_mask[CDSGraphManager::fl_cam])
 				RGraph.mapCamAttachedSorted.Sorted.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_cam]);
 			else
-				RGraph.mapHUDSorted.Sorted.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
+				RGraph.mapHUDSorted.Sorted.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+					i_mask[CDSGraphManager::fl_hud], val_hud_role);
 			return;
 		}
 		else
@@ -146,7 +275,8 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 			if (i_mask[CDSGraphManager::fl_cam])
 				RGraph.mapCamAttached.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_cam]);
 			else
-				RGraph.mapHUD.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
+				RGraph.mapHUD.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+					i_mask[CDSGraphManager::fl_hud], val_hud_role);
 
 			/*
 #if RENDER==R_R4
@@ -167,7 +297,8 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 				if (i_mask[CDSGraphManager::fl_cam])
 					RGraph.mapCamAttachedSorted.Emissive.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d, i_mask[CDSGraphManager::fl_cam]);
 				else
-					RGraph.mapHUDSorted.Emissive.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d, i_mask[CDSGraphManager::fl_hud]);
+					RGraph.mapHUDSorted.Emissive.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh_d,
+						i_mask[CDSGraphManager::fl_hud], val_hud_role);
 			}
 				
 #endif	//	RENDER!=R_R1
@@ -204,7 +335,8 @@ void CDSGraphManager::r_dsgraph_insert_dynamic(dxRender_Visual *pVisual, Fmatrix
 	if (sh->flags.bWmark && i_mask[CDSGraphManager::fl_wmarks])
 	{
 		if (i_mask[CDSGraphManager::fl_hud])
-			RGraph.mapHUDSorted.Wmark.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
+			RGraph.mapHUDSorted.Wmark.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh,
+				i_mask[CDSGraphManager::fl_hud], val_hud_role);
 		else
 			RGraph.mapDynamicSorted.Wmark.emplace_back(distSQ, SSA, val_pObject, pVisual, xform, sh, i_mask[CDSGraphManager::fl_hud]);
 		return;

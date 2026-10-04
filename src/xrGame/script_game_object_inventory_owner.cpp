@@ -2670,7 +2670,7 @@ void CScriptGameObject::Weapon_SetCurrentScope(u8 type)
 		return;
 	}
 
-	weapon->m_cur_scope = type;
+	weapon->SetCurrentScopeIndex(type, "script");
 }
 
 u8 CScriptGameObject::Weapon_GetCurrentScope()

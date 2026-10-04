@@ -858,7 +858,7 @@ bool CHudItem::TryPlayAnimIdle()
 
 			CEntity::SEntityState st;
 			pActor->g_State(st);
-			if (st.bSprint)
+			if (st.bSprint && pActor->cam_BodycamSprintAnimReady())
 			{
 				PlayAnimIdleSprint();
 				return true;
@@ -1109,7 +1109,26 @@ void CHudItem::Ray(SPickParam& pp)
 		);
 
 		// Transform from non-offset HUD space to world space
-		Device.hud_to_world(matrix, proj);
+		// the pick remaps through the actor's real eye under demo_record
+		if (Level().Cameras().GetCamEffector(cefDemo))
+		{
+			CCameraBase* c = const_cast<CActor*>(pActor)->cam_FirstEye();
+			Fmatrix view;
+			view.build_camera_dir(c->vPosition, c->vDirection, c->vNormal);
+			Fmatrix inv_view;
+			inv_view.invert(view);
+			Fmatrix mproj;
+			mproj.build_projection(
+				deg2rad(c->f_fov),
+				Device.fASPECT,
+				R_VIEWPORT_NEAR,
+				g_pGamePersistent->Environment().CurrentEnv->far_plane);
+			Fmatrix inv_proj;
+			inv_proj.invert(mproj);
+			Device.hud_to_world(matrix, proj, view, inv_view, inv_proj);
+		}
+		else
+			Device.hud_to_world(matrix, proj);
 	}
 
 	// Detect wall penetration

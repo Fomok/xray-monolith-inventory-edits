@@ -9,6 +9,7 @@
 #define SCOPE_ATTACH_IDX 2
 
 class player_hud;
+namespace Bodycam { class HudArms; }
 class CHudItem;
 class CMotionDef;
 
@@ -316,12 +317,16 @@ struct attachable_hud_item
     float final_anim_speed;
 
 	player_hud_motion_container* m_hand_motions;
+	MotionID m_active_hand_motion;
+	CBlend* m_active_hand_blend;
+	u32 m_active_hand_generation;
 
 	attachable_hud_item(player_hud* pparent) : m_parent(pparent), m_upd_firedeps_frame(u32(-1)), m_parent_hud_item(nullptr),
-		m_model(nullptr), m_attach_place_idx(0) {
+		m_model(nullptr), m_attach_place_idx(0), m_active_hand_blend(nullptr), m_active_hand_generation(0) {
 	}
 	~attachable_hud_item();
 	void load(const shared_str& sect_name);
+	void update_attach_offset();
 	void update(bool bForce);
 	void setup_firedeps(firedeps& fd);
 	void render(IDSGraphManager* DM);
@@ -408,6 +413,7 @@ public:
 	void re_sync_anim(u8 part);
 	void set_part_cycle_time(u8 part, float time);
 	void set_part_cycle_speed(u8 part, float speed);
+	void DumpStalker2AuthoredMotionProfile();
 	bool allow_activation(CHudItem* item);
 	attachable_hud_item* attached_item(u16 item_idx) { return m_attached_items[item_idx]; };
 	void detach_item_idx(u16 idx);
@@ -439,10 +445,16 @@ public:
 private:
 	const Fvector attach_rot(u8 part) const;
 	const Fvector attach_pos(u8 part) const;
+	u16 left_hand_bone() const;
+	bool capture_left_hand_attachment(const Fmatrix& item_offset, bool lead_gun,
+		Fmatrix& hand_relative) const;
+	bool compose_left_hand_attachment(const Fmatrix& hand_relative, Fmatrix& result) const;
 	shared_str m_sect_name;
 	xr_vector<u16> m_ancors;
+	u16 m_left_hand_bone = BI_NONE;
 	attachable_hud_item* m_attached_items[3];
 	static void _BCL FingerCallback(CBoneInstance* B);
+	Bodycam::HudArms* m_bodycam_hud_arms = nullptr;
 
 public:
 	IKinematicsAnimated* m_model;
