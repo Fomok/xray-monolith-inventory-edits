@@ -6,6 +6,7 @@
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
 #include "InventoryOwner.h"
+#include "InventoryBox.h"
 #include "InventoryContainer.h"	// AMP: needed by IterateInventory as well now
 #include "Pda.h"
 #include "xrMessages.h"
@@ -772,11 +773,12 @@ Observation sqa_observe_transfer(const Entry& e)
     auto* rig = Level().Objects.net_Find(e.rig);
     auto* item = smart_cast<CInventoryItem*>(obj);
     auto* container = smart_cast<CInventoryContainer*>(rig);
-    if (!obj || !rig || obj->getDestroy() || rig->getDestroy() || !item || !container)
+    auto* stash = smart_cast<CInventoryBox*>(rig);
+    if (!obj || !rig || obj->getDestroy() || rig->getDestroy() || !item || (!container && !stash))
         return state;
     state.endpoints_live = Level().Objects.net_Find(e.from) && Level().Objects.net_Find(e.to);
     state.item_token = item->SqaTransferGeneration();
-    state.rig_token = container->SqaTransferGeneration();
+    state.rig_token = container ? container->SqaTransferGeneration() : stash->SqaTransferGeneration();
     state.parent = obj->H_Parent() ? u16(obj->H_Parent()->ID()) : inventory_rig_transfer::none;
     return state;
 }
@@ -832,7 +834,9 @@ bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
         return false;
     auto* item = smart_cast<CInventoryItem*>(&item_object->object());
     auto* container = smart_cast<CInventoryContainer*>(&container_object->object());
-    if (!item || !container || smart_cast<CInventoryContainer*>(&item_object->object()) ||
+    auto* stash = smart_cast<CInventoryBox*>(&container_object->object());
+    if (!item || (!container && !stash) || (stash && !stash->can_take()) ||
+        smart_cast<CInventoryContainer*>(&item_object->object()) ||
         item_object->object().H_Parent() != &container_object->object()) return false;
     auto& inv = actor->inventory();
     if (!inv.SqaValidSlot(slot)) return false;
@@ -840,14 +844,15 @@ bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
     if (!inv.CanTakeItem(item) || !inv.CanPutInSlot(item, slot, old)) return false;
     if (old && return_to_source && smart_cast<CInventoryContainer*>(&old->object())) return false;
     const u16 actor_id = u16(object().ID()), container_id = u16(container_object->object().ID());
+    const auto source_token = container ? container->SqaTransferGeneration() : stash->SqaTransferGeneration();
     Entry incoming{u16(item_object->object().ID()), container_id, actor_id, container_id,
-        item->SqaTransferGeneration(), container->SqaTransferGeneration(), Device.dwTimeGlobal};
+        item->SqaTransferGeneration(), source_token, Device.dwTimeGlobal};
     incoming.target_slot = slot;
     if (registry->request(incoming, sqa_observe_transfer(incoming)) != Request::queued) return false;
     if (old && return_to_source)
     {
         const Entry outgoing{u16(old->object().ID()), actor_id, container_id, container_id,
-            old->SqaTransferGeneration(), container->SqaTransferGeneration(), Device.dwTimeGlobal};
+            old->SqaTransferGeneration(), source_token, Device.dwTimeGlobal};
         if (registry->request(outgoing, sqa_observe_transfer(outgoing)) != Request::queued)
         { registry->forget(incoming.item); return false; }
     }

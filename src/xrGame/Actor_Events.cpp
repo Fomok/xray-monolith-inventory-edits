@@ -7,6 +7,7 @@
 #include "silencer.h"
 #include "grenadelauncher.h"
 #include "inventory.h"
+#include "InventoryBox.h"
 #include "level.h"
 #include "xr_level_controller.h"
 #include "FoodItem.h"
@@ -70,7 +71,10 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
                 for (const auto& transfer : inventory().sqa_rig_transfers.entries())
                 {
                     auto* source = smart_cast<CInventoryItem*>(Level().Objects.net_Find(transfer.rig));
-                    if (source && source->SqaTransferGeneration() == transfer.rig_token &&
+                    auto* stash = smart_cast<CInventoryBox*>(Level().Objects.net_Find(transfer.rig));
+                    const auto source_token = source ? source->SqaTransferGeneration() :
+                        (stash ? stash->SqaTransferGeneration() : 0);
+                    if (source_token == transfer.rig_token &&
                         transfer.item == id && transfer.to == ID() &&
                         transfer.target_slot != inventory_rig_transfer::none &&
                         incoming->SqaTransferGeneration() == transfer.item_token &&

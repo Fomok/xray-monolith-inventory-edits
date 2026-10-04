@@ -23,6 +23,13 @@ protected:
 };
 struct Item:CGameObject,CInventoryItem{using CGameObject::CGameObject; CGameObject& object() override {return *this;}};
 struct CInventoryContainer:Item{using Item::Item;};
+struct CInventoryBox:CGameObject {
+ using CGameObject::CGameObject;
+ inventory_rig_transfer::Token generation=inventory_rig_transfer::next_identity();
+ bool allowed=true;
+ auto SqaTransferGeneration() const {return generation;}
+ bool can_take()const{return allowed;}
+};
 struct Inventory{
  inventory_rig_transfer::Registry sqa_rig_transfers;
  std::map<u16,CInventoryItem*> slots;bool take=true,allow=true;

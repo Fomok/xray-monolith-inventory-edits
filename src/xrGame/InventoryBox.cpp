@@ -94,6 +94,7 @@ void CInventoryBox::net_Destroy()
 BOOL CInventoryBox::net_Spawn(CSE_Abstract* DC)
 {
 	if (!inherited::net_Spawn(DC)) return FALSE;
+    sqa_transfer_generation = inventory_rig_transfer::next_identity();
 
 	setVisible(TRUE);
 	setEnabled(TRUE);

@@ -258,6 +258,7 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("drop_item_and_teleport", &CScriptGameObject::DropItemAndTeleport)
         .def("sqa_rig_transfer", &CScriptGameObject::SqaRigTransfer)
         .def("sqa_equip_from_container", &CScriptGameObject::SqaEquipFromContainer)
+        .def("sqa_equip_from_stash", &CScriptGameObject::SqaEquipFromContainer)
         .def("sqa_rig_transfer_pending", &CScriptGameObject::SqaRigTransferPending)
         .def("sqa_rig_transfer_rig_pending", &CScriptGameObject::SqaRigTransferRigPending)
         .def("sqa_rig_transfer_count", &CScriptGameObject::SqaRigTransferCount)

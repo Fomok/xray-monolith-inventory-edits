@@ -1,6 +1,7 @@
 #pragma once
 #include "inventory_space.h"
 #include "GameObject.h"
+#include "inventory_rig_transfer.h"
 #include "script_export_space.h"
 
 class CInventoryBox : public CGameObject
@@ -11,11 +12,13 @@ public:
 	xr_vector<u16> m_items;
 
 protected:
+    inventory_rig_transfer::Token sqa_transfer_generation = inventory_rig_transfer::next_identity();
 	bool m_in_use;
 	bool m_can_take;
 	bool m_closed;
 
 public:
+    inventory_rig_transfer::Token SqaTransferGeneration() const { return sqa_transfer_generation; }
 	CInventoryBox();
 	virtual ~CInventoryBox();
 
