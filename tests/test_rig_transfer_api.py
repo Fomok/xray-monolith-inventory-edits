@@ -59,9 +59,32 @@ int main(){try{
  setup();CHECK(host_request(1,21,14,0));host_query(6,0);CHECK(!host_query(0,0)&&host_query(4,0)==65535);
  setup();CHECK(!host_request(14,21,14,0));CHECK(!host_request(1,14,14,1));CHECK(!host_request(1,999,14,0));host_add(90,3,1);CHECK(!host_request(1,90,14,1));host_add(91,1,1);CHECK(!host_request(1,91,14,1));CHECK(sent_events.empty());
  setup();for(int i=0;i<100;++i){CHECK(host_request(1,21,14,0));CHECK(host_request(1,22,14,0));host_parent(21,65535);CHECK(host_query(0,0)==2);host_parent(21,1);CHECK(host_query(0,0)==1);host_parent(22,1);CHECK(host_query(0,0)==0);CHECK(host_query(4,0)!=65535);CHECK(host_query(4,0)!=65535);CHECK(host_query(4,0)==65535);CHECK(host_request(1,21,14,1));CHECK(host_request(1,22,14,1));host_parent(21,14);host_parent(22,14);CHECK(host_query(0,0)==0);CHECK(host_query(4,0)==65535);}CHECK(sent_events.size()==800);
+ // Actual container equipment API: reserve before dispatch, preserve old item,
+ // reject invalid/pending/destroyed endpoints without sending partial events.
+ auto equip=[](int slot,bool back){CScriptGameObject actor(get(1)),item(get(21)),rig(get(14));return actor.SqaEquipFromContainer(&item,&rig,u16(slot),back);};
+ setup();CHECK(equip(2,false));CHECK(sent_events.size()==2);CHECK(dynamic_cast<CActor*>(get(1))->inventory().sqa_rig_transfers.entries()[0].target_slot==2);CHECK(!equip(2,false)&&sent_events.size()==2);
+ setup();host_add(30,2,1);auto* actor=dynamic_cast<CActor*>(get(1));actor->inventory().slots[2]=dynamic_cast<CInventoryItem*>(get(30));CHECK(equip(2,true));CHECK(sent_events.size()==4);CHECK(sent_events[0].item==30&&sent_events[0].type==GE_TRADE_SELL);CHECK(sent_events[1].item==30&&sent_events[1].dest==14);CHECK(sent_events[2].item==21&&sent_events[3].dest==1);CHECK(host_query(0,0)==2);
+ setup();host_add(30,2,1);actor=dynamic_cast<CActor*>(get(1));actor->inventory().slots[2]=dynamic_cast<CInventoryItem*>(get(30));CHECK(equip(2,false));CHECK(sent_events.size()==3&&sent_events[0].type==GEG_PLAYER_ITEM2RUCK);
+ setup();CHECK(!equip(65535,false)&&sent_events.empty());CHECK(!equip(99,false)&&sent_events.empty());
+ setup();actor=dynamic_cast<CActor*>(get(1));actor->inventory().allow=false;CHECK(!equip(2,false)&&sent_events.empty());
+ setup();actor=dynamic_cast<CActor*>(get(1));actor->inventory().take=false;CHECK(!equip(2,false)&&sent_events.empty());
+ setup();host_parent(21,1);CHECK(!equip(2,false)&&sent_events.empty());
+ setup();host_add(30,2,1);actor=dynamic_cast<CActor*>(get(1));actor->inventory().slots[2]=dynamic_cast<CInventoryItem*>(get(30));host_server(30,0);CHECK(!equip(2,true)&&sent_events.empty()&&host_query(0,0)==0);
+ setup();host_add(30,1,1);actor=dynamic_cast<CActor*>(get(1));actor->inventory().slots[2]=dynamic_cast<CInventoryItem*>(get(30));CHECK(!equip(2,true)&&sent_events.empty());
  puts("PASS: production dispatch/status/completion, async gaps, duplicates, conflicts, destruction, ID reuse, external owners, teardown and 100 handover cycles");return 0;
 }catch(const std::exception& e){puts(e.what());return 1;}}
 '''
+# Compile the real arrival block as well, rather than a duplicate of its logic.
+arrival=(E/'src/xrGame/Actor_Events.cpp').read_text(encoding='utf-8-sig')
+a=arrival.index('                // Resolve the reserved destination')
+b=arrival.index('                inventory().Take(_GO, false, true);',a)
+arrival=arrival[a:b].replace('inventory()', 'self.inventory()').replace('transfer.to == ID()', 'transfer.to == self.ID()')
+bridge+='\nconstexpr int eItemPlaceSlot=1;\nvoid host_arrival(CActor& self,CGameObject* _GO){const auto id=_GO->ID();\n'+arrival+'\n}\n'
+tests=tests.replace(' puts("PASS: production dispatch/status/completion', ''' setup();CHECK(equip(2,false));actor=dynamic_cast<CActor*>(get(1));host_parent(21,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==eItemPlaceSlot);CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.slot_id==2);
+ setup();CHECK(equip(2,false));actor=dynamic_cast<CActor*>(get(1));host_add(30,2,1);actor->inventory().slots[2]=dynamic_cast<CInventoryItem*>(get(30));host_parent(21,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==0);
+ setup();CHECK(equip(2,false));actor=dynamic_cast<CActor*>(get(1));host_add(21,2,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==0);
+ setup();CHECK(equip(2,false));actor=dynamic_cast<CActor*>(get(1));host_add(14,1,1);host_parent(21,1);host_arrival(*actor,get(21));CHECK(dynamic_cast<CInventoryItem*>(get(21))->m_ItemCurrPlace.type==0);
+ puts("PASS: production dispatch/status/completion''')
 cpp=B/'rig_transfer_api_test.cpp';exe=B/'rig_transfer_api_test.exe';cpp.write_text(head+methods+bridge+tests,encoding='utf-8')
 subprocess.run([args.compiler,'c++','-std=c++17',str(cpp),'-o',str(exe)],check=True);subprocess.run([str(exe)],check=True)
 cpp=B/'rig_transfer_api_bridge.cpp';dll=B/'rig_transfer_api_bridge.dll';cpp.write_text(head+methods+bridge,encoding='utf-8')

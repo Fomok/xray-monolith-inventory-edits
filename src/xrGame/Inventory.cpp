@@ -1374,8 +1374,9 @@ bool CInventory::InRuck(const CInventoryItem* pIItem) const
 }
 
 
-bool CInventory::CanPutInSlot(PIItem pIItem, u16 slot_id) const
+bool CInventory::CanPutInSlot(PIItem pIItem, u16 slot_id, PIItem replacing) const
 {
+    if (!pIItem || !SqaValidSlot(slot_id)) return false;
 	if (!m_bSlotsUseful) return false;
 
 	if (!GetOwner()->CanPutInSlot(pIItem, slot_id)) return false;
@@ -1395,8 +1396,8 @@ bool CInventory::CanPutInSlot(PIItem pIItem, u16 slot_id) const
 			return false;
 	}
 
-	if (slot_id != NO_ACTIVE_SLOT &&
-		NULL == ItemFromSlot(slot_id))
+	if (slot_id != NO_ACTIVE_SLOT && slot_id < m_slots.size() &&
+        (NULL == ItemFromSlot(slot_id) || (replacing && replacing == ItemFromSlot(slot_id))))
 		return true;
 
 	return false;

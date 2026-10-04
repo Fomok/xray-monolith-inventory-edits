@@ -444,6 +444,7 @@ public:
 	void ForEachInventoryItems(const ::luabind::functor<bool>& functor);
 	void TransferItem(CScriptGameObject* pItem, CScriptGameObject* pForWho);
     bool SqaRigTransfer(CScriptGameObject* item, CScriptGameObject* rig, bool to_rig);
+    bool SqaEquipFromContainer(CScriptGameObject* item, CScriptGameObject* container, u16 slot, bool return_to_source);
     bool SqaRigTransferPending(u16 id);
     bool SqaRigTransferRigPending(u16 id);
     u32 SqaRigTransferCount();

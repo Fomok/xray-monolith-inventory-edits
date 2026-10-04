@@ -19,6 +19,7 @@ struct Entry
     Token item_token, rig_token;
     std::uint32_t started;
     bool warned = false;
+    Id target_slot = none; // Equip directly on arrival, before pickup callbacks.
 };
 struct Observation
 {

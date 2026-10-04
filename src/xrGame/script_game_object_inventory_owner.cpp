@@ -1,4 +1,4 @@
-﻿////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 // script_game_object_inventory_owner.сpp :	функции для inventory owner
 //////////////////////////////////////////////////////////////////////////
 
@@ -818,6 +818,54 @@ bool CScriptGameObject::SqaRigTransfer(CScriptGameObject* item_object, CScriptGa
     CGameObject::u_EventGen(packet, GE_TRADE_BUY, e.to);
     packet.w_u16(e.item);
     CGameObject::u_EventSend(packet);
+    return true;
+}
+
+// The UI preflights packing and acceptance. This function validates both owners
+// and reserves the equip destination before dispatching any ownership events.
+bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
+    CScriptGameObject* container_object, u16 slot, bool return_to_source)
+{
+    auto* actor = smart_cast<CActor*>(&object());
+    auto* registry = sqa_transfer_registry(*this);
+    if (!actor || !registry || !registry->entries().empty() || !item_object || !container_object)
+        return false;
+    auto* item = smart_cast<CInventoryItem*>(&item_object->object());
+    auto* container = smart_cast<CInventoryContainer*>(&container_object->object());
+    if (!item || !container || smart_cast<CInventoryContainer*>(&item_object->object()) ||
+        item_object->object().H_Parent() != &container_object->object()) return false;
+    auto& inv = actor->inventory();
+    if (!inv.SqaValidSlot(slot)) return false;
+    auto* old = inv.ItemFromSlot(slot);
+    if (!inv.CanTakeItem(item) || !inv.CanPutInSlot(item, slot, old)) return false;
+    if (old && return_to_source && smart_cast<CInventoryContainer*>(&old->object())) return false;
+    const u16 actor_id = u16(object().ID()), container_id = u16(container_object->object().ID());
+    Entry incoming{u16(item_object->object().ID()), container_id, actor_id, container_id,
+        item->SqaTransferGeneration(), container->SqaTransferGeneration(), Device.dwTimeGlobal};
+    incoming.target_slot = slot;
+    if (registry->request(incoming, sqa_observe_transfer(incoming)) != Request::queued) return false;
+    if (old && return_to_source)
+    {
+        const Entry outgoing{u16(old->object().ID()), actor_id, container_id, container_id,
+            old->SqaTransferGeneration(), container->SqaTransferGeneration(), Device.dwTimeGlobal};
+        if (registry->request(outgoing, sqa_observe_transfer(outgoing)) != Request::queued)
+        { registry->forget(incoming.item); return false; }
+    }
+    NET_Packet packet;
+    if (old)
+    {
+        CGameObject::u_EventGen(packet, return_to_source ? GE_TRADE_SELL : GEG_PLAYER_ITEM2RUCK, actor_id);
+        packet.w_u16(old->object().ID()); CGameObject::u_EventSend(packet);
+        if (return_to_source)
+        {
+            CGameObject::u_EventGen(packet, GE_TRADE_BUY, container_id);
+            packet.w_u16(old->object().ID()); CGameObject::u_EventSend(packet);
+        }
+    }
+    CGameObject::u_EventGen(packet, GE_TRADE_SELL, container_id);
+    packet.w_u16(incoming.item); CGameObject::u_EventSend(packet);
+    CGameObject::u_EventGen(packet, GE_TRADE_BUY, actor_id);
+    packet.w_u16(incoming.item); CGameObject::u_EventSend(packet);
     return true;
 }
 

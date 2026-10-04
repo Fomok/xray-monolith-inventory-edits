@@ -64,7 +64,24 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 				Msg("--- Actor [%d][%s]  %s  [%d][%s]", ID(), Name(), act, _GO->ID(), _GO->cNameSect().c_str());
 #endif // MP_LOGGING
 
-				inventory().Take(_GO, false, true);
+                // Resolve the reserved destination before Take invokes any Lua
+                // pickup/overflow callbacks. No temporary backpack placement.
+                auto* incoming = smart_cast<CInventoryItem*>(_GO);
+                for (const auto& transfer : inventory().sqa_rig_transfers.entries())
+                {
+                    auto* source = smart_cast<CInventoryItem*>(Level().Objects.net_Find(transfer.rig));
+                    if (source && source->SqaTransferGeneration() == transfer.rig_token &&
+                        transfer.item == id && transfer.to == ID() &&
+                        transfer.target_slot != inventory_rig_transfer::none &&
+                        incoming->SqaTransferGeneration() == transfer.item_token &&
+                        inventory().CanPutInSlot(incoming, transfer.target_slot))
+                    {
+                        incoming->m_ItemCurrPlace.type = eItemPlaceSlot;
+                        incoming->m_ItemCurrPlace.slot_id = transfer.target_slot;
+                        break;
+                    }
+                }
+                inventory().Take(_GO, false, true);
 
 				SelectBestWeapon(Obj);
 			}

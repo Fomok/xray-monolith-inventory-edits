@@ -60,7 +60,8 @@ public:
 	bool InBelt(const CInventoryItem* pIItem) const;
 	bool InRuck(const CInventoryItem* pIItem) const;
 
-	bool CanPutInSlot(PIItem pIItem, u16 slot_id) const;
+	bool SqaValidSlot(u16 slot) const { return slot != NO_ACTIVE_SLOT && slot < m_slots.size(); }
+	bool CanPutInSlot(PIItem pIItem, u16 slot_id, PIItem replacing = nullptr) const;
 	bool CanPutInBelt(PIItem pIItem);
 	bool CanPutInRuck(PIItem pIItem) const;
 
