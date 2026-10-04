@@ -82,7 +82,6 @@ public:
 private:
 	// render-time UV: the atlas region, cropped to the geometry aspect when in cover mode
 	void ComputeRenderUV(Frect& uv) const;
-	void RenderPolygon(const sPoly2D* polygon);
 	void RenderInternal(const Fvector2& pos);
 	void RenderInternal(float angle);
 };

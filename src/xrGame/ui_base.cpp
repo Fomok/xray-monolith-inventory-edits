@@ -31,7 +31,6 @@ void C2DFrustum::CreateFromRect(const Frect& rect)
 
 sPoly2D* C2DFrustum::ClipPoly(sPoly2D& S, sPoly2D& D) const
 {
-
 	bool bFullTest = false;
 	for (u32 j = 0; j < S.size(); j++)
 	{
@@ -45,25 +44,6 @@ sPoly2D* C2DFrustum::ClipPoly(sPoly2D& S, sPoly2D& D) const
 	sPoly2D* src = &D;
 	sPoly2D* dest = &S;
 	if (!bFullTest && !m_force_clip) return dest;
-
-    // Ordinary rectangular scissors dominate scrolling inventory rendering.
-    // Reject polygons wholly beyond one edge before running the general UV
-    // interpolating clipper. Strict comparisons retain its boundary behavior.
-    // Custom plane sets keep the original path (their m_rect may be stale).
-    if (!m_force_clip && planes.size() == 4 && !S.empty())
-    {
-        bool left = true, right = true, above = true, below = true;
-        for (u32 j = 0; j < S.size(); ++j)
-        {
-            left = left && S[j].pt.x < m_rect.x1;
-            right = right && S[j].pt.x > m_rect.x2;
-            above = above && S[j].pt.y < m_rect.y1;
-            below = below && S[j].pt.y > m_rect.y2;
-        }
-        if (left || right || above || below)
-            return nullptr;
-    }
-
 
 	for (u32 i = 0; i < planes.size(); i++)
 	{
