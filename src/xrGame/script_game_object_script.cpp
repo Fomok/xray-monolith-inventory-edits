@@ -15,6 +15,8 @@
 
 using namespace luabind;
 
+static bool sqa_scripted_reload_supported() { return true; }
+
 extern class_<CScriptGameObject> script_register_game_object1(class_<CScriptGameObject> &&);
 extern class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject> &&);
 extern class_<CScriptGameObject> script_register_game_object_trader(class_<CScriptGameObject> &&);
@@ -26,6 +28,7 @@ void CScriptGameObject::script_register(lua_State* L)
 
     module(L)
     [
+        def("sqa_scripted_reload_supported", &sqa_scripted_reload_supported),
         class_<inventory_grid::ScriptGrid>("sqa_grid")
         .def(constructor<>())
         .def("resize", &inventory_grid::ScriptGrid::resize)
