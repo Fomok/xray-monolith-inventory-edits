@@ -308,6 +308,9 @@ void CWeaponAutomaticShotgun::OnMotionMark(u32 state, const motion_marks& M)
 
 u8 CWeaponAutomaticShotgun::AddCartridge(u8 cnt)
 {
+    if (ScriptOwnsMagazineReload())
+        return cnt;
+
 	//if (IsMisfire()) bMisfire = false;
 
 	if (m_set_next_ammoType_on_reload != undefined_ammo_type)
