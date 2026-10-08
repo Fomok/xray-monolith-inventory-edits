@@ -116,6 +116,10 @@ public:
 	void r_dsgraph_render_graph_sorted(R_dsgraph::mapDSGraphItems<T, Reverse>& graph, bool _clear = true);
 	void r_dsgraph_capture_hud();
 	void r_dsgraph_render_hud(bool _clear = true);
+#if RENDER == R_R4
+	void r_dsgraph_extract_native_ui();
+	void r_dsgraph_render_native_ui();
+#endif
 	void r_dsgraph_render_physical_glass(bool deferred = false);
 	void r_dsgraph_render_hud_svp();
 	// pip one hud pose sample feeds the housing and every late scope draw

@@ -100,6 +100,23 @@ public:
     }
 };
 
+class CBlender_dlss_ui_depth : public IBlender
+{
+public:
+    CBlender_dlss_ui_depth() { description.CLS = 0; }
+    LPCSTR getComment() override { return "Native PDA screen occlusion depth"; }
+    BOOL canBeDetailed() override { return FALSE; }
+    BOOL canBeLMAPped() override { return FALSE; }
+    void Compile(CBlender_Compile& C) override
+    {
+        IBlender::Compile(C);
+        if (C.iElement != 0) return;
+        C.r_Pass("stub_screen_space", "dlss_ui_depth", FALSE, TRUE, TRUE);
+        C.r_dx10Texture("s_scene_depth", "$user$dlss_scene_depth");
+        C.r_End();
+    }
+};
+
 void CRenderTarget::set_viewport_size(ID3DDeviceContext * dev, float w, float h)
 {
 	custom_viewport[0].Width = w;
@@ -1503,6 +1520,10 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 		rt_dlss_post_color.create("$user$dlss_post_color", Device.dwWidth, Device.dwHeight, D3DFMT_A16B16G16R16F);
 		t_dlss_output.create("$user$dlss_output");
 		t_dlss_output->surface_set(dlss::Output());
+		t_dlss_scene_depth.create("$user$dlss_scene_depth");
+		t_dlss_scene_depth->surface_set(dlss::SceneDepthTexture());
+		CBlender_dlss_ui_depth uiDepth;
+		s_dlss_ui_depth.create(&uiDepth, "dlss_ui_depth");
 		CBlender_dlss_postprocess blender;
 		s_dlss_postprocess.create(&blender, "dlss_postprocess");
 		CBlender_dlss_copy copy;
@@ -1527,7 +1548,7 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 
 CRenderTarget::~CRenderTarget()
 {
-	if (this == RImplementation.TargetMain) { scope_vslr_destroy(); if (t_dlss_output) t_dlss_output->surface_set(nullptr); dlss::ReleaseTargets(); }
+	if (this == RImplementation.TargetMain) { scope_vslr_destroy(); if (t_dlss_output) t_dlss_output->surface_set(nullptr); if (t_dlss_scene_depth) t_dlss_scene_depth->surface_set(nullptr); dlss::ReleaseTargets(); }
 	_RELEASE(t_ss_async);
 
 	// Textures

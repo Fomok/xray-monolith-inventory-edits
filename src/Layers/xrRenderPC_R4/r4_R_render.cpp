@@ -160,6 +160,7 @@ void CRender::Render()
 	PIX_EVENT_C(CRender_Render, dx10_marker_frame);
 	dx10_annotate_frame();
 	dlss::EndScene();
+	GMBase.RGraph.mapHUDNativeUi.clear(); // Never retain packets across views/menu/reset.
 
 	rmNormal();
 
@@ -377,6 +378,7 @@ void CRender::renderGBuffer(bool clearGraph)
 		if (Target == TargetMain) // pip weapon HUD only in the main view, not the scope image
 		{
 			GMBase.r_dsgraph_capture_hud();
+			if (dlss::Configured()) GMBase.r_dsgraph_extract_native_ui();
 			svp_stats::cpu_begin(svp_stats::CPU_HUD);
 			const bool svp_scope_aimed = g_pGamePersistent
 				&& (g_pGamePersistent->m_pGShaderConstants->hud_params.y > 0.005f
