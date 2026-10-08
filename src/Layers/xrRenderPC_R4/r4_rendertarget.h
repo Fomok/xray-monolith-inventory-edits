@@ -462,6 +462,11 @@ private:
 	ref_shader s_combine_volumetric;
 public:
 	ref_shader s_postprocess;
+	ref_shader s_dlss_postprocess;
+	ref_shader s_dlss_copy;
+	ref_rt rt_dlss_post_source;
+	ref_rt rt_dlss_post_color;
+	ref_texture t_dlss_output;
 	ref_shader s_postprocess_msaa;
 	ref_geom g_postprocess;
 	ref_shader s_menu;
@@ -670,6 +675,9 @@ public:
 	void phase_combine();
 	void phase_combine_volumetric();
 	void phase_pp();
+	void phase_dlss_postprocess();
+	ref_rt& PostprocessColor();
+	ref_rt& PostprocessSource();
 
 	virtual void set_blur(float f) { param_blur = f; }
 	virtual void set_gray(float f) { param_gray = f; }
