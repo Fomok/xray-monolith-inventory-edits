@@ -24,13 +24,17 @@ bool reportedEvaluation = false;
 string512 backendError = {};
 
 const char* Method() { return useFsr ? "FSR3" : "DLSS"; }
+void ShowBackendError(const char* method)
+{
+    string128 summary;
+    xr_sprintf(summary, "%s is not active.", method);
+    SetRendererError(summary, "See the console/log for details.");
+}
 void LogBackendError(const char* method, const char* stage, unsigned result)
 {
     xr_sprintf(backendError, "%s (0x%08X)", stage, result);
     Msg("! [%s] %s", method, backendError);
-    string128 summary;
-    xr_sprintf(summary, "[%s] Renderer error", method);
-    SetRendererError(summary, backendError, "See the console/log for details. Reapply Upscaling or switch it Off in Video settings.");
+    ShowBackendError(method);
 }
 void LogDlss(const char* stage, unsigned result) { LogBackendError("DLSS", stage, result); }
 void LogFsr(const char* stage, unsigned result) { LogBackendError("FSR3", stage, result); }
@@ -40,7 +44,7 @@ void ActivationFailed(const char* reason, const char* recovery)
     xr_sprintf(summary, "[%s] NOT ACTIVE - rendering at native resolution", Method());
     Msg("! %s: %s", summary, reason);
     Msg("! [%s] %s", Method(), recovery);
-    SetRendererError(summary, reason, recovery);
+    ShowBackendError(Method());
 }
 const char* BackendReason(const char* fallback) { return backendError[0] ? backendError : fallback; }
 void ResetHistory() { backend.ResetHistory(); fsrBackend.ResetHistory(); }
@@ -259,7 +263,7 @@ bool Evaluate(ID3D11Texture2D* color, ID3D11Texture2D* motion)
         const char* recovery = "Check the console/log. Reapply Upscaling (vid_restart) or switch it Off in Video settings.";
         Msg("! %s: %s", summary, reason);
         Msg("! [%s] %s", Method(), recovery);
-        SetRendererError(summary, reason, recovery);
+        ShowBackendError(Method());
     }
     return success;
 }

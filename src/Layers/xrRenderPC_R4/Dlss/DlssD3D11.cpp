@@ -1,4 +1,5 @@
 #include "DlssD3D11.h"
+#include "UpscalerDiagnostics.h"
 #include "../../../../sdk/DLSS/include/nvsdk_ngx.h"
 #include "../../../../sdk/DLSS/include/nvsdk_ngx_helpers.h"
 
@@ -23,7 +24,13 @@ D3D11Backend::~D3D11Backend() { Shutdown(); }
 bool D3D11Backend::Check(unsigned result, const char* stage)
 {
     if (NVSDK_NGX_SUCCEED(static_cast<NVSDK_NGX_Result>(result))) return true;
-    if (m_log) m_log(stage, result);
+    if (m_log)
+    {
+        char message[512];
+        const wchar_t* description = GetNGXResultAsString(static_cast<NVSDK_NGX_Result>(result));
+        std::snprintf(message, sizeof(message), "%s: %ls", stage, description ? description : L"Unknown NGX error");
+        m_log(message, result);
+    }
     return false;
 }
 
@@ -188,6 +195,7 @@ bool D3D11Backend::Evaluate(const Frame& frame)
     if (!Ready()) return false;
     if (!Validate(frame))
     {
+        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log);
         if (m_log) m_log("Invalid DLSS input resources; disabling until render-target reset", unsigned(E_INVALIDARG));
         m_failed = true;
         m_history.Invalidate();
@@ -213,8 +221,11 @@ bool D3D11Backend::Evaluate(const Frame& frame)
     const auto result = NGX_D3D11_EVALUATE_DLSS_EXT(m_context.Get(), m_feature, m_parameters, &eval);
     m_context->ClearState();
     m_context->SwapDeviceContextState(previous.Get(), nullptr);
-    if (!Check(result, "DLSS evaluation failed; disabling until render-target reset"))
+    if (NVSDK_NGX_FAILED(result))
     {
+        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(result));
+        // Keep the SDK error as the final diagnostic used by the STOPPED log.
+        Check(result, "DLSS evaluation failed; disabling until render-target reset");
         m_failed = true;
         m_history.Invalidate();
         return false;

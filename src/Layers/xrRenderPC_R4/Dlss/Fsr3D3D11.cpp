@@ -1,9 +1,25 @@
 #include "Fsr3D3D11.h"
+#include "UpscalerDiagnostics.h"
 #include "../../../../sdk/FSR3/include/FidelityFX/host/backends/dx11/ffx_dx11.h"
 
 namespace fsr3
 {
 using Microsoft::WRL::ComPtr;
+static void LogEvaluationInputs(const D3D11Backend::Frame& frame, dlss::Size render,
+    ID3D11Device* device, ID3D11Texture2D* output, D3D11Backend::Log log,
+    unsigned result = unsigned(E_INVALIDARG))
+{
+    if (!log) return;
+    dlss::LogEvaluationInputs(frame, render, device, output, log, result);
+    char message[256];
+    std::snprintf(message, sizeof(message),
+        "Evaluation camera: near=%.9g far=%.9g vertical_fov=%.9g; invalid_camera=%u",
+        double(frame.cameraNear), double(frame.cameraFar), double(frame.verticalFov),
+        unsigned(!std::isfinite(frame.cameraNear) || !std::isfinite(frame.cameraFar) ||
+            !std::isfinite(frame.verticalFov) || frame.cameraNear <= 0 || frame.cameraFar <= frame.cameraNear ||
+            frame.verticalFov <= 0 || frame.verticalFov >= 3.141593f));
+    log(message, result);
+}
 class ContextScope
 {
 public:
@@ -179,6 +195,7 @@ try
     if (!Ready()) return false;
     if (!Validate(frame))
     {
+        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log);
         if (m_log) m_log("Invalid FSR3 inputs; disabling until vid_restart", unsigned(E_INVALIDARG));
         m_failed = true; m_history.Invalidate(); return false;
     }
@@ -209,13 +226,18 @@ try
     ID3D11SamplerState* samplers[] = {m_samplers[0].Get(), m_samplers[1].Get()};
     m_context->CSSetSamplers(0, 2, samplers);
     const auto result = ffxFsr3UpscalerContextDispatch(m_fsr.get(), &dispatch);
-    if (!Check(result, "FSR3 evaluation failed; disabling until vid_restart"))
-    { m_failed = true; m_history.Invalidate(); return false; }
+    if (result != FFX_OK)
+    {
+        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(result));
+        Check(result, "FSR3 evaluation failed; disabling until vid_restart");
+        m_failed = true; m_history.Invalidate(); return false;
+    }
     m_history.Commit(frame.frame);
     return true;
 }
 catch (HRESULT result)
 {
+    LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(result));
     if (m_log) m_log("FSR3 dispatch failed; disabling until vid_restart", unsigned(result));
     m_failed = true;
     m_history.Invalidate();
@@ -223,6 +245,7 @@ catch (HRESULT result)
 }
 catch (...)
 {
+    LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(E_FAIL));
     if (m_log) m_log("FSR3 dispatch exception; disabling until vid_restart", unsigned(E_FAIL));
     m_failed = true;
     m_history.Invalidate();

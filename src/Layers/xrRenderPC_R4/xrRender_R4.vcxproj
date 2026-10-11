@@ -906,6 +906,7 @@
     </ClCompile>
     <ClInclude Include="Dlss\DlssIntegration.h" />
     <ClInclude Include="Dlss\DlssD3D11.h" />
+    <ClInclude Include="Dlss\UpscalerDiagnostics.h" />
     <ClInclude Include="Dlss\DlssTemporal.h" />
     <ClInclude Include="..\xrRender\RenderDimensions.h" />
   </ItemGroup>
