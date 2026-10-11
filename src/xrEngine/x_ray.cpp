@@ -325,7 +325,8 @@ void execUserScript()
 	// re-apply -gpu_markers / -shader_debug after user.ltx so a saved cvar value can't override them
 	if (strstr(Core.Params, "-gpu_markers")) Console->Execute("r__gpu_markers 1");
 	if (strstr(Core.Params, "-shader_debug")) Console->Execute("r__shader_debug 1");
-	Console->Execute("dump_cvar");
+    if (Console->GetBool("dump_cvar_enable"))
+	    Console->Execute("dump_cvar");
 }
 
 void slowdownthread(void*)

@@ -34,6 +34,31 @@ extern u32 svp_stats_cull_reject;
 extern u32 svp_stats_lod_scale;
 extern u32 svp_ledger_ssa_culled;
 extern u32 svp_ledger_lod_scale;
+ICF bool R4FullDetailRejectSpatial(ISpatial* spatial, bool normalPhase)
+{
+#if RENDER == R_R4
+	if (ps_r4_full_detail_distance_scale >= 1.f || !normalPhase || !spatial || !g_pGamePersistent ||
+		!g_pGamePersistent->Environment().CurrentEnv)
+		return false;
+
+	const float farPlane = g_pGamePersistent->Environment().CurrentEnv->far_plane;
+	const float fullDetailDistance = std::max(100.f, farPlane * ps_r4_full_detail_distance_scale);
+	if (Device.vCameraPosition.distance_to_sqr(spatial->spatial.sphere.P) <=
+		_sqr(fullDetailDistance + spatial->spatial.sphere.R))
+		return false;
+
+	if (spatial->spatial.type & STYPE_LIGHTSOURCE)
+	{
+		light* L = (light*)spatial->dcast_Light();
+		if (L && L->flags.bHudMode)
+			return false;
+	}
+
+	return true;
+#else
+	return false;
+#endif
+}
 
 ICF float calcLOD(float ssa/*fDistSq*/, float R)
 {
@@ -754,7 +779,9 @@ void CDSGraphManager::r_dsgraph_capture_lights()
 
 	for (ISpatialShared spatial : lstLights)
 	{
-		if (0 == spatial) continue; spatial->spatial_updatesector();
+		if (0 == spatial) continue;
+		if (R4FullDetailRejectSpatial(spatial.get(), i_mask[CDSGraphManager::fl_normal])) continue;
+		spatial->spatial_updatesector();
 		CSector* sector = (CSector*)spatial->spatial.sector;
 		if (0 == sector) continue;
 
@@ -858,6 +885,7 @@ void CDSGraphManager::r_dsgraph_capture_dynamic(CObject* O)
 			{
 				ISpatialShared spatial = lstRenderables[o_it];
 				if (0 == spatial) continue;
+				if (R4FullDetailRejectSpatial(spatial.get(), i_mask[CDSGraphManager::fl_normal])) continue;
 				CSector* sector = (CSector*)spatial->spatial.sector;
 				if (0 == sector) continue;
 

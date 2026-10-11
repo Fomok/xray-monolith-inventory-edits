@@ -42,3 +42,5 @@ compressor/mod.db0
 # emacs temp file
 \#*\#
 *~
+
+__pycache__/

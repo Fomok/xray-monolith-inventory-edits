@@ -831,18 +831,10 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 	// pip r__scope_debug on-screen inspector overlay (gated + main-only inside the call)
 	Target->phase_scope_debug();
 
-	// detail-clear + HUD UI on the main viewport, the scope image has no separate HUD UI
+	// Clear details after both viewport passes.
 	if (Details)
 		Details->details_clear();
 
-	if (g_hud)
-	{
-		PROF_EVENT("render_hud");
-		if (g_hud->RenderActiveItemUIQuery())
-			GMBase.r_dsgraph_render_hud_ui();
-		if (g_hud->RenderCamAttachedUIQuery())
-			GMBase.r_dsgraph_render_cam_ui();
-	}
 }
 #include "../xrRender/CHudInitializer.h"
 
@@ -865,6 +857,17 @@ void CRender::render_forward()
 		GMBase.fade_render(); // faded-portals
 		GMBase.r_dsgraph_render_sorted(false); // strict-sorted geoms
 		g_pGamePersistent->Environment().RenderLast(); // rain/thunder-bolts
+
+		// Item UI belongs to the main view; draw before HUD glass and postprocessing.
+		if (g_hud && !(Device.true_pip_on && Target == TargetSVP) && !Device.m_SecondViewport.IsSVPFrame())
+		{
+			PROF_EVENT("render_hud");
+			if (g_hud->RenderActiveItemUIQuery())
+				GMBase.r_dsgraph_render_hud_ui();
+			if (g_hud->RenderCamAttachedUIQuery())
+				GMBase.r_dsgraph_render_cam_ui();
+		}
+
 		GMBase.r_dsgraph_render_sorted_hud();
 	}
 

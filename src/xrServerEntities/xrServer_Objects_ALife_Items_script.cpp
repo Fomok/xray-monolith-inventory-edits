@@ -83,6 +83,23 @@ int sqa_rig_membership_version() { return 1; }
 int sqa_rig_pouches_version() { return 1; }
 int sqa_box_layout_version() { return 1; }
 
+float get_condition_script(CSE_ALifeInventoryItem* item)
+{
+	return item->m_fCondition;
+}
+
+// the net packet quantises condition over zero to one, anything else corrupts the stored value
+void set_condition_script(CSE_ALifeInventoryItem* item, float value)
+{
+	if (value < 0.f || value > 1.f)
+	{
+		Msg("!cse_alife_inventory_item.condition set to %f, must be between 0 and 1", value);
+		return;
+	}
+
+	item->m_fCondition = value;
+}
+
 using namespace luabind;
 
 #pragma optimize("s",on)
@@ -140,6 +157,7 @@ void CSE_ALifeInventoryItem::script_register(lua_State* L)
 		.def("data_count", &item_data_count_script)
 		.def("data_key", &item_data_key_script)
 		.def("data_bytes", &item_data_bytes_script)
+		.property("condition", &get_condition_script, &set_condition_script)
 	];
 }
 
