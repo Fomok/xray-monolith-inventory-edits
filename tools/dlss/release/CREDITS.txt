@@ -1,0 +1,31 @@
+CREDITS AND COMPONENT NOTICES
+============================
+OGSR team and xrSimpAI - original DLSS implementation
+https://github.com/OGSR/OGSR-Engine
+
+GSC Game World / Anomaly / xray-monolith:
+https://github.com/themrdemonized/xray-monolith
+Engine base: all-in-one-vs2022-wpo-mt.
+GSC's non-commercial engine license is reproduced in the binary packages.
+
+NVIDIA DLSS / NGX:
+https://github.com/NVIDIA/DLSS/releases/tag/v310.9.1
+This software contains source code provided by NVIDIA Corporation.
+The pinned release runtime and SDK are subject to their included license notices.
+
+AMD FidelityFX / CAS and community D3D11 backend contributors:
+FSR upscaler API version 3.1.2; community DX11 backend vendored from OGSR's
+dependency tree. Not AMD's officially supported DX12/Vulkan backend.
+AMD MIT license and accompanying third-party notices are included.
+
+Shader providers (original author notices retained):
+Ascii1457 — Screen Space Shaders, audited Update23_5
+https://www.moddb.com/addons/screen-space-shaders
+Hippobot — Atmospherics, audited 2.69 RC7.5
+https://www.moddb.com/mods/stalker-anomaly/addons/hippos-shaders-and-atmospherics
+theRealBeef — Beef's shader-based NVGs, audited GAMMA package
+https://www.moddb.com/addons/beefs-shader-based-nvgs-v10
+
+These are compatibility overrides, not replacements for the full original mods.
+All other components retain their original ownership and applicable terms.
+No NVIDIA, AMD, GSC or GAMMA endorsement is claimed.

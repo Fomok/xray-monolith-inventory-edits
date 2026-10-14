@@ -1,0 +1,35 @@
+DLSS / FSR3 CREDITS
+============================
+OGSR team and xrSimpAI - original DLSS implementation
+https://github.com/OGSR/OGSR-Engine
+
+Compatibility package: bepis
+https://github.com/brodrigz/xray-monolith
+
+Ascii1457 - Screen Space Shaders Update 23.5
+https://www.moddb.com/addons/screen-space-shaders
+
+Hippobot - Atmospherics
+https://www.moddb.com/mods/stalker-anomaly/addons/hippos-shaders-and-atmospherics
+Additional shader credits, including Lvutner's, are retained in the files.
+
+theRealBeef and the contributors credited in night_vision.h - Beef's NVGs
+https://www.moddb.com/addons/beefs-shader-based-nvgs-v10
+The header permits adaptation/distribution with attribution. Its original
+credits and notice are retained.
+
+indiesunpraiser - Better Beef's NVGs
+https://www.moddb.com/mods/stalker-anomaly/addons/better-beefs-nvg-indiesunpraiser/
+Its header credits BEEF, LVutner, Sky4Ace, Meltac, Mattias, xwize and indiesunpraiser,
+and permits distribution/adaptation with credit. Those credits are retained.
+
+WearableDevices authors and xray-monolith DLSS fork contributors
+
+AMD FidelityFX / CAS contributors
+The shared sharpening helper retains its original AMD license notice.
+
+GSC Game World, Anomaly, themrdemonized/xray-monolith and fork contributors
+https://github.com/themrdemonized/xray-monolith
+
+Original author comments and ownership remain with their respective authors.
+This is a compatibility package and requires the original mods separately.
