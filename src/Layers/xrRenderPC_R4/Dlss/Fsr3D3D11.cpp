@@ -6,11 +6,11 @@ namespace fsr3
 {
 using Microsoft::WRL::ComPtr;
 static void LogEvaluationInputs(const D3D11Backend::Frame& frame, dlss::Size render,
-    ID3D11Device* device, ID3D11Texture2D* output, D3D11Backend::Log log,
+    ID3D11Texture2D* output, D3D11Backend::Log log,
     unsigned result = unsigned(E_INVALIDARG))
 {
     if (!log) return;
-    dlss::LogEvaluationInputs(frame, render, device, output, log, result);
+    dlss::LogEvaluationInputs(frame, render, output, log, result);
     char message[256];
     std::snprintf(message, sizeof(message),
         "Evaluation camera: near=%.9g far=%.9g vertical_fov=%.9g; invalid_camera=%u",
@@ -173,13 +173,18 @@ bool D3D11Backend::Validate(const Frame& frame) const
         !std::isfinite(frame.cameraNear) || !std::isfinite(frame.cameraFar) ||
         !std::isfinite(frame.verticalFov) || frame.cameraNear <= 0 || frame.cameraFar <= frame.cameraNear ||
         frame.verticalFov <= 0 || frame.verticalFov >= 3.141593f) return false;
+    // Older ReShade versions proxy the device but resources report the original.
+    // Compare resource devices consistently, using our own output as the reference.
+    if (!m_output) return false;
+    ComPtr<ID3D11Device> resourceDevice;
+    m_output->GetDevice(&resourceDevice);
     for (auto* input : {frame.color, frame.depth, frame.motion})
     {
         D3D11_TEXTURE2D_DESC desc;
         input->GetDesc(&desc);
         ComPtr<ID3D11Device> device;
         input->GetDevice(&device);
-        if (device.Get() != m_device.Get() || desc.Width != m_render.width || desc.Height != m_render.height ||
+        if (device.Get() != resourceDevice.Get() || desc.Width != m_render.width || desc.Height != m_render.height ||
             desc.SampleDesc.Count != 1 || desc.ArraySize != 1 || !(desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)) return false;
     }
     D3D11_TEXTURE2D_DESC depth, motion;
@@ -195,7 +200,7 @@ try
     if (!Ready()) return false;
     if (!Validate(frame))
     {
-        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log);
+        LogEvaluationInputs(frame, m_render, m_output.Get(), m_log);
         if (m_log) m_log("Invalid FSR3 inputs; disabling until vid_restart", unsigned(E_INVALIDARG));
         m_failed = true; m_history.Invalidate(); return false;
     }
@@ -228,7 +233,7 @@ try
     const auto result = ffxFsr3UpscalerContextDispatch(m_fsr.get(), &dispatch);
     if (result != FFX_OK)
     {
-        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(result));
+        LogEvaluationInputs(frame, m_render, m_output.Get(), m_log, unsigned(result));
         Check(result, "FSR3 evaluation failed; disabling until vid_restart");
         m_failed = true; m_history.Invalidate(); return false;
     }
@@ -237,7 +242,7 @@ try
 }
 catch (HRESULT result)
 {
-    LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(result));
+    LogEvaluationInputs(frame, m_render, m_output.Get(), m_log, unsigned(result));
     if (m_log) m_log("FSR3 dispatch failed; disabling until vid_restart", unsigned(result));
     m_failed = true;
     m_history.Invalidate();
@@ -245,7 +250,7 @@ catch (HRESULT result)
 }
 catch (...)
 {
-    LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(E_FAIL));
+    LogEvaluationInputs(frame, m_render, m_output.Get(), m_log, unsigned(E_FAIL));
     if (m_log) m_log("FSR3 dispatch exception; disabling until vid_restart", unsigned(E_FAIL));
     m_failed = true;
     m_history.Invalidate();

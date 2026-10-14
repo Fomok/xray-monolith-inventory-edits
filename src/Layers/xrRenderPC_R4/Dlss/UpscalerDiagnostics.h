@@ -7,18 +7,21 @@ namespace dlss
 {
 // Failure path only: preserve the inputs needed to diagnose validation/SDK errors.
 inline void LogEvaluationInputs(const D3D11Backend::Frame& frame, Size render,
-    ID3D11Device* expectedDevice, ID3D11Texture2D* output, D3D11Backend::Log log,
+    ID3D11Texture2D* output, D3D11Backend::Log log,
     unsigned result = unsigned(E_INVALIDARG))
 {
     if (!log) return;
+    // Use the same resource-device reference as validation, including with ReShade.
+    Microsoft::WRL::ComPtr<ID3D11Device> resourceDevice;
+    if (output) output->GetDevice(&resourceDevice);
     char message[512];
     std::snprintf(message, sizeof(message),
-        "Evaluation inputs: frame=%llu expected=%ux%u jitter=(%.9g,%.9g) delta_ms=%.9g; invalid_jitter=%u invalid_time=%u color_aliases_output=%u",
+        "Evaluation inputs: frame=%llu expected=%ux%u jitter=(%.9g,%.9g) delta_ms=%.9g; invalid_jitter=%u invalid_time=%u color_aliases_output=%u missing_output=%u",
         static_cast<unsigned long long>(frame.frame), render.width, render.height,
         double(frame.jitter.x), double(frame.jitter.y), double(frame.deltaMilliseconds),
         unsigned(!std::isfinite(frame.jitter.x) || !std::isfinite(frame.jitter.y)),
         unsigned(!std::isfinite(frame.deltaMilliseconds) || frame.deltaMilliseconds < 0),
-        unsigned(frame.color && frame.color == output));
+        unsigned(frame.color && frame.color == output), unsigned(!output));
     log(message, result);
 
     ID3D11Texture2D* inputs[] = {frame.color, frame.depth, frame.motion};
@@ -45,7 +48,7 @@ inline void LogEvaluationInputs(const D3D11Backend::Frame& frame, Size render,
             names[i], desc.Width, desc.Height, unsigned(desc.Format), desc.SampleDesc.Count, desc.ArraySize, desc.BindFlags,
             unsigned(desc.Width != render.width || desc.Height != render.height), unsigned(!validFormat),
             unsigned(desc.SampleDesc.Count != 1), unsigned(desc.ArraySize != 1),
-            unsigned(!(desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)), unsigned(device.Get() != expectedDevice));
+            unsigned(!(desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)), unsigned(device.Get() != resourceDevice.Get()));
         log(message, result);
     }
 }

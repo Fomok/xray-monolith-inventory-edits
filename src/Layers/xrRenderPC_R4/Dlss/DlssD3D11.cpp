@@ -171,6 +171,11 @@ bool D3D11Backend::Validate(const Frame& frame) const
     if (!frame.color || !frame.depth || !frame.motion || frame.color == m_output.Get() ||
         !std::isfinite(frame.jitter.x) || !std::isfinite(frame.jitter.y) ||
         !std::isfinite(frame.deltaMilliseconds) || frame.deltaMilliseconds < 0) return false;
+    // Older ReShade versions proxy the device but resources report the original.
+    // Compare resource devices consistently, using our own output as the reference.
+    if (!m_output) return false;
+    ComPtr<ID3D11Device> resourceDevice;
+    m_output->GetDevice(&resourceDevice);
     for (auto* input : {frame.color, frame.depth, frame.motion})
     {
         D3D11_TEXTURE2D_DESC desc;
@@ -179,7 +184,7 @@ bool D3D11Backend::Validate(const Frame& frame) const
             desc.ArraySize != 1 || !(desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)) return false;
         ComPtr<ID3D11Device> device;
         input->GetDevice(&device);
-        if (device.Get() != m_device.Get()) return false;
+        if (device.Get() != resourceDevice.Get()) return false;
     }
     D3D11_TEXTURE2D_DESC depth, motion;
     frame.depth->GetDesc(&depth);
@@ -195,7 +200,7 @@ bool D3D11Backend::Evaluate(const Frame& frame)
     if (!Ready()) return false;
     if (!Validate(frame))
     {
-        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log);
+        LogEvaluationInputs(frame, m_render, m_output.Get(), m_log);
         if (m_log) m_log("Invalid DLSS input resources; disabling until render-target reset", unsigned(E_INVALIDARG));
         m_failed = true;
         m_history.Invalidate();
@@ -223,7 +228,7 @@ bool D3D11Backend::Evaluate(const Frame& frame)
     m_context->SwapDeviceContextState(previous.Get(), nullptr);
     if (NVSDK_NGX_FAILED(result))
     {
-        LogEvaluationInputs(frame, m_render, m_device.Get(), m_output.Get(), m_log, unsigned(result));
+        LogEvaluationInputs(frame, m_render, m_output.Get(), m_log, unsigned(result));
         // Keep the SDK error as the final diagnostic used by the STOPPED log.
         Check(result, "DLSS evaluation failed; disabling until render-target reset");
         m_failed = true;
