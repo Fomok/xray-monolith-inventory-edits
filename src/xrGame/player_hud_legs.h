@@ -19,11 +19,16 @@ public:
     void    update(CActor* actor, bool isShadowPass = false);
     void    render(IDSGraphManager* DM, bool isShadowPass = false);
     void    destroy();
+    void    record_camera_collision(const Fvector& requested, const Fvector& resolved);
 
     bool    is_active() const { return m_model != nullptr; }
     IKinematics* model() const { return m_model; }
 
 private:
+    Fvector m_camera_collision = {0.f, 0.f, 0.f};
+    u32 m_collision_frame = u32(-1);
+    u32 m_retreat_frame = u32(-1);
+    float m_collision_retreat = 0.f;
     IKinematics* m_model = nullptr;
     IKinematics* m_shadow_model = nullptr;
     shared_str              m_visual_name;

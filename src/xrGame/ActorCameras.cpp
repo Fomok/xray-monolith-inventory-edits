@@ -803,7 +803,11 @@ bool CActor::cam_Prepare(float dt, float fFOV, PreparedCamera& frame, bool refer
 	if (!reference && Level().CurrentEntity() == this)
 	{
         if (body_pivot_active(this))
+        {
+            const Fvector requestedEye = cameras[eacFirstEye]->vPosition;
             collide_camera_swept(*cameras[eacFirstEye], _viewport_near, this, pivotAnchor, pivotAnchor);
+            m_legs_controller.record_camera_collision(requestedEye, cameras[eacFirstEye]->vPosition);
+        }
         else
             collide_camera(*cameras[eacFirstEye], _viewport_near, this);
 	}

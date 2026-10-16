@@ -347,8 +347,11 @@ void CActor::cam_FinalizeReference(const PreparedCamera& frame, Fmatrix& cameraW
 		baseSweepStart.add(m_reference_camera_base_safe_eye);
 	}
 	m_reference_camera_base_carrier = preparedEye;
+	const Fvector requestedBaseEye = C->vPosition;
 	collide_camera_swept(*C, frame.viewport_near, this, baseSweepStart, preparedEye, &m_reference_camera_base_release, frame.delta,
 		Bodycam::DiagnosticsEnabled(2));
+	if (body_pivot_active(this))
+		m_legs_controller.record_camera_collision(requestedBaseEye, C->vPosition);
 	m_reference_camera_base_safe_eye = C->vPosition;
 	// The caller must anchor all Reference HUD roots to this same corrected pose.
 	cameraWorld.c = C->vPosition;
@@ -377,6 +380,8 @@ void CActor::cam_FinalizeReference(const PreparedCamera& frame, Fmatrix& cameraW
 	m_reference_camera_effect_safe_eye = C->vPosition;
 	Fvector finalCollisionDelta;
 	finalCollisionDelta.sub(C->vPosition, finalPosition);
+	if (body_pivot_active(this))
+		m_legs_controller.record_camera_collision(finalPosition, C->vPosition);
 	Cameras().ApplyReferenceCollisionTranslation(finalCollisionDelta);
 
 	// HUD-affecting native action/landing deltas move the paired arms and weapon

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "player_hud_legs.h"
+#include "body_pivot_turn.h"
 #include "player_hud.h"
 #include "actor.h"
 #include "inventory_item.h"
@@ -45,6 +46,8 @@ bool body_pivot_active(CActor* actor)
 
 void player_legs_controller::destroy()
 {
+    m_collision_retreat = 0.f;
+    m_retreat_frame = u32(-1);
     for (IKinematics** model : { &m_model, &m_shadow_model })
     {
         if (!*model)
@@ -218,6 +221,18 @@ void player_legs_controller::copy_bones_from_actor(CActor* actor)
     }
 }
 
+void player_legs_controller::record_camera_collision(const Fvector& requested, const Fvector& resolved)
+{
+    if (m_collision_frame != Device.dwFrame)
+    {
+        m_camera_collision.set(0.f, 0.f, 0.f);
+        m_collision_frame = Device.dwFrame;
+    }
+    Fvector delta;
+    delta.sub(resolved, requested);
+    if (_valid(delta)) m_camera_collision.add(delta);
+}
+
 void player_legs_controller::update(CActor* actor, bool isShadowPass)
 {
     actor->XFORMShadow.set(actor->XFORM());
@@ -250,13 +265,27 @@ void player_legs_controller::update(CActor* actor, bool isShadowPass)
         copy_bones_from_actor(actor);
 
     m_legs_transform.set(actor->XFORM());
-    // The pelvis stays at the actor root. Camera effects, lean and yaw must
-    // never translate this root around the rendered eye.
+    // Keep the normal body pivot. Only actual camera collision may retreat
+    // the visual model; camera bob, lean and pitch never drive this offset.
     if (body_pivot_active(actor))
     {
+        Fvector forward = actor->XFORM().k;
+        forward.y = 0.f;
+        forward.normalize_safe();
+        if (m_retreat_frame != Device.dwFrame)
+        {
+            const float required = m_collision_frame == Device.dwFrame
+                ? -m_camera_collision.dotproduct(forward) : 0.f;
+            if (m_retreat_frame + 1 != Device.dwFrame) m_collision_retreat = 0.f;
+            m_collision_retreat = body_pivot::retreat(m_collision_retreat, required, Device.fTimeDelta);
+            m_retreat_frame = Device.dwFrame;
+        }
+        m_legs_transform.c.mad(forward, -m_collision_retreat);
         actor->XFORMShadow.set(m_legs_transform);
         return;
     }
+    m_collision_retreat = 0.f;
+    m_retreat_frame = u32(-1);
     if (legs_attach_to_camera && pDemoRecords.empty())
         m_legs_transform.c.set(Device.vCameraPosition.x, m_legs_transform.c.y, Device.vCameraPosition.z);
 

@@ -8,6 +8,17 @@ constexpr float pi = 3.14159265358979323846f;
 inline float radians(float degrees) { return degrees * pi / 180.f; }
 inline float wrap(float angle) { return std::remainder(angle, 2.f * pi); }
 struct Turn { float yaw; bool turning; };
+// Respond immediately to collision pressure; ease back only when space opens.
+inline float retreat(float current, float required, float dt)
+{
+    if (!std::isfinite(current)) current = 0.f;
+    if (!std::isfinite(required)) required = 0.f;
+    required = std::clamp(required, 0.f, 2.5f);
+    if (required >= current) return required;
+    if (!std::isfinite(dt) || dt <= 0.f) return current;
+    const float next = required + (current - required) * std::exp(-12.f * std::min(dt, 0.1f));
+    return next < 0.001f ? 0.f : next;
+}
 // Uses native model yaw so existing spine/head and turn animations agree.
 inline Turn step(float yaw, float aim, float dt, bool moving, bool turning)
 {
