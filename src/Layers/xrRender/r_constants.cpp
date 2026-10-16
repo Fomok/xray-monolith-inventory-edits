@@ -11,6 +11,7 @@
 #include "r_constants.h"
 
 #include "../xrRender/dxRenderDeviceRender.h"
+#include "../../xrEngine/shader_bus.h"
 
 // pool
 //.static	poolSS<R_constant,512>			g_constant_allocator;
@@ -25,9 +26,9 @@ R_constant_table::~R_constant_table()
 }
 
 
-void R_constant_table::fatal(LPCSTR S)
+void R_constant_table::fatal(LPCSTR S, LPCSTR name)
 {
-	FATAL(S);
+	Debug.fatal(DEBUG_INFO, "%s (constant '%s')", S, name);
 }
 
 void R_constant_table::_copy(const R_constant_table& Other)
@@ -35,6 +36,7 @@ void R_constant_table::_copy(const R_constant_table& Other)
 	table = Other.table;
 #if defined(USE_DX10) || defined(USE_DX11)
 	m_CBTable = Other.m_CBTable;
+	dt_instance_size = Other.dt_instance_size;
 #endif
 }
 
@@ -110,7 +112,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 							break;
 						default:
 							Msg("Invalid matrix dimension:%dx%d in constant %s", it->RegisterCount, T->Columns, name);
-							fatal("MATRIX_ROWS: unsupported number of RegisterCount");
+							fatal("MATRIX_ROWS: unsupported number of RegisterCount", name);
 							break;
 						}
 						break;
@@ -118,21 +120,21 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 						VERIFY(4 == it->RegisterCount);
 						break;
 					default:
-						fatal("MATRIX_ROWS: unsupported number of Rows");
+						fatal("MATRIX_ROWS: unsupported number of Rows", name);
 						break;
 					}
 					break;
 				default:
-					fatal("MATRIX_ROWS: unsupported number of Columns");
+					fatal("MATRIX_ROWS: unsupported number of Columns", name);
 					break;
 				}
 			}
 			break;
 		case D3DXPC_MATRIX_COLUMNS:
-			fatal("Pclass MATRIX_COLUMNS unsupported");
+			fatal("Pclass MATRIX_COLUMNS unsupported", name);
 			break;
 		case D3DXPC_STRUCT:
-			fatal("Pclass D3DXPC_STRUCT unsupported");
+			fatal("Pclass D3DXPC_STRUCT unsupported", name);
 			break;
 		case D3DXPC_OBJECT:
 			{
@@ -169,7 +171,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 					}
 					break;
 				default:
-					fatal("Pclass D3DXPC_OBJECT - object isn't of 'sampler' type");
+					fatal("Pclass D3DXPC_OBJECT - object isn't of 'sampler' type", name);
 					break;
 				}
 			}
@@ -192,6 +194,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 			R_constant_load& L = (destination & 1) ? C->ps : C->vs;
 			L.index = r_index;
 			L.cls = r_type;
+			L.size = it->RegisterCount * 16;
 			table.push_back(C);
 		}
 		else
@@ -201,6 +204,7 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 			R_constant_load& L = (destination & 1) ? C->ps : C->vs;
 			L.index = r_index;
 			L.cls = r_type;
+			L.size = it->RegisterCount * 16;
 		}
 	}
 	std::sort(table.begin(), table.end(), p_sort_constants);
@@ -244,12 +248,19 @@ void R_constant_table::merge(R_constant_table* T)
 		{
 			VERIFY2(!(C->destination&src->destination&RC_dest_sampler),
 			        "Can't have samplers or textures with the same name for PS, VS and GS.");
+			// a bus lane keeps the type of the stage merged first and skips a stage that disagrees
+			if (C->type != src->type && 0 == strncmp(C->name.c_str(), "bus_", 4))
+			{
+				ShaderBus::refuse(C->name.c_str(), "has a different type in another shader stage, stages that differ from the first one read are skipped");
+				continue;
+			}
 			C->destination |= src->destination;
 			VERIFY(C->type == src->type);
 			R_constant_load& sL = src->get_load(src->destination);
 			R_constant_load& dL = C->get_load(src->destination);
 			dL.index = sL.index;
 			dL.cls = sL.cls;
+			dL.size = sL.size;
 		}
 	}
 
@@ -267,6 +278,10 @@ void R_constant_table::merge(R_constant_table* T)
 	m_CBTable.reserve(m_CBTable.size() + T->m_CBTable.size());
 	for (u32 i = 0; i < T->m_CBTable.size(); ++i)
 		m_CBTable.push_back(T->m_CBTable[i]);
+
+	// only the stage that declares the record carries a size, the null stages leave it alone
+	if (T->dt_instance_size)
+		dt_instance_size = T->dt_instance_size;
 #endif	//	USE_DX10
 }
 
@@ -278,12 +293,17 @@ void R_constant_table::clear()
 	table.clear();
 #if defined(USE_DX10) || defined(USE_DX11)
 	m_CBTable.clear();
-#endif	//	
+	dt_instance_size = 0;
+#endif	//
 }
 
 BOOL R_constant_table::equal(R_constant_table& C)
 {
 	if (table.size() != C.table.size()) return FALSE;
+#if defined(USE_DX10) || defined(USE_DX11)
+	// tables are shared between equal shaders, the detail record size must survive that
+	if (dt_instance_size != C.dt_instance_size) return FALSE;
+#endif
 	u32 size = table.size();
 	for (u32 it = 0; it < size; it++)
 	{

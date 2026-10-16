@@ -20,6 +20,7 @@
 #include "Level.h"
 #include "game_cl_base.h"
 #include "Actor.h"
+#include "../xrEngine/CameraBase.h"
 #include "string_table.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "ai_object_location.h"
@@ -1268,7 +1269,24 @@ void CInventoryItem::activate_physic_shell()
 
 	UpdateXForm();
 
+	CActor* actor = smart_cast<CActor*>(E);
+	float heading = actor ? actor->cam_Active()->vDirection.getH() : E->Direction().getH();
+	Fvector pos = object().Position();
+	object().XFORM().setHPB(heading, 0.f, 0.f);
+	if (actor)
+	{
+		pos.x = actor->Position().x;
+		pos.z = actor->Position().z;
+		pos.mad(object().XFORM().k, 0.3f);
+	}
+	object().Position().set(pos);
 	object().CPhysicsShellHolder::activate_physic_shell();
+	if (actor && object().PPhysicsShell())
+	{
+		Fvector vel = actor->cam_Active()->vDirection;
+		vel.y = 0.f;
+		object().PPhysicsShell()->set_LinearVel(vel.mul(4.f));
+	}
 }
 
 void CInventoryItem::UpdateXForm()
@@ -1473,10 +1491,10 @@ Irect CInventoryItem::GetInvGridRect() const
 {
 	u32 x, y, w, h;
 
-	x = pSettings->r_u32(m_object->cNameSect(), "inv_grid_x");
-	y = pSettings->r_u32(m_object->cNameSect(), "inv_grid_y");
-	w = pSettings->r_u32(m_object->cNameSect(), "inv_grid_width");
-	h = pSettings->r_u32(m_object->cNameSect(), "inv_grid_height");
+	x = m_inv_grid_rect.x1 >= 0 ? m_inv_grid_rect.x1 : pSettings->r_u32(m_object->cNameSect(), "inv_grid_x");
+	y = m_inv_grid_rect.y1 >= 0 ? m_inv_grid_rect.y1 : pSettings->r_u32(m_object->cNameSect(), "inv_grid_y");
+	w = m_inv_grid_rect.x2 >= 0 ? m_inv_grid_rect.x2 : pSettings->r_u32(m_object->cNameSect(), "inv_grid_width");
+	h = m_inv_grid_rect.y2 >= 0 ? m_inv_grid_rect.y2 : pSettings->r_u32(m_object->cNameSect(), "inv_grid_height");
 
 	return Irect().set(x, y, w, h);
 }
@@ -1485,10 +1503,10 @@ Irect CInventoryItem::GetUpgrIconRect() const
 {
 	u32 x, y, w, h;
 
-	x = READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_x", 0);
-	y = READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_y", 0);
-	w = READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_width", 0);
-	h = READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_height", 0);
+	x = m_upgr_icon_rect.x1 >= 0 ? m_upgr_icon_rect.x1 : READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_x", 0);
+	y = m_upgr_icon_rect.y1 >= 0 ? m_upgr_icon_rect.y1 : READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_y", 0);
+	w = m_upgr_icon_rect.x2 >= 0 ? m_upgr_icon_rect.x2 : READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_width", 0);
+	h = m_upgr_icon_rect.y2 >= 0 ? m_upgr_icon_rect.y2 : READ_IF_EXISTS(pSettings, r_u32, m_object->cNameSect(), "upgr_icon_height", 0);
 
 	return Irect().set(x, y, w, h);
 }

@@ -19,7 +19,30 @@ void CWeaponAK74::script_register	(lua_State *L)
 	[
 		class_<CWeaponAK74,CGameObject>("CWeaponAK74")
 			.def(constructor<>()),
-			
+
+		class_<enum_exporter<CHUDState::EHudStates>>("hud_state")
+			.enum_("states")
+			[
+				value("idle", int(CHUDState::eIdle)),
+				value("showing", int(CHUDState::eShowing)),
+				value("hiding", int(CHUDState::eHiding)),
+				value("hidden", int(CHUDState::eHidden)),
+				value("bore", int(CHUDState::eBore))
+			],
+
+		class_<enum_exporter<CWeapon::EWeaponStates>>("weapon_state")
+			.enum_("states")
+			[
+				value("fire", int(CWeapon::eFire)),
+				value("fire2", int(CWeapon::eFire2)),
+				value("reload", int(CWeapon::eReload)),
+				value("misfire", int(CWeapon::eMisfire)),
+				value("switch", int(CWeapon::eSwitch)),
+				value("switch_mode", int(CWeapon::eSwitchMode)),
+				value("aim_start", int(CWeapon::eAimStart)),
+				value("aim_end", int(CWeapon::eAimEnd))
+			],
+
 		class_<CWeapon,CGameObject>("CWeapon")
 			.def(constructor<>())
 			.def("can_kill", (bool (CWeapon::*)() const)&CWeapon::can_kill)
@@ -47,6 +70,8 @@ void CWeaponAK74::script_register	(lua_State *L)
 			.def("CurrentZoomFactor", &CWeapon::CurrentZoomFactor)
 			.def("OnZoomIn", &CWeapon::OnZoomIn)
 			.def("OnZoomOut", &CWeapon::OnZoomOut)
+			.def("StopZoom", &CWeapon::StopZoom)
+			.def("IsTextureZoomActive", &CWeapon::IsTextureZoomActive)
 			
 			.def("IsSingleHanded", &CWeapon::IsSingleHanded)
 			

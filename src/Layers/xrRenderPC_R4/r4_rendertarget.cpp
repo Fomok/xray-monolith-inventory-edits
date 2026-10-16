@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "scope_vslr_renderer.h"
 #include "../xrRender/resourcemanager.h"
 #include "blender_light_occq.h"
 #include "blender_light_mask.h"
@@ -94,7 +95,7 @@ void CRenderTarget::u_setrt(const ref_rt& _1, const ref_rt& _2, const ref_rt& _3
 		dwWidth = _1->dwWidth;
 		dwHeight = _1->dwHeight;
 	}
-	else
+	else if (!ps_r__light_lean || !RCache.get_smapsize_memo(zb, dwWidth, dwHeight))
 	{
 		D3D_DEPTH_STENCIL_VIEW_DESC desc;
 		zb->GetDesc(&desc);
@@ -115,6 +116,9 @@ void CRenderTarget::u_setrt(const ref_rt& _1, const ref_rt& _2, const ref_rt& _3
 		dwWidth = TexDesc.Width;
 		dwHeight = TexDesc.Height;
 		_RELEASE(pRes);
+
+		if (ps_r__light_lean)
+			RCache.set_smapsize_memo(zb, dwWidth, dwHeight);
 	}
 
 	if (_1) RCache.set_RT(_1->pRT, 0);
@@ -841,11 +845,15 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 		if (RImplementation.o.nullrt) nullrt = (D3DFORMAT)MAKEFOURCC('N', 'U', 'L', 'L');
 
 		u32 size = RImplementation.o.smapsize;
-		rt_smap_depth = createUnique(r2_RT_smap_depth, size, size, depth_format);
+		// the svp never rasterizes a shadow map, it reads the main atlas through the stock texture name
+		const bool smap_alloc = isMain || ps_r__svp_smap_alloc != 0;
+		if (smap_alloc)
+			rt_smap_depth = createUnique(r2_RT_smap_depth, size, size, depth_format);
 
 		if (RImplementation.o.dx10_minmax_sm)
 		{
-			rt_smap_depth_minmax = createUnique(r2_RT_smap_depth_minmax, size / 4, size / 4, D3DFMT_R32F);
+			if (smap_alloc)
+				rt_smap_depth_minmax = createUnique(r2_RT_smap_depth_minmax, size / 4, size / 4, D3DFMT_R32F);
 			CBlender_createminmax TempBlender;
 			s_create_minmax_sm.create(&TempBlender, "null");
 		}
@@ -1133,6 +1141,11 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 		t_envmap_1.create(r2_T_envs1);
 	}
 	t_reticle.create("$user$reticle"); // pip per-lens reticle texture for the scope color shader
+	if (isMain)
+	{
+		reticle_glow_create(); // 3DSS reticle glow targets and passes (r4_rendertarget_phase_3dss_reticle.cpp)
+		scope_glass_compose_create(); // scope glass composition passes (svp_optics.cpp)
+	}
 
 	// Build textures
 	{
@@ -1431,6 +1444,7 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 
 CRenderTarget::~CRenderTarget()
 {
+	if (this == RImplementation.TargetMain) scope_vslr_destroy();
 	_RELEASE(t_ss_async);
 
 	// Textures

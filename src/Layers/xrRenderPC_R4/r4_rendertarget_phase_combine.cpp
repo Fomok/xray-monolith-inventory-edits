@@ -1,9 +1,12 @@
 #include "stdafx.h"
+#include "scope_vslr_renderer.h"
 #include "../../xrEngine/igame_persistent.h"
 #include "../../xrEngine/environment.h"
 
 #include "../xrRender/dxEnvironmentRender.h"
+#include "svp_lens_lighting.h"
 #include "svp_stats.h" // pip combine sub timers for the breakdown panel
+#include "../xrRender/SkeletonX.h"
 
 #define STENCIL_CULL 0
 
@@ -91,7 +94,11 @@ float hclip(float v, float dim) { return 2.f * v / dim - 1.f; }
 
 void CRenderTarget::phase_combine()
 {
-	PIX_EVENT(phase_combine);
+    // With deferred glass the combine shader adds the optical image at the lens
+    // pixels, so the image is drawn first.
+    if (this == RImplementation.TargetMain && scope_glass_deferred_current())
+        phase_scope_reference_ocular();
+	PIX_EVENT_C(phase_combine, dx10_marker_combine);
     PROF_EVENT("phase_combine");
 
 	// combine sub timers run on the main pass only so the scope pass never splits the bucket
@@ -260,7 +267,7 @@ void CRenderTarget::phase_combine()
 	tm_beg(svp_stats::SEC_C_COMBINE1);
 	if (!_menu_pp)
 	{
-		PIX_EVENT(combine_1);
+		PIX_EVENT_C(combine_1, dx10_marker_combine);
 		// Compute params
 		CEnvDescriptorMixer& envdesc = *g_pGamePersistent->Environment().CurrentEnv;
 		const float minamb = 0.001f;
@@ -354,21 +361,40 @@ void CRenderTarget::phase_combine()
 		_RELEASE(e1);
 
 		// Draw
-		RCache.set_Element(s_combine->E[0]);
-		//RCache.set_Geometry			(g_combine_VP		);
-		RCache.set_Geometry(g_combine);
+		auto bind_combine = [&](const ref_shader& shader) {
+			RCache.set_Element(shader->E[0]);
+            RCache.set_Geometry(g_combine);
 
-		RCache.set_c("m_v2w", Device.mInvView);
-		RCache.set_c("L_ambient", ambclr);
+			RCache.set_c("m_v2w", Device.mInvView);
+			RCache.set_c("L_ambient", ambclr);
 
-		RCache.set_c("Ldynamic_color", sunclr);
-		RCache.set_c("Ldynamic_dir", sundir);
+			RCache.set_c("Ldynamic_color", sunclr);
+			RCache.set_c("Ldynamic_dir", sundir);
 
-		RCache.set_c("env_color", envclr);
-		RCache.set_c("fog_color", fogclr);
+			RCache.set_c("env_color", envclr);
+			RCache.set_c("fog_color", fogclr);
 
-		RCache.set_c("ssao_noise_tile_factor", fSSAONoise);
-		RCache.set_c("ssao_kernel_size", fSSAOKernelSize);
+			RCache.set_c("ssao_noise_tile_factor", fSSAONoise);
+			RCache.set_c("ssao_kernel_size", fSSAOKernelSize);
+		};
+
+		// The Reference capture runs the combine once more, into its FP16 target,
+		// to take the colour before tone mapping.
+		const bool reference_capture = scope_reference_capture_begin();
+		if (reference_capture)
+		{
+			bind_combine(s_scope_reference_capture);
+			// The raw capture is the scope image, never the night vision encoding of it.
+			extern Fvector4 ps_dev_param_8;
+			RCache.set_c("shader_param_8", 0.f, ps_dev_param_8.y, ps_dev_param_8.z, ps_dev_param_8.w);
+			RCache.set_c("scope_reference_transfer",
+				RImplementation.TargetMain->scope_reference_packet.toneMapInputGamma, 0.f, 0.f, 0.f);
+			RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
+			u_setrt(rt_Generic_0, rt_Generic_1, rt_Heat, baseZB);
+		}
+		// Lens glass under night vision: its own light, before the combine encodes the lens.
+		phase_scope_glass_night_vision(bind_combine, Offset);
+		bind_combine(s_combine);
 
 		if (!RImplementation.o.dx10_msaa)
 			RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
@@ -395,8 +421,15 @@ void CRenderTarget::phase_combine()
 			}
 			RCache.set_Stencil(FALSE, D3DCMP_EQUAL, 0x01, 0xff, 0);
 		}
+		// Lens glass: its own radiance at glass pixels, through the combine's display transfer.
+		phase_scope_glass_combine(bind_combine, Offset);
 	}
 	tm_end(svp_stats::SEC_C_COMBINE1);
+
+	// Without deferred glass the optical image is drawn here, before the forward
+	// glass and the scene post-process.
+	if (this == RImplementation.TargetMain && !scope_glass_deferred_current())
+		phase_scope_reference_ocular();
 
 	//Copy previous rt
 	svp_copy_begin(SVP_CP_SCENE, rt_copy_bytes(rt_Generic_temp));
@@ -416,6 +449,7 @@ void CRenderTarget::phase_combine()
 	if (RImplementation.o.ssfx_ssr && ps_r__ssfx_ssr_enable
 		&& ((svp_pass && ps_r__svp_skip_ssr < 2) || !Device.m_SecondViewport.IsSVPFrame()))
 	{
+		PIX_EVENT(phase_ssfx_ssr);
 		ssfx_PrevPos_Requiered = true;
 		tm_beg(svp_stats::SEC_C_SSR);
 		phase_ssfx_ssr(); // [SSFX] - New SSR Phase
@@ -550,7 +584,20 @@ void CRenderTarget::phase_combine()
 		RCache.set_ColorWriteEnable();
 		//	TODO: DX10: CHeck this!
 		//g_pGamePersistent->Environment().RenderClouds	();
+		if (this == RImplementation.TargetMain) scope_reference_refresh();
+		reticle_glow_begin(); // 3DSS reticle glow targets, cleared before the HUD and lens passes
 		RImplementation.render_forward();
+        scope_reference_capture_particles();
+
+		// The physical PiP lens belongs to the forward object stage. Its world-space
+		// mesh, lighting and optical layers are resolved before later scene effects.
+		if (this == RImplementation.TargetMain && Device.true_pip_on
+			&& (Device.m_SecondViewport.IsSVPActive()
+				|| !RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty()))
+		{
+			phase_3DSSReticle(true);
+		}
+
 		if (g_pGamePersistent) g_pGamePersistent->OnRenderPPUI_main(); // PP-UI
 	}
 	tm_end(svp_stats::SEC_C_FWD);
@@ -653,6 +700,7 @@ void CRenderTarget::phase_combine()
 	{
 		if (ps_sunshafts_mode == R2SS_SCREEN_SPACE || ps_sunshafts_mode == R2SS_COMBINE_SUNSHAFTS)
 		{
+			PIX_EVENT(phase_sunshafts);
 			tm_beg(svp_stats::SEC_C_SUNSHAFT);
 			phase_sunshafts();
 			tm_end(svp_stats::SEC_C_SUNSHAFT);
@@ -661,10 +709,15 @@ void CRenderTarget::phase_combine()
 
 	if (RImplementation.o.ssfx_fog && ps_ssfx_fog_scattering > 0)
 	{
+		PIX_EVENT(phase_ssfx_fog_scattering);
 		tm_beg(svp_stats::SEC_C_FOG);
 		phase_ssfx_fog_scattering();
 		tm_end(svp_stats::SEC_C_FOG);
 	}
+
+    if (bDistort) scope_reference_capture_distortion();
+    if (scope_reference_capture_begin())
+        scope_reference_capture_end();
 
 	// pip with DLSS on, skip the SVP engine AA/post so rt_Generic_0$svp stays aliased + jittered for the
 	// eval (DLSS does its own reconstruction), main + off + gate-0 keep the stock AA path unchanged
@@ -682,6 +735,7 @@ void CRenderTarget::phase_combine()
 	if (RImplementation.o.ssfx_motionblur && ps_ssfx_motionblur.y > 0 && !svp_dlss_skip_aa
 		&& !(svp_pass && ps_r__svp_skip_motionblur))
 	{
+		PIX_EVENT(phase_ssfx_motion_blur);
 		phase_ssfx_motion_blur();
 	}
 
@@ -692,15 +746,28 @@ void CRenderTarget::phase_combine()
 			|| (Device.true_pip_on
 				&& (Device.m_SecondViewport.IsSVPActive()
 					|| !RImplementation.GMBase.RGraph.mapReflexHUDSorted.empty()
-					|| !RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty()))))
+					|| !RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty()
+					|| !RImplementation.GMBase.RGraph.mapScopeHUDOverlay.empty()))))
 	{
-		phase_3DSSReticle(); // Redotix99 3D Shader Based Scopes / pip true-PiP lens composite
+		svp_stats::cpu_begin(svp_stats::CPU_LENS);
+		phase_3DSSReticle(false); // PiP reticle/depth overlays and legacy 3DSS
+		svp_stats::cpu_end(svp_stats::CPU_LENS);
 	}
+
+    // Real HUD glass follows opaque optical composition, before bloom/NVG/scene effects
+    // (not under night vision with deferred glass, scope_glass_forward_layer_allowed).
+    if (this == RImplementation.TargetMain && scope_glass_forward_layer_allowed() && prepare_scope_physical_glass()) {
+        u_setrt(rt_Generic_0, nullptr, rt_Position, baseZB);
+        RCache.set_Stencil(FALSE);
+        RCache.set_ColorWriteEnable();
+        RImplementation.GMBase.r_dsgraph_render_physical_glass();
+    }
 
 	// Compute blur textures for the SVP post effects without changing the DLSS input
 	// Off keeps the stock IsSVPFrame skip
 	if ((Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp) || !Device.m_SecondViewport.IsSVPFrame())
 	{
+		PIX_EVENT(phase_blur);
 		tm_beg(svp_stats::SEC_C_BLUR);
 		phase_blur();
 		tm_end(svp_stats::SEC_C_BLUR);
@@ -730,6 +797,7 @@ void CRenderTarget::phase_combine()
 	const bool svp_pass_now = Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp;
 	if (ps_r2_ls_flags.test(R2FLAG_DOF) && !(svp_pass_now && ps_r__svp_skip_dof))
 	{
+		PIX_EVENT(phase_dof);
 		tm_beg(svp_stats::SEC_C_DOF);
 		phase_dof();
 		tm_end(svp_stats::SEC_C_DOF);
@@ -742,6 +810,7 @@ void CRenderTarget::phase_combine()
 		svp_stats_lean_flags |= svp_stats::LEAN_LUT;
 	if (!lut_stock_skip && !lean_lut)
 	{
+		PIX_EVENT(phase_lut);
 		tm_beg(svp_stats::SEC_C_LUT);
 		phase_lut();
 		tm_end(svp_stats::SEC_C_LUT);
@@ -759,6 +828,7 @@ void CRenderTarget::phase_combine()
 
 	if (ps_r2_nightvision > 0 && !svp_pass_now)
 	{
+		reticle_glow_compose_before_nightvision(); // 3DSS reticle light through the night vision tube
 		if (!svp_nvg_pass())
 			phase_nightvision();
 	}
@@ -798,7 +868,9 @@ void CRenderTarget::phase_combine()
 	{
 		RImplementation.GMBase.RGraph.mapScopeHUDSorted.clear();
 		RImplementation.GMBase.RGraph.mapScopeHUDObjective.clear();
+		RImplementation.GMBase.RGraph.mapPhysicalScopeGlass.clear();
 		RImplementation.GMBase.RGraph.mapReflexHUDSorted.clear();
+		RImplementation.GMBase.RGraph.mapScopeHUDOverlay.clear();
 	}
 
 	if (ssfx_PrevPos_Requiered)
@@ -835,7 +907,7 @@ void CRenderTarget::phase_combine()
 	tm_beg(svp_stats::SEC_C_COMBINE2);
 	if (1)
 	{
-		PIX_EVENT(combine_2);
+		PIX_EVENT_C(combine_2, dx10_marker_combine);
 		//
 		struct v_aa
 		{
@@ -952,6 +1024,8 @@ void CRenderTarget::phase_combine()
 			phase_hdr10_lens_flare(); // samples from rt_Generic_0, writes to rt_Color
 		}
 	}
+	scope_vslr_render(*this);
+	reticle_glow_compose(); // 3DSS reticle glow, after bloom, the tone curve and the HDR10 bloom
 
 	//	if FP16-BLEND !not! supported - draw flares here, overwise they are already in the bloom target
 	/* if (!RImplementation.o.fp16_blend)*/
@@ -962,7 +1036,7 @@ void CRenderTarget::phase_combine()
 	// pip the svp pass skips phase_pp, it writes the real backbuffer
 	if (PP_Complex && !(Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp))
 	{
-		PIX_EVENT(phase_pp);
+		PIX_EVENT_C(phase_pp, dx10_marker_post);
 		tm_beg(svp_stats::SEC_C_COMBINE2);
 		phase_pp();
 		tm_end(svp_stats::SEC_C_COMBINE2);
@@ -1131,6 +1205,7 @@ void CRenderTarget::phase_combine_volumetric()
 		//RCache.set_Geometry			(g_combine_VP		);
 		RCache.set_Geometry(g_combine);
 		RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
+        scope_reference_capture_volumetric(Offset);
 	}
 	RCache.set_ColorWriteEnable();
 }

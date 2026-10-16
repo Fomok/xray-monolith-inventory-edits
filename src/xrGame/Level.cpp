@@ -41,6 +41,7 @@
 #include "xrEngine/XR_IOConsole.h"
 #include "actor.h"
 #include "player_hud.h"
+#include "first_person_transform.h"
 #include "UI/UIGameTutorial.h"
 #include "file_transfer.h"
 #include "message_filter.h"
@@ -294,6 +295,7 @@ CLevel::~CLevel()
 {
     PROF_EVENT("CLevel::~CLevel");
     //crash_saving::save_impl = nullptr; // CLevel not available, disable crash save
+    FirstPerson::Reset();
     xr_delete(g_player_hud);
     delete_data(m_script_attachments);
     delete_data(hud_zones_list);
@@ -1045,6 +1047,9 @@ void CLevel::OnFrame()
 		make_NetCorrectionPrediction();
 	if (!g_dedicated_server)
 	{
+		// the map update may run on the parallel thread so removals are reported to script from here
+		MapManager().FlushRemovedNotify();
+
 		if (g_mt_config.test(mtMap))
 			Device.seqParallel.push_back(xr_make_delegate(m_map_manager, &CMapManager::Update));
 		else

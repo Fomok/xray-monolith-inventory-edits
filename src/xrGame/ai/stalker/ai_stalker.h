@@ -443,7 +443,7 @@ private:
 public:
 	virtual void on_weapon_shot_start(CWeapon* weapon);
 	virtual void on_weapon_shot_update();
-	virtual void on_weapon_shot_stop();
+	virtual void on_weapon_shot_stop(CWeapon* weapon);
 	virtual void on_weapon_shot_remove(CWeapon* weapon);
 	virtual void on_weapon_hide(CWeapon* weapon);
 	IC CWeaponShotEffector& weapon_shot_effector() const;
@@ -881,9 +881,13 @@ public:
 	IC void death_sound_enabled(bool value);
 	IC bool death_sound_enabled() const;
 
+	IC void movement_hold(bool value);
+	IC bool movement_hold() const;
+
 private:
 	bool m_take_items_enabled;
 	bool m_death_sound_enabled;
+	bool m_movement_hold;
 
 public:
 	smart_cover::cover const* get_current_smart_cover();

@@ -85,6 +85,7 @@ void CUIActorMenu::SendEvent_Item2Slot(PIItem pItem, u16 recipient, u16 slot_id)
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2SLOT, pItem->object().H_Parent()->ID());
 	P.w_u16(pItem->object().ID());
 	P.w_u16(slot_id);
+    P.w_u8(0); // do activate
 	CGameObject::u_EventSend(P);
 
 	PlaySnd(eItemToSlot);
@@ -450,7 +451,6 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 {
 	ClearAllLists();
-	m_pMouseCapturer = NULL;
 	m_UIPropertiesBox->Hide();
 	SetCurrentItem(NULL);
 

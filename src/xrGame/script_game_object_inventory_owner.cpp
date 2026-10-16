@@ -60,6 +60,10 @@
 #include "ai_space.h"
 #include "ActorBackpack.h"
 
+// Boeker: zoom inertia factor support
+#include "EffectorZoomInertion.h"
+#include "ActorEffector.h"
+
 //
 //-Alundaio
 
@@ -487,6 +491,7 @@ void CScriptGameObject::MakeItemActive(CScriptGameObject* pItem)
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2SLOT, owner->object_id());
 	P.w_u16(item->object().ID());
 	P.w_u16(slot);
+	P.w_u8(0); // do activate
 	CGameObject::u_EventSend(P);
 
 	CGameObject::u_EventGen(P, GEG_PLAYER_ACTIVATE_SLOT, owner->object_id());
@@ -504,17 +509,17 @@ void CScriptGameObject::MoveItemToRuck(CScriptGameObject* pItem)
 			"CScriptGameObject::MoveItemToRuck non-CInventoryOwner object !!!");
 		return;
 	}
-	
+
 	if (!owner->inventory().CanPutInRuck(item))
 		return;
-	
+
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2RUCK, owner->object_id());
 	P.w_u16(item->object().ID());
 	CGameObject::u_EventSend(P);
 }
 
-void CScriptGameObject::MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id)
+void CScriptGameObject::MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id, bool doNotActivate)
 {
 	CInventoryOwner* owner = smart_cast<CInventoryOwner*>(&object());
 	CInventoryItem* item = smart_cast<CInventoryItem*>(&pItem->object());
@@ -524,7 +529,7 @@ void CScriptGameObject::MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id)
 			"CScriptGameObject::MoveItemToSlot non-CInventoryOwner object !!!");
 		return;
 	}
-	
+
 	// Have a crash if you want
 	/*
 	if (!owner->inventory().CanPutInSlot(item, slot_id))
@@ -534,7 +539,7 @@ void CScriptGameObject::MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id)
 		return;
 	}
 	*/
-	
+
 	CInventoryItem* item_in_slot = owner->inventory().ItemFromSlot(slot_id);
 
 	NET_Packet P;
@@ -544,10 +549,11 @@ void CScriptGameObject::MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id)
 		P.w_u16(item_in_slot->object().ID());
 		CGameObject::u_EventSend(P);
 	}
-	
+
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2SLOT, owner->object_id());
 	P.w_u16(item->object().ID());
 	P.w_u16(slot_id);
+    P.w_u8(doNotActivate ? 1 : 0);
 	CGameObject::u_EventSend(P);
 }
 
@@ -561,10 +567,10 @@ void CScriptGameObject::MoveItemToBelt(CScriptGameObject* pItem)
 			"CScriptGameObject::MoveItemToBelt non-CInventoryOwner object !!!");
 		return;
 	}
-	
+
 	if (!owner->inventory().CanPutInBelt(item))
 		return;
-	
+
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GEG_PLAYER_ITEM2BELT, owner->object_id());
 	P.w_u16(item->object().ID());
@@ -1942,6 +1948,32 @@ void CScriptGameObject::set_fire_queue_scale(float size_k, float interval_k)
 	stalker->set_fire_queue_scale(size_k, interval_k);
 }
 
+bool CScriptGameObject::is_hit_anim_playing()
+{
+	CEntityAlive* entity_alive = smart_cast<CEntityAlive*>(&object());
+	if (!entity_alive || !entity_alive->character_physics_support())
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		                                "CEntityAlive : cannot access class member is_hit_anim_playing!");
+		return (false);
+	}
+
+	return (entity_alive->character_physics_support()->is_hit_anim_playing());
+}
+
+void CScriptGameObject::set_movement_hold(bool value)
+{
+	CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
+	if (!stalker)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		                                "CAI_Stalker : cannot access class member set_movement_hold!");
+		return;
+	}
+
+	stalker->movement_hold(value);
+}
+
 bool CScriptGameObject::can_kill_enemy()
 {
 	CAI_Stalker* stalker = smart_cast<CAI_Stalker*>(&object());
@@ -2608,17 +2640,16 @@ void CScriptGameObject::SetWeight(float w)
 	inventory_item->SetWeight(w);
 }
 
-// demonized: get luminosity as displayed in ui
-float CScriptGameObject::GetActorUILuminosity()
+float CScriptGameObject::GetActorVisibility()
 {
 	CActor* pActor = smart_cast<CActor*>(&object());
 	if (!pActor)
 	{
 		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
-			"CScriptGameObject::GetActorLuminosity, object is not actor");
+			"CScriptGameObject::GetActorVisibility, object is not actor");
 		return 0.f;
 	}
-	return pActor->GetUILuminosity();
+	return pActor->GetVisibility();
 }
 
 float CScriptGameObject::GetActorJumpSpeed() const
@@ -2814,6 +2845,46 @@ void CScriptGameObject::SetActorLookoutCoef(float val)
 		return;
 	}
 	pActor->m_fLookoutFactor = val;
+}
+
+// verdatim: set damage stagger time factor
+float CScriptGameObject::GetActorDamageStaggerTimeFactor() const
+{
+    CActor* pActor = smart_cast<CActor*>(&object());
+    if (!pActor)
+    {
+        ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+            "CActor : cannot access class member GetActorDamageStaggerTimeFactor!");
+        return (false);
+    }
+    return (pActor->DamageStaggerTimeFactor);
+}
+void CScriptGameObject::SetActorDamageStaggerTimeFactor(float val)
+{
+    CActor* pActor = smart_cast<CActor*>(&object());
+    if (!pActor)
+    {
+        ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+            "CActor : cannot access class member SetActorDamageStaggerTimeFactor!");
+        return;
+    }
+    pActor->DamageStaggerTimeFactor = val;
+}
+
+// Boeker: zoom inertia factor support
+void CScriptGameObject::SetZoomInertionFactor(float factor)
+{
+    CActor* pActor = smart_cast<CActor*>(&object());
+    if (!pActor)
+        return;
+
+    CEffectorZoomInertion* eff = smart_cast<CEffectorZoomInertion*>(
+        pActor->Cameras().GetCamEffector(eCEZoom)
+    );
+    if (!eff)
+        return;
+
+    eff->SetUserFactor(clampr(factor, 0.f, 2.f));
 }
 
 // demonized: Additional exports

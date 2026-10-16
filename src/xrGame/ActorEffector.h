@@ -13,6 +13,7 @@ protected:
 private:
 
 	SCamEffectorInfo m_cam_info_hud;
+	bool m_reference_update = false;
 
 protected:
 	virtual void UpdateCamEffectors();
@@ -26,6 +27,17 @@ public:
 	virtual ~CActorCameraManager()
 	{
 	}
+
+	virtual void UpdateReference(const Fmatrix& cameraWorld, float fFOV, float fASPECT, float fFAR) override;
+
+    // Collision translation is shared by the rendered eye and both HUD roots.
+    // Preserve the effectors' relative offsets without evaluating them again.
+    void ApplyReferenceCollisionTranslation(const Fvector& delta)
+    {
+        m_cam_info.p.add(delta);
+        if(m_base_cam_info_valid)m_base_cam_info.p.add(delta);
+        m_cam_info_hud.p.add(delta);
+    }
 
 	IC void hud_camera_Matrix(Fmatrix& M)
 	{
@@ -72,6 +84,8 @@ public:
 	bool m_bAbsolutePositioning;
 	float m_fov;
 	float m_power;
+    // ver, allow setting speed of a camera anim
+    float m_speed;
 
 	CAnimatorCamEffector();
 	virtual ~CAnimatorCamEffector();
@@ -79,6 +93,8 @@ public:
 	virtual BOOL ProcessCam(SCamEffectorInfo& info);
 	void SetCyclic(bool b) { m_bCyclic = b; }
 	void SetPower(float p) { m_power = p; }
+    // ver, allow setting speed of a camera anim
+    void SetSpeed(float s) {m_speed = s;}
 	float GetPower() { return m_power; }
 	virtual BOOL Valid();
 	float GetAnimatorLength() { return fLifeTime; };

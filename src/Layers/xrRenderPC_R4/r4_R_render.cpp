@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "../../xrEngine/peak_volumetric_debug.h"
 #include "../../xrEngine/igame_persistent.h"
 #include "../xrRender/FBasicVisual.h"
 #include "../../xrEngine/customhud.h"
@@ -11,6 +12,8 @@
 #include "../../Include/xrRender/DebugRender.h" // pip IDebugRender::add_lines
 #include "../xrRender/SkeletonX.h"              // pip CSkeletonX for the skinned lens bone transform
 #include "svp_camera.h"                         // pip svpCamera + the hud geometry snapshot
+#include "svp_lens_lighting.h"
+#include "scope_vslr_renderer.h"
 #include "svp_stats.h"                          // pip per-viewport render-stats overlay
 
 // set all per-viewport camera globals from an explicit view/proj/proj_hud
@@ -151,7 +154,9 @@ void CRender::ResetSVPHistory()
 
 void CRender::Render()
 {
-	PIX_EVENT(CRender_Render);
+	if(ps_pfx_volumetric_debug){g_peak_volumetric_debug.Begin(Device.dwFrame);g_peak_volumetric_debug.dx11Seen=true;}
+	PIX_EVENT_C(CRender_Render, dx10_marker_frame);
+	dx10_annotate_frame();
 
 	rmNormal();
 
@@ -171,6 +176,11 @@ void CRender::Render()
 		Target->u_setrt(Device.dwWidth, Device.dwHeight, HW.pBaseRT,NULL,NULL, HW.pBaseZB);
 		return;
 	}
+
+	// pip the scope lens shaders build with the level's first frame, not on the first aim; here, where shader
+	// creation is serialized with rendering (the level loader's thread would race the loading screen)
+	if (scope_svp_enabled && TargetMain)
+		TargetMain->EnsureScopeShaders();
 
 	if (m_bFirstFrameAfterReset)
 	{
@@ -221,9 +231,16 @@ void CRender::Render()
 		HW.pContext->ClearDepthStencilView(HW.pBaseZB, D3D_CLEAR_DEPTH, 1.0f, 0);
 	}*/
 
-    GMBase.traverse(RImplementation.pLastSector, ViewBase, Device.vCameraPosition, Device.mFullTransform);
-    GMBase.r_dsgraph_capture_static();
-    GMBase.r_dsgraph_capture_dynamic();
+    // pip cpu cost of the main graph traverse plus capture, read by the fps audit overlay
+    {
+        const bool timed = ps_r__svp_stats != 0;
+        CTimer capture_timer;
+        if (timed) capture_timer.Start();
+        GMBase.traverse(RImplementation.pLastSector, ViewBase, Device.vCameraPosition, Device.mFullTransform);
+        GMBase.r_dsgraph_capture_static();
+        GMBase.r_dsgraph_capture_dynamic();
+        if (timed) svp_stats_capture_base_ms = capture_timer.GetElapsed_ms_f();
+    }
 
 	// pip reset the per-frame lens, it is re-derived each frame so an un-scoped frame leaves radius 0
 	// the debug overlays hold the last radii while the svp stays active so a culled weapon keeps its lines
@@ -243,131 +260,8 @@ void CRender::Render()
 		vp.objective.radius = 0;
 	}
 
-	// pip a stale hook must never survive into this frame (it captures this + TargetSVP)
-	Device.m_SecondViewport.dual_accum = nullptr;
-	// pip double-pass, the captured graph renders once for the main viewport and, when a scope drives
-	// the SVP, a second time into TargetSVP, true_pip off keeps the single stock main pass
-	bool svp = Device.true_pip_on && Device.m_SecondViewport.IsSVPActive();
-	// pip lock the adaptive SVP size at ADS-in (svp false -> true) from the disc learned on the last aim, so the
-	// target is sized once per aim and never resized mid-ADS (the live disc keeps learning for next time)
-	static bool s_prev_svp = false;
-	static u32 s_disc_epoch = 0;
-	// an optic swap while aimed re-locks from the re-learned disc so the target resizes once for the
-	// new optic, the ads-in edge still owns the first lock
-	const bool disc_swap = (svp && Device.m_SecondViewport.svp_optic_epoch != s_disc_epoch);
-	if ((svp && !s_prev_svp) || disc_swap)
-		Device.m_SecondViewport.svp_disc_applied = Device.m_SecondViewport.svp_disc_px;
-	s_disc_epoch = Device.m_SecondViewport.svp_optic_epoch;
-	const bool svp_edge = (svp != s_prev_svp);
-	s_prev_svp = svp;
-	// pip allocate the SVP target before the main pass derives the camera into it (lazy, only while a
-	// PiP scope is aimed, never when off)
-	if (Device.true_pip_on && g_pGamePersistent &&
-		g_pGamePersistent->m_pGShaderConstants->hud_params.y > 0.005f)
-		EnsureTargetSVP();
-	// pip the lens content swaps at the scope edges, both taa histories seed from the current
-	// frame so the stale scene never ghosts through the resolve
-	if (svp_edge)
-		ResetSVPHistory();
-	// creation can fail at VRAM exhaustion, fall back to the single stock pass this frame
-	if (svp && !TargetSVP)
-		svp = false;
-	// pip diag, an aimed weapon without an svp pass (y is nonzero even at hip, gate on x)
-	{
-		if (ps_r__svp_diag && Device.true_pip_on && !svp && g_pGamePersistent
-			&& g_pGamePersistent->m_pGShaderConstants->hud_params.x > 0.05f)
-		{
-			static u32 s_ns_ms = 0;
-			if (Device.dwTimeGlobal - s_ns_ms > 500)
-			{
-				s_ns_ms = Device.dwTimeGlobal;
-				PipMsg("[SVP-STATE] zoomed hud without an svp pass, active=%d target=%d",
-					(int)Device.m_SecondViewport.IsSVPActive(), TargetSVP ? 1 : 0);
-			}
-		}
-	}
-	// pip [SVP-NVG] tuning diag, edge on generation change plus a slow heartbeat while active
-	{
-		extern Fvector4 ps_dev_param_7;
-		extern Fvector4 ps_dev_param_8;
-		extern int ps_r2_nightvision;
-		static float s_nvg_gen = -1.f;
-		static u32 s_nvg_ms = 0;
-		const float genf = floorf(ps_dev_param_8.x);
-		const bool edge = _abs(ps_dev_param_8.x - s_nvg_gen) > 0.001f;
-		if (ps_r__svp_diag && (edge || (genf >= 1.f && Device.dwTimeGlobal - s_nvg_ms > 2000)))
-		{
-			s_nvg_gen = ps_dev_param_8.x;
-			s_nvg_ms = Device.dwTimeGlobal;
-			const float gain_off = floorf(ps_dev_param_8.w) / 10.f;
-			PipMsg("[SVP-NVG] gen=%.0f tubes=%.1f gain_cur=%.2f gain_off=%.2f tm_scale=%.1f vig=%.2f r2nv=%d scoped=%d aim=%.2f p7=%.2f/%.2f/%.2f/%.2f",
-				genf, (ps_dev_param_8.x - genf) * 10.f,
-				floorf(ps_dev_param_8.y) / 10.f, gain_off, 10.f * gain_off,
-				floorf(ps_dev_param_8.z) / 100.f, ps_r2_nightvision,
-				(int)(Device.true_pip_on && Device.m_SecondViewport.IsSVPActive()),
-				g_pGamePersistent ? g_pGamePersistent->m_pGShaderConstants->hud_params.x : 0.f,
-				ps_dev_param_7.x, ps_dev_param_7.y, ps_dev_param_7.z, ps_dev_param_7.w);
-		}
-	}
-	if (Device.true_pip_on)
-		TargetMain->SetActive();
-	svp_stats::section_begin(svp_stats::SEC_MAIN_GBUFFER);
-	renderGBuffer(!svp); // keep the priority-0 graph when an SVP pass follows
-	svp_stats::section_end(svp_stats::SEC_MAIN_GBUFFER);
-	if (svp)
-		EnsureTargetSVP();
-	TargetMain->svp_objective_hud_prepare(svp);
-	if (svp)
-	{
-		// pip CPU-side cost probe for the SVP gbuffer, throttled log while r__svp_diag is on
-		CTimer svp_t; svp_t.Start();
-		const u32 calls0 = RCache.stat.calls;
-		const u32 verts0 = RCache.stat.verts;
-		TargetSVP->SetActive();
-		svp_stats::section_begin(svp_stats::SEC_SVP_GBUFFER);
-		renderGBuffer(true);
-		svp_stats::section_end(svp_stats::SEC_SVP_GBUFFER);
-		if (ps_r__svp_diag)
-		{
-			static u32 s_perf_ms = 0;
-			if (Device.dwTimeGlobal - s_perf_ms > 1000)
-			{
-				s_perf_ms = Device.dwTimeGlobal;
-				PipMsg("[SVP-PERF] gbuffer %.2fms calls %u verts %uk", svp_t.GetElapsed_sec() * 1000.f,
-					RCache.stat.calls - calls0, (RCache.stat.verts - verts0) / 1000);
-			}
-		}
-		TargetMain->svp_objective_hud_report();
-		// pip stencil the dead corners after the native scope draw
-		if (ps_r__svp_corner_mask && !RImplementation.o.dx10_msaa && TargetSVP)
-			TargetSVP->stamp_svp_corner_mask();
-		TargetMain->SetActive(); // shadow generation + main accumulation run on the main target
-
-		// pip install the dual-accumulate hook, each shadow unit builds its map once on the main atlas
-		// then this re-accumulates it into the SVP with no second shadow render
-		Device.m_SecondViewport.dual_accum = [this](const std::function<void()>& accum)
-		{
-			TargetSVP->SetActive();   // SVP gbuffer + accumulator (and, for now, the SVP shadow atlas)
-			share_main_smaps();       // re-point the shadow atlas at the main maps the generation built
-			Device.m_SecondViewport.force_svp_sss = (ps_r__svp_sss_sun != 0); // sun keeps the SSS contact term
-			svp_stats::note_svp_blend();
-			svp_stats::section_begin(svp_stats::SEC_SVP_LIGHTS);
-			{ PIX_EVENT(SVP_ACCUM); accum(); } // SVP marginal lighting cost: accumulate this unit into the SVP (shared maps)
-			svp_stats::section_end(svp_stats::SEC_SVP_LIGHTS);
-			Device.m_SecondViewport.force_svp_sss = false;
-			TargetMain->SetActive();  // restore for the next unit's generation on the main atlas
-		};
-	}
-
-	// single shared lighting pass, when svp the render_sun_cascades/render_lights dual-accumulate via
-	// the hook and the SVP is combined + captured before the main combine composites it into the lens
-	renderSceneLighting(bSUN, svp);
-	Device.m_SecondViewport.dual_accum = nullptr;
-
-	// pip close the whole-frame window then draw the stats panel over the finished image
-	svp_stats::section_end(svp_stats::SEC_FRAME);
-	svp_stats::frame_end(svp);
-	svp_stats::draw_overlay();
+	// PiP owns viewport replay and shared-light scheduling.
+	renderViewports(bSUN);
 }
 
 void CRender::renderGBuffer(bool clearGraph)
@@ -380,19 +274,18 @@ void CRender::renderGBuffer(bool clearGraph)
 	// otherwise resubmit the whole world through a cone that sees a fraction
 	const bool svp_pass = (Target == TargetSVP) && Device.true_pip_on;
 	const bool svp_cull = svp_pass && ps_r__svp_cull;
-	const bool svp_cull_grass = svp_pass && ps_r__svp_cull_grass && !ps_r__svp_skip_grass;
-	if (svp_cull || svp_cull_grass)
-	{
-		Fmatrix svp_full;
+	// the grass bracket below arms off the same matrix so it is built for the whole scope pass
+	Fmatrix svp_full;
+	if (svp_pass)
 		svp_full.mul(Device.matrices[1].mProject, Device.matrices[1].mView);
+	if (svp_cull)
 		CDSGraphManager::svp_cull_begin(svp_full, svp_cull);
-	}
 	// pip SVP coverage = (mag * svp_side / main_height)^2, capped at 1: the fraction of the main view's
 	// pixel area an object covers in the scope. feeds the LOD scale and the small-object cull threshold
 	if (svp_pass && TargetSVP && (ps_r__svp_lod > 0.f || ps_r__svp_cull_ssa > 0.f))
 	{
 		extern float g_pip_scope_magnification;
-		const float mh = (float)Device.dwHeight;
+		const float mh = (float)TargetMain->Height;
 		const float svp_eff = sqrtf((float)TargetSVP->Width * (float)TargetSVP->Height); // geometric-mean side (== Width when square)
 		float cov = (mh > 1.f) ? (g_pip_scope_magnification * svp_eff / mh) : 1.f;
 		cov *= cov;
@@ -429,7 +322,7 @@ void CRender::renderGBuffer(bool clearGraph)
 
 	//******* Main render :: PART-0	-- first
 	{
-		PIX_EVENT(DEFER_PART0_SPLIT);
+		PIX_EVENT_C(DEFER_PART0_SPLIT, dx10_marker_gbuffer);
 		// level, SPLIT
 		Target->phase_scene_begin();
 		GMBase.r_dsgraph_render_static(0, clearGraph);
@@ -458,6 +351,8 @@ void CRender::renderGBuffer(bool clearGraph)
 		LP_normal.clear();
 		LP_pending.clear();
 		GMBase.r_dsgraph_capture_lights();
+		SvpLensLighting::CaptureSceneLights(LP_normal, LP_pending);
+		scope_vslr_scene_lights(LP_normal, LP_pending); // the lamps the scope reflection capture lights with
 		if (ps_r__svp_stats)
 		{
 			const u32 lp_total = (u32)(LP_normal.v_point.size() + LP_normal.v_spot.size() + LP_normal.v_shadowed.size()
@@ -469,12 +364,13 @@ void CRender::renderGBuffer(bool clearGraph)
 
 	//******* Main render :: PART-1 (second)
 	{
-		PIX_EVENT(DEFER_PART1_SPLIT);
+		PIX_EVENT_C(DEFER_PART1_SPLIT, dx10_marker_gbuffer);
 		// level
 		Target->phase_scene_begin();
 		if (Target == TargetMain) // pip weapon HUD only in the main view, not the scope image
 		{
 			GMBase.r_dsgraph_capture_hud();
+			svp_stats::cpu_begin(svp_stats::CPU_HUD);
 			const bool svp_scope_aimed = g_pGamePersistent
 				&& (g_pGamePersistent->m_pGShaderConstants->hud_params.y > 0.005f
 					|| (g_pGamePersistent->m_pGShaderConstants->hud_params.x > 0.05f
@@ -486,6 +382,7 @@ void CRender::renderGBuffer(bool clearGraph)
 			// deriveScopeLens, after the clear) can auto-derive the objective distance against the optical axis
 			if ((scope_svp_enabled && svp_scope_aimed) || scope_debug >= 2)
 				svp_snapshot_hud_geom();
+			svp_stats::cpu_end(svp_stats::CPU_HUD);
 			// keep the weapon list when an SVP pass follows, the scope image drains it second
 			extern bool g_svp_hud_frozen_pass;
 			extern bool g_svp_hud_history_write;
@@ -501,6 +398,7 @@ void CRender::renderGBuffer(bool clearGraph)
 
 			// pip derive the scope lens then build the SVP camera (matrices[1]) while a PiP scope
 			// is aimed, zoom-0 tube sights have no zoom fov so ADS + a captured lens also qualifies
+			svp_stats::cpu_begin(svp_stats::CPU_HUD);
 			if (scope_svp_enabled && svp_scope_aimed)
 			{
 				deriveScopeLens();
@@ -517,6 +415,7 @@ void CRender::renderGBuffer(bool clearGraph)
 					&& svpCamera())
 					ResetSVPHistory();
 			}
+			svp_stats::cpu_end(svp_stats::CPU_HUD);
 			// pip [3DB] for aimed sights without a captured lens, reflex and irons keep 3d
 			// ballistics so the sight independent markers draw, the pip overlay owns the rest
 			{
@@ -534,6 +433,7 @@ void CRender::renderGBuffer(bool clearGraph)
 			auto& vp = Device.m_SecondViewport;
 			// the weapon drains through the same scope camera as the world
 			// the near plane hides everything behind the front lens
+			svp_stats::cpu_begin(svp_stats::CPU_HUD);
 			if (scope_svp_enabled >= 2 && vp.eyepiece.radius > EPS
 				&& vp.svp_front_use_m > EPS)
 			{
@@ -553,6 +453,7 @@ void CRender::renderGBuffer(bool clearGraph)
 			}
 			else
 				GMBase.RGraph.mapHUD.clear(); // consume the deferred main-pass clear
+			svp_stats::cpu_end(svp_stats::CPU_HUD);
 		}
 		GMBase.r_dsgraph_render_lods(true, clearGraph);
 		// pip r__svp_skip_grass drops the near-grass field on the scope pass (mostly off a zoomed cone)
@@ -561,13 +462,19 @@ void CRender::renderGBuffer(bool clearGraph)
 			// keep the grass visible set on the main drain when the SVP pass draws it second
 			extern bool g_svp_defer_detail_clear;
 			g_svp_defer_detail_clear = (!svp_pass && !clearGraph && !ps_r__svp_skip_grass);
+			// the scope grass draws only the slot ranges the scope cone keeps
+			if (svp_pass)
+				Details->hw_Run_Begin_Scope(svp_full);
 			Details->Render();
+			if (svp_pass)
+				Details->hw_Run_End();
 			g_svp_defer_detail_clear = false;
 		}
+		if (!svp_pass) Target->phase_scope_glass_deferred();
 		Target->phase_scene_end();
 	}
 
-	if (svp_cull || svp_cull_grass)
+	if (svp_cull)
 		CDSGraphManager::svp_cull_end(); // pip end SVP cull, the shared shadow/light passes below are unaffected
 	if (svp_pass)
 	{
@@ -667,6 +574,9 @@ void CRender::renderGBuffer(bool clearGraph)
 // shadow maps with no second shadow render (SetActive(SVP) had pointed them at the SVP's empty atlas)
 void CRender::share_main_smaps()
 {
+	// an svp target with no atlas of its own leaves the stock name on the main maps already
+	if (TargetSVP && !TargetSVP->rt_smap_depth)
+		return;
 	for (auto& r : TargetMain->RenderTargetRemaps)
 		if (r.second == TargetMain->rt_smap_depth ||
 			(TargetMain->rt_smap_depth_minmax && r.second == TargetMain->rt_smap_depth_minmax))
@@ -680,7 +590,7 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 	// accumulate is replayed into the SVP by the dual_accum hook (inside render_sun_cascade + below)
 	if (bSUN) //bSUN && Device.dwFrame & 1 --Delayed sun update. Worth to check it in future
 	{
-		PIX_EVENT(DEFER_SUN);
+		PIX_EVENT_C(DEFER_SUN, dx10_marker_lights);
 		svp_stats::note_sun();
 		svp_stats::section_begin(svp_stats::SEC_MAIN_LIGHTS);
 		RImplementation.stats.l_visible ++;
@@ -728,7 +638,7 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 	// emissive runs on the main viewport only (active here), the SVP skips self-illum (minor) so it does
 	// not re-render + clear the shared GMBase emissive list that the main pass still needs
 	{
-		PIX_EVENT(DEFER_SELF_ILLUM);
+		PIX_EVENT_C(DEFER_SELF_ILLUM, dx10_marker_lights);
 		svp_stats::section_begin(svp_stats::SEC_MAIN_EMISSIVE);
 		Target->phase_accumulator();
 		// Render emissive geometry, stencil - write 0x0 at pixel pos
@@ -763,14 +673,14 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 	// (it replays the accumulate into the SVP via dual_accum, sharing the maps), non dependant on OCCQ
 	svp_stats::section_begin(svp_stats::SEC_MAIN_LIGHTS); // svp mirror nests here through the hook
 	{
-		PIX_EVENT(DEFER_LIGHT_NO_OCCQ);
+		PIX_EVENT_C(DEFER_LIGHT_NO_OCCQ, dx10_marker_lights);
 		Target->phase_accumulator();
 		render_lights(LP_normal);
 	}
 
 	// Lighting, dependant on OCCQ
 	{
-		PIX_EVENT(DEFER_LIGHT_OCCQ);
+		PIX_EVENT_C(DEFER_LIGHT_OCCQ, dx10_marker_lights);
 		render_lights(LP_pending);
 	}
 	svp_stats::section_end(svp_stats::SEC_MAIN_LIGHTS);
@@ -789,6 +699,7 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 			Target->phase_combine();
 		}
 
+		svp_stats::cpu_begin(svp_stats::CPU_MISC);
 		TargetSVP->phase_svp_capture(); // SVP combined color -> rt_secondVP, ready for the main lens
 
 		// The real reflex mesh draws through the objective after SVP post processing
@@ -806,6 +717,7 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 					Device.m_SecondViewport.GetSVPSession();
 			}
 		}
+		svp_stats::cpu_end(svp_stats::CPU_MISC);
 
 		TargetMain->SetActive();
 		svp_stats::section_end(svp_stats::SEC_SVP_COMBINE);
@@ -820,7 +732,7 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 
 	// Postprocess
 	{
-		PIX_EVENT(DEFER_LIGHT_COMBINE);
+		PIX_EVENT_C(DEFER_LIGHT_COMBINE, dx10_marker_lights);
 		svp_stats::section_begin(svp_stats::SEC_MAIN_COMBINE);
 		Target->phase_combine();
 		svp_stats::section_end(svp_stats::SEC_MAIN_COMBINE);
@@ -833,14 +745,6 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 	if (Details)
 		Details->details_clear();
 
-	if (g_hud)
-	{
-		PROF_EVENT("render_hud");
-		if (g_hud->RenderActiveItemUIQuery())
-			GMBase.r_dsgraph_render_hud_ui();
-		if (g_hud->RenderCamAttachedUIQuery())
-			GMBase.r_dsgraph_render_cam_ui();
-	}
 }
 #include "../xrRender/CHudInitializer.h"
 
@@ -863,6 +767,18 @@ void CRender::render_forward()
 		GMBase.fade_render(); // faded-portals
 		GMBase.r_dsgraph_render_sorted(false); // strict-sorted geoms
 		g_pGamePersistent->Environment().RenderLast(); // rain/thunder-bolts
+
+		// Item and camera attachment UI draws before the sorted HUD so nearer glass and the post chain cover it
+		// pip main view only, the scope image has no attachment UI
+		if (g_hud && !(Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp))
+		{
+			PROF_EVENT("render_hud");
+			if (g_hud->RenderActiveItemUIQuery())
+				GMBase.r_dsgraph_render_hud_ui();
+			if (g_hud->RenderCamAttachedUIQuery())
+				GMBase.r_dsgraph_render_cam_ui();
+		}
+
 		GMBase.r_dsgraph_render_sorted_hud();
 	}
 

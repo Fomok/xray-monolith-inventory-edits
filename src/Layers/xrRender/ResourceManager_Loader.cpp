@@ -7,6 +7,10 @@
 
 void CResourceManager::OnDeviceDestroy(BOOL)
 {
+#if defined(USE_DX10) || defined(USE_DX11)
+    DrainTextureLoads();
+    ReleasePrefetchedTextures();
+#endif
 	if (RDEVICE.b_is_Ready) return;
 	m_textures_description.UnLoad();
 
@@ -157,12 +161,20 @@ void CResourceManager::StoreNecessaryTextures()
 	if (!m_necessary.empty())
 		return;
 
-	map_TextureIt it = m_textures.begin();
-	map_TextureIt it_e = m_textures.end();
-
-	for (; it != it_e; ++it)
+	// Snapshot the keys under creationGuard: this used to walk m_textures
+	// directly with no lock at all, racing _CreateTexture's guarded insert on
+	// other threads. Release the lock before calling T.create(), since that
+	// re-enters _CreateTexture and takes creationGuard itself.
+	xr_vector<LPCSTR> texture_names;
 	{
-		LPCSTR texture_name = it->first;
+		xrCriticalSectionGuard guard(creationGuard);
+		texture_names.reserve(m_textures.size());
+		for (auto& pair : m_textures)
+			texture_names.push_back(pair.first);
+	}
+
+	for (LPCSTR texture_name : texture_names)
+	{
 		if (strstr(texture_name, "\\levels\\")) continue;
 		if (!strchr(texture_name, '\\')) continue;
 

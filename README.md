@@ -1,40 +1,150 @@
-# X-Ray Monolith Bodycam MT
+# X-Ray Monolith Bodycam MT v0.3
 
 This fork combines the Bodycam camera and viewmodel systems with objective-camera
 picture-in-picture scopes for S.T.A.L.K.E.R. Anomaly / GAMMA.
 
-## **WHAT'S NEW**
+## v0.3 update
 
-1. Merged the latest X-Ray Monolith MT and objective-camera PiP development builds.
-2. Weapon-relative true PiP alignment:
-   - The scope reticle and tunneling follow the live weapon and sight axes while the gun moves inside the Bodycam deadzone.
-   - Projectile zero, reticle alignment, and visible weapon geometry remain coherent from 1x through high magnification.
-   - Current-frame weapon and sight snapshots prevent delayed reticle movement, stale alignment, and cross-weapon state leakage.
-3. Physical scope behavior:
-   - Dynamic exit-pupil vignetting is derived from eye alignment rather than a fixed overlay.
-   - Tunneling, image transmission, field of view, eye relief, exit pupil, objective diameter, and controller response are modeled separately.
-   - Typed per-optic profiles contain measured specifications for supported LPVOs, magnifiers, prism sights, Eastern optics, night-vision optics, and integrated weapon sights.
-   - Authored scope interiors remain supported while generated tunneling covers optics without a suitable interior mask.
-   - Optical sights use physical eye coupling; digital and thermal displays remain rigid.
-4. Updated PiP renderer integration:
-   - Linear magnification stepping, hybrid-optic capture, objective-aware near-plane handling, local exposure, and scope-specific post-processing.
-   - Stable PiP ownership during ADS transitions, reloads, weapon changes, and high-magnification recentering.
-   - Per-weapon swing envelopes drive scope-shadow response without leaking state between weapons or viewport sessions.
-5. Expanded Bodycam simulation:
-   - Consistent mouse response across sensitivity settings.
-   - Coordinated hip-fire, ADS, PiP camera, viewmodel, and ballistic direction.
-   - Selectable Bodycam Style and STALKER 2 Style arm IK layers.
-   - Correct left-hand device attachment while procedural arm IK is active.
-   - Per-weapon viewmodel profiles with smooth, ADS-safe positioning for hip-fire, walking, and sprint states.
-6. Reworked Bodycam and PiP ImGui menus:
-   - Feature-oriented pages, descriptive tooltips, and right-click reset to default.
-   - Default, Balanced, Disable, No ADS, Red Orchestra, and Red Orchestra (ADS only) Bodycam presets.
-   - Named user presets can be created, updated, renamed, and deleted in-game.
-   - User presets are isolated in `bodycam_user.ltx` and never modify shipped defaults.
-7. Stable integration surfaces for other mods:
-   - Typed PiP optic API version 3 with exact schema negotiation, descriptors, structured validation, and profile provenance.
-   - Lua-facing Bodycam state and viewmodel controls.
-   - Additive actor-camera deltas for recoil mods without actor-direction rebakes.
+v0.3 expands Classic mode with regrip, recoil, camera follow,
+Footstep Camera and weapon-handling features, alongside the Monolith MT merge, MSDF reticles
+and scope VSLR reflections. VSLR adds nearby scene and
+player reflections to the scope-glass composition, including the night-vision rendering path.
+MSDF reticles are a 3DSS feature and remain available with PiP disabled.
+
+The Classic additions work in Classic mode (`bodycam_motion_mode 0`); they do not require
+switching modes. Reference mode (`bodycam_motion_mode 1`) is separate and is used for
+reference-only features. Reference character packets are included under
+`gamedata/bodycam_reference/character/`; install the matching core gamedata with the executable. The original recording/export inputs remain local.
+See [the porting guide](docs/BODYCAM_PORTING.md) for the module boundaries and asset requirements.
+
+This is a development checkpoint. The latest static review checked source membership,
+settings/UI references, hook documentation and distribution overlaps; it did not perform a new
+engine build or live-game validation. Known issues remain deferred:
+
+- PiP target replacement needs an allocation-failure check before rendering resumes.
+- Bodycam console input needs strict numeric parsing and finite-value validation.
+- The published Classic viewmodel delta differs from the displayed HUD transform in axis order
+  and lowering influence.
+- Release tooling needs to reject Git metadata failures instead of writing incomplete provenance.
+
+Local `dist/` archives may predate the source checkout. Use a matched engine, core db0 and
+compatibility patch, and check the release manifest before installing.
+
+## What's new in v0.3
+
+Compared against the previously published
+[`bodycam-mt` checkpoint `2c4420b60`](https://github.com/asuparabekon/xray-monolith-bodycam/commit/2c4420b60e6abec4685d352615068248200ea485).
+The implementation checkpoint is `42e4bb7b8` in the development history. This public snapshot
+squashes that history into one commit. The features below are additions or changes relative to
+that published build; true PiP, physical optic profiles, presets and the original per-weapon HUD
+position editor were already present.
+
+### Classic mode: new camera and weapon handling
+
+These features run in Classic mode over the game's native first-person animations. Regrip,
+recoil and camera features adapted from the Reference implementation are available here;
+selecting Reference mode is not required.
+
+- **Regrip:** optional procedural regrip on the Classic rig, fading out during weapon actions
+  so reloads and other authored animations remain in control.
+- **Recoil:** optional Reference-derived gun recoil on the Classic rig, with hip/ADS intensity
+  controls and a configurable share of the existing Fire Impulse. Recoil settles through
+  weapon actions instead of snapping off.
+- **Continuous camera follow:** an alternative to deadzone camera lag, exposed as Reference
+  follow within Classic's Camera Decoupling controls, with bounded positional response.
+- **Head roll and shake:** configurable Reference-derived head motion within Classic's camera rig.
+- **Footstep Camera:** recorded head motion follows the native step schedule and replaces
+  native head bob when enabled.
+- **Mouse-driven arm settling:** the elbows settle after look movement.
+- **Movement-linked weapon handling:** weapon response to steps and velocity changes.
+- **Sprint refinements:** sprint-start gun step bob, held lowering through the sprint hand-off
+  and braking-stride response.
+- **HUD continuity and settings fixes:** improved authored-animation phase tracking, action
+  policies and preset updates.
+
+### Separate Reference-only features
+
+Reference mode is reserved for the reference-only procedural character pipeline: grounded
+movement, camera/weapon/arm motion, sway, stress and sight regrip, with individual feature controls.
+It preserves GAMMA's stamina rules and existing authored weapon actions. Native hand-contact
+fitting, action-boundary blending and held-ADS handling connect that pipeline to the game.
+Its weapon-placement controls provide saved absolute hip/ADS anchors, preview restore,
+legacy-position migration and stance clearance. Mode selection is console-only.
+
+### Scope glass, reflections and the optical image
+
+- **Coated physical glass:** layered lens reflections, coating colour, roughness, tint and brightness,
+  with shared glass lighting across Classic and Reference paths.
+- **Scope VSLR:** nearby scene reflections captured around the player, with depth-aware sharp
+  reflection lookup, roughness-dependent blur, coverage blending into the weather environment and
+  smoothed capture updates. This is local reflection capture, not hardware ray tracing.
+- **Player reflections:** a dedicated player mirror capture in scope glass, with current-frame
+  placement and edge fading to reduce jitter and abrupt boundaries.
+- **Weather and lighting integration:** scope glass follows the installed environment/sky and
+  display transfer, with sun and local-light highlights. Dedicated composition handles glass and
+  reticle lighting under night vision.
+- **Eye-model integration:** Classic Reference follow uses the current scope eye; Deadzone uses
+  tracked pupil motion. Switching models hands over smoothly. Reference pupil zoom sensitivity
+  uses current eye alignment.
+- **Reflection controls:** VSLR enable, smoothing/update controls and diagnostic views; capture
+  resources are released on level unload or render-target destruction.
+
+### Reticles and 3DSS
+
+- **MSDF reticles:** scalable distance-field reticles with material states, illumination and
+  Mark Switch support. The GAMMA patch supplies the Razor EBR-9 MOA and six-state EOTech atlases.
+- **Exposure-aware reticle glow:** coloured emission is composed after tone mapping across supported
+  scope, reflex and magnifier paths, with per-atlas settings and the Reticle Glow MCM tab.
+- **Independent of PiP:** MSDF/glow also work in stock 3DSS with PiP disabled and are independent of
+  Bodycam motion mode. Existing bitmap reticles retain their rendering path.
+- **Sight shader warm-up:** sight shaders are prepared during loading, with compiler-definition and
+  bytecode reuse to reduce repeated preparation work. This is not a promise of hitch-free aiming.
+- **Separate authoring application:** [3DSS Reticle Studio](https://github.com/asuparabekon/3dss-reticle-studio)
+  edits and exports the reticle atlases; it is not bundled into the engine.
+
+### PiP renderer and grass
+
+- Integrated the newer PiP renderer through `406e7c015`, with 3DSS for GAMMA 5.02 compatibility.
+- Updated magnifier ownership, camera history, scope exposure, configuration publication and
+  texture-load/resource-lifetime handling.
+- Optional hardware-instanced grass and a depth-only grass shadow path, supplied through the
+  separate Grass Optimisation patch. The engine retains its fallback grass path without that patch.
+- Separated PiP scheduling, sizing, camera tracking and material ownership into smaller modules.
+  Reference pose evaluation also received allocation reductions; performance gains depend on the scene.
+
+### Modding APIs and merged Monolith MT features
+
+- **First-person transform API:** versioned access to camera, HUD, weapon, optic and offhand poses;
+  see [FIRST_PERSON_LUA_API.md](docs/FIRST_PERSON_LUA_API.md). The known Classic viewmodel-delta
+  mismatch remains listed in the development status above.
+- **Newer Monolith MT base:** merged through `871e24912`. These are upstream contributions, with
+  their existing credits retained. Additions include:
+  - a typed named shader-constant bus, array/matrix/uint and texture-alias lanes, per-object values
+    and an ImGui bus monitor;
+  - LuaJIT CPU/allocation profiling and GC statistics;
+  - level-pack/spawn overlays, large/version-13 AI-map support, patrol fragments, level connectivity
+    queries and spawning by level name;
+  - expanded NPC and monster scripting for combat decisions, movement/turning, perception,
+    health restoration, reload events and cover selection;
+  - script/weather/ambient/music sound hooks and HUD-sound frequency/delay multipliers;
+  - dynamic PDA tabs, tab icons, font/frameline scaling, UI child lookup and scroll hooks;
+  - callback ordering, map-location events, camera-effector speed controls, scripted-item and
+    first-person-leg shader access, plus additional animation and input hooks;
+  - footstep sound/particle-distance controls, sound-distance multipliers, optional NPC weapon-drop
+    suppression, acceleration-during-lookout and pseudogiant stomp controls;
+  - dropped-weapon transform, paused thunderbolt, NPC reload, launcher-ammunition and texture/thread
+    lifetime fixes, alongside the upstream stability changes.
+
+### Distribution and maintenance
+
+- Split the engine/core gamedata, GAMMA compatibility patch and optional grass patch into separate
+  deliverables. Use matching versions; the GAMMA patch supplies the updated MT core mirrors.
+- Reorganized Bodycam into feature modules, a shared Classic camera rig and a portable Reference
+  library, with a central settings registry and documented engine hooks.
+- Development tools, tests and captured evidence remain local and are excluded from this source
+  snapshot. Runtime assets and required third-party notices remain included.
+- This feature inventory describes implemented changes, not blanket compatibility certification.
+  The pending fixes and current validation limits are stated above.
 
 ## Bodycam MT Version
 
@@ -60,6 +170,7 @@ without making those systems share hidden state. It provides:
 * console variables, Modded Exes settings, feature-oriented ImGui controls, and Lua access to Bodycam state and viewmodel profiles;
 * built-in Bodycam presets plus user-created presets that can be managed entirely in-game;
 * isolated `bodycam_user.ltx` storage for user-created Bodycam presets without modifying shipped defaults.
+* a versioned [first-person Lua transform API](docs/FIRST_PERSON_LUA_API.md) exposing Bodycam's finalized camera and HUD transforms.
 
 ## Upstream MT Version
 
@@ -114,21 +225,22 @@ Third-party mods and their assets are not included in this repository. Shader co
 files derived from 3DSS are distributed separately and should be installed as their own MO2
 patch above the scope mods they extend.
 
-## Installing a matched build
+## Installation
 
-There is no public release archive yet. For development builds:
+Close the game and MO2, and back up the files you are replacing.
 
-1. Install the required 3DSS and weapon-mod dependencies through MO2.
-2. Build either `DX11-AVX | x64` or `DX11 | x64`.
-3. Copy the matching executable and PDB from `_build/_game/bin_dbg` into the Anomaly `bin`
-   directory.
-4. Install this repository's `gamedata` as a separate MO2 mod, or package it while preserving
-   its directory layout.
-5. Install the matching 3DSS PiP compatibility patch at higher MO2 priority than 3DSS.
-6. Clear `appdata/shaders_cache` before the first launch after shader changes.
+1. Extract the engine download into your Anomaly folder and overwrite when prompted.
+   Include both the `bin` and `db` folders.
+2. Install the **GAMMA Patch** through MO2. Give it higher priority than the mods listed in
+   its README so it wins file conflicts. It is required for GAMMA and 3D Shader Scopes setups.
+3. Optional: install the **Grass Optimisation Patch** through MO2, letting it overwrite the
+   supported grass/shader mods listed in its README.
+4. Clear `Anomaly/appdata/shaders_cache`.
+5. In MO2, select the executable pointing to `Anomaly/bin/AnomalyDX11AVX.exe` and launch.
+   If it is not listed, add it through MO2's executable settings.
 
-Do not install only the executable. The scripts, configs, and shaders in `gamedata` are part
-of the runtime contract.
+Use matching engine, core gamedata and GAMMA Patch versions. Install the full engine package,
+not just the EXE. See [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) for packaging details.
 
 ## Building
 
@@ -146,6 +258,11 @@ git clone --recursive https://github.com/asuparabekon/xray-monolith-bodycam.git
 
 Open `src/engine-vs2022.sln`, select an x64 DX11 configuration, and build the solution. The
 current PiP implementation targets DX11.
+
+Development tools under `tools/`, tests, validation fixtures and captured output under `tests/`
+are maintained locally and excluded from the published source tree. Historical development
+documents may refer to these local utilities; a fresh clone does not include the engine packaging,
+deployment or asset-generation scripts, the validation harness, or its reference data.
 
 ## Configuration
 
@@ -721,3 +838,15 @@ problems, also enable `r__svp_cop_diag 2`.
 This repository inherits the upstream X-Ray engine licensing terms. See
 [License.txt](License.txt). The original S.T.A.L.K.E.R. engine code is available for
 non-commercial use under its applicable terms.
+
+## Documentation
+
+- [Source provenance and credits](docs/PROVENANCE.md)
+- [Porting guide and engine hooks](docs/BODYCAM_PORTING.md)
+- [Classic feature architecture](docs/CLASSIC.md)
+- [Distribution and file ownership](docs/DISTRIBUTION.md)
+- [First-person Lua API](docs/FIRST_PERSON_LUA_API.md)
+- [HUD animation policy](docs/BODYCAM_HUD_ANIMATION_POLICY.md)
+- [Shader bus](docs/shader_bus.md)
+- [DXML](docs/DXML.md)
+- [Callback ordering](docs/axr_main.md)

@@ -105,9 +105,51 @@ void CUIWindow::ResetPPMode()
 	}
 }
 
+// latched once so an untouched game never pays for the ancestor lookup in the draw path
+static std::atomic<bool> s_clip_used{false};
+
+void CUIWindow::EnableClip(bool enable)
+{
+	m_bClipEnabled = enable;
+	if (enable)
+		s_clip_used.store(true, std::memory_order_relaxed);
+}
+
+bool CUIWindow::AnyClipEnabled()
+{
+	return s_clip_used.load(std::memory_order_relaxed);
+}
+
+// Windows that have taken the mouse, oldest first; the top one receives all mouse input. Nesting is
+// a transient grab (a scrollbar drag) on top of a lasting one (an open popup), so a release restores
+// the previous holder instead of leaving nobody in charge.
+static xr_vector<CUIWindow*> s_capture_stack;
+
+static void erase_capture(CUIWindow* w)
+{
+	auto it = std::find(s_capture_stack.begin(), s_capture_stack.end(), w);
+	if (it != s_capture_stack.end())
+		s_capture_stack.erase(it);
+}
+
+static bool capture_inside(CUIWindow* c, CUIWindow* w)
+{
+	for (CUIWindow* p = c; p; p = p->GetParent())
+		if (p == w)
+			return true;
+	return false;
+}
+
+static void erase_capture_subtree(CUIWindow* w)
+{
+	s_capture_stack.erase(
+		std::remove_if(s_capture_stack.begin(), s_capture_stack.end(),
+		               [w](CUIWindow* c) { return capture_inside(c, w); }),
+		s_capture_stack.end());
+}
+
 CUIWindow::CUIWindow()
 	: m_pParentWnd(NULL),
-	  m_pMouseCapturer(NULL),
 	  m_pMessageTarget(NULL),
 	  m_pKeyboardCapturer(NULL),
 	  m_bAutoDelete(false),
@@ -118,8 +160,15 @@ CUIWindow::CUIWindow()
 	  //dwHintDelay(1000),
 	  //bShowHint(false),
 	  //m_sHint(""),
-	  m_bCustomDraw(false)
+	  m_bCustomDraw(false),
+	  m_bHideLock(false),
+	  m_bClipEnabled(false),
+	  m_bClipRectSet(false),
+	  m_bCursorDelta(false)
 {
+	m_clip_rect.set(0.0f, 0.0f, 0.0f, 0.0f);
+	m_capture_cursor.set(0.0f, 0.0f);
+
 	Show(true);
 	Enable(true);
 #ifdef LOG_ALL_WNDS
@@ -134,6 +183,8 @@ CUIWindow::CUIWindow()
 CUIWindow::~CUIWindow()
 {
 	VERIFY(!(GetParent()&&IsAutoDelete()));
+
+	erase_capture_subtree(this);
 
 	//if (m_pHint)
 	//	xr_delete(m_pHint);
@@ -277,8 +328,7 @@ void CUIWindow::DetachChild(CUIWindow* pChild)
 	if (NULL == pChild)
 		return;
 
-	if (m_pMouseCapturer == pChild)
-		SetCapture(pChild, false);
+	erase_capture_subtree(pChild);
 
 	{
 		xrCriticalSectionGuard guard(csUi);
@@ -353,22 +403,35 @@ bool CUIWindow::OnMouseAction(float x, float y, EUIMessages mouse_action)
 
 	if (GetParent() == NULL)
 	{
-		if (!wndRect.in(cursor_pos))
+		// the window that captured the mouse gets every message, wherever the cursor is
+		CUIWindow* cap = MouseCapturer();
+		if (cap && cap != this)
+		{
+			CUIWindow* cap_root = cap;
+			while (cap_root->GetParent())
+				cap_root = cap_root->GetParent();
+
+			if (cap_root == this || cap_root == cap) // our tree, or an unattached capturer
+			{
+				Frect cap_rect;
+				cap->GetAbsoluteRect(cap_rect);
+				Fvector2 cur = GetUICursor().GetCursorPosition();
+				if (WINDOW_MOUSE_MOVE == mouse_action)
+					cap->FeedCursorDelta(cur);
+				cap->OnMouseAction(cur.x - cap_rect.left, cur.y - cap_rect.top, mouse_action);
+				return true;
+			}
+		}
+
+		if (cap == this && WINDOW_MOUSE_MOVE == mouse_action)
+			FeedCursorDelta(GetUICursor().GetCursorPosition());
+
+		// a window that captured the mouse keeps receiving actions from outside its rect
+		if (!wndRect.in(cursor_pos) && cap != this)
 			return false;
 		//получить координаты относительно окна
 		cursor_pos.x -= wndRect.left;
 		cursor_pos.y -= wndRect.top;
-	}
-
-
-	//если есть дочернее окно,захватившее мышь, то
-	//сообщение направляем ему сразу
-	if (m_pMouseCapturer)
-	{
-		m_pMouseCapturer->OnMouseAction(cursor_pos.x - m_pMouseCapturer->GetWndRect().left,
-			cursor_pos.y - m_pMouseCapturer->GetWndRect().top,
-			mouse_action);
-		return true;
 	}
 
 	// handle any action
@@ -485,23 +548,61 @@ void CUIWindow::OnFocusLost()
 //ему в независимости от того где мышь
 void CUIWindow::SetCapture(CUIWindow* pChildWindow, bool capture_status)
 {
-	if (GetParent())
-	{
-		GetParent()->SetCapture(this, capture_status);
-	}
-
 	if (capture_status)
 	{
-		//оповестить дочернее окно о потере фокуса мыши
-		if (NULL != m_pMouseCapturer)
-			m_pMouseCapturer->SendMessage(this, WINDOW_MOUSE_CAPTURE_LOST);
+		if (!pChildWindow)
+			return;
 
-		m_pMouseCapturer = pChildWindow;
+		//оповестить дочернее окно о потере фокуса мыши
+		if (!s_capture_stack.empty() && s_capture_stack.back() != pChildWindow)
+			s_capture_stack.back()->SendMessage(this, WINDOW_MOUSE_CAPTURE_LOST);
+
+		erase_capture(pChildWindow); // re-capture moves it to the top rather than stacking twice
+		s_capture_stack.push_back(pChildWindow);
+
+		pChildWindow->m_capture_cursor = GetUICursor().GetCursorPosition();
 	}
 	else
 	{
-		m_pMouseCapturer = NULL;
+		erase_capture(pChildWindow);
+
+		// the window underneath missed every move made during the capture
+		if (CUIWindow* top = MouseCapturer())
+			top->m_capture_cursor = GetUICursor().GetCursorPosition();
 	}
+}
+
+CUIWindow* CUIWindow::MouseCapturer()
+{
+	return s_capture_stack.empty() ? NULL : s_capture_stack.back();
+}
+
+void CUIWindow::ReleaseMouseCapture()
+{
+	m_bCursorDelta = false;
+	erase_capture_subtree(this);
+}
+
+void CUIWindow::SetMouseCapture(bool status)
+{
+	m_bCursorDelta = status;
+	if (status)
+		m_capture_cursor = GetUICursor().GetCursorPosition();
+
+	SetCapture(this, status);
+}
+
+void CUIWindow::FeedCursorDelta(const Fvector2& cursor)
+{
+	if (!m_bCursorDelta)
+		return;
+
+	Fvector2 d;
+	d.sub(cursor, m_capture_cursor);
+	m_capture_cursor = cursor;
+
+	if (_abs(d.x) > EPS_S || _abs(d.y) > EPS_S)
+		OnMouseMoveRelative(d.x, d.y);
 }
 
 
@@ -626,7 +727,6 @@ CUIWindow* CUIWindow::GetChildMouseHandler()
 //для перевода окна и потомков в исходное состояние
 void CUIWindow::Reset()
 {
-	m_pMouseCapturer = NULL;
 }
 
 void CUIWindow::ResetAll()
@@ -651,7 +751,7 @@ bool CUIWindow::IsChild(CUIWindow* pPossibleChild) const
 }
 
 
-CUIWindow* CUIWindow::FindChild(const shared_str name)
+CUIWindow* CUIWindow::FindChild(const LPCSTR name)
 {
 	if (WindowName() == name)
 		return this;

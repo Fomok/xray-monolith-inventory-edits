@@ -26,6 +26,9 @@ ENGINE_API extern float psHUD_FOV_def;
 int g_nearwall = NW_FOV;
 int g_nearwall_trace = NT_CAM;
 
+// verdatim
+BOOL scale_hud_motion_marks_by_speed = FALSE;
+
 CHudItem::CHudItem()
 {
 	RenderHud(TRUE);
@@ -84,6 +87,10 @@ void CHudItem::Load(LPCSTR section)
 	m_nearwall_target_hud_fov = READ_IF_EXISTS(pSettings, r_float, section, "nearwall_target_hud_fov", 0.27f);
 	m_nearwall_speed_mod = READ_IF_EXISTS(pSettings, r_float, section, "nearwall_speed_mod", 10.f);
 	m_base_fov = READ_IF_EXISTS(pSettings, r_float, section, "hud_fov", 0.f);
+	// Both trajectories start at the same loaded, unobstructed native FOV.
+	// Never seed the counterfactual from an uninitialized smoothing accumulator.
+	m_hud_fov = m_hud_fov_without_nearwall = GetBaseHudFov();
+	m_hud_fov_baseline_initialized = true;
 
 	// Rezy - Custom Script 3D UI
 	script_ui_funct = READ_IF_EXISTS(pSettings, r_string, section, "custom_ui_func", nullptr);
@@ -501,6 +508,11 @@ static float lerp(float a, float b, float t)
 	return a * (1 - t) + b * t;
 }
 
+float CHudItem::GetTargetHudFovWithoutNearWall()
+{
+	return GetBaseHudFov();
+}
+
 float CHudItem::GetTargetHudFov()
 {
 	float target_fov = GetBaseHudFov();
@@ -557,6 +569,20 @@ void CHudItem::UpdateCL()
 			{
 				float motion_prev_time = ((float)m_dwMotionCurrTm - (float)m_dwMotionStartTm) / 1000.0f;
 				float motion_curr_time = ((float)Device.dwTimeGlobal - (float)m_dwMotionStartTm) / 1000.0f;
+
+                // verdatim, edits so motion marks shift their timings based on speed
+                if (scale_hud_motion_marks_by_speed) {
+                    CMotionDef def;
+                    u16 s = m_current_motion_def->speed;
+                    float speed = def.Dequantize(s);
+
+                    // get the final_anim_speed after the ltx speed changes / script changes from actor_on_hud_animation_play and scale the marks accordingly to the two timings
+                    float final_anim_speed = HudItemData()->final_anim_speed;
+
+                    motion_prev_time = (((float)m_dwMotionCurrTm - (float)m_dwMotionStartTm) / 1000.0f) * speed * final_anim_speed;
+                    motion_curr_time = (((float)Device.dwTimeGlobal - (float)m_dwMotionStartTm) / 1000.0f) * speed * final_anim_speed;
+                    
+                }
 
 				xr_vector<motion_marks>::const_iterator it = marks.begin();
 				xr_vector<motion_marks>::const_iterator it_e = marks.end();
@@ -699,6 +725,7 @@ extern float g_end_modif;
 
 u32 CHudItem::PlayHUDMotion(shared_str M, BOOL bMixIn, CHudItem* W, u32 state, float speed, float end, bool bMixIn2)
 {
+    const shared_str requestedMotion=M;
 	if (IsAttachedToHUD())
 	{
 		::luabind::functor<::luabind::object> funct;
@@ -738,9 +765,13 @@ u32 CHudItem::PlayHUDMotion(shared_str M, BOOL bMixIn, CHudItem* W, u32 state, f
 			Msg("!Missing hud animation %s", *M);
 			return 0;
 		}
+		// Sprint-entry probe: only an authored transition swapped in by a script
+		// plays now; the plain sprint clip waits for full sprint.
+		if (m_bodycam_entry_probe && M == requestedMotion)
+			return 0;
 	}
 
-	u32 anim_time = PlayHUDMotion_noCB(M, bMixIn, speed, bMixIn2);
+    u32 anim_time = PlayHUDMotion_noCB(M, bMixIn, speed, bMixIn2);
 	if (anim_time > 0)
 	{
 		m_bStopAtEndAnimIsRunning = true;
@@ -768,6 +799,11 @@ u32 CHudItem::PlayHUDMotion(shared_str M, BOOL bMixIn, CHudItem* W, u32 state, f
 	else
 		m_bStopAtEndAnimIsRunning = false;
 
+	if (m_bodycam_entry_probe)
+	{
+		m_bodycam_entry_clip = anim_time > 0;
+		m_bodycam_entry_motion = m_current_motion;
+	}
 	return anim_time;
 }
 
@@ -841,7 +877,12 @@ bool CHudItem::TryPlayAnimIdle()
 
 			CEntity::SEntityState st;
 			pActor->g_State(st);
-			if (st.bSprint && pActor->cam_BodycamSprintAnimReady())
+			// Reference owns the sprint pose. Keep the native idle grip underneath it;
+			// playing anm_idle_sprint as well introduces a second, immediate raise.
+			// Walk/crouch clips, actions and Classic keep their native selection.
+			if (st.bSprint && g_player_hud && g_player_hud->ReferenceOwnsMotion(this))
+				return false;
+			if (st.bSprint && pActor->BodycamSprintAnimReady())
 			{
 				PlayAnimIdleSprint();
 				return true;
@@ -1198,6 +1239,11 @@ void CHudItem::OnFrame()
 	float t = m_nearwall_speed_mod * Device.fTimeDelta;
 
 	float target_fov = GetTargetHudFov();
+	if (!m_hud_fov_baseline_initialized) {
+		m_hud_fov_without_nearwall = m_hud_fov;
+		m_hud_fov_baseline_initialized = true;
+	}
+	m_hud_fov_without_nearwall = lerp(m_hud_fov_without_nearwall, GetTargetHudFovWithoutNearWall(), t);
 	m_hud_fov = lerp(m_hud_fov, target_fov, t);
 
 	float target_ofs = GetTargetNearWallOffset();

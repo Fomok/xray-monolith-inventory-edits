@@ -405,6 +405,7 @@
     <ClInclude Include="..\xrRenderDX10\dx10BufferUtils.h" />
     <ClInclude Include="..\xrRenderDX10\dx10ConstantBuffer.h" />
     <ClInclude Include="..\xrRenderDX10\dx10ConstantBuffer_impl.h" />
+    <ClInclude Include="..\xrRenderDX10\dx10DebugName.h" />
     <ClInclude Include="..\xrRenderDX10\dx10R_Backend_Runtime.h" />
     <ClInclude Include="..\xrRenderDX10\dx10r_constants_cache.h" />
     <ClInclude Include="..\xrRenderDX10\dx10StateUtils.h" />
@@ -480,6 +481,7 @@
     <ClInclude Include="..\xrRender\ModelPool.h" />
     <ClInclude Include="..\xrRender\NvTriStrip.h" />
     <ClInclude Include="..\xrRender\NvTriStripObjects.h" />
+    <ClInclude Include="..\xrRender\occ_engine.h" />
     <ClInclude Include="..\xrRender\occRasterizer.h" />
     <ClInclude Include="..\xrRender\ParticleEffect.h" />
     <ClInclude Include="..\xrRender\ParticleEffectActions.h" />
@@ -525,6 +527,7 @@
     <ClInclude Include="..\xrRender\xrRender_console.h" />
     <ClInclude Include="..\xrRender\svp_constants.h" />
     <ClInclude Include="..\xrRender\svp_console.h" />
+    <ClInclude Include="..\xrRender\light_smap_layout.h" />
     <ClInclude Include="..\xrRender\svp_lens_detect_math.h" />
     <ClInclude Include="..\xrRender\svp_lens_detect.h" />
     <ClInclude Include="..\xrRender\xrStripify.h" />
@@ -667,6 +670,8 @@
     <ClCompile Include="..\xrRender\NvTriStrip.cpp" />
     <ClCompile Include="..\xrRender\NvTriStripObjects.cpp" />
     <ClCompile Include="..\xrRender\occRasterizer.cpp" />
+    <ClCompile Include="..\xrRender\occ_engine_legacy.cpp" />
+    <ClCompile Include="..\xrRender\occ_engine_moc.cpp" />
     <ClCompile Include="..\xrRender\occRasterizer_core.cpp" />
     <ClCompile Include="..\xrRender\ParticleEffect.cpp" />
     <ClCompile Include="..\xrRender\ParticleEffectActions.cpp" />

@@ -315,7 +315,7 @@ float CVisualMemoryManager::object_visible_distance(const CGameObject* game_obje
 
 	float distance = (1.f - alpha / fov) * (max_view_distance - min_view_distance) + min_view_distance;
 
-	return (distance);
+	return (distance * m_view_distance_factor);
 }
 
 float CVisualMemoryManager::object_luminocity(const CGameObject* game_object) const
@@ -664,8 +664,8 @@ struct CVisibleObjectPredicateEx
 
 void CVisualMemoryManager::remove_links(CObject* object)
 {
+	if (m_objects)
 	{
-		VERIFY(m_objects);
 		VISIBLES::iterator I = std::find_if(m_objects->begin(), m_objects->end(), CVisibleObjectPredicateEx(object));
 		if (I != m_objects->end())
 			m_objects->erase(I);

@@ -4755,6 +4755,18 @@
     <ClInclude Include="game_graph_inline.h">
       <Filter>AI\ANavigation\GameGraph</Filter>
     </ClInclude>
+    <ClInclude Include="game_graph_builder.h">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="spawn_overlays.h">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="spawn_packs.h">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="spawn_templates.h">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClInclude>
     <ClInclude Include="..\xrServerEntities\game_graph_space.h">
       <Filter>AI\ANavigation\GameGraph</Filter>
     </ClInclude>
@@ -5157,6 +5169,9 @@
     <ClInclude Include="svp_optic_config_script.h">
       <Filter>AI\AScript\ScriptClasses\Console</Filter>
     </ClInclude>
+    <ClInclude Include="shader_bus_script.h">
+      <Filter>AI\AScript\ScriptClasses\Console</Filter>
+    </ClInclude>
     <ClInclude Include="base_client_classes.h">
       <Filter>AI\AScript\ScriptClasses\BaseClientClasses</Filter>
     </ClInclude>
@@ -5409,6 +5424,12 @@
     <ClInclude Include="bodycam_camera.h">
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClInclude>
+    <ClInclude Include="bodycam_camera_rig.h">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClInclude>
+    <ClInclude Include="first_person_transform.h">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClInclude>
     <ClInclude Include="bodycam_hud_arms.h">
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClInclude>
@@ -5416,6 +5437,12 @@
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClInclude>
     <ClInclude Include="bodycam_mouse_input.h">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClInclude>
+    <ClInclude Include="bodycam_diagnostics.h">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClInclude>
+    <ClInclude Include="bodycam_sprint_start.h">
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClInclude>
     <ClInclude Include="bodycam_movement_response.h">
@@ -5428,6 +5455,9 @@
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClInclude>
     <ClInclude Include="bodycam_simulation.h">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClInclude>
+    <ClInclude Include="bodycam_smoothing.h">
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClInclude>
     <ClInclude Include="bodycam_viewmodel_profile.h">
@@ -8579,6 +8609,18 @@
     <ClCompile Include="game_graph_script.cpp">
       <Filter>AI\ANavigation\GameGraph</Filter>
     </ClCompile>
+    <ClCompile Include="game_graph_builder.cpp">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="spawn_overlays.cpp">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="spawn_packs.cpp">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="spawn_templates.cpp">
+      <Filter>AI\ANavigation\GameGraph</Filter>
+    </ClCompile>
     <ClCompile Include="level_graph.cpp">
       <Filter>AI\ANavigation\LevelGraph</Filter>
     </ClCompile>
@@ -8790,6 +8832,9 @@
       <Filter>AI\AScript\ScriptClasses\Console</Filter>
     </ClCompile>
     <ClCompile Include="svp_optic_config_script.cpp">
+      <Filter>AI\AScript\ScriptClasses\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="shader_bus_script.cpp">
       <Filter>AI\AScript\ScriptClasses\Console</Filter>
     </ClCompile>
     <ClCompile Include="base_client_classes_script.cpp">
@@ -9092,6 +9137,12 @@
     <ClCompile Include="bodycam_camera.cpp">
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClCompile>
+    <ClCompile Include="bodycam_camera_rig.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="first_person_transform.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
     <ClCompile Include="bodycam_hud_arms.cpp">
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClCompile>
@@ -9102,6 +9153,27 @@
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClCompile>
     <ClCompile Include="bodycam_mouse_input.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="bodycam_actor_camera.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="bodycam_actor_movement.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="bodycam_hud_playback.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="bodycam_diagnostics.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="bodycam_steps.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="bodycam_reference_hud_actions.cpp">
+      <Filter>Core\Client\Objects\actor\base</Filter>
+    </ClCompile>
+    <ClCompile Include="bodycam_reference_weapon.cpp">
       <Filter>Core\Client\Objects\actor\base</Filter>
     </ClCompile>
     <ClCompile Include="bodycam_movement_response.cpp">

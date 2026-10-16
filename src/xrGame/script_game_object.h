@@ -99,6 +99,8 @@ class CScriptEntityAction;
 class CScriptTask;
 class CScriptSoundInfo;
 class CScriptMonsterHitInfo;
+class CScriptMonsterEnemyInfo;
+class CScriptMonsterHomeInfo;
 class CScriptBinderObject;
 class CCoverPoint;
 class CScriptIniFile;
@@ -114,6 +116,7 @@ class CScriptGameObject;
 class CZoneCampfire;
 class CPhysicObject;
 class CArtefact;
+class CWeaponBinoculars;
 class script_attachment;
 
 #ifdef STATIONARYMGUN_NEW
@@ -216,6 +219,9 @@ public:
 	LPCSTR Section() const;
 	// CInventoryItem
 	u32 Cost() const;
+	// Icon values use x1/y1 for position and x2/y2 for width/height.
+	Frect GetInvGridRect() const;
+	Frect GetUpgrIconRect() const;
 	float GetCondition() const;
 	void SetCondition(float val);
 	float GetPowerCritical() const;
@@ -359,6 +365,7 @@ public:
 	void berserk();
 	void set_custom_panic_threshold(float value);
 	void set_default_panic_threshold();
+	void set_monster_melee_strike(LPCSTR anim_left, LPCSTR anim_right, float rear_arc_deg);
 
 	// CAI_Trader
 	void set_trader_global_anim(LPCSTR anim);
@@ -441,7 +448,7 @@ public:
 	u32 Money();
 	void MakeItemActive(CScriptGameObject* pItem);
 	void MoveItemToRuck(CScriptGameObject* pItem);
-	void MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id);
+	void MoveItemToSlot(CScriptGameObject* pItem, u16 slot_id, bool doNotActivate);
 	void MoveItemToBelt(CScriptGameObject* pItem);
 	void ItemAllowTrade(CScriptGameObject* pItem);
 	void ItemDenyTrade(CScriptGameObject* pItem);
@@ -509,7 +516,7 @@ public:
 	CScriptGameObject * GetObjectById(u16 id) const;
 
 
-	// Callbacks			
+	// Callbacks
 	void SetCallback(GameObject::ECallbackType type, const ::luabind::functor<void>& functor);
 	void SetCallback(GameObject::ECallbackType type, const ::luabind::functor<void>& functor,
 	                 const ::luabind::object& object);
@@ -564,6 +571,8 @@ public:
 	CScriptGameObject* GetCorpse() const;
 	CScriptSoundInfo GetSoundInfo();
 	CScriptMonsterHitInfo GetMonsterHitInfo();
+	CScriptMonsterEnemyInfo GetMonsterEnemyInfo();
+	CScriptMonsterHomeInfo GetMonsterHomeInfo();
 	void bind_object(CScriptBinderObject* object);
 	CScriptGameObject* GetCurrentOutfit() const;
 	float GetCurrentOutfitProtection(int hit_type);
@@ -840,9 +849,65 @@ public:
 	void set_aim_params(float max_angle, float min_angle, float min_speed, float predict_time);
 	void set_fire_queue_scale(float size_k, float interval_k);
 	void set_vision_speed(float value);
+	void set_visible_enemy_bias(float actor_bias, float npc_bias);
+	void set_hit_redirect(float max, float falloff);
+	void set_view_distance_factor(float value);
+	void set_health_restore_boost(float value);
+	void set_movement_hold(bool value);
+	void set_monster_attack_on_move_params(float max_go_close_time, float far_radius, float prepare_radius,
+	                                       float prepare_time, float attack_radius, float update_side_period,
+	                                       float prediction_factor);
+	void set_monster_run_attack_params(float min_dist, float max_dist, float min_delay_ms, float max_delay_ms);
+	void set_monster_jump_flags(bool auto_aim, bool prepare_in_move, bool ground_skip, float auto_aim_factor);
+	void set_monster_aura_params(LPCSTR aura_name, float linear, float quadratic, float max_power,
+	                             float max_distance);
+	void set_bloodsucker_vis_timing(float min_delay_ms);
+	void set_monster_turn_factor(float factor);
 	bool can_kill_enemy();
 	bool can_kill_member();
 	bool fire_make_sense();
+	bool is_hit_anim_playing();
+
+	int get_monster_state();
+	bool is_monster_jumping();
+	int get_monster_rank();
+	bool ability_invisibility();
+	bool ability_can_drag();
+	bool ability_psi_attack();
+	bool ability_earthquake();
+	bool ability_can_jump();
+	bool ability_distant_feel();
+	bool ability_run_attack();
+	bool ability_rotation_jump();
+	bool ability_jump_over_physics();
+	bool can_attack_on_move();
+	float get_monster_morale();
+	float get_psy_influence();
+	float get_radiation_influence();
+	float get_fire_influence();
+	u32 get_monster_cover_vertex(const Fvector& enemy_position, float min_dist, float max_dist);
+
+	void set_monster_attack_dist(float min_dist, float max_dist);
+	void set_monster_jump_params(float min_dist, float max_dist, float max_angle, float max_height, float delay_ms);
+	void set_chimera_attack_params(float attack_radius, float prepare_timeout_ms, float attack_timeout_ms,
+	                               int num_prepare_jumps, int num_attack_jumps);
+	void set_burer_gravi_params(float cooldown_ms, float min_dist, float max_dist, float speed, float radius,
+	                            float hit_power);
+	void set_burer_tele_params(int max_objects, float find_radius, float min_dist, float max_dist,
+	                           float fly_velocity);
+	void set_controller_tube_params(float damage, float see_duration_ms, float min_delay_ms, float min_distance);
+	void set_controller_stamina_hit(float value);
+	void set_poltergeist_detection_params(float near_factor, float far_factor, float far_range,
+	                                      float speed_factor, float loose_speed);
+	void set_poltergeist_height_params(float height_min, float height_max, float change_velocity,
+	                                   float min_time_ms, float max_time_ms);
+
+	bool try_monster_jump(const Fvector& position, float factor, bool skip_prepare);
+	bool try_monster_rotation_jump();
+	bool try_monster_run_attack();
+	bool try_monster_threaten();
+	bool monster_capture_control(int type);
+	bool monster_release_control(int type);
 
 	void aim_bone_id(LPCSTR value);
 	LPCSTR aim_bone_id() const;
@@ -977,6 +1042,7 @@ public:
 	_DECLARE_FUNCTION14(cast_Ammo, CWeaponAmmo);
 	_DECLARE_FUNCTION14(cast_Weapon, CWeapon);
 	_DECLARE_FUNCTION14(cast_Knife, CWeaponKnife);
+	_DECLARE_FUNCTION14(cast_Binoculars, CWeaponBinoculars);
 	_DECLARE_FUNCTION14(cast_WeaponMagazined, CWeaponMagazined);
 	_DECLARE_FUNCTION14(cast_WeaponMagazinedWGrenade, CWeaponMagazinedWGrenade);
 	_DECLARE_FUNCTION14(cast_EatableItem, CEatableItem);
@@ -1082,6 +1148,8 @@ public:
 	bool is_bone_visible(LPCSTR bone_name, bool bHud) { return is_bone_visible(bone_id(bone_name, bHud), bHud); }
 	bool is_bone_visible(LPCSTR bone_name) { return is_bone_visible(bone_id(bone_name), false); }
 
+	bool is_physical_scope_glass_bone(LPCSTR bone_name);
+	void set_physical_scope_glass_mask(LPCSTR bone_name, bool enabled);
 	void set_bone_visible(u16 bone_id, bool bVisibility, bool bRecursive, bool bHud);
 	void set_bone_visible(u16 bone_id, bool bVisibility, bool bRecursive) { set_bone_visible(bone_id, bVisibility, bRecursive, false); }
 	void set_bone_visible(LPCSTR bone_name, bool bVisibility, bool bRecursive, bool bHud) { set_bone_visible(bone_id(bone_name, bHud), bVisibility, bRecursive, bHud); }
@@ -1114,8 +1182,8 @@ public:
     void SetBulletCheckVisual(bool value);
 #endif
 
-	bool IsBoneVisible(LPCSTR bone_name, bool bHud = false);	
-	void SetBoneVisible(LPCSTR bone_name, bool bVisibility, bool bRecursive = true, bool bHud = false);	
+	bool IsBoneVisible(LPCSTR bone_name, bool bHud = false);
+	void SetBoneVisible(LPCSTR bone_name, bool bVisibility, bool bRecursive = true, bool bHud = false);
 	//CAI_Stalker
 	void ResetBoneProtections(LPCSTR imm_sect, LPCSTR bone_sect);
 	//Anything with PPhysicShell (ie. car, actor, stalker, monster, heli)
@@ -1168,8 +1236,7 @@ public:
 
 	float Weight() const;
 
-	// demonized: get luminosity as displayed in ui
-	float GetActorUILuminosity();
+	float GetActorVisibility();
 
 	float GetActorJumpSpeed() const;
 	void SetActorJumpSpeed(float jump_speed);
@@ -1188,6 +1255,13 @@ public:
 	// demonized: Adjust Lookout coeff
 	float GetActorLookoutCoef() const;
 	void SetActorLookoutCoef(float val);
+
+    // verdatim: adjust damage stagger time factor
+    float GetActorDamageStaggerTimeFactor() const;
+    void SetActorDamageStaggerTimeFactor(float val);
+
+    // Boeker: adjust zoom inertia factor
+    void SetZoomInertionFactor(float factor);
 
 	float GetActorCrouchCoef() const;
 	void SetActorCrouchCoef(float val);
@@ -1219,6 +1293,12 @@ public:
 	::luabind::object GetDefaultShaders(bool bHud = false);
 	void SetShaderTexture(int id, LPCSTR shader, LPCSTR texture, bool bHud = false);
 	void ResetShaderTexture(int id, bool bHud = false);
+	::luabind::object GetHudMotionItemShaders();
+	void SetHudMotionItemShader(int id, LPCSTR shader, LPCSTR texture);
+	void ResetHudMotionItemShader(int id);
+	::luabind::object GetLegsShaders();
+	void SetLegsShader(int id, LPCSTR shader, LPCSTR texture);
+	void ResetLegsShader(int id);
 
 	script_attachment* AddAttachment(LPCSTR name, LPCSTR model_name);
 	script_attachment* GetAttachment(LPCSTR name);
@@ -1271,7 +1351,7 @@ struct SafeWrapBase
         ai().script_engine().lua_error_not_crash(ai().script_engine().lua());
     }
 
-    // This generic function accepts ANY instance type (const or non-const) 
+    // This generic function accepts ANY instance type (const or non-const)
     // and ANY member function pointer type.
     template <typename InstanceT, typename FuncT, typename... Args>
     static auto execute(InstanceT instance, FuncT memFunc, Args&&... args)

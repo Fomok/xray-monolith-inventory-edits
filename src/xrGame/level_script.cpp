@@ -28,6 +28,8 @@
 #include "map_manager.h"
 #include "map_spot.h"
 #include "map_location.h"
+#include "ui/xrUIXmlParser.h"
+#include "../Include/xrRender/UIRender.h"
 #include "physics_world_scripted.h"
 #include "alife_simulator.h"
 #include "alife_time_manager.h"
@@ -502,6 +504,69 @@ CUIStatic* map_get_minimap_spot_static(u16 id, LPCSTR spot_type)
 	return table;
 }
 
+::luabind::object map_get_all_object_spots()
+{
+	::luabind::object table = ::luabind::newtable(ai().script_engine().lua());
+
+	if (!g_pGameLevel)
+		return table;
+
+	Locations& locations = Level().MapManager().Locations();
+	int i = 1;
+	for (Locations_it it = locations.begin(); it != locations.end(); ++it)
+	{
+		CMapLocation* ml = (*it).location;
+		if (!ml) continue;
+
+		::luabind::object spot = ::luabind::newtable(ai().script_engine().lua());
+		spot["id"] = ml->ObjectID();
+		spot["spot_type"] = ml->spot_type;
+		spot["current_spot_type"] = ml->CurrentSpotType();
+		spot["hint"] = ml->GetHint();
+		spot["level_name"] = ml->GetLevelName().c_str();
+
+		Fvector pos = ml->GetLastPosition();
+		spot["x"] = pos.x;
+		spot["y"] = pos.y;
+		spot["z"] = pos.z;
+
+		table[i] = spot;
+		i++;
+	}
+
+	return table;
+}
+
+::luabind::object map_get_spot_declaration(LPCSTR spot_type)
+{
+	::luabind::object declaration = ::luabind::newtable(ai().script_engine().lua());
+
+	if (!spot_type || !spot_type[0])
+	{
+		Msg("!map_get_spot_declaration: empty spot type");
+		return declaration;
+	}
+
+	CUIXml* xml = GetSpotXml();
+	string512 path;
+	strconcat(sizeof(path), path, spot_type, ":mini_map");
+	if (!xml->NavigateToNode(path, 0))
+		return declaration;
+
+	LPCSTR spot = xml->ReadAttrib(path, 0, "spot", "");
+	if (!xr_strlen(spot))
+		return declaration;
+
+	strconcat(sizeof(path), path, spot, ":texture");
+	if (!xml->NavigateToNode(path, 0))
+		return declaration;
+
+	declaration["texture"] = xml->Read(path, 0, "");
+	declaration["width"] = xml->ReadAttribFlt(spot, 0, "width", 0.0f);
+	declaration["height"] = xml->ReadAttribFlt(spot, 0, "height", 0.0f);
+	return declaration;
+}
+
 u16 map_has_object_spot(u16 id, LPCSTR spot_type)
 {
 	return Level().MapManager().HasMapLocation(spot_type, id);
@@ -722,6 +787,15 @@ void enable_input()
 #endif // #ifdef DEBUG
 }
 
+bool is_input_captured()
+{
+	if (g_bDisableAllInput)
+		return true;
+
+	CUIGameCustom* ui = CurrentGameUI();
+	return ui && ui->TopInputReceiver() != NULL;
+}
+
 void spawn_phantom(const Fvector& position)
 {
 	Level().spawn_item("m_phantom", position, u32(-1), u16(-1), false);
@@ -827,6 +901,30 @@ float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func, float cam
 	e->Start(fn);
 	Actor()->Cameras().AddCamEffector(e);
 	return e->GetAnimatorLength();
+}
+
+float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func, float cam_fov, bool b_hud, float power, float speed)
+{
+    CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
+    if (cam_fov)
+    {
+        e->m_bAbsolutePositioning = true;
+        e->m_fov = cam_fov;
+    }
+    if (power)
+    {
+        e->SetPower(power);
+    }
+    if (speed)
+    {
+        e->SetSpeed(speed);
+    }
+    e->SetHudAffect(b_hud);
+    e->SetType((ECamEffectorType)id);
+    e->SetCyclic(cyclic);
+    e->Start(fn);
+    Actor()->Cameras().AddCamEffector(e);
+    return e->GetAnimatorLength();
 }
 
 // demonized: Get cam effector transform data from "*.anm" file
@@ -1075,6 +1173,13 @@ u32 queue_actor_camera_delta(float yaw_delta, float pitch_delta)
 	return actor ? actor->cam_QueueScriptCameraDelta(yaw_delta, pitch_delta) : 0;
 }
 
+// Angular mouse look for script-only motion tests; shares queue/ack/cancellation.
+u32 queue_actor_mouse_look(float yaw_delta, float pitch_delta)
+{
+	CActor* actor = Actor();
+	return actor ? actor->cam_QueueScriptCameraDelta(yaw_delta, pitch_delta, true) : 0;
+}
+
 u32 poll_actor_camera_delta(u32 request_id, float& yaw, float& pitch)
 {
 	CActor* actor = Actor();
@@ -1188,16 +1293,38 @@ void remove_pp_effector(int id)
 
 void set_pp_effector_factor(int id, float f, float f_sp)
 {
-	CPostprocessAnimator* pp = smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+    CPostprocessAnimator* pp = smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
 
-	if (pp) pp->SetDesiredFactor(f, f_sp);
+    if (pp) pp->SetDesiredFactor(f, f_sp);
 }
 
 void set_pp_effector_factor2(int id, float f)
 {
-	CPostprocessAnimator* pp = smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+    CPostprocessAnimator* pp = smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
 
-	if (pp) pp->SetCurrentFactor(f);
+    if (pp) pp->SetCurrentFactor(f);
+}
+
+bool check_pp_effector(int id)
+{
+    CPostprocessAnimator* pp = smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+    if (pp)
+    {
+        return pp->Valid();
+    }
+    return false;
+}
+
+float get_pp_effector_factor(int id)
+{
+    CPostprocessAnimator* pp = smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+    return pp ? pp->GetCurrentFactor() : 0.0f;
+}
+
+float get_pp_effector_length(int id)
+{
+    CPostprocessAnimator* pp = smart_cast<CPostprocessAnimator*>(Actor()->Cameras().GetPPEffector((EEffectorPPType)id));
+    return pp ? pp->GetLength() : 0.0f;
 }
 
 #include "relation_registry.h"
@@ -1750,24 +1877,36 @@ void hud_adj_state(bool state)
 
 LPCSTR vid_modes_string()
 {
-	xr_string resolutions = "";
+	// Static: the returned pointer must outlive this call until luabind copies it.
+	// A local would be freed on return, leaving luabind to read a freed buffer.
+	static shared_str resolutions;
+    if (resolutions.size() > 0)
+        return resolutions.c_str();
+
+    xr_string result;
 
 	xr_token* tok = vid_mode_token;
 	while (tok->name)
 	{
-		if (strlen(resolutions.c_str()) > 0)
-			resolutions.append(",");
+		if (!result.empty())
+            result.append(",");
 
-		resolutions.append(tok->name);
+        result.append(tok->name);
 		tok++;
 	}
 
+    resolutions = result.c_str();
 	return resolutions.c_str();
 }
 
 u32 PlayHudMotion(u8 hand, LPCSTR itm_name, LPCSTR anm_name, bool bMixIn = true, float speed = 1.f)
 {
 	return g_player_hud->script_anim_play(hand, itm_name, anm_name, bMixIn, speed);
+}
+
+u32 PlayHudMotionBodycam(u8 hand, LPCSTR itm_name, LPCSTR anm_name, bool bMixIn, float speed, float lowering_influence)
+{
+	return g_player_hud->script_anim_play(hand, itm_name, anm_name, bMixIn, speed, lowering_influence);
 }
 
 void StopHudMotion()
@@ -1800,6 +1939,12 @@ bool MotionExists(LPCSTR model_path, LPCSTR motion_name)
 void PlayBlendAnm(LPCSTR name, u8 part, float speed, float power, bool bLooped, bool no_restart, LPCSTR pivot_bone)
 {
 	g_player_hud->PlayBlendAnm(name, part, speed, power, bLooped, no_restart, pivot_bone);
+}
+
+void PlayBlendAnmBodycam(LPCSTR name, u8 part, float speed, float power, bool bLooped, bool no_restart,
+	LPCSTR pivot_bone, float lowering_influence)
+{
+	g_player_hud->PlayBlendAnm(name, part, speed, power, bLooped, no_restart, pivot_bone, lowering_influence);
 }
 
 void StopBlendAnm(LPCSTR name, bool bForce)
@@ -1938,15 +2083,36 @@ const Fvector3 world2ui_with_depth(Fvector pos, bool hud = false, bool allow_off
 	x /= width_fk;
 	y /= height_fk;
 
-	float depth = v_res.w < 0 ? -1 : 1;
-
-	return {x, y, depth};
+	// post projection w, negative behind the camera, its magnitude is the view distance
+	return {x, y, v_res.w};
 }
 
 const Fvector2 world2ui(Fvector pos, bool hud = false, bool allow_offscreen = false)
 {
 	Fvector3 res = world2ui_with_depth(pos, hud, allow_offscreen);
 	return {res.x, res.y};
+}
+
+::luabind::object world2ui_many(::luabind::object points, bool hud, bool allow_offscreen)
+{
+	::luabind::object table = ::luabind::newtable(ai().script_engine().lua());
+
+	if (!points || points.type() != LUA_TTABLE)
+	{
+		Msg("!world2ui_many: argument is not a table");
+		return table;
+	}
+
+	for (int i = 1;; ++i)
+	{
+		std::optional<Fvector> pos = ::luabind::object_cast_nothrow<Fvector>(points[i]);
+		if (!pos)
+			break;
+
+		table[i] = world2ui_with_depth(*pos, hud, allow_offscreen);
+	}
+
+	return table;
 }
 
 // demonized: unproject ui coordinates (ie mouse cursor coordinates) to world coordinates
@@ -2054,6 +2220,21 @@ void ui2world_offscreen(Fvector2 pos, Fvector& res, u16& obj_id)
 void ui2world_offscreen(Fvector& pos, Fvector& res, u16& obj_id)
 {
 	ui2world_offscreen(Fvector2().set(pos.x, pos.y), res, obj_id);
+}
+
+Fvector2 get_texture_size(LPCSTR name)
+{
+	Fvector2 size;
+	size.set(0.f, 0.f);
+
+	if (!name || !name[0])
+	{
+		Msg("!get_texture_size: empty texture name");
+		return size;
+	}
+
+	UIRender->GetTextureResolution(name, size);
+	return size;
 }
 
 const float get_env_rads()
@@ -2230,6 +2411,12 @@ bool actor_safemode()
 
 void actor_set_safemode(bool status)
 {
+	// Classic sprint transition: lowering asked for during the sprint start
+	// waits for full sprint speed; a raise cancels a waiting lowering.
+	if (!status)
+		Actor()->BodycamCancelSprintLowering();
+	else if (Actor()->BodycamDeferSprintLowering())
+		return;
 	if (Actor()->is_safemode() != status)
 	{
 		CWeapon* wep = smart_cast<CWeapon*>(Actor()->inventory().ActiveItem());
@@ -2311,6 +2498,49 @@ void iterate_nearest(const Fvector& pos, float radius, const ::luabind::functor<
 		if (!obj) continue;
 		if (functor(obj->lua_game_object())) break;
 	}
+}
+
+CScriptGameObject* nearest_object_of_class(const Fvector& pos, float radius, int clsid, float& distance)
+{
+	distance = 0.f;
+
+	if (!g_pGameLevel)
+		return nullptr;
+
+	if (radius <= 0.f)
+	{
+		Msg("!nearest_object: bad radius %f", radius);
+		return nullptr;
+	}
+
+	xr_vector<CObject*> nearest;
+	Level().ObjectSpace.GetNearest(nearest, pos, radius, NULL);
+
+	CGameObject* best = nullptr;
+	float best_dist = flt_max;
+	for (CObject* o : nearest)
+	{
+		CGameObject* obj = smart_cast<CGameObject*>(o);
+		if (!obj) continue;
+		if (clsid >= 0 && obj->clsid() != clsid) continue;
+
+		float d = obj->Position().distance_to_sqr(pos);
+		if (d < best_dist)
+		{
+			best_dist = d;
+			best = obj;
+		}
+	}
+
+	if (!best) return nullptr;
+
+	distance = _sqrt(best_dist);
+	return best->lua_game_object();
+}
+
+CScriptGameObject* nearest_object(const Fvector& pos, float radius, float& distance)
+{
+	return nearest_object_of_class(pos, radius, -1, distance);
 }
 
 LPCSTR PickMaterial(const Fvector& start_pos, const Fvector& dir, float trace_dist, CScriptGameObject* ignore_obj)
@@ -2709,7 +2939,6 @@ void CLevel::script_register(lua_State* L)
 
 			def("map_add_object_spot_ser", map_add_object_spot_ser),
 			def("map_add_object_spot", map_add_object_spot),
-			//-		def("map_add_object_spot_complex",		map_add_object_spot_complex),
 			def("map_remove_object_spot", map_remove_object_spot),
 			def("map_has_object_spot", map_has_object_spot),
 			def("map_change_spot_hint", map_change_spot_hint),
@@ -2720,6 +2949,8 @@ void CLevel::script_register(lua_State* L)
 			def("map_get_object_spot_static", map_get_spot_static),
 			def("map_get_object_minimap_spot_static", map_get_minimap_spot_static),
 			def("map_get_object_spots_by_id", map_get_object_spots_by_id),
+			def("map_get_all_object_spots", map_get_all_object_spots),
+			def("map_get_spot_declaration", map_get_spot_declaration),
 
 			def("map_pan_to", &map_pan_to),
 			def("map_pan_to_level", &map_pan_to_level),
@@ -2732,18 +2963,16 @@ void CLevel::script_register(lua_State* L)
 			def("show_indicators", show_indicators),
 			def("show_weapon", show_weapon),
 			def("add_call", ((void (*)(const ::luabind::functor<bool>&, const ::luabind::functor<void>&))&add_call)),
-			def("add_call", ((void (*)(const ::luabind::object&, const ::luabind::functor<bool>&,
-			                           const ::luabind::functor<void>&))&add_call)),
+			def("add_call", ((void (*)(const ::luabind::object&, const ::luabind::functor<bool>&, const ::luabind::functor<void>&))&add_call)),
 			def("add_call", ((void (*)(const ::luabind::object&, LPCSTR, LPCSTR))&add_call)),
 			def("remove_call", ((void (*)(const ::luabind::functor<bool>&, const ::luabind::functor<void>&))&remove_call)),
-			def("remove_call",
-			    ((void (*)(const ::luabind::object&, const ::luabind::functor<bool>&, const ::luabind::functor<void>&))&
-				    remove_call)),
+			def("remove_call", ((void (*)(const ::luabind::object&, const ::luabind::functor<bool>&, const ::luabind::functor<void>&))&remove_call)),
 			def("remove_call", ((void (*)(const ::luabind::object&, LPCSTR, LPCSTR))&remove_call)),
 			def("remove_calls_for_object", remove_calls_for_object),
 			def("present", is_level_present),
 			def("disable_input", disable_input),
 			def("enable_input", enable_input),
+			def("is_input_captured", is_input_captured),
 			def("spawn_phantom", spawn_phantom),
 
             def("scheduler_flush", scheduler_flush),
@@ -2758,10 +2987,6 @@ void CLevel::script_register(lua_State* L)
 			def("set_snd_volume", &set_snd_volume),
 			def("get_music_volume", &get_music_volume),
 			def("set_music_volume", &set_music_volume),
-			def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR))&add_cam_effector)),
-			def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR, float))&add_cam_effector)),
-			def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR, float, bool))&add_cam_effector)),
-			def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR, float, bool, float))&add_cam_effector)),
 
 			// demonized: Set custom camera position and direction with movement smoothing (for cutscenes, etc)
 			def("set_cam_custom_position_direction", ((void (*)(Fvector&, Fvector&, unsigned int, bool, bool))& set_cam_position_direction)),
@@ -2781,6 +3006,12 @@ void CLevel::script_register(lua_State* L)
 			def("get_cam_custom_direction", &get_cam_custom_direction),
 			def("set_cam_custom_hud_pin", &set_cam_custom_hud_pin),
 
+            def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR))& add_cam_effector)),
+            def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR, float))& add_cam_effector)),
+            def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR, float, bool))& add_cam_effector)),
+            def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR, float, bool, float))& add_cam_effector)),
+            // ver; allow changing the speed of cam effectors
+            def("add_cam_effector", ((float (*)(LPCSTR, int, bool, LPCSTR, float, bool, float, float))& add_cam_effector)),
 			def("remove_cam_effector", &remove_cam_effector),
 			def("set_cam_effector_factor", &set_cam_effector_factor),
 			def("get_cam_effector_factor", &get_cam_effector_factor),
@@ -2788,14 +3019,19 @@ void CLevel::script_register(lua_State* L)
 			def("set_cam_effector_fov", &set_cam_effector_fov),
 			def("get_cam_effector_fov", &get_cam_effector_fov),
 			def("queue_actor_camera_delta", &queue_actor_camera_delta),
+			def("queue_actor_mouse_look", &queue_actor_mouse_look),
 			def("poll_actor_camera_delta", &poll_actor_camera_delta,
 				pure_out_value<2>() + pure_out_value<3>()),
 			def("cancel_actor_camera_delta", &cancel_actor_camera_delta),
 			def("check_cam_effector", &check_cam_effector),
+
 			def("add_pp_effector", &add_pp_effector),
+            def("remove_pp_effector", &remove_pp_effector),
 			def("set_pp_effector_factor", &set_pp_effector_factor),
-			def("set_pp_effector_factor", &set_pp_effector_factor2),
-			def("remove_pp_effector", &remove_pp_effector),
+            def("set_pp_effector_factor", &set_pp_effector_factor2),
+            def("get_pp_effector_factor", &get_pp_effector_factor),
+            def("get_pp_effector_length", &get_pp_effector_length),
+            def("check_pp_effector", &check_pp_effector),
 
 			def("add_complex_effector", &add_complex_effector),
 			def("remove_complex_effector", &remove_complex_effector),
@@ -2812,7 +3048,10 @@ void CLevel::script_register(lua_State* L)
 
 			def("actor_moving_state", &ActorMovingState),
 			def("get_env_rads", &get_env_rads),
+			def("get_texture_size", &get_texture_size),
 			def("iterate_nearest", &iterate_nearest),
+			def("nearest_object", &nearest_object, pure_out_value<3>()),
+			def("nearest_object", &nearest_object_of_class, pure_out_value<4>()),
 			def("pick_material", &PickMaterial),
 			def("add_bullet", ((void (*)(Fvector, Fvector, float, float, float, u16, ALife::EHitType, float, LPCSTR, float))& AddBullet)),
 			def("add_bullet", ((void (*)(::luabind::object))& AddBullet)),
@@ -2849,6 +3088,7 @@ void CLevel::script_register(lua_State* L)
 		.def("get_object", &CRayPick::get_object)
 		.def("get_distance", &CRayPick::get_distance)
 		.def("get_element", &CRayPick::get_element)
+		.def("get_multiply_add", &CRayPick::get_multiply_add)
 		.def("get_normal", &CRayPick::get_normal),
 		class_<script_rq_result>("rq_result")
 		.def_readonly("object", &script_rq_result::O)
@@ -2979,11 +3219,13 @@ void CLevel::script_register(lua_State* L)
 		def("reload_language", &reload_language),
 		def("get_resolutions", &vid_modes_string),
 		def("play_hud_motion", PlayHudMotion),
+		def("play_hud_motion_bodycam", PlayHudMotionBodycam),
 		def("stop_hud_motion", StopHudMotion),
 		def("get_motion_length", MotionLength),
 		def("hud_motion_allowed", AllowHudMotion),
 		def("motion_exists", MotionExists),
 		def("play_hud_anm", PlayBlendAnm),
+		def("play_hud_anm_bodycam", PlayBlendAnmBodycam),
 		def("stop_hud_anm", StopBlendAnm),
 		def("stop_all_hud_anms", StopAllBlendAnms),
 		def("set_hud_anm_time", SetBlendAnmTime),
@@ -2999,6 +3241,7 @@ void CLevel::script_register(lua_State* L)
 		def("get_visual_userdata", GetVisualUserdata),
 		def("world2ui", world2ui),
 		def("world2ui_with_depth", world2ui_with_depth),
+		def("world2ui_many", world2ui_many),
 		def("ui2world", (void (*)(Fvector2, Fvector&, u16&))&ui2world, pure_out_value<2>() + pure_out_value<3>()),
 		def("ui2world", (void (*)(Fvector&, Fvector&, u16&))&ui2world, pure_out_value<2>() + pure_out_value<3>()),
 		def("ui2world_offscreen", (void (*)(Fvector2, Fvector&, u16&))& ui2world_offscreen, pure_out_value<2>() + pure_out_value<3>()),

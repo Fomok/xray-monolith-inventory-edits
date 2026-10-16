@@ -490,6 +490,7 @@ void CKinematics::Depart()
 
 void CKinematics::Release()
 {
+    PhysicalScopeGlassMask = 0;
 	// xr_free bones
 	for (u32 i = 0; i < bones->size(); i++)
 	{
@@ -564,6 +565,56 @@ void CKinematics::LL_SetBonesVisible(u64 mask)
 	}
 	CalculateBones_Invalidate();
 	Visibility_Invalidate();
+}
+
+bool CKinematics::CopyBonesFrom(IKinematics* _from)
+{
+	CKinematics* from = smart_cast<CKinematics*>(_from);
+	if (!from || from == this)
+		return false;
+
+	// Calculate now, so that the renderer doesn't recalculate the bones this frame and overwrite the copy
+	CalculateBones_Invalidate();
+	CalculateBones(TRUE);
+
+	CBoneInstance& root = bone_instances[iRoot];
+	root.mTransform.identity();
+	root.mRenderTransform.mul_43(root.mTransform, (*bones)[iRoot]->m2b_transform);
+
+	auto copy_bone = [&](u16 dst_id, u16 src_id)
+	{
+		CBoneInstance& dst = bone_instances[dst_id];
+		const Fmatrix& pose = from->LL_GetTransform(src_id);
+
+		// Hidden bones stay collapsed, but keep the pose for when they are shown again
+		dst.mTransformHidden = pose;
+		if (LL_GetBoneVisible(dst_id))
+		{
+			dst.mTransform = pose;
+			dst.mRenderTransform = from->bone_instances[src_id].mRenderTransform;
+		}
+	};
+
+	if (LL_BoneCount() == from->LL_BoneCount())
+	{
+		for (u16 i = 0; i < LL_BoneCount(); ++i)
+			copy_bone(i, i);
+	}
+	else
+	{
+		for (const auto& [name, id] : *bone_map_N)
+		{
+			u16 src_id = from->LL_BoneID(name);
+			if (src_id != BI_NONE)
+				copy_bone(id, src_id);
+		}
+	}
+
+	// Bounds of the copied pose
+	vis.box = from->vis.box;
+	vis.sphere = from->vis.sphere;
+
+	return true;
 }
 
 void CKinematics::Visibility_Update()
@@ -902,6 +953,52 @@ void CKinematics::ClearWallmarks()
 	//	for (SkeletonWMVecIt it=wallmarks.begin(); it!=wallmarks.end(); it++)
 	//		xr_delete	(*it);
 	wallmarks.clear();
+}
+
+u64 CKinematics::ScopeGlassBoneSubtree(u16 bone)
+{
+    if (bone >= bones->size()) return 0;
+    u64 mask = 0;
+    for (u16 id = 0; id < bones->size(); ++id)
+    {
+        u16 ancestor = id;
+        while (ancestor != bone && ancestor != BI_NONE && ancestor < bones->size())
+            ancestor = (*bones)[ancestor]->GetParentID();
+        if (ancestor == bone) mask |= u64(1) << id;
+    }
+    return mask;
+}
+
+bool CKinematics::IsPhysicalScopeGlassBone(u16 bone)
+{
+#if RENDER == R_R4
+    const u64 subtree = ScopeGlassBoneSubtree(bone);
+    if (!subtree) return false;
+    bool found = false;
+    // Child arrays reorder as visibility changes; inspect each mesh's actual
+    // bone set instead of indexing the original child_faces by current order.
+    for (const auto* list : { &children, &children_invisible })
+        for (auto* visual : *list)
+        {
+            auto* mesh = smart_cast<CSkeletonX*>(visual);
+            if (!mesh) continue;
+            const u64 used = mesh->ScopeGlassBoneMask();
+            if (!(used & subtree)) continue;
+            if (mesh->IsPhysicalScopeGlass()) found = true;
+            // An opaque mesh shared with unrelated bones cannot be removed
+            // as a whole. Keep native behavior for that unsupported layout.
+            else if (used & ~subtree) return false;
+        }
+    return found;
+#else
+    return false;
+#endif
+}
+
+void CKinematics::SetPhysicalScopeGlassMask(u16 bone, bool enabled)
+{
+    PhysicalScopeGlassMask = enabled && IsPhysicalScopeGlassBone(bone)
+        ? ScopeGlassBoneSubtree(bone) : 0;
 }
 
 int CKinematics::LL_GetBoneGroups(xr_vector<xr_vector<u16>>& groups)

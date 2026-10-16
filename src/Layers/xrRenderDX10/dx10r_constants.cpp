@@ -63,8 +63,14 @@ BOOL R_constant_table::parseConstants(ID3DShaderReflectionConstantBuffer* pTable
 		case D3D10_SVT_INT:
 			type = RC_int;
 			break;
+		case D3D10_SVT_UINT:
+			// shader bus lanes take raw unsigned values, any other uint stays unsupported
+			if (0 != strncmp(name, "bus_", 4))
+				fatal("R_constant_table::parse: unexpected shader variable type.", name);
+			type = RC_uint;
+			break;
 		default:
-			fatal("R_constant_table::parse: unexpected shader variable type.");
+			fatal("R_constant_table::parse: unexpected shader variable type.", name);
 		}
 
 		// Rindex,Rcount
@@ -97,7 +103,7 @@ BOOL R_constant_table::parseConstants(ID3DShaderReflectionConstantBuffer* pTable
 					r_type = RC_1x2;
 					break;
 				default:
-					fatal("Vector: 1 components is scalar - there is special case for this!!!!!");
+					fatal("Vector: 1 components is scalar - there is special case for this!!!!!", name);
 					break;
 				}
 			}
@@ -131,21 +137,21 @@ BOOL R_constant_table::parseConstants(ID3DShaderReflectionConstantBuffer* pTable
 						//VERIFY(4 == it->RegisterCount); 
 						break;
 					default:
-						fatal("MATRIX_ROWS: unsupported number of Rows");
+						fatal("MATRIX_ROWS: unsupported number of Rows", name);
 						break;
 					}
 					break;
 				default:
-					fatal("MATRIX_ROWS: unsupported number of Columns");
+					fatal("MATRIX_ROWS: unsupported number of Columns", name);
 					break;
 				}
 			}
 			break;
 		case D3D10_SVC_MATRIX_COLUMNS:
-			fatal("Pclass MATRIX_COLUMNS unsupported");
+			fatal("Pclass MATRIX_COLUMNS unsupported", name);
 			break;
 		case D3D10_SVC_STRUCT:
-			fatal("Pclass D3DXPC_STRUCT unsupported");
+			fatal("Pclass D3DXPC_STRUCT unsupported", name);
 			break;
 		case D3D10_SVC_OBJECT:
 			{
@@ -209,6 +215,7 @@ BOOL R_constant_table::parseConstants(ID3DShaderReflectionConstantBuffer* pTable
 									? C->vs : C->gs);*/
 			L.index = r_index;
 			L.cls = r_type;
+			L.size = VarDesc.Size;
 			table.push_back(C);
 		}
 		else
@@ -221,6 +228,7 @@ BOOL R_constant_table::parseConstants(ID3DShaderReflectionConstantBuffer* pTable
 									? C->vs : C->gs);*/
 			L.index = r_index;
 			L.cls = r_type;
+			L.size = VarDesc.Size;
 		}
 	}
 	return TRUE;
@@ -374,26 +382,40 @@ BOOL R_constant_table::parse(void* _desc, u32 destination)
 		//	Parse single constant table
 		ID3DShaderReflectionConstantBuffer* pTable = 0;
 
+		u16 realBuf = 0;
 		for (u16 iBuf = 0; iBuf < ShaderDesc.ConstantBuffers; ++iBuf)
 		{
 			pTable = pReflection->GetConstantBufferByIndex(iBuf);
 			if (pTable)
 			{
+				// a structured buffer reflects its element layout as a pseudo cbuffer
+				// only real cbuffers parse and bind
+				D3D_SHADER_BUFFER_DESC BufDesc;
+				pTable->GetDesc(&BufDesc);
+				if (BufDesc.Type != D3D_CT_CBUFFER)
+				{
+					// reflection drops after parse so keep the declared detail record size now
+					if (BufDesc.Name && 0 == xr_strcmp(BufDesc.Name, "dt_instances"))
+						dt_instance_size = u16(BufDesc.Size);
+					continue;
+				}
+
 				//	Encode buffer index into destination
 				u32 updatedDest = destination;
-				updatedDest |= iBuf << dest_to_shift_value(destination); /*((destination&RC_dest_pixel)
+				updatedDest |= realBuf << dest_to_shift_value(destination); /*((destination&RC_dest_pixel)
 					? RC_dest_pixel_cb_index_shift : (destination&RC_dest_vertex)
 					? RC_dest_vertex_cb_index_shift : RC_dest_geometry_cb_index_shift);*/
 
 				//	Encode bind dest (pixel/vertex buffer) and bind point index
-				u32 uiBufferIndex = iBuf;
-				uiBufferIndex |= dest_to_cbuf_type(destination); /*(destination&RC_dest_pixel) 
+				u32 uiBufferIndex = realBuf;
+				uiBufferIndex |= dest_to_cbuf_type(destination); /*(destination&RC_dest_pixel)
 					? CB_BufferPixelShader : (destination&RC_dest_vertex)
 					? CB_BufferVertexShader : CB_BufferGeometryShader;*/
 
 				parseConstants(pTable, updatedDest);
 				ref_cbuffer tempBuffer = dxRenderDeviceRender::Instance().Resources->_CreateConstantBuffer(pTable);
 				m_CBTable.push_back(cb_table_record(uiBufferIndex, tempBuffer));
+				++realBuf;
 			}
 		}
 	}

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "bodycam_reference_projection.h"
 #include "../xrCDB/frustum.h"
 #include "xr_ioconsole.h"
 #include "xr_input.h"
@@ -19,6 +20,7 @@
 #include "x_ray.h"
 #include "discord\discord.h"
 #include "render.h"
+#include "renderdoc_integration.h"
 #include <chrono>
 
 // must be defined before include of FS_impl.h
@@ -32,6 +34,7 @@
 
 #include "xrSash.h"
 #include "igame_persistent.h"
+#include "shader_bus.h"
 
 #include "CustomHUD.h"
 #include "EngineThreading.h"
@@ -385,8 +388,21 @@ void CRenderDevice::on_idle()
 
 	{
 		PROF_EVENT("seqParallelBeforRender");
-		for (auto& it : Device.seqParallelBeforRender)
-			it();
+		xrCriticalSectionGuard guard(&Device.seqParallelBeforRenderCS);
+
+		// A callback invoked here can destroy an object that owns a particle
+		// group, and PS::CParticleGroup::SItem::~SItem cancels its own pending
+		// entry in this very vector. That cancellation clears the entry in
+		// place instead of erasing it, so the vector never changes size while
+		// we walk it. Skip the cleared entries; the clear() below drops them.
+		// Index by position and copy each delegate before invoking it, so an
+		// entry appended by a callback is still handled safely.
+		for (size_t it = 0; it < Device.seqParallelBeforRender.size(); ++it)
+		{
+			auto Callback = Device.seqParallelBeforRender[it];
+			if (Callback)
+				Callback();
+		}
 
 		Device.seqParallelBeforRender.clear();
 	}
@@ -445,9 +461,15 @@ void CRenderDevice::on_idle()
 
 	// pip true hud fov renders the weapon at the scene perspective while fully aimed through a PiP scope
 	extern int g_svp_hud_true_fov;
-	const float hud_fov_deg = (g_svp_hud_true_fov && true_pip_on && m_SecondViewport.IsSVPActive()
-		&& g_pGamePersistent && g_pGamePersistent->m_pGShaderConstants->hud_params.x > 0.999f) ? fFOV : psHUD_FOV * 83.f;
+	const float hud_fov_deg = BodycamReference::HudProjectionFov(
+		dwFrame, reference_hud_projection_frame, fFOV, psHUD_FOV * 83.f,
+		g_svp_hud_true_fov && true_pip_on && m_SecondViewport.IsSVPActive()
+		&& g_pGamePersistent && g_pGamePersistent->m_pGShaderConstants->hud_params.x > 0.999f, reference_hud_nearwall_scale);
 	mProjectHud.build_projection(deg2rad(hud_fov_deg), fASPECT, R_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
+    const float referenceClipScale=BodycamReference::HudProjectionClipScale(
+        dwFrame,reference_hud_projection_frame,reference_hud_clip_scale);
+    mProjectHud._11*=referenceClipScale;
+    mProjectHud._22*=referenceClipScale;
 	mProjectCam.build_projection(deg2rad(83.f), fASPECT, R_VIEWPORT_NEAR, g_pGamePersistent->Environment().CurrentEnv->far_plane);
 	
 	mViewHud.set(mView);
@@ -481,6 +503,9 @@ void CRenderDevice::on_idle()
 	mFullTransform_saved = mFullTransform;
 	mView_saved = mView;
 	mProject_saved = mProject;
+
+	vCameraPosition_bones = vCameraPosition;
+	mFullTransform_bones = mFullTransform;
 
 	STOP_PROFILE;
 
@@ -546,7 +571,16 @@ void CRenderDevice::on_idle()
 #endif 
 	Device.isRendering = false;
 
-	secondary_tasks.wait();
+	// pip wall time of the secondary task join, read by the fps audit overlay
+	{
+		extern int ps_r__svp_stats;
+		extern float svp_stats_join_ms;
+		const bool timed = ps_r__svp_stats != 0;
+		CTimer join_timer;
+		if (timed) join_timer.Start();
+		secondary_tasks.wait();
+		if (timed) svp_stats_join_ms = join_timer.GetElapsed_ms_f();
+	}
 
 	if (psLua_ParallelGC_debug && psLua_ParallelGC && Device.LuaGCDebug)
 	{
@@ -674,6 +708,13 @@ void CRenderDevice::FrameMove()
 
 	dwFrame++;
 	Core.dwFrame = dwFrame;
+	// Sample once, before any viewport or actor work. This timer remains at unit
+	// rate and participates in pause management, independently of gameplay time.
+	application_delta = Paused() ? 0.0 :
+		(psDeviceFlags.test(rsConstantFPS) ? 0.033 :
+			double(application_timer.GetElapsed_ticks()) / double(CPU::qpc_freq));
+	application_timer.Start();
+	renderdoc_poll_captures();
 	dwTimeContinual = TimerMM.GetElapsed_ms() - app_inactive_time;
 	if (psDeviceFlags.test(rsConstantFPS))
 	{
@@ -716,6 +757,8 @@ void CRenderDevice::FrameMove()
 	// Frame move
 	Statistic->EngineTOTAL.Begin();
 
+	ShaderBus::frame_latch();
+	
 	START_PROFILE("Process seqFrame");
 	Device.seqFrame.Process(rp_Frame);
 	STOP_PROFILE;

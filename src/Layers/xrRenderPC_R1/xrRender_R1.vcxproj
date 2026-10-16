@@ -462,6 +462,7 @@
     <ClInclude Include="..\xrRender\ModelPool.h" />
     <ClInclude Include="..\xrRender\NvTriStrip.h" />
     <ClInclude Include="..\xrRender\NvTriStripObjects.h" />
+    <ClInclude Include="..\xrRender\occ_engine.h" />
     <ClInclude Include="..\xrRender\occRasterizer.h" />
     <ClInclude Include="..\xrRender\ParticleEffect.h" />
     <ClInclude Include="..\xrRender\ParticleEffectActions.h" />
@@ -596,6 +597,8 @@
     <ClCompile Include="..\xrRender\NvTriStrip.cpp" />
     <ClCompile Include="..\xrRender\NvTriStripObjects.cpp" />
     <ClCompile Include="..\xrRender\occRasterizer.cpp" />
+    <ClCompile Include="..\xrRender\occ_engine_legacy.cpp" />
+    <ClCompile Include="..\xrRender\occ_engine_moc.cpp" />
     <ClCompile Include="..\xrRender\occRasterizer_core.cpp" />
     <ClCompile Include="..\xrRender\ParticleEffect.cpp" />
     <ClCompile Include="..\xrRender\ParticleEffectActions.cpp" />
