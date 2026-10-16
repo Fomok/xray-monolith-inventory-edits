@@ -29,6 +29,7 @@ struct RecoilSettings
 struct WeaponFollowSettings
 {
 	bool enable = false; // Opt-in test; requires Classic with Camera Decoupling off.
+	bool standing_hold = false;
 	float edge_softness = .5f; // Portion of the range with progressive resistance.
 	float hip_time = .16f, hip_yaw = 6.f, hip_pitch = 4.f;
 	float ads_time = .06f, ads_yaw = 0.f, ads_pitch = 0.f;

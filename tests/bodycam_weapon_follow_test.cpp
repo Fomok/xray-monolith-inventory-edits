@@ -51,5 +51,18 @@ int main() {
  }
  assert(std::abs(results[0]-results[2])<.001f);
  assert(std::abs(results[1]-results[2])<.001f);
+ WeaponFollowState held;
+ held.Update(0,0,.01f,0,1,true,.16f,.1f,.1f,.5f,true);
+ held.Update(.02f,0,.01f,1,1,true,.16f,.1f,.1f,.5f,true);
+ assert(std::abs(held.yaw+.02f)<1e-6f); // World aim remains held.
+ for(int i=2;i<=100;++i) held.Update(.02f,0,.01f,i,1,true,.16f,.1f,.1f,.5f,true);
+ assert(std::abs(held.yaw+.02f)<1e-6f); // No drift when looking elsewhere.
+ held.Update(.22f,0,.01f,101,1,true,.16f,.1f,.1f,.5f,true);
+ assert(held.yaw>-.1f && held.yaw<-.05f); // Still respects soft boundary.
+ float held_angle=held.yaw;
+ held.Update(.22f,0,.01f,102,1,true,.16f,.1f,.1f,.5f,false);
+ assert(held.yaw>held_angle && held.yaw<held_angle+.005f); // No snap on movement.
+ for(int i=103;i<300;++i) held.Update(.22f,0,.01f,i,1,true,.16f,.1f,.1f,.5f,false);
+ assert(std::abs(held.yaw)<1e-5f && held.return_strength==1.f);
  std::cout<<"Weapon follow tests passed: FPS independence, direction, wrap, caps, reversal, ADS, reset, duplicate frames, invalid inputs\n";
 }

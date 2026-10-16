@@ -319,6 +319,7 @@ BoolBinding g_bool_bindings[] = {
 	BODYCAM_BOOL(footstep_camera_enable, footstep.enable),
 	BODYCAM_BOOL(classic_regrip_enable, regrip.enable),
 	BODYCAM_BOOL(classic_recoil_enable, recoil.enable),
+	BODYCAM_BOOL(weapon_follow_standing_hold, weapon_follow.standing_hold),
 	BODYCAM_BOOL(weapon_follow_enable, weapon_follow.enable),
 	BODYCAM_BOOL(directional_weapon_inertia_enable, handling.directional_weapon_inertia),
 	BODYCAM_BOOL(movement_linked_handling_enable, handling.movement_linked_handling),

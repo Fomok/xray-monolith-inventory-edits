@@ -12,6 +12,7 @@ namespace Bodycam
 struct WeaponFollowState
 {
     float yaw = 0.f, pitch = 0.f;
+    float return_strength = 1.f;
     float previous_yaw = 0.f, previous_pitch = 0.f;
     std::uint32_t last_frame = 0, last_item = 0;
     bool initialized = false;
@@ -47,7 +48,7 @@ struct WeaponFollowState
         return direction * x;
     }
 
-    static float Step(float value, float delta, float dt, float tau, float limit, float softness)
+    static float Step(float value, float delta, float dt, float tau, float limit, float softness, float recovery = 1.f)
     {
         if (limit <= .000001f) return 0.f;
         value = std::clamp(value, -limit, limit);
@@ -55,15 +56,17 @@ struct WeaponFollowState
         // exact linear ramp integration there. Bound work to 60 steps at 4 FPS.
         const int steps = static_cast<int>(std::ceil(dt * 240.f));
         const float h = dt / steps;
-        const float response = -std::expm1(-h / tau);
-        const float push = -delta * tau * response / dt;
+        const float exponent = h * recovery / tau;
+        const float response = -std::expm1(-exponent);
+        const float ramp = exponent > .000001f ? response / exponent : 1.f;
+        const float push = -delta * ramp / steps;
         for (int i = 0; i < steps; ++i)
             value = Push(value * (1.f - response), push, limit, softness);
         return value;
     }
 
     void Update(float aim_yaw, float aim_pitch, float dt, std::uint32_t frame,
-        std::uint32_t item, bool enabled, float tau, float yaw_limit, float pitch_limit, float softness = .5f)
+        std::uint32_t item, bool enabled, float tau, float yaw_limit, float pitch_limit, float softness = .5f, bool standing_hold = false)
     {
         if (!std::isfinite(aim_yaw) || !std::isfinite(aim_pitch) || !std::isfinite(dt) ||
             !std::isfinite(softness) || !std::isfinite(tau) || !std::isfinite(yaw_limit) || !std::isfinite(pitch_limit))
@@ -76,6 +79,7 @@ struct WeaponFollowState
         if (reset)
         {
             yaw = pitch = 0.f;
+            return_strength = standing_hold ? 0.f : 1.f;
             previous_yaw = aim_yaw;
             previous_pitch = aim_pitch;
             last_frame = frame;
@@ -95,9 +99,15 @@ struct WeaponFollowState
             yaw = pitch = 0.f;
             return;
         }
+        // Blend the return force, never the accumulated angle. This keeps
+        // walking/standing transitions continuous without recentring jumps.
+        const float target = standing_hold ? 0.f : 1.f;
+        const float old_strength = return_strength;
+        return_strength += std::clamp(target - return_strength, -dt / .15f, dt / .15f);
+        const float recovery = (old_strength + return_strength) * .5f;
         softness = std::clamp(softness, 0.f, 1.f);
-        yaw = Step(yaw, dy, dt, tau, yaw_limit, softness);
-        pitch = Step(pitch, dp, dt, tau, pitch_limit, softness);
+        yaw = Step(yaw, dy, dt, tau, yaw_limit, softness, recovery);
+        pitch = Step(pitch, dp, dt, tau, pitch_limit, softness, recovery);
     }
 };
 }

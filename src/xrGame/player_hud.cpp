@@ -13,6 +13,8 @@
 #include "../xrEngine/CameraBase.h"
 #include "bodycam_camera.h"
 #include "bodycam_settings.h"
+#include "CharacterPhysicsSupport.h"
+#include "PHMovementControl.h"
 #include "bodycam_math.h"
 #include "bodycam_reference/script_layer_policy.h"
 #include "bodycam_reference/animation_blend.h"
@@ -1259,9 +1261,11 @@ void player_hud::prepare_hud_pose(const Fmatrix& cam_trans, HudPoseFrame& frame)
 	const float tau = follow.hip_time + (follow.ads_time - follow.hip_time) * ads;
 	const float max_yaw = deg2rad(follow.hip_yaw + (follow.ads_yaw - follow.hip_yaw) * ads);
 	const float max_pitch = deg2rad(follow.hip_pitch + (follow.ads_pitch - follow.hip_pitch) * ads);
+	const bool standing_hold = follow.standing_hold && !Actor()->AnyAction() &&
+		Actor()->character_physics_support()->movement()->GetVelocityActual() < .08f;
 	const Fvector& aim = Actor()->cam_FirstEye()->vDirection;
 	m_weapon_follow.Update(aim.getH(), aim.getP(), Device.fTimeDelta,
-		Device.dwFrame, wep ? wep->ID() : u16(-1), follow_allowed, tau, max_yaw, max_pitch, follow.edge_softness);
+		Device.dwFrame, wep ? wep->ID() : u16(-1), follow_allowed, tau, max_yaw, max_pitch, follow.edge_softness, standing_hold);
 	if (follow_allowed)
 	{
 		Fmatrix lag;
