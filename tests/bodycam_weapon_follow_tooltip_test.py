@@ -35,7 +35,7 @@ def harness(text):
 LuaRuntime().compile(source)
 show, tooltip = harness(source)
 names = set(re.findall(r'"(weapon_follow_[a-z_]+)"', source))
-assert len(names) == 7
+assert len(names) == 8
 for name in names:
     displayed, description = show(name, 'bool' if name.endswith('_enable') else 'float')
     assert description and displayed == description
@@ -43,4 +43,4 @@ assert show('future_setting_without_description', 'bool')[0] == 'No description 
 assert tooltip(None) == 'No description available.'
 assert tooltip('') == 'No description available.'
 assert tooltip('100% / %s') == '100%% / %%s'
-print('PASS: all 7 weapon-follow hover paths, missing descriptions, nil/empty text and literal percent signs')
+print('PASS: all 8 weapon-follow hover paths, missing descriptions, nil/empty text and literal percent signs')

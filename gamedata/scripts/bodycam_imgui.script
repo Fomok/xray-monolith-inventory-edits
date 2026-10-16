@@ -94,6 +94,9 @@ local feature_tabs = {
         name = "Weapon Follow",
         toggle = { "weapon_follow_enable", "Enabled (Classic, Camera Decoupling OFF)" },
         sections = {
+            { name = "Limit response", settings = {
+                { "weapon_follow_edge_softness", "Edge softness" },
+            } },
             { name = "Hip-fire", settings = {
                 { "weapon_follow_hip_time", "Catch-up time (seconds)" },
                 { "weapon_follow_hip_yaw", "Maximum horizontal lag (degrees)" },
@@ -402,6 +405,7 @@ local diagnostics_sections = {
 }
 
 local binding_descriptions = {
+    weapon_follow_edge_softness = "Progressive resistance near the lag limit. Zero is the old hard stop; 0.5 softens the outer half of the range; 1 starts resistance from the centre. Returning and reversing remain free.",
     weapon_follow_enable = "Lets the camera lead while the weapon and arms catch up. Requires Classic mode with Camera Decoupling off. Inactive during freelook, scripted hand actions and off-hand items.",
     weapon_follow_hip_time = "Hip-fire catch-up time in seconds. Higher values make the weapon feel heavier; zero follows the camera immediately.",
     weapon_follow_hip_yaw = "Maximum horizontal hip-fire lag in degrees. Limits how far the weapon can trail during a turn.",

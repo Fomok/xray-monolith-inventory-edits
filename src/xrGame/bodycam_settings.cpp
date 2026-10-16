@@ -185,6 +185,7 @@ namespace
 // default and range. The UI scripts refer to settings by name only.
 const FloatBinding g_float_bindings[] = {
 	// Camera-first weapon follow (opt-in).
+	BODYCAM_FLOAT(weapon_follow_edge_softness, weapon_follow.edge_softness, 0.f, 1.f),
 	BODYCAM_FLOAT(weapon_follow_hip_time, weapon_follow.hip_time, 0.f, .5f),
 	BODYCAM_FLOAT(weapon_follow_hip_yaw, weapon_follow.hip_yaw, 0.f, 15.f),
 	BODYCAM_FLOAT(weapon_follow_hip_pitch, weapon_follow.hip_pitch, 0.f, 15.f),

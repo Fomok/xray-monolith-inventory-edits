@@ -1261,7 +1261,7 @@ void player_hud::prepare_hud_pose(const Fmatrix& cam_trans, HudPoseFrame& frame)
 	const float max_pitch = deg2rad(follow.hip_pitch + (follow.ads_pitch - follow.hip_pitch) * ads);
 	const Fvector& aim = Actor()->cam_FirstEye()->vDirection;
 	m_weapon_follow.Update(aim.getH(), aim.getP(), Device.fTimeDelta,
-		Device.dwFrame, wep ? wep->ID() : u16(-1), follow_allowed, tau, max_yaw, max_pitch);
+		Device.dwFrame, wep ? wep->ID() : u16(-1), follow_allowed, tau, max_yaw, max_pitch, follow.edge_softness);
 	if (follow_allowed)
 	{
 		Fmatrix lag;
