@@ -778,6 +778,16 @@ bool CActor::cam_Prepare(float dt, float fFOV, PreparedCamera& frame, bool refer
 	// calc point
 	xform.transform_tiny(point);
 
+    // Reference has its own physical camera solver. Classic gets a small
+    // body-relative eye offset before its normal camera collision handling.
+    if (!reference && body_pivot_active(this))
+    {
+        Fvector bodyForward = XFORM().k;
+        bodyForward.y = 0.f;
+        bodyForward.normalize_safe();
+        point.mad(bodyForward, g_body_eye_forward);
+    }
+
 	CCameraBase* C = cam_Active();
 
 	cam_ApplyScriptCameraDeltas(C);

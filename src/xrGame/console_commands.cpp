@@ -215,6 +215,9 @@ extern float legs_spine_offset_y;
 extern BOOL legs_in_demo_record;
 extern BOOL legs_in_low_crouch;
 extern BOOL legs_attach_to_camera;
+extern BOOL g_body_pivot;
+extern BOOL g_body_natural_turn;
+extern float g_body_eye_forward;
 extern BOOL legs_render_attachments_shadow;
 
 extern BOOL r__actor_shadow_in_demo_record;
@@ -2900,6 +2903,9 @@ void CCC_RegisterCommands()
     CMD4(CCC_Integer, "g_legs_in_demo_record", &legs_in_demo_record, 0, 1);
     CMD4(CCC_Integer, "g_legs_in_low_crouch", &legs_in_low_crouch, 0, 1);
     CMD4(CCC_Integer, "g_legs_attach_to_camera", &legs_attach_to_camera, 0, 1);
+    CMD4(CCC_Integer, "g_body_pivot", &g_body_pivot, 0, 1);
+    CMD4(CCC_Integer, "g_body_natural_turn", &g_body_natural_turn, 0, 1);
+    CMD4(CCC_Float, "g_body_eye_forward", &g_body_eye_forward, 0.0f, 0.25f);
     CMD4(CCC_Integer, "g_legs_render_attachments_shadow", &legs_render_attachments_shadow, 0, 1);
 
     CMD4(CCC_Integer, "r__actor_shadow_in_demo_record", &r__actor_shadow_in_demo_record, 0, 1);

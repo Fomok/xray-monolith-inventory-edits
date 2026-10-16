@@ -17,6 +17,7 @@
 #include "static_cast_checked.hpp"
 #include "player_hud.h"
 #include "bodycam_settings.h"
+#include "body_pivot_turn.h"
 
 #ifdef DEBUG
 #include "phdebug.h"
@@ -380,7 +381,10 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector& vControlAccel, float& Ju
 	}
 	//transform local dir to world dir
 	Fmatrix mOrient;
-	mOrient.rotateY(-r_model_yaw);
+    // A delayed visual body must not steer WASD away from the aim heading.
+    const bool naturalBody = body_pivot_active(this) && g_body_natural_turn && Bodycam::ClassicActive()
+        && cam_freelook == eflDisabled;
+    mOrient.rotateY(-(naturalBody ? r_torso.yaw : r_model_yaw));
 	mOrient.transform_dir(vControlAccel);
 }
 
@@ -549,7 +553,18 @@ void CActor::g_cl_Orientate(u32 mstate_rl, float dt)
 		r_torso.pitch = unaffected_r_torso.pitch + dangle.x;
 	}
 
-    if (disableActorBodyRotationDelay || Device.time_factor() < 1)
+    if (body_pivot_active(this) && g_body_natural_turn && Bodycam::ClassicActive()
+        && cam_freelook == eflDisabled)
+    {
+        const auto turn = body_pivot::step(r_model_yaw, r_torso.yaw, dt,
+            (mstate_rl & (mcAnyMove | mcJump | mcFall | mcSprint)) != 0,
+            (mstate_real & mcTurn) != 0);
+        r_model_yaw = angle_normalize(turn.yaw);
+        r_model_yaw_dest = angle_normalize(r_torso.yaw);
+        if (turn.turning) mstate_real |= mcTurn;
+        else mstate_real &= ~mcTurn;
+    }
+    else if (disableActorBodyRotationDelay || Device.time_factor() < 1)
     {
         r_model_yaw = angle_normalize(r_torso.yaw);
         r_model_yaw_dest = r_model_yaw;

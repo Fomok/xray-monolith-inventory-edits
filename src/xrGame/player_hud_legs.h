@@ -5,6 +5,12 @@ class IKinematicsAnimated;
 class IKinematics;
 struct IDSGraphManager;
 
+// Local first-person pivot; does not move the physics actor.
+extern BOOL g_body_pivot;
+extern BOOL g_body_natural_turn;
+extern float g_body_eye_forward;
+bool body_pivot_active(CActor* actor);
+
 class player_legs_controller
 {
 public:

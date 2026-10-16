@@ -10,12 +10,25 @@
 #include "../xrEngine/CameraBase.h"
 #include "ai_space.h"
 #include "script_engine.h"
+#include "level.h"
 
 BOOL g_legs_enabled = FALSE;
 float legs_fwd_offset = -0.5f;
 BOOL legs_attach_to_camera = TRUE;
+BOOL g_body_pivot = TRUE;
+BOOL g_body_natural_turn = TRUE;
+float g_body_eye_forward = 0.15f;
 extern int showActorBody;
 extern xr_unordered_set<CDemoRecord*> pDemoRecords;
+
+bool body_pivot_active(CActor* actor)
+{
+    return actor && g_body_pivot && g_legs_enabled && showActorBody == 0
+        && IsGameTypeSingle() && actor == Level().CurrentControlEntity()
+        && actor->active_cam() == eacFirstEye && actor->g_Alive()
+        && !actor->Holder() && !(actor->MovingState() & mcClimb)
+        && pDemoRecords.empty();
+}
 
 void player_legs_controller::destroy()
 {
@@ -224,6 +237,13 @@ void player_legs_controller::update(CActor* actor, bool isShadowPass)
         copy_bones_from_actor(actor);
 
     m_legs_transform.set(actor->XFORM());
+    // The pelvis stays at the actor root. Camera effects, lean and yaw must
+    // never translate this root around the rendered eye.
+    if (body_pivot_active(actor))
+    {
+        actor->XFORMShadow.set(m_legs_transform);
+        return;
+    }
     if (legs_attach_to_camera && pDemoRecords.empty())
         m_legs_transform.c.set(Device.vCameraPosition.x, m_legs_transform.c.y, Device.vCameraPosition.z);
 
