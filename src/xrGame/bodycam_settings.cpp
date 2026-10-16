@@ -184,6 +184,13 @@ namespace
 // The one definition of every setting: Lua name, console name, storage,
 // default and range. The UI scripts refer to settings by name only.
 const FloatBinding g_float_bindings[] = {
+	// Camera-first weapon follow (opt-in).
+	BODYCAM_FLOAT(weapon_follow_hip_time, weapon_follow.hip_time, 0.f, .5f),
+	BODYCAM_FLOAT(weapon_follow_hip_yaw, weapon_follow.hip_yaw, 0.f, 15.f),
+	BODYCAM_FLOAT(weapon_follow_hip_pitch, weapon_follow.hip_pitch, 0.f, 15.f),
+	BODYCAM_FLOAT(weapon_follow_ads_time, weapon_follow.ads_time, 0.f, .5f),
+	BODYCAM_FLOAT(weapon_follow_ads_yaw, weapon_follow.ads_yaw, 0.f, 5.f),
+	BODYCAM_FLOAT(weapon_follow_ads_pitch, weapon_follow.ads_pitch, 0.f, 5.f),
 	// Reference regrip and recoil on the Classic rig.
 	BODYCAM_FLOAT(classic_regrip_1_intensity, regrip.intensity[0], 0.f, 1.f),
 	BODYCAM_FLOAT(classic_regrip_2_intensity, regrip.intensity[1], 0.f, 1.f),
@@ -311,6 +318,7 @@ BoolBinding g_bool_bindings[] = {
 	BODYCAM_BOOL(footstep_camera_enable, footstep.enable),
 	BODYCAM_BOOL(classic_regrip_enable, regrip.enable),
 	BODYCAM_BOOL(classic_recoil_enable, recoil.enable),
+	BODYCAM_BOOL(weapon_follow_enable, weapon_follow.enable),
 	BODYCAM_BOOL(directional_weapon_inertia_enable, handling.directional_weapon_inertia),
 	BODYCAM_BOOL(movement_linked_handling_enable, handling.movement_linked_handling),
 	BODYCAM_BOOL(vm_lowering_enable, sim.lowering.enable),
@@ -438,7 +446,7 @@ bool SprintTransitionEnabled()
 bool AnyEffectEnabled()
 {
 	const RuntimeConfig& config = g_config;
-	return config.camera.enable || config.sim.sprint.enable || config.sim.lowering.enable || config.sim.fire.enable ||
+	return config.weapon_follow.enable || config.camera.enable || config.sim.sprint.enable || config.sim.lowering.enable || config.sim.fire.enable ||
 		config.sim.stalker2_arm.enable || config.footstep.enable || config.regrip.enable || config.recoil.enable ||
 		config.handling.directional_weapon_inertia || config.handling.movement_linked_handling;
 }

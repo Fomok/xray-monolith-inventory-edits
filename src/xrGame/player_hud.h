@@ -10,6 +10,7 @@ class CActor;
 #include <vector>
 #include <cstdint>
 #include <optional>
+#include "bodycam_weapon_follow.h"
 
 #define SCOPE_ATTACH_IDX 2
 
@@ -517,6 +518,7 @@ public:
 	bool inertion_allowed();
 
 private:
+	Bodycam::WeaponFollowState m_weapon_follow;
 	struct HudPoseFrame
 	{
 		CWeapon* weapon = nullptr;

@@ -91,6 +91,22 @@ local builtin_presets = {
 
 local feature_tabs = {
     {
+        name = "Weapon Follow",
+        toggle = { "weapon_follow_enable", "Enabled (Classic, Camera Decoupling OFF)" },
+        sections = {
+            { name = "Hip-fire", settings = {
+                { "weapon_follow_hip_time", "Catch-up time (seconds)" },
+                { "weapon_follow_hip_yaw", "Maximum horizontal lag (degrees)" },
+                { "weapon_follow_hip_pitch", "Maximum vertical lag (degrees)" },
+            } },
+            { name = "Aim down sights", settings = {
+                { "weapon_follow_ads_time", "Catch-up time (seconds)" },
+                { "weapon_follow_ads_yaw", "Maximum horizontal lag (degrees)" },
+                { "weapon_follow_ads_pitch", "Maximum vertical lag (degrees)" },
+            } },
+        },
+    },
+    {
         name = "Weapon Handling",
         sections = {
             { name = "Classic Features", settings = {
@@ -1309,6 +1325,10 @@ local function draw_selected_feature()
 
     local feature = feature_tabs[selected_feature]
     if feature then
+        if feature.name == "Weapon Follow" then
+            ImGui.TextWrapped("Camera leads; hands and weapon trail behind. Use Classic mode and turn Camera Decoupling OFF. Higher catch-up time feels heavier. ADS limits default to zero for sight alignment. Temporarily inactive during freelook, scripted hand actions and off-hand items.")
+            ImGui.Spacing()
+        end
         if feature.toggle then
             draw_settings_table("bodycam_toggle_" .. feature.name, { feature.toggle })
             ImGui.Spacing()

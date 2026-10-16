@@ -1247,6 +1247,28 @@ void player_hud::prepare_hud_pose(const Fmatrix& cam_trans, HudPoseFrame& frame)
 		m2pos.y += z2 / 2.f;
 	}
 
+	// Camera-first weapon lag. Apply to the shared hand frame before authored
+	// offsets and Bodycam IK so both arms and the gun remain together.
+	const auto& follow = Bodycam::GetConfig().weapon_follow;
+	const bool follow_allowed = follow.enable && Bodycam::ClassicActive() &&
+		!Bodycam::GetConfig().camera.enable && wep && m_attached_items[0] &&
+		!m_attached_items[1] && script_anim_part == u8(-1) && script_anim_offset_factor == 0.f &&
+		control_factor == 0.f && Actor()->g_Alive() &&
+		Actor()->cam_Active() == Actor()->cam_FirstEye();
+	const float ads = wep ? wep->GetZRotatingFactor() : 0.f;
+	const float tau = follow.hip_time + (follow.ads_time - follow.hip_time) * ads;
+	const float max_yaw = deg2rad(follow.hip_yaw + (follow.ads_yaw - follow.hip_yaw) * ads);
+	const float max_pitch = deg2rad(follow.hip_pitch + (follow.ads_pitch - follow.hip_pitch) * ads);
+	const Fvector& aim = Actor()->cam_FirstEye()->vDirection;
+	m_weapon_follow.Update(aim.getH(), aim.getP(), Device.fTimeDelta,
+		Device.dwFrame, wep ? wep->ID() : u16(-1), follow_allowed, tau, max_yaw, max_pitch);
+	if (follow_allowed)
+	{
+		Fmatrix lag;
+		lag.setHPB(m_weapon_follow.yaw, m_weapon_follow.pitch, 0.f);
+		trans.mulB_43(lag);
+	}
+
 	Fmatrix trans_2 = trans;
 
 	if (m_attached_items[0])

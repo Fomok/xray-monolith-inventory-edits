@@ -1,8 +1,8 @@
-name: SQA-Bodycam-v03-Test
+name: SQA-Bodycam-Weapon-Follow-Test
 
 on:
   push:
-    branches: [ "amp-hooks-bodycam-v03-mt" ]
+    branches: [ "amp-bodycam-fomokchanges-mt" ]
   workflow_dispatch:
 
 permissions:
@@ -124,7 +124,7 @@ jobs:
     # Download this artifact for one ZIP with bin/ and db/ at its root.
     - uses: actions/upload-artifact@v4.6.0
       with:
-        name: Squared-Away-Bodycam-v03-DX11-AVX
+        name: Squared-Away-Bodycam-Weapon-Follow-DX11-AVX
         path: ./package/
         if-no-files-found: error
         retention-days: 14

@@ -26,6 +26,13 @@ struct RecoilSettings
 };
 
 // Two independent arm handling features.
+struct WeaponFollowSettings
+{
+	bool enable = false; // Opt-in test; requires Classic with Camera Decoupling off.
+	float hip_time = .16f, hip_yaw = 6.f, hip_pitch = 4.f;
+	float ads_time = .06f, ads_yaw = 0.f, ads_pitch = 0.f;
+};
+
 struct HandlingSettings
 {
 	bool directional_weapon_inertia = true; // The elbows settle after mouse movement.
@@ -68,6 +75,7 @@ struct RuntimeConfig
 	RegripSettings regrip;
 	RecoilSettings recoil;
 	HandlingSettings handling;
+	WeaponFollowSettings weapon_follow;
 	MovementInertiaSettings movement_inertia;
 	SprintStartSettings sprint_start;
 };
