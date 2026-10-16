@@ -402,6 +402,13 @@ local diagnostics_sections = {
 }
 
 local binding_descriptions = {
+    weapon_follow_enable = "Lets the camera lead while the weapon and arms catch up. Requires Classic mode with Camera Decoupling off. Inactive during freelook, scripted hand actions and off-hand items.",
+    weapon_follow_hip_time = "Hip-fire catch-up time in seconds. Higher values make the weapon feel heavier; zero follows the camera immediately.",
+    weapon_follow_hip_yaw = "Maximum horizontal hip-fire lag in degrees. Limits how far the weapon can trail during a turn.",
+    weapon_follow_hip_pitch = "Maximum vertical hip-fire lag in degrees. Limits how far the weapon can trail when looking up or down.",
+    weapon_follow_ads_time = "Catch-up time while aiming down sights. Has no effect when both ADS lag limits are zero.",
+    weapon_follow_ads_yaw = "Maximum horizontal lag while aiming down sights. Zero preserves alignment; start small when experimenting.",
+    weapon_follow_ads_pitch = "Maximum vertical lag while aiming down sights. Zero preserves alignment; start small when experimenting.",
     camera_continuous_follow_enable = "Deadzone: the camera waits until the aim leaves the deadzone, then catches up. Reference follow: the camera follows the gun continuously with the Reference camera lag, in hip fire and ADS. The model also sets the scope eye with Bodycam scope effects: Deadzone eases the eye back to the centre of the scope; Reference follow shows the current eye.",
     camera_follow_lag_speed_min = "Reference follow: camera lag speed while the aim moves slowly. Lower trails further behind slow turns.",
     camera_follow_lag_speed_max = "Reference follow: camera lag speed while the aim moves fast. Lower trails further behind fast turns.",
@@ -852,7 +859,11 @@ local tooltip_wrap_width = 430
 
 local function tooltip_text(text)
     ImGui.PushTextWrapPos(tooltip_wrap_width)
-    ImGui.TextWrapped(text)
+    -- The native wrapper expects a non-null printf format string.
+    -- Missing descriptions must not reach it as nil; literal percent signs
+    -- must not be interpreted as native formatting arguments.
+    local safe_text = type(text) == "string" and text ~= "" and text or "No description available."
+    ImGui.TextWrapped((safe_text:gsub("%%", "%%%%")))
     ImGui.PopTextWrapPos()
 end
 
