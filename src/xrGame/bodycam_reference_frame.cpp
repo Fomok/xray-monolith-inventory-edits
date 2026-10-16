@@ -256,6 +256,13 @@ bool EngineFrameAdapter::Run(Frame& frame, bool hadWeaponProjection)
 	// camera; the arms and the optic follow because they hang on it.
 	Fmatrix world = Bodycam::FromRows(
 		ApplyLean(pose.cameraWorld, actor.r_torso.roll, preparedCamera.c.x - actor.Position().x, preparedCamera.c.z - actor.Position().z));
+    if (body_pivot_active(&actor))
+    {
+        Fvector bodyForward = actor.XFORM().k;
+        bodyForward.y = 0.f;
+        bodyForward.normalize_safe();
+        world.c.mad(bodyForward, body_pivot_eye_distance(&actor));
+    }
 	frame.cameraFinalized = true;
 	actor.cam_FinalizeReference(frame.camera, world);
 	PublishHud(frame, *host, world, weaponPose, float(view.horizontalFov));

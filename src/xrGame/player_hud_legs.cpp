@@ -17,9 +17,22 @@ float legs_fwd_offset = -0.5f;
 BOOL legs_attach_to_camera = TRUE;
 BOOL g_body_pivot = TRUE;
 BOOL g_body_natural_turn = TRUE;
-float g_body_eye_forward = 0.15f;
+float g_body_eye_forward = 0.5f;
+BOOL g_body_eye_auto = TRUE;
 extern int showActorBody;
 extern xr_unordered_set<CDemoRecord*> pDemoRecords;
+
+float body_pivot_eye_distance(CActor* actor)
+{
+    if (!g_body_eye_auto) return g_body_eye_forward;
+    // Preserve the original outfit/global body-to-eye spacing, but move the
+    // eye ahead of the fixed body root rather than orbiting the mesh behind it.
+    PIItem outfit = actor->inventory().ItemFromSlot(OUTFIT_SLOT);
+    shared_str section = outfit ? outfit->object().cNameSect() : shared_str("actor");
+    const float offset = pSettings->line_exist(section, "legs_fwd_offset")
+        ? pSettings->r_float(section, "legs_fwd_offset") : legs_fwd_offset;
+    return _valid(offset) ? clampr(-offset, -2.f, 2.f) : 0.5f;
+}
 
 bool body_pivot_active(CActor* actor)
 {

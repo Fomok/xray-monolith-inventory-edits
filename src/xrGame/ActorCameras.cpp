@@ -778,14 +778,15 @@ bool CActor::cam_Prepare(float dt, float fFOV, PreparedCamera& frame, bool refer
 	// calc point
 	xform.transform_tiny(point);
 
-    // Reference has its own physical camera solver. Classic gets a small
-    // body-relative eye offset before its normal camera collision handling.
+    const Fvector pivotAnchor = point;
+    // Reference applies spacing to its solved camera later. Classic uses the
+    // original outfit spacing ahead of the body, with a swept wall check.
     if (!reference && body_pivot_active(this))
     {
         Fvector bodyForward = XFORM().k;
         bodyForward.y = 0.f;
         bodyForward.normalize_safe();
-        point.mad(bodyForward, g_body_eye_forward);
+        point.mad(bodyForward, body_pivot_eye_distance(this));
     }
 
 	CCameraBase* C = cam_Active();
@@ -801,7 +802,10 @@ bool CActor::cam_Prepare(float dt, float fFOV, PreparedCamera& frame, bool refer
 	}
 	if (!reference && Level().CurrentEntity() == this)
 	{
-		collide_camera(*cameras[eacFirstEye], _viewport_near, this);
+        if (body_pivot_active(this))
+            collide_camera_swept(*cameras[eacFirstEye], _viewport_near, this, pivotAnchor, pivotAnchor);
+        else
+            collide_camera(*cameras[eacFirstEye], _viewport_near, this);
 	}
 
     static bool firstPersonDeathDied = false;
