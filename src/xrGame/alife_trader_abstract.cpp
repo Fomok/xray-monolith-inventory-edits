@@ -210,6 +210,23 @@ void add_online_impl(CSE_ALifeDynamicObject* object, const bool& update_registri
 		object->alife().server().Process_spawn(tNetPacket, clientID,FALSE, l_tpALifeInventoryItem->base());
 		l_tpALifeDynamicObject->s_flags.and(u16(-1) ^ M_SPAWN_UPDATE);
 		l_tpALifeDynamicObject->m_bOnline = true;
+
+		// AMP: the other half of the deep save in the switch manager. A
+		// child that owns children - a container - has to bring them
+		// online too, or it comes back as an empty shell still listing
+		// ids that no longer exist, which is what crashes
+		// xrServer::Perform_destroy later ("child registered but not
+		// found"). update_registries is false: only the top-level object
+		// belongs in the scheduler and the graph.
+		//
+		// No stock inventory item has children, so this never runs in a
+		// game without containers.
+		if (!l_tpALifeDynamicObject->children.empty())
+		{
+			Msg("[AMP-S] deep spawn: [%d] is bringing %d item(s) of its own online",
+			    l_tpALifeDynamicObject->ID, (u32)l_tpALifeDynamicObject->children.size());
+			l_tpALifeDynamicObject->add_online(false);
+		}
 	}
 
 	if (!update_registries)

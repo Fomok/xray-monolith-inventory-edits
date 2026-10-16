@@ -11,6 +11,9 @@
 #include "xrServer_Objects_ALife.h"
 #include "PHSynchronize.h"
 #include "inventory_space.h"
+#include "inventory_layout.h"
+#include "inventory_membership.h"
+#include "inventory_pouches.h"
 
 #include "character_info_defs.h"
 #include "infoportiondefs.h"
@@ -50,6 +53,91 @@ public:
 	CSE_ALifeObject* m_self;
 	u32 m_last_update_time;
 	xr_vector<shared_str> m_upgrades;
+
+	// ============================================================
+	//  ITEM DATA: a small store a script may keep ON the item
+	//
+	//  Saved with the item, so it survives the things an object id does
+	//  not: going offline, being carried to another level, sitting in a
+	//  stash or inside a container. A mod that files its bookkeeping by
+	//  id has to cope with that id being handed to something else later;
+	//  a mod that keeps it here does not, because the data goes wherever
+	//  the item goes.
+	//
+	//  A VECTOR OF PAIRS, not a map. A handful of keys per item is a
+	//  linear scan either way, the order is stable so the same state
+	//  saves as the same bytes, and object_saver/object_loader already
+	//  serialise a container of std::pair<shared_str, shared_str> with no
+	//  help at all - which is what keeps STATE_Write to one line.
+	// ============================================================
+	typedef std::pair<shared_str, shared_str> item_data_pair;
+	typedef xr_vector<item_data_pair> item_data_store;
+	item_data_store m_item_data;
+
+    inventory_layout::Placement m_inventory_layout;
+    inventory_layout::Placement inventory_layout() const { return m_inventory_layout; }
+    bool set_inventory_layout(int x, int y, int width, int height, bool rotated, bool manual)
+    { return m_inventory_layout.set(x, y, width, height, rotated, manual); }
+    void clear_inventory_layout() { m_inventory_layout.clear(); }
+
+private:
+    inventory_membership::Identity m_rig_identity = 0;
+    inventory_membership::Membership m_rig_membership;
+    inventory_pouches::Attachments m_rig_pouches;
+    inventory_membership::Membership m_box_layout;
+public:
+    inventory_membership::Membership rig_membership() const { return m_rig_membership; }
+    bool rig_membership_matches(const CSE_ALifeInventoryItem* rig) const
+    { return rig && rig->m_rig_identity && m_rig_membership.valid() && m_rig_membership.owner == rig->m_rig_identity; }
+    bool set_rig_membership(CSE_ALifeInventoryItem* rig, LPCSTR key, int x, int y,
+        int w, int h, bool rotated, int order);
+    void clear_rig_membership() { m_rig_membership.clear(); }
+    // Separate from outer inventory and rig-pocket placement. Container identity
+    // uses the same native allocator, never a recyclable ALife object ID.
+    inventory_membership::Membership box_layout() const { return m_box_layout; }
+    bool box_layout_matches(const CSE_ALifeInventoryItem* box) const
+    { return box && box->m_rig_identity && m_box_layout.valid() && m_box_layout.owner == box->m_rig_identity; }
+    bool set_box_layout(CSE_ALifeInventoryItem* box, int x, int y, int w, int h, bool rotated, int order);
+    void clear_box_layout() { m_box_layout.clear(); }
+    bool rig_pouches_initialized() const { return m_rig_pouches.initialized; }
+    LPCSTR rig_pouch(int slot) const { return m_rig_pouches.get(slot); }
+    bool set_rig_pouch(int slot, LPCSTR section);
+    bool set_rig_pouches(LPCSTR first, LPCSTR second);
+
+public:
+	//  LIMITS, because a store with no ceiling is a save file with no
+	//  ceiling. The whole of an object's state has to fit ONE NET_Packet,
+	//  and that is 16 KB for everything the object has to say - so the
+	//  budget here is a quarter of it and set_data refuses rather than
+	//  building a packet that cannot be sent. Measured on the SERIALISED
+	//  length, which is the number that actually decides.
+	enum
+	{
+		item_data_max_key = 63,
+		item_data_max_value = 2047,
+		item_data_max_keys = 32,
+		item_data_max_bytes = 4096,
+	};
+
+	//  ABSENT AND EMPTY ARE DIFFERENT ANSWERS, so there are two calls
+	//  rather than one that overloads "" to mean both. That exact
+	//  conflation has cost this pack a bug already.
+	bool has_data(LPCSTR key) const;
+	LPCSTR get_data(LPCSTR key) const;
+	//  false when refused - key too long, too many keys, over budget -
+	//  so a caller is never left believing it stored something.
+	bool set_data(LPCSTR key, LPCSTR value);
+	bool remove_data(LPCSTR key);
+	void clear_data();
+	//  For walking what is there: a migration, a debug dump, a mod
+	//  tidying up after an older version of itself.
+	u32 data_count() const;
+	LPCSTR data_key(u32 index) const;
+	//  What the store costs in the packet as it stands.
+	u32 data_bytes() const;
+
+private:
+	const item_data_pair* find_data(LPCSTR key) const;
 
 public:
 	CSE_ALifeInventoryItem(LPCSTR caSection);
@@ -266,6 +354,19 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDocument, CSE_ALifeItem)
 	shared_str m_wDoc;
 	CSE_ALifeItemDocument(LPCSTR caSection);
 	virtual ~CSE_ALifeItemDocument();
+SERVER_ENTITY_DECLARE_END
+
+// AMP: the server half of the carryable container (CInventoryContainer).
+// A CSE_ALifeItem so it can be carried, with the inventory box's
+// online/offline handling so a container lying on the ground far from
+// the actor does not lose its contents to the one-level default.
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemContainer, CSE_ALifeItem)
+	CSE_ALifeItemContainer(LPCSTR caSection);
+	virtual ~CSE_ALifeItemContainer();
+#ifdef XRGAME_EXPORTS
+	virtual void add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children, const bool& update_registries);
+	virtual void add_online(const bool& update_registries);
+#endif
 SERVER_ENTITY_DECLARE_END
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemGrenade, CSE_ALifeItem)

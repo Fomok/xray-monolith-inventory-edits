@@ -6,6 +6,8 @@
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
 #include "InventoryOwner.h"
+#include "InventoryBox.h"
+#include "InventoryContainer.h"	// AMP: needed by IterateInventory as well now
 #include "Pda.h"
 #include "xrMessages.h"
 #include "character_info.h"
@@ -59,6 +61,8 @@
 #include "./xrServerEntities/inventory_space.h"
 #include "ai_space.h"
 #include "ActorBackpack.h"
+#include "alife_simulator.h"
+#include "alife_object_registry.h"
 
 // Boeker: zoom inertia factor support
 #include "EffectorZoomInertion.h"
@@ -244,15 +248,47 @@ void CScriptGameObject::ForEachInventoryItems(const ::luabind::functor<bool>& fu
 	TIItemContainer item_list;
 	pInv->AddAvailableItems(item_list, false);
 
-	TIItemContainer::iterator it;
-	for (it = item_list.begin(); item_list.end() != it; ++it)
+	// Quest callbacks may remove items or drop their enclosing container.
+	// Resolve the snapshot again and check possession before each callback.
+	xr_vector<u16> ids;
+	for (PIItem item : item_list)
+		ids.push_back(item->object().ID());
+
+	for (u16 id : ids)
 	{
-		CGameObject* inv_go = smart_cast<CGameObject*>(*it);
-		if (inv_go)
-		{
+		CGameObject* inv_go = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+		CInventoryItem* item = smart_cast<CInventoryItem*>(inv_go);
+		if (item && (inv_go->H_Parent() == &object() || pInv->AmpInCarriedBox(item)))
 			if (functor(inv_go->lua_game_object(), this) == true)
 				return;
-		}
+	}
+}
+
+// Enumerate direct ownership for layout/capacity calculations. The existing
+// IterateInventory also visits carried container contents for quest consumers.
+void CScriptGameObject::IterateInventoryDirect(::luabind::functor<bool> functor, ::luabind::object object)
+{
+	CInventoryOwner* inventory_owner = smart_cast<CInventoryOwner*>(&this->object());
+	if (!inventory_owner)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		    "CScriptGameObject::IterateInventoryDirect non-CInventoryOwner object !!!");
+		return;
+	}
+
+	// A callback may transfer or destroy an item. Snapshot IDs, not pointers,
+	// and recheck ownership before visiting each surviving object.
+	xr_vector<u16> ids;
+	const TIItemContainer& items = inventory_owner->inventory().m_all;
+	for (TIItemContainer::const_iterator it = items.begin(); it != items.end(); ++it)
+		ids.push_back((*it)->object().ID());
+
+	for (xr_vector<u16>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+	{
+		CGameObject* item = smart_cast<CGameObject*>(Level().Objects.net_Find(*it));
+		if (item && item->H_Parent() == &this->object())
+			if (functor(object, item->lua_game_object()) == true)
+				return;
 	}
 }
 
@@ -267,11 +303,41 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 		return;
 	}
 
-	TIItemContainer::iterator I = inventory_owner->inventory().m_all.begin();
-	TIItemContainer::iterator E = inventory_owner->inventory().m_all.end();
-	for (; I != E; ++I)
-		if (functor(object, (*I)->object().lua_game_object()) == true)
-			return;
+	CInventory& inventory = inventory_owner->inventory();
+	// Capture both lists before invoking Lua. A callback can destroy or move
+	// a later item (including a whole box), invalidating inventory pointers.
+	xr_vector<u16> direct_ids;
+	xr_vector<u16> contained_ids;
+	for (PIItem item : inventory.m_all)
+	{
+		if (item->object().H_Parent() != &this->object())
+			continue;
+		direct_ids.push_back(item->object().ID());
+		CInventoryContainer* box = smart_cast<CInventoryContainer*>(item);
+		if (!box)
+			continue;
+		for (u16 id : box->m_items)
+		{
+			CGameObject* child = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+			if (child && child->H_Parent() == box)
+				contained_ids.push_back(id);
+		}
+	}
+
+	// Keep loose items first, with the same early-stop behavior as before.
+	xr_vector<u16> visited;
+	direct_ids.insert(direct_ids.end(), contained_ids.begin(), contained_ids.end());
+	for (u16 id : direct_ids)
+	{
+		if (std::find(visited.begin(), visited.end(), id) != visited.end())
+			continue;
+		visited.push_back(id);
+		CGameObject* current = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+		CInventoryItem* item = smart_cast<CInventoryItem*>(current);
+		if (item && (current->H_Parent() == &this->object() || inventory.AmpInCarriedBox(item)))
+			if (functor(object, current->lua_game_object()) == true)
+				return;
+	}
 }
 
 void CScriptGameObject::IterateRuck(::luabind::functor<bool> functor, ::luabind::object object)
@@ -327,6 +393,36 @@ void CScriptGameObject::IterateInventoryBox(::luabind::functor<bool> functor, ::
 			if (functor(object, GO->lua_game_object()) == true)
 				return;
 	}
+}
+
+// AMP: the carryable container's mirror of IterateInventoryBox.
+void CScriptGameObject::IterateContainer(::luabind::functor<bool> functor, ::luabind::object object)
+{
+	CInventoryContainer* container = smart_cast<CInventoryContainer*>(&this->object());
+	if (!container)
+	{
+		ai().script_engine().script_log(ScriptStorage::eLuaMessageTypeError,
+		                                "CScriptGameObject::IterateContainer non-CInventoryContainer object !!!");
+		return;
+	}
+
+	// Over a COPY: the functor is script and may take things out of
+	// the container mid-walk, which edits m_items under the iterator.
+	xr_vector<u16> items = container->m_items;
+	xr_vector<u16>::const_iterator I = items.begin();
+	xr_vector<u16>::const_iterator E = items.end();
+	for (; I != E; ++I)
+	{
+		CGameObject* GO = smart_cast<CGameObject*>(Level().Objects.net_Find(*I));
+		if (GO && GO->H_Parent() == &this->object())
+			if (functor(object, GO->lua_game_object()))
+				return;
+	}
+}
+
+bool CScriptGameObject::IsContainer()
+{
+	return smart_cast<CInventoryContainer*>(&this->object()) != NULL;
 }
 
 void CScriptGameObject::MarkItemDropped(CScriptGameObject* item, bool flag)
@@ -620,9 +716,37 @@ void CScriptGameObject::TransferItem(CScriptGameObject* pItem, CScriptGameObject
 		return;
 	}
 
+	// ============================================================
+	// AMP: SOLD BY WHOEVER ACTUALLY HOLDS IT
+	//
+	// This sent the "sell" from object().ID() - the caller - on the
+	// assumption that the caller owns the item. Since containers, an
+	// item the actor can SEE may be owned by a case he is carrying, and
+	// telling the actor to let go of something he is not holding does
+	// nothing at all: the item stays in the case, the buyer gets
+	// nothing, and a quest hand-in that walked the inventory, found it
+	// and "took" it has in fact taken nothing.
+	//
+	// So the seller is the item's real parent when that parent is one
+	// of our containers. Everything else is exactly as it was - a
+	// normal item's parent IS the caller, and this reads as the same
+	// two events it always sent.
+	//
+	// NOT A GENERAL "sell from whoever holds it". Only a container, and
+	// only because a container is a thing this engine lets you carry
+	// while it owns its contents. A stash, an NPC, a corpse - all
+	// unchanged.
+	// ============================================================
+	u16 seller = object().ID();
+	{
+		CObject* parent = pIItem->object().H_Parent();
+		if (parent && smart_cast<CInventoryContainer*>(parent))
+			seller = u16(parent->ID());
+	}
+
 	// выбросить у себя
 	NET_Packet P;
-	CGameObject::u_EventGen(P, GE_TRADE_SELL, object().ID());
+	CGameObject::u_EventGen(P, GE_TRADE_SELL, seller);
 	P.w_u16(pIItem->object().ID());
 	CGameObject::u_EventSend(P);
 
@@ -630,6 +754,220 @@ void CScriptGameObject::TransferItem(CScriptGameObject* pItem, CScriptGameObject
 	CGameObject::u_EventGen(P, GE_TRADE_BUY, pForWho->object().ID());
 	P.w_u16(pIItem->object().ID());
 	CGameObject::u_EventSend(P);
+}
+
+
+// Native lifecycle for Squared Away rig handovers. The ordinary transfer API
+// stays unchanged for other mods; only this path owns a pending registry.
+namespace
+{
+using inventory_rig_transfer::Entry;
+using inventory_rig_transfer::Observation;
+using inventory_rig_transfer::Registry;
+using inventory_rig_transfer::Request;
+
+Observation sqa_observe_transfer(const Entry& e)
+{
+    Observation state;
+    if (!ai().get_alife()) return state;
+    auto& objects = ai().alife().objects();
+    if (!objects.object(e.item, true) || !objects.object(e.from, true) || !objects.object(e.to, true))
+        return state;
+    auto* obj = Level().Objects.net_Find(e.item);
+    auto* rig = Level().Objects.net_Find(e.rig);
+    auto* item = smart_cast<CInventoryItem*>(obj);
+    auto* container = smart_cast<CInventoryContainer*>(rig);
+    auto* stash = smart_cast<CInventoryBox*>(rig);
+    auto* corpse = smart_cast<CAI_Stalker*>(rig);
+    if (!obj || !rig || obj->getDestroy() || rig->getDestroy() || !item || (!container && !stash && !corpse))
+        return state;
+    state.endpoints_live = Level().Objects.net_Find(e.from) && Level().Objects.net_Find(e.to);
+    state.item_token = item->SqaTransferGeneration();
+    state.rig_token = container ? container->SqaTransferGeneration() :
+        (stash ? stash->SqaTransferGeneration() : corpse->SqaOwnerTransferGeneration());
+    auto* destination = smart_cast<CInventoryContainer*>(Level().Objects.net_Find(e.to));
+    state.destination_token = destination ? destination->SqaTransferGeneration() : 0;
+    state.parent = obj->H_Parent() ? u16(obj->H_Parent()->ID()) : inventory_rig_transfer::none;
+    return state;
+}
+
+Registry* sqa_transfer_registry(CScriptGameObject& self)
+{
+    auto* actor = smart_cast<CActor*>(&self.object());
+    if (!actor) return nullptr;
+    auto& registry = actor->inventory().sqa_rig_transfers;
+    registry.settle(sqa_observe_transfer, [](const Entry& e)
+    {
+        Msg("[SQA-transfer] waiting for item %u to reach owner %u; rig toggle remains queued",
+            unsigned(e.item), unsigned(e.to));
+    }, Device.dwTimeGlobal);
+    return &registry;
+}
+}
+
+bool CScriptGameObject::SqaRigTransfer(CScriptGameObject* item_object, CScriptGameObject* rig_object, bool to_rig)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry || !item_object || !rig_object) return false;
+    auto* item = smart_cast<CInventoryItem*>(&item_object->object());
+    auto* rig = smart_cast<CInventoryContainer*>(&rig_object->object());
+    if (!item || !rig || item_object == rig_object ||
+        smart_cast<CInventoryContainer*>(&item_object->object())) return false;
+    const u16 actor_id = u16(object().ID());
+    const u16 rig_id = u16(rig_object->object().ID());
+    const Entry e{u16(item_object->object().ID()), to_rig ? actor_id : rig_id,
+        to_rig ? rig_id : actor_id, rig_id,
+        item->SqaTransferGeneration(), rig->SqaTransferGeneration(), Device.dwTimeGlobal};
+    const auto result = registry->request(e, sqa_observe_transfer(e));
+    if (result == Request::refused) return false;
+    if (result != Request::queued) return true;
+    NET_Packet packet;
+    CGameObject::u_EventGen(packet, GE_TRADE_SELL, e.from);
+    packet.w_u16(e.item);
+    CGameObject::u_EventSend(packet);
+    CGameObject::u_EventGen(packet, GE_TRADE_BUY, e.to);
+    packet.w_u16(e.item);
+    CGameObject::u_EventSend(packet);
+    return true;
+}
+
+// Packing and source access are checked by the UI before this call. Transfer
+// the same object directly between owners, never via a temporary actor pickup.
+bool CScriptGameObject::SqaStorageTransfer(CScriptGameObject* item_object, CScriptGameObject* destination)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry || !item_object || !destination) return false;
+    auto* item = smart_cast<CInventoryItem*>(&item_object->object());
+    auto* from = item_object->object().H_Parent();
+    auto* to = &destination->object();
+    if (!item || !from || from == to || to == &item_object->object() ||
+        smart_cast<CInventoryContainer*>(&item_object->object()) || to->getDestroy()) return false;
+    auto* source_container = smart_cast<CInventoryContainer*>(from);
+    auto* source_stash = smart_cast<CInventoryBox*>(from);
+    auto* target_container = smart_cast<CInventoryContainer*>(to);
+    if ((!source_container && !source_stash && from != &object()) ||
+        (!target_container && to != &object()) ||
+        (source_stash && !source_stash->can_take())) return false;
+    auto* anchor = source_container ? static_cast<CInventoryItem*>(source_container) :
+        static_cast<CInventoryItem*>(target_container);
+    const u16 anchor_id = source_stash ? u16(source_stash->ID()) : u16(anchor->object().ID());
+    const auto token = source_stash ? source_stash->SqaTransferGeneration() : anchor->SqaTransferGeneration();
+    Entry e{u16(item_object->object().ID()), u16(from->ID()), u16(to->ID()), anchor_id,
+        item->SqaTransferGeneration(), token, Device.dwTimeGlobal};
+    e.destination_token = target_container ? target_container->SqaTransferGeneration() : 0;
+    e.storage_ruck = to == &object();
+    if (e.storage_ruck && !smart_cast<CActor*>(&object())->inventory().CanTakeItem(item)) return false;
+    const auto result = registry->request(e, sqa_observe_transfer(e));
+    if (result == Request::refused) return false;
+    if (result != Request::queued) return true;
+    NET_Packet packet;
+    CGameObject::u_EventGen(packet, GE_TRADE_SELL, e.from);
+    packet.w_u16(e.item); CGameObject::u_EventSend(packet);
+    CGameObject::u_EventGen(packet, GE_TRADE_BUY, e.to);
+    packet.w_u16(e.item); CGameObject::u_EventSend(packet);
+    return true;
+}
+
+// The UI preflights packing and acceptance. This function validates both owners
+// and reserves the equip destination before dispatching any ownership events.
+bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
+    CScriptGameObject* container_object, u16 slot, bool return_to_source)
+{
+    auto* actor = smart_cast<CActor*>(&object());
+    auto* registry = sqa_transfer_registry(*this);
+    if (!actor || !registry || !registry->entries().empty() || !item_object || !container_object)
+        return false;
+    auto* item = smart_cast<CInventoryItem*>(&item_object->object());
+    auto* container = smart_cast<CInventoryContainer*>(&container_object->object());
+    auto* stash = smart_cast<CInventoryBox*>(&container_object->object());
+    auto* corpse = smart_cast<CAI_Stalker*>(&container_object->object());
+    if (!item || (!container && !stash && !corpse) || (stash && !stash->can_take()) ||
+        (corpse && corpse->g_Alive()) || container_object->object().getDestroy() ||
+        item_object->object().getDestroy() ||
+        smart_cast<CInventoryContainer*>(&item_object->object()) ||
+        item_object->object().H_Parent() != &container_object->object()) return false;
+    auto& inv = actor->inventory();
+    if (!inv.SqaValidSlot(slot)) return false;
+    auto* old = inv.ItemFromSlot(slot);
+    if (!inv.CanTakeItem(item) || !inv.CanPutInSlot(item, slot, old)) return false;
+    if (old && return_to_source && smart_cast<CInventoryContainer*>(&old->object())) return false;
+    const u16 actor_id = u16(object().ID()), container_id = u16(container_object->object().ID());
+    const auto source_token = container ? container->SqaTransferGeneration() :
+        (stash ? stash->SqaTransferGeneration() : corpse->SqaOwnerTransferGeneration());
+    Entry incoming{u16(item_object->object().ID()), container_id, actor_id, container_id,
+        item->SqaTransferGeneration(), source_token, Device.dwTimeGlobal};
+    incoming.target_slot = slot;
+    if (registry->request(incoming, sqa_observe_transfer(incoming)) != Request::queued) return false;
+    if (old && return_to_source)
+    {
+        const Entry outgoing{u16(old->object().ID()), actor_id, container_id, container_id,
+            old->SqaTransferGeneration(), source_token, Device.dwTimeGlobal};
+        if (registry->request(outgoing, sqa_observe_transfer(outgoing)) != Request::queued)
+        { registry->forget(incoming.item); return false; }
+    }
+    NET_Packet packet;
+    if (old)
+    {
+        CGameObject::u_EventGen(packet, return_to_source ? GE_TRADE_SELL : GEG_PLAYER_ITEM2RUCK, actor_id);
+        packet.w_u16(old->object().ID()); CGameObject::u_EventSend(packet);
+        if (return_to_source)
+        {
+            CGameObject::u_EventGen(packet, GE_TRADE_BUY, container_id);
+            packet.w_u16(old->object().ID()); CGameObject::u_EventSend(packet);
+        }
+    }
+    CGameObject::u_EventGen(packet, GE_TRADE_SELL, container_id);
+    packet.w_u16(incoming.item); CGameObject::u_EventSend(packet);
+    CGameObject::u_EventGen(packet, GE_TRADE_BUY, actor_id);
+    packet.w_u16(incoming.item); CGameObject::u_EventSend(packet);
+    return true;
+}
+
+bool CScriptGameObject::SqaRigTransferPending(u16 id)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    return registry && registry->pending(id);
+}
+
+bool CScriptGameObject::SqaRigTransferRigPending(u16 id)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    return registry && registry->rig_pending(id);
+}
+
+u32 CScriptGameObject::SqaRigTransferCount()
+{
+    auto* registry = sqa_transfer_registry(*this);
+    return registry ? u32(registry->entries().size()) : 0;
+}
+
+u16 CScriptGameObject::SqaRigTransferAt(u32 index)
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry || index == 0 || index > registry->entries().size()) return inventory_rig_transfer::none;
+    return registry->entries()[index - 1].item;
+}
+
+u16 CScriptGameObject::SqaRigTransferFinished()
+{
+    auto* registry = sqa_transfer_registry(*this);
+    if (!registry) return inventory_rig_transfer::none;
+    Entry e{};
+    while (registry->take_finished(e))
+    {
+        const auto state = sqa_observe_transfer(e);
+        // Only arrived actor-owned items need the magazine integration callback.
+        if (e.to == object().ID() && state.endpoints_live && state.parent == e.to &&
+            state.item_token == e.item_token && state.rig_token == e.rig_token)
+            return e.item;
+    }
+    return inventory_rig_transfer::none;
+}
+
+void CScriptGameObject::SqaRigTransferForget(u16 id)
+{
+    auto* actor = smart_cast<CActor*>(&object());
+    if (actor) actor->inventory().sqa_rig_transfers.forget(id);
 }
 
 void CScriptGameObject::TakeItem(CScriptGameObject* pItem)

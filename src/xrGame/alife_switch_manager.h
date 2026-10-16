@@ -25,6 +25,17 @@ protected:
 private:
 	OBJECT_VECTOR m_saved_chidren;
 
+	// AMP: a descendant that owns children of its own, and what it owned
+	// before Perform_destroy emptied it. See the comment in the .cpp.
+	struct deep_children_entry
+	{
+		CSE_ALifeDynamicObject* parent;
+		OBJECT_VECTOR children;
+	};
+
+	void collect_deep_children(const OBJECT_VECTOR& ids,
+	                           xr_vector<deep_children_entry>& result);
+
 protected:
 	bool synchronize_location(CSE_ALifeDynamicObject* object);
 

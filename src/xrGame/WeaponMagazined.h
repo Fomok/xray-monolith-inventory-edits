@@ -45,6 +45,7 @@ protected:
 	//кадр момента пересчета UpdateSounds
 	u32 dwUpdateSounds_Frame = 0;
 protected:
+	bool ScriptOwnsMagazineReload();
 	virtual void OnMagazineEmpty();
 
 	virtual void switch2_Idle();

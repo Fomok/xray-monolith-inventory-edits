@@ -179,6 +179,7 @@ DECLARE_SPECIALIZATION(CExplosiveRocket, CPhysicsShellHolder, cast_explosive_roc
 DECLARE_SPECIALIZATION(CGrenade, CPhysicsShellHolder, cast_grenade)
 
 DECLARE_SPECIALIZATION(CInventoryBox, CGameObject, cast_inventory_box)
+DECLARE_SPECIALIZATION(CInventoryContainer, CGameObject, cast_inventory_container)
 DECLARE_SPECIALIZATION(CHangingLamp, CGameObject, cast_hanging_lamp)
 DECLARE_SPECIALIZATION(CHelicopter, CGameObject, cast_helicopter)
 DECLARE_SPECIALIZATION(CPhantom, CGameObject, cast_phantom)

@@ -46,6 +46,7 @@ public:
 	//if just_before_destroy is true, then activate will be forced (because deactivate message will not deliver)
 	bool DropItem(CGameObject* pObj, bool just_before_destroy, bool dont_create_shell);
 	void Clear();
+	inventory_rig_transfer::Registry sqa_rig_transfers;
 
 	u16 m_last_slot;
 	IC u16 FirstSlot() const { return KNIFE_SLOT; }
@@ -59,7 +60,8 @@ public:
 	bool InBelt(const CInventoryItem* pIItem) const;
 	bool InRuck(const CInventoryItem* pIItem) const;
 
-	bool CanPutInSlot(PIItem pIItem, u16 slot_id) const;
+	bool SqaValidSlot(u16 slot) const { return slot != NO_ACTIVE_SLOT && slot < m_slots.size(); }
+	bool CanPutInSlot(PIItem pIItem, u16 slot_id, PIItem replacing = nullptr) const;
 	bool CanPutInBelt(PIItem pIItem);
 	bool CanPutInRuck(PIItem pIItem) const;
 
@@ -111,6 +113,9 @@ public:
 	bool Eat(PIItem pIItem);
 	bool ClientEat(PIItem pIItem);
 
+	// Possession check for contents of carried containers, including equipped rigs.
+	bool AmpInCarriedBox(const CInventoryItem* item) const;
+
 	IC u16 GetActiveSlot() const { return m_iActiveSlot; }
 
 	void SetPrevActiveSlot(u16 ActiveSlot) { m_iPrevActiveSlot = ActiveSlot; }
@@ -158,6 +163,12 @@ public:
 protected:
 	void UpdateDropTasks();
 	void UpdateDropItem(PIItem pIItem);
+
+	// AMP: the drop sweep walks the slots, the belt and the ruck, and a
+	// case's children are in none of those. This visits them - but only on
+	// a frame that put the flag on one, which is why the flag exists.
+	void AmpUpdateBoxDrops();
+	bool m_amp_box_drop;
 
 	// Активный слот и слот который станет активным после смены
 	//значения совпадают в обычном состоянии (нет смены слотов)

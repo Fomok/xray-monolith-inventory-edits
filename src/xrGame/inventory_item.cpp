@@ -343,6 +343,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item)
 /////////// network ///////////////////////////////
 BOOL CInventoryItem::net_Spawn(CSE_Abstract* DC)
 {
+	sqa_transfer_generation = inventory_rig_transfer::next_identity();
 	VERIFY(!m_pInventory);
 
 	m_flags.set(FInInterpolation, FALSE);
@@ -784,6 +785,28 @@ void CInventoryItem::net_Export(NET_Packet& P)
 void CInventoryItem::load(IReader& packet)
 {
 	m_ItemCurrPlace.value = packet.r_u16();
+
+	// Opt-in migration for equipment whose configured slot changed between saves.
+	// Apply before ownership restoration and first-update script cleanup.
+	if (READ_IF_EXISTS(pSettings, r_bool, object().cNameSect(), "restore_slot_from_config", false))
+	{
+		const int configured_slot = READ_IF_EXISTS(pSettings, r_s32, object().cNameSect(), "slot", -1) + 1;
+		if (configured_slot > 0 && configured_slot < 64)
+		{
+			// Old scripts could force equipment into a slot without updating its
+			// saved base slot. Opted-in items use their configured slot regardless.
+			if (m_ItemCurrPlace.type == eItemPlaceSlot)
+			{
+				if (m_ItemCurrPlace.slot_id != configured_slot)
+					Msg("[inventory-slot] %s: saved slot %u (base %u) -> configured slot %d",
+						object().cNameSect().c_str(), (unsigned)m_ItemCurrPlace.slot_id,
+						(unsigned)m_ItemCurrPlace.base_slot_id, configured_slot);
+				m_ItemCurrPlace.slot_id = configured_slot;
+			}
+			m_ItemCurrPlace.base_slot_id = configured_slot;
+		}
+	}
+
 	m_fCondition = packet.r_float();
 
 	//--	load_data( m_upgrades, packet );

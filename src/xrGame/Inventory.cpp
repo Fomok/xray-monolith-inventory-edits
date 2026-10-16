@@ -24,6 +24,7 @@
 #include "game_base_space.h"
 #include "uigamecustom.h"
 #include "clsid_game.h"
+#include "InventoryContainer.h"	// AMP
 #include "static_cast_checked.hpp"
 #include "player_hud.h"
 #include "PDA.h"
@@ -100,6 +101,7 @@ CInventory::CInventory()
 	m_fTotalWeight = -1.f;
 	m_dwModifyFrame = 0;
 	m_drop_last_frame = false;
+	m_amp_box_drop = false;	// AMP
 
 	InitPriorityGroupsForQSwitch();
 	m_next_item_iteration_time = 0;
@@ -113,6 +115,7 @@ CInventory::~CInventory()
 
 void CInventory::Clear()
 {
+	sqa_rig_transfers.clear();
 	m_all.clear();
 	m_ruck.clear();
 	m_belt.clear();
@@ -906,10 +909,43 @@ void CInventory::UpdateDropTasks()
 		}
 	}
 
+	// AMP: ...AND THE CHILDREN OF THE CASES, on the frames where one of
+	// them is waiting. See the note where the flag is set.
+	if (m_amp_box_drop)
+	{
+		m_amp_box_drop = false;
+		AmpUpdateBoxDrops();
+	}
+
 	if (m_drop_last_frame)
 	{
 		m_drop_last_frame = false;
 		m_pOwner->OnItemDropUpdate();
+	}
+}
+
+// AMP: the same UpdateDropItem every other item gets, over the children of
+// the cases in the ruck.
+//
+// OVER A COPY OF THE ID LIST, and that is not caution for its own sake:
+// UpdateDropItem sends the reject that makes CInventoryContainer::OnEvent
+// erase the id from this very vector, which would leave the loop walking
+// a container that changed under it.
+void CInventory::AmpUpdateBoxDrops()
+{
+	for (TIItemContainer::iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
+	{
+		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
+		if (!box)
+			continue;
+
+		xr_vector<u16> ids = box->m_items;
+		for (xr_vector<u16>::const_iterator ci = ids.begin(); ids.end() != ci; ++ci)
+		{
+			PIItem child = smart_cast<CInventoryItem*>(Level().Objects.net_Find(*ci));
+			if (child)
+				UpdateDropItem(child);
+		}
 	}
 }
 
@@ -964,6 +1000,78 @@ PIItem CInventory::SameSlot(const u16 slot, PIItem pIItem, bool bSearchRuck) con
 	return NULL;
 }
 
+// AMP: ...AND INSIDE THE CASES YOU ARE CARRYING
+//
+// A carried container owns real objects - see CInventoryContainer - but
+// they are H_SetParent'ed to IT, not to the owner, so they are in no
+// list this function walks. Every "have you got one of these" in the
+// game therefore says no about a thing the player is plainly carrying:
+// a quest hand-in takes nothing and pays anyway, a craft says you are
+// short, a trader cannot see it.
+//
+// ONE LEVEL, which is not a simplification: a container never holds
+// another container (see the V1 constraints in InventoryContainer.h),
+// so one level IS all of them.
+//
+// SECOND, AND ONLY ON FAILURE. Anything loose in the ruck answers
+// first and this costs nothing at all in the ordinary case - which is
+// most calls, on a hot path.
+// `need_useful` matches whatever the caller's own loop asked for.
+// CInventory::Get requires Useful(); GetItemFromInventory does not, and a
+// helper that quietly added the test would make the two disagree about an
+// item one of them can see.
+static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name,
+                                     bool need_useful)
+{
+	for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
+	{
+		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
+		if (!box)
+			continue;
+
+		for (xr_vector<u16>::const_iterator ci = box->m_items.begin();
+		     box->m_items.end() != ci; ++ci)
+		{
+			CObject* O = Level().Objects.net_Find(*ci);
+			if (!O)
+				continue;
+
+			// NOT smart_cast<CInventoryItem*>(O). A CObject is not an
+			// item; the item is its inventory_item interface, and that
+			// is what every caller of this function expects back.
+			PIItem child = smart_cast<CInventoryItem*>(O);
+			if (!child)
+				continue;
+
+			if (xr_strcmp(child->object().cNameSect(), name))
+				continue;
+
+			if (need_useful && !child->Useful())
+				continue;
+
+			return child;
+		}
+	}
+	return NULL;
+}
+
+// Check both sides of the ownership link. Equipped rigs are carried too.
+// This query describes possession, not permission to reload or quick-use.
+bool CInventory::AmpInCarriedBox(const CInventoryItem* item) const
+{
+	if (!item)
+		return false;
+	CInventoryContainer* box = smart_cast<CInventoryContainer*>(item->object().H_Parent());
+	if (!box || box->H_Parent() != m_pOwner->cast_game_object())
+		return false;
+	if (std::find(box->m_items.begin(), box->m_items.end(), item->object().ID()) == box->m_items.end())
+		return false;
+	for (PIItem carried : m_all)
+		if (carried->object().ID() == box->ID())
+			return true;
+	return false;
+}
+
 //найти в инвенторе вещь с указанным именем
 PIItem CInventory::Get(LPCSTR name, bool bSearchRuck) const
 {
@@ -976,6 +1084,13 @@ PIItem CInventory::Get(LPCSTR name, bool bSearchRuck) const
 			pIItem->Useful())
 			return pIItem;
 	}
+
+	// AMP: the cases, and the ruck only - a container on the belt is
+	// not a thing this game has, and the belt is asked on a far hotter
+	// path than the ruck is.
+	if (bSearchRuck)
+		return amp_find_in_containers(list, name, true);
+
 	return NULL;
 }
 
@@ -1116,10 +1231,54 @@ bool CInventory::Eat(PIItem pIItem)
 	CInventoryOwner* IO = smart_cast<CInventoryOwner*>(entity_alive);
 	if (!IO) return false;
 
-	CInventory* pInventory = pItemToEat->m_pInventory;
-	if (!pInventory || pInventory != this) return false;
-	if (pInventory != IO->m_inventory) return false;
-	if (pItemToEat->object().H_Parent()->ID() != entity_alive->ID()) return false;
+	// ============================================================
+	// AMP: ...OR IN A CASE YOU ARE CARRYING
+	//
+	//   "item in box have context menu and i could 'use' it, i tried
+	//    drinking canteen of water and fdda animation played but the use
+	//    wasnt consumed and i didnt get hydrated"
+	//
+	// The animation is script-side and ran. The swallow is HERE, and it
+	// did not - silently, with no message and no log line, because all
+	// three of the tests below answer no for a thing in a case and the
+	// function simply returns false.
+	//
+	// A case owns its contents: they are H_SetParent'ed to IT and never
+	// go through CInventory::Take, so a child has NO m_pInventory at all
+	// and a parent that is not the actor. Three noes for one fact.
+	//
+	// This is the seventh door of the same kind. Get,
+	// GetItemFromInventory, AddAvailableItems, IterateInventory,
+	// TransferItem and the server-side detach were the other six, and one
+	// sentence is behind all of them: WHAT IS IN A CASE YOU ARE CARRYING
+	// IS SOMETHING YOU ARE CARRYING.
+	// ============================================================
+	const bool amp_boxed = AmpInCarriedBox(pItemToEat);
+
+	if (!amp_boxed)
+	{
+		CInventory* pInventory = pItemToEat->m_pInventory;
+		if (!pInventory || pInventory != this) return false;
+		if (pInventory != IO->m_inventory) return false;
+		if (pItemToEat->object().H_Parent()->ID() != entity_alive->ID()) return false;
+	}
+
+	// AMP hooks: ask the script before the actor consumes anything,
+	// whatever path the consumption came by - a quick-use key, the Use
+	// menu, or another script calling eat() directly. A false answer
+	// refuses the use and nothing below runs. With no functor defined,
+	// behaviour is exactly the stock one. Actor only: NPCs eat too, and
+	// their meals are none of the script's business here.
+	if (Actor() && Actor()->m_inventory == this)
+	{
+		::luabind::functor<bool> amp_veto;
+		if (ai().script_engine().functor("_G.AMP__before_eat", amp_veto))
+		{
+			CGameObject* go = smart_cast<CGameObject*>(pIItem);
+			if (go && !amp_veto(go->lua_game_object()))
+				return false;
+		}
+	}
 
 	if (!pItemToEat->UseBy(entity_alive))
 		return false;
@@ -1152,6 +1311,22 @@ bool CInventory::Eat(PIItem pIItem)
 			return false;
 
 		pIItem->SetDropManual(TRUE);
+
+		// AMP: AND SOMEBODY HAS TO ANSWER THAT FLAG.
+		//
+		// UpdateDropTasks walks the slots, the belt and the ruck, and a
+		// case's child is in none of them - so an emptied thing in a case
+		// would set the flag and wait for a loop that never visits it.
+		// That is worse than it sounds: IsInvalid() is `getDestroy() ||
+		// GetDropManual()`, so the item would read as half-destroyed to
+		// every other piece of code, for the rest of the save.
+		//
+		// The flag says "look in the cases next frame" and nothing else
+		// can set it, because Eat is the only door into a case's child.
+		// So the extra walk costs nothing on the frames - which is all of
+		// them - where nobody drank the last of something out of a case.
+		if (amp_boxed)
+			m_amp_box_drop = true;
 	}
 
 	return true;
@@ -1202,8 +1377,9 @@ bool CInventory::InRuck(const CInventoryItem* pIItem) const
 }
 
 
-bool CInventory::CanPutInSlot(PIItem pIItem, u16 slot_id) const
+bool CInventory::CanPutInSlot(PIItem pIItem, u16 slot_id, PIItem replacing) const
 {
+    if (!pIItem || !SqaValidSlot(slot_id)) return false;
 	if (!m_bSlotsUseful) return false;
 
 	if (!GetOwner()->CanPutInSlot(pIItem, slot_id)) return false;
@@ -1223,8 +1399,8 @@ bool CInventory::CanPutInSlot(PIItem pIItem, u16 slot_id) const
 			return false;
 	}
 
-	if (slot_id != NO_ACTIVE_SLOT &&
-		NULL == ItemFromSlot(slot_id))
+	if (slot_id != NO_ACTIVE_SLOT && slot_id < m_slots.size() &&
+        (NULL == ItemFromSlot(slot_id) || (replacing && replacing == ItemFromSlot(slot_id))))
 		return true;
 
 	return false;
@@ -1283,7 +1459,24 @@ CInventoryItem* CInventory::GetItemFromInventory(LPCSTR caItemName)
 	for (TIItemContainer::iterator l_it = l_list.begin(); l_list.end() != l_it; ++l_it)
 		if (xr_strcmp((*l_it)->object().cNameSect().c_str(), caItemName) == 0)
 			return (*l_it);
-	return (0);
+
+	// ============================================================
+	// AMP: ...AND INSIDE THE CASES. THIS IS THE ONE actor:object USES.
+	//
+	// CScriptGameObject::GetObjectByName - which is `actor:object(sec)`
+	// in script, and so is every "have you got one of these" a dialogue
+	// condition or a task functor asks - comes HERE, not to
+	// CInventory::Get. Teaching only Get left the counting fixed and the
+	// asking still blind: the taskboard saw the artefact in the pouch
+	// and the hand-in dialogue still would not appear.
+	//
+	// SECOND, AND ONLY ON FAILURE, for the same reason as Get: anything
+	// loose answers first and the ordinary case costs nothing.
+	//
+	// m_all, not m_ruck - this function's own list, so a container is
+	// found wherever the owner is carrying it.
+	// ============================================================
+	return amp_find_in_containers(l_list, caItemName, false);
 }
 
 CInventoryItem* CInventory::GetItemFromInventory(u16 id)
@@ -1406,6 +1599,44 @@ void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_tr
 					}
 					items_container.push_back(item);
 				}
+			}
+		}
+	}
+
+	// ============================================================
+	// AMP: ...AND WHAT IS INSIDE THE CASES
+	//
+	// This list is what `inventory_for_each` hands a script, and
+	// GAMMA's fetch hand-in walks exactly that to find the item it is
+	// taking off you. Without this the hand-in finds nothing, takes
+	// nothing - and the task pays anyway, because completion is decided
+	// elsewhere. That is the duplication, by its last road.
+	//
+	// NOT FOR TRADE. The same list dressed for a trader is what the
+	// trade window shows, and a case's contents appearing in the sell
+	// list - beside the case, which already weighs them - is two
+	// entries for one item and a way to sell something out from under
+	// the case that holds it. A hand-in is not a trade; the flag is
+	// already here to tell them apart.
+	// ============================================================
+	if (!for_trade)
+	{
+		for (TIItemContainer::const_iterator it = m_all.begin(); m_all.end() != it; ++it)
+		{
+			CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
+			if (!box || box->H_Parent() != m_pOwner->cast_game_object())
+				continue;
+
+			for (xr_vector<u16>::const_iterator ci = box->m_items.begin();
+			     box->m_items.end() != ci; ++ci)
+			{
+				CObject* O = Level().Objects.net_Find(*ci);
+				if (!O || O->H_Parent() != box)
+					continue;
+
+				PIItem child = smart_cast<CInventoryItem*>(O);
+				if (child)
+					items_container.push_back(child);
 			}
 		}
 	}

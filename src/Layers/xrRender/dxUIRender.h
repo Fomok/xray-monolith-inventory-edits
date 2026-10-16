@@ -39,6 +39,7 @@ public:
 
 	virtual void CacheSetXformWorld(const Fmatrix& M);
 	virtual void CacheSetCullMode(CullMode);
+	virtual void CacheSetDepthTest(bool enable);
 
 private:
 	ref_geom hGeom_TL;

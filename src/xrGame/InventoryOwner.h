@@ -10,6 +10,7 @@
 #include "script_space_forward.h"
 #include "character_info.h"
 #include "inventory_space.h"
+#include "inventory_rig_transfer.h"
 #include "script_export_space.h"
 
 extern xr_string TranslateName(LPCSTR nameStr);
@@ -42,7 +43,11 @@ class CAI_PhraseDialogManager;
 
 class CInventoryOwner : public CAttachmentOwner
 {
+private:
+    inventory_rig_transfer::Token sqa_owner_transfer_generation = inventory_rig_transfer::next_identity();
 public:
+    inventory_rig_transfer::Token SqaOwnerTransferGeneration() const { return sqa_owner_transfer_generation; }
+
 	CInventoryOwner();
 	virtual ~CInventoryOwner();
 

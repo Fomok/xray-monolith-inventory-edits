@@ -162,8 +162,13 @@
 //       CSE_ALifeTraderAbstract		added property m_deadbody_can_take, m_deadbody_closed
 // 127	 CSE_ALifeObjectClimable		added material;
 // 128	 CSE_ALifeObjectClimable		added can_fire in smart covers;
+// 129	 CSE_ALifeInventoryItem		added item data - a saved key/value store a
+//									script may keep on any item. Read only when
+//									m_wVersion > 128, so every older save loads with
+//									an empty store and nothing else changes.
 //------------------------------------------------------------------------------
-#define SPAWN_VERSION	u16(128)
+// 130  CSE_ALifeInventoryItem: typed native outer-inventory placement.
+#define SPAWN_VERSION	u16(133)
 
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_Shape, ISE_Shape, CShapeData)
 public:

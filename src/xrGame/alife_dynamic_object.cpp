@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "xrServer_Objects_ALife.h"
+#include "xrServer_Objects_ALife_Items.h" // AMP: CSE_ALifeItemContainer
 #include "alife_simulator.h"
 #include "alife_schedule_registry.h"
 #include "alife_graph_registry.h"
@@ -230,6 +231,17 @@ void CSE_ALifeInventoryBox::add_online(const bool& update_registries)
 		object->alife().server().Process_spawn(tNetPacket, clientID,FALSE, l_tpALifeInventoryItem->base());
 		l_tpALifeDynamicObject->s_flags.and(u16(-1) ^ M_SPAWN_UPDATE);
 		l_tpALifeDynamicObject->m_bOnline = true;
+
+		// A portable container in a stash owns another level of inventory.
+		// Spawn that level just as the trader/actor path does. Otherwise its
+		// children remain offline with an online parent and never reach the UI.
+		if (!l_tpALifeDynamicObject->children.empty())
+		{
+			Msg("[AMP-S] stash deep spawn: [%d] bringing %d item(s) online",
+			    l_tpALifeDynamicObject->ID, (u32)l_tpALifeDynamicObject->children.size());
+			l_tpALifeDynamicObject->add_online(false);
+		}
+
 	}
 
 	CSE_ALifeDynamicObjectVisual::add_online(update_registries);
@@ -289,6 +301,129 @@ void CSE_ALifeInventoryBox::add_offline(const xr_vector<ALife::_OBJECT_ID>& save
 
 
 	CSE_ALifeDynamicObjectVisual::add_offline(saved_children, update_registries);
+}
+
+////////////////////////////////////////////////////////////////////////////
+// AMP: CSE_ALifeItemContainer - the carryable container's switch
+// handling, copied from the inventory box above, which is the engine's
+// one proven owner of items through the online/offline boundary.
+//
+// Two deliberate differences from the box's code:
+//   * the !can_save() branch uses `continue` (the box's `--i; --n;`
+//     mutates the bounds of a loop over a vector it does not own and
+//     skips the child after every release);
+//   * no visual asserts - a container is a plain item.
+//
+// These run when the container itself crosses the boundary as a ROOT
+// object - dropped on the ground and the actor walks away.
+//
+// A container carried in somebody's inventory crosses it a different
+// way: the OWNER switches, and the switch manager saves one level of
+// children and lets Perform_destroy wipe the rest. That was the bug
+// behind an emptied container after a level change. The fix is in
+// CALifeSwitchManager::remove_online (deep save) and add_online_impl in
+// alife_trader_abstract.cpp (deep spawn), which call the two functions
+// below for the carried case as well.
+////////////////////////////////////////////////////////////////////////////
+void CSE_ALifeItemContainer::add_online(const bool& update_registries)
+{
+	NET_Packet tNetPacket;
+	ClientID clientID;
+	clientID.set(
+		alife().server().GetServerClient() ? alife().server().GetServerClient()->ID.value() : 0);
+
+	// DIAG: what the container believes it is carrying at the moment it
+	// comes back into the world.
+	Msg("[AMP-S] container %d add_online with %d child(ren)", ID, (int)children.size());
+
+	// A list of ids is a promise that each one still names something.
+	// Keep only the ones that do: an id left behind by an earlier fault
+	// would otherwise sit in children until xrServer::Perform_destroy
+	// walks it at shutdown and asserts "child registered but not found".
+	// Losing an item is bad; crashing the game on the way out is worse.
+	ALife::OBJECT_VECTOR survivors;
+	survivors.reserve(children.size());
+
+	ALife::OBJECT_IT I = children.begin();
+	ALife::OBJECT_IT E = children.end();
+	for (; I != E; ++I)
+	{
+		CSE_ALifeDynamicObject* child = ai().alife().objects().object(*I, true);
+		CSE_ALifeInventoryItem* item = child ? smart_cast<CSE_ALifeInventoryItem*>(child) : NULL;
+		if (!item)
+		{
+			Msg("[AMP-S] container [%d]: child [%d] IS NOT IN THE REGISTRY - dropping the id", ID, *I);
+			continue;
+		}
+		Msg("[AMP-S]   spawning child %d back", *I);
+
+		item->base()->s_flags.or(M_SPAWN_UPDATE);
+		CSE_Abstract* abstract = smart_cast<CSE_Abstract*>(item);
+		alife().server().entity_Destroy(abstract);
+
+		child->o_Position = o_Position;
+		child->m_tNodeID = m_tNodeID;
+		alife().server().Process_spawn(tNetPacket, clientID, FALSE, item->base());
+		child->s_flags.and(u16(-1) ^ M_SPAWN_UPDATE);
+		child->m_bOnline = true;
+		survivors.push_back(child->ID);
+
+		// a container inside a container - not allowed in V1, but the
+		// recursion costs a branch and stops it being a silent loss.
+		if (!child->children.empty())
+			child->add_online(false);
+	}
+
+	children.swap(survivors);
+	Msg("[AMP-S] container %d came online holding %d", ID, (int)children.size());
+
+	CSE_ALifeItem::add_online(update_registries);
+}
+
+void CSE_ALifeItemContainer::add_offline(const xr_vector<ALife::_OBJECT_ID>& saved_children,
+                                         const bool& update_registries)
+{
+	// DIAG: what the switch manager handed us on the way out. If this says
+	// nought, the contents were gone before this ran.
+	Msg("[AMP-S] container %d add_offline with %d saved child(ren)", ID,
+	    (int)saved_children.size());
+
+	for (u32 i = 0, n = saved_children.size(); i < n; ++i)
+	{
+		CSE_ALifeDynamicObject* child = smart_cast<CSE_ALifeDynamicObject*>(
+			ai().alife().objects().object(saved_children[i], true));
+		if (!child)
+		{
+			Msg("[AMP-S]   child %d IS NULL on the way offline - lost here", saved_children[i]);
+			continue;
+		}
+		child->m_bOnline = false;
+
+		CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(child);
+		VERIFY2(item, "Non inventory item object inside a container?!");
+		if (!item)
+			continue;
+
+		ALife::_OBJECT_ID item_id = item->base()->ID;
+		item->base()->ID = alife().server().PerformIDgen(item_id);
+
+		if (!child->can_save())
+		{
+			Msg("[AMP-S]   child %d cannot be saved - released", child->ID);
+			alife().release(child);
+			continue;
+		}
+		child->clear_client_data();
+		alife().graph().add(child, child->m_tGraphID, false);
+		alife().graph().remove(child, child->m_tGraphID);
+		children.push_back(child->ID);
+		child->ID_Parent = ID;
+		Msg("[AMP-S]   child kept, new id %d, parent %d", child->ID, ID);
+	}
+
+	Msg("[AMP-S] container %d went offline holding %d", ID, (int)children.size());
+
+	CSE_ALifeItem::add_offline(saved_children, update_registries);
 }
 
 void CSE_ALifeDynamicObject::clear_client_data()

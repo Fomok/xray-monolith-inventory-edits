@@ -17,6 +17,7 @@
 #include "entity_alive.h"
 #include "EntityCondition.h"
 #include "InventoryOwner.h"
+#include "Inventory.h"	// AMP
 #include "UIGameCustom.h"
 #include "ui/UIActorMenu.h"
 
@@ -127,8 +128,28 @@ bool CEatableItem::UseBy(CEntityAlive* entity_alive)
 
 	CInventoryOwner* IO = smart_cast<CInventoryOwner*>(entity_alive);
 	R_ASSERT(IO);
-	R_ASSERT(m_pInventory==IO->m_inventory);
-	R_ASSERT(object().H_Parent()->ID()==entity_alive->ID());
+
+	// ============================================================
+	// AMP: THE SAME ALLOWANCE CInventory::Eat MAKES, AND IT HAS TO BE
+	// MADE HERE OR THE FIX THERE IS WORSE THAN THE BUG
+	//
+	// These two say the same thing the gate in Eat says, and they say it
+	// as R_ASSERT - which, unlike VERIFY, is not compiled out of a release
+	// build. Opening the gate without opening these would turn a silent
+	// "nothing happened" into a hard stop the first time somebody drank
+	// out of a case.
+	//
+	// A thing in a case you are carrying has no m_pInventory and its
+	// parent is the case. Both are true and neither means it is not
+	// yours. Everything below this point reads the SECTION and the
+	// entity - not the inventory - so nothing in the swallow itself
+	// depends on which of the two roads the item came by.
+	// ============================================================
+	if (!(IO->m_inventory && IO->m_inventory->AmpInCarriedBox(this)))
+	{
+		R_ASSERT(m_pInventory==IO->m_inventory);
+		R_ASSERT(object().H_Parent()->ID()==entity_alive->ID());
+	}
 
 	entity_alive->conditions().ApplyInfluence(V, m_physic_item->cNameSect());
 

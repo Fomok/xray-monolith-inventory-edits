@@ -68,6 +68,7 @@ script_attachment::script_attachment(LPCSTR name, LPCSTR model_name)
 	m_script_ui_offset[3].set(0, 0, 0);
 	m_script_ui_scale.set(1, 1);
 	m_script_ui_bone = 0;
+	m_script_ui_depth = false;
 	m_script_light = nullptr;
 	m_script_light_bone = 0;
 	m_parent_bone = 0;
@@ -304,6 +305,8 @@ void script_attachment::RenderUI()
 		bk = UI().m_currentPointType;
 		UI().m_currentPointType = IUIRender::pttLIT;
 		UIRender->CacheSetCullMode(IUIRender::cmNONE);
+		if (m_script_ui_depth)
+			UIRender->CacheSetDepthTest(true);
 
 		Fmatrix LM;
 		Fmatrix ui_bone;
@@ -318,6 +321,8 @@ void script_attachment::RenderUI()
 		m_script_ui->Draw();
 		
 		UIRender->CacheSetCullMode(IUIRender::cmCCW);
+		if (m_script_ui_depth)
+			UIRender->CacheSetDepthTest(false);
 		UI().m_currentPointType = bk;
 	}
 

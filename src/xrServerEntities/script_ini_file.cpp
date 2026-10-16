@@ -33,13 +33,45 @@ LPCSTR CScriptIniFile::update(LPCSTR file_name)
 	return (*shared_str(S1));
 }
 
+// ============================================================
+// AMP: A NAME THAT IS NOT THERE IS AN ANSWER, NOT A CRASH
+//
+// These two are what a script calls to ask "is this in the ini", and
+// they are the polite question you ask BEFORE reading anything. A script
+// that has nothing to ask about passes nil, luabind hands that over as a
+// null pointer, and the engine walks straight into it.
+//
+// That is a hard crash with no Lua error and no line number - the game
+// is simply gone - which is exactly what it looks like from the outside:
+//
+//   "when i try to remove a pills with ctrl + click the game crashes
+//    with no error, alwasy the same item"
+//
+// The Lua was this, in an icon addon, and it is not wrong:
+//
+//   while (icon_override:section_exist(sec) and ...) do
+//
+// It is asking whether the section exists. For a cell that has no item
+// any more, `sec` is nil, and the honest answer to "does the section
+// called nothing exist" is NO. Returning false is what every caller of
+// this already handles; dying is what none of them can.
+//
+// One branch each, before anything dereferences the pointer. Nothing
+// that passes a real name behaves differently.
+// ============================================================
 bool CScriptIniFile::line_exist(LPCSTR S, LPCSTR L)
 {
+	if (!S || !L)
+		return (false);
+
 	return (!!inherited::line_exist(S, L));
 }
 
 bool CScriptIniFile::section_exist(LPCSTR S)
 {
+	if (!S)
+		return (false);
+
 	return (!!inherited::section_exist(S));
 }
 

@@ -427,9 +427,14 @@ public:
 	void ActorLookAtPoint(Fvector point);
 	void ActorStopLookAtPoint();
 	void IterateInventory(::luabind::functor<bool> functor, ::luabind::object object);
+	void IterateInventoryDirect(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateRuck(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateBelt(::luabind::functor<bool> functor, ::luabind::object object);
 	void IterateInventoryBox(::luabind::functor<bool> functor, ::luabind::object object);
+	// AMP: the carryable container - same shape as the box's iterator,
+	// plus a cheap way for a script to ask whether an object IS one.
+	void IterateContainer(::luabind::functor<bool> functor, ::luabind::object object);
+	bool IsContainer();
 	void MarkItemDropped(CScriptGameObject* item, bool flag);
 	bool MarkedDropped(CScriptGameObject* item);
 	void UnloadMagazine(bool bKeepAmmo);
@@ -442,6 +447,15 @@ public:
 	void DropItemAndTeleport(CScriptGameObject* pItem, Fvector position);
 	void ForEachInventoryItems(const ::luabind::functor<bool>& functor);
 	void TransferItem(CScriptGameObject* pItem, CScriptGameObject* pForWho);
+    bool SqaRigTransfer(CScriptGameObject* item, CScriptGameObject* rig, bool to_rig);
+    bool SqaStorageTransfer(CScriptGameObject* item, CScriptGameObject* destination);
+    bool SqaEquipFromContainer(CScriptGameObject* item, CScriptGameObject* container, u16 slot, bool return_to_source);
+    bool SqaRigTransferPending(u16 id);
+    bool SqaRigTransferRigPending(u16 id);
+    u32 SqaRigTransferCount();
+    u16 SqaRigTransferAt(u32 index);
+    u16 SqaRigTransferFinished();
+    void SqaRigTransferForget(u16 id);
 	void TakeItem(CScriptGameObject* pItem);
 	void TransferMoney(int money, CScriptGameObject* pForWho);
 	void GiveMoney(int money);

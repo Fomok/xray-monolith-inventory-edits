@@ -7,6 +7,8 @@
 #include "silencer.h"
 #include "grenadelauncher.h"
 #include "inventory.h"
+#include "InventoryBox.h"
+#include "InventoryOwner.h"
 #include "level.h"
 #include "xr_level_controller.h"
 #include "FoodItem.h"
@@ -64,7 +66,32 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 				Msg("--- Actor [%d][%s]  %s  [%d][%s]", ID(), Name(), act, _GO->ID(), _GO->cNameSect().c_str());
 #endif // MP_LOGGING
 
-				inventory().Take(_GO, false, true);
+                // Resolve the reserved destination before Take invokes any Lua
+                // pickup/overflow callbacks. No temporary backpack placement.
+                auto* incoming = smart_cast<CInventoryItem*>(_GO);
+                for (const auto& transfer : inventory().sqa_rig_transfers.entries())
+                {
+                    auto* source = smart_cast<CInventoryItem*>(Level().Objects.net_Find(transfer.rig));
+                    auto* stash = smart_cast<CInventoryBox*>(Level().Objects.net_Find(transfer.rig));
+                    auto* owner = smart_cast<CInventoryOwner*>(Level().Objects.net_Find(transfer.rig));
+                    const auto source_token = source ? source->SqaTransferGeneration() :
+                        (stash ? stash->SqaTransferGeneration() : (owner ? owner->SqaOwnerTransferGeneration() : 0));
+                    if (source_token != transfer.rig_token || transfer.item != id ||
+                        transfer.to != ID() || incoming->SqaTransferGeneration() != transfer.item_token) continue;
+                    if (transfer.storage_ruck)
+                    {
+                        incoming->m_ItemCurrPlace.type = eItemPlaceRuck;
+                        break;
+                    }
+                    if (transfer.target_slot != inventory_rig_transfer::none &&
+                        inventory().CanPutInSlot(incoming, transfer.target_slot))
+                    {
+                        incoming->m_ItemCurrPlace.type = eItemPlaceSlot;
+                        incoming->m_ItemCurrPlace.slot_id = transfer.target_slot;
+                        break;
+                    }
+                }
+                inventory().Take(_GO, false, true);
 
 				SelectBestWeapon(Obj);
 			}

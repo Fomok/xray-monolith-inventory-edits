@@ -175,6 +175,7 @@
 #	include "space_restrictor.h"
 #	include "smart_zone.h"
 #	include "InventoryBox.h"
+#	include "InventoryContainer.h"
 
 #	include "actor_mp_server.h"
 #	include "actor_mp_client.h"
@@ -423,6 +424,9 @@ void CObjectFactory::register_classes()
 	ADD(CHolderEntityObject, CSE_ALifeDynamicObjectVisual, CLSID_OBJECT_HOLDER_ENT, "obj_holder_ent");
 
 	ADD(CInventoryBox, CSE_ALifeInventoryBox, CLSID_INVENTORY_BOX, "inventory_box");
+	// AMP: the carryable container. The Lua name feeds clsid.iitem_container,
+	// which is also how a script detects an engine that has the class at all.
+	ADD(CInventoryContainer, CSE_ALifeItemContainer, CLSID_IITEM_CONTAINER, "iitem_container");
 #ifndef NO_SINGLE
 	ADD(smart_cover::object, CSE_SmartCover, TEXT2CLSID("SMRTCOVR"), "smart_cover");
 #endif // #ifndef NO_SINGLE

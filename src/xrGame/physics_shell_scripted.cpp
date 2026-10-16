@@ -114,6 +114,10 @@ void cphysics_shell_scripted::script_register(lua_State* L)
 		.def("set_angular_vel", &cphysics_shell_scripted::set_AngularVel)
 		.def("freeze", &cphysics_shell_scripted::freeze)
 		.def("unfreeze", &cphysics_shell_scripted::unfreeze)
+		.def("disable_collision", &cphysics_shell_scripted::DisableCollision)
+		.def("enable_collision", &cphysics_shell_scripted::EnableCollision)
+		.def("set_ignore_static", &cphysics_shell_scripted::SetIgnoreStatic)
+		.def("set_ignore_dynamic", &cphysics_shell_scripted::SetIgnoreDynamic)
 	];
 }
 

@@ -241,7 +241,22 @@ bool CHUDManager::RenderActiveItemUIQuery()
 
 	if (!need_render_hud()) return false;
 
-	return (g_player_hud && g_player_hud->render_item_ui_query());
+	if (g_player_hud && g_player_hud->render_item_ui_query())
+		return true;
+
+	// A HUD-type script attachment carrying its own 3D UI is reason enough
+	// to run the pass, whether or not the held weapon wants one.
+	if (g_actor)
+	{
+		for (auto& pair : *g_actor->GetAttachments())
+		{
+			script_attachment* att = pair.second;
+			if (att->GetType() == eSA_HUD && att->HasScriptUI())
+				return true;
+		}
+	}
+
+	return false;
 }
 
 bool CHUDManager::RenderCamAttachedUIQuery()

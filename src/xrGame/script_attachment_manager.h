@@ -65,6 +65,7 @@ private:
 	Fvector m_script_ui_offset[4];
 	Fvector2 m_script_ui_scale;
 	u16 m_script_ui_bone;
+	bool m_script_ui_depth;
 
 	AttachmentScriptLight* m_script_light;
 	u16 m_script_light_bone;
@@ -175,6 +176,13 @@ public:
 	void SetScriptUIBone(u16 bone) { m_script_ui_bone = bone; }
 	void SetScriptUIBone(LPCSTR bone) { m_script_ui_bone = bone_id(bone); }
 	u16 GetScriptUIBone() { return m_script_ui_bone; }
+
+	// Depth-test this attachment's 3D UI against the scene, so the model
+	// can occlude it. Off by default: existing mods keep drawing on top.
+	void SetScriptUIDepth(bool enable) { m_script_ui_depth = enable; }
+	bool GetScriptUIDepth() { return m_script_ui_depth; }
+
+	bool HasScriptUI() const { return m_script_ui != nullptr; }
 
 	script_attachment* AddAttachment(LPCSTR name, LPCSTR model_name);
 	void RemoveAttachment(LPCSTR name) { RemoveChild(name, true); }

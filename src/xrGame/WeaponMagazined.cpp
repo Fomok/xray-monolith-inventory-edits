@@ -20,6 +20,9 @@
 #include "game_object_space.h"
 #include "script_callback_ex.h"
 #include "script_game_object.h"
+#include "ai_space.h"
+#include "script_engine.h"
+#include "WeaponMagazinedWGrenade.h"
 #include "player_hud.h"
 #include "HudSound.h"
 
@@ -472,6 +475,19 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 	}
 }
 
+bool CWeaponMagazined::ScriptOwnsMagazineReload()
+{
+    if (!IsGameTypeSingle() || !ParentIsActor())
+        return false;
+    // Underbarrel ammunition always follows the native reload path.
+    auto* grenadeWeapon = smart_cast<CWeaponMagazinedWGrenade*>(this);
+    if (grenadeWeapon && grenadeWeapon->GetGrenadeLauncherMode())
+        return false;
+    luabind::functor<bool> ownsReload;
+    return ai().script_engine().functor("_G.SQA__scripted_magazine_reload", ownsReload)
+        && ownsReload(lua_game_object());
+}
+
 void CWeaponMagazined::ReloadMagazine()
 {
 	m_needReload = false;
@@ -487,6 +503,11 @@ void CWeaponMagazined::ReloadMagazine()
 			return;
 		}
 	}
+
+    // The optional magazine bridge supplies rounds itself. Keep animation and
+    // misfire handling, but do not consume, unload or respawn loose ammunition.
+    if (ScriptOwnsMagazineReload())
+        return;
 
 	if (!m_bLockType)
 	{
