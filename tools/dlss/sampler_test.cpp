@@ -60,6 +60,11 @@ static void CheckBindings(dx10SamplerStateCache& cache, dx10SamplerStateCache::H
         VERIFY(cache.GetState(lookup) == handles[i]); // Bias/aniso never change handles.
     }
 }
+// Bodycam instruments the real sampler cache; the standalone test owns the
+// same counters without pulling in the game's render-statistics subsystem.
+int ps_r__svp_stats = 0;
+unsigned int svp_stats_sampler_set = 0;
+
 int main(int argc, char** argv)
 try
 {

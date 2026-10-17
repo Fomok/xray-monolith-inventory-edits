@@ -63,12 +63,6 @@ jobs:
     - uses: microsoft/setup-msbuild@v1.3.1
       with:
         msbuild-architecture: "x64"
-    - name: Build executable
-      env:
-        BUILD_CONFIGURATION: ${{ matrix.configuration }}
-      run: |
-        msbuild /p:Configuration=$env:BUILD_CONFIGURATION /p:Platform=x64 $env:SOLUTION_FILE_PATH
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     - name: Check temporal math and native HUD selection
       run: |
         $ErrorActionPreference = "Stop"
@@ -78,6 +72,12 @@ jobs:
           & "./_build/dlss_tests/$test.exe"
           if ($LASTEXITCODE -ne 0) { throw "$test failed" }
         }
+    - name: Build executable
+      env:
+        BUILD_CONFIGURATION: ${{ matrix.configuration }}
+      run: |
+        msbuild /p:Configuration=$env:BUILD_CONFIGURATION /p:Platform=x64 $env:SOLUTION_FILE_PATH
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     - name: Stage executable and symbols
       env:
         BUILD_CONFIGURATION: ${{ matrix.configuration }}
