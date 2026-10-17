@@ -174,6 +174,7 @@ public:
           right(Device.vCameraRight), position_saved(Device.vCameraPosition_saved), fov(Device.fFOV),
           aspect(Device.fASPECT), width(Device.dwWidth), height(Device.dwHeight)
     {
+        auxiliary = dlss::SetAuxiliaryView(true);
         UINT count = 1;
         HW.pContext->RSGetViewports(&count, &viewport);
         if (!count) viewport = {0.f, 0.f, float(width), float(height), 0.f, 1.f};
@@ -184,6 +185,7 @@ public:
 
     void restore() const
     {
+        dlss::SetAuxiliaryView(auxiliary);
         Device.mView = view;
         Device.mProject = project;
         Device.mProjectHud = project_hud;
@@ -217,6 +219,7 @@ public:
     }
 
 private:
+    bool auxiliary = false;
     CRenderTarget& target;
     u32 target_width, target_height;
     Fmatrix view, project, project_hud, full, full_hud, inv_view, inv_project, inv_project_hud, inv_full;

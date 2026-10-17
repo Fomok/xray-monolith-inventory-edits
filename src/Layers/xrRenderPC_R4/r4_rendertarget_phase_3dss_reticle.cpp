@@ -204,7 +204,7 @@ void CRenderTarget::reticle_glow_compose_before_nightvision()
 {
 	if (this != RImplementation.TargetMain || reticle_glow_frame != Device.dwFrame)
 		return;
-	reticle_glow_composite(rt_Generic_0, true);
+	reticle_glow_composite(PostprocessSource(), true);
 	reticle_glow_composed_frame = Device.dwFrame;
 }
 
@@ -212,7 +212,7 @@ void CRenderTarget::reticle_glow_compose_before_nightvision()
 // encoding of its combine)
 void CRenderTarget::reticle_glow_composite(const ref_rt& target, bool night_vision)
 {
-	const float w = float(Device.dwWidth), h = float(Device.dwHeight);
+	const float w = float(target->dwWidth), h = float(target->dwHeight);
 	u32 offset = 0;
 	FVF::TL* pv = (FVF::TL*)RCache.Vertex.Lock(4, g_combine->vb_stride, offset);
 	const u32 C = color_rgba(0, 0, 0, 255);

@@ -16,6 +16,8 @@ dlss::Size renderSize;
 dlss::Offset rasterJitter;
 dlss::Offset previousJitter;
 bool inScene = false, mainView = false, configured = false;
+bool auxiliaryView = false;
+bool MainTarget() { return !auxiliaryView && !Device.m_SecondViewport.IsSVPFrame(); }
 unsigned jitterIndex = 0;
 Fvector lastPosition, lastDirection;
 float lastFov = 0;
@@ -50,8 +52,8 @@ const char* BackendReason(const char* fallback) { return backendError[0] ? backe
 void ResetHistory() { backend.ResetHistory(); fsrBackend.ResetHistory(); }
 }
 
-unsigned RenderScreenWidth() { return inScene ? dlss::RenderWidth() : Device.dwWidth; }
-unsigned RenderScreenHeight() { return inScene ? dlss::RenderHeight() : Device.dwHeight; }
+unsigned RenderScreenWidth() { return inScene && MainTarget() ? dlss::RenderWidth() : Device.dwWidth; }
+unsigned RenderScreenHeight() { return inScene && MainTarget() ? dlss::RenderHeight() : Device.dwHeight; }
 
 namespace dlss
 {
@@ -187,25 +189,31 @@ void ReleaseTargets()
 void ShutdownDevice() { ReleaseTargets(); backend.Shutdown(); }
 unsigned RenderWidth() { return renderSize.Valid() ? renderSize.width : Device.dwWidth; }
 unsigned RenderHeight() { return renderSize.Valid() ? renderSize.height : Device.dwHeight; }
-bool Configured() { return configured; }
-bool Active() { return configured && inScene && mainView && (useFsr ? fsrBackend.Ready() : backend.Ready()); }
-Offset RasterJitter() { return rasterJitter; }
-Offset PreviousRasterJitter() { return previousJitter; }
-ID3DDepthStencilView* SceneDepth() { return inScene && configured ? sceneDepthView.Get() : HW.pBaseZB; }
+bool Configured() { return configured && MainTarget(); }
+bool SetAuxiliaryView(bool value) { const bool old = auxiliaryView; auxiliaryView = value; return old; }
+void SelectView()
+{
+    if (configured && inScene)
+        SSManager.SetMipLODBias(ps_r__tf_Mipbias + (MainTarget() ? log2f(float(RenderWidth()) / Device.dwWidth) : 0.f));
+}
+bool Active() { return Configured() && inScene && mainView && (useFsr ? fsrBackend.Ready() : backend.Ready()); }
+Offset RasterJitter() { return MainTarget() ? rasterJitter : Offset{}; }
+Offset PreviousRasterJitter() { return MainTarget() ? previousJitter : Offset{}; }
+ID3DDepthStencilView* SceneDepth() { return inScene && Configured() ? sceneDepthView.Get() : HW.pBaseZB; }
 ID3D11Texture2D* SceneDepthTexture() { return sceneDepth.Get(); }
 ID3D11Texture2D* Output() { return useFsr ? fsrBackend.Output() : backend.Output(); }
 
 void BeginScene()
 {
     inScene = true;
-    if (configured)
+    if (Configured())
     {
         const D3D11_VIEWPORT viewport{0, 0, float(RenderWidth()), float(RenderHeight()), 0, 1};
         HW.pContext->RSSetViewports(1, &viewport);
     }
     // Scope frames render spatially at the selected scene resolution. They must
     // neither consume a jitter sample nor overwrite the main camera's history.
-    mainView = !Device.m_SecondViewport.IsSVPFrame();
+    mainView = MainTarget();
     if (Active())
     {
         if (haveCamera && (lastPosition.distance_to_sqr(Device.vCameraPosition) > 64.0f * 64.0f ||

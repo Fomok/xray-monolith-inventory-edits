@@ -13,6 +13,9 @@ void BeginScene();
 void EndScene(bool invalidateHistory = false);
 bool Active();
 bool Configured();
+// Keep auxiliary Bodycam views out of the main temporal history.
+bool SetAuxiliaryView(bool value);
+void SelectView();
 unsigned RenderWidth();
 unsigned RenderHeight();
 Offset RasterJitter();

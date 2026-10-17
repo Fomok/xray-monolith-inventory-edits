@@ -156,7 +156,8 @@ void CRenderTarget::phase_dlss_postprocess()
 	// A normal weapon/device must not trigger an additional native depth pass.
 	const bool renderHudUi = RImplementation.GMBase.RGraph.hasNativeHudAttachments &&
 		g_hud && g_hud->RenderActiveItemUIQuery();
-	if (renderHudUi || !RImplementation.GMBase.RGraph.mapHUDNativeUi.empty())
+	if (renderHudUi || !RImplementation.GMBase.RGraph.mapHUDNativeUi.empty() ||
+		(ps_r2_nightvision > 0 && Device.true_pip_on && Device.m_SecondViewport.IsSVPActive()))
 	{
 		if (!reported_native_ui)
 		{
@@ -185,9 +186,13 @@ void CRenderTarget::phase_dlss_postprocess()
 		phase_gasmask_dudv();
 		if (ps_r2_drops_control.x > 0) phase_gasmask_drops();
 	}
-	if (ps_r2_nightvision > 0) phase_nightvision();
+	if (ps_r2_nightvision > 0)
+	{
+		reticle_glow_compose_before_nightvision();
+		if (!svp_nvg_pass()) phase_nightvision();
+	}
 	if (ps_r2_heatvision > 0) phase_heatvision();
-	if (scope_fake_enabled) phase_fakescope();
+	if (scope_fake_enabled && !(Device.true_pip_on && Device.m_SecondViewport.IsSVPActive())) phase_fakescope();
 }
 
 void CRenderTarget::phase_pp()

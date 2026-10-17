@@ -481,12 +481,13 @@ void CRenderTarget::SetActive(bool force)
 	for (auto& r : RenderTargetRemaps)
 		r.first->surface_set(r.second->pSurface);
 
-	set_viewport_size(HW.pContext, (float)Width, (float)Height);
+	dlss::SelectView();
+	set_viewport_size(HW.pContext, float(RenderScreenWidth()), float(RenderScreenHeight()));
 	RCache.set_RT(baseRT, 0);
 	RCache.set_RT(nullptr, 1);
 	RCache.set_RT(nullptr, 2);
 	RCache.set_RT(nullptr, 3);
-	RCache.set_ZB(baseZB);
+	RCache.set_ZB(dlss::SceneDepth());
 }
 #endif
 
@@ -637,6 +638,8 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 	// SVP target builds $id-suffixed RTs and remaps them over the stock names in SetActive
 	// for the main target (name == nullptr) createUnique is a verbatim passthrough to rt.create
 	const bool isMain = (name == nullptr);
+	const u32 sceneWidth = isMain ? dlss::RenderWidth() : Width;
+	const u32 sceneHeight = isMain ? dlss::RenderHeight() : Height;
 	auto createUnique = [this, isMain, name](LPCSTR Name, u32 cw, u32 ch, D3DFORMAT f, u32 sc = 1, bool uav = false) -> ref_rt
 	{
 		ref_rt rt;
@@ -659,7 +662,7 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 
 	//	NORMAL
 	{
-		u32 w = isMain ? dlss::RenderWidth() : Width, h = isMain ? dlss::RenderHeight() : Height;
+		u32 w = sceneWidth, h = sceneHeight;
 
 		// PiP base RT/ZB, main restores from the swapchain, SVP renders into its own
 		if (isMain)
@@ -1110,8 +1113,8 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 
 	//SMAA
 	{
-		u32 w = dlss::RenderWidth();
-		u32 h = dlss::RenderHeight();
+		u32 w = sceneWidth;
+		u32 h = sceneHeight;
 
 		rt_smaa_edgetex = createUnique(r2_RT_smaa_edgetex, w, h, D3DFMT_A8R8G8B8);
 		rt_smaa_blendtex = createUnique(r2_RT_smaa_blendtex, w, h, D3DFMT_A8R8G8B8);
@@ -1148,13 +1151,13 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 		u32 h = 0;
 		if (RImplementation.o.ssao_half_data)
 		{
-			w = dlss::RenderWidth() / 2;
-			h = dlss::RenderHeight() / 2;
+			w = sceneWidth / 2;
+			h = sceneHeight / 2;
 		}
 		else
 		{
-			w = dlss::RenderWidth();
-			h = dlss::RenderHeight();
+			w = sceneWidth;
+			h = sceneHeight;
 		}
 
 		D3DFORMAT fmt = HW.Caps.id_vendor == 0x10DE ? D3DFMT_R32F : D3DFMT_R16F;
@@ -1183,7 +1186,7 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 	// HDAO
 	if (RImplementation.o.ssao_hdao && RImplementation.o.ssao_ultra)
 	{
-		u32 w = isMain ? dlss::RenderWidth() : Width, h = isMain ? dlss::RenderHeight() : Height;
+		u32 w = sceneWidth, h = sceneHeight;
 		rt_ssao_temp = createUnique(r2_RT_ssao_temp, w, h, D3DFMT_R16F, 1, true);
 		s_hdao_cs.create(b_hdao_cs, "r2\\ssao");
 		if (RImplementation.o.dx10_msaa)
@@ -1514,7 +1517,7 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 
 	// PP
 	s_postprocess.create("postprocess");
-	if (dlss::Configured())
+	if (isMain && dlss::Configured())
 	{
 		rt_dlss_post_source.create("$user$dlss_post_source", Device.dwWidth, Device.dwHeight, D3DFMT_A16B16G16R16F);
 		rt_dlss_post_color.create("$user$dlss_post_color", Device.dwWidth, Device.dwHeight, D3DFMT_A16B16G16R16F);
@@ -1533,7 +1536,7 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 	                     RCache.QuadIB);
 
 	// Menu
-	if (dlss::Configured())
+	if (isMain && dlss::Configured())
 	{
 		CBlender_dlss_menu menu;
 		s_menu.create(&menu, "dlss_menu");

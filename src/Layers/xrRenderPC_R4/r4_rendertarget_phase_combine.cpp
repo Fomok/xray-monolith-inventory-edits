@@ -862,16 +862,6 @@ void CRenderTarget::phase_combine()
 		tm_end(svp_stats::SEC_C_TAA);
 	}
 
-	// pip clear the scope capture maps at the main-pass tail after every consumer (lens composite,
-	// nvg split, taa mask stamp), unconditional of the taa path, frame-start clear covers staleness
-	if (this == RImplementation.TargetMain)
-	{
-		RImplementation.GMBase.RGraph.mapScopeHUDSorted.clear();
-		RImplementation.GMBase.RGraph.mapScopeHUDObjective.clear();
-		RImplementation.GMBase.RGraph.mapPhysicalScopeGlass.clear();
-		RImplementation.GMBase.RGraph.mapReflexHUDSorted.clear();
-		RImplementation.GMBase.RGraph.mapScopeHUDOverlay.clear();
-	}
 
 	if (ssfx_PrevPos_Requiered)
 	{
@@ -1025,7 +1015,7 @@ void CRenderTarget::phase_combine()
 		}
 	}
 	scope_vslr_render(*this);
-	reticle_glow_compose(); // 3DSS reticle glow, after bloom, the tone curve and the HDR10 bloom
+	if (!(dlss::Configured() && ps_r2_nightvision > 0)) reticle_glow_compose(); // 3DSS reticle glow, after bloom, the tone curve and the HDR10 bloom
 
 	//	if FP16-BLEND !not! supported - draw flares here, overwise they are already in the bloom target
 	/* if (!RImplementation.o.fp16_blend)*/
@@ -1040,6 +1030,17 @@ void CRenderTarget::phase_combine()
 		tm_beg(svp_stats::SEC_C_COMBINE2);
 		phase_pp();
 		tm_end(svp_stats::SEC_C_COMBINE2);
+	}
+
+	// pip clear the scope capture maps at the main-pass tail after every consumer (lens composite,
+	// nvg split, taa mask stamp), unconditional of the taa path, frame-start clear covers staleness
+	if (this == RImplementation.TargetMain)
+	{
+		RImplementation.GMBase.RGraph.mapScopeHUDSorted.clear();
+		RImplementation.GMBase.RGraph.mapScopeHUDObjective.clear();
+		RImplementation.GMBase.RGraph.mapPhysicalScopeGlass.clear();
+		RImplementation.GMBase.RGraph.mapReflexHUDSorted.clear();
+		RImplementation.GMBase.RGraph.mapScopeHUDOverlay.clear();
 	}
 
 	//	Re-adapt luminance
