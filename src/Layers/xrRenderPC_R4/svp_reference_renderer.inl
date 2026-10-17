@@ -263,13 +263,16 @@ bool CRenderTarget::phase_scope_reference_ocular()
     EnsureScopeShaders();
 
     svp_reference_unbind();
-    svp_reference_target(rt_scope_reference_ocular, "$user$svp_reference_ocular", Width, Height);
+    // These images are read with integer G-buffer pixel coordinates. They must
+    // share the scene extent, not the native display extent when upscaling.
+    const u32 sceneWidth = rt_Position->dwWidth, sceneHeight = rt_Position->dwHeight;
+    svp_reference_target(rt_scope_reference_ocular, "$user$svp_reference_ocular", sceneWidth, sceneHeight);
     const float transparent[4]={0,0,0,0};
     HW.pContext->ClearRenderTargetView(rt_scope_reference_ocular->pRT,transparent);
     svp_reference_target(rt_scope_reference_inside, "$user$svp_reference_inside", svp_reference_chart_size, svp_reference_chart_size);
     if (capture->reticle_capture_light_current())
     {
-        svp_reference_target(rt_scope_reference_capture_tc, "$user$svp_reference_capture_tc", Width, Height);
+        svp_reference_target(rt_scope_reference_capture_tc, "$user$svp_reference_capture_tc", sceneWidth, sceneHeight);
         HW.pContext->ClearRenderTargetView(rt_scope_reference_capture_tc->pRT, transparent);
     }
     if(!s_scope_reference_glyph)s_scope_reference_glyph.create("scope_reference_glyph");
@@ -294,7 +297,7 @@ bool CRenderTarget::phase_scope_reference_ocular()
             // viewport, whatever the size of this target. The stock image
             // pass, which normally sets output_res, does not run here.
             const auto mainTarget=RImplementation.TargetMain;
-            const float mainWidth=float(mainTarget->Width),mainHeight=float(mainTarget->Height);
+            const float mainWidth=float(mainTarget->rt_Position->dwWidth),mainHeight=float(mainTarget->rt_Position->dwHeight);
             RCache.set_c("output_res",mainWidth,mainHeight,1.f/mainWidth,1.f/mainHeight);
             RCache.set_CullMode(CULL_NONE);RCache.set_Stencil(FALSE);RCache.set_Z(FALSE);
         });
@@ -304,7 +307,7 @@ bool CRenderTarget::phase_scope_reference_ocular()
     }
     scope_reference_packet.ocularRoot=nullptr;
     scope_reference_packet.ocularVisual=nullptr;
-    set_viewport_size(HW.pContext,float(Width),float(Height));
+    set_viewport_size(HW.pContext,float(sceneWidth),float(sceneHeight));
     svp_reference_unbind();
     SetActive(true);
     u_setrt(rt_Generic_0, rt_Generic_1, rt_Heat, baseZB);

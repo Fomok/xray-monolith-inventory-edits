@@ -190,6 +190,7 @@ void ShutdownDevice() { ReleaseTargets(); backend.Shutdown(); }
 unsigned RenderWidth() { return renderSize.Valid() ? renderSize.width : Device.dwWidth; }
 unsigned RenderHeight() { return renderSize.Valid() ? renderSize.height : Device.dwHeight; }
 bool Configured() { return configured && MainTarget(); }
+void InvalidateHistory() { ResetHistory(); }
 bool SetAuxiliaryView(bool value) { const bool old = auxiliaryView; auxiliaryView = value; return old; }
 void SelectView()
 {

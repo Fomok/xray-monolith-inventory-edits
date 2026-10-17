@@ -464,6 +464,8 @@ public:
 	ref_shader s_postprocess;
 	ref_shader s_dlss_postprocess;
 	ref_shader s_dlss_copy;
+	ref_shader s_dlss_scope_resolve;
+	ref_rt rt_dlss_scope_mask;
 	ref_shader s_dlss_ui_depth;
 	ref_texture t_dlss_scene_depth;
 	bool reported_native_ui = false; // One diagnostic per target lifetime.
