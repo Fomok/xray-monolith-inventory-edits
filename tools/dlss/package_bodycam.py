@@ -16,6 +16,7 @@ def package(output):
     for item in source.iterdir():
         shutil.copyfile(item, shaders/item.name)
     shutil.copyfile(REPO/'gamedata/shaders/r3/scope_glass_nvg_focus.h', shaders/'scope_glass_nvg_focus.h')
+    shutil.copyfile(REPO/'extras/dlss_bodycam/GRASS-CREDITS.txt', stage/'GRASS-CREDITS.txt')
     config = stage/'fomod/ModuleConfig.xml'
     tree = ET.parse(config)
     tree.find('moduleName').text = 'Squared Away Bodycam - DLSS / FSR 3 Test'

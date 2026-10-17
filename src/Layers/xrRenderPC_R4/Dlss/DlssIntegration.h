@@ -17,6 +17,7 @@ bool Configured();
 bool SetAuxiliaryView(bool value);
 void SelectView();
 void InvalidateHistory();
+bool CameraReprojection(Fmatrix& result);
 unsigned RenderWidth();
 unsigned RenderHeight();
 Offset RasterJitter();

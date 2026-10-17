@@ -66,7 +66,7 @@ jobs:
     - name: Check temporal math and native HUD selection
       run: |
         $ErrorActionPreference = "Stop"
-        foreach ($test in @("temporal_test", "pda_depth_test", "sampler_test")) {
+        foreach ($test in @("temporal_test", "pda_depth_test", "sampler_test", "camera_mv_test")) {
           msbuild "tools/dlss/$test.vcxproj" /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
           if ($LASTEXITCODE -ne 0) { throw "$test build failed" }
           & "./_build/dlss_tests/$test.exe"

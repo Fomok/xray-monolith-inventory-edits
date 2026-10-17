@@ -1,0 +1,30 @@
+// Conservative compatibility fallback. Zero velocity alone is not proof of
+// missing data: preserve tagged/HUD/lens pixels and every nonzero vector.
+Texture2D<float> s_scene_depth;
+Texture2D<float4> s_motion_vectors;
+Texture2D<float4> s_scope_mask;
+float4x4 m_upscaler_reproject;
+float4 upscaler_camera_params; // current jitter UV, valid history, live scope mask
+
+float4 main(float4 position : SV_Position, float2 ignored : TEXCOORD0) : SV_Target
+{
+    int2 pixel = int2(position.xy);
+    float4 stored = s_motion_vectors.Load(int3(pixel, 0));
+    float depth = s_scene_depth.Load(int3(pixel, 0));
+    if (upscaler_camera_params.z < .5 || !all(isfinite(stored)) ||
+        any(abs(stored) > 1e-6) || !isfinite(depth) || depth <= .02001 || depth >= 1.0)
+        return stored;
+    if (upscaler_camera_params.w > .5 && s_scope_mask.Load(int3(pixel, 0)).a > 0)
+        return stored;
+
+    uint width, height;
+    s_scene_depth.GetDimensions(width, height);
+    // Depth is raster-jittered; reconstruct the unjittered current clip point.
+    float2 uv = (float2(pixel) + .5) / float2(width, height) - upscaler_camera_params.xy;
+    float4 previous = mul(m_upscaler_reproject, float4(uv * float2(2, -2) + float2(-1, 1), depth, 1));
+    if (!all(isfinite(previous)) || previous.w <= 1e-5) return stored;
+    float2 previousUV = previous.xy / previous.w * float2(.5, -.5) + .5;
+    float2 motion = uv - previousUV;
+    if (all(isfinite(motion)) && all(abs(motion) <= 1.0)) stored.xy = motion;
+    return stored;
+}

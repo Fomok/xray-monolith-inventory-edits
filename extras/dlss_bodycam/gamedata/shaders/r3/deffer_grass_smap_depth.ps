@@ -1,0 +1,26 @@
+#include "common.h"
+#include "sload.h"
+
+static float DITHER_THRESHOLDS[16] =
+{
+	1.0 / 17.0,  9.0 / 17.0,  3.0 / 17.0, 11.0 / 17.0,
+	13.0 / 17.0,  5.0 / 17.0, 15.0 / 17.0,  7.0 / 17.0,
+	4.0 / 17.0, 12.0 / 17.0,  2.0 / 17.0, 10.0 / 17.0,
+	16.0 / 17.0,  8.0 / 17.0, 14.0 / 17.0,  6.0 / 17.0
+};
+
+// depth only grass, it keeps both clips of the gbuffer pass and none of its output math
+void main( p_bumped I )
+{
+	// UpdateTC is the empty stub for this compile so tcdh is the unshifted base coord
+	clip( tbase(I.tcdh).w - def_aref );
+
+	// per instance fade alpha rides M1.x, the same dither the gbuffer pass applies
+	float4 Postc = mul(m_P, float4(I.position.xyz, 1));
+	float2 tc = (Postc.xy / Postc.w) * float2(0.5f, -0.5f) + 0.5f;
+
+	float2 dither_uv = tc * screen_res.xy;
+	uint dither_idx = (uint(dither_uv.x) % 4) * 4 + uint(dither_uv.y) % 4;
+
+	clip( I.M1.x - DITHER_THRESHOLDS[dither_idx] );
+}
