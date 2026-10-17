@@ -1523,6 +1523,8 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 		rt_dlss_post_color.create("$user$dlss_post_color", Device.dwWidth, Device.dwHeight, D3DFMT_A16B16G16R16F);
 		rt_dlss_scope_mask.create("$user$dlss_scope_mask", sceneWidth, sceneHeight, D3DFMT_A8R8G8B8);
 		s_dlss_scope_resolve.create("dlss_scope_resolve");
+		rt_dlss_camera_motion.create("$user$dlss_camera_motion", sceneWidth, sceneHeight, D3DFMT_A16B16G16R16F);
+		s_dlss_camera_motion.create("dlss_camera_mv");
 		t_dlss_output.create("$user$dlss_output");
 		t_dlss_output->surface_set(dlss::Output());
 		t_dlss_scene_depth.create("$user$dlss_scene_depth");

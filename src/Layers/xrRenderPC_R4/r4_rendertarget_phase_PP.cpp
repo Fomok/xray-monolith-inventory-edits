@@ -147,7 +147,36 @@ void CRenderTarget::phase_dlss_postprocess()
 		// Unbind the mask before sampling it after reconstruction.
 		u_setrt(rt_Color, nullptr, nullptr, nullptr);
 	}
-	const bool dlssOutput = dlss::Evaluate(rt_Color->pSurface, rt_ssfx_motion_vectors->pSurface);
+	ID3D11Texture2D* motion = rt_ssfx_motion_vectors->pSurface;
+	Fmatrix cameraReprojection;
+	const bool cameraHistory = dlss::CameraReprojection(cameraReprojection);
+	if (dlss::Active() && ps_r_upscaler_camera_mv && cameraHistory)
+	{
+		// Separate output: preserve the original HUD and scope-glass tags and
+		// never bind the motion-vector source as an output during this pass.
+		u_setrt(rt_dlss_camera_motion, nullptr, nullptr, nullptr);
+		RImplementation.rmNormal();
+		RCache.set_CullMode(CULL_NONE);
+		RCache.set_Stencil(FALSE);
+		RCache.set_ColorWriteEnable();
+		RCache.set_Element(s_dlss_camera_motion->E[0]);
+		RCache.set_c("m_upscaler_reproject", cameraReprojection);
+		RCache.set_c("upscaler_camera_params", sceneJitter.x / dlss::RenderWidth(),
+			sceneJitter.y / dlss::RenderHeight(), 1.f, resolveScope ? 1.f : 0.f);
+		u32 mvOffset;
+		const float rw = float(dlss::RenderWidth()), rh = float(dlss::RenderHeight());
+		FVF::TL* quad = (FVF::TL*)RCache.Vertex.Lock(4, g_combine->vb_stride, mvOffset);
+		quad[0].set(0, rh, EPS_S, 1, 0xffffffff, 0, 1);
+		quad[1].set(0, 0, EPS_S, 1, 0xffffffff, 0, 0);
+		quad[2].set(rw, rh, EPS_S, 1, 0xffffffff, 1, 1);
+		quad[3].set(rw, 0, EPS_S, 1, 0xffffffff, 1, 0);
+		RCache.Vertex.Unlock(4, g_combine->vb_stride);
+		RCache.set_Geometry(g_combine);
+		RCache.Render(D3DPT_TRIANGLELIST, mvOffset, 0, 4, 0, 2);
+		motion = rt_dlss_camera_motion->pSurface;
+		u_setrt(rt_Color, nullptr, nullptr, nullptr);
+	}
+	const bool dlssOutput = dlss::Evaluate(rt_Color->pSurface, motion);
 	dlss::EndScene();
 	if (!dlss::Configured()) return;
 

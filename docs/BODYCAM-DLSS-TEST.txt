@@ -27,6 +27,17 @@ Upscaling remains off until enabled. Main-view reconstruction is separate
 from Bodycam's PiP scope renderer; this does not implement scope-only DLSS.
 
 TEST
+This build adds instanced Bodycam grass with previous-frame wind motion,
+and a conservative camera-motion fallback for untagged world pixels.
+Replace the previous shader compatibility package with the accompanying
+updated package; do not retain its old grass overrides. Reload the level
+after installing so the engine can select the instanced grass shader.
+The fallback is enabled by default. Compare with r__upscaler_camera_mv 0
+in the console; use r__upscaler_camera_mv 1 to enable it again. This affects
+DLSS/FSR reconstruction only. Check grass in wind, turning near fences and
+foliage, moving NPCs, and PiP optics. It is a compatibility heuristic, not
+a replacement for correct object motion vectors. No FPS gain is guaranteed.
+
 Compare Off, DLSS Quality and FSR Quality. Check walking/turning, aiming
 through PiP scopes, changing optics, NVG with/without scopes, PDA, wearable
 screens, inventory, menus, loading saves and changing areas. Also check

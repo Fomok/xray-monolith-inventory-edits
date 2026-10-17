@@ -1,0 +1,5 @@
+Bodycam Grass Optimisation 4.1.0: asuparabekon, TheLostInPlace and Ascii1457.
+Source snapshot: user-supplied GAMMA Bodycam 0.3 + DLSS + DLSS 5 - Full Pack.zip.
+Merged deffer_grass.vs from the supplied Bodycam 0.3 DLSS Merge core patch retains
+instancing and adds DLSS jitter and previous-frame wind to both shader paths.
+Other grass shaders are unchanged from the supplied Bodycam 4.1.0 snapshot.

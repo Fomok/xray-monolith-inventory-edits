@@ -23,6 +23,8 @@ Fvector lastPosition, lastDirection;
 float lastFov = 0;
 bool haveCamera = false;
 bool reportedEvaluation = false;
+Fmatrix previousCameraTransform;
+bool haveCameraTransform = false;
 string512 backendError = {};
 
 const char* Method() { return useFsr ? "FSR3" : "DLSS"; }
@@ -49,7 +51,7 @@ void ActivationFailed(const char* reason, const char* recovery)
     ShowBackendError(Method());
 }
 const char* BackendReason(const char* fallback) { return backendError[0] ? backendError : fallback; }
-void ResetHistory() { backend.ResetHistory(); fsrBackend.ResetHistory(); }
+void ResetHistory() { backend.ResetHistory(); fsrBackend.ResetHistory(); haveCameraTransform = false; }
 }
 
 unsigned RenderScreenWidth() { return inScene && MainTarget() ? dlss::RenderWidth() : Device.dwWidth; }
@@ -172,6 +174,7 @@ void InitializeTargets()
 
 void ReleaseTargets()
 {
+    haveCameraTransform = false;
     inScene = mainView = configured = false;
     jitterIndex = 0;
     haveCamera = false;
@@ -191,6 +194,19 @@ unsigned RenderWidth() { return renderSize.Valid() ? renderSize.width : Device.d
 unsigned RenderHeight() { return renderSize.Valid() ? renderSize.height : Device.dwHeight; }
 bool Configured() { return configured && MainTarget(); }
 void InvalidateHistory() { ResetHistory(); }
+bool CameraReprojection(Fmatrix& result)
+{
+    if (!Active()) return false;
+    Fmatrix inverse;
+    const bool invertible = D3DXMatrixInverse((D3DXMATRIX*)&inverse, nullptr,
+        (D3DXMATRIX*)&Device.mFullTransform) != nullptr;
+    const bool valid = haveCameraTransform && invertible;
+    if (valid) result.mul(previousCameraTransform, inverse);
+    else result.identity();
+    previousCameraTransform = Device.mFullTransform;
+    haveCameraTransform = invertible;
+    return valid;
+}
 bool SetAuxiliaryView(bool value) { const bool old = auxiliaryView; auxiliaryView = value; return old; }
 void SelectView()
 {
