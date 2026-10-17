@@ -1,0 +1,156 @@
+FOMOD SOURCE AND PACKAGING NOTES
+================================
+
+These technical notes and SOURCE_MANIFEST.json remain in the repository
+and build output. The user ZIP contains installation instructions and credits.
+
+LAYOUT
+------
+The canonical source for shared helpers, UI and existing RC7/WearableDevices
+overrides remains extras/dlss_gamma/gamedata. The FOMOD builder routes those
+files into separate components instead of installing them all unconditionally.
+
+extras/dlss_fomod/sss235 contains four newly prepared SSS 23.5 shader files.
+They replace the four Atmospherics files in the mandatory base component.
+The RC7.x choice overrides those base files with priority 100. WearableDevices
+is installed only when selected, with priority 200. RC7.5 and RC7.6 share
+one choice and payload because the four relevant original shaders are identical.
+
+The Better Beef's checkbox installs its three shader overrides at priority
+200. When combined with RC7.x, a conditional priority-300 merge replaces only
+combine_2_naa.ps. With the checkbox off, none of these overrides is installed.
+
+The original flat extras/dlss_gamma payload is retained for existing release
+workflows. It is still the RC7-oriented patch; it is not the SSS-only variant.
+Use tools/dlss/package_compatibility.py to build the new multi-variant FOMOD.
+
+BASE SOURCES
+------------
+Source archive: ScreenSpaceShaders_Update23_5.zip
+SHA256: f442e925248620451b525ac037b0a58b9bd97303abcecc695d600b71884025b4
+
+SSS archive members and the corresponding installed GAMMA files matched
+when preparing this package. Individual input and output hashes are recorded
+in SOURCE_MANIFEST.json.
+
+deffer_impl_flat.ps:
+  Source: 05 - Rain - Puddles/gamedata/shaders/r3/deffer_impl_flat.ps
+  Add the motion-vector header and assign O.velocity before returning.
+  Keep SSS's 0.95 terrain material and 0.6 normal-strength values; do not copy
+  Atmospherics' material sentinel or normal-strength changes into this file.
+
+ssfx_ao.ps:
+  Source: 01 - AO/gamedata/shaders/r3/ssfx_ao.ps
+  Add dlss_contract.h and wrap the history-coordinate expression.
+  Correct the original nested-loop typo: the j loop increments j, not i.
+  Both local copies of the original SSS archive contain that typo. Leaving
+  it intact leaves j unchanged and advances the outer sample index instead.
+  This correction is confined to the SSS base; RC7 uses its existing GTAO.
+
+ssfx_il.ps:
+  Source: 07 - Indirect Light/gamedata/shaders/r3/ssfx_il.ps
+  Add dlss_contract.h; wrap history sampling and bounds-check coordinates.
+  Retain SSS's original material classification and illumination algorithm.
+
+ssfx_sss_ext.ps:
+  Source: 02 - SSS/gamedata/shaders/r3/ssfx_sss_ext.ps
+  Add dlss_contract.h; wrap history sampling and bounds-check coordinates.
+  Retain SSS's original flora and terrain material comparisons.
+
+The shared temporal helper returns a zero history offset when the upscaler
+is inactive. No new C++ changes or binary rebuild are needed for this package.
+
+ATMOSPHERICS
+------------
+The installed stock GAMMA Atmospherics package identifies its source as
+Atmospherics_GAMMA_2.68.93_hotfix3.7z. It supplies none of the four shaders
+listed above, so its choice retains the SSS base. No RC7 constants are added
+to stock Atmospherics or to SSS. Its separate sky shader includes
+night_vision.h, which is why the existing header remains in the shared base.
+
+The installed Atmospherics 2.69 RC7.5 and RC7.6 sources of these four shaders
+match after newline normalization. Their shared FOMOD choice reuses the existing
+extras/dlss_gamma overrides byte-for-byte. Files elsewhere in Atmospherics
+can differ; this does not claim that the entire versions are identical.
+
+WEARABLEDEVICES
+---------------
+The third page installs the existing wd_body.vs byte-for-byte when selected.
+No glow/bloom workaround, device draw-order change or engine rollback is
+included. The original mod itself is not bundled.
+
+BETTER BEEF'S NVGS
+------------------
+Source: BetterBeefsNVGs_indiesunpraiser.19 supplied for this integration.
+The linked ModDB page currently identifies its download as .18; the local
+supplied .19 files are the source of this patch, not an assumed web revision.
+Source members and byte hashes are recorded under better_beefs in the manifest.
+
+The previous compatibility header derives from stock Beef's NVG. Better
+Beef's generation shaders instead construct NVGParams and call nvg_process;
+the stock header does not supply that interface. Its .19 Lua scripts also
+pack extra per-generation settings that the stock header does not implement.
+
+better_beefs/night_vision.h:
+  Copy the full supplied 00 - Main header, retaining its controls/functions.
+  Add a depth GetDimensions query in blurred_depth and use the depth resource
+  dimensions for its two integer Load coordinates. Keep screen_res for colour,
+  noise, blur radius and display effects. This matches the existing stock NVG
+  correction: the engine runs phase_nightvision after reconstruction while
+  s_position remains at scene resolution. NVG processing stays native-sized.
+
+better_beefs/pp_blur.ps:
+  Start from 02 - PATCH - [ SSS ]. Keep its NVG half/quarter/eighth-res pipeline
+  and SSFX_Blur fallback. Use s_position.GetDimensions for the first half-res
+  pass's two depth loads. The current engine runs phase_blur before temporal
+  reconstruction, so this preserves the existing mapping there and avoids
+  assuming a colour-pass size for depth lookups. Blur pass selection/radii
+  retain screen_res, matching phase_blur's RenderScreenWidth/Height constants.
+
+better_beefs/combine_2_naa.ps:
+  Preserve the original 02 - PATCH - [ SSS ] file, including the condition
+  that excludes an active NVG lens from SSS LUT grading. Used with SSS-only
+  and stock Atmospherics, which does not supply this combine shader.
+
+better_beefs_atmos_rc7/combine_2_naa.ps:
+  Start with the installed Atmospherics RC7.6 file; the RC7.5 source is
+  identical after newline normalization. Add Better Beef's LUT-mask condition
+  around ssfx_lut_pp without removing Atmospherics clarity or final dithering.
+  Only installed when BOTH RC7.x and Better Beef's are selected.
+
+The original mod remains responsible for its generation shaders, settings
+and Lua scripts, including its FDDA Redone patch where applicable. Its
+03 - PATCH - [ SSS Weapons DOF ] must remain installed when that SSS module
+is used; it preserves the mod's encoded-blur handling. That shader reads
+depth via SSFX_get_position and runs before reconstruction in this engine,
+so it is not overridden by this compatibility package.
+
+All four compatibility shaders retain original author comments/credits.
+No C++ changes, new runtime constants or extra rendering passes are added.
+This optional integration has not been shader-compiled or tried in-game.
+
+BUILD
+-----
+From the repository root with Python 3.10 or later:
+  python tools/dlss/package_compatibility.py
+
+Default output:
+  _build/releases/0.5/
+
+Use --output with a new directory for another build. The builder refuses to
+overwrite an existing output directory. It packages only explicit shader/UI
+sources, instructions, selection records and the FOMOD XML. It does not read
+the user's current mod installation, compile shaders, run tests, launch MO2,
+change profiles or install binaries. Source archives are not needed to rebuild.
+
+The separate build MANIFEST.json lists archive member sizes and hashes.
+SOURCE_MANIFEST.json records provenance of the four SSS variants and the
+corresponding original Atmospherics files. Updating shader sources requires
+updating this provenance and the stated compatibility versions deliberately.
+
+STATUS
+------
+The three-page installer and new SSS/stock-Atmospherics/Better Beef's variants have not
+been exercised in MO2 or in-game. No shader compilation tests were run.
+RC7 and WearableDevices reuse the existing 0.4 files. Packaging as release
+0.5 does not establish in-game verification of the new variants.

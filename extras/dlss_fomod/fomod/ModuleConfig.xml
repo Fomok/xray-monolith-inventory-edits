@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
+  <moduleName>DLSS / FSR3 Compatibility Patch - 0.5</moduleName>
+  <requiredInstallFiles>
+    <folder source="docs" destination="DLSS Compatibility - Instructions" priority="0" />
+  </requiredInstallFiles>
+  <installSteps order="Explicit">
+    <installStep name="1. Required base">
+      <optionalFileGroups order="Explicit">
+        <group name="SSS 23.5 must already be installed" type="SelectAll">
+          <plugins order="Explicit">
+            <plugin name="SSS 23.5 compatibility - REQUIRED">
+              <description>BEFORE INSTALLING
+- Install the 0.5 DLSS/FSR3 modded binaries into your Anomaly folder.
+- Install Screen Space Shaders 23.5 (already comes with gamma 0.9.5)
+
+AFTER INSTALLING
+- Clear the shader cache through the launcher.
+- Put this patch at highest priority(at the bottom), or at least bellow any other shader related mod.
+- In-game: set MSAA/AA to Off, configure DLSS or FSR 3 in menu.
+
+Reinstalling? Choose REPLACE.
+Custom SSS installation? See README.txt for the required modules.</description>
+              <files>
+                <folder source="components\base\gamedata" destination="gamedata" priority="0" />
+              </files>
+              <typeDescriptor>
+                <type name="Required" />
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="2. Atmospherics version">
+      <optionalFileGroups order="Explicit">
+        <group name="Choose your installed Atmospherics version" type="SelectExactlyOne">
+          <plugins order="Explicit">
+            <plugin name="Atmospherics is NOT installed">
+              <description>Choose this if you don't have Atmospherics mod enabled.
+
+Atmospherics is optional. SSS 23.5 is still required.</description>
+              <files>
+                <file source="selections\atmos_none.txt" destination="DLSS Compatibility - Instructions\Selected Atmospherics.txt" priority="0" />
+              </files>
+              <typeDescriptor>
+                <type name="Optional" />
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Atmospherics 2.68.93 Hotfix 3 - stock GAMMA 0.9.5">
+              <description>Choose this for the Atmospherics included with GAMMA 0.9.5.
+
+MO2 usually calls it:
+290- Atmospherics Shaders Weathers and Reshade Latest - Hippobot (filename Atmospherics_GAMMA_2.68.93_hotfix3.7z)
+
+Keep only one Atmospherics version enabled.</description>
+              <files>
+                <file source="selections\atmos_26893.txt" destination="DLSS Compatibility - Instructions\Selected Atmospherics.txt" priority="0" />
+              </files>
+              <typeDescriptor>
+                <type name="Optional" />
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Atmospherics 2.69 RC7.x">
+              <description>Choose this for Atmospherics 2.69 RC7.5 or above.
+
+Keep only one Atmospherics version enabled.</description>
+              <files>
+                <folder source="components\atmos_rc7\gamedata" destination="gamedata" priority="100" />
+                <file source="selections\atmos_rc7.txt" destination="DLSS Compatibility - Instructions\Selected Atmospherics.txt" priority="0" />
+              </files>
+              <conditionFlags>
+                <flag name="dlss_atmos_rc7">On</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Optional" />
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+    <installStep name="3. Other add-ons">
+      <optionalFileGroups order="Explicit">
+        <group name="Select installed add-ons, or leave both unchecked" type="SelectAny">
+          <plugins order="Explicit">
+            <plugin name="WearableDevices compatibility">
+              <description>Select if WearableDevices is installed and enabled.
+
+Keep the original WearableDevices mod enabled.</description>
+              <files>
+                <folder source="components\wearable\gamedata" destination="gamedata" priority="200" />
+                <file source="selections\wearable.txt" destination="DLSS Compatibility - Instructions\WearableDevices selected.txt" priority="0" />
+              </files>
+              <typeDescriptor>
+                <type name="Optional" />
+              </typeDescriptor>
+            </plugin>
+            <plugin name="Better Beef's NVGs compatibility (.19)">
+              <description>Select if Better Beef's NVGs is installed.
+Leave unchecked for stock GAMMA / stock Beef's NVG.</description>
+              <files>
+                <folder source="components\better_beefs\gamedata" destination="gamedata" priority="200" />
+                <file source="selections\better_beefs.txt" destination="DLSS Compatibility - Instructions\Better Beef's NVGs selected.txt" priority="0" />
+              </files>
+              <conditionFlags>
+                <flag name="dlss_better_beefs">On</flag>
+              </conditionFlags>
+              <typeDescriptor>
+                <type name="Optional" />
+              </typeDescriptor>
+            </plugin>
+          </plugins>
+        </group>
+      </optionalFileGroups>
+    </installStep>
+  </installSteps>
+  <conditionalFileInstalls>
+    <patterns>
+      <pattern>
+        <dependencies operator="And">
+          <flagDependency flag="dlss_atmos_rc7" value="On" />
+          <flagDependency flag="dlss_better_beefs" value="On" />
+        </dependencies>
+        <files>
+          <folder source="components\better_beefs_atmos_rc7\gamedata" destination="gamedata" priority="300" />
+        </files>
+      </pattern>
+    </patterns>
+  </conditionalFileInstalls>
+</config>

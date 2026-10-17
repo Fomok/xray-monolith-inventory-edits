@@ -54,12 +54,13 @@ public:
 // main view, with the render target: the glow targets and their passes, so the first sight drawn compiles nothing
 void CRenderTarget::reticle_glow_create()
 {
-	rt_reticle_emission.create("$user$reticle_emission", Width, Height, D3DFMT_A16B16G16R16F);
-	rt_reticle_glow_source.create("$user$reticle_glow_source", Width, Height, D3DFMT_A16B16G16R16F);
-	rt_reticle_image_emission.create("$user$reticle_image_emission", Width, Height, D3DFMT_A16B16G16R16F);
-	rt_reticle_image_glow.create("$user$reticle_image_glow", Width, Height, D3DFMT_A16B16G16R16F);
-	const u32 hw = _max(Width / 2, 1u), hh = _max(Height / 2, 1u);
-	rt_reticle_glow_full.create("$user$reticle_glow_full", Width, Height, D3DFMT_A16B16G16R16F);
+	const u32 sceneWidth = rt_Position->dwWidth, sceneHeight = rt_Position->dwHeight;
+	rt_reticle_emission.create("$user$reticle_emission", sceneWidth, sceneHeight, D3DFMT_A16B16G16R16F);
+	rt_reticle_glow_source.create("$user$reticle_glow_source", sceneWidth, sceneHeight, D3DFMT_A16B16G16R16F);
+	rt_reticle_image_emission.create("$user$reticle_image_emission", sceneWidth, sceneHeight, D3DFMT_A16B16G16R16F);
+	rt_reticle_image_glow.create("$user$reticle_image_glow", sceneWidth, sceneHeight, D3DFMT_A16B16G16R16F);
+	const u32 hw = _max(sceneWidth / 2, 1u), hh = _max(sceneHeight / 2, 1u);
+	rt_reticle_glow_full.create("$user$reticle_glow_full", sceneWidth, sceneHeight, D3DFMT_A16B16G16R16F);
 	rt_reticle_glow_half[0].create("$user$reticle_glow_half0", hw, hh, D3DFMT_A16B16G16R16F);
 	rt_reticle_glow_half[1].create("$user$reticle_glow_half1", hw, hh, D3DFMT_A16B16G16R16F);
 	rt_reticle_glow_quarter[0].create("$user$reticle_glow_quarter0", _max(hw / 2, 1u), _max(hh / 2, 1u), D3DFMT_A16B16G16R16F);
@@ -204,7 +205,7 @@ void CRenderTarget::reticle_glow_compose_before_nightvision()
 {
 	if (this != RImplementation.TargetMain || reticle_glow_frame != Device.dwFrame)
 		return;
-	reticle_glow_composite(rt_Generic_0, true);
+	reticle_glow_composite(PostprocessSource(), true);
 	reticle_glow_composed_frame = Device.dwFrame;
 }
 
@@ -212,7 +213,7 @@ void CRenderTarget::reticle_glow_compose_before_nightvision()
 // encoding of its combine)
 void CRenderTarget::reticle_glow_composite(const ref_rt& target, bool night_vision)
 {
-	const float w = float(Device.dwWidth), h = float(Device.dwHeight);
+	const float w = float(target->dwWidth), h = float(target->dwHeight);
 	u32 offset = 0;
 	FVF::TL* pv = (FVF::TL*)RCache.Vertex.Lock(4, g_combine->vb_stride, offset);
 	const u32 C = color_rgba(0, 0, 0, 255);

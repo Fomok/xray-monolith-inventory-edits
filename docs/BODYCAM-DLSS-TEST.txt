@@ -1,0 +1,46 @@
+Squared Away + Bodycam 0.3 + DLSS / FSR 3 - experimental test
+==========================================================
+
+Two separate branches:
+amp-bodycam-dlss-mt: standard Bodycam 0.3 + Squared Away.
+amp-bodycam-fomokchanges-dlss-mt: the same, plus Fomok's weapon follow.
+Neither includes the experimental camera/body pivot changes.
+
+INSTALL
+1. Back up your current bin/AnomalyDX11AVX.exe and db/mods/00_modded_exes_gamedata.db0.
+2. Extract ONE engine test ZIP into the Anomaly folder. Use its matching EXE,
+   DB0 and nvngx_dlss.dll together. Do not combine files from the two ZIPs.
+3. Keep Bodycam GAMMA Patch 1.1.0 and your Squared Away installation enabled.
+4. Install the separate Bodycam DLSS Shader Compatibility Test ZIP through
+   MO2, below Bodycam GAMMA Patch, SSS and Atmospherics. It must win shader
+   conflicts. Select your actual Atmospherics version and WearableDevices
+   only if installed. This patch requires SSS 23.5. It preserves Bodycam's
+   own NVG shader/script pairing.
+5. Clear shader cache through the launcher. Start with MSAA switched OFF.
+6. In Video > Basic, choose DLSS or FSR 3 and a quality level, then Apply.
+   Alternatively: r_upscaler dlss, r_dlss_quality quality, vid_restart.
+   For FSR: r_upscaler fsr3, r_fsr3_quality quality, vid_restart.
+
+DLSS needs a supported NVIDIA RTX GPU/driver. FSR 3 Super Resolution needs
+Direct3D feature level 11.1. This does not add frame generation.
+Upscaling remains off until enabled. Main-view reconstruction is separate
+from Bodycam's PiP scope renderer; this does not implement scope-only DLSS.
+
+TEST
+Compare Off, DLSS Quality and FSR Quality. Check walking/turning, aiming
+through PiP scopes, changing optics, NVG with/without scopes, PDA, wearable
+screens, inventory, menus, loading saves and changing areas. Also check
+vid_restart, resizing and returning from the main menu. In the personal
+build, check Weapon Follow and stationary hold in F11 > Bodycam.
+
+Build and offline checks are not in-game validation. These are test branches,
+not a new stable release. Keep the old files for easy rollback. To revert,
+disable this shader patch, restore the backed-up engine files, and clear
+shader cache again.
+
+SOURCES
+Bodycam 0.3: asuparabekon/xray-monolith-bodycam, 65faa2f0.
+Squared Away Bodycam baseline: c736134a; weapon-follow baseline: 56fd8ccc.
+Upscaler: brodrigz/xray-monolith tag 1.0.1, 854dd279 (release label 0.5).
+NVIDIA DLSS runtime: v310.9.1, official release DLL; license included.
+AMD FidelityFX FSR 3.1 backend: upstream SDK; license included.

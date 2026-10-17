@@ -30,7 +30,7 @@ bool CRenderTarget::svp_nvg_pass()
 	const float width = float(Device.dwWidth);
 	const float height = float(Device.dwHeight);
 	u32 offset = 0;
-	ref_rt& destination = RImplementation.o.dx10_msaa ? rt_Generic : rt_Color;
+	ref_rt& destination = PostprocessColor();
 
 	u_setrt(destination, nullptr, nullptr, HW.pBaseZB);
 	RCache.set_CullMode(CULL_NONE);
@@ -89,7 +89,7 @@ bool CRenderTarget::svp_nvg_pass()
 	draw_quad();
 
 	RCache.set_Stencil(FALSE);
-	HW.pContext->CopyResource(rt_Generic_0->pSurface, destination->pSurface);
+	HW.pContext->CopyResource(PostprocessSource()->pSurface, destination->pSurface);
 
 	if (ps_r__svp_diag)
 	{

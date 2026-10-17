@@ -1,8 +1,8 @@
-name: SQA-Bodycam-Weapon-Follow-Test
+name: SQA-Bodycam-DLSS-Test
 
 on:
   push:
-    branches: [ "amp-bodycam-fomokchanges-mt" ]
+    branches: [ "amp-bodycam-dlss-mt", "amp-bodycam-fomokchanges-dlss-mt" ]
   workflow_dispatch:
 
 permissions:
@@ -69,6 +69,15 @@ jobs:
       run: |
         msbuild /p:Configuration=$env:BUILD_CONFIGURATION /p:Platform=x64 $env:SOLUTION_FILE_PATH
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    - name: Check temporal math and native HUD selection
+      run: |
+        $ErrorActionPreference = "Stop"
+        foreach ($test in @("temporal_test", "pda_depth_test", "sampler_test")) {
+          msbuild "tools/dlss/$test.vcxproj" /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw "$test build failed" }
+          & "./_build/dlss_tests/$test.exe"
+          if ($LASTEXITCODE -ne 0) { throw "$test failed" }
+        }
     - name: Stage executable and symbols
       env:
         BUILD_CONFIGURATION: ${{ matrix.configuration }}
@@ -82,6 +91,15 @@ jobs:
           if ((Get-Item -LiteralPath $source).Length -eq 0) { throw "Empty required file: $source" }
           Copy-Item -LiteralPath $source -Destination ./stage/bin/
         }
+    - name: Stage verified NVIDIA runtime and licenses
+      run: |
+        $ErrorActionPreference = "Stop"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/NVIDIA/DLSS/v310.9.1/lib/Windows_x86_64/rel/nvngx_dlss.dll" -OutFile ./stage/bin/nvngx_dlss.dll
+        $expected = "3975567B8943C53ACCE397F2B72380092F84F162D00B0D2C7D08A1025C563983"
+        if ((Get-FileHash ./stage/bin/nvngx_dlss.dll -Algorithm SHA256).Hash -ne $expected) { throw "NVIDIA runtime checksum mismatch" }
+        New-Item -ItemType Directory -Force -Path ./stage/licenses | Out-Null
+        Copy-Item -LiteralPath ./sdk/DLSS/LICENSE.txt -Destination ./stage/licenses/NVIDIA-DLSS.txt
+        Copy-Item -LiteralPath ./sdk/FSR3/LICENSE.txt -Destination ./stage/licenses/AMD-FidelityFX.txt
     - uses: actions/upload-artifact@v4.6.0
       with:
         name: amp-bodycam-${{ matrix.configuration }}
@@ -116,6 +134,7 @@ jobs:
         New-Item -ItemType Directory -Force -Path ./package/docs | Out-Null
         Copy-Item -LiteralPath ./License.txt,./THIRD-PARTY-NOTICES.txt,./README.md -Destination ./package/
         Copy-Item -LiteralPath ./docs/DISTRIBUTION.md,./docs/PROVENANCE.md -Destination ./package/docs/
+        Copy-Item -LiteralPath ./docs/BODYCAM-DLSS-TEST.txt -Destination "./package/READ ME FIRST.txt"
         $manifest = @{ commit = $env:GITHUB_SHA; upstream = "65faa2f0"; configuration = "DX11-AVX"; files = @() }
         Get-ChildItem ./package -File -Recurse | ForEach-Object {
           $manifest.files += @{ path = [IO.Path]::GetRelativePath((Resolve-Path ./package), $_.FullName).Replace("\", "/"); sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
@@ -124,7 +143,7 @@ jobs:
     # Download this artifact for one ZIP with bin/ and db/ at its root.
     - uses: actions/upload-artifact@v4.6.0
       with:
-        name: Squared-Away-Bodycam-Weapon-Follow-DX11-AVX
+        name: Squared-Away-${{ github.ref_name }}-DX11-AVX
         path: ./package/
         if-no-files-found: error
         retention-days: 14

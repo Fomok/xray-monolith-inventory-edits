@@ -853,7 +853,7 @@ void CRenderTarget::phase_3DSSReticle(bool object_lens_pass)
 							RCache.set_c("screen_res", sr);
 							auto tm = RImplementation.TargetMain;
 							Fvector4 outr;
-							outr.set((float)tm->Width, (float)tm->Height, 1.0f / (float)tm->Width, 1.0f / (float)tm->Height);
+							outr.set(float(tm->rt_Position->dwWidth), float(tm->rt_Position->dwHeight), 1.f / tm->rt_Position->dwWidth, 1.f / tm->rt_Position->dwHeight);
 							RCache.set_c("output_res", outr);
 							Fvector up = { 0, 1, 0 };
 							Device.m_SecondViewport.objective.m_W.transform_dir(up);

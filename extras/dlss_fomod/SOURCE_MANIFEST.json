@@ -1,0 +1,123 @@
+{
+  "sss_archive": "ScreenSpaceShaders_Update23_5.zip",
+  "sss_archive_sha256": "f442e925248620451b525ac037b0a58b9bd97303abcecc695d600b71884025b4",
+  "sss_sources": [
+    {
+      "file": "deffer_impl_flat.ps",
+      "archive_member": "05 - Rain - Puddles/gamedata/shaders/r3/deffer_impl_flat.ps",
+      "original_sha256": "1b6b831774324d9730d4211706ef113f5a710d0ce8f92b21ce9cbfbac49f702b",
+      "patched_sha256": "614ca2a0f3faeab7909b52c32c886c7fe372242e9da9c985d5b0670bd724cabb"
+    },
+    {
+      "file": "ssfx_ao.ps",
+      "archive_member": "01 - AO/gamedata/shaders/r3/ssfx_ao.ps",
+      "original_sha256": "d8fd8fbc141a2d6655c580332c0e6752837aaebc5d0aa48f5d91f16c285d83fa",
+      "patched_sha256": "5555065d8c293148e0d40acd1eef11e8e5930ad551c722cc002d3e3715700090"
+    },
+    {
+      "file": "ssfx_il.ps",
+      "archive_member": "07 - Indirect Light/gamedata/shaders/r3/ssfx_il.ps",
+      "original_sha256": "a1a05f88c418b38bdd0e1a4191795d2e5da124129c697cd2216daa70f3ce63c1",
+      "patched_sha256": "280ec704d67956c6040c6a3087c5fb121fd3a4eba4ae9b66ec57d242c0e1749f"
+    },
+    {
+      "file": "ssfx_sss_ext.ps",
+      "archive_member": "02 - SSS/gamedata/shaders/r3/ssfx_sss_ext.ps",
+      "original_sha256": "71b7b9fbe74a85e6dfb96dd17ffb107281ee560c3f694e0bb75a828557e783e7",
+      "patched_sha256": "41fcf7e7b4994d2a2c4a9e75915d5ac4bdea9b12d08a06982b5e172fe042a1f9"
+    }
+  ],
+  "atmos_sources": [
+    {
+      "version": "2.69 RC7.5",
+      "file": "deffer_impl_flat.ps",
+      "original_sha256": "273f6312624ad4bf6d56c994cc26f9ec15c700f2c8b13c165c6dddc31eac9cb1",
+      "original_sha256_lf": "042ee6b4a495c8d49205bf1b7d28f7afb13fbcec998af12240bcbed6bb727344"
+    },
+    {
+      "version": "2.69 RC7.5",
+      "file": "ssfx_ao.ps",
+      "original_sha256": "2d5b156b92f9790005fa6550bf13e38f87c05a717aaad9eb30f389068aaaf61c",
+      "original_sha256_lf": "a94f353c7fe8b783ebeaf78a6a3cf1cc8230fdec93b25e4eb808f1b2596b775e"
+    },
+    {
+      "version": "2.69 RC7.5",
+      "file": "ssfx_il.ps",
+      "original_sha256": "79ca36a50374d0c7a28845dfb74747ddee72133f49696adc4cb40aea1bf3a24b",
+      "original_sha256_lf": "79ca36a50374d0c7a28845dfb74747ddee72133f49696adc4cb40aea1bf3a24b"
+    },
+    {
+      "version": "2.69 RC7.5",
+      "file": "ssfx_sss_ext.ps",
+      "original_sha256": "3c8fcdb66a7f49c3dc8a710fa286cea2b6042861e887dab5f7fea5c407c216ec",
+      "original_sha256_lf": "3c8fcdb66a7f49c3dc8a710fa286cea2b6042861e887dab5f7fea5c407c216ec"
+    },
+    {
+      "version": "2.69 RC7.6",
+      "file": "deffer_impl_flat.ps",
+      "original_sha256": "273f6312624ad4bf6d56c994cc26f9ec15c700f2c8b13c165c6dddc31eac9cb1",
+      "original_sha256_lf": "042ee6b4a495c8d49205bf1b7d28f7afb13fbcec998af12240bcbed6bb727344"
+    },
+    {
+      "version": "2.69 RC7.6",
+      "file": "ssfx_ao.ps",
+      "original_sha256": "2d5b156b92f9790005fa6550bf13e38f87c05a717aaad9eb30f389068aaaf61c",
+      "original_sha256_lf": "a94f353c7fe8b783ebeaf78a6a3cf1cc8230fdec93b25e4eb808f1b2596b775e"
+    },
+    {
+      "version": "2.69 RC7.6",
+      "file": "ssfx_il.ps",
+      "original_sha256": "79ca36a50374d0c7a28845dfb74747ddee72133f49696adc4cb40aea1bf3a24b",
+      "original_sha256_lf": "79ca36a50374d0c7a28845dfb74747ddee72133f49696adc4cb40aea1bf3a24b"
+    },
+    {
+      "version": "2.69 RC7.6",
+      "file": "ssfx_sss_ext.ps",
+      "original_sha256": "3c8fcdb66a7f49c3dc8a710fa286cea2b6042861e887dab5f7fea5c407c216ec",
+      "original_sha256_lf": "3c8fcdb66a7f49c3dc8a710fa286cea2b6042861e887dab5f7fea5c407c216ec"
+    }
+  ],
+  "stock_atmospherics": {
+    "archive": "Atmospherics_GAMMA_2.68.93_hotfix3.7z",
+    "affected_source_files_supplied_by_stock_atmospherics": []
+  },
+  "better_beefs": {
+    "source_package": "BetterBeefsNVGs_indiesunpraiser.19",
+    "mod_page": "https://www.moddb.com/mods/stalker-anomaly/addons/better-beefs-nvg-indiesunpraiser/",
+    "files": [
+      {
+        "component": "better_beefs",
+        "file": "night_vision.h",
+        "source": "00 - Main\\gamedata\\shaders\\r3\\night_vision.h",
+        "original_sha256": "c3a584c787c411d03ec706a1a5c54440814432bc6aa4a6422c0c8865f5353aed",
+        "patched_sha256": "bae637b4e1badfbbbbd1ff9cd0641b82dced2517b0bbd9f223f12bfd473d27af"
+      },
+      {
+        "component": "better_beefs",
+        "file": "pp_blur.ps",
+        "source": "02 - PATCH - [ SSS ]\\gamedata\\shaders\\r3\\pp_blur.ps",
+        "original_sha256": "899c0c7e77a7741313d5113a8bbceb3d18653b7f45df21fa151c0dedf4aae309",
+        "patched_sha256": "f6b5a7089e49cfbe00c47a0e8ef3df756ff5e789350682e1eaed4d560f105305"
+      },
+      {
+        "component": "better_beefs",
+        "file": "combine_2_naa.ps",
+        "source": "02 - PATCH - [ SSS ]\\gamedata\\shaders\\r3\\combine_2_naa.ps",
+        "original_sha256": "464bc53b098961f3b6eb2b37d297089a32ef980dda18405c896e9d7b6d7d0923",
+        "patched_sha256": "0641e1395f0a8d23131be770b6cb68d06e581e9645fead4a0ce3aa92f3c373cc"
+      },
+      {
+        "component": "better_beefs_atmos_rc7",
+        "file": "combine_2_naa.ps",
+        "source": "Atmospherics 2.69 RC7.6/gamedata/shaders/r3/combine_2_naa.ps",
+        "original_sha256": "f9adb91832b20fce93dfa4c50fff1a20e8afed829b9d618268147b9a2919e469",
+        "patched_sha256": "a82ab803b91b496cdead33107dcff24911e8ed8e5ebacfef671d223327298b76"
+      }
+    ],
+    "atmos_combine_original_sha256_lf": "f9adb91832b20fce93dfa4c50fff1a20e8afed829b9d618268147b9a2919e469",
+    "atmos_combine_original_identical_versions": [
+      "2.69 RC7.5",
+      "2.69 RC7.6"
+    ]
+  }
+}
