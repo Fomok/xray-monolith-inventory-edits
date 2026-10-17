@@ -31,7 +31,7 @@ void CRenderTarget::draw_reticle_emission(const ref_shader& shader, ID3DDepthSte
 	const float capture = separate && S && S->reticle_capture_frame == Device.dwFrame && !S->reticle_capture_light_current() ? 1.f : 0.f;
 	// the lens shaders take their screen derivatives in main view pixels (output_res), which the stock image pass
 	// sets only for its own shader; without it the capture coordinate and the reticle angle are not defined
-	const float w = float(Width), h = float(Height);
+	const float w = float(RenderScreenWidth()), h = float(RenderScreenHeight());
 	draw_scope(shader,
 		[capture, w, h]
 		{

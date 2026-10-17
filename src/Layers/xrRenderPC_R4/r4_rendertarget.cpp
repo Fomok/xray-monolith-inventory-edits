@@ -483,7 +483,7 @@ void CRenderTarget::SetActive(bool force)
 
 	dlss::SelectView();
 	set_viewport_size(HW.pContext, float(RenderScreenWidth()), float(RenderScreenHeight()));
-	RCache.set_RT(baseRT, 0);
+	RCache.set_RT(isMain && dlss::SceneDepth() != baseZB ? rt_Color->pRT : baseRT, 0);
 	RCache.set_RT(nullptr, 1);
 	RCache.set_RT(nullptr, 2);
 	RCache.set_RT(nullptr, 3);

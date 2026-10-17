@@ -17,7 +17,7 @@ dlss::Offset rasterJitter;
 dlss::Offset previousJitter;
 bool inScene = false, mainView = false, configured = false;
 bool auxiliaryView = false;
-bool MainTarget() { return !auxiliaryView && !Device.m_SecondViewport.IsSVPFrame(); }
+bool MainTarget() { return !auxiliaryView && !(Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp); }
 unsigned jitterIndex = 0;
 Fvector lastPosition, lastDirection;
 float lastFov = 0;
@@ -213,7 +213,7 @@ void BeginScene()
     }
     // Scope frames render spatially at the selected scene resolution. They must
     // neither consume a jitter sample nor overwrite the main camera's history.
-    mainView = MainTarget();
+    mainView = MainTarget() && !Device.m_SecondViewport.IsSVPFrame();
     if (Active())
     {
         if (haveCamera && (lastPosition.distance_to_sqr(Device.vCameraPosition) > 64.0f * 64.0f ||

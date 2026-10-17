@@ -69,6 +69,15 @@ jobs:
       run: |
         msbuild /p:Configuration=$env:BUILD_CONFIGURATION /p:Platform=x64 $env:SOLUTION_FILE_PATH
         if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    - name: Check temporal math and native HUD selection
+      run: |
+        $ErrorActionPreference = "Stop"
+        foreach ($test in @("temporal_test", "pda_depth_test", "sampler_test")) {
+          msbuild "tools/dlss/$test.vcxproj" /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw "$test build failed" }
+          & "./_build/dlss_tests/$test.exe"
+          if ($LASTEXITCODE -ne 0) { throw "$test failed" }
+        }
     - name: Stage executable and symbols
       env:
         BUILD_CONFIGURATION: ${{ matrix.configuration }}
@@ -125,6 +134,7 @@ jobs:
         New-Item -ItemType Directory -Force -Path ./package/docs | Out-Null
         Copy-Item -LiteralPath ./License.txt,./THIRD-PARTY-NOTICES.txt,./README.md -Destination ./package/
         Copy-Item -LiteralPath ./docs/DISTRIBUTION.md,./docs/PROVENANCE.md -Destination ./package/docs/
+        Copy-Item -LiteralPath ./docs/BODYCAM-DLSS-TEST.txt -Destination "./package/READ ME FIRST.txt"
         $manifest = @{ commit = $env:GITHUB_SHA; upstream = "65faa2f0"; configuration = "DX11-AVX"; files = @() }
         Get-ChildItem ./package -File -Recurse | ForEach-Object {
           $manifest.files += @{ path = [IO.Path]::GetRelativePath((Resolve-Path ./package), $_.FullName).Replace("\", "/"); sha256 = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash }
