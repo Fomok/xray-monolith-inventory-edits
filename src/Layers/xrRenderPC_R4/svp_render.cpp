@@ -40,8 +40,11 @@ void CRender::renderViewports(BOOL bSUN)
 		EnsureTargetSVP();
 	// pip the lens content swaps at the scope edges, both taa histories seed from the current
 	// frame so the stale scene never ghosts through the resolve
-	if (svp_edge)
+	if (svp_edge || disc_swap)
+	{
 		ResetSVPHistory();
+		dlss::InvalidateHistory();
+	}
 	svp_stats::cpu_end(svp_stats::CPU_MISC);
 	// creation can fail at VRAM exhaustion, fall back to the single stock pass this frame
 	if (svp && !TargetSVP)
