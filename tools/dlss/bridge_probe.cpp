@@ -90,6 +90,19 @@ int main(int argc, char** argv)
                 c11->ClearRenderTargetView(depthRtv.Get(),depthColor);c11->ClearRenderTargetView(motionRtv.Get(),zero);
             }
             for (unsigned frame=0; frame<120; ++frame) {
+                if(menuTest && pass==0 && frame==40)
+                {
+                    // NGX/model startup can take long enough for the test window
+                    // to lose focus. Validate interactions on our own foreground
+                    // window; do not report key/menu success on an inactive HWND.
+                    const DWORD other=GetWindowThreadProcessId(GetForegroundWindow(),nullptr);
+                    const DWORD self=GetCurrentThreadId();
+                    const bool attached=other!=self && AttachThreadInput(self,other,TRUE);
+                    SetWindowPos(window,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_SHOWWINDOW);
+                    SetForegroundWindow(window);SetFocus(window);
+                    if(attached)AttachThreadInput(self,other,FALSE);
+                    if(GetForegroundWindow()!=window){puts("FAIL menu test could not focus its own window");return 13;}
+                }
                 // Messages target only this harness window, never another app.
                 if(menuTest && pass==0 && (frame==60 || frame==90)) PostMessageW(window,WM_KEYDOWN,VK_INSERT,1);
                 if(menuTest && pass==0 && (frame==61 || frame==91)) PostMessageW(window,WM_KEYUP,VK_INSERT,0xC0000001);
