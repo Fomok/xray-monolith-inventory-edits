@@ -49,4 +49,4 @@ Test 4 engine/settings ZIPs as the known rendering baseline. Validation results 
 limitations must accompany the final package; build success alone is not menu proof.
 
 ## Current validation
-Menu open/close and live NR toggle passed in the isolated GPU harness. The strict generated-presentation count failed with both patched and original DLLs under current conditions. This is an experimental companion; see VALIDATION.md for results and unresolved gameplay/FG checks.
+Test 2 retains Insert and adds an independent application-timing clock with an explicit external-FG-excluded label. Matched original/menu-fix/corrected tests pass sustained generation with DXGI counts confirming two presentations per app frame; FG off gives one. The repeated-resize stress threshold still fails for original and patched DLLs during startup/recreation transients. Actual game scan-out and perceived smoothness remain unverified. See VALIDATION.md for exact results and limitations.
