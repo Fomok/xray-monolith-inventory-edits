@@ -121,7 +121,8 @@ RWTexture2D<float> depthOut:register(u0); RWTexture2D<float2> motionOut:register
     {
         // Opaque protection of changed pixels, not recovered translucent UI alpha.
         // Dilation also protects antialiased text edges; underlying scene is retained
-        // from HUD-less color. Embedded/world UI is excluded by the eligibility gate.
+        // from HUD-less color. Native actor HUD widgets/glass are composed after
+        // that capture too; item/camera UI remains excluded by eligibility.
         static const char code[] = R"(
 Texture2D<float4> scene:register(t0); Texture2D<float4> finalColor:register(t1);
 RWTexture2D<float> mask:register(u0);

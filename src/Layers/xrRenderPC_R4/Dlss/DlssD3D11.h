@@ -51,6 +51,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D11DeviceContext1> m_context;
     Microsoft::WRL::ComPtr<ID3DDeviceContextState> m_state;
     Microsoft::WRL::ComPtr<ID3D11Texture2D> m_output;
+    Microsoft::WRL::ComPtr<ID3D11Texture2D> m_exposure;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_outputView;
     NVSDK_NGX_Parameter* m_parameters = nullptr;
     NVSDK_NGX_Handle* m_feature = nullptr;

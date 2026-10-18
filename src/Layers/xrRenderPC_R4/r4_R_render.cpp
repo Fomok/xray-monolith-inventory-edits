@@ -785,7 +785,7 @@ void CRender::render_forward()
 		if (g_hud && !(Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp))
 		{
 			PROF_EVENT("render_hud");
-			if (!GMBase.RGraph.hasNativeHudAttachments && g_hud->RenderActiveItemUIQuery())
+            if (!GMBase.RGraph.hasNativeHudAttachments && !personal_fg::ProtectEmbeddedUi() && g_hud->RenderActiveItemUIQuery())
 				GMBase.r_dsgraph_render_hud_ui();
 			if (g_hud->RenderCamAttachedUIQuery())
 				GMBase.r_dsgraph_render_cam_ui();

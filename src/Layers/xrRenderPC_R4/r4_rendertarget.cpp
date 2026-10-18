@@ -39,8 +39,9 @@ D3D_VIEWPORT custom_viewport[1] = { 0, 0, 0, 0, 0.f, 1.f };
 
 class CBlender_dlss_postprocess : public IBlender
 {
+    bool hudless;
 public:
-    CBlender_dlss_postprocess() { description.CLS = 0; }
+    CBlender_dlss_postprocess(bool cleanScene = false) : hudless(cleanScene) { description.CLS = 0; }
     LPCSTR getComment() override { return "DLSS display-resolution postprocess"; }
     BOOL canBeDetailed() override { return FALSE; }
     BOOL canBeLMAPped() override { return FALSE; }
@@ -50,8 +51,8 @@ public:
         if (C.iElement != 0 && C.iElement != 4) return;
         C.r_Pass("stub_notransform_postpr", C.iElement == 4 ? "postprocess_CM" : "postprocess",
             FALSE, FALSE, FALSE, FALSE);
-        C.r_dx10Texture("s_base0", "$user$dlss_post_source");
-        C.r_dx10Texture("s_base1", "$user$dlss_post_source");
+        C.r_dx10Texture("s_base0", hudless ? "$user$fg_post_source" : "$user$dlss_post_source");
+        C.r_dx10Texture("s_base1", hudless ? "$user$fg_post_source" : "$user$dlss_post_source");
         C.r_dx10Texture("s_noise", "fx\\fx_noise2");
         if (C.iElement == 4)
         {
@@ -1520,6 +1521,7 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 	if (isMain && dlss::Configured())
 	{
 		rt_dlss_post_source.create("$user$dlss_post_source", Device.dwWidth, Device.dwHeight, D3DFMT_A16B16G16R16F);
+        rt_fg_post_source.create("$user$fg_post_source", Device.dwWidth, Device.dwHeight, D3DFMT_A16B16G16R16F);
 		rt_dlss_post_color.create("$user$dlss_post_color", Device.dwWidth, Device.dwHeight, D3DFMT_A16B16G16R16F);
 		rt_dlss_scope_mask.create("$user$dlss_scope_mask", sceneWidth, sceneHeight, D3DFMT_A8R8G8B8);
 		s_dlss_scope_resolve.create("dlss_scope_resolve");
@@ -1533,6 +1535,8 @@ CRenderTarget::CRenderTarget(LPCSTR name, u32 width, u32 height)
 		s_dlss_ui_depth.create(&uiDepth, "dlss_ui_depth");
 		CBlender_dlss_postprocess blender;
 		s_dlss_postprocess.create(&blender, "dlss_postprocess");
+        CBlender_dlss_postprocess cleanScene(true);
+        s_fg_postprocess.create(&cleanScene, "fg_postprocess");
 		CBlender_dlss_copy copy;
 		s_dlss_copy.create(&copy, "dlss_copy");
 	}

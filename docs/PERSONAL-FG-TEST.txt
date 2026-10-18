@@ -1,5 +1,5 @@
-Squared Away Personal DLSS Frame Generation Test 3 — DX11 AVX
-EXPERIMENTAL personal build. First in-game FG validation is still required.
+Squared Away Personal DLSS Frame Generation Test 4 — DX11 AVX
+EXPERIMENTAL personal build. Test 3 generated frames in game; Test 4 integration still needs gameplay validation.
 
 Use a separate test copy/profile. Install the COMPLETE bin/ + db/ package over
 the same Bodycam+DLSS baseline used for bridge test 1. Keep the public grass/motion
@@ -24,7 +24,7 @@ Scheduling are checked by the SDK. This test targets RTX 5080. SDR windowed/bord
    does not prove displayed FPS. r__framelimit remains a rendered-FPS cap.
 
 Generation suspends in menus/loading/pause/unfocused windows, scopes/PiP, night vision,
-thermal and embedded item/camera UI. Those render normally without generated frames.
+thermal and item/camera UI. Actor-attached wearable UI is now protected by a clean-scene capture and UI mask. Those render normally without generated frames.
 Returning to eligible gameplay resets temporal history. The UI mask conservatively
 protects changed pixels; translucent edges and world-space overlays remain a test risk.
 The bridge orders GPU writes after FG input retirement; this version prioritizes
@@ -46,3 +46,40 @@ No public release/website or installed files were changed by Codex.
 Test 2 corrects global fake-scope switches blocking hip-fire FG. Scope/aim transitions still suspend interpolation. [FG TIMING] reports average CPU fence, Reflex and Present waits every 240 presentations to investigate performance; these are not GPU execution times. Existing reports with OptiScaler show its DX11-to-DX12 upscaler and DLSS-NR enabled, but no cause for the FPS loss is yet established. Keep the full log for comparison.
 
 Test 3 uses actual UI-content flags instead of broad render-pass queries that are true for ordinary held weapons/camera models. Real device/script UI and wearable screens still suspend FG. [Personal FG] UI content flags records the exact blocker. The bridge now queues a D3D11 GPU wait after presentation instead of forcing current-frame CPU completion; previous-allocator reuse, resize and error recovery still drain safely. Performance recovery and sustained generated frames require in-game confirmation. Test 2 engine-swap results associate the slowdown with this personal build, not a reboot/GPU issue.
+
+TEST 4: OPTISCALER DLSS-NR + PERSONAL FG
+The supplied Full Pack uses the wilsjo2 DLSS-NR fork, not official OptiScaler.
+Its existing FrameGen.External=true startup mode keeps NR/SR enabled while leaving
+Streamline/Reflex/FG to the game. Keep OptiScaler's own FG disabled. Use
+Upscalers.Dx11Upscaler=dlss_12 and DlssNr.Enabled=true for Neural Rendering.
+Restart after changing External; do not expect a live setting change to unhook FG.
+A separately prepared OptiScaler settings ZIP is supplied for the known Full Pack.
+Back up your installed OptiScaler.ini, then copy that ZIP's bin/OptiScaler.ini into
+Anomaly/bin. It is a bin configuration, NOT an MO2 mod. Restore your backup to undo.
+For your customized INI, tools/prepare-optiscaler-personal.ps1 takes -SourceIni and
+-OutputDirectory, preserves other settings and writes a separate prepared file.
+It refuses to overwrite its source or an existing output. Copy manually after review.
+Do not replace the DLSS-NR fork with official OptiScaler just to match a newer version:
+the official source checked does not provide this fork's Neural Rendering path.
+
+The engine supplies a real unity-exposure texture for SDR, preventing OptiScaler's
+missing-exposure fallback recreation. Timeout diagnostics now distinguish an engine
+retirement timeout from an actual DX12 device-removal reason. Neither change alone
+proves that the reported hot-switch crash is fixed.
+
+Wearable screens/glass retain native rendering and occlusion. FG now captures the
+scene before their native draw, applies identical final postprocess to the clean
+scene and displayed frame, and protects overlay pixels with the conservative mask.
+No Wearable Devices script replacement or MO2 patch is required for this approach.
+Translucent glass edges and moving wrist screens still require visual validation;
+the mask copies affected current-frame pixels instead of interpolating their UI.
+Item/camera UI and scope/vision exclusions remain.
+
+Validation sequence: fresh launch with prepared External=true config; fixed DLSS
+w/DX12 backend; test personal FG off/on, then NR off/on, then Promin/Vektor equipped.
+Require sustained presented=2/status=0, no exposure-recreation warning and no timeout.
+Compare UI readability, hand/glass occlusion, movement edges and frame times. Only
+after stable fixed-backend operation, test backend transitions in a disposable
+session, initially with r_dlss_fg 0. Save complete engine and OptiScaler logs.
+Probe --streamline --ngx uses synthetic DLAA inputs and recreates NGX across resizes;
+it is an interoperability check with FG OFF, not proof of gameplay/NR image quality.

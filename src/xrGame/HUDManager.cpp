@@ -252,7 +252,7 @@ bool CHUDManager::RenderActiveItemUIQuery()
 		for (auto& pair : *g_actor->GetAttachments())
 		{
 			script_attachment* att = pair.second;
-			if (att->GetType() == eSA_HUD && att->HasScriptUI())
+			if (att->GetType() == eSA_HUD && att->HasScriptUIInTree())
 				return true;
 		}
 	}

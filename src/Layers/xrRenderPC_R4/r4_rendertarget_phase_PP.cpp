@@ -214,9 +214,14 @@ void CRenderTarget::phase_dlss_postprocess()
 		RCache.Render(D3DPT_TRIANGLELIST, offset, 0, 4, 0, 2);
 	}
 
+    // Preserve a genuinely UI-free scene BEFORE native wearable widgets/glass.
+    // It receives the identical final PP shader, geometry/noise and color-map
+    // constants below; difference masking therefore sees overlays, not PP drift.
+    if (personal_fg::NeedsHudless())
+        HW.pContext->CopyResource(rt_fg_post_source->pSurface, rt_dlss_post_source->pSurface);
 	// Only defer direct UI draws when wearable surfaces were found in this view.
 	// A normal weapon/device must not trigger an additional native depth pass.
-	const bool renderHudUi = RImplementation.GMBase.RGraph.hasNativeHudAttachments &&
+	const bool renderHudUi = (RImplementation.GMBase.RGraph.hasNativeHudAttachments || personal_fg::ProtectEmbeddedUi()) &&
 		g_hud && g_hud->RenderActiveItemUIQuery();
 	if (renderHudUi || !RImplementation.GMBase.RGraph.mapHUDNativeUi.empty() ||
 		(ps_r2_nightvision > 0 && Device.true_pip_on && Device.m_SecondViewport.IsSVPActive()))
@@ -317,6 +322,16 @@ void CRenderTarget::phase_pp()
 	// Actual rendering
 	static shared_str s_brightness = "c_brightness";
 	static shared_str s_colormap = "c_colormap";
+    if (dlss::Configured() && personal_fg::NeedsHudless())
+    {
+        RCache.set_Element(s_fg_postprocess->E[bCMap ? 4 : 0]);
+        RCache.set_c(s_brightness, p_brightness.x, p_brightness.y, p_brightness.z, 0);
+        RCache.set_c(s_colormap, param_color_map_influence, param_color_map_interpolate, 0, 0);
+        RCache.set_Geometry(g_postprocess);
+        RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
+        personal_fg::CaptureHudless();
+        RCache.set_Element(s_dlss_postprocess->E[bCMap ? 4 : 0]);
+    }
 	RCache.set_c(s_brightness, p_brightness.x, p_brightness.y, p_brightness.z, 0);
 	RCache.set_c(s_colormap, param_color_map_influence, param_color_map_interpolate, 0, 0);
 	RCache.set_Geometry(g_postprocess);

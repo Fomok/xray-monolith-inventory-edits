@@ -47,6 +47,10 @@ int main()
  const float black[]={0,0,0,1},white[]={1,1,1,1};
  context->ClearRenderTargetView(sceneRtv.Get(),black);context->ClearRenderTargetView(finalRtv.Get(),black);
  D3D11_RECT rect{20,20,30,30};context->ClearView(finalRtv.Get(),white,&rect,1);
+ // A translucent wearable-glass pixel already composited over the scene must
+ // also be protected; it is not treated as absent merely because alpha < 1.
+ const float glass[]={.125f,.25f,.375f,1.f};
+ D3D11_RECT glassRect{40,20,50,30};context->ClearView(finalRtv.Get(),glass,&glassRect,1);
  Check(inputs.ProtectUi(device.Get(),context.Get(),finalColor.Get()),"UI mask shader");
  auto read=[&](UINT index,auto validate){
   D3D11_TEXTURE2D_DESC d{};inputs.render[index]->GetDesc(&d);d.BindFlags=d.MiscFlags=0;d.Usage=D3D11_USAGE_STAGING;d.CPUAccessFlags=D3D11_CPU_ACCESS_READ;
@@ -57,7 +61,8 @@ int main()
  };
  read(0,[](const D3D11_MAPPED_SUBRESOURCE& m){return fabsf(*static_cast<const float*>(m.pData)-.5f)<1e-6f;});
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* h=static_cast<const unsigned short*>(m.pData);return h[0]==0x3400 && h[1]==0xb000;});
- read(3,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=static_cast<const unsigned char*>(m.pData);return p[0]==0 && p[25*m.RowPitch+25]==255 && p[19*m.RowPitch+19]==255 && p[18*m.RowPitch+18]==0;});
+ read(2,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=static_cast<const unsigned char*>(m.pData);return p[25*m.RowPitch+25*4]==0 && p[25*m.RowPitch+45*4]==0;});
+ read(3,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=static_cast<const unsigned char*>(m.pData);return p[0]==0 && p[25*m.RowPitch+25]==255 && p[25*m.RowPitch+45]==255 && p[19*m.RowPitch+19]==255 && p[18*m.RowPitch+18]==0;});
  context->ClearState();context->Flush();
  puts("PASS depth=.5, RG16 motion=(.25,-.125), UI interior/edge/dilation/background and context-state restore.");
  return 0;

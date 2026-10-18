@@ -52,7 +52,19 @@ class Dx12PresentationBridge
         const double start = NowMs();
         DWORD wait = WaitForSingleObject(completion, 5000);
         waitMs += NowMs() - start;
-        if (wait != WAIT_OBJECT_0) return wait == WAIT_TIMEOUT ? DXGI_ERROR_DEVICE_HUNG : HRESULT_FROM_WIN32(GetLastError());
+        if (wait != WAIT_OBJECT_0)
+        {
+            const HRESULT removed = device->GetDeviceRemovedReason();
+            if (logger)
+            {
+                char message[320];
+                std::snprintf(message, sizeof(message), "! [DX12 bridge] retirement wait=%lu expected=%llu completed=%llu DX12 removed=0x%08x; timeout is not itself proof of device removal",
+                    wait, serial, fence->GetCompletedValue(), unsigned(removed));
+                logger(message);
+            }
+            if (FAILED(removed)) return removed;
+            return HRESULT_FROM_WIN32(wait == WAIT_TIMEOUT ? ERROR_TIMEOUT : GetLastError());
+        }
         return device->GetDeviceRemovedReason();
     }
 
@@ -60,6 +72,7 @@ public:
     bool GenerationReady() const { return fgReady && !fgFailed; }
     bool ReflexReady() const { return fgReady; }
     bool GenerationActive() const { return fgReady && streamline.IsEnabled(); }
+    bool NeedsHudless() const { return inputs.scene && !inputs.hudless; }
     UINT PresentedFrames() const { return streamline.PresentedFrames(); }
     void DiscardInputs() { inputs.Invalidate(); }
     HRESULT BeginFrame(UINT limitUs)
@@ -108,7 +121,7 @@ public:
     }
     void CaptureHudless()
     {
-        if(inputs.scene) { context->CopyResource(inputs.render[2].Get(),target.Get()); inputs.hudless=true; }
+        if(NeedsHudless()) { context->CopyResource(inputs.render[2].Get(),target.Get()); inputs.hudless=true; }
     }
     void ShutdownBeforeSwapchainRelease()
     {

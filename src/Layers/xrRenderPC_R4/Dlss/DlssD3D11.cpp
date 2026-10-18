@@ -136,6 +136,29 @@ bool D3D11Backend::Create(Quality quality, Size render, Size display, bool hdr, 
         return false;
     }
 
+    // SDR is already exposed by the engine. Supply explicit unity exposure:
+    // OptiScaler's D11/D12 path otherwise recreates the backend to enable auto
+    // exposure when this optional native-D11 input is absent.
+    if (!hdr)
+    {
+        D3D11_TEXTURE2D_DESC exposure = {};
+        exposure.Width = exposure.Height = exposure.MipLevels = exposure.ArraySize = 1;
+        exposure.SampleDesc.Count = 1;
+        exposure.Format = DXGI_FORMAT_R32_FLOAT;
+        exposure.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        const float unity = 1.f;
+        D3D11_SUBRESOURCE_DATA initial = {};
+        initial.pSysMem = &unity;
+        initial.SysMemPitch = sizeof(unity);
+        hr = m_device->CreateTexture2D(&exposure, &initial, &m_exposure);
+        if (FAILED(hr))
+        {
+            if (m_log) m_log("DLSS exposure allocation", hr);
+            ReleaseFeature();
+            return false;
+        }
+    }
+
     // Parameters survive vid_restart; always overwrite every quality hint so
     // choosing Default cannot inherit the previous feature's explicit preset.
     for (const auto* hint : {NVSDK_NGX_Parameter_DLSS_Hint_Render_Preset_DLAA,
@@ -220,6 +243,7 @@ bool D3D11Backend::Evaluate(const Frame& frame)
     eval.InReset = m_history.Begin(frame.frame, frame.cameraCut);
     eval.InFrameTimeDeltaInMsec = frame.deltaMilliseconds;
     eval.InPreExposure = eval.InExposureScale = 1.0f;
+    eval.pInExposureTexture = m_exposure.Get();
 
     ComPtr<ID3DDeviceContextState> previous;
     m_context->SwapDeviceContextState(m_state.Get(), &previous);
@@ -245,6 +269,7 @@ void D3D11Backend::ReleaseFeature()
     m_feature = nullptr;
     m_outputView.Reset();
     m_output.Reset();
+    m_exposure.Reset();
     m_render = m_display = {};
     m_history.Invalidate();
     m_failed = false;

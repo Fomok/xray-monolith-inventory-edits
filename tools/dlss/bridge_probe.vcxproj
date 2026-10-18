@@ -22,9 +22,9 @@
       <WarningLevel>Level4</WarningLevel><ExceptionHandling>Sync</ExceptionHandling>
       <Optimization>MaxSpeed</Optimization>
     </ClCompile>
-    <Link><SubSystem>Console</SubSystem></Link>
+    <Link><SubSystem>Console</SubSystem><AdditionalDependencies>$(MSBuildThisFileDirectory)..\..\sdk\DLSS\lib\nvsdk_ngx_d.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
   </ItemDefinitionGroup>
-  <ItemGroup><ClCompile Include="bridge_probe.cpp" /><ClCompile Include="..\..\src\Layers\xrRenderDX10\StreamlineIntegration.cpp" /></ItemGroup>
+  <ItemGroup><ClCompile Include="bridge_probe.cpp" /><ClCompile Include="..\..\src\Layers\xrRenderDX10\StreamlineIntegration.cpp" /><ClCompile Include="..\..\src\Layers\xrRenderPC_R4\Dlss\DlssD3D11.cpp" /></ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
 
