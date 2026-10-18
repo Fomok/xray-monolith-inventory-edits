@@ -1,6 +1,6 @@
 diff --git a/OptiScaler/include/SqaFgTelemetry.h b/OptiScaler/include/SqaFgTelemetry.h
 new file mode 100644
-index 0000000..67b4e4e
+index 0000000000000000000000000000000000000000..67b4e4ed0a968ed0e66df0b0e93f5ed2071cb4c8
 --- /dev/null
 +++ b/OptiScaler/include/SqaFgTelemetry.h
 @@ -0,0 +1,89 @@
@@ -94,17 +94,18 @@ index 0000000..67b4e4e
 +};
 +} // namespace sqa_fps
 diff --git a/OptiScaler/menu/menu_common.cpp b/OptiScaler/menu/menu_common.cpp
-index 840703b..ced2389 100644
+index 5f958ae124dfafc644e0d30efb6a5f38c55388ff..c4b3a0db43a1be47353efef55074fa475ccda056 100644
 --- a/OptiScaler/menu/menu_common.cpp
 +++ b/OptiScaler/menu/menu_common.cpp
-@@ -1,5 +1,6 @@
- ﻿#include "pch.h"
+@@ -1,6 +1,7 @@
+ #include "pch.h"
+ #include <dlssnr/DlssNr_MenuOverlay.h>
  #include "menu_common.h"
 +#include "../include/SqaFgTelemetry.h"
+ #if defined(OPTISCALER_RTX40_MFG)
  #include <framegen/dlssg/MfgUnlock.h>
- #include <framegen/dlssg/AmpereMfgLoader.h>
- #include <dlssnr/DlssNr_ExposureScan.h>
-@@ -1179,6 +1180,17 @@ static void ApplyThemeStyle()
+ #endif
+@@ -1368,6 +1369,17 @@ void MenuCommon::ApplyThemeStyle()
  
  static double lastTime = 0.0;
  static double lastFrameTime = 0.0;
@@ -122,7 +123,7 @@ index 840703b..ced2389 100644
  static UINT64 uwpTargetFrame = 0;
  
  void MenuCommon::Present()
-@@ -1258,11 +1270,27 @@ void MenuCommon::UpdateRenderTiming(RenderMenuContext& ctx)
+@@ -1447,11 +1459,27 @@ void MenuCommon::UpdateRenderTiming(RenderMenuContext& ctx)
      }
      else
      {
@@ -150,7 +151,7 @@ index 840703b..ced2389 100644
      }
  
      state.frameTimes.pop_front();
-@@ -1939,6 +1967,9 @@ void MenuCommon::RenderPerformanceOverlay(RenderMenuContext& ctx)
+@@ -2063,6 +2091,9 @@ void MenuCommon::RenderPerformanceOverlay(RenderMenuContext& ctx)
                  }
              }
  
@@ -160,7 +161,7 @@ index 840703b..ced2389 100644
              if (overlayType == FpsOverlay_JustFPS)
                  firstLine = StrFmt("%s", fpsPart.c_str());
              else
-@@ -7185,6 +7216,12 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
+@@ -7376,6 +7407,12 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
      auto& frameTime = ctx.frameTime;
      auto& frameRate = ctx.frameRate;
  
@@ -173,7 +174,7 @@ index 840703b..ced2389 100644
      ImGui::Spacing();
      ImGui::Separator();
      ImGui::Spacing();
-@@ -7192,7 +7229,9 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
+@@ -7383,7 +7420,9 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
      if (ImGui::BeginTable("plots", 2, ImGuiTableFlags_SizingStretchSame))
      {
          ImGui::TableNextColumn();
@@ -185,7 +186,7 @@ index 840703b..ced2389 100644
          ImGui::PlotLines(
              ft.c_str(), [](void* rb, int idx) -> float
 diff --git a/OptiScaler/menu/menu_dx12.cpp b/OptiScaler/menu/menu_dx12.cpp
-index 8cac3c4..1601f50 100644
+index 8cac3c48f3372d77f96e31e62b399ff1c6a1e167..1601f5090fafc8401fa7fc937d910b0a73adf473 100644
 --- a/OptiScaler/menu/menu_dx12.cpp
 +++ b/OptiScaler/menu/menu_dx12.cpp
 @@ -42,6 +42,11 @@ static DescriptorHeapAllocator g_pd3dSrvDescHeapAlloc;
@@ -217,48 +218,12 @@ index 8cac3c4..1601f50 100644
      return true;
  }
 diff --git a/OptiScaler/upscalers/IFeature_Dx12.cpp b/OptiScaler/upscalers/IFeature_Dx12.cpp
-index 448a2c7..1395313 100644
+index 711fb317c8c0ca3fca7991a211120169cffb84dd..aee4031ba61c18c7c3c807d72695a02929eb6c75 100644
 --- a/OptiScaler/upscalers/IFeature_Dx12.cpp
 +++ b/OptiScaler/upscalers/IFeature_Dx12.cpp
-@@ -91,9 +91,23 @@ bool IFeature_Dx12::Evaluate(ID3D12GraphicsCommandList* InCommandList, NVSDK_NGX
-     ID3D12Resource* paramMotion = nullptr;
-     ID3D12Resource* paramDepth = nullptr;
- 
--    InParameters->Get(NVSDK_NGX_Parameter_Output, &paramOutput);
--    InParameters->Get(NVSDK_NGX_Parameter_MotionVectors, &paramMotion);
--    InParameters->Get(NVSDK_NGX_Parameter_Depth, &paramDepth);
-+    // A D3D11 NGX parameter table carried through Dx11wDx12 can expose the
-+    // bridge's D3D12 pointers only through Get(void**). A successful typed Get
-+    // may still return null. Keep native D3D12 tables working and fall back to
-+    // the same untyped representation the bridge writes before dispatch.
-+    auto getResource = [&](const char* name, ID3D12Resource*& resource)
-+    {
-+        InParameters->Get(name, &resource);
-+        if (resource == nullptr)
-+        {
-+            void* pointer = nullptr;
-+            if (InParameters->Get(name, &pointer) == NVSDK_NGX_Result_Success)
-+                resource = static_cast<ID3D12Resource*>(pointer);
-+        }
-+    };
-+    getResource(NVSDK_NGX_Parameter_Output, paramOutput);
-+    getResource(NVSDK_NGX_Parameter_MotionVectors, paramMotion);
-+    getResource(NVSDK_NGX_Parameter_Depth, paramDepth);
- 
-     // Order is important as that's the order of shader dispatch
-     std::vector<ShaderPass> pipeline;
-@@ -248,6 +262,8 @@ bool IFeature_Dx12::Evaluate(ID3D12GraphicsCommandList* InCommandList, NVSDK_NGX
-     UpscalerTime->Start(InCommandList);
- 
-     auto evalResult = EvaluateInternal(InCommandList, InParameters);
-+    if (_frameCount == 1 || _frameCount == 31)
-+        LOG_INFO("[SQA menu diagnostic] evaluated frame {} result {} passes {}", _frameCount, evalResult, pipeline.size());
- 
-     UpscalerTime->End(InCommandList);
- 
-@@ -266,6 +282,11 @@ bool IFeature_Dx12::Evaluate(ID3D12GraphicsCommandList* InCommandList, NVSDK_NGX
-         }
-     }
+@@ -312,6 +312,11 @@ bool IFeature_Dx12::Evaluate(ID3D12GraphicsCommandList* InCommandList, NVSDK_NGX
+     if (!DispatchShaderPipeline(pipeline))
+         return true;
  
 +    if (_frameCount == 31 || _frameCount == 60)
 +        LOG_INFO("[SQA menu diagnostic] frame {} overlay {} output {:X} menu {:X}",
