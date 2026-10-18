@@ -1,6 +1,16 @@
-# Personal Bodycam + DLSS frame generation investigation
+# Personal Bodycam + DLSS frame generation
 
-Checked 2026-10-18. Frame generation is NOT implemented. The initial architectural blocker led to the opt-in presentation prototype described below. Earlier investigation evidence is retained for context.
+Checked 2026-10-18. Real DLSS 2x frame generation is implemented on the personal branch. The full build and package verification passed; generated frames and gameplay quality remain unconfirmed. The earlier investigation and bridge-only prototype below are historical context, not the current implementation status.
+
+## Personal FG implementation
+
+`SQA_DLSS_FG=1` loads the optional Streamline 2.14.16 runtime and DX12 proxy swapchain. `r_dlss_fg 1` requests generation only when inputs are eligible; the console setting defaults off. The native DX11 renderer and DLSS/FSR upscaler remain intact. `SQA_DX12_BRIDGE=1` alone still enables only ordinary bridge presentation.
+
+The integration supplies shared depth, motion, HUD-less color and a conservative UI protection mask, with Reflex tokens/markers and synchronized input retirement. The UI mask is a dilated binary difference, not reconstructed translucent alpha. Scope/PiP, vision effects, embedded UI, menus/loading/pause and unfocused windows suspend interpolation. SDR windowed/borderless only; start testing with VSync off. The first implementation serializes input reuse and may cost performance.
+
+Sources: `src/Layers/xrRenderDX10/{dx12PresentationBridge.h,PersonalFgInputs.h,StreamlineIntegration.cpp}` and `src/Layers/xrRenderPC_R4/Dlss/PersonalFrameGeneration.cpp`, plus engine simulation hooks. Runtime integration adapts Brodrigz tag 1.0.2 with OGSR/xrSimpAI credits. See [provenance](PERSONAL-FG-PROVENANCE.md) and [installation/test/rollback instructions](PERSONAL-FG-TEST.txt).
+
+Local checks passed: SDK capability/Reflex/proxy presentation with generation OFF (180 calls, two resizes); real GPU readback of converted depth/motion and UI protection including context-state restoration on RTX 5080. These do not establish actual interpolation. In-game proof needs enabled diagnostics with actual presented count 2 and successful status, plus visual, latency and frame-time checks.
 
 ## DX12 presentation prototype 1
 
@@ -75,3 +85,6 @@ Local hardware probe exited 0: 60 synchronized copy/present calls each at 320x24
 No in-game test was run. Bodycam/PiP, HUD, PDA, screenshots, upscaler image quality, window-mode transitions and frame-time impact still need Fomok's A/B testing. Frame generation remains unimplemented. Installed files were not read or modified.
 
 Upstream comparison during build: Brodrigz release 0.6/tag 1.0.2 includes an experimental bridge and FG integrations. D3D12PresentBridge.cpp and tools/dlss/DX12_BRIDGE.txt were inspected as references after this prototype was written; no code merged. Its shared-resource mechanism is similar and should be evaluated for the next FG stage, with a separate Bodycam/PiP audit.
+
+## Verified personal FG package
+Built source a8ed90397aa0509ed58284d8422274e31c046a37; GitHub Actions run 39101862415 success; artifact 12127236624. ZIP SHA256 44BD25EAE0C9B539AD725CBA28FE1455249014D3C5077DB570EAC220DB7F5B34. All 25 manifest entries and six NVIDIA runtime signatures verified locally. Full DX11 AVX build and existing checks passed. Output: C:/GAMMA/sqa-previews/personal-frame-generation/Squared Away Personal DLSS FG Test 1 DX11 AVX.zip. Local evidence: validation.json, package-verification.json, runtime-probe.log, fg-inputs-test.log in the same directory. No actual generated-frame/gameplay result yet. This documentation update does not change the built engine source.
