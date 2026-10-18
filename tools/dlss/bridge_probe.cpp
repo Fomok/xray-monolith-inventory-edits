@@ -110,7 +110,9 @@ int main(int argc, char** argv)
                 if(menuTest && pass==0 && (frame==101 || frame==111)) PostMessageW(window,WM_KEYUP,VK_F8,0xC0000001);
                 MSG message{};
                 while(PeekMessageW(&message,nullptr,0,0,PM_REMOVE)){TranslateMessage(&message);DispatchMessageW(&message);}
-                check(bridge.BeginFrame(0), "Reflex begin"); bridge.EndSimulation();
+                // Keep the interaction workload below display refresh so
+                // presentation metering does not dominate its FG count check.
+                check(bridge.BeginFrame(menuTest ? 16667 : 0), "Reflex begin"); bridge.EndSimulation();
                 const float color[4] = { frame/120.f, pass/8.f, 0.25f, 1.f };
                 if(ngx)
                 {
