@@ -41,6 +41,19 @@ jobs:
           Copy-Item tools/optiscaler/menu-compat.patch stage/source/
           Get-ChildItem optiscaler-source -File -Filter '*LICENSE*' | Copy-Item -Destination stage/source/
           @{engineRepositoryCommit=$env:GITHUB_SHA; optiscalerBase='5019c979656225ec87e3331658f8a1f3ea478244'; dllSha256=(Get-FileHash stage/bin/dxgi.dll).Hash} | ConvertTo-Json | Set-Content stage/build-manifest.json
+      - name: Archive corresponding source including pinned submodules
+        working-directory: optiscaler-source
+        run: |
+          git ls-files --recurse-submodules | Set-Content ../source-files.txt -Encoding utf8
+          7z a -tzip ../optiscaler-corresponding-source.zip '@../source-files.txt' -mx=5
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: personal-optiscaler-corresponding-source
+          path: optiscaler-corresponding-source.zip
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: personal-optiscaler-menu-companion

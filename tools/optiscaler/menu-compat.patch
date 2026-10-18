@@ -1,5 +1,5 @@
 diff --git a/OptiScaler/menu/menu_dx12.cpp b/OptiScaler/menu/menu_dx12.cpp
-index 8cac3c4..53330e5 100644
+index 8cac3c4..1601f50 100644
 --- a/OptiScaler/menu/menu_dx12.cpp
 +++ b/OptiScaler/menu/menu_dx12.cpp
 @@ -42,6 +42,11 @@ static DescriptorHeapAllocator g_pd3dSrvDescHeapAlloc;
@@ -14,6 +14,22 @@ index 8cac3c4..53330e5 100644
      if (Config::Instance()->OverlayMenu.value_or_default())
          return false;
  
+@@ -193,6 +198,15 @@ bool Menu_Dx12::Render(ID3D12GraphicsCommandList* pCmdList, ID3D12Resource* outT
+         outBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
+         pCmdList->ResourceBarrier(2, barriers);
+     }
++    else
++    {
++        // No menu/splash draw still leaves the source transitioned for the
++        // temporary copy above. Restore it before the caller copies it back
++        // to D3D11 or starts the next upscaler dispatch.
++        outBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_SOURCE;
++        outBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_UNORDERED_ACCESS;
++        pCmdList->ResourceBarrier(1, &outBarrier);
++    }
+ 
+     return true;
+ }
 diff --git a/OptiScaler/upscalers/IFeature_Dx12.cpp b/OptiScaler/upscalers/IFeature_Dx12.cpp
 index 448a2c7..1395313 100644
 --- a/OptiScaler/upscalers/IFeature_Dx12.cpp
