@@ -1,0 +1,49 @@
+name: Personal OptiScaler menu compatibility
+on:
+  push:
+    branches: [personal-bodycam-dlss-frame-generation]
+    paths: ['tools/optiscaler/**', '.github/workflows/personal-optiscaler.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  companion:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: wilsjo2/OptiScaler-DLSSNR-PreSR-Multipass
+          ref: 5019c979656225ec87e3331658f8a1f3ea478244
+          submodules: recursive
+          path: optiscaler-source
+      - uses: microsoft/setup-msbuild@v2
+      - name: Apply scoped companion patch
+        working-directory: optiscaler-source
+        run: |
+          git apply --check ../tools/optiscaler/menu-compat.patch
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git apply ../tools/optiscaler/menu-compat.patch
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build companion
+        working-directory: optiscaler-source
+        run: |
+          msbuild OptiScaler.sln /m /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Stage companion and source provenance
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force stage/bin,stage/source | Out-Null
+          Copy-Item optiscaler-source/x64/Release/a/OptiScaler.dll stage/bin/dxgi.dll
+          Copy-Item tools/optiscaler/menu-compat.patch stage/source/
+          Get-ChildItem optiscaler-source -File -Filter '*LICENSE*' | Copy-Item -Destination stage/source/
+          @{engineRepositoryCommit=$env:GITHUB_SHA; optiscalerBase='5019c979656225ec87e3331658f8a1f3ea478244'; dllSha256=(Get-FileHash stage/bin/dxgi.dll).Hash} | ConvertTo-Json | Set-Content stage/build-manifest.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: personal-optiscaler-menu-companion
+          path: stage/
+          if-no-files-found: error
+          retention-days: 7

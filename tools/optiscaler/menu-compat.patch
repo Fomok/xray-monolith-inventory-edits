@@ -1,0 +1,41 @@
+diff --git a/OptiScaler/menu/menu_dx12.cpp b/OptiScaler/menu/menu_dx12.cpp
+index 8cac3c4..53330e5 100644
+--- a/OptiScaler/menu/menu_dx12.cpp
++++ b/OptiScaler/menu/menu_dx12.cpp
+@@ -42,6 +42,11 @@ static DescriptorHeapAllocator g_pd3dSrvDescHeapAlloc;
+ 
+ bool Menu_Dx12::Render(ID3D12GraphicsCommandList* pCmdList, ID3D12Resource* outTexture)
+ {
++    static int diagnosticCalls = 0;
++    if (++diagnosticCalls <= 2)
++        LOG_INFO("[SQA menu diagnostic] Render overlay {} list {:X} output {:X} initialized {} backend {:X}",
++                 Config::Instance()->OverlayMenu.value_or_default(), (size_t)pCmdList,
++                 (size_t)outTexture, _dx12Init, (size_t)ImGui::GetIO().BackendRendererUserData);
+     if (Config::Instance()->OverlayMenu.value_or_default())
+         return false;
+ 
+diff --git a/OptiScaler/upscalers/IFeature_Dx12.cpp b/OptiScaler/upscalers/IFeature_Dx12.cpp
+index 448a2c7..e842826 100644
+--- a/OptiScaler/upscalers/IFeature_Dx12.cpp
++++ b/OptiScaler/upscalers/IFeature_Dx12.cpp
+@@ -248,6 +248,8 @@ bool IFeature_Dx12::Evaluate(ID3D12GraphicsCommandList* InCommandList, NVSDK_NGX
+     UpscalerTime->Start(InCommandList);
+ 
+     auto evalResult = EvaluateInternal(InCommandList, InParameters);
++    if (_frameCount == 1 || _frameCount == 31)
++        LOG_INFO("[SQA menu diagnostic] evaluated frame {} result {} passes {}", _frameCount, evalResult, pipeline.size());
+ 
+     UpscalerTime->End(InCommandList);
+ 
+@@ -266,6 +268,11 @@ bool IFeature_Dx12::Evaluate(ID3D12GraphicsCommandList* InCommandList, NVSDK_NGX
+         }
+     }
+ 
++    if (_frameCount == 31 || _frameCount == 60)
++        LOG_INFO("[SQA menu diagnostic] frame {} overlay {} output {:X} menu {:X}",
++                 _frameCount, Config::Instance()->OverlayMenu.value_or_default(),
++                 (size_t)paramOutput, (size_t)Imgui.get());
++
+     // imgui
+     if (!Config::Instance()->OverlayMenu.value_or_default() && _frameCount > 30)
+     {
