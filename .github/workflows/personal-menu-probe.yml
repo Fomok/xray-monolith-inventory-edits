@@ -2,7 +2,7 @@ name: Personal settings interaction probe
 on:
   push:
     branches: [personal-bodycam-dlss-frame-generation]
-    paths: ['tools/dlss/bridge_probe.cpp', '.github/workflows/personal-menu-probe.yml']
+    paths: ['tools/dlss/bridge_probe.cpp', 'tools/dlss/fg_inputs_test.cpp', 'src/Layers/xrRenderDX10/PersonalFgInputs.h', '.github/workflows/personal-menu-probe.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,6 +17,8 @@ jobs:
         run: |
           msbuild tools/dlss/bridge_probe.vcxproj /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          msbuild tools/dlss/fg_inputs_test.vcxproj /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Test telemetry protocol and rates
         shell: pwsh
         run: |
@@ -25,6 +27,8 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: personal-menu-interaction-probe
-          path: _build/dlss_tests/bridge_probe.exe
+          path: |
+            _build/dlss_tests/bridge_probe.exe
+            _build/dlss_tests/fg_inputs_test.exe
           if-no-files-found: error
           retention-days: 7

@@ -57,7 +57,10 @@ int main()
   ComPtr<ID3D11Texture2D> staging;Check(device->CreateTexture2D(&d,nullptr,&staging),"staging");
   context->CopyResource(staging.Get(),inputs.render[index].Get());
   D3D11_MAPPED_SUBRESOURCE mapped{};Check(context->Map(staging.Get(),0,D3D11_MAP_READ,0,&mapped),"readback");
-  bool ok=validate(mapped);context->Unmap(staging.Get(),0);if(!ok){printf("FAIL input %u readback\n",index);ExitProcess(1);}
+  bool ok=validate(mapped);
+  if(!ok && index==1) {auto* p=(const unsigned short*)((const char*)mapped.pData+32*mapped.RowPitch);
+      printf("motion center raw half: %04x %04x\n",p[64],p[65]);}
+  context->Unmap(staging.Get(),0);if(!ok){printf("FAIL input %u readback\n",index);ExitProcess(1);}
  };
  read(0,[](const D3D11_MAPPED_SUBRESOURCE& m){return fabsf(*static_cast<const float*>(m.pData)-.5f)<1e-6f;});
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* h=static_cast<const unsigned short*>(m.pData);return h[0]==0x3400 && h[1]==0xb000;});
@@ -74,11 +77,13 @@ int main()
  PersonalFgScope scope;scope.mapping=map.Get();scope.depth=depth.Get();scope.motion=scopeMotion.Get();
  scope.reprojection[0]=scope.reprojection[5]=scope.reprojection[10]=scope.reprojection[15]=1;
  scope.planes[0]=scope.planes[2]=.1f;scope.planes[1]=scope.planes[3]=100.f;
+ puts("Scope first frame");
  Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"scope first frame");
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0 && p[65]==0;});
  for(UINT i=0;i<64*64;++i)mapping[i*4]+=.0625f;
  context->UpdateSubresource(map.Get(),0,nullptr,mapping.data(),64*4*sizeof(float),0);
  scope.reset=false;
+ puts("Scope moved lens");
  Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"scope moved lens");
  // prev capture = current capture - scopeMV. Old screen = current+.03125.
  // RG16 output must therefore be (-.03125,0), while outside lens stays main.

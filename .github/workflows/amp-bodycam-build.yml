@@ -8,6 +8,7 @@ on:
       - '.github/workflows/personal-optiscaler.yml'
       - '.github/workflows/personal-menu-probe.yml'
       - 'tools/dlss/bridge_probe.cpp'
+      - 'tools/dlss/fg_inputs_test.cpp'
   workflow_dispatch:
 
 permissions:
