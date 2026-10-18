@@ -12,9 +12,38 @@
 
 int main(int argc, char** argv)
 {
-    bool fg=false, ngx=false, generate=false, menuTest=false, abTest=false;
+    for(int i=1;i<argc;++i) if(strcmp(argv[i],"--telemetry-self-test")==0) {
+        using namespace sqa_fps;
+        Reader missing; if(missing.Read().state!=State::Unavailable)return 21;
+        Publisher writer; Reader reader;
+        const int64_t f=Frequency(), start=Clock();
+        writer.Publish(1,true,false,start);
+        if(reader.Read(start).state!=State::Warming)return 22;
+        for(int n=1;n<=60;++n)writer.Publish(1,true,false,start+f*n/120);
+        auto r=reader.Read(start+f/2);
+        if(r.state!=State::Live || fabs(r.app-120)>0.01 || fabs(r.presented-120)>0.01 || r.enabled)return 23;
+        writer.Publish(2,true,true,start+f);
+        if(reader.Read(start+f).state!=State::Warming)return 24;
+        for(int n=1;n<=60;++n)writer.Publish(n%2?1:3,true,true,start+f+f*n/120);
+        r=reader.Read(start+f+f/2);
+        if(r.state!=State::Live || fabs(r.app-120)>0.01 || fabs(r.presented-240)>0.01 || !r.enabled)return 25;
+        // Enabled with zero reported output must remain zero, never guessed 2x.
+        for(int n=1;n<=60;++n)writer.Publish(0,true,true,start+f+f/2+f*n/120);
+        r=reader.Read(start+2*f);
+        if(r.state!=State::Live || fabs(r.presented)>0.01)return 26;
+        if(reader.Read(start+4*f).state!=State::Stale)return 27;
+        writer.Publish(1,true,false,start+4*f);
+        if(reader.Read(start+4*f).state!=State::Warming)return 28;
+        writer.Publish(0,false,false,start+4*f+1);
+        if(reader.Read(start+4*f+1).state!=State::Unavailable)return 29;
+        writer.Stop();
+        puts("PASS telemetry missing, 1x, variable counts, 2x, zero output, mode reset, stale, recovery and invalidation");
+        return 0;
+    }
+    bool fg=false, ngx=false, generate=false, menuTest=false, abTest=false, toggleTest=false;
     for(int i=1;i<argc;++i) { fg |= strcmp(argv[i],"--streamline")==0; ngx |= strcmp(argv[i],"--ngx")==0; generate |= strcmp(argv[i],"--generate")==0; menuTest |= strcmp(argv[i],"--menu-test")==0; }
     for(int i=1;i<argc;++i) abTest |= strcmp(argv[i],"--ab-test")==0;
+    for(int i=1;i<argc;++i) toggleTest |= strcmp(argv[i],"--toggle-test")==0;
     if(menuTest && !generate) { puts("--menu-test requires --generate"); return 10; }
     if(generate && (!fg || !ngx)) { puts("--generate requires --streamline --ngx"); return 7; }
     unsigned generatedPresents=0;
@@ -24,7 +53,8 @@ int main(int argc, char** argv)
     unsigned counts[9]={};
     FILE* cadence=nullptr;
     if(abTest) { fopen_s(&cadence,"presentation-cadence.csv","w"); if(!cadence)return 14;
-        fprintf(cadence,"Pass,Frame,Qpc,Frequency,SDKFrames,FGActive,Foreground,StatsHRESULT,PresentCount,PresentRefreshCount,SyncRefreshCount,LastPresentHRESULT,LastPresentCount\n"); }
+        fprintf(cadence,"Pass,Frame,Qpc,Frequency,SDKFrames,FGActive,Foreground,StatsHRESULT,PresentCount,PresentRefreshCount,SyncRefreshCount,LastPresentHRESULT,LastPresentCount,FpsState,RenderedFPS,PresentedFPS\n"); }
+    sqa_fps::Reader fpsReader;
     LARGE_INTEGER frequency{}; QueryPerformanceFrequency(&frequency);
     using Microsoft::WRL::ComPtr;
     auto check = [](HRESULT hr, const char* step) {
@@ -154,7 +184,7 @@ int main(int argc, char** argv)
                     }
                 }
                 c11->ClearRenderTargetView(rtv.Get(),color);
-                if(generate)
+                if(generate && (!toggleTest || frame<500 || frame>=900))
                 {
                     sl::Constants c{};
                     sl::float4x4 identity{};
@@ -178,7 +208,8 @@ int main(int argc, char** argv)
                     LARGE_INTEGER now{}; QueryPerformanceCounter(&now);
                     DXGI_FRAME_STATISTICS stats{}; const HRESULT sh=swapchain->GetFrameStatistics(&stats);
                     UINT last=0; const HRESULT lh=swapchain->GetLastPresentCount(&last);
-                    fprintf(cadence,"%u,%u,%lld,%lld,%u,%u,%u,0x%08lx,%u,%u,%u,0x%08lx,%u\n",pass,frame,now.QuadPart,frequency.QuadPart,reported,unsigned(bridge.GenerationActive()),unsigned(GetForegroundWindow()==window),sh,stats.PresentCount,stats.PresentRefreshCount,stats.SyncRefreshCount,lh,last);
+                    const auto rates=fpsReader.Read();
+                    fprintf(cadence,"%u,%u,%lld,%lld,%u,%u,%u,0x%08lx,%u,%u,%u,0x%08lx,%u,%u,%.3f,%.3f\n",pass,frame,now.QuadPart,frequency.QuadPart,reported,unsigned(bridge.GenerationActive()),unsigned(GetForegroundWindow()==window),sh,stats.PresentCount,stats.PresentRefreshCount,stats.SyncRefreshCount,lh,last,unsigned(rates.state),rates.app,rates.presented);
                 }
                 if(generate && bridge.GenerationActive() && bridge.PresentedFrames()>=2) ++generatedPresents;
             }
@@ -209,7 +240,7 @@ int main(int argc, char** argv)
     printf("SDK total frames=%llu; counts 0..7,8+: ",reportedFrames);for(unsigned n:counts)printf("%u ",n);puts("");
     FILE* report=nullptr;fopen_s(&report,"bridge-probe-result.txt","w");
     if(report){fprintf(report,"Completed=%u Resizes=%u Readbacks=%u NGX=%u GenerateRequested=%u GeneratedPresents=%u SDKTotalFrames=%llu\n",passCount*framesPerPass,passCount-1,passCount,unsigned(ngx),unsigned(generate),generatedPresents,reportedFrames);fclose(report);}
-    if(generate && generatedPresents<(abTest?1620u:900u)){puts("FAIL generated-presentation count below target");return 9;}
+    if(generate && generatedPresents<(toggleTest?1200u:abTest?1620u:900u)){puts("FAIL generated-presentation count below target");return 9;}
     puts("PASS bridge initialization, presentations, shared-target readbacks and cleanup. Not a gameplay or displayed-image test.");
     return 0;
 }

@@ -17,6 +17,11 @@ jobs:
         run: |
           msbuild tools/dlss/bridge_probe.vcxproj /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Test telemetry protocol and rates
+        shell: pwsh
+        run: |
+          & _build/dlss_tests/bridge_probe.exe --telemetry-self-test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
           name: personal-menu-interaction-probe

@@ -259,7 +259,7 @@ bool StreamlineIntegration::AfterPresent(ID3D12Fence** inputFence, UINT64& input
     m_presentedFrames = 0;
     // Do not keep querying a failed FG plugin after successful recovery. Reflex
     // and ordinary proxy presentation remain active; FG statistics are unavailable.
-    if (m_failed && !m_enabled) return true;
+    if (m_failed && !m_enabled) { m_fpsTelemetry.Publish(0,false,false); return true; }
     sl::DLSSGState state{};
     // A warning is not a failed Present. Still require usable output: alternative
     // runtimes may return a warning without filling the state/fence fields.
@@ -267,6 +267,12 @@ bool StreamlineIntegration::AfterPresent(ID3D12Fence** inputFence, UINT64& input
     state.numFramesActuallyPresented = ~0u;
     state.lastPresentInputsProcessingCompletionFenceValue = ~UINT64(0);
     const auto result = m_slDLSSGGetState(m_viewport, state, nullptr);
+    // Reuse the one normal GetState result. Telemetry never queries the SDK again
+    // and never participates in queue ordering, input lifetime or recovery.
+    m_fpsTelemetry.Publish(state.numFramesActuallyPresented,
+        (result==sl::Result::eOk || result==sl::Result::eWarnOutOfVRAM) &&
+        state.status==sl::DLSSGStatus::eOk && state.numFramesActuallyPresented!=~0u,
+        m_enabled);
     // Observe the normal query only: no extra SDK calls, waits, or recovery changes.
     if (m_diagnosticPresents)
     {
@@ -354,6 +360,7 @@ bool StreamlineIntegration::DisableAfterFailure()
 
 void StreamlineIntegration::Shutdown()
 {
+    m_fpsTelemetry.Stop();
     if (m_initialized)
     {
         if (m_deviceReady) { SetEnabled(false); ClearTags(); }

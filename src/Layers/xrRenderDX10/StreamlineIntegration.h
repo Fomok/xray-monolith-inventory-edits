@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <dxgi.h>
 #include <string>
+#include "PersonalFgTelemetry.h"
 #include "../../../sdk/Streamline/include/sl.h"
 #include "../../../sdk/Streamline/include/sl_dlss_g.h"
 #include "../../../sdk/Streamline/include/sl_reflex.h"
@@ -49,6 +50,7 @@ public:
     const char* FailureStage() const { return m_failureStage; }
 
 private:
+    sqa_fps::Publisher m_fpsTelemetry;
     bool Check(sl::Result result, const char* stage);
     void Log(const char* message) const;
     HMODULE m_module{};
