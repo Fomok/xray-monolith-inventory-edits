@@ -18,6 +18,8 @@ int main(int argc, char** argv)
     if(menuTest && !generate) { puts("--menu-test requires --generate"); return 10; }
     if(generate && (!fg || !ngx)) { puts("--generate requires --streamline --ngx"); return 7; }
     unsigned generatedPresents=0;
+    const unsigned passCount=abTest?1:8;
+    const unsigned framesPerPass=abTest?1800:120;
     unsigned long long reportedFrames=0;
     unsigned counts[9]={};
     FILE* cadence=nullptr;
@@ -64,7 +66,7 @@ int main(int argc, char** argv)
             [](const char* message){puts(message);}), "initialize");
         dlss::D3D11Backend upscaler;
         if(ngx && !upscaler.Initialize(raw.Get(),L".",[](const char* message,unsigned result){printf("NGX %s 0x%08x\n",message,result);})) return 4;
-        for (unsigned pass=0; pass<8; ++pass)
+        for (unsigned pass=0; pass<passCount; ++pass)
         {
             if (pass) {
                 check(bridge.Suspend(), "drain before resize");
@@ -96,7 +98,7 @@ int main(int argc, char** argv)
                 const float depthColor[]={.5f,0,0,0},zero[]={0,0,0,0};
                 c11->ClearRenderTargetView(depthRtv.Get(),depthColor);c11->ClearRenderTargetView(motionRtv.Get(),zero);
             }
-            for (unsigned frame=0; frame<120; ++frame) {
+            for (unsigned frame=0; frame<framesPerPass; ++frame) {
                 if((menuTest || abTest) && frame==40)
                 {
                     // NGX/model startup can take long enough for the test window
@@ -120,7 +122,7 @@ int main(int argc, char** argv)
                 // Keep the interaction workload below display refresh so
                 // presentation metering does not dominate its FG count check.
                 check(bridge.BeginFrame(menuTest ? 16667 : 0), "Reflex begin"); bridge.EndSimulation();
-                const float color[4] = { frame/120.f, pass/8.f, 0.25f, 1.f };
+                const float color[4] = { (frame%120)/120.f, pass/8.f, 0.25f, 1.f };
                 if(ngx)
                 {
                     c11->ClearRenderTargetView(colorRtv.Get(),color);
@@ -195,7 +197,7 @@ int main(int argc, char** argv)
                 abs(int(pixel[1])-int(255.f*pass/8.f+.5f))<=1 && abs(int(pixel[2])-64)<=1 && pixel[3]==255;
             c11->Unmap(readback.Get(),0);
             if(!correct){puts("FAIL shared target pixel after retirement");return 3;}
-            printf("PASS %ux%u: 120 presentations and shared-target readback\n",desc.Width,desc.Height);
+            printf("PASS %ux%u: %u presentations and shared-target readback\n",desc.Width,desc.Height,framesPerPass);
         }
         c11->ClearState(); c11->Flush();
         upscaler.Shutdown();
@@ -206,8 +208,8 @@ int main(int argc, char** argv)
     if(cadence)fclose(cadence);
     printf("SDK total frames=%llu; counts 0..7,8+: ",reportedFrames);for(unsigned n:counts)printf("%u ",n);puts("");
     FILE* report=nullptr;fopen_s(&report,"bridge-probe-result.txt","w");
-    if(report){fprintf(report,"Completed=960 Resizes=7 Readbacks=8 NGX=%u GenerateRequested=%u GeneratedPresents=%u\n",unsigned(ngx),unsigned(generate),generatedPresents);fclose(report);}
-    if(generate && generatedPresents<900){puts("FAIL fewer than 900 confirmed generated presentations");return 9;}
-    puts("PASS bridge initialization, 960 presentations, seven resizes, eight shared-target readbacks and cleanup. Not a gameplay or displayed-image test.");
+    if(report){fprintf(report,"Completed=%u Resizes=%u Readbacks=%u NGX=%u GenerateRequested=%u GeneratedPresents=%u SDKTotalFrames=%llu\n",passCount*framesPerPass,passCount-1,passCount,unsigned(ngx),unsigned(generate),generatedPresents,reportedFrames);fclose(report);}
+    if(generate && generatedPresents<(abTest?1620u:900u)){puts("FAIL generated-presentation count below target");return 9;}
+    puts("PASS bridge initialization, presentations, shared-target readbacks and cleanup. Not a gameplay or displayed-image test.");
     return 0;
 }
