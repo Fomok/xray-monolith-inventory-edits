@@ -3,7 +3,8 @@ Squared Away Personal DLSS FG Test 7 Scope Diagnostics - EXPERIMENTAL
 INSTALL
 1. Quit the game. Back up the complete Test 6 engine package.
 2. Copy this complete engine package to the separate personal test game.
-3. Install Squared Away Personal FG Test 6 UI and Scope Shader.zip as a separate
+3. Keep the matching Test 6 UI/shader mod, or install the Test 7 Matching UI
+   and Scope Shader ZIP as a separate
    MO2 mod below DLSS FSR3 Compatibility Patch and Bodycam patches. Its three
    files must win. This is required for the matching optical map and controls.
 4. Keep OptiScaler Dual FPS Test 1 (dxgi.dll), the Test 4 INI, NR model and other
@@ -35,14 +36,15 @@ The existing Insert menu, NR controls and wearable scene/UI protection remain.
 
 TESTING LIMITS
 GPU input, camera/optical motion, occlusion, reset, UI and Lua checks passed.
-A foreground integration interval reported 2x presentations. The full 1800-frame
-probe lost foreground focus and failed its strict sustained-generation threshold;
-this is not a completed sustained gameplay/visual-quality validation.
+The earlier Test 6 full probe failed its sustained threshold after losing focus.
+Test 7 passed its 1800-frame scoped-input/NR/toggle probe, with measured cap100
+rates near50/100 FG on and100/100 off. This is not gameplay/visual validation.
 Test scope pans, zoom, optic switches, entry/exit, occluding hands, reticles,
 Bodycam effects, NR and wearable screens in game. See the validation report.
 
 ROLLBACK
-Disable the Test 6 UI/shader mod and restore the complete Test 6 engine package.
+Restore the complete backed-up Test 6 engine package. Keep its matching
+Test 6 UI/shader mod enabled.
 Keep the existing OptiScaler companion/INI. No installed game files were changed
 while preparing these packages. Do not install this test on the public engine.
 

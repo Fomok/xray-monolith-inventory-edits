@@ -40,5 +40,37 @@ Bodycam mapping. Its factor-of-two cap scaling differs from our measured
 cap behavior and is not adopted. Both ship Streamline 2.14.16 and DLSS-G
 310.9.16; Preset C activation is a driver override and remains unverified.
 
-Validation: pending the Test 7 build and runtime checks. Existing Test 6 remains
-available for rollback. No public branch or installed files are modified.
+Validation completed for source ecf540856233427523433ffe7065ff291a80805b:
+
+- Full engine build [39135180483](https://github.com/Fomok/xray-monolith-inventory-edits/actions/runs/39135180483) succeeded; artifact 12139524764, digest sha256:4b8f8d14373f8db669d0a64a5baa5aabe50f40dad1471a8329ca15aa01a91157.
+- Four CPU regressions passed, including invalid/sentinel diagnostic counts,
+  off/on and known/unknown scope classification. GPU depth/motion/UI/optical-map
+  tests and the dual-FPS telemetry self-test exited 0.
+- Existing LuaJIT settings checks passed availability, insertion, pending
+  Apply/Cancel, capability status and absence of renderer-restart flags.
+  UI/shader/telemetry/companion source is unchanged from Test 6.
+- Isolated RTX 5080 + matched OptiScaler DLSS-NR scope integration completed
+  1800 frames, with 1348 reporting two presentations, 452 reporting one,
+  3148 SDK presentations total, and exit 0. Forty initial frames lacked
+  foreground focus. The intentional FG-off interval accounts for 400 frames.
+- With a 100-presented-FPS cap: foreground frames200..400 measured49.9994
+  rendered/99.9988 DXGI presentations per second; off frames600..800 measured
+  99.9914/99.9914; resumed frames1100..1500 measured49.9999/99.9998.
+  This verifies the existing cap behavior, not an uncapped speed improvement.
+- New context/totals lines were observed from existing SDK queries. This
+  includes exact comparison of all four emitted cumulative snapshots
+  (tokens240/480/720/960) against the independent full cadence CSV: passed.
+  The snapshots do not sample or extrapolate the cumulative counters.
+  The standalone probe correctly reports unknown engine context; actual in-game
+  scoped-context association remains to be checked. Captured stdout ends
+  before the full run summary; the completed CSV, explicit result file and
+  exit status establish completion. No shutdown-log completeness claim.
+- All 29 CI-manifest entries and six NVIDIA runtime signatures passed.
+  The final delivery has a fresh manifest; executable/database/runtime payloads
+  remain byte-identical to CI. Source patch applicability is verified separately
+  against93483f8a0211bec6583af6179a0038dc6633dfce in the developer handoff.
+
+Existing Test 6 remains available for rollback. Actual Test 7 gameplay, lens
+image quality and long-run stability remain unverified. No public branch or
+installed files were modified. No AMD FG/buffer-ring change or Preset C driver
+override is included.
