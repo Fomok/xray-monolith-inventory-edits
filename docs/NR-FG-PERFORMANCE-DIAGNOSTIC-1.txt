@@ -1,0 +1,74 @@
+Squared Away NR FG Performance Diagnostic 1 (19 October 2026)
+
+Diagnostic EXE replacement for the optional bodycam-dlss-fg-2026.10.18 runtime.
+Not a full engine install, not for the previous no-FG engine. Requires the current
+working optional FG runtime and its matching UI/shader patches. No optimization
+or companion changes. Public release is unchanged.
+
+INSTALL
+Close game. Back up Anomaly/bin/AnomalyDX11AVX.exe outside bin. Extract this ZIP's
+bin folder into Anomaly, replacing ONLY AnomalyDX11AVX.exe. Leave your companion,
+INI, models, Streamline, db files and MO2 patches unchanged. Launch normally via
+MO2 using DX11 AVX. No special launcher or environment variable needed.
+ROLLBACK: close game and restore your backed-up AnomalyDX11AVX.exe. Remove any
+temporary -dxgi_old argument used in the optional comparison. No saves/config
+migration required. Preserve logs before launching another run.
+
+TEST (same scene, stationary/unscoped, foreground)
+Use the same save/camera, resolution, DLSS mode and all graphics settings. Keep
+RTSS off for the known startup issue. Record existing caps and preferably disable
+caps/VSync consistently for the comparison, restoring them afterward. Warm up
+30 seconds after loading before recording. Close Insert and game menus while
+measuring. Do not Alt-Tab during measurement. Keep companion External=true and
+its own FrameGen.Enabled=false; FG is controlled by the engine Video settings.
+
+Perform four separate launches so each pair of logs describes one test:
+A. NR off (Insert), engine FG off (Video; Apply).
+B. NR on, engine FG off.
+C. NR off, engine FG on (2x; Apply).
+D. NR on, engine FG on (2x; Apply).
+Do not change NR working scale/passes or DLSS quality between runs. After setting
+options and closing menus, allow a brief warm-up, then record30seconds. Note
+Rendered AND Presented FPS and when the measurement started. Save both logs
+immediately after quitting under the test letter. Repeating in reversed order
+helps distinguish scene/load variation. Use a visible clock without switching
+focus; do not install a new overlay just for this test.
+
+Optional second comparison: same diagnostic EXE/companion, temporary -dxgi_old,
+engine FG off, NR off/on. This bypasses our presentation bridge (no engine GPU
+DIAG output expected); OptiScaler NR timing still applies. It also changes the
+swapchain path and removes engine Reflex, so it is not a single-fence experiment.
+
+SEND
+For EACH run: appdata/logs/xray_<name>.log and the OptiScaler.log actually updated
+by that launch (usually bin/OptiScaler.log; check timestamp). Include test letter,
+Rendered/Presented readings, resolution/DLSS mode, NR settings, frame caps/VSync,
+GPU/driver, launch arguments and whether the view was unscoped/foreground.
+Logs can contain local paths; send privately. Preserve before another launch.
+
+MEASUREMENTS
+[FG GPU DIAG] v1 initialized d11=1 d12=1 confirms both GPU timers available.
+Every eighth bridge frame is sampled using a four-slot query ring. Results are
+polled without flush/wait; busy samples are skipped, disjoint/errors rejected.
+Reports occur every240bridge ticks and can contain completions from earlier ticks.
+Stage meanings:
+ d11_inputs_including_scope: depth/motion conversion, plus scope mapping if scoped.
+ d11_hudless_copy: clean-scene image copy.
+ d11_ui_protection: UI mask/protection work.
+ d12_backbuffer_copy_barriers: final copy and adjacent resource barriers.
+Numbers are GPU elapsed intervals (may include scheduling/preemption), not pure
+shader cost. fg/scoped/foregroundKnown classify the sampled frame; NR state is
+NOT observed by engine, so label the runs. n is valid samples, not frame count.
+Missing stage is not zero cost. skipped/invalid counters show incomplete coverage.
+Timestamp insertion and polling have some overhead; restore baseline EXE to check
+observer cost if needed. No new synchronization or forced flush is added.
+
+Existing [FG TIMING] is CPU time in retirement wait, Reflex begin and Present.
+It does NOT report GPU execution, and its240frame windows can span menu/toggles.
+Existing OptiScaler 'DLSS-NR GPU window' times NR; those intervals can include
+other GPU work. Do not sum CPU waits and GPU intervals into total frame time.
+Opaque Streamline FG GPU duration and cross-queue wait duration are NOT measured
+by these timestamps. A GPU queue timeline would be needed to establish overlap
+or idle waits; no administrator tracing is required/requested by this package.
+
+Validation status and hashes are supplied separately with the delivered package.

@@ -1,0 +1,50 @@
+name: Isolated NR FG timing diagnostic
+on:
+  push:
+    branches: [diagnostic-nr-fg-timing-20261019]
+    paths: ['src/**', 'tools/dlss/**', '.github/workflows/diagnostic-nr-fg.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+      - name: Compile and validate probes
+        run: |
+          $ErrorActionPreference = "Stop"
+          msbuild tools/dlss/bridge_probe.vcxproj /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw "Bridge probe compilation failed" }
+          msbuild tools/dlss/fg_inputs_test.vcxproj /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw "Input probe compilation failed" }
+          & ./_build/dlss_tests/bridge_probe.exe --telemetry-self-test
+          if ($LASTEXITCODE -ne 0) { throw "Telemetry regression failed" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NR-FG-Diagnostic-Probes
+          path: |
+            _build/dlss_tests/bridge_probe.exe
+            _build/dlss_tests/fg_inputs_test.exe
+          retention-days: 7
+          if-no-files-found: error
+      - name: Build DX11 AVX only
+        run: |
+          msbuild src/engine-vs2022.sln /p:Configuration=DX11-AVX /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { throw "Engine compilation failed" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NR-FG-Diagnostic-DX11-AVX
+          path: |
+            _build/_game/bin_dbg/AnomalyDX11AVX.exe
+            _build/_game/bin_dbg/AnomalyDX11AVX.pdb
+          retention-days: 7
+          if-no-files-found: error

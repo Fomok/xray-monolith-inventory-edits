@@ -8,6 +8,7 @@
 #include <cstdio>
 #include "StreamlineIntegration.h"
 #include "PersonalFgInputs.h"
+#include "PersonalFgGpuTiming.h"
 
 class Dx12PresentationBridge
 {
@@ -19,6 +20,8 @@ class Dx12PresentationBridge
     Ptr<ID3D11Device1> renderDevice;
     StreamlineIntegration streamline;
     PersonalFgInputs inputs;
+    PersonalFgGpuTiming gpuTiming;
+    personal_fg_diag::Context timingContext{};
     sl::Constants frameConstants{};
     bool fgReady = false, fgFailed = false;
     StreamlineIntegration::Logger logger = nullptr;
@@ -74,11 +77,13 @@ public:
     bool GenerationActive() const { return fgReady && streamline.IsEnabled(); }
     bool NeedsHudless() const { return inputs.scene && !inputs.hudless; }
     UINT PresentedFrames() const { return streamline.PresentedFrames(); }
-    void SetFrameContext(const personal_fg_diag::Context& context) { streamline.SetFrameContext(context); }
+    void SetFrameContext(const personal_fg_diag::Context& context) { timingContext=context; streamline.SetFrameContext(context); }
     void DiscardInputs() { inputs.Invalidate(); }
     HRESULT BeginFrame(UINT limitUs)
     {
         inputs.Invalidate();
+        timingContext={};
+        gpuTiming.Tick(context.Get(),fence.Get());
         timingLimitUs = limitUs;
         const double start = NowMs();
         const bool ready = !fgReady || streamline.BeginFrame(limitUs);
@@ -119,11 +124,18 @@ public:
             hr=inputs.Resize(device.Get(),renderDevice.Get(),d.Width,d.Height,width,height); if(FAILED(hr))return hr;
         }
         frameConstants=constants;
-        return inputs.Capture(renderDevice.Get(),context.Get(),depth,motion,scope);
+        const int timing=gpuTiming.Begin11(0,context.Get());
+        const HRESULT result=inputs.Capture(renderDevice.Get(),context.Get(),depth,motion,scope);
+        gpuTiming.End11(0,timing,context.Get());
+        return result;
     }
     void CaptureHudless()
     {
-        if(NeedsHudless()) { context->CopyResource(inputs.render[2].Get(),target.Get()); inputs.hudless=true; }
+        if(NeedsHudless()) {
+            const int timing=gpuTiming.Begin11(1,context.Get());
+            context->CopyResource(inputs.render[2].Get(),target.Get()); inputs.hudless=true;
+            gpuTiming.End11(1,timing,context.Get());
+        }
     }
     void ShutdownBeforeSwapchainRelease()
     {
@@ -243,6 +255,7 @@ public:
         hr = device11->OpenSharedFence(handle, IID_PPV_ARGS(fence11.GetAddressOf()));
         CloseHandle(handle);
         if (FAILED(hr)) return hr;
+        gpuTiming.Initialize(d11,device.Get(),queue.Get(),logger);
         completion = CreateEventW(nullptr, FALSE, FALSE, nullptr);
         if (!completion) return HRESULT_FROM_WIN32(GetLastError());
         Ptr<ID3D11Texture2D> test;
@@ -270,7 +283,9 @@ public:
                 streamline.CanGenerate(width,height) && (interval==0 || streamline.SupportsVSync());
             if(generate)
             {
+                const int timing=gpuTiming.Begin11(2,context.Get());
                 hr=inputs.ProtectUi(renderDevice.Get(),context.Get(),target.Get());
+                gpuTiming.End11(2,timing,context.Get());
                 if(FAILED(hr)) { hr=FailGeneration(); if(FAILED(hr))return hr; generate=false; }
             }
             if(!streamline.SetEnabled(generate))return E_FAIL;
@@ -294,6 +309,7 @@ public:
         if (FAILED(hr)) return hr;
         hr = commands->Reset(allocator.Get(), nullptr);
         if (FAILED(hr)) return hr;
+        const int copyTiming=gpuTiming.Begin12(commands.Get());
         D3D12_RESOURCE_BARRIER barrier = {};
         barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
         barrier.Transition.pResource = backbuffer.Get();
@@ -307,12 +323,14 @@ public:
         barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
         barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
         commands->ResourceBarrier(1, &barrier);
+        gpuTiming.End12(copyTiming,commands.Get());
         hr = commands->Close();
         if (FAILED(hr)) return hr;
         ID3D12CommandList* lists[] = { commands.Get() };
         queue->ExecuteCommandLists(1, lists);
         hr = queue->Signal(fence.Get(), ++serial);
         if (FAILED(hr)) return hr;
+        gpuTiming.Submitted12(copyTiming,serial);
         if(fgReady) { streamline.Marker(sl::PCLMarker::eRenderSubmitEnd); streamline.Marker(sl::PCLMarker::ePresentStart); }
         const double presentStart = NowMs();
         hr=swapchain->Present(interval, flags);
@@ -337,6 +355,7 @@ public:
         // and eBlockPresentingClientQueue; no shared input may be overwritten early.
         hr=context->Wait(fence11.Get(),serial); if(FAILED(hr))return hr;
         context->Flush();
+        gpuTiming.Classify(GenerationActive(),timingContext.scoped,timingContext.known && timingContext.foreground);
         inputs.Invalidate();
         if (++timingPresents == 240)
         {
