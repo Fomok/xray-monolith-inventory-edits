@@ -1,6 +1,24 @@
 # Personal Bodycam + DLSS frame generation investigation
 
-Checked 2026-10-18. Status: blocked on graphics/presentation architecture; frame generation is NOT implemented. No toggle, binaries or test package are supplied.
+Checked 2026-10-18. Frame generation is NOT implemented. The initial architectural blocker led to the opt-in presentation prototype described below. Earlier investigation evidence is retained for context.
+
+## DX12 presentation prototype 1
+
+The personal branch now keeps native D3D11 rendering and NGX upscaling, but can present completed frames through D3D12. Enable only by setting the game process environment variable `SQA_DX12_BRIDGE=1`. The default path still uses the original DX11 swapchain. This is not a frame-generation toggle.
+
+Implementation: `src/Layers/xrRenderDX10/dx12PresentationBridge.h`, integrated through `CHW::GetPresentationTexture` and `CHW::PresentFrame`. A D3D12 device is created on the adapter obtained from the actual D3D11 device. A shared simultaneous-access RGBA8 render target is opened by D3D11; a shared fence establishes DX11 completion before the DX12 copy. DX12 transitions the current swapchain buffer for copy and returns it to PRESENT. A bounded CPU fence wait protects reuse, allocator reset and resize. This intentionally serializes frames and is not a performance optimization.
+
+The bridge validates shared texture/RTV and fence support before taking ownership of the window swapchain. Startup failures log an HRESULT and fall back to native DX11. SDR windowed/borderless only for this first prototype; HDR/exclusive startup and `-dxgi_old` retain the native path. An exclusive-mode request while active is held in borderless mode. Runtime presentation or resize failure stops with restart instructions; there is no unsafe hot switch after a failed GPU wait.
+
+The existing main/PiP hidden-pass presentation gate remains in place. R4 PDA/scope capture and asynchronous screenshot reads now obtain the shared presentation texture rather than asking the D3D12 swapchain for a D3D11 texture. No scope/upscaler shaders or frozen experiment code were changed.
+
+Why shared resources instead of D3D11On12: this preserves the native D3D11 device used by NGX, FSR and existing renderer resources. D3D11On12 would also change device behavior throughout the renderer. Compatibility with a future frame-generation SDK is still unverified; this prototype transports only final color, not the HUD-less color, depth, motion or UI buffers needed for FG.
+
+Build: the personal branch's `amp-bodycam-build.yml` builds DX11 AVX, the existing temporal/HUD tests, a standalone hardware probe and matching DB0. No release publication is configured in this workflow. Test instructions are in `docs/PERSONAL-BRIDGE-TEST.txt`.
+
+The hardware probe uses a hidden standalone window, 180 presentations over three sizes and two resizes. A successful probe only establishes API-level transport/presentation, not image quality, gameplay, scope behavior or performance. Runtime and final build evidence will be recorded with the delivered package.
+
+Microsoft resource-sharing reference: https://learn.microsoft.com/en-us/windows/win32/api/d3d11_1/nf-d3d11_1-id3d11device1-opensharedresource1 . Shared simultaneous-access state semantics: https://microsoft.github.io/DirectX-Specs/d3d/ResourceHeaps.html .
 
 ## Verified baseline
 
@@ -34,7 +52,7 @@ Paths below are relative to the baseline repository.
 
 NVIDIA's current DLSS-G guide describes D3D12/Vulkan integration, input lifetimes and Reflex. NVIDIA's requirements page explicitly requires DX12 for its DirectX frame-generation path. AMD supplies DX12/Vulkan interpolation swapchains. Neither is a drop-in native DX11 FG backend. The GPU model does not remove this API mismatch.
 
-## Concrete next options
+## Original next options (the shared-resource option is now prototyped above)
 
 1. Investigate a DX12 presentation bridge while retaining DX11 rendering: shared color, depth and motion resources on the same adapter, explicit cross-API synchronization, DX12 swapchain ownership, resize/device-loss handling, and a measured copy/synchronization budget. Prove ordinary ungenerated presentation first. SDK compatibility of this bridge is unverified.
 2. Alternatively prototype D3D11On12: replace device/swapchain initialization, acquire/release wrapped backbuffers and flush at ownership transitions. Validate all existing NGX DX11, render-target and shader behavior before adding Streamline. This is a graphics architecture experiment, not an established compatible switch.
@@ -42,6 +60,18 @@ NVIDIA's current DLSS-G guide describes D3D12/Vulkan integration, input lifetime
 
 After a working graphics bridge, integrate actual capability detection, Reflex and frame generation disabled by default. Keep frame IDs tied to presented main frames, never hidden SVP passes. Separate pre-UI color and UI alpha/color, preserve PiP optical depth/motion or conservatively disable FG while scopes are active until validated. Reset on camera/viewport changes; disable during menus/loading, resize and device loss. Check generated-frame cadence and image quality independently of simulation FPS.
 
-## Validation and limits
+## Initial investigation validation and limits (before prototype)
 
 Performed: local source audit, clean baseline check, remote branch/tag SHA verification, local GPU query and official-document review. No runtime renderer changes, compilation, shader execution or gameplay test occurred. No performance or image-quality claim is made. Installed game/mod files were neither read nor changed. No public release or website update.
+
+## Prototype 1 validation result — 2026-10-18
+
+Built commit 89a4fd9c2ccacb7b108f78ea4c456b1b0e94a930, GitHub Actions run 39099172239. DX11 AVX executable, temporal_test, pda_depth_test, sampler_test and camera_mv_test passed; matching DB0 and complete package produced. Initial standalone compile found a missing UINT64_MAX declaration, fixed before this successful build.
+
+Downloaded artifact 12126162048 to C:/GAMMA/sqa-previews/personal-frame-generation-bridge/Squared Away Personal DX12 Bridge Test 1 DX11 AVX.zip. SHA256 ADF8A137CA0D3F0692A90497AC8616B87D21F5F115828DA736D7D558F77CB59D matched GitHub's digest; all 13 build-manifest files verified.
+
+Local hardware probe exited 0: 60 synchronized copy/present calls each at 320x240, 352x272 and 384x304; two resizes and cleanup completed. Log: C:/GAMMA/sqa-previews/personal-frame-generation-bridge/bridge-probe.log. Hidden-window API success is not proof of visible pixels or gameplay. The probe selects the default hardware adapter; it does not log adapter identity. RTX 5080 presence was established separately.
+
+No in-game test was run. Bodycam/PiP, HUD, PDA, screenshots, upscaler image quality, window-mode transitions and frame-time impact still need Fomok's A/B testing. Frame generation remains unimplemented. Installed files were not read or modified.
+
+Upstream comparison during build: Brodrigz release 0.6/tag 1.0.2 includes an experimental bridge and FG integrations. D3D12PresentBridge.cpp and tools/dlss/DX12_BRIDGE.txt were inspected as references after this prototype was written; no code merged. Its shared-resource mechanism is similar and should be evaluated for the next FG stage, with a separate Bodycam/PiP audit.
