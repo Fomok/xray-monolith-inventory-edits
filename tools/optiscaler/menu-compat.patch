@@ -318,6 +318,26 @@ index 0000000000000000000000000000000000000000..67b4e4ed0a968ed0e66df0b0e93f5ed2
 +    }
 +};
 +} // namespace sqa_fps
+diff --git a/OptiScaler/inputs/NVNGX_DLSS_Dx11.cpp b/OptiScaler/inputs/NVNGX_DLSS_Dx11.cpp
+index 4ac856a3e0f09f36c728a9256844152a13d2ae87..51e552d2a4f6d5928e2766c7f976286bd74df701 100644
+--- a/OptiScaler/inputs/NVNGX_DLSS_Dx11.cpp
++++ b/OptiScaler/inputs/NVNGX_DLSS_Dx11.cpp
+@@ -357,6 +357,15 @@ NVSDK_NGX_API NVSDK_NGX_Result NVSDK_NGX_D3D11_Shutdown1(ID3D11Device* InDevice)
+ {
+     if (State::Instance().isShuttingDown)
+         return NVSDK_NGX_Result_Success;
++    // This proxy already owns one process-wide D3D11 context map. With external
++    // D3D12 FG alive, the driver's device-specific D3D11 shutdown faults on the
++    // tested bridge. Use its standard D3D11 teardown, retaining the ordinary
++    // D3D12 shutdown/NR drain when the engine releases its FG runtime afterward.
++    if (State::Instance().externalFrameGeneration && NVNGXProxy::D3D11_Shutdown() != nullptr)
++    {
++        LOG_INFO("External FG: using standard D3D11 NGX shutdown; D3D12 owner remains active");
++        return NVSDK_NGX_D3D11_Shutdown();
++    }
+     shutdown = true;
+     State::Instance().currentFeature = nullptr;
+     Dx11Contexts.clear();
 diff --git a/OptiScaler/menu/menu_common.cpp b/OptiScaler/menu/menu_common.cpp
 index 5f958ae124dfafc644e0d30efb6a5f38c55388ff..824c2356a73961cf8401dec36086f1fea0ec502b 100644
 --- a/OptiScaler/menu/menu_common.cpp
