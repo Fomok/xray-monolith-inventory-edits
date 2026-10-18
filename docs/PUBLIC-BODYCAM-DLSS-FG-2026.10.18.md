@@ -65,6 +65,24 @@ Streamline/DLSS-G runtime DLLs retain their verified NVIDIA signatures.
 7. Launch your ordinary shortcut > MO2 > Play using DX11-AVX. No special launcher,
    environment variable or command-line opt-in is required.
 
+## Optional DLSS5 / NR reinstall pack
+
+**Squared.Away.Optional.DLSS5.NR.Runtime.zip** contains only `bin/dxgi.dll`,
+`bin/OptiScaler.ini`, `bin/nvngx_dlss.dll` and `bin/nvngx_dlssnr.dll`: the tested
+patched companion, compatible settings, SR runtime and actual NR model. The full
+FG engine runtime already contains these exact files. **Install the full engine
+package OR use this optional pack to repair/reinstall NR on that matching setup;
+there is no need to install both.** The optional ZIP does not supply an engine,
+Streamline or shader/UI patches and is not a universal stock-engine injector.
+
+For the optional pack, close the game/MO2, back up those four files and any old
+helper, merge its `bin` into the matching Anomaly folder, keep the tested external-FG
+INI settings, and move obsolete `nvngx.dll_dlssnr.dll` out after backup. Retain
+the existing engine, Streamline and matching MO2 patches. Launch normally, then
+use Insert to enable/disable NR. Restore the backed-up files/helper to undo it.
+Engine FG/PiP controls remain in Video settings. A main-runtime update can replace
+these same files again; do not stack duplicate proxies or alternate NR versions.
+
 ## In game
 
 In Video > Basic, turn MSAA off, select DLSS/DLAA and its quality mode, and Apply.
