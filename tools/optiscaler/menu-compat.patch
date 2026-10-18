@@ -1,3 +1,228 @@
+diff --git a/OptiScaler/Config.cpp b/OptiScaler/Config.cpp
+index 74f4efd662924c74d6fe7aa36e3f23686eb5ddd2..f0b864eaf01f3d330b89514c74dad92484d0fbfb 100644
+--- a/OptiScaler/Config.cpp
++++ b/OptiScaler/Config.cpp
+@@ -67,6 +67,7 @@ bool Config::Reload(std::filesystem::path iniPath)
+ 
+         // Frame Generation
+         {
++            ExternalFrameGeneration.set_from_config(readBool("FrameGen", "External"));
+             FGEnabled.set_from_config(readBool("FrameGen", "Enabled"));
+             FGDebugView.set_from_config(readBool("FrameGen", "DebugView"));
+ 
+@@ -981,7 +982,7 @@ bool Config::SaveIni(std::filesystem::path destination)
+     {
+         ini.SetValue("FrameGen", "Enabled", GetBoolValue(Instance()->FGEnabled.value_for_config()).c_str());
+         // Discard settings from removed fork-only frame-generation extensions.
+-        ini.Delete("FrameGen", "External");
++        ini.SetValue("FrameGen", "External", GetBoolValue(Instance()->ExternalFrameGeneration.value_for_config()).c_str());
+         for (const auto* key : { "AdaBlackwellKernels", "AmpereMfgUnlock", "AmpereMfgMaxFrames", "AmpereMfgKernelImage",
+                                  "AmpereMfgHardwareBilinear" })
+             ini.Delete("DLSSG", key);
+diff --git a/OptiScaler/Config.h b/OptiScaler/Config.h
+index 10e25c5e184e108e7549a51db88944b31af52702..098184a3f857677b9c019dbf14cba90b42cb42e3 100644
+--- a/OptiScaler/Config.h
++++ b/OptiScaler/Config.h
+@@ -644,6 +644,7 @@ class Config
+     CustomOptional<FrameTimeSource> FTInput { FrameTimeSource::Input };
+ 
+     // OptiFG
++    CustomOptional<bool> ExternalFrameGeneration { false }; // startup-only ownership
+     CustomOptional<bool> FGEnabled { false };
+     CustomOptional<bool> FGUseMutexForSwapchain { true };
+     CustomOptional<bool> FGMakeMVCopy { true };
+diff --git a/OptiScaler/State.h b/OptiScaler/State.h
+index f8d3586c2574f39ac329d936dd57d69bd63bc86b..f967d3ddb4d0a1d77176e4c988e156d304392b6f 100644
+--- a/OptiScaler/State.h
++++ b/OptiScaler/State.h
+@@ -139,6 +139,7 @@ typedef struct CapturedHudlessInfo
+ class State
+ {
+   public:
++    bool externalFrameGeneration = false; // fixed at startup; never switch hook ownership live
+     static State& Instance()
+     {
+         // Hooks still read the shutdown flag during other DLLs' detach callbacks.
+diff --git a/OptiScaler/dllmain.cpp b/OptiScaler/dllmain.cpp
+index 729e01db5d81c274443635e860c019b711e72501..b79ae66cf44b7198d91a43c6599422d59be23112 100644
+--- a/OptiScaler/dllmain.cpp
++++ b/OptiScaler/dllmain.cpp
+@@ -1869,6 +1869,22 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
+ #endif
+ 
+         // Initial state of FG
++        State::Instance().externalFrameGeneration = Config::Instance()->ExternalFrameGeneration.value_or_default();
++        if (State::Instance().externalFrameGeneration)
++        {
++            // Only runtime overrides: preserve the user's OptiFG configuration for the next
++            // startup with External=false. Do not load a second FG provider or change Reflex.
++            auto* cfg = Config::Instance();
++            cfg->FGInput.set_volatile_value(FGInput::NoFG);
++            cfg->FGOutput.set_volatile_value(FGOutput::NoFG);
++            cfg->FGNvngxReplacement.set_volatile_value(FGNvngxReplacement::None);
++            cfg->FGEnabled.set_volatile_value(false);
++            cfg->ForceXeLL.set_volatile_value(false);
++            cfg->UseFakenvapi.set_volatile_value(false);
++            cfg->FN_ForceReflex.set_volatile_value(ForceReflex::InGame);
++            LOG_INFO("External frame generation: leaving Streamline/Reflex and MFG control to the game or unlocker; NR/SR remain available");
++        }
++
+         State::Instance().activeFgInput = Config::Instance()->FGInput.value_or_default();
+         State::Instance().activeFgOutput = Config::Instance()->FGOutput.value_or_default();
+         State::Instance().activeFgNvngx = Config::Instance()->FGNvngxReplacement.value_or_default();
+diff --git a/OptiScaler/hooks/LibraryLoad_Hooks.cpp b/OptiScaler/hooks/LibraryLoad_Hooks.cpp
+index 68e1f5794b043f1b8efe8f2864113dc700d930aa..60e3caac4ebb85303727c292ed91c968dfb8fb44 100644
+--- a/OptiScaler/hooks/LibraryLoad_Hooks.cpp
++++ b/OptiScaler/hooks/LibraryLoad_Hooks.cpp
+@@ -58,6 +58,16 @@ HMODULE LibraryLoadHooks::LoadLibraryCheckW(std::wstring libName, LPCWSTR lpLibF
+     auto normalizedPath = path.wstring();
+     to_lower_in_place(normalizedPath);
+ 
++    if (State::Instance().externalFrameGeneration)
++    {
++        const auto filename = std::filesystem::path(normalizedPath).filename().wstring();
++        const bool streamline = filename.starts_with(L"sl.") && filename.ends_with(L".dll");
++        const bool otaFg = normalizedPath.contains(L"\\versions\\") &&
++            (normalizedPath.contains(L"\\sl_") || normalizedPath.contains(L"\\dlssg\\"));
++        if (streamline || otaFg || filename == L"nvngx_dlssg.dll")
++            return nullptr; // not handled: preserve the original loader/unlocker's path
++    }
++
+     std::filesystem::path localSlPath(Config::Instance()->MainDllPath.value());
+     localSlPath = localSlPath / L"streamline"; // Hardcoded streamline folder
+     auto normalizedLocalSlPath = localSlPath.lexically_normal();
+diff --git a/OptiScaler/hooks/Reflex_Hooks.cpp b/OptiScaler/hooks/Reflex_Hooks.cpp
+index 4aaefbb59066e825c6092bcbf288113085bc4cb1..03f57e794f59b45d1f6d4671cfa60d83c44d526d 100644
+--- a/OptiScaler/hooks/Reflex_Hooks.cpp
++++ b/OptiScaler/hooks/Reflex_Hooks.cpp
+@@ -398,6 +398,9 @@ NvAPI_Status ReflexHooks::hkNvAPI_Vulkan_GetLatency(HANDLE vkDevice, NV_VULKAN_L
+ 
+ void ReflexHooks::hookReflex(PFN_NvApi_QueryInterface& queryInterface)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     if (!_inited)
+     {
+ #ifdef _DEBUG
+@@ -560,6 +563,13 @@ bool ReflexHooks::updateTimingData()
+ // For updating information about Reflex hooks
+ void ReflexHooks::update(bool fgActive, bool isVulkan)
+ {
++    if (State::Instance().externalFrameGeneration)
++    {
++        State::Instance().reflexLimitsFps = false;
++        State::Instance().reflexShowWarning = false;
++        return;
++    }
++
+     // We can still use just the markers to limit the fps with Reflex disabled
+     // But need to fallback in case a game stops sending them for some reason
+     _updatesWithoutMarker++;
+@@ -679,6 +689,9 @@ void ReflexHooks::update(bool fgActive, bool isVulkan)
+ // 0 - disables the fps cap
+ void ReflexHooks::setFPSLimit(float fps)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_INFO("Set FPS Limit to: {}", fps);
+     if (fps == 0.0)
+         _minimumIntervalUs = 0;
+diff --git a/OptiScaler/hooks/Streamline_Hooks.cpp b/OptiScaler/hooks/Streamline_Hooks.cpp
+index ab1136791409a0f00e3506990cd0dc79a87756b1..fcb8271744508712e74325e53f767a1feba453c9 100644
+--- a/OptiScaler/hooks/Streamline_Hooks.cpp
++++ b/OptiScaler/hooks/Streamline_Hooks.cpp
+@@ -1776,6 +1776,9 @@ void* StreamlineHooks::hkcommon_slGetPluginFunction(const char* functionName)
+ 
+ void StreamlineHooks::updateForceReflex()
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     // Not needed for Streamline v1 as slSetConstants is sent every frame
+     if (o_slReflexSetOptions)
+     {
+@@ -1801,6 +1804,9 @@ void StreamlineHooks::updateForceReflex()
+ 
+ void StreamlineHooks::updateDlssgOptions()
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     if (o_slDLSSGSetOptions)
+     {
+         LOG_FUNC();
+@@ -1888,6 +1894,9 @@ void StreamlineHooks::unhookInterposer()
+ // Call it just after sl.interposer's load or if sl.interposer is already loaded
+ void StreamlineHooks::hookInterposer(HMODULE slInterposer)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_FUNC();
+ 
+     if (!slInterposer)
+@@ -2109,6 +2118,9 @@ void StreamlineHooks::unhookDlss()
+ 
+ void StreamlineHooks::hookDlss(HMODULE slDlss)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_FUNC();
+ 
+     if (!slDlss)
+@@ -2162,6 +2174,9 @@ void StreamlineHooks::unhookDlssg()
+ 
+ void StreamlineHooks::hookDlssg(HMODULE slDlssg)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_FUNC();
+ 
+     if (!slDlssg)
+@@ -2218,6 +2233,9 @@ void StreamlineHooks::unhookLocalDlssg()
+ 
+ void StreamlineHooks::hookLocalDlssg(HMODULE slDlssg)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_FUNC();
+ 
+     if (!slDlssg)
+@@ -2269,6 +2287,9 @@ void StreamlineHooks::unhookReflex()
+ 
+ void StreamlineHooks::hookReflex(HMODULE slReflex)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_FUNC();
+ 
+     if (!slReflex)
+@@ -2325,6 +2346,9 @@ void StreamlineHooks::unhookPcl()
+ 
+ void StreamlineHooks::hookPcl(HMODULE slPcl)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_FUNC();
+ 
+     if (!slPcl)
+@@ -2383,6 +2407,9 @@ void StreamlineHooks::unhookCommon()
+ 
+ void StreamlineHooks::hookCommon(HMODULE slCommon)
+ {
++    if (State::Instance().externalFrameGeneration)
++        return;
++
+     LOG_FUNC();
+ 
+     if (!slCommon)
 diff --git a/OptiScaler/include/SqaFgTelemetry.h b/OptiScaler/include/SqaFgTelemetry.h
 new file mode 100644
 index 0000000000000000000000000000000000000000..67b4e4ed0a968ed0e66df0b0e93f5ed2071cb4c8
@@ -94,7 +319,7 @@ index 0000000000000000000000000000000000000000..67b4e4ed0a968ed0e66df0b0e93f5ed2
 +};
 +} // namespace sqa_fps
 diff --git a/OptiScaler/menu/menu_common.cpp b/OptiScaler/menu/menu_common.cpp
-index 5f958ae124dfafc644e0d30efb6a5f38c55388ff..c4b3a0db43a1be47353efef55074fa475ccda056 100644
+index 5f958ae124dfafc644e0d30efb6a5f38c55388ff..824c2356a73961cf8401dec36086f1fea0ec502b 100644
 --- a/OptiScaler/menu/menu_common.cpp
 +++ b/OptiScaler/menu/menu_common.cpp
 @@ -1,6 +1,7 @@
@@ -161,7 +386,33 @@ index 5f958ae124dfafc644e0d30efb6a5f38c55388ff..c4b3a0db43a1be47353efef55074fa47
              if (overlayType == FpsOverlay_JustFPS)
                  firstLine = StrFmt("%s", fpsPart.c_str());
              else
-@@ -7376,6 +7407,12 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
+@@ -3306,6 +3337,12 @@ static void RenderDlssgTelemetry()
+ 
+ void MenuCommon::RenderFrameGenerationSelection(RenderMenuContext& ctx)
+ {
++    if (State::Instance().externalFrameGeneration)
++    {
++        ImGui::TextWrapped("External FG is active. Use the game Video settings for FG and PiP.");
++        return;
++    }
++
+     auto& state = ctx.state;
+     auto config = ctx.config;
+     auto& menuResScale = ctx.menuResScale;
+@@ -3908,6 +3945,12 @@ void MenuCommon::RenderFrameGenerationSelection(RenderMenuContext& ctx)
+ 
+ void MenuCommon::RenderFrameGenerationRuntimeSettings(RenderMenuContext& ctx)
+ {
++    if (State::Instance().externalFrameGeneration)
++    {
++        ImGui::TextWrapped("External FG is active. Use the game Video settings for FG and PiP.");
++        return;
++    }
++
+     auto& state = ctx.state;
+     auto config = ctx.config;
+     auto& currentFeature = ctx.currentFeature;
+@@ -7376,6 +7419,12 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
      auto& frameTime = ctx.frameTime;
      auto& frameRate = ctx.frameRate;
  
@@ -174,7 +425,7 @@ index 5f958ae124dfafc644e0d30efb6a5f38c55388ff..c4b3a0db43a1be47353efef55074fa47
      ImGui::Spacing();
      ImGui::Separator();
      ImGui::Spacing();
-@@ -7383,7 +7420,9 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
+@@ -7383,7 +7432,9 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
      if (ImGui::BeginTable("plots", 2, ImGuiTableFlags_SizingStretchSame))
      {
          ImGui::TableNextColumn();
@@ -217,6 +468,21 @@ index 8cac3c48f3372d77f96e31e62b399ff1c6a1e167..1601f5090fafc8401fa7fc937d910b0a
  
      return true;
  }
+diff --git a/OptiScaler/nvapi/NvApiHooks.cpp b/OptiScaler/nvapi/NvApiHooks.cpp
+index 5b70eb380a5d96d6518acbc03b0da0fb734ade2b..af9a445d58e6036c824d5c7e1a1df0d18949bc76 100644
+--- a/OptiScaler/nvapi/NvApiHooks.cpp
++++ b/OptiScaler/nvapi/NvApiHooks.cpp
+@@ -198,6 +198,10 @@ NvAPI_Status __stdcall NvApiHooks::hkNvAPI_DRS_GetSetting(NvDRSSessionHandle hSe
+ 
+ void* __stdcall NvApiHooks::hkNvAPI_QueryInterface(unsigned int InterfaceId)
+ {
++    // Preserve native capability, Reflex and flip-metering calls for the engine.
++    if (State::Instance().externalFrameGeneration)
++        return o_NvAPI_QueryInterface ? o_NvAPI_QueryInterface(InterfaceId) : nullptr;
++
+     if (!o_NvAPI_QueryInterface)
+         if (Config::Instance()->UseFakenvapi.value_or_default())
+             o_NvAPI_QueryInterface = (PFN_NvApi_QueryInterface) fakenvapi::queryInterface;
 diff --git a/OptiScaler/upscalers/IFeature_Dx12.cpp b/OptiScaler/upscalers/IFeature_Dx12.cpp
 index 711fb317c8c0ca3fca7991a211120169cffb84dd..aee4031ba61c18c7c3c807d72695a02929eb6c75 100644
 --- a/OptiScaler/upscalers/IFeature_Dx12.cpp
