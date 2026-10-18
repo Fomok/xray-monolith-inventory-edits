@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cmath>
+#include <vector>
 #include "../../src/Layers/xrRenderDX10/dx12PresentationBridge.h"
 #include "../../src/Layers/xrRenderPC_R4/Dlss/DlssD3D11.h"
 #pragma comment(lib, "d3d11.lib")
@@ -10,8 +12,9 @@
 
 int main(int argc, char** argv)
 {
-    bool fg=false, ngx=false, generate=false;
-    for(int i=1;i<argc;++i) { fg |= strcmp(argv[i],"--streamline")==0; ngx |= strcmp(argv[i],"--ngx")==0; generate |= strcmp(argv[i],"--generate")==0; }
+    bool fg=false, ngx=false, generate=false, menuTest=false;
+    for(int i=1;i<argc;++i) { fg |= strcmp(argv[i],"--streamline")==0; ngx |= strcmp(argv[i],"--ngx")==0; generate |= strcmp(argv[i],"--generate")==0; menuTest |= strcmp(argv[i],"--menu-test")==0; }
+    if(menuTest && !generate) { puts("--menu-test requires --generate"); return 10; }
     if(generate && (!fg || !ngx)) { puts("--generate requires --streamline --ngx"); return 7; }
     unsigned generatedPresents=0;
     using Microsoft::WRL::ComPtr;
@@ -29,6 +32,7 @@ int main(int argc, char** argv)
     // when DLSS-G accepts the tags. Active-generation validation needs a visible
     // presentation surface; transport-only modes remain hidden.
     if(generate) { ShowWindow(window,SW_SHOWNORMAL);UpdateWindow(window);SetForegroundWindow(window); }
+    if(menuTest) SetWindowPos(window,nullptr,50,50,1300,780,SWP_NOZORDER);
     {
         ComPtr<ID3D11Device> raw;
         ComPtr<ID3D11DeviceContext> rawContext;
@@ -86,6 +90,11 @@ int main(int argc, char** argv)
                 c11->ClearRenderTargetView(depthRtv.Get(),depthColor);c11->ClearRenderTargetView(motionRtv.Get(),zero);
             }
             for (unsigned frame=0; frame<120; ++frame) {
+                // Messages target only this harness window, never another app.
+                if(menuTest && pass==0 && (frame==60 || frame==90)) PostMessageW(window,WM_KEYDOWN,VK_INSERT,1);
+                if(menuTest && pass==0 && (frame==61 || frame==91)) PostMessageW(window,WM_KEYUP,VK_INSERT,0xC0000001);
+                if(menuTest && pass==0 && (frame==100 || frame==110)) PostMessageW(window,WM_KEYDOWN,VK_F10,1);
+                if(menuTest && pass==0 && (frame==101 || frame==111)) PostMessageW(window,WM_KEYUP,VK_F10,0xC0000001);
                 MSG message{};
                 while(PeekMessageW(&message,nullptr,0,0,PM_REMOVE)){TranslateMessage(&message);DispatchMessageW(&message);}
                 check(bridge.BeginFrame(0), "Reflex begin"); bridge.EndSimulation();
@@ -97,6 +106,28 @@ int main(int argc, char** argv)
                     f.color=colorInput.Get();f.depth=depthInput.Get();f.motion=motionInput.Get();
                     f.jitter={0,0};f.deltaMilliseconds=16.666f;f.frame=pass*120+frame;f.cameraCut=frame==0;
                     if(!upscaler.Evaluate(f)) return 6;
+                    if(menuTest && pass==0 && (frame==50 || frame==80 || frame==95))
+                    {
+                        // Capture the actual NGX output, before the transport-only
+                        // target clear below. This exercises menu drawing, not just
+                        // the standalone synthetic presentation rectangle.
+                        D3D11_TEXTURE2D_DESC d{};upscaler.Output()->GetDesc(&d);
+                        if(d.Format!=DXGI_FORMAT_R16G16B16A16_FLOAT)return 11;
+                        d.Usage=D3D11_USAGE_STAGING;d.BindFlags=0;d.MiscFlags=0;d.CPUAccessFlags=D3D11_CPU_ACCESS_READ;
+                        ComPtr<ID3D11Texture2D> read;
+                        check(d11->CreateTexture2D(&d,nullptr,&read),"menu readback");
+                        c11->CopyResource(read.Get(),upscaler.Output());
+                        D3D11_MAPPED_SUBRESOURCE m{};check(c11->Map(read.Get(),0,D3D11_MAP_READ,0,&m),"menu map");
+                        const unsigned stride=(d.Width*3+3)&~3u;
+                        std::vector<unsigned char> pixels(stride*d.Height);
+                        auto channel=[](unsigned short h){unsigned e=(h>>10)&31,v=h&1023;float f=e?std::ldexp(1.f+v/1024.f,int(e)-15):std::ldexp(float(v),-24);if(h&32768)f=-f;return (unsigned char)(f<0?0:f>1?255:f*255.f);};
+                        for(unsigned y=0;y<d.Height;++y){auto* src=(const unsigned short*)((const unsigned char*)m.pData+y*m.RowPitch);auto* dst=pixels.data()+(d.Height-1-y)*stride;for(unsigned x=0;x<d.Width;++x){dst[x*3]=channel(src[x*4+2]);dst[x*3+1]=channel(src[x*4+1]);dst[x*3+2]=channel(src[x*4]);}}
+                        c11->Unmap(read.Get(),0);
+                        BITMAPFILEHEADER bh{};bh.bfType=0x4d42;bh.bfOffBits=sizeof(bh)+sizeof(BITMAPINFOHEADER);bh.bfSize=bh.bfOffBits+(DWORD)pixels.size();
+                        BITMAPINFOHEADER bi{};bi.biSize=sizeof(bi);bi.biWidth=d.Width;bi.biHeight=d.Height;bi.biPlanes=1;bi.biBitCount=24;bi.biSizeImage=(DWORD)pixels.size();
+                        char name[64];sprintf_s(name,"menu-frame-%u.bmp",frame);FILE* out=nullptr;fopen_s(&out,name,"wb");if(!out)return 12;
+                        fwrite(&bh,sizeof(bh),1,out);fwrite(&bi,sizeof(bi),1,out);fwrite(pixels.data(),pixels.size(),1,out);fclose(out);
+                    }
                 }
                 c11->ClearRenderTargetView(rtv.Get(),color);
                 if(generate)

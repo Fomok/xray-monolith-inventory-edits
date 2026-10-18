@@ -1,0 +1,25 @@
+name: Personal settings interaction probe
+on:
+  push:
+    branches: [personal-bodycam-dlss-frame-generation]
+    paths: ['tools/dlss/bridge_probe.cpp', '.github/workflows/personal-menu-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/setup-msbuild@v2
+      - name: Compile interaction probe
+        shell: pwsh
+        run: |
+          msbuild tools/dlss/bridge_probe.vcxproj /p:Configuration=Release /p:Platform=x64 /verbosity:minimal
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: personal-menu-interaction-probe
+          path: _build/dlss_tests/bridge_probe.exe
+          if-no-files-found: error
+          retention-days: 7
