@@ -824,7 +824,7 @@ void CRender::RenderToTarget(RRT target)
 	}
 
 	ID3DTexture2D* pBuffer = nullptr;
-	HW.m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBuffer);
+    R_CHK(HW.GetPresentationTexture(&pBuffer));
 	HW.pContext->CopyResource((*RT)->pSurface, pBuffer);
 	pBuffer->Release();
 }

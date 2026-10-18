@@ -9,6 +9,7 @@
 #if defined(USE_DX11)
 #include <d3d11_4.h>
 #include <dxgi1_4.h>
+class Dx12PresentationBridge;
 #endif
 
 #include "hwcaps.h"
@@ -67,6 +68,9 @@ public:
 #if defined(USE_DX11)	//	USE_DX10
 public:
     IDXGIFactory2*          m_pFactory; //  DXGI factory
+    Dx12PresentationBridge* presentationBridge = nullptr;
+    HRESULT PresentFrame(UINT interval, UINT flags);
+    HRESULT GetPresentationTexture(ID3D11Texture2D** texture);
 	IDXGIAdapter1*			m_pAdapter;	//	pD3D equivalent
 	IDXGIOutput*			m_pOutput;	//	the output we render to (belongs to m_pAdapter)
 	ID3D11Device1*			pDevice;	//	combine with DX9 pDevice via typedef

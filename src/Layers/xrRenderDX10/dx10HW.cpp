@@ -9,6 +9,7 @@
 #ifdef USE_DX11
 # include <d3d11_4.h>
 # include <dxgi1_5.h>
+# include "dx12PresentationBridge.h"
 #endif
 #pragma warning(default:4995)
 #include "../xrRender/HW.h"
@@ -597,7 +598,25 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     }
 
     // create swapchain
-    R_CHK(m_pFactory->CreateSwapChainForHwnd(pDevice, m_hWnd, &sd, &sd_fullscreen, NULL, &m_pSwapChain));
+    char bridgeOption[8] = {};
+    const bool bridgeRequested = GetEnvironmentVariableA("SQA_DX12_BRIDGE", bridgeOption, sizeof(bridgeOption)) == 1
+        && bridgeOption[0] == '1';
+    if (bridgeRequested && !Core.ParamsData.test(ECoreParams::dxgi_old))
+    {
+        presentationBridge = new Dx12PresentationBridge();
+        const HRESULT bridgeResult = presentationBridge->Initialize(pDevice, pContext, m_pFactory,
+            m_hWnd, sd, sd_fullscreen, &m_pSwapChain);
+        if (FAILED(bridgeResult))
+        {
+            Msg("! [DX12 bridge] startup hr=0x%08x; falling back to native DX11", bridgeResult);
+            delete presentationBridge;
+            presentationBridge = nullptr;
+            _RELEASE(m_pSwapChain);
+        }
+        else Msg("[DX12 bridge] active: native DX11 rendering, DX12 presentation; frame generation OFF");
+    }
+    if (!presentationBridge)
+        R_CHK(m_pFactory->CreateSwapChainForHwnd(pDevice, m_hWnd, &sd, &sd_fullscreen, NULL, &m_pSwapChain));
 
     // setup colorspace
     // HDR10 (U10 output) -> DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020
@@ -776,6 +795,10 @@ void CHW::DestroyDevice()
     _RELEASE(m_pSwapChain);
 
 #ifdef USE_DX11
+    pContext->ClearState();
+    pContext->Flush();
+    delete presentationBridge;
+    presentationBridge = nullptr;
     _RELEASE(pContext);
 #endif
 
@@ -809,6 +832,15 @@ void CHW::Reset(HWND hwnd)
 #endif
 
     BOOL bWindowed = (g_screenmode != 2);
+#ifdef USE_DX11
+    // Prototype supports windowed/borderless only, including later mode changes.
+    if (presentationBridge && !bWindowed)
+    {
+        Msg("! [DX12 bridge] exclusive fullscreen request held in borderless mode");
+        g_screenmode = 1;
+        bWindowed = TRUE;
+    }
+#endif
 
 #if defined(USE_DX11)
     cd_fs.Windowed = bWindowed;
@@ -895,6 +927,8 @@ void CHW::Reset(HWND hwnd)
         flags);
     if (FAILED(_hr_resize) || pDevice->GetDeviceRemovedReason() != S_OK)
         Msg("! [CHW::Reset] ResizeBuffers hr=0x%08x removed=0x%08x", _hr_resize, pDevice->GetDeviceRemovedReason());
+    if (presentationBridge)
+        CHECK_OR_EXIT(SUCCEEDED(_hr_resize), "DX12 bridge resize failed. Restart with SQA_DX12_BRIDGE unset.");
 #elif defined(USE_DX10)
 	CHK_DX(m_pSwapChain->ResizeBuffers(
 		cd.BufferCount,
@@ -1495,8 +1529,13 @@ void CHW::UpdateViews()
 
     // Create a render target view
 	//R_CHK	(pDevice->GetRenderTarget			(0,&pBaseRT));
-    ID3DTexture2D* pBuffer;
-	R = m_pSwapChain->GetBuffer(0, __uuidof( ID3DTexture2D), (LPVOID*)&pBuffer);
+    ID3DTexture2D* pBuffer = nullptr;
+#ifdef USE_DX11
+    R = GetPresentationTexture(&pBuffer);
+    CHECK_OR_EXIT(SUCCEEDED(R), "Presentation target creation failed. Restart with SQA_DX12_BRIDGE unset.");
+#else
+        R = m_pSwapChain->GetBuffer(0, __uuidof( ID3DTexture2D), (LPVOID*)&pBuffer);
+#endif
     R_CHK(R);
 
     R = pDevice->CreateRenderTargetView(pBuffer, NULL, &pBaseRT);
@@ -1546,4 +1585,25 @@ void CHW::UpdateViews()
     secret_pBaseZB = pBaseZB;
 #endif
 }
+#ifdef USE_DX11
+HRESULT CHW::GetPresentationTexture(ID3D11Texture2D** texture)
+{
+    if (presentationBridge)
+        return presentationBridge->Target(pDevice, m_ChainDesc.Width, m_ChainDesc.Height, m_ChainDesc.Format, texture);
+    return m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)texture);
+}
+
+HRESULT CHW::PresentFrame(UINT interval, UINT flags)
+{
+    if (!presentationBridge) return m_pSwapChain->Present(interval, flags);
+    const HRESULT hr = presentationBridge->Present(m_pSwapChain, interval, flags);
+    if (FAILED(hr))
+    {
+        Msg("! [DX12 bridge] present failed hr=0x%08x DX11 removed=0x%08x; restart with SQA_DX12_BRIDGE unset", hr, pDevice->GetDeviceRemovedReason());
+        // Do not silently reuse a resource after an uncompleted GPU wait.
+        CHECK_OR_EXIT(false, "DX12 bridge presentation failed. Restart with SQA_DX12_BRIDGE unset.");
+    }
+    return hr;
+}
+#endif
 #endif

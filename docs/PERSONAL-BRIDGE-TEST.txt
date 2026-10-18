@@ -1,0 +1,32 @@
+Squared Away Personal DX12 Bridge Test 1
+PERSONAL EXPERIMENT. No frame generation.
+
+Use a separate disposable game copy/profile. Install this complete bin/ + db/ package
+over the standard Bodycam + DLSS baseline. Retain the matching public grass/motion
+shader patch and Bodycam GAMMA Patch 1.1.0. Do not mix with weapon-follow/pivot builds.
+
+Default: native DX11. Bridge opt-in: set environment variable SQA_DX12_BRIDGE=1 for
+the game process (or launch MO2 from a shell with that variable set).
+PowerShell example before launching your test MO2/game:
+  $env:SQA_DX12_BRIDGE = '1'
+To revert in that shell:
+  Remove-Item Env:SQA_DX12_BRIDGE -ErrorAction SilentlyContinue
+Restart the game after changing the variable. There is no frame-generation setting.
+
+Start with SDR and windowed/borderless. HDR/exclusive startup uses native DX11 fallback;
+-dxgi_old bypasses the bridge. Exclusive requests while active are held in borderless.
+Look for "[DX12 bridge] active" or the explicit fallback HRESULT in the game log.
+Startup failures fall back; a runtime synchronization/resize failure stops with a
+restart instruction rather than continuing with potentially unsafe resources.
+
+Run tools/bridge_probe.exe first if desired: standalone hidden-window hardware test,
+no game required. Its success does not establish gameplay or visual correctness.
+
+A/B test the same save with the variable unset and set:
+- load/quit/menu/pause; motion, inventory, PDA, screenshots;
+- DLAA and DLSS Quality, 1x and magnified PiP, reticles, night vision;
+- repeated resize and alt-tab, borderless/windowed transitions.
+Record log, visual issues, frame times and GPU load. The prototype serializes each
+frame and adds a full-frame GPU copy, so a performance cost is expected.
+No generated frames or improved FPS are promised. Restore the previous complete
+engine package to undo the test. Installed files were not changed by Codex.

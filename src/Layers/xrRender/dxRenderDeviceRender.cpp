@@ -515,7 +515,11 @@ void dxRenderDeviceRender::End()
 #ifdef USE_DX11
 		svp_frame_burst_capture(); // r__svp_frame_burst saves this frame
 #endif
-		HW.m_pSwapChain->Present(present_interval, present_flags);
+#ifdef USE_DX11
+        HW.PresentFrame(present_interval, present_flags);
+#else
+        HW.m_pSwapChain->Present(present_interval, present_flags);
+#endif
 		svp_stats_present_ms = present_timer.GetElapsed_ms_f();
 	}
 #else //!USE_DX10 || USE_DX11
