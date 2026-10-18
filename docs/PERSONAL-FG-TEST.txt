@@ -1,55 +1,28 @@
-Squared Away Personal DLSS FG Test 7 Scope Diagnostics - EXPERIMENTAL
+Personal DLSS FG Test 8 - NORMAL LAUNCH - EXPERIMENTAL
 
-INSTALL
-1. Quit the game. Back up the complete Test 6 engine package.
-2. Copy this complete engine package to the separate personal test game.
-3. Keep the matching Test 6 UI/shader mod, or install the Test 7 Matching UI
-   and Scope Shader ZIP as a separate
-   MO2 mod below DLSS FSR3 Compatibility Patch and Bodycam patches. Its three
-   files must win. This is required for the matching optical map and controls.
-4. Keep OptiScaler Dual FPS Test 1 (dxgi.dll), the Test 4 INI, NR model and other
-   Full Pack dependencies. Keep External=true and OverlayMenu=false.
-5. Start through your existing FG-enabled launch with SQA_DLSS_FG=1.
+Quit the game and back up its matching bin/db and proxy/config in a test copy.
+Install the complete runtime bin/db payload. Launch your ordinary desktop
+shortcut, MO2, then Play. No special launcher or environment variable is required.
 
-SETTINGS
-Video > Basic has NVIDIA frame generation and Frame generation inside PiP
-scopes. Set the desired switches and Apply. Cancel preserves the old values.
-Both choices persist without a renderer restart. The status text reports whether
-this process loaded the runtime; the FPS overlay shows actual active/suspended
-state. No console commands are needed for these switches. Existing commands
-r_dlss_fg 0/1 and the new r_dlss_fg_pip 0/1 remain available.
+Video > Basic: NVIDIA frame generation and Frame generation inside PiP scopes
+remain independent saved choices. Apply changes them; Cancel keeps old values.
+Default Off. Runtime ready means capability, not that interpolation is enabled.
+Unsupported startup falls back to native DX11; check status/log if unavailable.
 
-PiP ON interpolates supported Bodycam Reference scope interiors and the world.
-The scope's own depth/motion and previous optical sampling map are transformed
-into the final image. Lens color/effects are retained. PiP OFF suspends FG while
-scoped; iron sights remain eligible. Unsupported legacy scopes, absent current
-Reference inputs, night vision/thermal and existing unsafe UI still suspend FG.
-Entry/exit, optic/camera changes and zoom/size cuts reset temporal history.
+Keep the supplied patched OptiScaler/INI: External=true, OverlayMenu=false,
+OptiScaler's own FG disabled. The runtime includes the tested NR model/forwarder,
+SR and Streamline files. Insert uses the patched legacy menu and measured FPS.
 
-FPS LIMIT AND COUNTERS
-The existing limit targets presented FPS under Reflex, including generated
-frames: 100 means about 50 rendered plus 50 generated. With FG off it targets
-100 rendered. The target and behavior are unchanged; no user settings were
-altered by this build. NR has its own GPU cost.
-Rendered and Presented are measured runtime rates, not physical monitor scan-out.
-The existing Insert menu, NR controls and wearable scene/UI protection remain.
+Matching UI/shader files must win over old MO2 loose copies. The merge kit lists
+the three exact files and includes their sources; db archives cannot override
+older loose files. Use the matching packed override or update the test-profile
+loose copies. No program automatically changes installed files.
 
-TESTING LIMITS
-GPU input, camera/optical motion, occlusion, reset, UI and Lua checks passed.
-The earlier Test 6 full probe failed its sustained threshold after losing focus.
-Test 7 passed its 1800-frame scoped-input/NR/toggle probe, with measured cap100
-rates near50/100 FG on and100/100 off. This is not gameplay/visual validation.
-Test scope pans, zoom, optic switches, entry/exit, occluding hands, reticles,
-Bodycam effects, NR and wearable screens in game. See the validation report.
+Cap100 targets about50 rendered/100 presented with FG, or100/100 off. Supported
+Reference optics use optical-map scope inputs; legacy/unmapped scopes, unsafe
+UI and NV/thermal remain guarded. Test actual lens/reticle quality in game.
 
-ROLLBACK
-Restore the complete backed-up Test 6 engine package. Keep its matching
-Test 6 UI/shader mod enabled.
-Keep the existing OptiScaler companion/INI. No installed game files were changed
-while preparing these packages. Do not install this test on the public engine.
-
-TEST 7 CHANGE
-Adds scope-aware diagnostic samples and cumulative SDK presentation counts.
-Existing in-game FG/PiP controls and rendering behavior are unchanged.
-Keep the matching Test 6 UI/scope-shader mod and Dual FPS companion.
-See docs/PERSONAL-FG-TEST7-VALIDATION.md for fields and validation limits.
+Rollback: restore the backed-up complete Test7 engine/data/UI/config set. Test7
+retains its old launch opt-in. Optional native recovery for Test8 is -dxgi_old;
+it is not needed for normal MO2 launching. Read the separate merge-kit validation.
+The supplied compiled engine remains SQA-based, not a prebuilt non-SQA engine.

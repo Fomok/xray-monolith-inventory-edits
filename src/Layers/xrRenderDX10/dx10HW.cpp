@@ -9,7 +9,7 @@
 #ifdef USE_DX11
 # include <d3d11_4.h>
 # include <dxgi1_5.h>
-# include "dx12PresentationBridge.h"
+# include "PersonalFgStartup.h"
 # include "../xrRenderPC_R4/Dlss/PersonalFrameGeneration.h"
 #endif
 #pragma warning(default:4995)
@@ -590,37 +590,20 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     _RELEASE(device);
     _RELEASE(context);
 
-    char fgOption[8] = {};
-    const bool fgRequested = GetEnvironmentVariableA("SQA_DLSS_FG", fgOption, sizeof(fgOption)) == 1 && fgOption[0] == '1';
-    if (ps_r__max_frame_latency > 0 && !fgRequested) {
-        IDXGIDevice1* dxgi_device1 = nullptr;
-        if (SUCCEEDED(pDevice->QueryInterface(&dxgi_device1)) && dxgi_device1) {
+    // Initialize capability during an ordinary MO2/game launch. Saved Video
+    // choices still control actual interpolation; unsupported startup stays DX11.
+    R_CHK(CreatePersonalPresentation(pDevice,pContext,m_pFactory,m_hWnd,sd,sd_fullscreen,
+        &m_pSwapChain,presentationBridge,!Core.ParamsData.test(ECoreParams::dxgi_old),
+        [](const char* message){Msg("%s",message);}));
+    if(ps_r__max_frame_latency>0 && !presentationBridge)
+    {
+        IDXGIDevice1* dxgi_device1=nullptr;
+        if(SUCCEEDED(pDevice->QueryInterface(&dxgi_device1)) && dxgi_device1)
+        {
             dxgi_device1->SetMaximumFrameLatency((UINT)ps_r__max_frame_latency);
             _RELEASE(dxgi_device1);
         }
     }
-
-    // create swapchain
-    char bridgeOption[8] = {};
-    const bool bridgeRequested = GetEnvironmentVariableA("SQA_DX12_BRIDGE", bridgeOption, sizeof(bridgeOption)) == 1
-        && bridgeOption[0] == '1';
-    if ((bridgeRequested || fgRequested) && !Core.ParamsData.test(ECoreParams::dxgi_old))
-    {
-        presentationBridge = new Dx12PresentationBridge();
-        const HRESULT bridgeResult = presentationBridge->Initialize(pDevice, pContext, m_pFactory,
-            m_hWnd, sd, sd_fullscreen, &m_pSwapChain, fgRequested, [](const char* message) { Msg("%s",message); });
-        if (FAILED(bridgeResult))
-        {
-            Msg("! [DX12 bridge] startup hr=0x%08x; falling back to native DX11", bridgeResult);
-            presentationBridge->ShutdownBeforeSwapchainRelease();
-            _RELEASE(m_pSwapChain);
-            delete presentationBridge;
-            presentationBridge = nullptr;
-        }
-        else Msg("[DX12 bridge] active: native DX11 rendering, DX12 presentation; DLSS-G runtime %s; r_dlss_fg defaults OFF", fgRequested ? "ready" : "not requested");
-    }
-    if (!presentationBridge)
-        R_CHK(m_pFactory->CreateSwapChainForHwnd(pDevice, m_hWnd, &sd, &sd_fullscreen, NULL, &m_pSwapChain));
 
     // setup colorspace
     // HDR10 (U10 output) -> DXGI_COLOR_SPACE_RGB_FULL_G2084_NONE_P2020
@@ -835,7 +818,7 @@ void CHW::Reset(HWND hwnd)
 #if defined(USE_DX11)
     personal_fg::Reset();
     if(presentationBridge)
-        CHECK_OR_EXIT(SUCCEEDED(presentationBridge->Suspend()), "DLSS-G reset failed; restart without SQA_DLSS_FG.");
+        CHECK_OR_EXIT(SUCCEEDED(presentationBridge->Suspend()), "DLSS-G reset failed; restart the game; use -dxgi_old for native DX11 recovery.");
     DXGI_SWAP_CHAIN_DESC1&           cd    = m_ChainDesc;
     DXGI_SWAP_CHAIN_FULLSCREEN_DESC& cd_fs = m_ChainDescFullscreen;
 #elif defined(USE_DX10)
@@ -939,7 +922,7 @@ void CHW::Reset(HWND hwnd)
     if (FAILED(_hr_resize) || pDevice->GetDeviceRemovedReason() != S_OK)
         Msg("! [CHW::Reset] ResizeBuffers hr=0x%08x removed=0x%08x", _hr_resize, pDevice->GetDeviceRemovedReason());
     if (presentationBridge)
-        CHECK_OR_EXIT(SUCCEEDED(_hr_resize), "DX12 bridge resize failed. Restart with SQA_DX12_BRIDGE unset.");
+        CHECK_OR_EXIT(SUCCEEDED(_hr_resize), "DX12 bridge resize failed. Restart the game; use -dxgi_old for native DX11 recovery.");
 #elif defined(USE_DX10)
 	CHK_DX(m_pSwapChain->ResizeBuffers(
 		cd.BufferCount,
@@ -1543,7 +1526,7 @@ void CHW::UpdateViews()
     ID3DTexture2D* pBuffer = nullptr;
 #ifdef USE_DX11
     R = GetPresentationTexture(&pBuffer);
-    CHECK_OR_EXIT(SUCCEEDED(R), "Presentation target creation failed. Restart with SQA_DX12_BRIDGE unset.");
+    CHECK_OR_EXIT(SUCCEEDED(R), "Presentation target creation failed. Restart the game; use -dxgi_old for native DX11 recovery.");
 #else
         R = m_pSwapChain->GetBuffer(0, __uuidof( ID3DTexture2D), (LPVOID*)&pBuffer);
 #endif
@@ -1610,9 +1593,9 @@ HRESULT CHW::PresentFrame(UINT interval, UINT flags)
     const HRESULT hr = presentationBridge->Present(m_pSwapChain, interval, flags);
     if (FAILED(hr))
     {
-        Msg("! [DX12 bridge] present failed hr=0x%08x DX11 removed=0x%08x; restart with SQA_DX12_BRIDGE unset", hr, pDevice->GetDeviceRemovedReason());
+        Msg("! [DX12 bridge] present failed hr=0x%08x DX11 removed=0x%08x; restart the game; use -dxgi_old for native DX11 recovery", hr, pDevice->GetDeviceRemovedReason());
         // Do not silently reuse a resource after an uncompleted GPU wait.
-        CHECK_OR_EXIT(false, "DX12 bridge presentation failed. Restart with SQA_DX12_BRIDGE unset.");
+        CHECK_OR_EXIT(false, "DX12 bridge presentation failed. Restart the game; use -dxgi_old for native DX11 recovery.");
     }
     return hr;
 }

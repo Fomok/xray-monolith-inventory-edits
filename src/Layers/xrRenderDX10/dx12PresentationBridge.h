@@ -200,6 +200,9 @@ public:
         {
             DXGI_ADAPTER_DESC adapterDesc{};
             hr=adapter->GetDesc(&adapterDesc); if(FAILED(hr))return hr;
+            // Avoid loading NVIDIA plugins on another vendor. The SDK performs
+            // the authoritative architecture/driver/HAGS check for NVIDIA adapters.
+            if(adapterDesc.VendorId!=0x10de)return DXGI_ERROR_UNSUPPORTED;
             wchar_t executable[32768]{};
             DWORD length=GetModuleFileNameW(nullptr,executable,32768);
             if(!length || length>=32768)return E_FAIL;

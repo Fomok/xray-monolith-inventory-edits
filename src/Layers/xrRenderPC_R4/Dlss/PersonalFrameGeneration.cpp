@@ -45,7 +45,7 @@ bool Eligible()
 {
     if(!ps_r_dlss_fg){Status("Off");return false;}
     auto* bridge=HW.presentationBridge;
-    if(!bridge || !bridge->GenerationReady()){Status("Unavailable: launch with SQA_DLSS_FG=1; check capability log; restart after a failure.");return false;}
+    if(!bridge || !bridge->GenerationReady()){Status("Unavailable: automatic capability initialization failed or is unsupported; check the log and restart after correcting the cause.");return false;}
     if(!Device.b_is_Active || Device.Paused() || !g_pGameLevel || Device.dwPrecacheFrame || IsMainMenuActive())
     {Status("Suspended for menu/loading/pause/inactive window.");return false;}
     const auto* main=RImplementation.TargetMain;
@@ -76,7 +76,7 @@ bool Eligible()
 }
 void Check(HRESULT result)
 {
-    CHECK_OR_EXIT(SUCCEEDED(result), "Personal frame generation synchronization failed; restart without SQA_DLSS_FG.");
+    CHECK_OR_EXIT(SUCCEEDED(result), "Personal frame generation synchronization failed; restart the game; use -dxgi_old for native DX11 recovery.");
 }
 }
 bool ReflexLimitsFrames()

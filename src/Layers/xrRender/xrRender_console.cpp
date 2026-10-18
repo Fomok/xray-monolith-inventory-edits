@@ -821,7 +821,7 @@ public:
         LPCSTR value="unavailable";
 #if defined(USE_DX11)
         if(HW.presentationBridge && HW.presentationBridge->GenerationReady())value="ready";
-        else if(StreamlineIntegration::FrameGenerationSupport()==StreamlineIntegration::Support::Unknown)value="restart";
+        else if(!HW.pDevice || StreamlineIntegration::FrameGenerationSupport()==StreamlineIntegration::Support::RestartRequired)value="restart";
 #endif
         xr_strcpy(status,value);
     }

@@ -4,7 +4,8 @@
 #include <cstdlib>
 #include <cmath>
 #include <vector>
-#include "../../src/Layers/xrRenderDX10/dx12PresentationBridge.h"
+#include <memory>
+#include "../../src/Layers/xrRenderDX10/PersonalFgStartup.h"
 #include "../../src/Layers/xrRenderPC_R4/Dlss/DlssD3D11.h"
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxgi.lib")
@@ -44,6 +45,21 @@ int main(int argc, char** argv)
     }
     bool fg=false, ngx=false, generate=false, menuTest=false, abTest=false, toggleTest=false;
     bool scopeTest=false;
+    bool autoStartup=false,startupSmoke=false,expectNative=false,unsupportedFormat=false;
+    for(int i=1;i<argc;++i) {
+        autoStartup |= strcmp(argv[i],"--auto-startup")==0;
+        startupSmoke |= strcmp(argv[i],"--startup-smoke")==0;
+        expectNative |= strcmp(argv[i],"--expect-native")==0;
+        unsupportedFormat |= strcmp(argv[i],"--unsupported-format")==0;
+    }
+    autoStartup |= startupSmoke;
+    if(autoStartup) {
+        char value[8]{};
+        if(GetEnvironmentVariableA("SQA_DLSS_FG",value,sizeof(value)) || GetEnvironmentVariableA("SQA_DX12_BRIDGE",value,sizeof(value))) {
+            puts("FAIL automatic-startup test requires both old launch variables absent");return 40;
+        }
+        fg=true;
+    }
     for(int i=1;i<argc;++i)scopeTest |= strcmp(argv[i],"--scope-test")==0;
     if(scopeTest) {fg=ngx=generate=abTest=true;}
     unsigned reflexLimitUs=0;
@@ -95,7 +111,8 @@ int main(int argc, char** argv)
         check(raw.As(&d11), "device1"); check(rawContext.As(&c11), "context1");
         ComPtr<IDXGIFactory2> factory;
         check(CreateDXGIFactory1(IID_PPV_ARGS(&factory)), "factory");
-        Dx12PresentationBridge bridge;
+        Dx12PresentationBridge manualBridge;
+        std::unique_ptr<Dx12PresentationBridge> automaticBridge;
         ComPtr<IDXGISwapChain1> swapchain;
         DXGI_SWAP_CHAIN_DESC1 desc = {};
         desc.Width=320; desc.Height=240; desc.Format=DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -104,8 +121,36 @@ int main(int argc, char** argv)
         desc.AlphaMode=DXGI_ALPHA_MODE_IGNORE;
         DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreen = {}; fullscreen.Windowed=TRUE;
         if(ngx) { desc.Width=1280; desc.Height=720; }
-        check(bridge.Initialize(d11.Get(), c11.Get(), factory.Get(), window, desc, fullscreen, &swapchain, fg,
-            [](const char* message){puts(message);}), "initialize");
+        if(unsupportedFormat)desc.Format=DXGI_FORMAT_R10G10B10A2_UNORM;
+        if(autoStartup) {
+            Dx12PresentationBridge* selected=nullptr;
+            check(CreatePersonalPresentation(d11.Get(),c11.Get(),factory.Get(),window,desc,fullscreen,
+                &swapchain,selected,true,[](const char* message){puts(message);fflush(stdout);}),"automatic startup/native fallback");
+            automaticBridge.reset(selected);
+            if(startupSmoke) {
+                if(bool(selected)==expectNative)return 41;
+                for(unsigned frame=0;frame<12;++frame) {
+                    ComPtr<ID3D11Texture2D> surface;
+                    if(selected) {
+                        check(selected->BeginFrame(0),"automatic FG-off frame");selected->EndSimulation();
+                        check(selected->Target(d11.Get(),desc.Width,desc.Height,desc.Format,&surface),"automatic target");
+                    } else check(swapchain->GetBuffer(0,IID_PPV_ARGS(&surface)),"native fallback target");
+                    ComPtr<ID3D11RenderTargetView> view;
+                    check(d11->CreateRenderTargetView(surface.Get(),nullptr,&view),"startup RTV");
+                    const float color[]={.1f,.2f,.3f,1.f};c11->ClearRenderTargetView(view.Get(),color);
+                    check(selected?selected->Present(swapchain.Get(),0,0):swapchain->Present(0,0),"startup present");
+                    if(selected && selected->GenerationActive())return 42;
+                }
+                c11->ClearState();c11->Flush();
+                if(selected)selected->ShutdownBeforeSwapchainRelease();
+                swapchain.Reset();automaticBridge.reset();
+                puts("PASS automatic startup without environment, 12 FG-off/native presentations and cleanup.");fflush(stdout);
+                DestroyWindow(window);return 0;
+            }
+            if(!selected){puts("FAIL generation test requires successful automatic capability startup");return 43;}
+        } else check(manualBridge.Initialize(d11.Get(),c11.Get(),factory.Get(),window,desc,fullscreen,&swapchain,fg,
+            [](const char* message){puts(message);}),"initialize");
+        auto& bridge=autoStartup?*automaticBridge:manualBridge;
         dlss::D3D11Backend upscaler;
         if(ngx && !upscaler.Initialize(raw.Get(),L".",[](const char* message,unsigned result){printf("NGX %s 0x%08x\n",message,result);})) return 4;
         for (unsigned pass=0; pass<passCount; ++pass)
