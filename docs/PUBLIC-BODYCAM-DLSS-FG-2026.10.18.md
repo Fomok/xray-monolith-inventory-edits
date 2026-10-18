@@ -133,3 +133,19 @@ tests are preserved as failures, not generation passes. Public packaging only
 changes two UI descriptions to remove obsolete wording; the script and scope
 shader behavior and both tested binaries are unchanged. Packed UI CRC/payloads,
 loose overrides, binary hashes and archive contents are verified before publishing.
+
+
+## Publication evidence
+
+Published as [optional release](https://github.com/Fomok/xray-monolith-inventory-edits/releases/tag/bodycam-dlss-fg-2026.10.18), id 416632615, pinned tag commit
+`f273026579bf4355d6871a80380426bf5156899e`. Existing releases and default latest `v2.1.0`
+remain unchanged. All six public asset URLs returned HTTP 200; uploaded sizes and
+SHA-256 digests matched local archives. GitHub immutable-release locking is not
+enabled; the versioned tag was created once and is not moved by this workflow.
+
+- [LICENSES-AND-NOTICES.txt](https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-fg-2026.10.18/LICENSES-AND-NOTICES.txt): 235057 bytes; `sha256:60f9344999984de99af0305a7e16cb77bd4cfa4aad132c7341126540875f7a12`.
+- [OptiScaler.NR.0.8.91.Corresponding.Source.zip](https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-fg-2026.10.18/OptiScaler.NR.0.8.91.Corresponding.Source.zip): 528211571 bytes; `sha256:5d599ce6ffedcdb0f7420bf2e63713d71dcf71b44dcdc3322ca660ba34760e14`.
+- [runtime-manifest.json](https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-fg-2026.10.18/runtime-manifest.json): 3627 bytes; `sha256:5d592a604e8944de941591950190e6879d7941d1c9603f12ee81369da16a8fac`.
+- [Squared.Away.Engine.Bodycam.DLSS.FG.DX11.AVX.zip](https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-fg-2026.10.18/Squared.Away.Engine.Bodycam.DLSS.FG.DX11.AVX.zip): 174794944 bytes; `sha256:f484f0bd166b3ac7d784af90df18513fdb1af8162bbf5d534f784b7a18e77658`.
+- [Squared.Away.FG.UI.Scope.Patch.zip](https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-fg-2026.10.18/Squared.Away.FG.UI.Scope.Patch.zip): 6357 bytes; `sha256:b5b807ac72c59b3899163b65946243250c90301e84fd53c5c3549cb76f1058ba`.
+- [Squared.Away.Optional.DLSS5.NR.Runtime.zip](https://github.com/Fomok/xray-monolith-inventory-edits/releases/download/bodycam-dlss-fg-2026.10.18/Squared.Away.Optional.DLSS5.NR.Runtime.zip): 155711314 bytes; `sha256:93dd8ee330d867f18b39966e374480f92f45e2a2338e6d3a3b67426fc41cb795`.
