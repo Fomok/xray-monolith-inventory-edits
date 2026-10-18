@@ -6,10 +6,14 @@
 
 #include "../../build_config_defines.h"
 #include "Debug/renderdoc_app.h" // r__rdc_capture
+#if defined(USE_DX11)
+#include "../xrRenderDX10/dx12PresentationBridge.h"
+#endif
 
 u32 ps_Preset = 2;
 u32 ps_r_dlss_quality = 0;
-int ps_r_dlss_fg = 0;
+u32 ps_r_dlss_fg = 0, ps_r_dlss_fg_pip = 0;
+xr_token personal_fg_token[] = {{"0", 0}, {"1", 1}, {nullptr, 0}};
 // Default to DLSS selection for compatibility with existing DLSS-only configs.
 // Its quality defaults to Off, so a fresh installation still renders natively.
 u32 ps_r_upscaler = 1;
@@ -805,6 +809,22 @@ public:
 		sscanf(args, "%u", &frames);
 		rdc_trigger_capture(frames);
 	}
+};
+
+class CCC_PersonalFgStatus : public IConsole_Command
+{
+public:
+    CCC_PersonalFgStatus(LPCSTR name):IConsole_Command(name) {}
+    void Execute(LPCSTR) override {}
+    void Save(IWriter*) override {} // capability, never a persisted user choice
+    void Status(TStatus& status) override {
+        LPCSTR value="unavailable";
+#if defined(USE_DX11)
+        if(HW.presentationBridge && HW.presentationBridge->GenerationReady())value="ready";
+        else if(StreamlineIntegration::FrameGenerationSupport()==StreamlineIntegration::Support::Unknown)value="restart";
+#endif
+        xr_strcpy(status,value);
+    }
 };
 
 class CCC_Screenshot : public IConsole_Command
@@ -1670,7 +1690,9 @@ void xrRender_initconsole()
 #if defined(USE_DX11)
 	CMD3(CCC_Token, "r_dlss_quality", &ps_r_dlss_quality, dlss_quality_token);
 #if (RENDER == R_R4)
-    CMD4(CCC_Integer, "r_dlss_fg", &ps_r_dlss_fg, 0, 1);
+    CMD3(CCC_Token, "r_dlss_fg", &ps_r_dlss_fg, personal_fg_token);
+    CMD3(CCC_Token, "r_dlss_fg_pip", &ps_r_dlss_fg_pip, personal_fg_token);
+    CMD1(CCC_PersonalFgStatus, "r_dlss_fg_status");
 #endif
 	CMD3(CCC_Token, "r_upscaler", &ps_r_upscaler, upscaler_token);
 	CMD3(CCC_Token, "r_fsr3_quality", &ps_r_fsr3_quality, fsr3_quality_token);

@@ -63,7 +63,35 @@ int main()
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* h=static_cast<const unsigned short*>(m.pData);return h[0]==0x3400 && h[1]==0xb000;});
  read(2,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=static_cast<const unsigned char*>(m.pData);return p[25*m.RowPitch+25*4]==0 && p[25*m.RowPitch+45*4]==0;});
  read(3,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=static_cast<const unsigned char*>(m.pData);return p[0]==0 && p[25*m.RowPitch+25]==255 && p[25*m.RowPitch+45]==255 && p[19*m.RowPitch+19]==255 && p[18*m.RowPitch+18]==0;});
+ // A moving lens with an independent camera must not inherit main-camera MVs.
+ // The previous optical map is identity; the next one shifts capture UV +1/16.
+ std::vector<float> mapping(64*64*4),scopeMotions(64*64*4,0.f);
+ for(UINT y=0;y<64;++y)for(UINT x=0;x<64;++x){auto i=(y*64+x)*4;
+     mapping[i]=(x+.5f)/64;mapping[i+1]=(y+.5f)/64;mapping[i+2]=(x>8&&x<55&&y>8&&y<55)?1.f:0.f;mapping[i+3]=1;
+     scopeMotions[i]=.03125f;}
+ auto map=source(DXGI_FORMAT_R32G32B32A32_FLOAT,mapping.data(),64*4*sizeof(float));
+ auto scopeMotion=source(DXGI_FORMAT_R32G32B32A32_FLOAT,scopeMotions.data(),64*4*sizeof(float));
+ PersonalFgScope scope;scope.mapping=map.Get();scope.depth=depth.Get();scope.motion=scopeMotion.Get();
+ scope.reprojection[0]=scope.reprojection[5]=scope.reprojection[10]=scope.reprojection[15]=1;
+ scope.planes[0]=scope.planes[2]=.1f;scope.planes[1]=scope.planes[3]=100.f;
+ Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"scope first frame");
+ read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0 && p[65]==0;});
+ for(UINT i=0;i<64*64;++i)mapping[i*4]+=.0625f;
+ context->UpdateSubresource(map.Get(),0,nullptr,mapping.data(),64*4*sizeof(float),0);
+ scope.reset=false;
+ Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"scope moved lens");
+ // prev capture = current capture - scopeMV. Old screen = current+.03125.
+ // RG16 output must therefore be (-.03125,0), while outside lens stays main.
+ read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* center=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);
+     const auto* outside=(const unsigned short*)m.pData;return center[64]==0xa800 && center[65]==0 && outside[0]==0x3400;});
+ read(0,[](const D3D11_MAPPED_SUBRESOURCE& m){return fabsf(*(const float*)((const char*)m.pData+32*m.RowPitch+32*4)-.5f)<1e-5f;});
+ scope.reset=true;
+ Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"scope reset");
+ read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0;});
+ Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get()),"scope exit");
+ read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0x3400;});
  context->ClearState();context->Flush();
+ puts("PASS independent scope motion, previous optical-map inversion, depth planes, cuts, exit and main-view isolation.");
  puts("PASS depth=.5, RG16 motion=(.25,-.125), UI interior/edge/dilation/background and context-state restore.");
  return 0;
 }

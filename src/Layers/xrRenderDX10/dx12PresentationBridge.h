@@ -105,7 +105,8 @@ public:
         if(logger)logger("[DLSS FG] Disabled after input/runtime failure; restart game to retry.");
         return !fgReady || streamline.DisableAfterFailure() ? S_OK : E_FAIL;
     }
-    HRESULT CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion, const sl::Constants& constants)
+    HRESULT CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion, const sl::Constants& constants,
+        const PersonalFgScope* scope=nullptr)
     {
         if(!GenerationReady() || !streamline.HasFrame() || !streamline.CanGenerate(width,height))return S_FALSE;
         if(!depth || !motion)return E_INVALIDARG;
@@ -117,7 +118,7 @@ public:
             hr=inputs.Resize(device.Get(),renderDevice.Get(),d.Width,d.Height,width,height); if(FAILED(hr))return hr;
         }
         frameConstants=constants;
-        return inputs.Capture(renderDevice.Get(),context.Get(),depth,motion);
+        return inputs.Capture(renderDevice.Get(),context.Get(),depth,motion,scope);
     }
     void CaptureHudless()
     {

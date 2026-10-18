@@ -59,6 +59,6 @@ ScopeReferenceImageOut main(ScopeReferenceCompositeVertex input)
     float3 color=scope_reference_optics(input.uv,reference_source_tangent.xyz,reference_source_bitangent.xyz,sourceView,effectDistance,scope_reference_active.x);
     ScopeReferenceImageOut output;
     output.color=float4(color,saturate(dot(scope_reference_pupil_transmission,float3(1.0/3.0,1.0/3.0,1.0/3.0)))*scope_reference_visibility);
-    output.capture=float4(reference_image_capture_tc,0,1);
+    output.capture=float4(reference_image_capture_tc,output.color.a>0.001?1:0,1);
     return output;
 }

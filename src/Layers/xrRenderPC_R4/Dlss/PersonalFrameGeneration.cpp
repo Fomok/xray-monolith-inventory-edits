@@ -8,7 +8,8 @@
 
 // Camera/Reflex sequencing adapted from Brodrigz 1.0.2 FrameGeneration.cpp.
 // Credits: Brodrigz, OGSR team, xrSimpAI. Bodycam eligibility is deliberately stricter.
-extern int ps_r_dlss_fg, ps_framelimiter;
+extern u32 ps_r_dlss_fg, ps_r_dlss_fg_pip;
+extern int ps_framelimiter;
 extern float scope_radius;
 extern bool IsMainMenuActive();
 namespace personal_fg
@@ -19,6 +20,11 @@ bool started=false, submitted=false, hidden=false, previous=false;
 Fmatrix lastTransform;
 Fvector lastPosition, lastDirection;
 u32 lastFrame=0, lastWidth=0, lastHeight=0;
+u32 lastScopeEpoch=~0u, lastScopeSession=~0u;
+bool lastScoped=false;
+dlss::Offset lastScopeMainJitter{};
+float lastScopeFov=0;
+u32 lastScopeWidth=0,lastScopeHeight=0;
 float lastFov=0;
 const char* lastStatus=nullptr;
 u32 lastUiFlags=~u32(0);
@@ -36,9 +42,19 @@ bool Eligible()
     {Status("Suspended for menu/loading/pause/inactive window.");return false;}
     const float aim = g_pGamePersistent && g_pGamePersistent->m_pGShaderConstants ?
         g_pGamePersistent->m_pGShaderConstants->hud_params.x : 0.f;
-    if(ScopeActive(Device.m_SecondViewport.IsSVPActive(), scope_fake_enabled != 0,
-        scope_3D_fake_enabled != 0, aim, scope_radius) || ps_r2_nightvision>0 || ps_r2_heatvision>0)
-    {Status("Suspended for scopes/night vision/thermal; native rendered frames preserved.");return false;}
+    const auto* main=RImplementation.TargetMain;
+    const auto* scope=RImplementation.TargetSVP;
+    const bool lens=!RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty();
+    const bool scoped=ScopeActive(Device.m_SecondViewport.IsSVPActive(), scope_fake_enabled != 0,
+        lens, aim, scope_radius);
+    if(ps_r2_nightvision>0 || ps_r2_heatvision>0)
+    {Status("Suspended for night vision/thermal.");return false;}
+    if(scoped && !ps_r_dlss_fg_pip)
+    {Status("Suspended in scopes: PiP frame generation is off in Video settings.");return false;}
+    if(scoped && (!Device.true_pip_on || !main || !scope ||
+        main->scope_reference_composited_frame!=Device.dwFrame ||
+        scope->scope_reference_raw_frame!=Device.dwFrame || !main->rt_scope_reference_capture_tc || !scope->rt_baseZB))
+    {Status("Suspended: scope has no current optical mapping/depth; legacy scopes are unsupported.");return false;}
     const u32 uiFlags = (g_hud ? g_hud->FrameGenerationUiFlags() : 0) |
         (RImplementation.GMBase.RGraph.hasNativeHudAttachments ? 16u : 0u);
     if (uiFlags != lastUiFlags)
@@ -80,8 +96,8 @@ void BeginSimulation()
     hidden=!Device.true_pip_on && svp.IsSVPActive() && (Device.dwFrame+1)%svp.GetSVPFrameDelay()==0;
     auto* bridge=HW.presentationBridge;
     if(!bridge || hidden)return;
-    // Existing r__framelimit remains a rendered-FPS cap. Reflex owns that cap
-    // when active; do not also busy-wait in the engine.
+    // Reflex applies this target to PRESENTED FPS with FG, and rendered FPS
+    // without FG. Preserve the user's target; do not also busy-wait in the engine.
     const UINT limit=ReflexLimitsFrames() && ps_framelimiter>0 ? UINT(1000000.f/ps_framelimiter) : 0;
     Check(bridge->BeginFrame(limit));
 }
@@ -98,7 +114,12 @@ void CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion)
 {
     if(Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp)return;
     if(!Eligible()){previous=false;return;}
-    const bool cut=!previous || Device.dwFrame!=lastFrame+1 || lastWidth!=dlss::RenderWidth() ||
+    const bool scoped=Device.m_SecondViewport.IsSVPActive() || !RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty();
+    auto& svp=Device.m_SecondViewport;
+    const bool scopeCut=scoped!=lastScoped || (scoped &&
+        (lastScopeEpoch!=svp.svp_optic_epoch || lastScopeSession!=svp.GetSVPSession() ||
+        _abs(lastScopeFov-svp.svp_fov)>.001f || lastScopeWidth!=RImplementation.TargetSVP->Width || lastScopeHeight!=RImplementation.TargetSVP->Height));
+    const bool cut=scopeCut || !previous || Device.dwFrame!=lastFrame+1 || lastWidth!=dlss::RenderWidth() ||
         lastHeight!=dlss::RenderHeight() || lastPosition.distance_to_sqr(Device.vCameraPosition)>64.f ||
         lastDirection.dotproduct(Device.vCameraDirection)<.25f || _abs(lastFov-Device.fFOV)>10.f;
     Fmatrix invProjection,invCurrent,toPrevious,fromPrevious;
@@ -123,11 +144,32 @@ void CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion)
     c.cameraFOV=2.f*atanf(1.f/Device.mProject._22);c.cameraAspectRatio=Device.mProject._22/Device.mProject._11;
     c.depthInverted=sl::eFalse;c.cameraMotionIncluded=sl::eTrue;
     c.motionVectors3D=c.motionVectorsJittered=sl::eFalse;c.reset=cut ? sl::eTrue : sl::eFalse;
-    const HRESULT result=HW.presentationBridge->CaptureScene(depth,motion,c);
+    PersonalFgScope scopeInputs;
+    if(scoped) {
+        auto* target=RImplementation.TargetSVP;
+        scopeInputs.mapping=RImplementation.TargetMain->rt_scope_reference_capture_tc->pSurface;
+        scopeInputs.depth=target->rt_baseZB->pSurface;
+        scopeInputs.motion=target->rt_ssfx_motion_vectors->pSurface;
+        Fmatrix current,old,inverse,reprojection;
+        current.mul(Device.matrices[1].mProject,Device.matrices[1].mView);
+        old.mul(Device.matrices_previous[1].mProject,Device.matrices_previous[1].mView);
+        D3DXMatrixInverse((D3DXMATRIX*)&inverse,nullptr,(D3DXMATRIX*)&current);
+        reprojection.mul(old,inverse);
+        memcpy(scopeInputs.reprojection,&reprojection,sizeof(Fmatrix));
+        scopeInputs.planes[0]=svp.svp_near;scopeInputs.planes[1]=svp.svp_far;
+        scopeInputs.planes[2]=c.cameraNear;scopeInputs.planes[3]=c.cameraFar;
+        scopeInputs.mainJitterDelta[0]=(jitter.x-lastScopeMainJitter.x)/dlss::RenderWidth();
+        scopeInputs.mainJitterDelta[1]=(jitter.y-lastScopeMainJitter.y)/dlss::RenderHeight();
+        scopeInputs.reset=cut;
+    }
+    const HRESULT result=HW.presentationBridge->CaptureScene(depth,motion,c,scoped?&scopeInputs:nullptr);
     if(FAILED(result)){Msg("! [Personal FG] input capture failed 0x%08x",result);Check(HW.presentationBridge->FailGeneration());previous=false;return;}
     previous=result==S_OK;lastFrame=Device.dwFrame;lastTransform=Device.mFullTransform;
     lastWidth=dlss::RenderWidth();lastHeight=dlss::RenderHeight();
     lastPosition=Device.vCameraPosition;lastDirection=Device.vCameraDirection;lastFov=Device.fFOV;
+    lastScoped=scoped;lastScopeEpoch=svp.svp_optic_epoch;lastScopeSession=svp.GetSVPSession();
+    lastScopeMainJitter=jitter;lastScopeFov=svp.svp_fov;
+    if(scoped){lastScopeWidth=RImplementation.TargetSVP->Width;lastScopeHeight=RImplementation.TargetSVP->Height;}
 }
 void CaptureHudless()
 {

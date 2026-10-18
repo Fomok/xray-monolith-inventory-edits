@@ -1,3 +1,32 @@
+Squared Away Personal DLSS FG Test 6 PiP - EXPERIMENTAL
+
+Use the complete Test 6 engine and matching Test 6 UI/shader override package.
+Keep the existing Dual FPS Test 1 OptiScaler DLL, Test 4 INI and NR dependencies.
+Start with the same SQA_DLSS_FG=1 environment opt-in as Test 5.
+Video > Basic now has NVIDIA frame generation and Frame generation inside PiP
+scopes. Apply saves these choices; Cancel preserves the old settings. The runtime
+status below the controls identifies missing startup opt-in/unavailable runtime.
+The master and PiP switches default Off; old r_dlss_fg 0/1 commands still work.
+
+PiP ON uses the Reference optical kernel's exact capture-coordinate map and
+scope-camera depth/motion. Previous optical mapping converts capture motion into
+main-image motion, including a moving lens. Lens color/effects stay unchanged.
+PiP OFF suspends generation while scoped. Iron sights no longer suspend FG just
+because the global 3D-scope option is enabled. Legacy optics without a current
+Reference mapping, night vision/thermal and existing unsafe UI still suspend FG.
+The lens interior is interpolated, not held at native cadence by a UI mask.
+
+The existing FPS limit targets presented FPS including FG under Reflex: a target
+of 100 produces about 50 rendered + 50 generated. With FG off it targets 100
+rendered. This build preserves the target and cap behavior; no driver limits
+or user config are changed. Lower GPU load at that cap can be expected.
+
+Restore the complete Test 5 engine and disable/remove the Test 6 UI/shader
+package to roll back. No installed files are modified by building these packages.
+Actual gameplay optics/interpolation, Apply/Cancel and scope transitions require
+user testing. See the accompanying validation report for completed offline tests.
+
+Historical Test 5 counter details (also applicable to Test 6):
 Squared Away Personal Dual FPS
 
 Install both matching packages in the separate test game:

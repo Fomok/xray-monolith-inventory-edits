@@ -270,7 +270,8 @@ bool CRenderTarget::phase_scope_reference_ocular()
     const float transparent[4]={0,0,0,0};
     HW.pContext->ClearRenderTargetView(rt_scope_reference_ocular->pRT,transparent);
     svp_reference_target(rt_scope_reference_inside, "$user$svp_reference_inside", svp_reference_chart_size, svp_reference_chart_size);
-    if (capture->reticle_capture_light_current())
+    // The same exact optical mapping also transports scope motion for personal FG.
+    // Keep it separate from color, depth, and the scope's own temporal history.
     {
         svp_reference_target(rt_scope_reference_capture_tc, "$user$svp_reference_capture_tc", sceneWidth, sceneHeight);
         HW.pContext->ClearRenderTargetView(rt_scope_reference_capture_tc->pRT, transparent);

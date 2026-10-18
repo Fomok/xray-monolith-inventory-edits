@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <d3dcompiler.h>
 #include <wrl/client.h>
+#include "PersonalFgScope.h"
 #pragma comment(lib, "d3dcompiler.lib")
 
 class PersonalFgInputs
@@ -12,6 +13,10 @@ class PersonalFgInputs
     template<class T> using Ptr = Microsoft::WRL::ComPtr<T>;
     Ptr<ID3DDeviceContextState> captureState;
     Ptr<ID3D11ComputeShader> conversion, uiMask;
+    Ptr<ID3D11ComputeShader> scopeConversion;
+    Ptr<ID3D11Texture2D> previousScopeMap;
+    Ptr<ID3D11Buffer> scopeConstants;
+    Ptr<ID3D11SamplerState> scopeSampler;
     Ptr<ID3D11UnorderedAccessView> depthUav, motionUav, uiUav;
     UINT renderWidth = 0, renderHeight = 0, displayWidth = 0, displayHeight = 0;
 
@@ -68,7 +73,7 @@ public:
     HRESULT Resize(ID3D12Device* d12, ID3D11Device1* d11, UINT rw, UINT rh, UINT dw, UINT dh)
     {
         renderWidth = renderHeight = displayWidth = displayHeight = 0;
-        Invalidate(); depthUav.Reset(); motionUav.Reset(); uiUav.Reset();
+        Invalidate(); previousScopeMap.Reset(); depthUav.Reset(); motionUav.Reset(); uiUav.Reset();
         HRESULT hr = Shared(d12,d11,0,rw,rh,DXGI_FORMAT_R32_FLOAT,true);
         if (FAILED(hr)) return hr;
         hr = Shared(d12,d11,1,rw,rh,DXGI_FORMAT_R16G16_FLOAT,true);
@@ -86,7 +91,8 @@ public:
         renderWidth=rw; renderHeight=rh; displayWidth=dw; displayHeight=dh;
         return S_OK;
     }
-    HRESULT Capture(ID3D11Device1* device, ID3D11DeviceContext1* context, ID3D11Texture2D* depth, ID3D11Texture2D* motion)
+    HRESULT Capture(ID3D11Device1* device, ID3D11DeviceContext1* context, ID3D11Texture2D* depth, ID3D11Texture2D* motion,
+        const PersonalFgScope* scope=nullptr)
     {
         static const char code[] = R"(
 Texture2D<float> depthIn:register(t0); Texture2D<float4> motionIn:register(t1);
@@ -114,7 +120,92 @@ RWTexture2D<float> depthOut:register(u0); RWTexture2D<float2> motionOut:register
         context->CSSetShader(conversion.Get(),nullptr,0); context->CSSetShaderResources(0,2,srvs);
         context->CSSetUnorderedAccessViews(0,2,uavs,nullptr);
         context->Dispatch((renderWidth+7)/8,(renderHeight+7)/8,1);
+        if(scope) { hr=ComposeScope(device,context,*scope); if(FAILED(hr))return hr; }
+        else previousScopeMap.Reset();
         scene=true;
+        return S_OK;
+    }
+    HRESULT ComposeScope(ID3D11Device1* device, ID3D11DeviceContext1* context, const PersonalFgScope& scope)
+    {
+        static const char code[]=R"(
+Texture2D<float4> mapping:register(t0), previousMapping:register(t1);
+Texture2D<float> scopeDepth:register(t2);
+Texture2D<float4> scopeMotion:register(t3);
+SamplerState linearClamp:register(s0);
+RWTexture2D<float> depthOut:register(u0);
+RWTexture2D<float2> motionOut:register(u1);
+cbuffer Params:register(b0) { row_major float4x4 reproject; float4 planes; float4 control; };
+[numthreads(8,8,1)] void main(uint3 p:SV_DispatchThreadID) {
+ uint w,h; depthOut.GetDimensions(w,h); if(p.x>=w||p.y>=h)return;
+ float4 map=mapping.Load(int3(p.xy,0)); if(map.z<0.5)return;
+ float2 uv=(p.xy+0.5)/float2(w,h), tc=map.xy;
+ float d=scopeDepth.SampleLevel(linearClamp,tc,0);
+ float z=planes.x*planes.y/max(planes.y-d*(planes.y-planes.x),1e-6);
+ depthOut[p.xy]=saturate(planes.w/(planes.w-planes.z)-planes.z*planes.w/((planes.w-planes.z)*max(z,planes.z)));
+ if(control.x>0.5) { motionOut[p.xy]=0; return; }
+ float2 mv=scopeMotion.SampleLevel(linearClamp,tc,0).xy;
+ if(dot(abs(mv),float2(1,1))<1e-6) {
+   float4 old=mul(float4(tc.x*2-1,1-tc.y*2,d,1),reproject);
+   if(old.w<=0) {motionOut[p.xy]=0;return;}
+   mv=tc-float2(old.x/old.w*.5+.5,.5-old.y/old.w*.5);
+ }
+ float2 target=tc-mv;
+ // Invert the PREVIOUS optical mapping, not the current lens scale. This
+ // includes lens translation, rotation, parallax and optical distortion.
+ float2 oldUV=uv-motionOut[p.xy]-control.yz;
+ float2 texel=1.0/float2(w,h);
+ bool valid=true;
+ [unroll] for(int i=0;i<6;i++) {
+   float4 c=previousMapping.SampleLevel(linearClamp,oldUV,0);
+   float4 x=previousMapping.SampleLevel(linearClamp,oldUV+float2(texel.x,0),0);
+   float4 y=previousMapping.SampleLevel(linearClamp,oldUV+float2(0,texel.y),0);
+   float2 a=(x.xy-c.xy)/texel.x,b=(y.xy-c.xy)/texel.y,e=c.xy-target;
+   float det=a.x*b.y-a.y*b.x;
+   if(min(c.z,min(x.z,y.z))<.99 || abs(det)<1e-6){valid=false;break;}
+   float2 step=float2(b.y*e.x-b.x*e.y,-a.y*e.x+a.x*e.y)/det;
+   oldUV-=clamp(step,-.05,.05);
+ }
+ float4 solved=previousMapping.SampleLevel(linearClamp,oldUV,0);
+ valid=valid && solved.z>.99 && all(oldUV>=0) && all(oldUV<=1) && length(solved.xy-target)<.002;
+ // Newly exposed lens pixels have no predecessor; zero vectors leave their
+ // correspondence to optical flow instead of leaking main-camera motion.
+ motionOut[p.xy]=valid ? uv-oldUV-control.yz : float2(0,0);
+})";
+        if(!scope.mapping || !scope.depth || !scope.motion)return E_INVALIDARG;
+        D3D11_TEXTURE2D_DESC desc{}; scope.mapping->GetDesc(&desc);
+        if(desc.Width!=renderWidth || desc.Height!=renderHeight)return E_INVALIDARG;
+        HRESULT hr=Shader(device,code,sizeof(code)-1,scopeConversion);if(FAILED(hr))return hr;
+        bool reset=scope.reset || !previousScopeMap;
+        if(previousScopeMap) { D3D11_TEXTURE2D_DESC old{};previousScopeMap->GetDesc(&old);
+            if(old.Width!=desc.Width || old.Height!=desc.Height || old.Format!=desc.Format){previousScopeMap.Reset();reset=true;} }
+        if(!previousScopeMap) {
+            desc.BindFlags=D3D11_BIND_SHADER_RESOURCE;desc.MiscFlags=0;
+            hr=device->CreateTexture2D(&desc,nullptr,previousScopeMap.GetAddressOf());if(FAILED(hr))return hr;
+        }
+        if(reset)context->CopyResource(previousScopeMap.Get(),scope.mapping);
+        struct Params {float matrix[16],planes[4],control[4];} params{};
+        memcpy(params.matrix,scope.reprojection,sizeof(params.matrix));memcpy(params.planes,scope.planes,sizeof(params.planes));params.control[0]=reset?1.f:0.f;
+        params.control[1]=scope.mainJitterDelta[0];params.control[2]=scope.mainJitterDelta[1];
+        if(!scopeConstants) {D3D11_BUFFER_DESC b{};b.ByteWidth=sizeof(params);b.BindFlags=D3D11_BIND_CONSTANT_BUFFER;
+            hr=device->CreateBuffer(&b,nullptr,scopeConstants.GetAddressOf());if(FAILED(hr))return hr;}
+        context->UpdateSubresource(scopeConstants.Get(),0,nullptr,&params,0,0);
+        if(!scopeSampler) {D3D11_SAMPLER_DESC s{};s.Filter=D3D11_FILTER_MIN_MAG_MIP_LINEAR;s.AddressU=s.AddressV=s.AddressW=D3D11_TEXTURE_ADDRESS_CLAMP;s.MaxLOD=D3D11_FLOAT32_MAX;
+            hr=device->CreateSamplerState(&s,scopeSampler.GetAddressOf());if(FAILED(hr))return hr;}
+        Ptr<ID3D11ShaderResourceView> map,oldMap,depth,motion;
+        hr=device->CreateShaderResourceView(scope.mapping,nullptr,&map);if(FAILED(hr))return hr;
+        hr=device->CreateShaderResourceView(previousScopeMap.Get(),nullptr,&oldMap);if(FAILED(hr))return hr;
+        D3D11_TEXTURE2D_DESC dd{};scope.depth->GetDesc(&dd);
+        D3D11_SHADER_RESOURCE_VIEW_DESC dv{};dv.ViewDimension=D3D11_SRV_DIMENSION_TEXTURE2D;dv.Texture2D.MipLevels=1;
+        dv.Format=dd.Format==DXGI_FORMAT_R24G8_TYPELESS?DXGI_FORMAT_R24_UNORM_X8_TYPELESS:DXGI_FORMAT_R32_FLOAT;
+        hr=device->CreateShaderResourceView(scope.depth,&dv,&depth);if(FAILED(hr))return hr;
+        hr=device->CreateShaderResourceView(scope.motion,nullptr,&motion);if(FAILED(hr))return hr;
+        ID3D11ShaderResourceView* views[]={map.Get(),oldMap.Get(),depth.Get(),motion.Get()};
+        ID3D11Buffer* cb=scopeConstants.Get();ID3D11SamplerState* sampler=scopeSampler.Get();
+        context->CSSetShader(scopeConversion.Get(),nullptr,0);context->CSSetShaderResources(0,4,views);
+        context->CSSetConstantBuffers(0,1,&cb);context->CSSetSamplers(0,1,&sampler);
+        context->Dispatch((renderWidth+7)/8,(renderHeight+7)/8,1);
+        ID3D11ShaderResourceView* empty[4]{};context->CSSetShaderResources(0,4,empty);
+        context->CopyResource(previousScopeMap.Get(),scope.mapping);
         return S_OK;
     }
     HRESULT ProtectUi(ID3D11Device1* device, ID3D11DeviceContext1* context, ID3D11Texture2D* finalColor)

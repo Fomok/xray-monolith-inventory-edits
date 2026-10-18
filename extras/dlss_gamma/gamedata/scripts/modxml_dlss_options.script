@@ -31,6 +31,10 @@ local function install_dynamic_options()
         for key, value in pairs(tree) do visible[key] = value end
         visible.gr = {}
         for _, row in ipairs(tree.gr) do
+            if row.id == "personal_fg_status" then
+                local status = get_console_cmd(0, "r_dlss_fg_status")
+                row.text = "ui_mm_fg_status_" .. (status == "ready" and "ready" or status == "restart" and "restart" or "unavailable")
+            end
             local needed = row.upscaler_method
             if not needed or needed == method or (needed == "either" and method ~= "off") then
                 visible.gr[#visible.gr + 1] = row
@@ -161,6 +165,17 @@ local function add_options()
                             cmd = "r_fsr3_quality", content = fsr_modes, vid = true,
                             upscaler_method = "fsr3",
                         })
+                    end
+                    local fg = content_for("r_dlss_fg", {{"0", "dlss_off"}, {"1", "personal_fg_on"}})
+                    local pip = content_for("r_dlss_fg_pip", {{"0", "dlss_off"}, {"1", "personal_fg_on"}})
+                    if #fg == 2 and #pip == 2 then
+                        local at = position + (dual and 5 or 3)
+                        table.insert(group.gr, at, {id="personal_fg", type="list", val=0,
+                            cmd="r_dlss_fg", content=fg})
+                        table.insert(group.gr, at+1, {id="personal_fg_pip", type="list", val=0,
+                            cmd="r_dlss_fg_pip", content=pip})
+                        table.insert(group.gr, at+2, {id="personal_fg_status", type="desc",
+                            text="ui_mm_fg_status_restart", clr={255,125,175,200}})
                     end
                     return
                 end
