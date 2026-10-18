@@ -3,6 +3,11 @@ name: SQA-Personal-DLSS-FG-Test
 on:
   push:
     branches: [ "personal-bodycam-dlss-frame-generation" ]
+    paths-ignore:
+      - 'tools/optiscaler/**'
+      - '.github/workflows/personal-optiscaler.yml'
+      - '.github/workflows/personal-menu-probe.yml'
+      - 'tools/dlss/bridge_probe.cpp'
   workflow_dispatch:
 
 permissions:
