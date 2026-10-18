@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PersonalFrameGeneration.h"
+#include "PersonalFgEligibility.h"
 #include "../../xrRenderDX10/dx12PresentationBridge.h"
 #include "../../../xrEngine/IGame_Persistent.h"
 #include "../../../xrEngine/IGame_Level.h"
@@ -8,6 +9,7 @@
 // Camera/Reflex sequencing adapted from Brodrigz 1.0.2 FrameGeneration.cpp.
 // Credits: Brodrigz, OGSR team, xrSimpAI. Bodycam eligibility is deliberately stricter.
 extern int ps_r_dlss_fg, ps_framelimiter;
+extern float scope_radius;
 extern bool IsMainMenuActive();
 namespace personal_fg
 {
@@ -31,8 +33,10 @@ bool Eligible()
     if(!bridge || !bridge->GenerationReady()){Status("Unavailable: launch with SQA_DLSS_FG=1; check capability log; restart after a failure.");return false;}
     if(!Device.b_is_Active || Device.Paused() || !g_pGameLevel || Device.dwPrecacheFrame || IsMainMenuActive())
     {Status("Suspended for menu/loading/pause/inactive window.");return false;}
-    if(Device.m_SecondViewport.IsSVPActive() || scope_fake_enabled || scope_3D_fake_enabled ||
-        ps_r2_nightvision>0 || ps_r2_heatvision>0)
+    const float aim = g_pGamePersistent && g_pGamePersistent->m_pGShaderConstants ?
+        g_pGamePersistent->m_pGShaderConstants->hud_params.x : 0.f;
+    if(ScopeActive(Device.m_SecondViewport.IsSVPActive(), scope_fake_enabled != 0,
+        scope_3D_fake_enabled != 0, aim, scope_radius) || ps_r2_nightvision>0 || ps_r2_heatvision>0)
     {Status("Suspended for scopes/night vision/thermal; native rendered frames preserved.");return false;}
     if(RImplementation.GMBase.RGraph.hasNativeHudAttachments ||
         (g_hud && (g_hud->RenderActiveItemUIQuery() || g_hud->RenderCamAttachedUIQuery())))

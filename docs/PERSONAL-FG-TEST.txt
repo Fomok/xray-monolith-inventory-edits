@@ -1,4 +1,4 @@
-Squared Away Personal DLSS Frame Generation Test 1 — DX11 AVX
+Squared Away Personal DLSS Frame Generation Test 2 — DX11 AVX
 EXPERIMENTAL personal build. First in-game FG validation is still required.
 
 Use a separate test copy/profile. Install the COMPLETE bin/ + db/ package over
@@ -42,3 +42,5 @@ in a hidden standalone window with generation OFF, not actual interpolation.
 Rollback: r_dlss_fg 0; quit; unset SQA_DLSS_FG and SQA_DX12_BRIDGE, then restart.
 Restore the previous complete engine package to undo the build.
 No public release/website or installed files were changed by Codex.
+
+Test 2 corrects global fake-scope switches blocking hip-fire FG. Scope/aim transitions still suspend interpolation. [FG TIMING] reports average CPU fence, Reflex and Present waits every 240 presentations to investigate performance; these are not GPU execution times. Existing reports with OptiScaler show its DX11-to-DX12 upscaler and DLSS-NR enabled, but no cause for the FPS loss is yet established. Keep the full log for comparison.

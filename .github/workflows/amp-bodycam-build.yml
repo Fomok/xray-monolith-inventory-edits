@@ -175,7 +175,7 @@ jobs:
     # Download this artifact for one ZIP with bin/ and db/ at its root.
     - uses: actions/upload-artifact@v4.6.0
       with:
-        name: Squared-Away-Personal-DLSS-FG-Test-1-DX11-AVX
+        name: Squared-Away-Personal-DLSS-FG-Test-2-DX11-AVX
         path: ./package/
         if-no-files-found: error
         retention-days: 14

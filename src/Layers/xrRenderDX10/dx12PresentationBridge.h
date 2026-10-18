@@ -5,6 +5,7 @@
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <wrl/client.h>
+#include <cstdio>
 #include "StreamlineIntegration.h"
 #include "PersonalFgInputs.h"
 
@@ -32,6 +33,13 @@ class Dx12PresentationBridge
     UINT64 serial = 0;
     UINT width = 0, height = 0;
     DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
+    double waitMs = 0, reflexMs = 0, presentMs = 0;
+    UINT timingPresents = 0, timingLimitUs = 0;
+    static double NowMs()
+    {
+        static const double frequency = [] { LARGE_INTEGER f; QueryPerformanceFrequency(&f); return double(f.QuadPart); }();
+        LARGE_INTEGER t; QueryPerformanceCounter(&t); return double(t.QuadPart) * 1000.0 / frequency;
+    }
 
     HRESULT WaitComplete()
     {
@@ -41,7 +49,9 @@ class Dx12PresentationBridge
         if (done >= serial) return S_OK;
         HRESULT hr = fence->SetEventOnCompletion(serial, completion);
         if (FAILED(hr)) return hr;
+        const double start = NowMs();
         DWORD wait = WaitForSingleObject(completion, 5000);
+        waitMs += NowMs() - start;
         if (wait != WAIT_OBJECT_0) return wait == WAIT_TIMEOUT ? DXGI_ERROR_DEVICE_HUNG : HRESULT_FROM_WIN32(GetLastError());
         return device->GetDeviceRemovedReason();
     }
@@ -55,7 +65,11 @@ public:
     HRESULT BeginFrame(UINT limitUs)
     {
         inputs.Invalidate();
-        if (fgReady && !streamline.BeginFrame(limitUs)) return E_FAIL;
+        timingLimitUs = limitUs;
+        const double start = NowMs();
+        const bool ready = !fgReady || streamline.BeginFrame(limitUs);
+        reflexMs += NowMs() - start;
+        if (!ready) return E_FAIL;
         return S_OK;
     }
     void EndSimulation()
@@ -284,7 +298,9 @@ public:
         hr = WaitComplete();
         if (FAILED(hr)) return hr;
         if(fgReady) { streamline.Marker(sl::PCLMarker::eRenderSubmitEnd); streamline.Marker(sl::PCLMarker::ePresentStart); }
+        const double presentStart = NowMs();
         hr=swapchain->Present(interval, flags);
+        presentMs += NowMs() - presentStart;
         if(fgReady)
         {
             streamline.Marker(sl::PCLMarker::ePresentEnd);
@@ -300,6 +316,17 @@ public:
             if(!stateOk) return FailGeneration();
         }
         inputs.Invalidate();
+        if (++timingPresents == 240)
+        {
+            if (logger)
+            {
+                char message[256]{};
+                snprintf(message,sizeof(message),"[FG TIMING] 240 presents: CPU fence wait=%.3f ms/present, Reflex begin=%.3f ms/present, Present=%.3f ms/present, limitUs=%u, FG=%u, syncInterval=%u. Not GPU execution times.",
+                    waitMs/240.0,reflexMs/240.0,presentMs/240.0,timingLimitUs,unsigned(GenerationActive()),interval);
+                logger(message);
+            }
+            timingPresents=0; waitMs=reflexMs=presentMs=0;
+        }
         return hr;
     }
 };

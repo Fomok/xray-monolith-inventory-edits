@@ -1,5 +1,6 @@
 #include "../../src/Layers/xrRenderPC_R4/Dlss/DlssTemporal.h"
 #include "../../src/Layers/xrRenderPC_R4/Dlss/DlssNativeUi.h"
+#include "../../src/Layers/xrRenderPC_R4/Dlss/PersonalFgEligibility.h"
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
@@ -11,6 +12,12 @@ static void Require(bool condition, const char* message)
 
 int main()
 {
+    Require(!personal_fg::ScopeActive(false, false, true, 0.f, .3f), "3D scopes enabled at hip must not block FG");
+    Require(!personal_fg::ScopeActive(false, true, false, 0.f, .3f), "2D scopes enabled at hip must not block FG");
+    Require(personal_fg::ScopeActive(false, false, true, .01f, 0.f), "3D aim transition must suspend FG");
+    Require(personal_fg::ScopeActive(false, true, false, 1.f, .3f), "visible fake scope must suspend FG");
+    Require(!personal_fg::ScopeActive(false, true, false, 1.f, 0.f), "zero-radius fake scope is invisible");
+    Require(personal_fg::ScopeActive(true, false, false, 0.f, 0.f), "active PiP must always suspend FG");
     using namespace dlss;
     const Size render{1280, 720}, display{1920, 1080};
     Require(ValidPreset(Preset::Default) && ValidPreset(Preset::J) && ValidPreset(Preset::K) &&
