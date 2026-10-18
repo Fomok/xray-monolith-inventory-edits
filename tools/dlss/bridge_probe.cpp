@@ -12,11 +12,18 @@
 
 int main(int argc, char** argv)
 {
-    bool fg=false, ngx=false, generate=false, menuTest=false;
+    bool fg=false, ngx=false, generate=false, menuTest=false, abTest=false;
     for(int i=1;i<argc;++i) { fg |= strcmp(argv[i],"--streamline")==0; ngx |= strcmp(argv[i],"--ngx")==0; generate |= strcmp(argv[i],"--generate")==0; menuTest |= strcmp(argv[i],"--menu-test")==0; }
+    for(int i=1;i<argc;++i) abTest |= strcmp(argv[i],"--ab-test")==0;
     if(menuTest && !generate) { puts("--menu-test requires --generate"); return 10; }
     if(generate && (!fg || !ngx)) { puts("--generate requires --streamline --ngx"); return 7; }
     unsigned generatedPresents=0;
+    unsigned long long reportedFrames=0;
+    unsigned counts[9]={};
+    FILE* cadence=nullptr;
+    if(abTest) { fopen_s(&cadence,"presentation-cadence.csv","w"); if(!cadence)return 14;
+        fprintf(cadence,"Pass,Frame,Qpc,Frequency,SDKFrames,FGActive,Foreground,StatsHRESULT,PresentCount,PresentRefreshCount,SyncRefreshCount,LastPresentHRESULT,LastPresentCount\n"); }
+    LARGE_INTEGER frequency{}; QueryPerformanceFrequency(&frequency);
     using Microsoft::WRL::ComPtr;
     auto check = [](HRESULT hr, const char* step) {
         if (FAILED(hr)) { printf("FAIL %s 0x%08lx\n", step, hr); ExitProcess(1); }
@@ -31,8 +38,8 @@ int main(int argc, char** argv)
     // An occluded/hidden swapchain can legitimately present only one frame even
     // when DLSS-G accepts the tags. Active-generation validation needs a visible
     // presentation surface; transport-only modes remain hidden.
-    if(generate) { ShowWindow(window,SW_SHOWNORMAL);UpdateWindow(window);SetForegroundWindow(window); }
-    if(menuTest) SetWindowPos(window,nullptr,50,50,1300,780,SWP_NOZORDER);
+    if(generate || abTest) { ShowWindow(window,SW_SHOWNORMAL);UpdateWindow(window);SetForegroundWindow(window); }
+    if(menuTest || abTest) SetWindowPos(window,nullptr,50,50,1300,780,SWP_NOZORDER);
     {
         ComPtr<ID3D11Device> raw;
         ComPtr<ID3D11DeviceContext> rawContext;
@@ -90,7 +97,7 @@ int main(int argc, char** argv)
                 c11->ClearRenderTargetView(depthRtv.Get(),depthColor);c11->ClearRenderTargetView(motionRtv.Get(),zero);
             }
             for (unsigned frame=0; frame<120; ++frame) {
-                if(menuTest && pass==0 && frame==40)
+                if((menuTest || abTest) && frame==40)
                 {
                     // NGX/model startup can take long enough for the test window
                     // to lose focus. Validate interactions on our own foreground
@@ -163,6 +170,14 @@ int main(int argc, char** argv)
                     c11->ClearView(rtv.Get(),overlay,&rectangle,1);
                 }
                 check(bridge.Present(swapchain.Get(),0,0), "copy and present");
+                const unsigned reported=bridge.PresentedFrames();
+                reportedFrames+=reported; ++counts[reported<8?reported:8];
+                if(cadence) {
+                    LARGE_INTEGER now{}; QueryPerformanceCounter(&now);
+                    DXGI_FRAME_STATISTICS stats{}; const HRESULT sh=swapchain->GetFrameStatistics(&stats);
+                    UINT last=0; const HRESULT lh=swapchain->GetLastPresentCount(&last);
+                    fprintf(cadence,"%u,%u,%lld,%lld,%u,%u,%u,0x%08lx,%u,%u,%u,0x%08lx,%u\n",pass,frame,now.QuadPart,frequency.QuadPart,reported,unsigned(bridge.GenerationActive()),unsigned(GetForegroundWindow()==window),sh,stats.PresentCount,stats.PresentRefreshCount,stats.SyncRefreshCount,lh,last);
+                }
                 if(generate && bridge.GenerationActive() && bridge.PresentedFrames()>=2) ++generatedPresents;
             }
             check(bridge.Suspend(), "drain before readback");
@@ -188,6 +203,8 @@ int main(int argc, char** argv)
         swapchain.Reset();
     }
     DestroyWindow(window);
+    if(cadence)fclose(cadence);
+    printf("SDK total frames=%llu; counts 0..7,8+: ",reportedFrames);for(unsigned n:counts)printf("%u ",n);puts("");
     FILE* report=nullptr;fopen_s(&report,"bridge-probe-result.txt","w");
     if(report){fprintf(report,"Completed=960 Resizes=7 Readbacks=8 NGX=%u GenerateRequested=%u GeneratedPresents=%u\n",unsigned(ngx),unsigned(generate),generatedPresents);fclose(report);}
     if(generate && generatedPresents<900){puts("FAIL fewer than 900 confirmed generated presentations");return 9;}
