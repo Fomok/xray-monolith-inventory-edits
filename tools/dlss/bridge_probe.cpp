@@ -10,8 +10,10 @@
 
 int main(int argc, char** argv)
 {
-    bool fg=false, ngx=false;
-    for(int i=1;i<argc;++i) { fg |= strcmp(argv[i],"--streamline")==0; ngx |= strcmp(argv[i],"--ngx")==0; }
+    bool fg=false, ngx=false, generate=false;
+    for(int i=1;i<argc;++i) { fg |= strcmp(argv[i],"--streamline")==0; ngx |= strcmp(argv[i],"--ngx")==0; generate |= strcmp(argv[i],"--generate")==0; }
+    if(generate && (!fg || !ngx)) { puts("--generate requires --streamline --ngx"); return 7; }
+    unsigned generatedPresents=0;
     using Microsoft::WRL::ComPtr;
     auto check = [](HRESULT hr, const char* step) {
         if (FAILED(hr)) { printf("FAIL %s 0x%08lx\n", step, hr); ExitProcess(1); }
@@ -91,7 +93,25 @@ int main(int argc, char** argv)
                     if(!upscaler.Evaluate(f)) return 6;
                 }
                 c11->ClearRenderTargetView(rtv.Get(),color);
+                if(generate)
+                {
+                    sl::Constants c{};
+                    sl::float4x4 identity{};
+                    identity[0]={1,0,0,0};identity[1]={0,1,0,0};identity[2]={0,0,1,0};identity[3]={0,0,0,1};
+                    c.cameraViewToClip=c.clipToCameraView=c.clipToLensClip=c.clipToPrevClip=c.prevClipToClip=identity;
+                    c.jitterOffset=c.cameraPinholeOffset={0,0};c.mvecScale={1,1};
+                    c.cameraPos={0,0,0};c.cameraUp={0,1,0};c.cameraRight={1,0,0};c.cameraFwd={0,0,1};
+                    c.cameraNear=.1f;c.cameraFar=1.f;c.cameraFOV=1.f;c.cameraAspectRatio=float(desc.Width)/desc.Height;
+                    c.depthInverted=c.motionVectors3D=c.motionVectorsJittered=sl::eFalse;
+                    c.cameraMotionIncluded=c.orthographicProjection=sl::eTrue;c.reset=frame==0?sl::eTrue:sl::eFalse;
+                    const HRESULT captured=bridge.CaptureScene(depthInput.Get(),motionInput.Get(),c);
+                    if(captured!=S_OK){printf("FAIL FG capture 0x%08lx\n",captured);return 8;}
+                    bridge.CaptureHudless();
+                    const float overlay[]={1,1,1,1};D3D11_RECT rectangle{20,20,40,40};
+                    c11->ClearView(rtv.Get(),overlay,&rectangle,1);
+                }
                 check(bridge.Present(swapchain.Get(),0,0), "copy and present");
+                if(generate && bridge.GenerationActive() && bridge.PresentedFrames()>=2) ++generatedPresents;
             }
             check(bridge.Suspend(), "drain before readback");
             if(ngx) upscaler.ReleaseFeature();
@@ -116,6 +136,9 @@ int main(int argc, char** argv)
         swapchain.Reset();
     }
     DestroyWindow(window);
+    FILE* report=nullptr;fopen_s(&report,"bridge-probe-result.txt","w");
+    if(report){fprintf(report,"Completed=960 Resizes=7 Readbacks=8 NGX=%u GenerateRequested=%u GeneratedPresents=%u\n",unsigned(ngx),unsigned(generate),generatedPresents);fclose(report);}
+    if(generate && generatedPresents<900){puts("FAIL fewer than 900 confirmed generated presentations");return 9;}
     puts("PASS bridge initialization, 960 presentations, seven resizes, eight shared-target readbacks and cleanup. Not a gameplay or displayed-image test.");
     return 0;
 }

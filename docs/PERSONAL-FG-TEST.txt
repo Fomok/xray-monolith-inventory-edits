@@ -83,3 +83,4 @@ after stable fixed-backend operation, test backend transitions in a disposable
 session, initially with r_dlss_fg 0. Save complete engine and OptiScaler logs.
 Probe --streamline --ngx uses synthetic DLAA inputs and recreates NGX across resizes;
 it is an interoperability check with FG OFF, not proof of gameplay/NR image quality.
+Probe --streamline --ngx --generate additionally submits synthetic FG inputs and requires at least 900 two-frame presentations across 960 calls. bridge-probe-result.txt records counts even when an injected overlay redirects stdout. It still does not test the game's wearable render path or displayed image quality.
