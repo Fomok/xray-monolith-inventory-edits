@@ -6,6 +6,7 @@
 #include <dxgi.h>
 #include <string>
 #include "PersonalFgTelemetry.h"
+#include "PersonalFgDiagnostics.h"
 #include "../../../sdk/Streamline/include/sl.h"
 #include "../../../sdk/Streamline/include/sl_dlss_g.h"
 #include "../../../sdk/Streamline/include/sl_reflex.h"
@@ -29,6 +30,7 @@ public:
     bool SetDevice(ID3D12Device* device);
     bool Upgrade(void** object);
     bool BeginFrame(UINT frameLimitUs);
+    void SetFrameContext(const personal_fg_diag::Context& context) { m_context=context; }
     void Marker(sl::PCLMarker marker);
     bool SetEnabled(bool enabled);
     bool Tag(const sl::Constants& constants, ID3D12Resource* depth, ID3D12Resource* motion,
@@ -50,6 +52,9 @@ public:
     const char* FailureStage() const { return m_failureStage; }
 
 private:
+    personal_fg_diag::Context m_context;
+    personal_fg_diag::Counters m_counters;
+    void LogCounters() const;
     sqa_fps::Publisher m_fpsTelemetry;
     bool Check(sl::Result result, const char* stage);
     void Log(const char* message) const;

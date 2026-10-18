@@ -74,6 +74,7 @@ public:
     bool GenerationActive() const { return fgReady && streamline.IsEnabled(); }
     bool NeedsHudless() const { return inputs.scene && !inputs.hudless; }
     UINT PresentedFrames() const { return streamline.PresentedFrames(); }
+    void SetFrameContext(const personal_fg_diag::Context& context) { streamline.SetFrameContext(context); }
     void DiscardInputs() { inputs.Invalidate(); }
     HRESULT BeginFrame(UINT limitUs)
     {

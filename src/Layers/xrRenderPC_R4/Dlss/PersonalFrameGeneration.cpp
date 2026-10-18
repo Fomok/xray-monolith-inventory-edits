@@ -117,6 +117,12 @@ void Reset(){previous=started=submitted=hidden=false;lastStatus=nullptr;if(HW.pr
 void CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion)
 {
     if(Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp)return;
+    personal_fg_diag::Context diagnostic;
+    diagnostic.known=true; diagnostic.scoped=Scoped(); diagnostic.pip=ps_r_dlss_fg_pip!=0;
+    diagnostic.foreground=Device.b_is_Active; diagnostic.engineFrame=Device.dwFrame;
+    diagnostic.scopeEpoch=Device.m_SecondViewport.svp_optic_epoch;
+    diagnostic.scopeSession=Device.m_SecondViewport.GetSVPSession();
+    if(HW.presentationBridge)HW.presentationBridge->SetFrameContext(diagnostic);
     if(!Eligible()){previous=false;return;}
     const bool scoped=Scoped();
     auto& svp=Device.m_SecondViewport;
@@ -172,6 +178,8 @@ void CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion)
     const HRESULT result=HW.presentationBridge->CaptureScene(depth,motion,c,scoped?&scopeInputs:nullptr);
     if(FAILED(result)){Msg("! [Personal FG] input capture failed 0x%08x",result);Check(HW.presentationBridge->FailGeneration());previous=false;return;}
     previous=result==S_OK;lastFrame=Device.dwFrame;lastTransform=Device.mFullTransform;
+    diagnostic.scopeInputs=scoped && result==S_OK;
+    HW.presentationBridge->SetFrameContext(diagnostic);
     lastWidth=dlss::RenderWidth();lastHeight=dlss::RenderHeight();
     lastPosition=Device.vCameraPosition;lastDirection=Device.vCameraDirection;lastFov=Device.fFOV;
     lastScoped=scoped;lastScopeEpoch=svp.svp_optic_epoch;lastScopeSession=svp.GetSVPSession();

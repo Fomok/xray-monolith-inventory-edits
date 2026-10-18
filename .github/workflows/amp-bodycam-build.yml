@@ -172,7 +172,7 @@ jobs:
         New-Item -ItemType Directory -Force -Path ./package/docs | Out-Null
         Copy-Item -LiteralPath ./License.txt,./THIRD-PARTY-NOTICES.txt,./README.md -Destination ./package/
         Copy-Item -LiteralPath ./docs/DISTRIBUTION.md,./docs/PROVENANCE.md,./docs/PERSONAL-FG-PROVENANCE.md,./docs/PERSONAL-FG-TEST4-VALIDATION.md -Destination ./package/docs/
-        Copy-Item -LiteralPath ./docs/PERSONAL-FG-DUAL-FPS-VALIDATION.md -Destination ./package/docs/
+        Copy-Item -LiteralPath ./docs/PERSONAL-FG-DUAL-FPS-VALIDATION.md,./docs/PERSONAL-FG-TEST7-VALIDATION.md -Destination ./package/docs/
         Copy-Item -LiteralPath ./docs/PERSONAL-FG-TEST.txt -Destination "./package/READ ME FIRST.txt"
         New-Item -ItemType Directory -Force -Path ./package/tools | Out-Null
         Copy-Item -LiteralPath ./tools/dlss/prepare-optiscaler-personal.ps1 -Destination ./package/tools/
@@ -184,7 +184,7 @@ jobs:
     # Download this artifact for one ZIP with bin/ and db/ at its root.
     - uses: actions/upload-artifact@v4.6.0
       with:
-        name: Squared-Away-Personal-DLSS-FG-Test-6-PiP-DX11-AVX
+        name: Squared-Away-Personal-DLSS-FG-Test-7-Scope-Diagnostics-DX11-AVX
         path: ./package/
         if-no-files-found: error
         retention-days: 14

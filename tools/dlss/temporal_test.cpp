@@ -1,6 +1,7 @@
 #include "../../src/Layers/xrRenderPC_R4/Dlss/DlssTemporal.h"
 #include "../../src/Layers/xrRenderPC_R4/Dlss/DlssNativeUi.h"
 #include "../../src/Layers/xrRenderPC_R4/Dlss/PersonalFgEligibility.h"
+#include "../../src/Layers/xrRenderDX10/PersonalFgDiagnostics.h"
 #include <vector>
 #include <cstdio>
 #include <cstdlib>
@@ -12,6 +13,23 @@ static void Require(bool condition, const char* message)
 
 int main()
 {
+    personal_fg_diag::Counters counts;
+    personal_fg_diag::Context context;
+    counts.Observe(false,true,1,context); // Disabled queries must not inflate enabled totals.
+    counts.Observe(true,false,~0u,context); // Unwritten SDK sentinel is not billions of frames.
+    counts.Observe(true,true,2,context); // Standalone/loading: no engine/optic context.
+    context.known=context.scoped=context.pip=context.foreground=true;
+    counts.Observe(true,true,2,context); // A scoped flag alone does not prove mapped inputs.
+    context.scopeInputs=true;
+    counts.Observe(true,true,2,context);
+    counts.Observe(true,true,1,context); // Enabled but not generating, e.g. focus loss.
+    context={};
+    Require(!context.known && !context.scopeInputs,"next frame cannot inherit scope diagnostics");
+    counts.Observe(true,true,1,context);
+    Require(counts.enabled==6 && counts.valid==5 && counts.invalid==1 && counts.presented==8,
+        "diagnostics count only usable enabled SDK results and reject sentinels");
+    Require(counts.generated==3 && counts.scopeValid==2 && counts.scopeGenerated==1 && counts.unknownContext==2,
+        "scope-generation totals require known current mapped input, not just aiming or enabled");
     Require(!personal_fg::ScopeActive(false, false, false, 0.f, .3f), "no visible lens at hip must not block FG");
     Require(!personal_fg::ScopeActive(false, true, false, 0.f, .3f), "2D scopes enabled at hip must not block FG");
     Require(!personal_fg::ScopeActive(false, false, false, 1.f, 0.f), "iron sights must not block FG");

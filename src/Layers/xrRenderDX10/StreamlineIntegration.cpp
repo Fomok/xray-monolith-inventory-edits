@@ -144,6 +144,7 @@ bool StreamlineIntegration::Upgrade(void** object)
 
 bool StreamlineIntegration::BeginFrame(UINT frameLimitUs)
 {
+    m_context={}; // Loading/standalone frames must never inherit an old optic snapshot.
     m_frame = nullptr;
     m_markerMask = 0;
     ++m_frameNumber;
@@ -267,6 +268,10 @@ bool StreamlineIntegration::AfterPresent(ID3D12Fence** inputFence, UINT64& input
     state.numFramesActuallyPresented = ~0u;
     state.lastPresentInputsProcessingCompletionFenceValue = ~UINT64(0);
     const auto result = m_slDLSSGGetState(m_viewport, state, nullptr);
+    m_counters.Observe(m_enabled,
+        (result==sl::Result::eOk || result==sl::Result::eWarnOutOfVRAM) &&
+        state.status==sl::DLSSGStatus::eOk && state.numFramesActuallyPresented!=~0u,
+        state.numFramesActuallyPresented,m_context);
     // Reuse the one normal GetState result. Telemetry never queries the SDK again
     // and never participates in queue ordering, input lifetime or recovery.
     m_fpsTelemetry.Publish(state.numFramesActuallyPresented,
@@ -309,6 +314,13 @@ bool StreamlineIntegration::AfterPresent(ID3D12Fence** inputFence, UINT64& input
         snprintf(message,sizeof(message),"[FG DIAG] Frame token=%u tagged=%u markerMask=0x%02X (expected 0x3F) enabled=%u actualPresented=%u status=0x%X",
             m_frameNumber,m_tagFrame,m_markerMask,unsigned(m_enabled),state.numFramesActuallyPresented,unsigned(state.status));
         Log(message);
+        char context[320]{};
+        snprintf(context,sizeof(context),"[FG CONTEXT] token=%u known=%u engineFrame=%u scoped=%u pipOption=%u scopeInputs=%u foreground=%u opticEpoch=%u scopeSession=%u enabled=%u actualPresented=%u status=0x%X",
+            m_frameNumber,unsigned(m_context.known),m_context.engineFrame,unsigned(m_context.scoped),
+            unsigned(m_context.pip),unsigned(m_context.scopeInputs),unsigned(m_context.foreground),
+            m_context.scopeEpoch,m_context.scopeSession,unsigned(m_enabled),state.numFramesActuallyPresented,unsigned(state.status));
+        Log(context);
+        LogCounters();
     }
     // Diagnostics only. Marker gaps affect latency stats, not image safety, and a
     // missing input fence still retires inputs in presenting-queue order
@@ -358,8 +370,19 @@ bool StreamlineIntegration::DisableAfterFailure()
     return true;
 }
 
+void StreamlineIntegration::LogCounters() const
+{
+    char message[384]{};
+    snprintf(message,sizeof(message),"[FG TOTALS] enabledQueries=%llu validEnabled=%llu invalidEnabled=%llu SDKpresentedSum=%llu queriesOver1=%llu scopeInputQueries=%llu scopeQueriesOver1=%llu unknownContext=%llu (runtime lifetime; SDK counts, not scan-out)",
+        m_counters.enabled,m_counters.valid,m_counters.invalid,m_counters.presented,m_counters.generated,
+        m_counters.scopeValid,m_counters.scopeGenerated,m_counters.unknownContext);
+    Log(message);
+}
+
 void StreamlineIntegration::Shutdown()
 {
+    if(m_counters.enabled)LogCounters();
+    m_counters={}; m_context={};
     m_fpsTelemetry.Stop();
     if (m_initialized)
     {

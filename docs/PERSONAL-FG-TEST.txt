@@ -1,7 +1,7 @@
-Squared Away Personal DLSS FG Test 6 PiP - EXPERIMENTAL
+Squared Away Personal DLSS FG Test 7 Scope Diagnostics - EXPERIMENTAL
 
 INSTALL
-1. Quit the game. Back up the complete Test 5 engine package.
+1. Quit the game. Back up the complete Test 6 engine package.
 2. Copy this complete engine package to the separate personal test game.
 3. Install Squared Away Personal FG Test 6 UI and Scope Shader.zip as a separate
    MO2 mod below DLSS FSR3 Compatibility Patch and Bodycam patches. Its three
@@ -42,6 +42,12 @@ Test scope pans, zoom, optic switches, entry/exit, occluding hands, reticles,
 Bodycam effects, NR and wearable screens in game. See the validation report.
 
 ROLLBACK
-Disable the Test 6 UI/shader mod and restore the complete Test 5 engine package.
+Disable the Test 6 UI/shader mod and restore the complete Test 6 engine package.
 Keep the existing OptiScaler companion/INI. No installed game files were changed
 while preparing these packages. Do not install this test on the public engine.
+
+TEST 7 CHANGE
+Adds scope-aware diagnostic samples and cumulative SDK presentation counts.
+Existing in-game FG/PiP controls and rendering behavior are unchanged.
+Keep the matching Test 6 UI/scope-shader mod and Dual FPS companion.
+See docs/PERSONAL-FG-TEST7-VALIDATION.md for fields and validation limits.
