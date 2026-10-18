@@ -1,3 +1,56 @@
+diff --git a/OptiScaler/menu/menu_common.cpp b/OptiScaler/menu/menu_common.cpp
+index 840703b..88c1b1d 100644
+--- a/OptiScaler/menu/menu_common.cpp
++++ b/OptiScaler/menu/menu_common.cpp
+@@ -1258,11 +1258,27 @@ void MenuCommon::UpdateRenderTiming(RenderMenuContext& ctx)
+     }
+     else
+     {
++        // With external FG the legacy menu runs inside upscaler evaluation,
++        // before the engine's generated presentations. Keep this clock separate
++        // from optional swapchain callbacks; never imply this is output FPS.
++        if (state.externalFrameGeneration)
++        {
++            static double lastApplicationFrame = 0.0;
++            frameTime = lastApplicationFrame > 0.0 ? now - lastApplicationFrame : 0.0;
++            frameRate = frameTime > 0.0 ? 1000.0 / frameTime : 0.0;
++            lastApplicationFrame = now;
++            _frameCount++;
++            if (_handle != nullptr)
++                UpdateManualInput(_handle);
++        }
++        else
++        {
+         if (state.activeFgInput == FGInput::NoFG || state.activeFgOutput == FGOutput::NoFG)
+             MenuCommon::Present();
+ 
+         frameTime = lastFrameTime;
+         frameRate = 1000.0 / frameTime;
++        }
+     }
+ 
+     state.frameTimes.pop_front();
+@@ -1939,6 +1955,9 @@ void MenuCommon::RenderPerformanceOverlay(RenderMenuContext& ctx)
+                 }
+             }
+ 
++            if (state.externalFrameGeneration && !config->OverlayMenu.value_or_default())
++                fpsPart = StrFmt("App: %6.1f FPS (external FG excluded)", frameRate);
++
+             if (overlayType == FpsOverlay_JustFPS)
+                 firstLine = StrFmt("%s", fpsPart.c_str());
+             else
+@@ -7192,7 +7211,9 @@ void MenuCommon::RenderMainMenuGraphs(RenderMenuContext& ctx)
+     if (ImGui::BeginTable("plots", 2, ImGuiTableFlags_SizingStretchSame))
+     {
+         ImGui::TableNextColumn();
+-        ImGui::Text("FrameTime");
++        const bool applicationTiming = state.externalFrameGeneration &&
++                                       !Config::Instance()->OverlayMenu.value_or_default();
++        ImGui::TextUnformatted(applicationTiming ? "Application frame time (external FG excluded)" : "FrameTime");
+         auto ft = StrFmt("%7.2f ms / %6.1f fps", frameTime, frameRate);
+         ImGui::PlotLines(
+             ft.c_str(), [](void* rb, int idx) -> float
 diff --git a/OptiScaler/menu/menu_dx12.cpp b/OptiScaler/menu/menu_dx12.cpp
 index 8cac3c4..1601f50 100644
 --- a/OptiScaler/menu/menu_dx12.cpp
