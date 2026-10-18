@@ -1,0 +1,44 @@
+Squared Away Personal DLSS Frame Generation Test 1 — DX11 AVX
+EXPERIMENTAL personal build. First in-game FG validation is still required.
+
+Use a separate test copy/profile. Install the COMPLETE bin/ + db/ package over
+the same Bodycam+DLSS baseline used for bridge test 1. Keep the public grass/motion
+shader patch and Bodycam GAMMA Patch 1.1.0. Do not mix frozen weapon-follow/pivot builds.
+Keep bin/streamline/ beside AnomalyDX11AVX.exe, including all six supplied DLLs.
+
+DEFAULT OFF. NVIDIA RTX 40/50, supported driver/Windows and Hardware-accelerated GPU
+Scheduling are checked by the SDK. This test targets RTX 5080. SDR windowed/borderless.
+1. Set SQA_DLSS_FG=1 in the environment of the test game/MO2 process, then restart:
+     $env:SQA_DLSS_FG = '1'
+   This loads the FG-capable bridge. SQA_DX12_BRIDGE=1 alone remains bridge-only.
+2. Enable DLAA or DLSS Quality (FSR3 upscaling can also supply temporal inputs).
+   MSAA must be off; keep the matching SSS motion-vector shaders.
+3. Start with VSync off. In the game console enter: r_dlss_fg 1
+   Turn generation off with: r_dlss_fg 0
+   The setting can persist in the test profile; omit SQA_DLSS_FG to prevent runtime loading.
+4. Look for capability/runtime-ready messages, "Interpolation enabled (2x)", and
+   [FG DIAG] PostPresent ... presented=2 / status=0x0. SDK support or the enable
+   message alone is NOT proof that extra frames were generated.
+5. Compare the same scene/save with r_dlss_fg 0 and 1. Record smoothness, latency,
+   UI/text edges, artifacts and frame times. The engine's simulation-FPS counter
+   does not prove displayed FPS. r__framelimit remains a rendered-FPS cap.
+
+Generation suspends in menus/loading/pause/unfocused windows, scopes/PiP, night vision,
+thermal and embedded item/camera UI. Those render normally without generated frames.
+Returning to eligible gameplay resets temporal history. The UI mask conservatively
+protects changed pixels; translucent edges and world-space overlays remain a test risk.
+The bridge waits for FG input retirement before reuse; this first version prioritizes
+correctness and may cost performance. Frame-generation quality is not certified.
+
+Resize uses a synchronized suspend path. If a device rebuild shuts Streamline down,
+restart the game to use FG again; repeated Streamline initialization is deliberately
+blocked. Missing/unsupported runtime falls back to native DX11. A synchronization
+failure stops with instructions instead of continuing with unsafe GPU resources.
+
+Optional bin/bridge_probe.exe tests ordinary bridge transport.
+bin/bridge_probe.exe --streamline checks SDK capability/Reflex/proxy presentation
+in a hidden standalone window with generation OFF, not actual interpolation.
+
+Rollback: r_dlss_fg 0; quit; unset SQA_DLSS_FG and SQA_DX12_BRIDGE, then restart.
+Restore the previous complete engine package to undo the build.
+No public release/website or installed files were changed by Codex.

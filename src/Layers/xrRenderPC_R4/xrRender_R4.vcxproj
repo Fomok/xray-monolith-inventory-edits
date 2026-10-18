@@ -893,6 +893,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Dlss\PersonalFrameGeneration.cpp" />
+    <ClCompile Include="..\xrRenderDX10\StreamlineIntegration.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
     <ClCompile Include="Dlss\DlssIntegration.cpp" />
     <ClCompile Include="Dlss\Fsr3D3D11.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

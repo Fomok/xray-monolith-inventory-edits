@@ -10,6 +10,7 @@
 # include <d3d11_4.h>
 # include <dxgi1_5.h>
 # include "dx12PresentationBridge.h"
+# include "../xrRenderPC_R4/Dlss/PersonalFrameGeneration.h"
 #endif
 #pragma warning(default:4995)
 #include "../xrRender/HW.h"
@@ -589,7 +590,9 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     _RELEASE(device);
     _RELEASE(context);
 
-    if (ps_r__max_frame_latency > 0) {
+    char fgOption[8] = {};
+    const bool fgRequested = GetEnvironmentVariableA("SQA_DLSS_FG", fgOption, sizeof(fgOption)) == 1 && fgOption[0] == '1';
+    if (ps_r__max_frame_latency > 0 && !fgRequested) {
         IDXGIDevice1* dxgi_device1 = nullptr;
         if (SUCCEEDED(pDevice->QueryInterface(&dxgi_device1)) && dxgi_device1) {
             dxgi_device1->SetMaximumFrameLatency((UINT)ps_r__max_frame_latency);
@@ -601,19 +604,20 @@ void CHW::CreateDevice(HWND hwnd, bool move_window)
     char bridgeOption[8] = {};
     const bool bridgeRequested = GetEnvironmentVariableA("SQA_DX12_BRIDGE", bridgeOption, sizeof(bridgeOption)) == 1
         && bridgeOption[0] == '1';
-    if (bridgeRequested && !Core.ParamsData.test(ECoreParams::dxgi_old))
+    if ((bridgeRequested || fgRequested) && !Core.ParamsData.test(ECoreParams::dxgi_old))
     {
         presentationBridge = new Dx12PresentationBridge();
         const HRESULT bridgeResult = presentationBridge->Initialize(pDevice, pContext, m_pFactory,
-            m_hWnd, sd, sd_fullscreen, &m_pSwapChain);
+            m_hWnd, sd, sd_fullscreen, &m_pSwapChain, fgRequested, [](const char* message) { Msg("%s",message); });
         if (FAILED(bridgeResult))
         {
             Msg("! [DX12 bridge] startup hr=0x%08x; falling back to native DX11", bridgeResult);
+            presentationBridge->ShutdownBeforeSwapchainRelease();
+            _RELEASE(m_pSwapChain);
             delete presentationBridge;
             presentationBridge = nullptr;
-            _RELEASE(m_pSwapChain);
         }
-        else Msg("[DX12 bridge] active: native DX11 rendering, DX12 presentation; frame generation OFF");
+        else Msg("[DX12 bridge] active: native DX11 rendering, DX12 presentation; DLSS-G runtime %s; r_dlss_fg defaults OFF", fgRequested ? "ready" : "not requested");
     }
     if (!presentationBridge)
         R_CHK(m_pFactory->CreateSwapChainForHwnd(pDevice, m_hWnd, &sd, &sd_fullscreen, NULL, &m_pSwapChain));
@@ -792,6 +796,10 @@ void CHW::DestroyDevice()
 		}
     }
     _SHOW_REF("refCount:m_pSwapChain", m_pSwapChain);
+#ifdef USE_DX11
+    personal_fg::Reset();
+    if(presentationBridge)presentationBridge->ShutdownBeforeSwapchainRelease();
+#endif
     _RELEASE(m_pSwapChain);
 
 #ifdef USE_DX11
@@ -825,6 +833,9 @@ void CHW::DestroyDevice()
 void CHW::Reset(HWND hwnd)
 {
 #if defined(USE_DX11)
+    personal_fg::Reset();
+    if(presentationBridge)
+        CHECK_OR_EXIT(SUCCEEDED(presentationBridge->Suspend()), "DLSS-G reset failed; restart without SQA_DLSS_FG.");
     DXGI_SWAP_CHAIN_DESC1&           cd    = m_ChainDesc;
     DXGI_SWAP_CHAIN_FULLSCREEN_DESC& cd_fs = m_ChainDescFullscreen;
 #elif defined(USE_DX10)

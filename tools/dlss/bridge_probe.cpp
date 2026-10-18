@@ -6,7 +6,7 @@
 #pragma comment(lib, "dxgi.lib")
 #pragma comment(lib, "user32.lib")
 
-int main()
+int main(int argc, char** argv)
 {
     using Microsoft::WRL::ComPtr;
     auto check = [](HRESULT hr, const char* step) {
@@ -38,7 +38,9 @@ int main()
         desc.BufferCount=2; desc.SwapEffect=DXGI_SWAP_EFFECT_FLIP_DISCARD;
         desc.AlphaMode=DXGI_ALPHA_MODE_IGNORE;
         DXGI_SWAP_CHAIN_FULLSCREEN_DESC fullscreen = {}; fullscreen.Windowed=TRUE;
-        check(bridge.Initialize(d11.Get(), c11.Get(), factory.Get(), window, desc, fullscreen, &swapchain), "initialize");
+        const bool fg = argc>1 && strcmp(argv[1],"--streamline")==0;
+        check(bridge.Initialize(d11.Get(), c11.Get(), factory.Get(), window, desc, fullscreen, &swapchain, fg,
+            [](const char* message){puts(message);}), "initialize");
         for (unsigned pass=0; pass<3; ++pass)
         {
             if (pass) {
@@ -51,6 +53,7 @@ int main()
             ComPtr<ID3D11RenderTargetView> rtv;
             check(d11->CreateRenderTargetView(target.Get(),nullptr,&rtv), "RTV");
             for (unsigned frame=0; frame<60; ++frame) {
+                check(bridge.BeginFrame(0), "Reflex begin"); bridge.EndSimulation();
                 const float color[4] = { frame/60.f, pass/3.f, 0.25f, 1.f };
                 c11->ClearRenderTargetView(rtv.Get(),color);
                 check(bridge.Present(swapchain.Get(),0,0), "copy and present");
@@ -58,6 +61,8 @@ int main()
             printf("PASS %ux%u: 60 synchronized presentations\n",desc.Width,desc.Height);
         }
         c11->ClearState(); c11->Flush();
+        bridge.ShutdownBeforeSwapchainRelease();
+        swapchain.Reset();
     }
     DestroyWindow(window);
     puts("PASS bridge initialization, 180 presentations, two resizes and cleanup. Not a gameplay or visual-quality test.");

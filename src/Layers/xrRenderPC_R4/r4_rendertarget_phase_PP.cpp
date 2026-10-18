@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Dlss/PersonalFrameGeneration.h"
 #include "r4_rendertarget.h"
 #include "../../xrEngine/CustomHUD.h"
 
@@ -176,7 +177,9 @@ void CRenderTarget::phase_dlss_postprocess()
 		motion = rt_dlss_camera_motion->pSurface;
 		u_setrt(rt_Color, nullptr, nullptr, nullptr);
 	}
+    personal_fg::CaptureScene(dlss::SceneDepthTexture(), motion);
 	const bool dlssOutput = dlss::Evaluate(rt_Color->pSurface, motion);
+    if(!dlssOutput) personal_fg::Reset();
 	dlss::EndScene();
 	if (!dlss::Configured()) return;
 

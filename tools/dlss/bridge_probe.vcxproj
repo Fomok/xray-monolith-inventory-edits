@@ -18,13 +18,13 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <LanguageStandard>stdcpp17</LanguageStandard><RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions><LanguageStandard>stdcpp17</LanguageStandard><RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level4</WarningLevel><ExceptionHandling>Sync</ExceptionHandling>
       <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link><SubSystem>Console</SubSystem></Link>
   </ItemDefinitionGroup>
-  <ItemGroup><ClCompile Include="bridge_probe.cpp" /></ItemGroup>
+  <ItemGroup><ClCompile Include="bridge_probe.cpp" /><ClCompile Include="..\..\src\Layers\xrRenderDX10\StreamlineIntegration.cpp" /></ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
 

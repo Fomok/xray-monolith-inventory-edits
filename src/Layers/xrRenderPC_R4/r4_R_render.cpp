@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Dlss/PersonalFrameGeneration.h"
 #include "../../xrEngine/peak_volumetric_debug.h"
 #include "../../xrEngine/igame_persistent.h"
 #include "../xrRender/FBasicVisual.h"
@@ -749,6 +750,7 @@ void CRender::renderSceneLighting(BOOL bSUN, bool svp)
 	}
 
 	// pip r__scope_debug on-screen inspector overlay (gated + main-only inside the call)
+    personal_fg::CaptureHudless();
 	Target->phase_scope_debug();
 
 	// detail-clear + HUD UI on the main viewport, the scope image has no separate HUD UI

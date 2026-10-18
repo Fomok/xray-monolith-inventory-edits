@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "bodycam_reference_projection.h"
+#ifdef STATIC_RENDERER_R4
+#include "../Layers/xrRenderPC_R4/Dlss/PersonalFrameGeneration.h"
+#endif
 #include "../xrCDB/frustum.h"
 #include "xr_ioconsole.h"
 #include "xr_input.h"
@@ -172,6 +175,9 @@ void CRenderDevice::End(void)
 	if (g_SASH.IsBenchmarkRunning())
 		g_SASH.DisplayFrame(Device.fTimeGlobal);
 	m_pRender->End();
+#ifdef STATIC_RENDERER_R4
+    personal_fg::EndPresent();
+#endif
 
 # ifdef INGAME_EDITOR
     if (load_finished && m_editor)
@@ -407,6 +413,9 @@ void CRenderDevice::on_idle()
 		Device.seqParallelBeforRender.clear();
 	}
 
+#ifdef STATIC_RENDERER_R4
+    personal_fg::BeginSimulation();
+#endif
 	FrameMove();
 
     if (g_pGamePersistent != nullptr)
@@ -523,7 +532,11 @@ void CRenderDevice::on_idle()
 	secondary_tasks.run(&XRay::Engine::GameThread);
 	
 #ifdef ECO_RENDER // ECO_RENDER START
-	if (Device.Paused() || IsMainMenuActive() || ps_framelimiter)
+	if (Device.Paused() || IsMainMenuActive() || (ps_framelimiter
+#ifdef STATIC_RENDERER_R4
+        && !personal_fg::ReflexLimitsFrames()
+#endif
+        ))
 	{
 		PROF_EVENT("Eco Render");
 
@@ -553,6 +566,9 @@ void CRenderDevice::on_idle()
 
 	if (b_is_Active && Begin())
 	{
+#ifdef STATIC_RENDERER_R4
+        personal_fg::BeginRender();
+#endif
 		START_PROFILE("Process seqRender");
 		seqRender.Process(rp_Render);
 		STOP_PROFILE;

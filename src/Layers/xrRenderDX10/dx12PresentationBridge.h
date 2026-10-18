@@ -1,11 +1,12 @@
 #pragma once
 
-// Personal prototype: native D3D11 rendering, D3D12 copy/presentation only.
-// No interpolation. Both APIs use the adapter owning the actual D3D11 device.
+// Personal bridge: native D3D11 rendering, optional DLSS-G on D3D12 presentation.
 #include <d3d11_4.h>
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <wrl/client.h>
+#include "StreamlineIntegration.h"
+#include "PersonalFgInputs.h"
 
 class Dx12PresentationBridge
 {
@@ -13,6 +14,13 @@ class Dx12PresentationBridge
     HMODULE runtime = nullptr;
     HANDLE completion = nullptr;
     Ptr<ID3D12Device> device;
+    Ptr<ID3D12Device> proxyDevice;
+    Ptr<ID3D11Device1> renderDevice;
+    StreamlineIntegration streamline;
+    PersonalFgInputs inputs;
+    sl::Constants frameConstants{};
+    bool fgReady = false, fgFailed = false;
+    StreamlineIntegration::Logger logger = nullptr;
     Ptr<ID3D12CommandQueue> queue;
     Ptr<ID3D12CommandAllocator> allocator;
     Ptr<ID3D12GraphicsCommandList> commands;
@@ -39,11 +47,66 @@ class Dx12PresentationBridge
     }
 
 public:
-    ~Dx12PresentationBridge()
+    bool GenerationReady() const { return fgReady && !fgFailed; }
+    bool ReflexReady() const { return fgReady; }
+    bool GenerationActive() const { return fgReady && streamline.IsEnabled(); }
+    UINT PresentedFrames() const { return streamline.PresentedFrames(); }
+    void DiscardInputs() { inputs.Invalidate(); }
+    HRESULT BeginFrame(UINT limitUs)
+    {
+        inputs.Invalidate();
+        if (fgReady && !streamline.BeginFrame(limitUs)) return E_FAIL;
+        return S_OK;
+    }
+    void EndSimulation()
+    {
+        if (!fgReady) return;
+        streamline.Marker(sl::PCLMarker::eSimulationEnd);
+        streamline.Marker(sl::PCLMarker::eRenderSubmitStart);
+    }
+    HRESULT Suspend()
+    {
+        HRESULT hr=WaitComplete(); if(FAILED(hr))return hr;
+        inputs.Invalidate();
+        if(fgReady && (!streamline.SetEnabled(false) || !streamline.ClearTags()))return E_FAIL;
+        return S_OK;
+    }
+    HRESULT FailGeneration()
+    {
+        HRESULT hr=WaitComplete(); if(FAILED(hr))return hr;
+        fgFailed=true; inputs.Invalidate();
+        if(logger)logger("[DLSS FG] Disabled after input/runtime failure; restart game to retry.");
+        return !fgReady || streamline.DisableAfterFailure() ? S_OK : E_FAIL;
+    }
+    HRESULT CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion, const sl::Constants& constants)
+    {
+        if(!GenerationReady() || !streamline.HasFrame() || !streamline.CanGenerate(width,height))return S_FALSE;
+        if(!depth || !motion)return E_INVALIDARG;
+        D3D11_TEXTURE2D_DESC d{},m{}; depth->GetDesc(&d); motion->GetDesc(&m);
+        if(d.Width!=m.Width || d.Height!=m.Height || d.SampleDesc.Count!=1 || m.SampleDesc.Count!=1)return E_INVALIDARG;
+        if(!inputs.Matches(d.Width,d.Height,width,height))
+        {
+            HRESULT hr=Suspend(); if(FAILED(hr))return hr;
+            hr=inputs.Resize(device.Get(),renderDevice.Get(),d.Width,d.Height,width,height); if(FAILED(hr))return hr;
+        }
+        frameConstants=constants;
+        return inputs.Capture(renderDevice.Get(),context.Get(),depth,motion);
+    }
+    void CaptureHudless()
+    {
+        if(inputs.scene) { context->CopyResource(inputs.render[2].Get(),target.Get()); inputs.hudless=true; }
+    }
+    void ShutdownBeforeSwapchainRelease()
     {
         WaitComplete();
+        streamline.Shutdown(); fgReady=false;
+    }
+    ~Dx12PresentationBridge()
+    {
+        ShutdownBeforeSwapchainRelease();
+        inputs=PersonalFgInputs{}; renderDevice.Reset();
         target.Reset(); shared.Reset(); context.Reset(); fence11.Reset();
-        fence.Reset(); commands.Reset(); allocator.Reset(); queue.Reset(); device.Reset();
+        fence.Reset(); commands.Reset(); allocator.Reset(); queue.Reset(); proxyDevice.Reset(); device.Reset();
         if (completion) CloseHandle(completion);
         if (runtime) FreeLibrary(runtime);
     }
@@ -86,7 +149,7 @@ public:
 
     HRESULT Initialize(ID3D11Device1* d11, ID3D11DeviceContext1* c11, IDXGIFactory2* factory,
         HWND window, const DXGI_SWAP_CHAIN_DESC1& desc, const DXGI_SWAP_CHAIN_FULLSCREEN_DESC& fullscreen,
-        IDXGISwapChain1** swapchain)
+        IDXGISwapChain1** swapchain, bool enableFg = false, StreamlineIntegration::Logger log = nullptr)
     {
         // HDR and exclusive mode remain on the established native path for prototype 1.
         if (!fullscreen.Windowed || desc.Format != DXGI_FORMAT_R8G8B8A8_UNORM || desc.SampleDesc.Count != 1)
@@ -102,15 +165,37 @@ public:
         if (FAILED(hr)) return hr;
         hr = dxgi->GetAdapter(adapter.GetAddressOf());
         if (FAILED(hr)) return hr;
+        logger=log;
+        renderDevice=d11;
+        if(enableFg)
+        {
+            DXGI_ADAPTER_DESC adapterDesc{};
+            hr=adapter->GetDesc(&adapterDesc); if(FAILED(hr))return hr;
+            wchar_t executable[32768]{};
+            DWORD length=GetModuleFileNameW(nullptr,executable,32768);
+            if(!length || length>=32768)return E_FAIL;
+            std::wstring directory(executable);
+            directory.resize(directory.find_last_of(L"\\/")); directory+=L"\\streamline";
+            if(!streamline.Initialize(directory.c_str(),logger) || !streamline.CheckAdapter(adapterDesc.AdapterLuid))return E_FAIL;
+        }
         runtime = LoadLibraryExW(L"d3d12.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
         if (!runtime) return HRESULT_FROM_WIN32(GetLastError());
         auto create = reinterpret_cast<PFN_D3D12_CREATE_DEVICE>(GetProcAddress(runtime, "D3D12CreateDevice"));
         if (!create) return E_NOINTERFACE;
         hr = create(adapter.Get(), D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(device.GetAddressOf()));
         if (FAILED(hr)) return hr;
+        if(enableFg)
+        {
+            if(!streamline.SetDevice(device.Get()))return E_FAIL;
+            proxyDevice=device;
+            auto* proxy=proxyDevice.Detach();
+            bool upgraded=streamline.Upgrade(reinterpret_cast<void**>(&proxy));
+            proxyDevice.Attach(proxy); if(!upgraded)return E_FAIL;
+            fgReady=true;
+        }
         D3D12_COMMAND_QUEUE_DESC q = {};
         q.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-        hr = device->CreateCommandQueue(&q, IID_PPV_ARGS(queue.GetAddressOf()));
+        hr = (proxyDevice ? proxyDevice.Get() : device.Get())->CreateCommandQueue(&q, IID_PPV_ARGS(queue.GetAddressOf()));
         if (FAILED(hr)) return hr;
         hr = device->CreateCommandAllocator(q.Type, IID_PPV_ARGS(allocator.GetAddressOf()));
         if (FAILED(hr)) return hr;
@@ -132,13 +217,34 @@ public:
         hr = Target(d11, desc.Width, desc.Height, desc.Format, test.GetAddressOf());
         if (FAILED(hr)) return hr;
         // All interop resources validated before acquiring the window's swapchain.
-        return factory->CreateSwapChainForHwnd(queue.Get(), window, &desc, &fullscreen, nullptr, swapchain);
+        Ptr<IDXGIFactory2> presentationFactory=factory;
+        if(enableFg)
+        {
+            auto* proxy=presentationFactory.Detach();
+            bool upgraded=streamline.Upgrade(reinterpret_cast<void**>(&proxy));
+            presentationFactory.Attach(proxy); if(!upgraded)return E_FAIL;
+        }
+        return presentationFactory->CreateSwapChainForHwnd(queue.Get(), window, &desc, &fullscreen, nullptr, swapchain);
     }
 
     HRESULT Present(IDXGISwapChain1* swapchain, UINT interval, UINT flags)
     {
         HRESULT hr = WaitComplete();
         if (FAILED(hr)) return hr;
+        if(fgReady)
+        {
+            if(!streamline.HasFrame()) { if(!streamline.BeginFrame(0))return E_FAIL; EndSimulation(); }
+            bool generate=GenerationReady() && inputs.scene && inputs.hudless &&
+                streamline.CanGenerate(width,height) && (interval==0 || streamline.SupportsVSync());
+            if(generate)
+            {
+                hr=inputs.ProtectUi(renderDevice.Get(),context.Get(),target.Get());
+                if(FAILED(hr)) { hr=FailGeneration(); if(FAILED(hr))return hr; generate=false; }
+            }
+            if(!streamline.SetEnabled(generate))return E_FAIL;
+            bool tagged=generate ? streamline.Tag(frameConstants,inputs.gpu[0].Get(),inputs.gpu[1].Get(),inputs.gpu[2].Get(),inputs.gpu[3].Get()) : streamline.ClearTags();
+            if(!tagged) { hr=FailGeneration(); if(FAILED(hr))return hr; }
+        }
         // Serialize the two APIs. The CPU completion wait also protects the next
         // D3D11 frame, resize and allocator reuse. Optimize only after gameplay proof.
         hr = context->Signal(fence11.Get(), ++serial);
@@ -177,6 +283,23 @@ public:
         if (FAILED(hr)) return hr;
         hr = WaitComplete();
         if (FAILED(hr)) return hr;
-        return swapchain->Present(interval, flags);
+        if(fgReady) { streamline.Marker(sl::PCLMarker::eRenderSubmitEnd); streamline.Marker(sl::PCLMarker::ePresentStart); }
+        hr=swapchain->Present(interval, flags);
+        if(fgReady)
+        {
+            streamline.Marker(sl::PCLMarker::ePresentEnd);
+            if(FAILED(hr))return hr;
+            Ptr<ID3D12Fence> consumed;
+            UINT64 value=0;
+            bool stateOk=streamline.AfterPresent(consumed.GetAddressOf(),value);
+            if(consumed && value) { hr=queue->Wait(consumed.Get(),value); if(FAILED(hr))return hr; }
+            // eBlockPresentingClientQueue orders all FG input consumption before
+            // this retirement fence, including runtimes without a returned fence.
+            hr=queue->Signal(fence.Get(),++serial); if(FAILED(hr))return hr;
+            hr=WaitComplete(); if(FAILED(hr))return hr;
+            if(!stateOk) return FailGeneration();
+        }
+        inputs.Invalidate();
+        return hr;
     }
 };

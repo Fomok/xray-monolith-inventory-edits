@@ -9,6 +9,7 @@
 
 u32 ps_Preset = 2;
 u32 ps_r_dlss_quality = 0;
+int ps_r_dlss_fg = 0;
 // Default to DLSS selection for compatibility with existing DLSS-only configs.
 // Its quality defaults to Off, so a fresh installation still renders natively.
 u32 ps_r_upscaler = 1;
@@ -1668,6 +1669,9 @@ void xrRender_initconsole()
 	CMD3(CCC_Token, "r2_smaa", &ps_smaa_quality, smaa_quality_token);
 #if defined(USE_DX11)
 	CMD3(CCC_Token, "r_dlss_quality", &ps_r_dlss_quality, dlss_quality_token);
+#if (RENDER == R_R4)
+    CMD4(CCC_Integer, "r_dlss_fg", &ps_r_dlss_fg, 0, 1);
+#endif
 	CMD3(CCC_Token, "r_upscaler", &ps_r_upscaler, upscaler_token);
 	CMD3(CCC_Token, "r_fsr3_quality", &ps_r_fsr3_quality, fsr3_quality_token);
 	CMD3(CCC_Token, "r_dlss_preset", &ps_r_dlss_preset, dlss_preset_token);
