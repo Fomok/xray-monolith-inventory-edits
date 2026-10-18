@@ -28,6 +28,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           git apply ../tools/optiscaler/menu-compat.patch
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # Include the newly added protocol header in the corresponding-source list.
+          git add --intent-to-add OptiScaler/include/SqaFgTelemetry.h
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Build companion
         working-directory: optiscaler-source
         run: |
