@@ -24,7 +24,9 @@ Scheduling are checked by the SDK. This test targets RTX 5080. SDR windowed/bord
    does not prove displayed FPS. r__framelimit remains a rendered-FPS cap.
 
 Generation suspends in menus/loading/pause/unfocused windows, scopes/PiP, night vision,
-thermal and item/camera UI. Actor-attached wearable UI is now protected by a clean-scene capture and UI mask. Those render normally without generated frames.
+thermal and item/camera UI; those views render normally without generated frames.
+Actor-attached wearable UI is now protected by a clean-scene capture and UI mask,
+allowing generation while its widgets/glass are present.
 Returning to eligible gameplay resets temporal history. The UI mask conservatively
 protects changed pixels; translucent edges and world-space overlays remain a test risk.
 The bridge orders GPU writes after FG input retirement; this version prioritizes
@@ -52,13 +54,18 @@ The supplied Full Pack uses the wilsjo2 DLSS-NR fork, not official OptiScaler.
 Its existing FrameGen.External=true startup mode keeps NR/SR enabled while leaving
 Streamline/Reflex/FG to the game. Keep OptiScaler's own FG disabled. Use
 Upscalers.Dx11Upscaler=dlss_12 and DlssNr.Enabled=true for Neural Rendering.
-Restart after changing External; do not expect a live setting change to unhook FG.
+Also set Menu.OverlayMenu=false to use the legacy menu path. External=true alone
+still crashed the combined probe with the default overlay path. Legacy menu mode
+passed with the exact supplied DLL; no fork replacement is required.
+Restart after changing External or OverlayMenu; live changes cannot undo hooks.
 A separately prepared OptiScaler settings ZIP is supplied for the known Full Pack.
 Back up your installed OptiScaler.ini, then copy that ZIP's bin/OptiScaler.ini into
 Anomaly/bin. It is a bin configuration, NOT an MO2 mod. Restore your backup to undo.
 For your customized INI, tools/prepare-optiscaler-personal.ps1 takes -SourceIni and
 -OutputDirectory, preserves other settings and writes a separate prepared file.
-It refuses to overwrite its source or an existing output. Copy manually after review.
+It sets those four keys and refuses to overwrite its source or an existing output.
+Copy manually after review. Other overlay-blocking or factory-wrapping changes
+are not required by the successful isolated test.
 Do not replace the DLSS-NR fork with official OptiScaler just to match a newer version:
 the official source checked does not provide this fork's Neural Rendering path.
 
@@ -84,3 +91,9 @@ session, initially with r_dlss_fg 0. Save complete engine and OptiScaler logs.
 Probe --streamline --ngx uses synthetic DLAA inputs and recreates NGX across resizes;
 it is an interoperability check with FG OFF, not proof of gameplay/NR image quality.
 Probe --streamline --ngx --generate additionally submits synthetic FG inputs and requires at least 900 two-frame presentations across 960 calls. bridge-probe-result.txt records counts even when an injected overlay redirects stdout. It still does not test the game's wearable render path or displayed image quality.
+
+RTX 5080 validation: native active FG and exact Full Pack NR+SR+FG with External=true
+and OverlayMenu=false each completed 960 presentations, seven resizes, eight NGX
+feature creations/readbacks, and 953 generated presentations (seven resize warmups).
+NR dispatch before SR was confirmed in OptiScaler's log. GPU input/mask checks passed.
+Gameplay with worn devices, menu interaction and backend hot-switching remain untested.

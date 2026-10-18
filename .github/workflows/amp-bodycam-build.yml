@@ -165,7 +165,7 @@ jobs:
         Copy-Item -Path ./incoming/* -Destination ./package -Recurse -Force
         New-Item -ItemType Directory -Force -Path ./package/docs | Out-Null
         Copy-Item -LiteralPath ./License.txt,./THIRD-PARTY-NOTICES.txt,./README.md -Destination ./package/
-        Copy-Item -LiteralPath ./docs/DISTRIBUTION.md,./docs/PROVENANCE.md,./docs/PERSONAL-FG-PROVENANCE.md -Destination ./package/docs/
+        Copy-Item -LiteralPath ./docs/DISTRIBUTION.md,./docs/PROVENANCE.md,./docs/PERSONAL-FG-PROVENANCE.md,./docs/PERSONAL-FG-TEST4-VALIDATION.md -Destination ./package/docs/
         Copy-Item -LiteralPath ./docs/PERSONAL-FG-TEST.txt -Destination "./package/READ ME FIRST.txt"
         New-Item -ItemType Directory -Force -Path ./package/tools | Out-Null
         Copy-Item -LiteralPath ./tools/dlss/prepare-optiscaler-personal.ps1 -Destination ./package/tools/

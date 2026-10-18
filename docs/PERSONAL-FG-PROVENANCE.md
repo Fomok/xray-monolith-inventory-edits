@@ -28,3 +28,10 @@ https://github.com/NVIDIA-RTX/Streamline/blob/v2.14.16/docs/ProgrammingGuideRefl
 Test 4 references (2026-10-18; no OptiScaler code copied): official optiscaler/OptiScaler master babf1d6c1450dba634dd2f39de00d87698ccbef4, latest release v0.9.4; wilsjo2/OptiScaler-DLSSNR-PreSR-Multipass bundled commit 5019c979656225ec87e3331658f8a1f3ea478244, reference HEAD 1bd39091337cc07ba961c8e59ded57e21dc95b18, release v0.8.3. The installed/Full Pack dxgi.dll SHA256 CF9C59158477B84A414334819E07A961530FF1308C0BB9FD3849CEB2A276C01E matched exactly. External FG mode in that fork intentionally preserves NR/SR while bypassing Streamline/Reflex hooks. Official upstream has different feature coverage; no wholesale update is bundled.
 https://github.com/optiscaler/OptiScaler
 https://github.com/wilsjo2/OptiScaler-DLSSNR-PreSR-Multipass
+
+The exact bundled fork also needs Menu.OverlayMenu=false for the tested personal
+bridge combination. External=true alone reproduced an active-FG fence stall/crash;
+switching to the legacy menu path passed with NR+SR+FG. The fork's Dxgi_Hooks.cpp
+and dllmain.cpp condition their overlay/DirectX hook setup on this setting. This
+isolates an overlay-path interaction, not a proven individual queue/command fault.
+No OptiScaler binary/source patch is included. See PERSONAL-FG-TEST4-VALIDATION.md.
