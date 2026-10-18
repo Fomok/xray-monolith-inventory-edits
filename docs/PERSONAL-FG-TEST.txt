@@ -1,162 +1,47 @@
 Squared Away Personal DLSS FG Test 6 PiP - EXPERIMENTAL
 
-Use the complete Test 6 engine and matching Test 6 UI/shader override package.
-Keep the existing Dual FPS Test 1 OptiScaler DLL, Test 4 INI and NR dependencies.
-Start with the same SQA_DLSS_FG=1 environment opt-in as Test 5.
-Video > Basic now has NVIDIA frame generation and Frame generation inside PiP
-scopes. Apply saves these choices; Cancel preserves the old settings. The runtime
-status below the controls identifies missing startup opt-in/unavailable runtime.
-The master and PiP switches default Off; old r_dlss_fg 0/1 commands still work.
+INSTALL
+1. Quit the game. Back up the complete Test 5 engine package.
+2. Copy this complete engine package to the separate personal test game.
+3. Install Squared Away Personal FG Test 6 UI and Scope Shader.zip as a separate
+   MO2 mod below DLSS FSR3 Compatibility Patch and Bodycam patches. Its three
+   files must win. This is required for the matching optical map and controls.
+4. Keep OptiScaler Dual FPS Test 1 (dxgi.dll), the Test 4 INI, NR model and other
+   Full Pack dependencies. Keep External=true and OverlayMenu=false.
+5. Start through your existing FG-enabled launch with SQA_DLSS_FG=1.
 
-PiP ON uses the Reference optical kernel's exact capture-coordinate map and
-scope-camera depth/motion. Previous optical mapping converts capture motion into
-main-image motion, including a moving lens. Lens color/effects stay unchanged.
-PiP OFF suspends generation while scoped. Iron sights no longer suspend FG just
-because the global 3D-scope option is enabled. Legacy optics without a current
-Reference mapping, night vision/thermal and existing unsafe UI still suspend FG.
-The lens interior is interpolated, not held at native cadence by a UI mask.
+SETTINGS
+Video > Basic has NVIDIA frame generation and Frame generation inside PiP
+scopes. Set the desired switches and Apply. Cancel preserves the old values.
+Both choices persist without a renderer restart. The status text reports whether
+this process loaded the runtime; the FPS overlay shows actual active/suspended
+state. No console commands are needed for these switches. Existing commands
+r_dlss_fg 0/1 and the new r_dlss_fg_pip 0/1 remain available.
 
-The existing FPS limit targets presented FPS including FG under Reflex: a target
-of 100 produces about 50 rendered + 50 generated. With FG off it targets 100
-rendered. This build preserves the target and cap behavior; no driver limits
-or user config are changed. Lower GPU load at that cap can be expected.
+PiP ON interpolates supported Bodycam Reference scope interiors and the world.
+The scope's own depth/motion and previous optical sampling map are transformed
+into the final image. Lens color/effects are retained. PiP OFF suspends FG while
+scoped; iron sights remain eligible. Unsupported legacy scopes, absent current
+Reference inputs, night vision/thermal and existing unsafe UI still suspend FG.
+Entry/exit, optic/camera changes and zoom/size cuts reset temporal history.
 
-Restore the complete Test 5 engine and disable/remove the Test 6 UI/shader
-package to roll back. No installed files are modified by building these packages.
-Actual gameplay optics/interpolation, Apply/Cancel and scope transitions require
-user testing. See the accompanying validation report for completed offline tests.
+FPS LIMIT AND COUNTERS
+The existing limit targets presented FPS under Reflex, including generated
+frames: 100 means about 50 rendered plus 50 generated. With FG off it targets
+100 rendered. The target and behavior are unchanged; no user settings were
+altered by this build. NR has its own GPU cost.
+Rendered and Presented are measured runtime rates, not physical monitor scan-out.
+The existing Insert menu, NR controls and wearable scene/UI protection remain.
 
-Historical Test 5 counter details (also applicable to Test 6):
-Squared Away Personal Dual FPS
+TESTING LIMITS
+GPU input, camera/optical motion, occlusion, reset, UI and Lua checks passed.
+A foreground integration interval reported 2x presentations. The full 1800-frame
+probe lost foreground focus and failed its strict sustained-generation threshold;
+this is not a completed sustained gameplay/visual-quality validation.
+Test scope pans, zoom, optic switches, entry/exit, occluding hands, reticles,
+Bodycam effects, NR and wearable screens in game. See the validation report.
 
-Install both matching packages in the separate test game:
-1. Personal DLSS FG Test 5 Dual FPS DX11 AVX (complete engine package).
-2. Personal OptiScaler Dual FPS Test 1 (bin/dxgi.dll companion).
-
-Quit the game first. Back up the current complete engine package and dxgi.dll.
-Keep the existing Test 4 OptiScaler settings, NR model/loader/dependencies and
-matching Bodycam/shader patches. Keep FrameGen.External=true and
-Menu.OverlayMenu=false. Neither package is an MO2 mod. Restart once after copying.
-Keep the existing SQA_DLSS_FG=1 opt-in; r_dlss_fg 0/1 controls generation.
-
-Enable the normal FPS Overlay option in OptiScaler if the overlay is hidden.
-Insert still opens the settings. Both the overlay and settings show:
-
-Rendered: application frames per second.
-Presented: measured runtime-reported presentations per second, including FG.
-
-The numbers use one shared half-second sampling window. Presented is calculated
-from actual reported frame counts; it is never guessed by multiplying Rendered.
-The mode indicator describes whether FG is enabled. If Presented stays close to
-Rendered with FG on, the measured interval did not contain extra presentations.
-FG off/suspended normally makes the values equal. Transitions briefly show
-"measuring"; stopped updates show "stale" after one second; missing/invalid
-telemetry shows "unavailable". Dashes mean no current measured presentation rate.
-An older engine with the new companion will therefore show Presented unavailable.
-
-Presented is not the monitor's physical scan-out/refresh FPS or proof that every
-generated image is visually distinct. No administrator tracing is required.
-In menus/loading/scopes the existing safety guards still apply. No wearable or
-resource-safety behavior is changed by telemetry.
-
-Rollback: restore the previous complete engine package and backed-up dxgi.dll,
-then restart. Preserve your existing INI. No configuration change is shipped.
-
-Existing engine requirements and retained Test 4 behavior
-
-Use a separate test copy/profile. Install the COMPLETE bin/ + db/ package over
-the same Bodycam+DLSS baseline used for bridge test 1. Keep the public grass/motion
-shader patch and Bodycam GAMMA Patch 1.1.0. Do not mix frozen weapon-follow/pivot builds.
-Keep bin/streamline/ beside AnomalyDX11AVX.exe, including all six supplied DLLs.
-
-DEFAULT OFF. NVIDIA RTX 40/50, supported driver/Windows and Hardware-accelerated GPU
-Scheduling are checked by the SDK. This test targets RTX 5080. SDR windowed/borderless.
-1. Set SQA_DLSS_FG=1 in the environment of the test game/MO2 process, then restart:
-     $env:SQA_DLSS_FG = '1'
-   This loads the FG-capable bridge. SQA_DX12_BRIDGE=1 alone remains bridge-only.
-2. Enable DLAA or DLSS Quality (FSR3 upscaling can also supply temporal inputs).
-   MSAA must be off; keep the matching SSS motion-vector shaders.
-3. Start with VSync off. In the game console enter: r_dlss_fg 1
-   Turn generation off with: r_dlss_fg 0
-   The setting can persist in the test profile; omit SQA_DLSS_FG to prevent runtime loading.
-4. Look for capability/runtime-ready messages, "Interpolation enabled (2x)", and
-   [FG DIAG] PostPresent ... presented=2 / status=0x0. SDK support or the enable
-   message alone is NOT proof that extra frames were generated.
-5. Compare the same scene/save with r_dlss_fg 0 and 1. Record smoothness, latency,
-   UI/text edges, artifacts and frame times. The engine's simulation-FPS counter
-   does not prove displayed FPS. r__framelimit remains a rendered-FPS cap.
-
-Generation suspends in menus/loading/pause/unfocused windows, scopes/PiP, night vision,
-thermal and item/camera UI; those views render normally without generated frames.
-Actor-attached wearable UI is now protected by a clean-scene capture and UI mask,
-allowing generation while its widgets/glass are present.
-Returning to eligible gameplay resets temporal history. The UI mask conservatively
-protects changed pixels; translucent edges and world-space overlays remain a test risk.
-The bridge orders GPU writes after FG input retirement; this version prioritizes
-correctness while allowing CPU preparation to overlap the prior GPU frame. Frame-generation quality is not certified.
-
-Resize uses a synchronized suspend path. If a device rebuild shuts Streamline down,
-restart the game to use FG again; repeated Streamline initialization is deliberately
-blocked. Missing/unsupported runtime falls back to native DX11. A synchronization
-failure stops with instructions instead of continuing with unsafe GPU resources.
-
-Optional bin/bridge_probe.exe tests ordinary bridge transport.
-bin/bridge_probe.exe --streamline checks SDK capability/Reflex/proxy presentation
-in a hidden standalone window with generation OFF, not actual interpolation.
-
-Rollback: r_dlss_fg 0; quit; unset SQA_DLSS_FG and SQA_DX12_BRIDGE, then restart.
-Restore the previous complete engine package to undo the build.
-No public release/website or installed files were changed by Codex.
-
-Test 2 corrects global fake-scope switches blocking hip-fire FG. Scope/aim transitions still suspend interpolation. [FG TIMING] reports average CPU fence, Reflex and Present waits every 240 presentations to investigate performance; these are not GPU execution times. Existing reports with OptiScaler show its DX11-to-DX12 upscaler and DLSS-NR enabled, but no cause for the FPS loss is yet established. Keep the full log for comparison.
-
-Test 3 uses actual UI-content flags instead of broad render-pass queries that are true for ordinary held weapons/camera models. Real device/script UI and wearable screens still suspend FG. [Personal FG] UI content flags records the exact blocker. The bridge now queues a D3D11 GPU wait after presentation instead of forcing current-frame CPU completion; previous-allocator reuse, resize and error recovery still drain safely. Performance recovery and sustained generated frames require in-game confirmation. Test 2 engine-swap results associate the slowdown with this personal build, not a reboot/GPU issue.
-
-TEST 4: OPTISCALER DLSS-NR + PERSONAL FG
-The supplied Full Pack uses the wilsjo2 DLSS-NR fork, not official OptiScaler.
-Its existing FrameGen.External=true startup mode keeps NR/SR enabled while leaving
-Streamline/Reflex/FG to the game. Keep OptiScaler's own FG disabled. Use
-Upscalers.Dx11Upscaler=dlss_12 and DlssNr.Enabled=true for Neural Rendering.
-Also set Menu.OverlayMenu=false to use the legacy menu path. External=true alone
-still crashed the combined probe with the default overlay path. Legacy menu mode
-passed with the exact supplied DLL; no fork replacement is required.
-Restart after changing External or OverlayMenu; live changes cannot undo hooks.
-A separately prepared OptiScaler settings ZIP is supplied for the known Full Pack.
-Back up your installed OptiScaler.ini, then copy that ZIP's bin/OptiScaler.ini into
-Anomaly/bin. It is a bin configuration, NOT an MO2 mod. Restore your backup to undo.
-For your customized INI, tools/prepare-optiscaler-personal.ps1 takes -SourceIni and
--OutputDirectory, preserves other settings and writes a separate prepared file.
-It sets those four keys and refuses to overwrite its source or an existing output.
-Copy manually after review. Other overlay-blocking or factory-wrapping changes
-are not required by the successful isolated test.
-Do not replace the DLSS-NR fork with official OptiScaler just to match a newer version:
-the official source checked does not provide this fork's Neural Rendering path.
-
-The engine supplies a real unity-exposure texture for SDR, preventing OptiScaler's
-missing-exposure fallback recreation. Timeout diagnostics now distinguish an engine
-retirement timeout from an actual DX12 device-removal reason. Neither change alone
-proves that the reported hot-switch crash is fixed.
-
-Wearable screens/glass retain native rendering and occlusion. FG now captures the
-scene before their native draw, applies identical final postprocess to the clean
-scene and displayed frame, and protects overlay pixels with the conservative mask.
-No Wearable Devices script replacement or MO2 patch is required for this approach.
-Translucent glass edges and moving wrist screens still require visual validation;
-the mask copies affected current-frame pixels instead of interpolating their UI.
-Item/camera UI and scope/vision exclusions remain.
-
-Validation sequence: fresh launch with prepared External=true config; fixed DLSS
-w/DX12 backend; test personal FG off/on, then NR off/on, then Promin/Vektor equipped.
-Require sustained presented=2/status=0, no exposure-recreation warning and no timeout.
-Compare UI readability, hand/glass occlusion, movement edges and frame times. Only
-after stable fixed-backend operation, test backend transitions in a disposable
-session, initially with r_dlss_fg 0. Save complete engine and OptiScaler logs.
-Probe --streamline --ngx uses synthetic DLAA inputs and recreates NGX across resizes;
-it is an interoperability check with FG OFF, not proof of gameplay/NR image quality.
-Probe --streamline --ngx --generate additionally submits synthetic FG inputs and requires at least 900 two-frame presentations across 960 calls. bridge-probe-result.txt records counts even when an injected overlay redirects stdout. It still does not test the game's wearable render path or displayed image quality.
-
-RTX 5080 validation: native active FG and exact Full Pack NR+SR+FG with External=true
-and OverlayMenu=false each completed 960 presentations, seven resizes, eight NGX
-feature creations/readbacks, and 953 generated presentations (seven resize warmups).
-NR dispatch before SR was confirmed in OptiScaler's log. GPU input/mask checks passed.
-Gameplay with worn devices, menu interaction and backend hot-switching remain untested.
+ROLLBACK
+Disable the Test 6 UI/shader mod and restore the complete Test 5 engine package.
+Keep the existing OptiScaler companion/INI. No installed game files were changed
+while preparing these packages. Do not install this test on the public engine.
