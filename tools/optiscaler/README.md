@@ -1,3 +1,31 @@
+# Personal OptiScaler NR 0.8.91 compatibility companion
+
+Current source is the standard NR fork release v0.8.91 at
+https://github.com/wilsjo2/OptiScaler-DLSSNR-PreSR-Multipass/tree/f45ccf3a761df91450959d325ac0166cba5364c9
+with menu-compat.patch. See docs/PERSONAL-OPTISCALER-NR-0891-VALIDATION.md for
+the release comparison, source/build provenance, tests, failures and limits.
+
+Keep FrameGen.External=true, FrameGen.Enabled=false and Menu.OverlayMenu=false.
+The personal Test 8 engine initializes normally through MO2 and owns FG/PiP,
+Streamline and Reflex. This companion preserves measured rendered/presented
+counters, legacy menu state restoration and startup-only external ownership.
+It uses standard D3D11 NGX shutdown in external mode to avoid the reproduced
+device-specific shutdown fault, then drains NR during normal D3D12 teardown.
+
+Build the pinned source with recursive submodules, apply menu-compat.patch,
+and build OptiScaler.sln Release/x64. The personal-optiscaler workflow also
+runs the NR diagnostics regression and archives complete corresponding source.
+
+Use the separate small bin replacement ZIP plus source/license ZIP. Retain
+Test 8 engine/Streamline/SR/NR model files. Back up the old DLL, INI and helper;
+move obsolete nvngx.dll_dlssnr.dll out of bin. Keep nvngx_dlssnr.dll, the actual
+NR model. The new fork owns NR directly and no longer needs the old helper.
+Restore all three backed-up companion files to roll back. Do not replace the
+patched companion with a stock official release: it lacks this NR integration.
+
+The prior 0.7.6 companion remains in the preserved Test 8 packages. Earlier
+diagnosis and validation are historical:
+
 # Personal OptiScaler legacy menu companion
 
 This companion targets the exact DLSS-NR fork supplied with the GAMMA Bodycam
