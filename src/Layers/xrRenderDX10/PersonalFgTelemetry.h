@@ -33,6 +33,9 @@ public:
             packet.pid=GetCurrentProcessId(); packet.frequency=Frequency(); packet.epoch=now;
         }
         if(!view)return;
+        // A reader may have been hidden throughout loading. Mark a fresh epoch
+        // so its next sample never averages across a presentation gap.
+        if(packet.stamp && (now<packet.stamp || now-packet.stamp>packet.frequency))packet.epoch=now;
         packet.stamp=now; packet.flags=(valid?1u:0u)|(enabled?2u:0u);
         ++packet.app; if(valid)packet.presented+=presented;
         InterlockedIncrement(&view->sequence); MemoryBarrier();

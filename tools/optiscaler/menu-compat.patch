@@ -1,9 +1,9 @@
 diff --git a/OptiScaler/include/SqaFgTelemetry.h b/OptiScaler/include/SqaFgTelemetry.h
 new file mode 100644
-index 0000000..bee0feb
+index 0000000..67b4e4e
 --- /dev/null
 +++ b/OptiScaler/include/SqaFgTelemetry.h
-@@ -0,0 +1,86 @@
+@@ -0,0 +1,89 @@
 +// Personal engine/companion telemetry ABI v1. Windows, same process, read-only consumer.
 +#pragma once
 +#include <windows.h>
@@ -39,6 +39,9 @@ index 0000000..bee0feb
 +            packet.pid=GetCurrentProcessId(); packet.frequency=Frequency(); packet.epoch=now;
 +        }
 +        if(!view)return;
++        // A reader may have been hidden throughout loading. Mark a fresh epoch
++        // so its next sample never averages across a presentation gap.
++        if(packet.stamp && (now<packet.stamp || now-packet.stamp>packet.frequency))packet.epoch=now;
 +        packet.stamp=now; packet.flags=(valid?1u:0u)|(enabled?2u:0u);
 +        ++packet.app; if(valid)packet.presented+=presented;
 +        InterlockedIncrement(&view->sequence); MemoryBarrier();

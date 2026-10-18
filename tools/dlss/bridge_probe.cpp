@@ -31,11 +31,13 @@ int main(int argc, char** argv)
         for(int n=1;n<=60;++n)writer.Publish(0,true,true,start+f+f/2+f*n/120);
         r=reader.Read(start+2*f);
         if(r.state!=State::Live || fabs(r.presented)>0.01)return 26;
-        if(reader.Read(start+4*f).state!=State::Stale)return 27;
-        writer.Publish(1,true,false,start+4*f);
-        if(reader.Read(start+4*f).state!=State::Warming)return 28;
-        writer.Publish(0,false,false,start+4*f+1);
-        if(reader.Read(start+4*f+1).state!=State::Unavailable)return 29;
+        writer.Publish(2,true,true,start+4*f);
+        if(reader.Read(start+4*f).state!=State::Warming)return 30;
+        if(reader.Read(start+6*f).state!=State::Stale)return 27;
+        writer.Publish(1,true,false,start+6*f);
+        if(reader.Read(start+6*f).state!=State::Warming)return 28;
+        writer.Publish(0,false,false,start+6*f+1);
+        if(reader.Read(start+6*f+1).state!=State::Unavailable)return 29;
         writer.Stop();
         puts("PASS telemetry missing, 1x, variable counts, 2x, zero output, mode reset, stale, recovery and invalidation");
         return 0;
