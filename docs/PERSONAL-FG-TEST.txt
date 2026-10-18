@@ -1,5 +1,39 @@
-Squared Away Personal DLSS Frame Generation Test 4 — DX11 AVX
-EXPERIMENTAL personal build. Test 3 generated frames in game; Test 4 integration still needs gameplay validation.
+Squared Away Personal Dual FPS
+
+Install both matching packages in the separate test game:
+1. Personal DLSS FG Test 5 Dual FPS DX11 AVX (complete engine package).
+2. Personal OptiScaler Dual FPS Test 1 (bin/dxgi.dll companion).
+
+Quit the game first. Back up the current complete engine package and dxgi.dll.
+Keep the existing Test 4 OptiScaler settings, NR model/loader/dependencies and
+matching Bodycam/shader patches. Keep FrameGen.External=true and
+Menu.OverlayMenu=false. Neither package is an MO2 mod. Restart once after copying.
+Keep the existing SQA_DLSS_FG=1 opt-in; r_dlss_fg 0/1 controls generation.
+
+Enable the normal FPS Overlay option in OptiScaler if the overlay is hidden.
+Insert still opens the settings. Both the overlay and settings show:
+
+Rendered: application frames per second.
+Presented: measured runtime-reported presentations per second, including FG.
+
+The numbers use one shared half-second sampling window. Presented is calculated
+from actual reported frame counts; it is never guessed by multiplying Rendered.
+The mode indicator describes whether FG is enabled. If Presented stays close to
+Rendered with FG on, the measured interval did not contain extra presentations.
+FG off/suspended normally makes the values equal. Transitions briefly show
+"measuring"; stopped updates show "stale" after one second; missing/invalid
+telemetry shows "unavailable". Dashes mean no current measured presentation rate.
+An older engine with the new companion will therefore show Presented unavailable.
+
+Presented is not the monitor's physical scan-out/refresh FPS or proof that every
+generated image is visually distinct. No administrator tracing is required.
+In menus/loading/scopes the existing safety guards still apply. No wearable or
+resource-safety behavior is changed by telemetry.
+
+Rollback: restore the previous complete engine package and backed-up dxgi.dll,
+then restart. Preserve your existing INI. No configuration change is shipped.
+
+Existing engine requirements and retained Test 4 behavior
 
 Use a separate test copy/profile. Install the COMPLETE bin/ + db/ package over
 the same Bodycam+DLSS baseline used for bridge test 1. Keep the public grass/motion

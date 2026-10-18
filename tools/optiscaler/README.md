@@ -4,7 +4,7 @@ This companion targets the exact DLSS-NR fork supplied with the GAMMA Bodycam
 0.3 + DLSS + DLSS 5 Full Pack. Base source:
 https://github.com/wilsjo2/OptiScaler-DLSSNR-PreSR-Multipass/tree/5019c979656225ec87e3331658f8a1f3ea478244
 
-The personal engine remains Test 4. Keep `FrameGen.External=true` and
+The dual-counter companion requires the matching personal telemetry engine. Keep `FrameGen.External=true` and
 `Menu.OverlayMenu=false`; enabling the separate presentation overlay reproduces
 the earlier NR/FG compatibility failure. The companion corrects the legacy menu
 instead of re-enabling that path.

@@ -33,3 +33,6 @@ Evidence: C:/GAMMA/sqa-previews/personal-frame-generation/dual-fps-20261018, inc
 Companion run39125933371 succeeded. DLLSHA256F16801A098CF5242F57989C8C38CFF1206A3D4DD4CB64DF28EB0A8A9B1B74628. Exact upstream wilsjo2/OptiScaler-DLSSNR-PreSR-Multipass5019c979656225ec87e3331658f8a1f3ea478244. Corresponding source contains all patched sources, new protocol header, pinned recursive submodules and licenses. Current CI archive omitted newly added untracked header; packaging adds the exact built header, verifies all four modified/added entries, and the workflow is corrected for future archives. Final source SHA256334A97A0BA505F4FD3DA6DAE7A59C02AA02884F7072B12D54D0C7E72C77B3CD9.
 
 Probe run39125996687 succeeded, including protocol tests. Full engine build/package verification is recorded in the final delivery manifest and accompanying validation addendum.
+
+## Completed engine build
+Full DX11-AVX run39125933391 succeeded at7c3ba654. Complete artifact12136298942 SHA2561058BE25AFAB094130C5D7927222476661E5E0659A4DCD9B94DA0485EEF8A422. All27CI manifest files verified; six Streamline/NVIDIA runtime signatures valid. Existing four CI regression programs passed. Delivered bin/db content remains hash-identical to CI; documentation/installation metadata is updated for Test5 DualFPS. Public branch remains93483f8a0211bec6583af6179a0038dc6633dfce.
