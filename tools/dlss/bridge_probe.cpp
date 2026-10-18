@@ -43,6 +43,13 @@ int main(int argc, char** argv)
         return 0;
     }
     bool fg=false, ngx=false, generate=false, menuTest=false, abTest=false, toggleTest=false;
+    unsigned reflexLimitUs=0;
+    for(int i=1;i<argc;++i) if(strcmp(argv[i],"--reflex-limit-us")==0) {
+        if(++i>=argc)return 31;
+        char* end=nullptr; const unsigned long value=strtoul(argv[i],&end,10);
+        if(!end || *end || value>1000000)return 31;
+        reflexLimitUs=static_cast<unsigned>(value);
+    }
     for(int i=1;i<argc;++i) { fg |= strcmp(argv[i],"--streamline")==0; ngx |= strcmp(argv[i],"--ngx")==0; generate |= strcmp(argv[i],"--generate")==0; menuTest |= strcmp(argv[i],"--menu-test")==0; }
     for(int i=1;i<argc;++i) abTest |= strcmp(argv[i],"--ab-test")==0;
     for(int i=1;i<argc;++i) toggleTest |= strcmp(argv[i],"--toggle-test")==0;
@@ -155,7 +162,7 @@ int main(int argc, char** argv)
                 while(PeekMessageW(&message,nullptr,0,0,PM_REMOVE)){TranslateMessage(&message);DispatchMessageW(&message);}
                 // Keep the interaction workload below display refresh so
                 // presentation metering does not dominate its FG count check.
-                check(bridge.BeginFrame(menuTest && !abTest ? 16667 : 0), "Reflex begin"); bridge.EndSimulation();
+                check(bridge.BeginFrame(reflexLimitUs ? reflexLimitUs : (menuTest && !abTest ? 16667 : 0)), "Reflex begin"); bridge.EndSimulation();
                 const float color[4] = { (frame%120)/120.f, pass/8.f, 0.25f, 1.f };
                 if(ngx)
                 {
