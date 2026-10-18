@@ -147,13 +147,15 @@ int main(int argc, char** argv)
                 // Messages target only this harness window, never another app.
                 if(menuTest && pass==0 && (frame==60 || frame==90)) PostMessageW(window,WM_KEYDOWN,VK_INSERT,1);
                 if(menuTest && pass==0 && (frame==61 || frame==91)) PostMessageW(window,WM_KEYUP,VK_INSERT,0xC0000001);
+                if(menuTest && abTest && (frame==400 || frame==1100)) PostMessageW(window,WM_KEYDOWN,VK_INSERT,1);
+                if(menuTest && abTest && (frame==401 || frame==1101)) PostMessageW(window,WM_KEYUP,VK_INSERT,0xC0000001);
                 if(menuTest && pass==0 && (frame==100 || frame==110)) PostMessageW(window,WM_KEYDOWN,VK_F8,1);
                 if(menuTest && pass==0 && (frame==101 || frame==111)) PostMessageW(window,WM_KEYUP,VK_F8,0xC0000001);
                 MSG message{};
                 while(PeekMessageW(&message,nullptr,0,0,PM_REMOVE)){TranslateMessage(&message);DispatchMessageW(&message);}
                 // Keep the interaction workload below display refresh so
                 // presentation metering does not dominate its FG count check.
-                check(bridge.BeginFrame(menuTest ? 16667 : 0), "Reflex begin"); bridge.EndSimulation();
+                check(bridge.BeginFrame(menuTest && !abTest ? 16667 : 0), "Reflex begin"); bridge.EndSimulation();
                 const float color[4] = { (frame%120)/120.f, pass/8.f, 0.25f, 1.f };
                 if(ngx)
                 {
@@ -162,7 +164,8 @@ int main(int argc, char** argv)
                     f.color=colorInput.Get();f.depth=depthInput.Get();f.motion=motionInput.Get();
                     f.jitter={0,0};f.deltaMilliseconds=16.666f;f.frame=pass*120+frame;f.cameraCut=frame==0;
                     if(!upscaler.Evaluate(f)) return 6;
-                    if(menuTest && pass==0 && (frame==50 || frame==80 || frame==95))
+                    if(menuTest && pass==0 && (frame==50 || frame==80 || frame==95 ||
+                        (abTest && (frame==450 || frame==750 || frame==1050))))
                     {
                         // Capture the actual NGX output, before the transport-only
                         // target clear below. This exercises menu drawing, not just
