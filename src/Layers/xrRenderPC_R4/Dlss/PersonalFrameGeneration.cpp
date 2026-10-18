@@ -3,6 +3,7 @@
 #include "../../xrRenderDX10/dx12PresentationBridge.h"
 #include "../../../xrEngine/IGame_Persistent.h"
 #include "../../../xrEngine/IGame_Level.h"
+#include "../../../xrEngine/CustomHUD.h"
 
 // Camera/Reflex sequencing adapted from Brodrigz 1.0.2 FrameGeneration.cpp.
 // Credits: Brodrigz, OGSR team, xrSimpAI. Bodycam eligibility is deliberately stricter.
