@@ -24,7 +24,11 @@ int main(int argc, char** argv)
     RegisterClassW(&wc);
     HWND window = CreateWindowW(wc.lpszClassName, L"SQA bridge probe", WS_OVERLAPPEDWINDOW,
         0, 0, 320, 240, nullptr, nullptr, wc.hInstance, nullptr);
-    if (!window) return 2; // Hidden window: no game installation involved.
+    if (!window) return 2;
+    // An occluded/hidden swapchain can legitimately present only one frame even
+    // when DLSS-G accepts the tags. Active-generation validation needs a visible
+    // presentation surface; transport-only modes remain hidden.
+    if(generate) { ShowWindow(window,SW_SHOWNORMAL);UpdateWindow(window);SetForegroundWindow(window); }
     {
         ComPtr<ID3D11Device> raw;
         ComPtr<ID3D11DeviceContext> rawContext;
@@ -82,6 +86,8 @@ int main(int argc, char** argv)
                 c11->ClearRenderTargetView(depthRtv.Get(),depthColor);c11->ClearRenderTargetView(motionRtv.Get(),zero);
             }
             for (unsigned frame=0; frame<120; ++frame) {
+                MSG message{};
+                while(PeekMessageW(&message,nullptr,0,0,PM_REMOVE)){TranslateMessage(&message);DispatchMessageW(&message);}
                 check(bridge.BeginFrame(0), "Reflex begin"); bridge.EndSimulation();
                 const float color[4] = { frame/120.f, pass/8.f, 0.25f, 1.f };
                 if(ngx)
