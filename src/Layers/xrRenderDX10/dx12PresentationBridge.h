@@ -29,7 +29,7 @@ class Dx12PresentationBridge
     {
         if (!serial || !fence) return S_OK;
         const UINT64 done = fence->GetCompletedValue();
-        if (done == UINT64_MAX) return DXGI_ERROR_DEVICE_REMOVED;
+        if (done == ~UINT64(0)) return DXGI_ERROR_DEVICE_REMOVED;
         if (done >= serial) return S_OK;
         HRESULT hr = fence->SetEventOnCompletion(serial, completion);
         if (FAILED(hr)) return hr;
