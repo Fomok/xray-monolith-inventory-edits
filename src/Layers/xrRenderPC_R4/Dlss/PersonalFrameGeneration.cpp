@@ -150,10 +150,13 @@ void CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion)
         scopeInputs.mapping=RImplementation.TargetMain->rt_scope_reference_capture_tc->pSurface;
         scopeInputs.depth=target->rt_baseZB->pSurface;
         scopeInputs.motion=target->rt_ssfx_motion_vectors->pSurface;
+        scopeInputs.mainMotion=motion;
+        scopeInputs.requireGlass=RImplementation.TargetMain->scope_glass_deferred_current();
         Fmatrix current,old,inverse,reprojection;
         current.mul(Device.matrices[1].mProject,Device.matrices[1].mView);
         old.mul(Device.matrices_previous[1].mProject,Device.matrices_previous[1].mView);
-        D3DXMatrixInverse((D3DXMATRIX*)&inverse,nullptr,(D3DXMATRIX*)&current);
+        if(!D3DXMatrixInverse((D3DXMATRIX*)&inverse,nullptr,(D3DXMATRIX*)&current))
+        {Status("Suspended: invalid scope camera projection.");previous=false;return;}
         reprojection.mul(old,inverse);
         memcpy(scopeInputs.reprojection,&reprojection,sizeof(Fmatrix));
         scopeInputs.planes[0]=svp.svp_near;scopeInputs.planes[1]=svp.svp_far;

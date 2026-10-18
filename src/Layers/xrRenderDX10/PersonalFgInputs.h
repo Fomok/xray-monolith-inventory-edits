@@ -15,6 +15,7 @@ class PersonalFgInputs
     Ptr<ID3D11ComputeShader> conversion, uiMask;
     Ptr<ID3D11ComputeShader> scopeConversion;
     Ptr<ID3D11Texture2D> previousScopeMap;
+    Ptr<ID3D11Texture2D> nextScopeMap;
     Ptr<ID3D11Buffer> scopeConstants;
     Ptr<ID3D11SamplerState> scopeSampler;
     Ptr<ID3D11UnorderedAccessView> depthUav, motionUav, uiUav;
@@ -73,7 +74,7 @@ public:
     HRESULT Resize(ID3D12Device* d12, ID3D11Device1* d11, UINT rw, UINT rh, UINT dw, UINT dh)
     {
         renderWidth = renderHeight = displayWidth = displayHeight = 0;
-        Invalidate(); previousScopeMap.Reset(); depthUav.Reset(); motionUav.Reset(); uiUav.Reset();
+        Invalidate(); previousScopeMap.Reset(); nextScopeMap.Reset(); depthUav.Reset(); motionUav.Reset(); uiUav.Reset();
         HRESULT hr = Shared(d12,d11,0,rw,rh,DXGI_FORMAT_R32_FLOAT,true);
         if (FAILED(hr)) return hr;
         hr = Shared(d12,d11,1,rw,rh,DXGI_FORMAT_R16G16_FLOAT,true);
@@ -131,22 +132,28 @@ RWTexture2D<float> depthOut:register(u0); RWTexture2D<float2> motionOut:register
 Texture2D<float4> mapping:register(t0), previousMapping:register(t1);
 Texture2D<float> scopeDepth:register(t2);
 Texture2D<float4> scopeMotion:register(t3);
+Texture2D<float4> mainMotion:register(t4);
 SamplerState linearClamp:register(s0);
 RWTexture2D<float> depthOut:register(u0);
 RWTexture2D<float2> motionOut:register(u1);
+RWTexture2D<float4> savedMapping:register(u2);
 cbuffer Params:register(b0) { row_major float4x4 reproject; float4 planes; float4 control; };
 [numthreads(8,8,1)] void main(uint3 p:SV_DispatchThreadID) {
  uint w,h; depthOut.GetDimensions(w,h); if(p.x>=w||p.y>=h)return;
- float4 map=mapping.Load(int3(p.xy,0)); if(map.z<0.5)return;
+ float4 map=mapping.Load(int3(p.xy,0));
+ if(control.w>.5 && mainMotion.Load(int3(p.xy,0)).w<=1.5)map.z=0;
+ savedMapping[p.xy]=map;
+ if(map.z<0.5 || !all(isfinite(map)))return;
  float2 uv=(p.xy+0.5)/float2(w,h), tc=map.xy;
  float d=scopeDepth.SampleLevel(linearClamp,tc,0);
+ if(!isfinite(d)) {motionOut[p.xy]=0;return;}
  float z=planes.x*planes.y/max(planes.y-d*(planes.y-planes.x),1e-6);
  depthOut[p.xy]=saturate(planes.w/(planes.w-planes.z)-planes.z*planes.w/((planes.w-planes.z)*max(z,planes.z)));
  if(control.x>0.5) { motionOut[p.xy]=0; return; }
  float2 mv=scopeMotion.SampleLevel(linearClamp,tc,0).xy;
  if(dot(abs(mv),float2(1,1))<1e-6) {
    float4 old=mul(float4(tc.x*2-1,1-tc.y*2,d,1),reproject);
-   if(old.w<=0) {motionOut[p.xy]=0;return;}
+   if(!all(isfinite(old)) || old.w<=0) {motionOut[p.xy]=0;return;}
    mv=tc-float2(old.x/old.w*.5+.5,.5-old.y/old.w*.5);
  }
  float2 target=tc-mv;
@@ -172,26 +179,28 @@ cbuffer Params:register(b0) { row_major float4x4 reproject; float4 planes; float
  motionOut[p.xy]=valid ? uv-oldUV-control.yz : float2(0,0);
 })";
         if(!scope.mapping || !scope.depth || !scope.motion)return E_INVALIDARG;
+        if(!(scope.planes[0]>0 && scope.planes[1]>scope.planes[0] && scope.planes[2]>0 && scope.planes[3]>scope.planes[2]))return E_INVALIDARG;
         D3D11_TEXTURE2D_DESC desc{}; scope.mapping->GetDesc(&desc);
         if(desc.Width!=renderWidth || desc.Height!=renderHeight)return E_INVALIDARG;
         HRESULT hr=Shader(device,code,sizeof(code)-1,scopeConversion);if(FAILED(hr))return hr;
         bool reset=scope.reset || !previousScopeMap;
         if(previousScopeMap) { D3D11_TEXTURE2D_DESC old{};previousScopeMap->GetDesc(&old);
-            if(old.Width!=desc.Width || old.Height!=desc.Height || old.Format!=desc.Format){previousScopeMap.Reset();reset=true;} }
+            if(old.Width!=desc.Width || old.Height!=desc.Height || old.Format!=desc.Format){previousScopeMap.Reset();nextScopeMap.Reset();reset=true;} }
         if(!previousScopeMap) {
-            desc.BindFlags=D3D11_BIND_SHADER_RESOURCE;desc.MiscFlags=0;
+            nextScopeMap.Reset();desc.BindFlags=D3D11_BIND_SHADER_RESOURCE|D3D11_BIND_UNORDERED_ACCESS;desc.MiscFlags=0;
             hr=device->CreateTexture2D(&desc,nullptr,previousScopeMap.GetAddressOf());if(FAILED(hr))return hr;
+            hr=device->CreateTexture2D(&desc,nullptr,nextScopeMap.GetAddressOf());if(FAILED(hr))return hr;
         }
-        if(reset)context->CopyResource(previousScopeMap.Get(),scope.mapping);
         struct Params {float matrix[16],planes[4],control[4];} params{};
         memcpy(params.matrix,scope.reprojection,sizeof(params.matrix));memcpy(params.planes,scope.planes,sizeof(params.planes));params.control[0]=reset?1.f:0.f;
         params.control[1]=scope.mainJitterDelta[0];params.control[2]=scope.mainJitterDelta[1];
+        params.control[3]=scope.requireGlass?1.f:0.f;
         if(!scopeConstants) {D3D11_BUFFER_DESC b{};b.ByteWidth=sizeof(params);b.BindFlags=D3D11_BIND_CONSTANT_BUFFER;
             hr=device->CreateBuffer(&b,nullptr,scopeConstants.GetAddressOf());if(FAILED(hr))return hr;}
         context->UpdateSubresource(scopeConstants.Get(),0,nullptr,&params,0,0);
         if(!scopeSampler) {D3D11_SAMPLER_DESC s{};s.Filter=D3D11_FILTER_MIN_MAG_MIP_LINEAR;s.AddressU=s.AddressV=s.AddressW=D3D11_TEXTURE_ADDRESS_CLAMP;s.MaxLOD=D3D11_FLOAT32_MAX;
             hr=device->CreateSamplerState(&s,scopeSampler.GetAddressOf());if(FAILED(hr))return hr;}
-        Ptr<ID3D11ShaderResourceView> map,oldMap,depth,motion;
+        Ptr<ID3D11ShaderResourceView> map,oldMap,depth,motion,main;
         hr=device->CreateShaderResourceView(scope.mapping,nullptr,&map);if(FAILED(hr))return hr;
         hr=device->CreateShaderResourceView(previousScopeMap.Get(),nullptr,&oldMap);if(FAILED(hr))return hr;
         D3D11_TEXTURE2D_DESC dd{};scope.depth->GetDesc(&dd);
@@ -199,13 +208,19 @@ cbuffer Params:register(b0) { row_major float4x4 reproject; float4 planes; float
         dv.Format=dd.Format==DXGI_FORMAT_R24G8_TYPELESS?DXGI_FORMAT_R24_UNORM_X8_TYPELESS:DXGI_FORMAT_R32_FLOAT;
         hr=device->CreateShaderResourceView(scope.depth,&dv,&depth);if(FAILED(hr))return hr;
         hr=device->CreateShaderResourceView(scope.motion,nullptr,&motion);if(FAILED(hr))return hr;
-        ID3D11ShaderResourceView* views[]={map.Get(),oldMap.Get(),depth.Get(),motion.Get()};
+        if(scope.requireGlass && !scope.mainMotion)return E_INVALIDARG;
+        if(scope.mainMotion){hr=device->CreateShaderResourceView(scope.mainMotion,nullptr,&main);if(FAILED(hr))return hr;}
+        Ptr<ID3D11UnorderedAccessView> saved;
+        hr=device->CreateUnorderedAccessView(nextScopeMap.Get(),nullptr,&saved);if(FAILED(hr))return hr;
+        ID3D11UnorderedAccessView* savedView=saved.Get();context->CSSetUnorderedAccessViews(2,1,&savedView,nullptr);
+        ID3D11ShaderResourceView* views[]={map.Get(),oldMap.Get(),depth.Get(),motion.Get(),main.Get()};
         ID3D11Buffer* cb=scopeConstants.Get();ID3D11SamplerState* sampler=scopeSampler.Get();
-        context->CSSetShader(scopeConversion.Get(),nullptr,0);context->CSSetShaderResources(0,4,views);
+        context->CSSetShader(scopeConversion.Get(),nullptr,0);context->CSSetShaderResources(0,5,views);
         context->CSSetConstantBuffers(0,1,&cb);context->CSSetSamplers(0,1,&sampler);
         context->Dispatch((renderWidth+7)/8,(renderHeight+7)/8,1);
-        ID3D11ShaderResourceView* empty[4]{};context->CSSetShaderResources(0,4,empty);
-        context->CopyResource(previousScopeMap.Get(),scope.mapping);
+        ID3D11ShaderResourceView* empty[5]{};context->CSSetShaderResources(0,5,empty);
+        ID3D11UnorderedAccessView* noUav=nullptr;context->CSSetUnorderedAccessViews(2,1,&noUav,nullptr);
+        previousScopeMap.Swap(nextScopeMap);
         return S_OK;
     }
     HRESULT ProtectUi(ID3D11Device1* device, ID3D11DeviceContext1* context, ID3D11Texture2D* finalColor)

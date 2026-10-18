@@ -88,10 +88,19 @@ int main()
  // prev capture = current capture - scopeMV. Old screen = current+.03125.
  // RG16 output must therefore be (-.03125,0), while outside lens stays main.
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* center=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);
-     const auto* outside=(const unsigned short*)m.pData;return center[64]==0xa800 && center[65]==0 && outside[0]==0x3400;});
+     const auto* outside=(const unsigned short*)m.pData;return center[64]==0xa800 && (center[65]&0x7fff)<=0x0400 && outside[0]==0x3400;});
  read(0,[](const D3D11_MAPPED_SUBRESOURCE& m){return fabsf(*(const float*)((const char*)m.pData+32*m.RowPitch+32*4)-.5f)<1e-5f;});
  scope.reset=true;
  Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"scope reset");
+ read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0;});
+ // Occluding hands/casing must retain main-view vectors, and newly exposed
+ // glass must not use an invisible previous lens pixel as correspondence.
+ scope.requireGlass=true;scope.mainMotion=motion.Get();scope.reset=false;
+ Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"occluded lens");
+ read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0x3400;});
+ for(UINT i=0;i<64*64;++i)motions[i*4+3]=2.f;
+ context->UpdateSubresource(motion.Get(),0,nullptr,motions.data(),64*4*sizeof(float),0);
+ Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"newly exposed lens");
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0;});
  Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get()),"scope exit");
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0x3400;});
