@@ -43,6 +43,9 @@ int main(int argc, char** argv)
         return 0;
     }
     bool fg=false, ngx=false, generate=false, menuTest=false, abTest=false, toggleTest=false;
+    bool scopeTest=false;
+    for(int i=1;i<argc;++i)scopeTest |= strcmp(argv[i],"--scope-test")==0;
+    if(scopeTest) {fg=ngx=generate=abTest=true;}
     unsigned reflexLimitUs=0;
     for(int i=1;i<argc;++i) if(strcmp(argv[i],"--reflex-limit-us")==0) {
         if(++i>=argc)return 31;
@@ -137,6 +140,17 @@ int main(int argc, char** argv)
                 const float depthColor[]={.5f,0,0,0},zero[]={0,0,0,0};
                 c11->ClearRenderTargetView(depthRtv.Get(),depthColor);c11->ClearRenderTargetView(motionRtv.Get(),zero);
             }
+            ComPtr<ID3D11Texture2D> scopeMap;
+            if(scopeTest) {
+                std::vector<float> map(desc.Width*desc.Height*4,0);
+                for(UINT y=0;y<desc.Height;++y)for(UINT x=0;x<desc.Width;++x){auto i=(y*desc.Width+x)*4;
+                    map[i]=2.f*(float(x)+.5f)/desc.Width-.5f;map[i+1]=2.f*(float(y)+.5f)/desc.Height-.5f;
+                    map[i+2]=(x>desc.Width/4 && x<desc.Width*3/4 && y>desc.Height/4 && y<desc.Height*3/4)?1.f:0.f;map[i+3]=1;}
+                D3D11_TEXTURE2D_DESC d{};d.Width=desc.Width;d.Height=desc.Height;d.MipLevels=d.ArraySize=d.SampleDesc.Count=1;
+                d.Format=DXGI_FORMAT_R32G32B32A32_FLOAT;d.BindFlags=D3D11_BIND_SHADER_RESOURCE;
+                D3D11_SUBRESOURCE_DATA initial{};initial.pSysMem=map.data();initial.SysMemPitch=desc.Width*16;
+                check(d11->CreateTexture2D(&d,&initial,&scopeMap),"scope optical map");
+            }
             for (unsigned frame=0; frame<framesPerPass; ++frame) {
                 if((menuTest || abTest) && frame==40)
                 {
@@ -207,7 +221,18 @@ int main(int argc, char** argv)
                     c.cameraNear=.1f;c.cameraFar=1.f;c.cameraFOV=1.f;c.cameraAspectRatio=float(desc.Width)/desc.Height;
                     c.depthInverted=c.motionVectors3D=c.motionVectorsJittered=sl::eFalse;
                     c.cameraMotionIncluded=c.orthographicProjection=sl::eTrue;c.reset=frame==0?sl::eTrue:sl::eFalse;
-                    const HRESULT captured=bridge.CaptureScene(depthInput.Get(),motionInput.Get(),c);
+                    PersonalFgScope scope;
+                    if(scopeTest) {
+                        scope.mapping=scopeMap.Get();scope.depth=depthInput.Get();scope.motion=motionInput.Get();
+                        scope.reprojection[0]=scope.reprojection[5]=scope.reprojection[10]=scope.reprojection[15]=1;
+                        scope.planes[0]=scope.planes[2]=.1f;scope.planes[1]=scope.planes[3]=1.f;
+                        scope.reset=frame==0 || (toggleTest && frame==900);
+                        c.mvecScale={-1,-1};
+                        const float lens[]={.25f,(frame%120)/120.f,pass/8.f,1};
+                        D3D11_RECT rect{LONG(desc.Width/4),LONG(desc.Height/4),LONG(desc.Width*3/4),LONG(desc.Height*3/4)};
+                        c11->ClearView(rtv.Get(),lens,&rect,1);
+                    }
+                    const HRESULT captured=bridge.CaptureScene(depthInput.Get(),motionInput.Get(),c,scopeTest?&scope:nullptr);
                     if(captured!=S_OK){printf("FAIL FG capture 0x%08lx\n",captured);return 8;}
                     bridge.CaptureHudless();
                     const float overlay[]={1,1,1,1};D3D11_RECT rectangle{20,20,40,40};
