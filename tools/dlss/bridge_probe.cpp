@@ -93,8 +93,8 @@ int main(int argc, char** argv)
                 // Messages target only this harness window, never another app.
                 if(menuTest && pass==0 && (frame==60 || frame==90)) PostMessageW(window,WM_KEYDOWN,VK_INSERT,1);
                 if(menuTest && pass==0 && (frame==61 || frame==91)) PostMessageW(window,WM_KEYUP,VK_INSERT,0xC0000001);
-                if(menuTest && pass==0 && (frame==100 || frame==110)) PostMessageW(window,WM_KEYDOWN,VK_F10,1);
-                if(menuTest && pass==0 && (frame==101 || frame==111)) PostMessageW(window,WM_KEYUP,VK_F10,0xC0000001);
+                if(menuTest && pass==0 && (frame==100 || frame==110)) PostMessageW(window,WM_KEYDOWN,VK_F8,1);
+                if(menuTest && pass==0 && (frame==101 || frame==111)) PostMessageW(window,WM_KEYUP,VK_F8,0xC0000001);
                 MSG message{};
                 while(PeekMessageW(&message,nullptr,0,0,PM_REMOVE)){TranslateMessage(&message);DispatchMessageW(&message);}
                 check(bridge.BeginFrame(0), "Reflex begin"); bridge.EndSimulation();
