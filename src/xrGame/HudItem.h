@@ -249,6 +249,7 @@ public:
 	virtual void render_item_3d_ui();
 
 	virtual bool render_item_3d_ui_query() { return true; }
+	virtual bool has_item_3d_ui_content() { return script_ui != nullptr; }
 
 	virtual bool CheckCompatibility(CHudItem*) { return true; }
 protected:

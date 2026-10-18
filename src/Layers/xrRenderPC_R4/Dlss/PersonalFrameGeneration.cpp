@@ -21,6 +21,7 @@ Fvector lastPosition, lastDirection;
 u32 lastFrame=0, lastWidth=0, lastHeight=0;
 float lastFov=0;
 const char* lastStatus=nullptr;
+u32 lastUiFlags=~u32(0);
 void Status(const char* reason)
 {
     if(reason!=lastStatus && ps_r_dlss_fg)Msg("[Personal FG] %s",reason);
@@ -38,8 +39,14 @@ bool Eligible()
     if(ScopeActive(Device.m_SecondViewport.IsSVPActive(), scope_fake_enabled != 0,
         scope_3D_fake_enabled != 0, aim, scope_radius) || ps_r2_nightvision>0 || ps_r2_heatvision>0)
     {Status("Suspended for scopes/night vision/thermal; native rendered frames preserved.");return false;}
-    if(RImplementation.GMBase.RGraph.hasNativeHudAttachments ||
-        (g_hud && (g_hud->RenderActiveItemUIQuery() || g_hud->RenderCamAttachedUIQuery())))
+    const u32 uiFlags = (g_hud ? g_hud->FrameGenerationUiFlags() : 0) |
+        (RImplementation.GMBase.RGraph.hasNativeHudAttachments ? 16u : 0u);
+    if (uiFlags != lastUiFlags)
+    {
+        Msg("[Personal FG] UI content flags=0x%X (1=item,2=item attachment,4=HUD attachment,8=camera UI,16=wearable surface)",uiFlags);
+        lastUiFlags=uiFlags;
+    }
+    if(uiFlags)
     {Status("Suspended for embedded item/camera UI.");return false;}
     if(RImplementation.o.dx10_msaa || !RImplementation.o.ssfx_motionvectors || !dlss::Active())
     {Status("Requires active DLSS/FSR upscaling, SSS motion vectors and MSAA off.");return false;}

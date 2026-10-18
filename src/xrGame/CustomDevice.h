@@ -57,6 +57,7 @@ public:
 
 	virtual void render_item_3d_ui();
 	virtual bool render_item_3d_ui_query();
+	virtual bool has_item_3d_ui_content() { return (m_ui && IsWorking()) || inherited::has_item_3d_ui_content(); }
 
 	bool m_bZoomed;
 	bool m_CustomDeviceEnabled;

@@ -44,6 +44,8 @@ public:
 	virtual void RenderCamAttachedUI() = 0;
 	virtual bool RenderActiveItemUIQuery() = 0;
 	virtual bool RenderCamAttachedUIQuery() = 0;
+	// Actual UI content, unlike the broad queries used to schedule render passes.
+	virtual u32 FrameGenerationUiFlags() = 0;
 	virtual void Render_R1_Attachment_UI() = 0;
 	virtual void net_Relcase(CObject* object) = 0;
 };

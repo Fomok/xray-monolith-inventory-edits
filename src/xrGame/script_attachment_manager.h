@@ -183,6 +183,13 @@ public:
 	bool GetScriptUIDepth() { return m_script_ui_depth; }
 
 	bool HasScriptUI() const { return m_script_ui != nullptr; }
+	bool HasScriptUIInTree() const
+	{
+		if (HasScriptUI()) return true;
+		for (const auto& child : m_children)
+			if (child.second && child.second->HasScriptUIInTree()) return true;
+		return false;
+	}
 
 	script_attachment* AddAttachment(LPCSTR name, LPCSTR model_name);
 	void RemoveAttachment(LPCSTR name) { RemoveChild(name, true); }

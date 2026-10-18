@@ -259,8 +259,8 @@ public:
             bool tagged=generate ? streamline.Tag(frameConstants,inputs.gpu[0].Get(),inputs.gpu[1].Get(),inputs.gpu[2].Get(),inputs.gpu[3].Get()) : streamline.ClearTags();
             if(!tagged) { hr=FailGeneration(); if(FAILED(hr))return hr; }
         }
-        // Serialize the two APIs. The CPU completion wait also protects the next
-        // D3D11 frame, resize and allocator reuse. Optimize only after gameplay proof.
+        // D3D12 consumes this frame only after D3D11 finishes writing it.
+        // WaitComplete above retires the previous allocator/tag set, not this frame.
         hr = context->Signal(fence11.Get(), ++serial);
         if (FAILED(hr)) return hr;
         context->Flush();
@@ -295,8 +295,6 @@ public:
         queue->ExecuteCommandLists(1, lists);
         hr = queue->Signal(fence.Get(), ++serial);
         if (FAILED(hr)) return hr;
-        hr = WaitComplete();
-        if (FAILED(hr)) return hr;
         if(fgReady) { streamline.Marker(sl::PCLMarker::eRenderSubmitEnd); streamline.Marker(sl::PCLMarker::ePresentStart); }
         const double presentStart = NowMs();
         hr=swapchain->Present(interval, flags);
@@ -312,9 +310,15 @@ public:
             // eBlockPresentingClientQueue orders all FG input consumption before
             // this retirement fence, including runtimes without a returned fence.
             hr=queue->Signal(fence.Get(),++serial); if(FAILED(hr))return hr;
-            hr=WaitComplete(); if(FAILED(hr))return hr;
             if(!stateOk) return FailGeneration();
         }
+        if(FAILED(hr))return hr;
+        // Enqueue protection for every future D3D11 write, including hidden PiP
+        // passes and screenshots. The CPU can build the next frame while this
+        // frame completes. FG retirement is still ordered by its completion fence
+        // and eBlockPresentingClientQueue; no shared input may be overwritten early.
+        hr=context->Wait(fence11.Get(),serial); if(FAILED(hr))return hr;
+        context->Flush();
         inputs.Invalidate();
         if (++timingPresents == 240)
         {

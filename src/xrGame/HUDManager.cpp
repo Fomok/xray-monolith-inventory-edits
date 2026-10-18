@@ -21,6 +21,7 @@
 #include "Inventory.h"
 #include "map_manager.h"
 #include "player_hud.h"
+#include "HudItem.h"
 #include "script_attachment_manager.h"
 
 #include "GametaskManager.h"
@@ -270,6 +271,35 @@ bool CHUDManager::RenderCamAttachedUIQuery()
 			return true;
 	}
 	return false;
+}
+
+u32 CHUDManager::FrameGenerationUiFlags()
+{
+	u32 flags = 0;
+	// Do not change legacy render-pass scheduling. An ordinary held weapon's
+	// render_item_3d_ui_query() returns true even if its draw method does nothing.
+	if (g_player_hud && need_render_hud() && psHUD_Flags.is(HUD_DRAW_RT2) &&
+		psHUD_Flags.is(HUD_WEAPON | HUD_WEAPON_RT | HUD_WEAPON_RT2))
+	{
+		for (u16 slot = 0; slot <= SCOPE_ATTACH_IDX; ++slot)
+		{
+			auto* attached = g_player_hud->attached_item(slot);
+			if (!attached || !attached->m_parent_hud_item) continue;
+			auto* item = attached->m_parent_hud_item;
+			if (item->has_item_3d_ui_content()) flags |= 1;
+			if (item->has_object())
+				for (const auto& pair : *item->object().GetAttachments())
+					if (pair.second->GetType() == eSA_HUD && pair.second->HasScriptUIInTree()) flags |= 2;
+		}
+	}
+	if (g_actor)
+		for (const auto& pair : *g_actor->GetAttachments())
+		{
+			const auto type = pair.second->GetType();
+			if ((type == eSA_HUD || type == eSA_CamAttached) && pair.second->HasScriptUIInTree())
+				flags |= type == eSA_HUD ? 4 : 8;
+		}
+	return flags;
 }
 
 void CHUDManager::RenderActiveItemUI()

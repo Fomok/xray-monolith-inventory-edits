@@ -110,6 +110,7 @@ public:
 	virtual void RenderActiveItemUI();
 	virtual void RenderCamAttachedUI();
 	virtual bool RenderActiveItemUIQuery();
+	virtual u32 FrameGenerationUiFlags();
 	virtual bool RenderCamAttachedUIQuery();
 
 	//Lain: added
