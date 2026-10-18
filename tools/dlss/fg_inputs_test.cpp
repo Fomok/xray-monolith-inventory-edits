@@ -102,6 +102,14 @@ int main()
  context->UpdateSubresource(motion.Get(),0,nullptr,motions.data(),64*4*sizeof(float),0);
  Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"newly exposed lens");
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0;});
+ // Missing object vectors reconstruct camera-only motion with the SVP matrix,
+ // never the main camera. A +1/16 clip shift is +1/32 in previous capture UV.
+ for(auto& v:scopeMotions)v=0;
+ context->UpdateSubresource(scopeMotion.Get(),0,nullptr,scopeMotions.data(),64*4*sizeof(float),0);
+ scope.reprojection[12]=.0625f;
+ Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get(),&scope),"scope camera fallback");
+ read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);
+     return p[64]==0xa800 && (p[65]&0x7fff)<=0x0400;});
  Check(inputs.Capture(device.Get(),context.Get(),depth.Get(),motion.Get()),"scope exit");
  read(1,[](const D3D11_MAPPED_SUBRESOURCE& m){const auto* p=(const unsigned short*)((const char*)m.pData+32*m.RowPitch);return p[64]==0x3400;});
  context->ClearState();context->Flush();

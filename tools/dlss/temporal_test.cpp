@@ -15,6 +15,7 @@ int main()
     Require(!personal_fg::ScopeActive(false, false, false, 0.f, .3f), "no visible lens at hip must not block FG");
     Require(!personal_fg::ScopeActive(false, true, false, 0.f, .3f), "2D scopes enabled at hip must not block FG");
     Require(!personal_fg::ScopeActive(false, false, false, 1.f, 0.f), "iron sights must not block FG");
+    Require(!personal_fg::ScopeActive(false, false, true, 0.f, .3f), "physical lens at hip is not an active scope camera");
     Require(personal_fg::ScopeActive(false, false, true, .01f, 0.f), "visible lens requires scope inputs");
     Require(personal_fg::ScopeActive(false, true, false, 1.f, .3f), "visible fake scope must suspend FG");
     Require(!personal_fg::ScopeActive(false, true, false, 1.f, 0.f), "zero-radius fake scope is invisible");

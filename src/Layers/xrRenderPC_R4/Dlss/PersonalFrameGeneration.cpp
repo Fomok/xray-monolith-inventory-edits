@@ -21,6 +21,7 @@ Fmatrix lastTransform;
 Fvector lastPosition, lastDirection;
 u32 lastFrame=0, lastWidth=0, lastHeight=0;
 u32 lastScopeEpoch=~0u, lastScopeSession=~0u;
+u32 lastScopeCameraEpoch=~0u;
 bool lastScoped=false;
 dlss::Offset lastScopeMainJitter{};
 float lastScopeFov=0;
@@ -33,6 +34,13 @@ void Status(const char* reason)
     if(reason!=lastStatus && ps_r_dlss_fg)Msg("[Personal FG] %s",reason);
     lastStatus=reason;
 }
+bool Scoped()
+{
+    const float aim = g_pGamePersistent && g_pGamePersistent->m_pGShaderConstants ?
+        g_pGamePersistent->m_pGShaderConstants->hud_params.x : 0.f;
+    return ScopeActive(Device.m_SecondViewport.IsSVPActive(),scope_fake_enabled!=0,
+        !RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty(),aim,scope_radius);
+}
 bool Eligible()
 {
     if(!ps_r_dlss_fg){Status("Off");return false;}
@@ -40,13 +48,9 @@ bool Eligible()
     if(!bridge || !bridge->GenerationReady()){Status("Unavailable: launch with SQA_DLSS_FG=1; check capability log; restart after a failure.");return false;}
     if(!Device.b_is_Active || Device.Paused() || !g_pGameLevel || Device.dwPrecacheFrame || IsMainMenuActive())
     {Status("Suspended for menu/loading/pause/inactive window.");return false;}
-    const float aim = g_pGamePersistent && g_pGamePersistent->m_pGShaderConstants ?
-        g_pGamePersistent->m_pGShaderConstants->hud_params.x : 0.f;
     const auto* main=RImplementation.TargetMain;
     const auto* scope=RImplementation.TargetSVP;
-    const bool lens=!RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty();
-    const bool scoped=ScopeActive(Device.m_SecondViewport.IsSVPActive(), scope_fake_enabled != 0,
-        lens, aim, scope_radius);
+    const bool scoped=Scoped();
     if(ps_r2_nightvision>0 || ps_r2_heatvision>0)
     {Status("Suspended for night vision/thermal.");return false;}
     if(scoped && !ps_r_dlss_fg_pip)
@@ -114,10 +118,10 @@ void CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion)
 {
     if(Device.true_pip_on && Device.m_SecondViewport.m_render_pass_is_svp)return;
     if(!Eligible()){previous=false;return;}
-    const bool scoped=Device.m_SecondViewport.IsSVPActive() || !RImplementation.GMBase.RGraph.mapScopeHUDSorted.empty();
+    const bool scoped=Scoped();
     auto& svp=Device.m_SecondViewport;
     const bool scopeCut=scoped!=lastScoped || (scoped &&
-        (lastScopeEpoch!=svp.svp_optic_epoch || lastScopeSession!=svp.GetSVPSession() ||
+        (lastScopeEpoch!=svp.svp_optic_epoch || lastScopeSession!=svp.GetSVPSession() || lastScopeCameraEpoch!=svp.svp_camera_epoch ||
         _abs(lastScopeFov-svp.svp_fov)>.001f || lastScopeWidth!=RImplementation.TargetSVP->Width || lastScopeHeight!=RImplementation.TargetSVP->Height));
     const bool cut=scopeCut || !previous || Device.dwFrame!=lastFrame+1 || lastWidth!=dlss::RenderWidth() ||
         lastHeight!=dlss::RenderHeight() || lastPosition.distance_to_sqr(Device.vCameraPosition)>64.f ||
@@ -171,6 +175,7 @@ void CaptureScene(ID3D11Texture2D* depth, ID3D11Texture2D* motion)
     lastWidth=dlss::RenderWidth();lastHeight=dlss::RenderHeight();
     lastPosition=Device.vCameraPosition;lastDirection=Device.vCameraDirection;lastFov=Device.fFOV;
     lastScoped=scoped;lastScopeEpoch=svp.svp_optic_epoch;lastScopeSession=svp.GetSVPSession();
+    lastScopeCameraEpoch=svp.svp_camera_epoch;
     lastScopeMainJitter=jitter;lastScopeFov=svp.svp_fov;
     if(scoped){lastScopeWidth=RImplementation.TargetSVP->Width;lastScopeHeight=RImplementation.TargetSVP->Height;}
 }
