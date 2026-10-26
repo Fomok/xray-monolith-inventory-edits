@@ -1,0 +1,13 @@
+{
+  "checked": "2026-10-27",
+  "upstream": "https://github.com/themrdemonized/xray-monolith",
+  "release": "https://github.com/themrdemonized/xray-monolith/releases/tag/2026.10.11",
+  "tag": "2026.10.11",
+  "published_at": "2026-10-11T09:21:06Z",
+  "commit": "c57fe5b9fab4fe0506659db03137c52d2500eb2f",
+  "tree": "3d1baeed6aeb66d3a0d60563f81938601013b9f2",
+  "baseline_branch": "inventory-next-upstream-baseline",
+  "baseline_url": "https://github.com/Fomok/xray-monolith-inventory-edits/tree/inventory-next-upstream-baseline",
+  "remote_commit_tree_verified": true,
+  "baseline_has_no_extra_commits": true
+}

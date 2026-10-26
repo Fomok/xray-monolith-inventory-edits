@@ -1,0 +1,61 @@
+-- Development-only helper for upstream 2026.10.11. No automatic callbacks.
+-- Load with: run_script inventory_lab
+-- This reuses the real engine UI; it does not implement an inventory model.
+local function message(text)
+    printf("[Inventory Lab] %s", text)
+end
+
+local function ready()
+    if not level or not level.present or not level.present() then
+        return false, "Load a disposable test save first."
+    end
+    if not db or not db.actor or not db.actor:alive() then
+        return false, "A live test actor is required."
+    end
+    return true
+end
+
+function snapshot()
+    local ok, reason = ready()
+    if not ok then message(reason); return nil, reason end
+    local items = {}
+    db.actor:iterate_inventory(function(owner, item)
+        items[#items + 1] = { id = item:id(), section = item:section() }
+    end, db.actor)
+    table.sort(items, function(a, b) return a.id < b.id end)
+    message("Real actor inventory: " .. #items .. " objects")
+    for _, item in ipairs(items) do
+        message(tostring(item.id) .. " " .. item.section)
+    end
+    return items
+end
+
+function reload_native_ui(acknowledgement)
+    if acknowledgement ~= "isolated-native-session" then
+        message("Native UI only. Use an isolated vanilla Anomaly test session; see README.")
+        return false
+    end
+    local ok, reason = ready()
+    if not ok then message(reason); return false end
+    if not ActorMenu or not ActorMenu.get_actor_menu or not ActorMenu.get_pda_menu
+        or not level.reload_ui_xml then
+        message("Required upstream UI bindings are unavailable.")
+        return false
+    end
+    -- Do not retain these pointers across the rebuild: the engine deletes them.
+    local inventory = ActorMenu.get_actor_menu()
+    local pda = ActorMenu.get_pda_menu()
+    if not inventory or not pda or inventory:IsShown() or pda:IsShown() then
+        message("Close inventory, loot/trade and PDA windows before rebuilding.")
+        return false
+    end
+    inventory, pda = nil, nil
+    level.reload_ui_xml()
+    message("Native UI rebuilt. Reopen inventory. Cached item XML/Lua/textures are NOT reloaded.")
+    return true
+end
+
+function main()
+    message("Upstream inventory lab helper loaded; no inventory changes or callbacks installed.")
+    snapshot()
+end
