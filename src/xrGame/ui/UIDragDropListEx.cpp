@@ -496,6 +496,11 @@ bool CUIDragDropListEx::CanSetItem(CUICellItem* itm)
 	return m_container->HasFreeSpace(itm->GetGridSize());
 }
 
+bool CUIDragDropListEx::CanSetItemAt(CUICellItem* item,const Ivector2& cell)
+{
+	return m_container->IsRoomFree(cell,item->GetGridSize());
+}
+
 CUICellItem* CUIDragDropListEx::RemoveItem(CUICellItem* itm, bool force_root)
 {
 	CUICellItem* i = m_container->RemoveItem(itm, force_root);

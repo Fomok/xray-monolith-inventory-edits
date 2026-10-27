@@ -24,10 +24,12 @@ namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
 inventory_next::DragSession& native_drag(){static inventory_next::DragSession value;return value;}
 constexpr u32 layout_chunk=0x33514c59;
+bool layout_current=false;
 
 }
 
 bool InventoryNextLayoutSync() noexcept try {
+    layout_current=false;
     if(!InventoryNextEnabled()||!g_pGameLevel||!Actor())return true;
     using namespace inventory_next;
     std::vector<Node> nodes;
@@ -41,7 +43,7 @@ bool InventoryNextLayoutSync() noexcept try {
                 Msg("! SQA3 probe: unsupported native value for live ID %u",item->object().ID()); return false;
             }
             Node n; n.id=InventoryNextIdentity(item->object().ID());
-            if(!n.id) { Msg("! SQA3 probe requires registered persistent ALife items");return false; } InventoryNextIdentityOnline(*item); n.parent=1; n.intrinsic=static_cast<Mass>(std::llround(grams));
+            if(!n.id) { Msg("! SQA3 awaiting persistent item live=%u section=%s parent=%u",item->object().ID(),item->m_section_id.c_str(),item->parent_id());return false; } InventoryNextIdentityOnline(*item); n.parent=1; n.intrinsic=static_cast<Mass>(std::llround(grams));
             n.empty={w,h}; n.half=n.empty; n.full=n.empty; n.position={};
             if(item->CurrPlace()==eItemPlaceSlot) {
                 if(item->CurrSlot()>=48)return false;
@@ -56,16 +58,16 @@ bool InventoryNextLayoutSync() noexcept try {
         }
         const auto result=layout().reconcile(std::move(nodes));
         if(!result)Msg("! SQA3 native layout sync: %s",result.error.c_str());
-        return result.ok;
+        layout_current=result.ok;return result.ok;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {native_drag().cancel();layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
     stream.w(bytes.data(),static_cast<u32>(bytes.size()));stream.close_chunk();
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
-    native_drag().cancel();layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
+    layout_current=false;native_drag().cancel();layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
     CHECK_OR_EXIT(InventoryNextEnabled()&&chunk->length()<=2*1024*1024,"Invalid SQA3 layout mode/size");
     const std::string bytes(reinterpret_cast<const char*>(chunk->pointer()),chunk->length());chunk->close();
     CHECK_OR_EXIT(layout().restore(bytes).ok,"Invalid SQA3 layout data");
@@ -99,7 +101,7 @@ void InventoryNextProbe(bool export_snapshot,bool show_view) noexcept {
 }
 
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated) noexcept try {
-    if(!InventoryNextEnabled()||!layout().initialized())return false;
+    if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
     if(found==layout().model().nodes().end()||found->second.location!=inventory_next::Location::Grid)return false;
     x=found->second.position.x;y=found->second.position.y;rotated=found->second.position.rotated;return true;

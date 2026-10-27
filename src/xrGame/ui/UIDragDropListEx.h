@@ -156,6 +156,7 @@ public:
 	Ivector2 PickCell(const Fvector2& abs_pos);
 	CUICell& GetCellAt(const Ivector2& pos);
 	CUICellContainer* GetContainer() { return m_container; }; //Alundaio
+	bool CanSetItemAt(CUICellItem* item,const Ivector2& cell);
 
 public:
 	//UIWindow overriding

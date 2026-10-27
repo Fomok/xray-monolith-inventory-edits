@@ -454,7 +454,10 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 
 void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 {
-    if(InventoryNextEnabled())InventoryNextLayoutSync();
+    if(InventoryNextEnabled() && !InventoryNextLayoutSync()) {
+        m_sqaRefresh=true;
+        if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Inventory is updating. Try again.");
+    }
 	ClearAllLists();
 	m_UIPropertiesBox->Hide();
 	SetCurrentItem(NULL);
@@ -486,6 +489,9 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 	TIItemContainer ruck_list;
 	ruck_list = m_pActorInvOwner->inventory().m_ruck;
 	std::sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	if(InventoryNextEnabled())std::stable_partition(ruck_list.begin(),ruck_list.end(),[](PIItem item){
+		int x=0,y=0;bool rotated=false;return InventoryNextNativePosition(item->object().ID(),x,y,rotated);
+	});
 
 	curr_list = pBagList;
 
@@ -501,7 +507,10 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
         CUICellItem* itm = create_cell_item(*itb);
         int x=0,y=0;bool rotated=false;
         if(InventoryNextEnabled()&&InventoryNextNativePosition((*itb)->object().ID(),x,y,rotated)) {
-            itm->SetSqaRotation(rotated);curr_list->SetItem(itm,Ivector2().set(x,y));
+            itm->SetSqaRotation(rotated);
+            const auto cell=Ivector2().set(x,y);
+            if(curr_list->CanSetItemAt(itm,cell))curr_list->SetItem(itm,cell);
+            else {Msg("! SQA3 view placement mismatch live=%u",(*itb)->object().ID());curr_list->SetItem(itm);m_sqaRefresh=true;}
         } else curr_list->SetItem(itm);
 		if (m_currMenuMode == mmTrade && m_pPartnerInvOwner)
 			ColorizeItem(itm, !CanMoveToPartner(*itb));
@@ -522,13 +531,15 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 
 void CUIActorMenu::FilterActorBagList(int mode)
 {
-	if (InventoryNextEnabled()) InventoryNextLayoutSync();
+	if (InventoryNextEnabled() && !InventoryNextLayoutSync()) m_sqaRefresh=true;
 	m_pInventoryBagList->ClearAll(true);
 	auto placeFilteredItem = [this](CUICellItem* cell, PIItem item) {
 		int x=0,y=0;bool rotated=false;
 		if (InventoryNextEnabled() && InventoryNextNativePosition(item->object().ID(),x,y,rotated)) {
 			cell->SetSqaRotation(rotated);
-			m_pInventoryBagList->SetItem(cell,Ivector2().set(x,y));
+			const auto position=Ivector2().set(x,y);
+			if(m_pInventoryBagList->CanSetItemAt(cell,position))m_pInventoryBagList->SetItem(cell,position);
+			else {m_pInventoryBagList->SetItem(cell);m_sqaRefresh=true;}
 		} else m_pInventoryBagList->SetItem(cell);
 	};
 
@@ -537,6 +548,9 @@ void CUIActorMenu::FilterActorBagList(int mode)
 	TIItemContainer ruck_list;
 	ruck_list = m_pActorInvOwner->inventory().m_ruck;
 	std::sort(ruck_list.begin(), ruck_list.end(), InventoryUtilities::GreaterRoomInRuck);
+	if(InventoryNextEnabled())std::stable_partition(ruck_list.begin(),ruck_list.end(),[](PIItem item){
+		int x=0,y=0;bool rotated=false;return InventoryNextNativePosition(item->object().ID(),x,y,rotated);
+	});
 
 	TIItemContainer::iterator itb = ruck_list.begin();
 	TIItemContainer::iterator ite = ruck_list.end();
