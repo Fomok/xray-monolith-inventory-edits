@@ -54,7 +54,15 @@ def main():
         assert not records and not names(world_path)
         assert actor == baseline, "carried state or identity changed"
     else:
-        assert actor == retained and set(records) == {105}
+        if phase == "nofit":
+            assert all(actor.get(key)==value for key,value in retained.items())
+            extra = set(actor)-set(retained)
+            assert len(extra)==6 and not extra.intersection(subtree)
+            assert all(actor[key]["attributes"]["native_section"]=="bandage" and actor[key]["grams"]==38 and actor[key]["parent"]==1 for key in extra)
+            assert report["grams"]==1366
+        else:
+            assert actor == retained
+        assert set(records) == {105}
         custodian, outside = records[105]
         expected = dict(subtree)
         expected[105] = dict(subtree[105], parent=2, position=[0, 0, 0])
@@ -82,6 +90,12 @@ def main():
     elif phase == "cancel":
         assert "ground bag provisioning shell=" not in log
         assert created == removed == "0"
+    elif phase in ("nofit", "remove_cancel"):
+        assert not carried and created=="0"
+        assert removed==("0" if phase=="nofit" else "1")
+        assert "loaded transfer server committed" not in log
+        assert "loaded transfer client completed" not in log
+        if phase=="nofit":assert "loaded transfer refused reason=" in log
     else:
         raise AssertionError("unsupported phase")
     report.update(phase=phase, world_sha256=world_hash, original_shell_and_nested_state_preserved=True,

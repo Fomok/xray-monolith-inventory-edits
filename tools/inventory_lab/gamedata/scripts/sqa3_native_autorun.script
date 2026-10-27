@@ -253,7 +253,7 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
-    if args:find("-sqa3-fixture-stash",1,true) then sqa3_stash_fixture.start(args,snapshot);return end
+    if args:find("-sqa3-fixture-stash",1,true) then sqa3_stash_fixture.start(args,snapshot,toggle_inventory);return end
     travel_block_test=args:find("-sqa3-fixture-travel-blocked",1,true)~=nil
     if travel_block_test then
         assert(args:find("-sqa3-fixture-ground-proxy-timeout",1,true),"blocked travel needs pending-ground timeout fixture")
@@ -268,12 +268,14 @@ function on_game_start()
             end
             return original_release(obj,msg)
         end
-        local ground=args:find("-sqa3-travel-ground",1,true)~=nil
+        local stash=args:find("-sqa3-travel-stash",1,true)~=nil
+        local ground=stash or args:find("-sqa3-travel-ground",1,true)~=nil
         local initialize=args:find("-sqa3-travel-initialize",1,true)~=nil
         local corpse=args:find("-sqa3-travel-corpse",1,true)~=nil
         assert(not(ground and corpse),"conflicting travel custodians")
         if corpse then assert(args:find("-sqa3-corpse-storage",1,true),"corpse travel opt-in missing") end
-        local label=corpse and "corpse" or (ground and "ground" or "crate")
+        if stash then assert(sqa3_stash.enabled(),"stash travel opt-in missing") end
+        local label=stash and "stash" or (corpse and "corpse" or (ground and "ground" or "crate"))
         local original=tonumber(args:match("%-sqa3%-travel%-crate=(%d+)"))
         local box
         local function find_box()
@@ -301,6 +303,10 @@ function on_game_start()
                 end
             end
             assert(count==3,"travel contents incomplete")
+            if stash then
+                assert(level.map_has_object_spot(box.id,"treasure")>0,"stash travel marker missing")
+                printf("[SQA3 AUTORUN] stash travel marker phase=%s present=true",phase)
+            end
             printf("[SQA3 AUTORUN] travel custody phase=%s level=%s live=%s online=%s members=3",phase,level.name(),tostring(box.id),tostring(box.online))
         end
         commands={function()
@@ -310,7 +316,12 @@ function on_game_start()
                 assert(level.name()=="fake_start","travel fixture must start in debug map")
                 if not initialize then
                     assert(alife_storage_manager.get_state().item_removal_done,"complete vanilla first-world initialization before placing travel-test storage")
-                    box=alife():object(original);assert(box and box:section_name()==(corpse and "sim_default_stalker_1" or (ground and "sqa3_ground_backpack" or "inventory_box")),"wrong travel custodian")
+                    if stash then
+                        local name=load_var(db.actor,"sqa3_stash_proxy_name","");local count=0
+                        alife():iterate_objects(function(obj) if obj:name()==name then box=obj;count=count+1 end return false end)
+                        assert(count==1,"named stash custodian missing or duplicated")
+                    else box=alife():object(original) end
+                    assert(box and box:section_name()==(corpse and "sim_default_stalker_1" or (ground and "sqa3_ground_backpack" or "inventory_box")),"wrong travel custodian")
                     save_var(db.actor,"sqa3_travel_box",box:name())
                 end
                 local pos=db.actor:position()
@@ -350,7 +361,12 @@ function on_game_start()
                         return false
                     end,db.actor)
                     assert(bags==2 and medkits==1,"travel retrieval incomplete")
-                    if ground then assert(not alife():object(crate_id),"travel ground proxy survived retrieval")
+                    if ground then
+                        assert(not alife():object(crate_id),"travel ground proxy survived retrieval")
+                        if stash then
+                            assert(level.map_has_object_spot(crate_id,"treasure")==0,"retrieved stash marker remained")
+                            printf("[SQA3 AUTORUN] stash travel marker removed after retrieval")
+                        end
                     elseif corpse then
                         local npc=level.object_by_id(crate_id);assert(npc and not npc:alive(),"travel corpse missing or alive")
                         local count=0;npc:iterate_inventory(function(_,item) if alife():object(item:id()) then count=count+1 end return false end,npc)

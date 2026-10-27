@@ -1,5 +1,5 @@
 -- Isolated native stash acceptance fixture; only called by the explicit autorun flag.
-function start(args,snapshot)
+function start(args,snapshot,open_inventory)
     printf("[SQA3 STASH TEST] fixture registered");flush()
     assert(sqa3_stash.enabled(),"native stash mode missing")
     local reload=args:find("-sqa3-stash-reload",1,true)~=nil
@@ -9,10 +9,17 @@ function start(args,snapshot)
     local timeout=args:find("-sqa3-stash-timeout",1,true)~=nil
     local rollback=args:find("-sqa3-stash-rollback",1,true)~=nil
     local equipped=args:find("-sqa3-stash-equipped",1,true)~=nil
+    local context=args:find("-sqa3-stash-context",1,true)~=nil
+    assert(not context or (not equipped and not returning and not reload),"context test requires creation")
+    local dialog_seen=false
+    local remove_cancel=args:find("-sqa3-stash-remove-cancel",1,true)~=nil
+    local nofit=args:find("-sqa3-stash-nofit",1,true)~=nil
+    assert(not(remove_cancel or nofit) or (returning and not rollback and not empty),"refusal requires ordinary loaded retrieval")
+    assert(not(remove_cancel and nofit),"choose one refusal case")
     assert(not timeout or args:find("-sqa3-fixture-ground-proxy-timeout",1,true),"timeout fault flag missing")
     assert(not rollback or args:find("-sqa3-fixture-world-fail-after-first",1,true),"rollback fault flag missing")
     assert(not(returning and (cancel or timeout or equipped)),"conflicting stash fixture")
-    local phase=cancel and "cancel" or (timeout and "timeout" or (rollback and (returning and "rollback_return" or "rollback_release") or (returning and "return" or "release")))
+    local phase=remove_cancel and "remove_cancel" or (nofit and "nofit" or (cancel and "cancel" or (timeout and "timeout" or (rollback and (returning and "rollback_return" or "rollback_release") or (returning and "return" or "release")))))
     local label="SQA3 field stash"
     local shell,proxy,identity,created,removed=nil,nil,nil,0,0
     local stage,started,failed=1,nil,false
@@ -31,6 +38,7 @@ function start(args,snapshot)
     end)
     RegisterScriptCallback("actor_on_stash_remove",function(data)
         removed=removed+1
+        if remove_cancel then data.cancel=true end
         printf("[SQA3 STASH TEST] remove callback proxy=%s",tostring(data.stash_id))
     end)
     commands[#commands+1]=function()
@@ -51,7 +59,10 @@ function start(args,snapshot)
         local item=level.object_by_id(shell);assert(item and item:section()=="itm_backpack","stash shell not online")
         if not reload and not returning then
             assert(item:parent() and item:parent():id()==db.actor:id(),"stash shell not carried")
-            identity=level.inventory_next_stash_identity(shell);assert(identity~="","stash identity unavailable")
+            printf("[SQA3 STASH TEST] requesting shell identity");flush()
+            identity=level.inventory_next_stash_identity(shell)
+            assert(type(identity)=="string" and identity:match("^%d+$"),"stash identity must be decimal text")
+            printf("[SQA3 STASH TEST] shell identity received=%s",identity);flush()
             save_var(db.actor,"sqa3_stash_shell_name",alife():object(shell):name())
             save_var(db.actor,"sqa3_stash_shell_identity",identity)
             save_var(db.actor,"sqa3_stash_proxy_name","")
@@ -60,6 +71,12 @@ function start(args,snapshot)
     end
     commands[#commands+1]=snapshot
     if not reload then
+        if nofit then
+            commands[#commands+1]=function()
+                local a=db.actor
+                for i=1,6 do assert(alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()),"full-pocket fixture spawn failed") end
+            end
+        end
         commands[#commands+1]=function()
             if returning then
                 assert(proxy,"stash proxy missing for retrieval")
@@ -67,6 +84,8 @@ function start(args,snapshot)
             elseif equipped then
                 assert(not db.actor:item_in_slot(13),"backpack slot already occupied")
                 assert(ActorMenu.get_actor_menu():ToSlot(level.object_by_id(shell),true,13),"fixture backpack equip refused")
+            elseif context then
+                assert(open_inventory,"inventory entry unavailable");open_inventory()
             else
                 item_backpack.start(level.object_by_id(shell))
                 assert(item_backpack.GUI and item_backpack.GUI:IsShown(),"normal stash dialog not shown")
@@ -80,13 +99,13 @@ function start(args,snapshot)
                 item_backpack.actor_on_item_use({section=function() return "itm_actor_backpack" end})
                 sqa3_stash.default_name=original
             else
-                started=started+60000
+                started=started+(context and 90000 or 60000)
                 printf("[SQA3 STASH TEST] physical window action=%s",returning and "retrieve" or (cancel and "cancel dialog" or "accept dialog"))
             end
         end
     end
     commands[#commands+1]=function()
-        local carried=(returning~=rollback) or cancel or timeout
+        local carried=((returning~=rollback) or cancel or timeout) and not remove_cancel and not nofit
         local item=level.object_by_id(shell);local server=alife():object(shell)
         assert(item and server and level.inventory_next_stash_identity(shell)==identity,"original stash shell lost")
         local expected=carried and db.actor:id() or proxy
@@ -104,8 +123,9 @@ function start(args,snapshot)
             if proxy then assert(not alife():object(proxy) and level.map_has_object_spot(proxy,"treasure")==0,"stash cleanup or marker removal incomplete") end
         end
         if not reload then
+            if context then assert(dialog_seen,"physical Create stash context action did not open naming dialog") end
             assert(created==((not returning and not cancel and not timeout and not rollback) and 1 or 0),"creation callback count changed")
-            assert(removed==(returning and 1 or 0),"removal callback count changed")
+            assert(removed==((returning and not nofit) and 1 or 0),"removal callback count changed")
         else assert(created==0 and removed==0,"reload replayed stash callbacks") end
         printf("[SQA3 STASH TEST] completed phase=%s empty=%s carried=%s created=%s removed=%s",phase,tostring(empty),tostring(carried),tostring(created),tostring(removed))
         if item_backpack.GUI and item_backpack.GUI:IsShown() then item_backpack.GUI:Close() end
@@ -117,6 +137,10 @@ function start(args,snapshot)
     commands[#commands+1]="quit"
     RegisterScriptCallback("actor_on_update",function()
         if failed or not db.actor then return end
+        if context and not dialog_seen and item_backpack.GUI and item_backpack.GUI:IsShown() then
+            item_backpack.GUI.input:SetText(label);dialog_seen=true
+            printf("[SQA3 STASH TEST] context naming dialog observed");flush()
+        end
         if not started then started=time_global()+10000;printf("[SQA3 STASH TEST] actor ready");flush() end
         if time_global()-started<stage*2000 then return end
         local command=commands[stage];if not command then return end;stage=stage+1
