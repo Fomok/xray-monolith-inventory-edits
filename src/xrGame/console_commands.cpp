@@ -1088,7 +1088,7 @@ public:
 			if (InventoryNextEnabled())
 			{
 				u16 packet_type; net_packet.r_begin(packet_type);
-				if (!ai().alife().save(net_packet)) { Msg("! SQA3 save refused; no success notification or thumbnail written"); return; }
+				if (!const_cast<CALifeSimulator&>(ai().alife()).save(net_packet)) { Msg("! SQA3 save refused; no success notification or thumbnail written"); return; }
 			}
 			else Level().Send(net_packet, net_flags(TRUE));
 		}
@@ -1107,7 +1107,7 @@ public:
 			if (InventoryNextEnabled())
 			{
 				u16 packet_type; net_packet.r_begin(packet_type);
-				if (!ai().alife().save(net_packet)) { Msg("! SQA3 save refused; no success notification or thumbnail written"); return; }
+				if (!const_cast<CALifeSimulator&>(ai().alife()).save(net_packet)) { Msg("! SQA3 save refused; no success notification or thumbnail written"); return; }
 			}
 			else Level().Send(net_packet, net_flags(TRUE));
 		}
