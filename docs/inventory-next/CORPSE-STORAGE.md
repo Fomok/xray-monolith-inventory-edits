@@ -72,3 +72,10 @@ them. Earlier initialization shutdown access violation remains unresolved.
 Fixture correction: cleanup requests use alife():release directly. Vanilla _g.script alife_release can return false without native release for a standalone NPC; for squad members it calls squad:remove_npc first. Native veto acceptance must not be mistaken for validation of that Lua bookkeeping path. Squad-managed cleanup compatibility remains open.
 
 Superseded Dev23 Travel Safety and Offline Reload Fixture ZIPs were hash-checked and removed (21573774bytes). Travel Gate Test Dev23 rollback and all evidence retained; cleanup manifest sqa-previews/inventory-next-20261027/dev23-superseded-package-cleanup.json.
+
+
+## Dev25 travel acceptance follow-up - 2026-10-27
+
+Trace engine5999c340/overlay0761f1a2: corpse actual map travel PID7340 and fresh return reload PID36432 passed. Crate first retry PID22704 completed travel but failed retrieval because no physical drag was completed; exit0 alone is not acceptance. Repeat PID25296 passed actual fake_start -> l01_escape -> fake_start, physical drag retrieval, saves and clean exit0/no timeout. All seven items/3278g restored with original persistent nesting and condition; outer105 transient ruck slot resets13->0. Final actor SHA68892c85f81c66281035c424e3787232dbc41ca77ee618cb58603147f755c3e3; empty world d424329db21a0d533be204a9b6ecf662a313f433305332524d97e3ecca6f1cee. Evidence ci-40545302619/crate-travel-retry and corpse-travel-trace/reload. Earlier stuck-pause and initialization shutdown failures remain historical unresolved risks, not erased by clean retries.
+
+Crate fresh return reload PID16176 also passed exact actor/world comparison, phase3 fake_start, clean exit0/no timeout. Evidence ci-40545302619/crate-travel-reload-verification.json.
