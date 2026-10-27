@@ -334,6 +334,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept
     if(slot!=0xffff) {
         auto& inventory=Actor()->inventory();
         if(source==0xffff||slot>=48||slot>inventory.LastSlot()||!pickup_slot_compatible(item,slot)||!inventory.CanPutInSlot(item,slot)) {
+            Msg("! SQA3 direct equip refused live=%u slot=%u; source retained",live,slot);
             InventoryNextPickupStatus("Equipment slot unavailable. Item stayed at source.");return false;
         }
         // Outfits can displace other equipment. Those compound changes need a
@@ -380,6 +381,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept
     const auto result=transaction->prepare(layout().model(),n,destinations,source==0xffff,slot==0xffff?0:n.wear_slots);
     if(!result){Msg("! SQA3 %s pickup refused live=%u reason=%s; source retained",source==0xffff?"ground":"owned",live,result.error.c_str());InventoryNextPickupStatus("No space. Item stayed at source.");return false;}
     pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);pickup_source=source;
+    if(slot!=0xffff)Msg("* SQA3 direct equip reserved live=%u slot=%u",live,slot);
     Msg("* SQA3 %s pickup reserved live=%u; save blocked=%d",source==0xffff?"ground":"owned",live,!InventoryNextPickupCanSave());
     return true;
 } catch (...) {Msg("! SQA3 ground pickup prepare exception; source retained");return false;}
