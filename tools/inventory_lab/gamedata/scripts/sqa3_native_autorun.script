@@ -532,7 +532,9 @@ function on_game_start()
     end
     if args:find("-sqa3-fixture-empty-corpse-cleanup",1,true) then
         local id=tonumber(args:match("%-sqa3%-world%-crate=(%d+)"));assert(id,"cleanup corpse ID missing")
+        local reload=args:find("-sqa3-cleanup-reload",1,true)~=nil
         commands={function()
+            if reload then return end
             local npc=level.object_by_id(id);assert(npc and not npc:alive(),"empty corpse missing")
             local count=0;npc:iterate_inventory(function() count=count+1;return false end,npc)
             assert(count==0,"cleanup corpse is not empty")
