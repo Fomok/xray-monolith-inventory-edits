@@ -119,7 +119,7 @@ void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,
         InventoryNextPickupStatus("Source changed. Transfer cancelled.");return;
     }
     if(!InventoryNextPickupPrepare(owner,live,source))return;
-    NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_OWNERSHIP_REJECT);reject.w_u16(source);reject.w_u16(live);
+    NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_TRADE_SELL);reject.w_u16(source);reject.w_u16(live);
     if(!Process_event_reject(reject,sender,time,source,live,false)) {
         InventoryNextPickupFinish(owner,live,false);return;
     }
@@ -132,7 +132,7 @@ void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,
     if(from->owner!=to->owner)PerformMigration(item,from->owner,to->owner);
     item->ID_Parent=owner;to->children.push_back(live);
     InventoryNextPickupFinish(owner,live,true);
-    NET_Packet take;take.w_begin(M_EVENT);take.w_u32(time);take.w_u16(GE_OWNERSHIP_TAKE);take.w_u16(owner);take.w_u16(live);
+    NET_Packet take;take.w_begin(M_EVENT);take.w_u32(time);take.w_u16(GE_TRADE_BUY);take.w_u16(owner);take.w_u16(live);
     const u32 mode=net_flags(TRUE,TRUE,FALSE,TRUE);
     SendBroadcast(BroadcastCID,reject,mode);SendBroadcast(BroadcastCID,take,mode);
 }

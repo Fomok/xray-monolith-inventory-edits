@@ -300,6 +300,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source) noexcept try {
     const auto actual_parent=item->object().H_Parent();
     if(source==0xffff?actual_parent!=nullptr:(!actual_parent||actual_parent->ID()!=source))return false;
     if(source!=0xffff&&!InventoryNextStrictOwnedPickup())return false;
+    if(!Actor()->inventory().CanTakeItem(item)){InventoryNextPickupStatus("Item cannot be taken. Source unchanged.");return false;}
     const auto id=InventoryNextIdentity(live);if(!id)return false;
     InventoryNextIdentityOnline(*item);
     Node n;n.id=id;n.parent=2;
@@ -344,6 +345,7 @@ void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
         const auto restored=layout().restore(pickup_transaction->model().serialize());
         if(!restored){pickup_fault=true;Msg("! SQA3 pickup publish failed: %s",restored.error.c_str());return;}
         pending_pickups.emplace(live,admitted);
+        InventoryNextPickupStatus("");
         if(InventoryNextIdentityCanSave()){pickup_fault=true;Msg("! SQA3 pending pickup incorrectly allowed save");return;}
         Msg("* SQA3 %s pickup server accepted live=%u owner=%llu cell=%d,%d",pickup_source==0xffff?"ground":"owned",live,admitted.parent,admitted.position.x,admitted.position.y);
     } else if(accepted||result.error!="native_rejected") {
@@ -359,7 +361,7 @@ void InventoryNextPickupTaken(u16 live) noexcept try {
     if(found==layout().model().nodes().end()||found->second.location==inventory_next::Location::Overflow) {
         pickup_fault=true;Msg("! SQA3 ordinary pickup lost reserved placement; saves blocked");return;
     }
-    InventoryNextPickupStatus("");
+    InventoryNextPickupStatus(nullptr);
     Msg("* SQA3 pickup client acknowledged live=%u; pending=%u save_ready=%d",live,static_cast<unsigned>(pending_pickups.size()),InventoryNextPickupCanSave());
 } catch (...) {pickup_fault=true;}
 
@@ -370,7 +372,7 @@ bool InventoryNextStrictOwnedPickup() noexcept {
 void InventoryNextPickupStatus(const char* text) noexcept try {
     if(!CurrentGameUI())return;
     auto& menu=CurrentGameUI()->GetActorMenu();menu.m_sqaRefresh=true;menu.m_sqaRetryAfter=Device.dwTimeGlobal+250;
-    if(menu.m_sqaStatus)menu.m_sqaStatus->TextItemControl()->SetText(text);
+    if(text&&menu.m_sqaStatus)menu.m_sqaStatus->TextItemControl()->SetText(text);
 } catch (...) {Msg("! SQA3 acquisition status refresh failed");}
 bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept try {
     if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||source==0xffff)return false;
