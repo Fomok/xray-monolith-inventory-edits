@@ -8,6 +8,7 @@
 
 #include "stdafx.h"
 #include "alife_storage_manager.h"
+#include "InventoryNextIdentity.h"
 #include "alife_simulator_header.h"
 #include "alife_time_manager.h"
 #include "alife_spawn_registry.h"
@@ -77,6 +78,8 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
 #endif
 	//-Alundaio
 
+	if (!InventoryNextIdentityCanSave()) { xr_strcpy(m_save_name, save); return; }
+
 	u32 source_count;
 	u32 dest_count;
 	void* dest_data;
@@ -87,6 +90,7 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
 		spawns().save(stream);
 		objects().save(stream);
 		registry().save(stream);
+		InventoryNextIdentitySave(stream);
 
 		source_count = stream.tell();
 		void* source_data = stream.pointer();
@@ -140,6 +144,8 @@ void CALifeStorageManager::load(void* buffer, const u32& buffer_size, LPCSTR fil
 	graph().on_load();
 	objects().load(source);
 	spawns().remap_legacy(objects().objects());
+	InventoryNextIdentityLoad(source);
+	InventoryNextIdentityValidate();
 
 	VERIFY(can_register_objects());
 	can_register_objects(false);

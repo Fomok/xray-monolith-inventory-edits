@@ -1,5 +1,7 @@
+#define SQA3_EXCEPTION_BOUNDARY
 #include "stdafx.h"
 #include "InventoryNextProbe.h"
+#include "InventoryNextIdentity.h"
 #include "actor.h"
 #include "inventory.h"
 #include "inventory_item.h"
@@ -10,7 +12,7 @@
 #include <cmath>
 #include <exception>
 
-void InventoryNextProbe(bool export_snapshot)
+void InventoryNextProbe(bool export_snapshot) noexcept
 {
     // Probe-assigned diagnostic layout/IDs, NOT native placement or game-save state.
     // All native reads occur synchronously on the explicitly invoked console call.
@@ -22,7 +24,7 @@ void InventoryNextProbe(bool export_snapshot)
         Node world=root; world.id=2; world.kind=Kind::WorldRoot;
         std::vector<Node> nodes{root,world};
         EntityRegistry registry;
-        Id next=100; int x=0,y=0,row_height=0;
+        int x=0,y=0,row_height=0;
         double native_grams=0;
         for (const auto* item : Actor()->inventory().m_all) {
             if (!item || nodes.size()>=4096) { Msg("! SQA3 probe: invalid/count-limited inventory"); return; }
@@ -35,7 +37,8 @@ void InventoryNextProbe(bool export_snapshot)
             }
             if (x+w>64) { x=0; y+=row_height; row_height=0; }
             if (y+h>64) { Msg("! SQA3 probe: diagnostic layout capacity exceeded"); return; }
-            Node n; n.id=next++; n.parent=1; n.intrinsic=static_cast<Mass>(std::llround(grams));
+            Node n; n.id=InventoryNextIdentity(item->object().ID());
+            if(!n.id) { Msg("! SQA3 probe requires registered persistent ALife items");return; } n.parent=1; n.intrinsic=static_cast<Mass>(std::llround(grams));
             n.empty={w,h}; n.half=n.empty; n.full=n.empty; n.position={x,y,false};
             n.condition=static_cast<unsigned>(std::llround(condition*10000.0));
             n.attributes["native_section"]=item->m_section_id.c_str();
@@ -59,5 +62,5 @@ void InventoryNextProbe(bool export_snapshot)
         }
     } catch(const std::exception& e) {
         Msg("! SQA3 probe failed: %s",e.what());
-    }
+    } catch (...) { Msg("! SQA3 probe failed: unknown core exception"); }
 }

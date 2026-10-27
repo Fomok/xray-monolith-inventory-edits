@@ -2037,6 +2037,19 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>$(IntDir)inventory_next_placement.obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\inventory_next\identity_ledger.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_identity_ledger.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="InventoryNextIdentity.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_identity_native.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="ui\InventoryNextView.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="InventoryNextProbe.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ExceptionHandling>Sync</ExceptionHandling>

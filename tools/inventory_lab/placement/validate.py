@@ -28,4 +28,3 @@ for mode, options in [('debug', ['-O0', '-g', '-D_GLIBCXX_ASSERTIONS']), ('relea
     results.append({'mode': mode, 'scenario_groups': 5, 'passed': True})
 (out / 'validation.json').write_text(json.dumps(results, indent=2))
 print(json.dumps(results, indent=2))
-

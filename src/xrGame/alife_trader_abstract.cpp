@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "InventoryNextIdentity.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "alife_simulator.h"
 #include "specific_character.h"
@@ -261,6 +262,7 @@ void add_offline_impl(CSE_ALifeDynamicObject* object, const xr_vector<ALife::_OB
 
 		ALife::_OBJECT_ID item_id = inventory_item->base()->ID;
 		inventory_item->base()->ID = object->alife().server().PerformIDgen(item_id);
+		InventoryNextIdentityRemap(item_id,inventory_item->base()->ID);
 
 		if (!child->can_save())
 		{

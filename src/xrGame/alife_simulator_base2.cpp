@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "InventoryNextIdentity.h"
 #include "alife_simulator_base.h"
 #include "relation_registry.h"
 #include "alife_registry_wrappers.h"
@@ -64,6 +65,7 @@ void CALifeSimulatorBase::unregister_object(CSE_ALifeDynamicObject* object, bool
 		graph().detach(*objects().object(item->base()->ID_Parent), item,
 		               objects().object(item->base()->ID_Parent)->m_tGraphID, alife_query);
 
+	InventoryNextIdentityRetire(object->ID);
 	objects().remove(object->ID);
 	story_objects().remove(object->m_story_id);
 	smart_terrains().remove(object);

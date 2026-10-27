@@ -1,0 +1,13 @@
+# Native identity lifecycle slice
+
+27 October 2026, development branch only. This is persistent identity integration, not an ownership transaction adapter.
+
+`IdentityLedger` enrolls explicit ALife server IDs into monotonic core IDs starting100. Online handles remain separate in EntityRegistry. Retirement never lowers the high-water mark; load/reset creates new online-handle epochs when the probe constructs its registry. Remapping preserves identity and refuses collision. The ledger is capped4096 entries and131072serialized bytes, versioned and canonical; invalid load never mutates the prior ledger.
+
+`InventoryNextIdentity` is active only with -inventory-lab and -dbg. The native actor probe now enrolls existing registered ALife entities and uses their saved core IDs, while geometry remains diagnostic row packing. Client-only/non-ALife entities fail admission. ALife object-registry construction resets the ledger for a new world. Permanent ALife unregister retires the ID; online/offline server destruction does not retire it. All three native offline ID-regeneration paths preserve mappings through explicit remap calls.
+
+Identity chunk0x33514944 is written within CALifeStorageManager's compressed save stream after registry data, including an empty ledger's high-water. Load restores it after object data and rejects missing referenced ALife entities. A save carrying the chunk is rejected without the explicit developer flags. No per-object packet layout changes or sidecar file. Native game save/load and online/offline runtime are NOT tested yet. Before writing the native save, all enrolled items and their parent chains must exist and pass can_save()/redundant() eligibility; otherwise the save is refused with a diagnostic, preserving the prior file. General eligibility and load behavior still need native runtime validation.
+
+Native release code disables exceptions. xrCore permits SQA3_EXCEPTION_BOUNDARY only in the new no-PCH adapter units, preserving XRAY_EXCEPTIONS=0 and other existing engine configuration. All exposed identity/probe calls are noexcept and catch exceptions before returning to engine code; core library files retain normal exception support. This follows first CI failure40433424879, C1189 disable-exceptions requirement. New compile pending.
+
+56 core tests pass debug/release, including canonical ledger roundtrip, remap, permanent deletion/reuse, duplicate records, collision rollback and ID exhaustion. Separate native view now linked for compilation; no automatic view replacement. Native event admission/acknowledgment, nested entity containers, mass integration, and full model layout save remain OPEN. No game launch or installed writes.

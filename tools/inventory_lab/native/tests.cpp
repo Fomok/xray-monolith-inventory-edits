@@ -1,5 +1,6 @@
 #include "model.h"
 #include "access_gate.h"
+#include "identity_ledger.h"
 #include "persistence.h"
 #include <cstdlib>
 #include <fstream>
@@ -57,6 +58,20 @@ int main(int argc,char** argv) {
         auto test=[&](const char* name, const std::function<void()>& fn) {
             fn(); ++passed; std::cout<<"PASS "<<name<<'\n';
         };
+        test("native identity survives save restore remap and retires reused server IDs",[]{
+            IdentityLedger ledger;Id first=0,again=0;yes(ledger.enroll(42,first));yes(ledger.enroll(42,again));check(first==again,"identity changed");
+            const auto saved=ledger.serialize();IdentityLedger restored;yes(restored.deserialize(saved));
+            yes(restored.remap(42,84));check(restored.lookup(84)==first&&!restored.lookup(42),"remap changed persistent ID");
+            restored.retire(84);yes(restored.enroll(84,again));check(again>first,"destroyed ID reused");
+            yes(restored.deserialize(saved));check(restored.lookup(42)==first,"save identity mismatch");
+        });
+        test("native identity corrupt restore collision and exhaustion fail atomically",[]{
+            IdentityLedger ledger;Id id=0;yes(ledger.enroll(1,id));yes(ledger.enroll(2,id));auto old=ledger.serialize();
+            no(ledger.remap(1,2),"identity_remap");no(ledger.deserialize("SQA3_IDENTITIES 1 100 2\n1 100\n2 100\n"),"identity_record");
+            check(ledger.serialize()==old,"identity failure mutated state");
+            no(ledger.enroll(0xffff,id),"invalid_server_id");
+            yes(ledger.deserialize("SQA3_IDENTITIES 1 18446744073709551615 0\n"));no(ledger.enroll(3,id),"identity_exhausted");
+        });
         test("recursive mass counts every unique nested item once",[]{
             auto m=make(); check(m.carried_mass()==157,"carried sum");
             check(m.subtree_mass(10)==150,"outer contents");

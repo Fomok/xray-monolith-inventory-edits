@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "InventoryNextIdentity.h"
 #include "alife_switch_manager.h"
 #include "xrServer_Objects_ALife.h"
 #include "alife_graph_registry.h"
@@ -93,6 +94,7 @@ void CALifeSwitchManager::remove_online(CSE_ALifeDynamicObject* object, bool upd
 
 		_OBJECT_ID object_id = object->ID;
 		object->ID = server().PerformIDgen(object_id);
+		InventoryNextIdentityRemap(object_id,object->ID);
 
 #ifdef DEBUG
 	if (psAI_Flags.test(aiALife))
