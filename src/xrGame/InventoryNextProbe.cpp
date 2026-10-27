@@ -379,6 +379,8 @@ bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept try
     const auto source_identity=InventoryNextIdentity(source),item_identity=InventoryNextIdentity(live);
     if(!source_identity||!item_identity){InventoryNextPickupStatus("Item unavailable. Transfer cancelled.");return true;}
     NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_ACQUIRE,owner);
-    packet.w_u16(source);packet.w_u16(live);packet.w_u64(source_identity);packet.w_u64(item_identity);CGameObject::u_EventSend(packet);
-    InventoryNextPickupStatus("Checking storage...");return true;
+    packet.w_u16(source);packet.w_u16(live);packet.w_u64(source_identity);packet.w_u64(item_identity);
+    // Local single-player dispatch may finish synchronously. Set the pending
+    // label first so the resulting refusal/acceptance remains visible.
+    InventoryNextPickupStatus("Checking storage...");CGameObject::u_EventSend(packet);return true;
 } catch (...) {InventoryNextPickupStatus("Transfer unavailable. Item stayed at source.");return true;}
