@@ -240,6 +240,11 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-nested-prepare",1,true) then
+        commands={"inventory_next_store 104 105 3 3 0",snapshot,"inventory_next_probe export","save sqa3_nested_manual","quit"}
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-nested-use",1,true) then
         commands={"inventory_next_probe export",snapshot}
         if not args:find("-sqa3-fixture-nested-use-reload",1,true) then
