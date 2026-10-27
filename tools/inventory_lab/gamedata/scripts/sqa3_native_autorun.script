@@ -71,6 +71,31 @@ local function check_sale()
     printf("[SQA3 AUTORUN] native sale verified live=%s actor_gain=%s partner_loss=%s",tostring(sale_item),tostring(gained),tostring(sale_partner_money-npc:money()))
     ActorMenu.get_actor_menu():HideDialog()
 end
+local function prepare_buyback()
+    npc_id=tonumber(command_line():match("%-sqa3%-fixture%-buyback=(%d+)"))
+    local npc=npc_id and level.object_by_id(npc_id)
+    assert(npc and npc:alive() and npc:section()=="sim_default_stalker_1","saved sale NPC unavailable")
+    npc:movement_enabled(false)
+    local pos=db.actor:position();pos.x=pos.x+1.2;npc:set_npc_position(pos)
+    local breads=0
+    npc:iterate_inventory(function(_,item)
+        if item:section()=="bread" then sale_item=item:id();breads=breads+1 end
+        return false
+    end,npc)
+    assert(breads==1,"buyback needs exactly the saved sale bread")
+    db.actor:give_money(100000)
+end
+local function check_buyback()
+    local npc=level.object_by_id(npc_id);assert(npc,"buyback NPC missing")
+    local actor_has,partner_has=false,false
+    db.actor:iterate_inventory(function(_,item) if item:id()==sale_item then actor_has=true end return false end,db.actor)
+    npc:iterate_inventory(function(_,item) if item:id()==sale_item then partner_has=true end return false end,npc)
+    assert(actor_has and not partner_has,"buyback did not return exact bread identity")
+    local spent=sale_actor_money-db.actor:money()
+    assert(spent>0 and npc:money()-sale_partner_money==spent,"buyback money not conserved")
+    printf("[SQA3 AUTORUN] native buyback verified live=%s actor_loss=%s partner_gain=%s",tostring(sale_item),tostring(spent),tostring(npc:money()-sale_partner_money))
+    ActorMenu.get_actor_menu():HideDialog()
+end
 local function kill_npc()
     ActorMenu.get_actor_menu():HideDialog()
     local npc=level.object_by_id(npc_id);assert(npc and npc:alive(),"fixture NPC missing before kill")
@@ -362,6 +387,17 @@ function on_game_start()
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
         commands[#commands+1]="save sqa3_trade_sale"
+    end
+    if args:find("-sqa3-fixture-buyback=",1,true) then
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        commands[#commands+1]=prepare_buyback
+        commands[#commands+1]=open_trade
+        commands[#commands+1]="screenshot sqa3_trade_buyback"
+        commands[#commands+1]=hold_sale
+        commands[#commands+1]=check_buyback
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_trade_buyback"
     end
     commands[#commands+1]="quit"
     printf("[SQA3 AUTORUN] registered isolated native fixture")
