@@ -208,6 +208,12 @@ void xrServer::Process_event_sqa_world_transfer(NET_Packet& P,ClientID sender,u3
             accepted=false;break;
         }
         item->ID_Parent=destination;to->children.push_back(live);moved.push_back(live);
+        // Isolated, explicitly requested fixture: exercise real ALife rollback
+        // after an actual member moved, before any client notification.
+        if(moved.size()==1&&strstr(Core.Params,"-sqa3-fixture-world-fail-after-first")) {
+            Msg("* SQA3 loaded transfer fixture interrupted after moved=1 before client notification");
+            accepted=false;break;
+        }
     }
     if(!accepted) {
         for(auto it=moved.rbegin();it!=moved.rend();++it) {

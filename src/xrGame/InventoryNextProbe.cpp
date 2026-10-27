@@ -838,7 +838,11 @@ bool InventoryNextWorldFinish(bool accepted) noexcept try {
     }
     const auto result=world_transfer->session->acknowledge(world_transfer->dispatch.token,observed,accepted);
     if(!result) {
-        if(world_transfer->session->can_save())world_refused("Loaded transfer refused. Bag unchanged.");
+        if(world_transfer->session->can_save()) {
+            const auto count=world_transfer->records.size();
+            world_refused("Loaded transfer refused. Bag unchanged.");
+            Msg("* SQA3 loaded transfer rejection restored count=%u save_ready=%d",static_cast<unsigned>(count),InventoryNextPickupCanSave()&&InventoryNextWorldCanSave());
+        }
         else {pickup_fault=true;InventoryNextPickupStatus("Loaded transfer needs reconciliation. Saving blocked.");}
         return false;
     }
