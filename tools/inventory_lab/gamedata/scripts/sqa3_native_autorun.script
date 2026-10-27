@@ -251,6 +251,7 @@ function on_game_start()
             return original_release(obj,msg)
         end
         local ground=args:find("-sqa3-travel-ground",1,true)~=nil
+        local initialize=args:find("-sqa3-travel-initialize",1,true)~=nil
         local label=ground and "ground" or "crate"
         local original=tonumber(args:match("%-sqa3%-travel%-crate=(%d+)"))
         local box
@@ -286,18 +287,32 @@ function on_game_start()
             printf("[SQA3 AUTORUN] travel resume phase=%s level=%s",tostring(phase),level.name())
             if phase==0 then
                 assert(level.name()=="fake_start","travel fixture must start in debug map")
-                box=alife():object(original);assert(box and box:section_name()==(ground and "sqa3_ground_backpack" or "inventory_box"),"wrong travel custodian")
-                save_var(db.actor,"sqa3_travel_box",box:name())
+                if not initialize then
+                    assert(alife_storage_manager.get_state().item_removal_done,"complete vanilla first-world initialization before placing travel-test storage")
+                    box=alife():object(original);assert(box and box:section_name()==(ground and "sqa3_ground_backpack" or "inventory_box"),"wrong travel custodian")
+                    save_var(db.actor,"sqa3_travel_box",box:name())
+                end
                 local pos=db.actor:position()
                 save_var(db.actor,"sqa3_travel_x",pos.x);save_var(db.actor,"sqa3_travel_y",pos.y);save_var(db.actor,"sqa3_travel_z",pos.z)
-                commands={"g_god on",function() custody("source",true) end,"inventory_next_probe export",
+                commands={"g_god on",function() if not initialize then custody("source",true) end end,"inventory_next_probe export",
                     function() save_var(db.actor,"sqa3_travel_phase",1) end,"jump_to_level l01_escape"}
             elseif phase==1 then
                 assert(level.name()=="l01_escape","outbound level transition did not reach Cordon")
-                commands={"g_god on",function() custody("away",false) end,"inventory_next_probe export","save sqa3_travel_"..label.."_away",
+                commands={"g_god on",function()
+                    assert(alife_storage_manager.get_state().item_removal_done,"vanilla world setup did not finish")
+                    if not initialize then custody("away",false) end
+                end,"inventory_next_probe export","save sqa3_travel_"..(initialize and "initialize" or label).."_away",
                     function() save_var(db.actor,"sqa3_travel_phase",2) end,"jump_to_level fake_start"}
             elseif phase==2 then
                 assert(level.name()=="fake_start","return level transition did not reach debug map")
+                if initialize then
+                    commands={function()
+                        assert(alife_storage_manager.get_state().item_removal_done,"world setup state did not persist")
+                        db.actor:set_actor_position(vector():set(load_var(db.actor,"sqa3_travel_x",0),load_var(db.actor,"sqa3_travel_y",0),load_var(db.actor,"sqa3_travel_z",0)))
+                        save_var(db.actor,"sqa3_travel_phase",0)
+                        printf("[SQA3 AUTORUN] vanilla world initialization complete after actual outbound/return transitions")
+                    end,snapshot,"inventory_next_probe export","save sqa3_world_initialized","quit"}
+                else
                 commands={function()
                     db.actor:set_actor_position(vector():set(load_var(db.actor,"sqa3_travel_x",0),load_var(db.actor,"sqa3_travel_y",0),load_var(db.actor,"sqa3_travel_z",0)))
                     started=started+5000
@@ -316,6 +331,7 @@ function on_game_start()
                     ActorMenu.get_actor_menu():HideDialog();save_var(db.actor,"sqa3_travel_phase",3)
                     printf("[SQA3 AUTORUN] travel retrieval completed level=%s",level.name())
                 end,snapshot,"inventory_next_probe export","save sqa3_travel_"..label.."_return","quit"}
+                end
             elseif phase==3 then
                 assert(level.name()=="fake_start","unexpected completed travel map")
                 commands={snapshot,"inventory_next_probe export","quit"}
