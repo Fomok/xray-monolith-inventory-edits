@@ -9,6 +9,7 @@
 #include "ui/UIActorMenu.h"
 #include "uigamecustom.h"
 #include "inventory_item.h"
+#include "InventoryNextProbe.h"
 
 CInventoryBox::CInventoryBox()
 {
@@ -38,6 +39,7 @@ void CInventoryBox::OnEvent(NET_Packet& P, u16 type)
 			itm->H_SetParent(this);
 			itm->setVisible(FALSE);
 			itm->setEnabled(FALSE);
+            InventoryNextWorldClientReady();
 
 			CInventoryItem* pIItem = smart_cast<CInventoryItem*>(itm);
 			VERIFY(pIItem);

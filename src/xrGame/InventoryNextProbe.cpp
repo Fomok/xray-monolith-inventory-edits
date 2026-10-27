@@ -30,6 +30,8 @@
 #include "../inventory_next/ground_pickup.h"
 #include "../inventory_next/purchase_session.h"
 #include "../inventory_next/world_subtrees.h"
+#include "../inventory_next/loaded_storage_session.h"
+#include "InventoryBox.h"
 #include "trade.h"
 #include "InventoryOwner.h"
 #include "entity_alive.h"
@@ -64,6 +66,17 @@ struct NativePurchase {
 };
 std::unique_ptr<NativePurchase> purchase;
 u64 next_purchase_token=0;
+struct NativeWorldTransfer {
+    inventory_next::EntityRegistry registry;
+    std::unique_ptr<inventory_next::LoadedStorageSession> session;
+    inventory_next::TransferSession::Dispatch dispatch;
+    xr_vector<PurchaseRecord> records;
+    u16 source=0xffff,destination=0xffff;
+    u64 custodian=0,token=0;
+    bool acquire=false,committed=false;
+};
+std::unique_ptr<NativeWorldTransfer> world_transfer;
+u64 next_world_token=0;
 
 
 bool read_storage_catalog(inventory_next::StorageCatalog& output) {
@@ -107,6 +120,10 @@ bool InventoryNextLayoutSync() noexcept try {
     std::vector<Node> nodes;
         for (auto* item : Actor()->inventory().m_all) {
             if (!item || nodes.size()>=4094) { Msg("! SQA3 probe: invalid/count-limited inventory"); return false; }
+            bool departing=false;
+            if(world_transfer&&world_transfer->committed&&!world_transfer->acquire)
+                for(const auto& record:world_transfer->records)if(record.live==item->object_id()){departing=true;break;}
+            if(departing)continue;
             const double grams=static_cast<double>(item->Weight())*1000.0;
             const double condition=item->GetCondition();
             const Irect shape=item->GetInvGridRect();
@@ -147,7 +164,7 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
@@ -158,7 +175,7 @@ void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     }
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
-    layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};auto chunk=stream.open_chunk(layout_chunk);
+    layout_current=false;native_drag().cancel();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};auto chunk=stream.open_chunk(layout_chunk);
     if(!chunk) {
         auto orphan=stream.open_chunk(world_storage_chunk);const bool has_world=orphan!=nullptr;if(orphan)orphan->close();
         CHECK_OR_EXIT(!has_world,"SQA3 world storage missing actor layout");return;
@@ -171,7 +188,7 @@ void InventoryNextLayoutLoad(IReader& stream) noexcept try {
         CHECK_OR_EXIT(world_chunk->length()<=2*1024*1024,"Invalid SQA3 world storage size");
         const std::string world_bytes(reinterpret_cast<const char*>(world_chunk->pointer()),world_chunk->length());world_chunk->close();
         CHECK_OR_EXIT(world_storage().restore(world_bytes).ok,"Invalid SQA3 world storage data");
-        CHECK_OR_EXIT(world_storage().records().empty()||InventoryNextLogicalStorage(),"SQA3 world storage requires logical storage mode");
+        CHECK_OR_EXIT(world_storage().records().empty()||InventoryNextWorldStorageEnabled(),"SQA3 world storage requires world storage mode");
     }
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout load failed");}
 void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept try {
@@ -188,7 +205,7 @@ void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcep
 } catch (...) {Msg("! SQA3 logical store exception");}
 bool InventoryNextCanRelease(u16 live) noexcept try {
     if(!InventoryNextLogicalStorage())return true;
-    if(!pending_pickups.empty()||pickup_transaction||purchase)return false;
+    if(!pending_pickups.empty()||pickup_transaction||purchase||world_transfer)return false;
     if(!InventoryNextLayoutSync())return false;
     const auto id=InventoryNextIdentity(live);
     if(!id||!layout().model().nodes().count(id))return true;
@@ -226,6 +243,14 @@ void InventoryNextProbe(bool export_snapshot,bool show_view) noexcept {
             auto saved=inventory_next::save_atomic(model,std::filesystem::path(path));
             if(!saved) Msg("! SQA3 probe export: %s",saved.error.c_str());
             else Msg("* SQA3 probe exported to lab appdata; native item placement exported");
+            if(InventoryNextWorldStorageEnabled()) {
+                string_path world_path;FS.update_path(world_path,"$app_data_root$","sqa3-world-storage.inv");
+                const auto world_bytes=world_storage().serialize();auto file=FS.w_open(world_path);const bool written=file!=nullptr;
+                if(file){file->w(world_bytes.data(),static_cast<u32>(world_bytes.size()));FS.w_close(file);}
+                Msg("* SQA3 world storage records=%u export=%s",static_cast<unsigned>(world_storage().records().size()),written?"written":"failed");
+                for(const auto& record:world_storage().records())
+                    Msg("* SQA3 world bag id=%llu custodian=%llu items=%u grams=%lld",record.first,record.second.custodian,static_cast<unsigned>(record.second.tree.nodes().size()-2),static_cast<long long>(record.second.tree.subtree_mass(record.first)));
+            }
         }
     } catch(const std::exception& e) {
         Msg("! SQA3 probe failed: %s",e.what());
@@ -333,9 +358,13 @@ bool InventoryNextStrictPickup() noexcept {
     return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-ground-pickup")||InventoryNextStrictOwnedPickup());
 }
 bool InventoryNextPickupCanSave() noexcept {
-    return !pickup_fault&&!pickup_transaction&&!purchase&&pending_pickups.empty();
+    return !pickup_fault&&!pickup_transaction&&!purchase&&!world_transfer&&pending_pickups.empty();
 }
 void InventoryNextPickupForget(u16 live) noexcept try {
+    const auto identity=InventoryNextIdentity(live);
+    for(const auto& record:world_storage().records())
+        if(record.second.custodian==identity||record.second.tree.nodes().count(identity))pickup_fault=true;
+    if(world_transfer)for(const auto& record:world_transfer->records)if(record.live==live)pickup_fault=true;
     if(purchase&&purchase->session&&purchase->session->state()!=inventory_next::PurchaseSession::State::Prepared)
         for(const auto& record:purchase->records)if(record.live==live)pickup_fault=true;
     pending_pickups.erase(live);
@@ -353,7 +382,7 @@ bool pickup_slot_compatible(CInventoryItem* item,u16 slot) {
 bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
-    if(pickup_fault||pickup_transaction||purchase||!InventoryNextLayoutSync())return false;
+    if(pickup_fault||pickup_transaction||purchase||world_transfer||!InventoryNextWorldCanRelease(live)||!InventoryNextLayoutSync())return false;
     auto object=Level().Objects.net_Find(live);
     auto item=smart_cast<CInventoryItem*>(object);
     const auto server=ai().alife().objects().object(live,true);
@@ -464,7 +493,7 @@ u16 InventoryNextPickupSlot(u16 owner,u16 live) noexcept try {
 
 
 bool InventoryNextStrictOwnedPickup() noexcept {
-    return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-owned-pickup")!=nullptr||InventoryNextStrictTradePickup());
+    return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-owned-pickup")!=nullptr||InventoryNextStrictTradePickup()||InventoryNextWorldStorageEnabled());
 }
 void InventoryNextPickupStatus(const char* text) noexcept try {
     if(!CurrentGameUI())return;
@@ -473,6 +502,10 @@ void InventoryNextPickupStatus(const char* text) noexcept try {
 } catch (...) {Msg("! SQA3 acquisition status refresh failed");}
 bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot) noexcept try {
     if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||source==0xffff)return false;
+    if(!InventoryNextWorldCanRelease(live)) {
+        if(slot!=0xffff){InventoryNextPickupStatus("Take the loaded bag into storage before equipping it.");return true;}
+        return InventoryNextWorldRequest(source,owner,live);
+    }
     const auto source_identity=InventoryNextIdentity(source),item_identity=InventoryNextIdentity(live);
     if(!source_identity||!item_identity){InventoryNextPickupStatus("Item unavailable. Transfer cancelled.");return true;}
     NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_ACQUIRE,owner);
@@ -653,4 +686,179 @@ void InventoryNextPurchaseClientReady() noexcept try {
             Actor()->callback(GameObject::eTradeSellBuyItem)(item->object().lua_game_object(),false,record.price);
     }
     Msg("* SQA3 purchase client completed count=%u save_ready=%d",static_cast<unsigned>(records.size()),InventoryNextPickupCanSave());
+} catch (...) {pickup_fault=true;}
+
+
+bool InventoryNextWorldStorageEnabled() noexcept {
+    return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-world-storage")!=nullptr;
+}
+bool InventoryNextWorldCanRelease(u16 live) noexcept try {
+    if(world_storage().records().empty())return true;
+    const auto id=InventoryNextIdentity(live);
+    for(const auto& record:world_storage().records())if(record.second.tree.nodes().count(id))return false;
+    return true;
+} catch (...) {return false;}
+bool InventoryNextWorldVisible(u16 live) noexcept try {
+    if(world_storage().records().empty())return true;
+    const auto id=InventoryNextIdentity(live);
+    for(const auto& record:world_storage().records())if(record.second.tree.nodes().count(id))return record.first==id;
+    return true;
+} catch (...) {return false;}
+bool InventoryNextWorldCanSave() noexcept try {
+    if(world_transfer||pickup_fault)return false;
+    for(const auto& record:world_storage().records()) {
+        const u16 custodian=InventoryNextIdentityServer(record.second.custodian);
+        if(!record.second.custodian||custodian==0xffff||!ai().alife().objects().object(custodian,true))return false;
+        for(const auto& pair:record.second.tree.nodes())if(pair.second.kind==inventory_next::Kind::Item) {
+            const u16 live=InventoryNextIdentityServer(pair.first);
+            auto server=ai().alife().objects().object(live,true);
+            if(!server||server->ID_Parent!=custodian)return false;
+        }
+    }
+    return true;
+} catch (...) {return false;}
+namespace {
+bool world_access(u16 source,u16 destination) {
+    if(!Actor()||(source==Actor()->ID())==(destination==Actor()->ID()))return false;
+    const u16 box_id=source==Actor()->ID()?destination:source;
+    auto box=smart_cast<CInventoryBox*>(Level().Objects.net_Find(box_id));
+    return box&&!box->getDestroy()&&box->can_take()&&!box->closed()&&box->Position().distance_to(Actor()->Position())<=3.0f;
+}
+bool world_node(u16 live,u16 parent,inventory_next::Node& node) {
+    using namespace inventory_next;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    auto server=ai().alife().objects().object(live,true);
+    if(!item||item->object().getDestroy()||!server||server->ID_Parent!=parent||!item->object().H_Parent()||item->parent_id()!=parent||item->IsQuestItem())return false;
+    const auto id=InventoryNextIdentity(live);if(!id)return false;InventoryNextIdentityOnline(*item);
+    const double mass=double(item->Weight())*1000.0,condition=item->GetCondition();const auto shape=item->GetInvGridRect();
+    if(!std::isfinite(mass)||mass<0||mass>1e12||!std::isfinite(condition)||condition<0||condition>1||shape.x2<1||shape.y2<1||shape.x2>16||shape.y2>64)return false;
+    node.id=id;node.parent=1;node.intrinsic=static_cast<Mass>(std::llround(mass));node.condition=static_cast<unsigned>(std::llround(condition*10000));
+    node.empty=node.half=node.full={shape.x2,shape.y2};
+    node.attributes["native_section"]=item->m_section_id.c_str();node.attributes["native_live_id"]=std::to_string(live);
+    node.attributes["native_place"]=parent==Actor()->ID()?std::to_string(item->CurrPlace()):"3";
+    node.attributes["native_slot"]=std::to_string(item->CurrSlot());
+    if(parent==Actor()->ID()&&item->CurrPlace()==eItemPlaceSlot) {
+        if(item->CurrSlot()>=48)return false;
+        node.location=Location::Equipment;node.wear_slots=node.equipped_slots=std::uint64_t{1}<<item->CurrSlot();
+    }
+    if(smart_cast<CBackpack*>(item)) {
+        StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+        const std::string section=item->m_section_id.c_str();
+        const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
+        const auto& shape=catalog.resolve(section,kind);node.container=true;node.grid=shape.grid;node.cells=shape.cells;
+    }
+    return true;
+}
+void world_refused(const char* message) {
+    world_transfer.reset();InventoryNextPickupStatus(message);
+}
+}
+bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live) noexcept try {
+    if(!InventoryNextWorldStorageEnabled()||!Actor())return false;
+    if(!InventoryNextPickupCanSave()){InventoryNextPickupStatus("Finish the pending transfer first.");return true;}
+    if(!InventoryNextLayoutSync())return true;
+    const auto shell=InventoryNextIdentity(live);if(!shell)return false;
+    const bool acquire=destination==Actor()->ID();
+    if(acquire) {
+        if(!world_storage().records().count(shell)) {
+            if(!InventoryNextWorldCanRelease(live)){InventoryNextPickupStatus("Take the containing bag first.");return true;}
+            return false;
+        }
+    } else {
+        bool loaded=false;for(const auto& pair:layout().model().nodes())if(pair.second.parent==shell){loaded=true;break;}
+        if(!loaded)return false;
+    }
+    if(!world_access(source,destination)){InventoryNextPickupStatus("Container unavailable. Bag unchanged.");return true;}
+    auto prepared=std::make_unique<NativeWorldTransfer>();prepared->source=source;prepared->destination=destination;prepared->acquire=acquire;
+    prepared->custodian=InventoryNextIdentity(acquire?source:destination);
+    if(!prepared->custodian)return true;
+    std::vector<inventory_next::Id> members;
+    if(acquire) {
+        const auto& record=world_storage().records().at(shell);
+        if(record.custodian!=prepared->custodian){InventoryNextPickupStatus("Bag custody changed. Transfer refused.");return true;}
+        for(const auto& pair:record.tree.nodes())if(pair.second.kind==inventory_next::Kind::Item)members.push_back(pair.first);
+    } else {
+        const auto& nodes=layout().model().nodes();
+        for(const auto& pair:nodes) {
+            auto id=pair.first;while(id&&id!=shell)id=nodes.at(id).parent;
+            if(id==shell)members.push_back(pair.first);
+        }
+    }
+    std::vector<inventory_next::Node> actual;
+    for(auto id:members) {
+        const u16 member=InventoryNextIdentityServer(id);inventory_next::Node node;
+        if(member==0xffff||!world_node(member,source,node)||node.id!=id){InventoryNextPickupStatus("Bag contents unavailable. Transfer refused.");return true;}
+        if(acquire) {
+            auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(member));
+            if(!Actor()->inventory().CanTakeItem(item)){InventoryNextPickupStatus("Bag contents cannot be taken.");return true;}
+        }
+        actual.push_back(node);prepared->records.push_back({member,id,0,node});
+    }
+    if(acquire&&!world_storage().refresh(shell,prepared->custodian,actual)){InventoryNextPickupStatus("Bag contents changed. Transfer refused.");return true;}
+    auto& registry=prepared->registry;
+    if(!registry.add(1)||!registry.bind(1,Actor()->ID())||!registry.add(prepared->custodian)||!registry.bind(prepared->custodian,acquire?source:destination))return true;
+    for(const auto& pair:layout().model().nodes())if(pair.second.kind==inventory_next::Kind::Item) {
+        const u16 member=InventoryNextIdentityServer(pair.first);
+        if(member==0xffff||!registry.add(pair.first)||!registry.bind(pair.first,member))return true;
+    }
+    for(const auto& record:prepared->records)if(!registry.add(record.identity)||!registry.bind(record.identity,record.live))return true;
+    prepared->session=std::make_unique<inventory_next::LoadedStorageSession>(layout().model(),world_storage(),registry);
+    std::vector<inventory_next::Id> destinations{1};
+    for(const auto& pair:layout().model().nodes())if(pair.second.kind==inventory_next::Kind::Item&&pair.second.container)destinations.push_back(pair.first);
+    const auto result=acquire?prepared->session->prepare_acquire(shell,prepared->custodian,destinations):prepared->session->prepare_release(shell,prepared->custodian);
+    if(!result){Msg("! SQA3 loaded transfer refused reason=%s",result.error.c_str());InventoryNextPickupStatus("Loaded bag does not fit or is unavailable. Source unchanged.");return true;}
+    prepared->token=++next_world_token;world_transfer=std::move(prepared);
+    NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_WORLD_TRANSFER,Actor()->ID());
+    packet.w_u16(source);packet.w_u16(destination);packet.w_u64(world_transfer->token);
+    InventoryNextPickupStatus("Moving loaded bag...");CGameObject::u_EventSend(packet);return true;
+} catch (...) {if(world_transfer)pickup_fault=true;InventoryNextPickupStatus("Loaded transfer needs reconciliation.");return true;}
+bool InventoryNextWorldValidate(u16 source,u16 destination,u64 token,xr_vector<u16>& items) noexcept try {
+    if(!InventoryNextWorldStorageEnabled()||!world_transfer||world_transfer->committed||world_transfer->token!=token||world_transfer->source!=source||world_transfer->destination!=destination)return false;
+    if(!world_access(source,destination)||InventoryNextIdentity(world_transfer->acquire?source:destination)!=world_transfer->custodian||!InventoryNextLayoutSync()) {
+        world_refused("Container changed. Bag stayed at source.");return false;
+    }
+    for(const auto& record:world_transfer->records) {
+        inventory_next::Node current;
+        if(!world_node(record.live,source,current)||!same_purchase_node(current,record.node)) {
+            world_refused("Bag contents changed. Transfer cancelled.");return false;
+        }
+        items.push_back(record.live);
+    }
+    auto result=world_transfer->session->dispatch(true,world_transfer->dispatch);
+    if(!result){world_refused("Loaded transfer changed. Bag stayed at source.");return false;}
+    return true;
+} catch (...) {world_refused("Loaded transfer validation failed.");return false;}
+bool InventoryNextWorldFinish(bool accepted) noexcept try {
+    if(!world_transfer)return false;
+    std::vector<inventory_next::TransferSession::ParentObservation> observed;
+    for(const auto& member:world_transfer->dispatch.subtree) {
+        auto server=ai().alife().objects().object(member.item.live,true);
+        if(InventoryNextIdentity(member.item.live)!=member.item.item){pickup_fault=true;return false;}
+        observed.push_back({member.item,server?server->ID_Parent:u16(0xffff)});
+    }
+    const auto result=world_transfer->session->acknowledge(world_transfer->dispatch.token,observed,accepted);
+    if(!result) {
+        if(world_transfer->session->can_save())world_refused("Loaded transfer refused. Bag unchanged.");
+        else {pickup_fault=true;InventoryNextPickupStatus("Loaded transfer needs reconciliation. Saving blocked.");}
+        return false;
+    }
+    const auto actor=world_transfer->session->committed_actor();const auto world=world_transfer->session->committed_world();
+    if(!actor||!world||!layout().restore(actor->serialize())){pickup_fault=true;return false;}
+    world_storage()=*world;world_transfer->committed=true;
+    if(world_transfer->acquire)for(const auto& record:world_transfer->records)pending_pickups.emplace(record.live,actor->nodes().at(record.identity));
+    Msg("* SQA3 loaded transfer server committed count=%u source=%u destination=%u; client acknowledgement pending",static_cast<unsigned>(world_transfer->records.size()),world_transfer->source,world_transfer->destination);
+    return true;
+} catch (...) {pickup_fault=true;return false;}
+void InventoryNextWorldClientReady() noexcept try {
+    if(!world_transfer||!world_transfer->committed||pickup_fault)return;
+    if(world_transfer->acquire&&!pending_pickups.empty())return;
+    for(const auto& record:world_transfer->records) {
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(record.live));
+        if(!item||InventoryNextIdentity(record.live)!=record.identity){pickup_fault=true;return;}
+        if(!item->object().H_Parent()||item->parent_id()!=world_transfer->destination)return;
+    }
+    const auto count=world_transfer->records.size();world_transfer.reset();
+    if(!InventoryNextLayoutSync()||!InventoryNextWorldCanSave()){pickup_fault=true;return;}
+    InventoryNextPickupStatus("");
+    Msg("* SQA3 loaded transfer client completed count=%u save_ready=%d",static_cast<unsigned>(count),InventoryNextPickupCanSave());
 } catch (...) {pickup_fault=true;}

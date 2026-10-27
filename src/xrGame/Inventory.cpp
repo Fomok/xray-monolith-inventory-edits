@@ -250,6 +250,7 @@ void CInventory::Take(CGameObject* pObj, bool bNotActivate, bool strict_placemen
         CGameObject::u_EventSend(packet);
     }
     InventoryNextPurchaseClientReady();
+    InventoryNextWorldClientReady();
 }
 
 bool CInventory::DropItem(CGameObject* pObj, bool just_before_destroy, bool dont_create_shell)

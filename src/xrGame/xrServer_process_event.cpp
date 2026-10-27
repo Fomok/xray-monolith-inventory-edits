@@ -93,6 +93,9 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_SQA_PURCHASE:
 		Process_event_sqa_purchase(P,sender,timestamp,destination);
 		break;
+	case GE_SQA_WORLD_TRANSFER:
+		Process_event_sqa_world_transfer(P,sender,timestamp,destination);
+		break;
 	case GE_TRADE_BUY:
 	case GE_OWNERSHIP_TAKE:
 		{
@@ -115,6 +118,7 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_LAUNCH_ROCKET:
 		{
             const u16 released=P.r_u16();
+            if(type!=GE_LAUNCH_ROCKET&&!InventoryNextWorldCanRelease(released))break;
             // Player/script release events need subtree protection. Internal
             // Perform_reject is also used by teardown/destruction and must run.
             if(type!=GE_LAUNCH_ROCKET&&InventoryNextLogicalStorage()&&Actor()&&

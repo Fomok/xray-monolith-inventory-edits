@@ -7,6 +7,7 @@
 #include "identity_state.h"
 #include "transfer_session.h"
 #include "world_subtrees.h"
+#include "loaded_storage_session.h"
 #include "ground_pickup.h"
 #include "purchase_session.h"
 #include "drag_session.h"
@@ -345,6 +346,54 @@ int main(int argc,char** argv) {
             no(ledger.refresh(100,900,{shell,changed}),"world_storage_section");
             changed=child;changed.empty={3,3};check(!ledger.refresh(100,900,{shell,changed}),"resized subtree accepted invalid placement");
             check(ledger.serialize()==before,"failed native refresh altered ledger");
+        });
+        test("loaded actor to crate and back commits actor and world candidates together",[]{
+            auto shell=bag(100,1,100);auto inner=bag(101,100,20);auto child=item(102,101,30);
+            child.attributes={{"ammo","9"}};child.condition=9098;
+            Model actor;yes(actor.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),shell,inner,child}));
+            WorldSubtrees world;EntityRegistry registry;
+            for(Id id:{1,100,101,102,900}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            LoadedStorageSession release(actor,world,registry);yes(release.prepare_release(100,900));
+            TransferSession::Dispatch event;yes(release.dispatch(true,event));
+            check(event.subtree.size()==3&&!release.committed_actor()&&!release.committed_world()&&!release.can_save(),"loaded transfer published early");
+            yes(release.acknowledge(event.token,{{*registry.handle(100),900},{*registry.handle(101),900},{*registry.handle(102),900}},true));
+            actor=*release.committed_actor();world=*release.committed_world();
+            check(actor.carried_mass()==0&&actor.nodes().size()==2&&world.records().at(100).tree.subtree_mass(100)==150,"loaded release lost or doubled ownership");
+            LoadedStorageSession take(actor,world,registry);yes(take.prepare_acquire(100,900,{1}));yes(take.dispatch(true,event));
+            yes(take.acknowledge(event.token,{{*registry.handle(102),1},{*registry.handle(100),1},{*registry.handle(101),1}},true));
+            actor=*take.committed_actor();world=*take.committed_world();
+            check(world.records().empty()&&actor.carried_mass()==150&&actor.nodes().at(101).parent==100&&actor.nodes().at(102).parent==101,"loaded pickup flattened tree or retained duplicate archive");
+            check(actor.nodes().at(102).condition==9098&&actor.nodes().at(102).attributes==child.attributes,"loaded roundtrip changed contained weapon state");
+        });
+        test("loaded pickup preflights complete bag footprint and preserves full actor and source",[]{
+            Model source;yes(source.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,2,100),item(101,100,20)}));
+            WorldSubtrees world;yes(world.capture(source,100,900));
+            Model actor;yes(actor.initialize({root(1,Kind::ActorRoot,{1,1}),root(2,Kind::WorldRoot),item(110,1,7)}));
+            EntityRegistry registry;for(Id id:{1,100,101,110,900}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            const auto before=actor.serialize(),outside=world.serialize();LoadedStorageSession take(actor,world,registry);
+            no(take.prepare_acquire(100,900,{1}),"no_fit");
+            check(take.can_save()&&!take.committed_actor()&&actor.serialize()==before&&world.serialize()==outside,"full loaded pickup altered source");
+        });
+        test("loaded transfer rejects partial native changes and stale actor or world ledgers",[]{
+            for(int failure=0;failure<3;++failure) {
+                Model actor;yes(actor.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,1,100),item(101,100,20)}));
+                WorldSubtrees world;EntityRegistry registry;for(Id id:{1,100,101,900}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+                LoadedStorageSession release(actor,world,registry);yes(release.prepare_release(100,900));TransferSession::Dispatch event;yes(release.dispatch(true,event));
+                if(failure==1){Command changed;changed.operation=Operation::SetMass;changed.item=101;changed.mass=21;changed.session=actor.session();changed.revision=actor.revision();yes(actor.execute(changed));}
+                if(failure==2){Model extra;yes(extra.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(200,2,30)}));yes(world.capture(extra,200,901));}
+                const auto before=actor.serialize(),outside=world.serialize();
+                no(release.acknowledge(event.token,{{*registry.handle(100),900},{*registry.handle(101),static_cast<std::uint16_t>(failure==0?1:900)}},true),failure==0?"native_parent_mismatch":failure==1?"stale_model":"stale_world_storage");
+                check(!release.can_save()&&!release.committed_actor()&&!release.committed_world()&&actor.serialize()==before&&world.serialize()==outside,"uncertain loaded transfer published candidates");
+                no(release.dispatch(false,event),"transfer_state");check(!release.can_save(),"repeated dispatch erased pending fault");
+            }
+        });
+        test("loaded transfer loss of access before dispatch cancels without moving records",[]{
+            Model actor;yes(actor.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,1,100),item(101,100,20)}));
+            WorldSubtrees world;EntityRegistry registry;for(Id id:{1,100,101,900}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            LoadedStorageSession release(actor,world,registry);yes(release.prepare_release(100,900));TransferSession::Dispatch event;
+            const auto before=actor.serialize();no(release.dispatch(false,event),"world_unavailable");
+            check(release.can_save()&&actor.serialize()==before&&world.records().empty(),"lost access changed loaded ownership");
+            no(release.prepare_release(100,0),"world_storage_custodian");
         });
         test("dismantling consumes once and retains all outputs with visible remainder",[]{
             Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),item(10,1,30)}));

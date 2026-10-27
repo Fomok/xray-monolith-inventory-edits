@@ -258,6 +258,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 	case GE_TRADE_BUY:
 	case GE_OWNERSHIP_TAKE:
 		{
+            if(pItem->parent_id()!=m_pActorInvOwner->object_id()&&!InventoryNextWorldVisible(pItem->object_id()))break;
 			u32 i = 0;
 			bool b_already = false;
 

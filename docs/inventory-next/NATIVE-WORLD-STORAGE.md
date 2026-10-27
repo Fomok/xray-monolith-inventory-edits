@@ -55,3 +55,22 @@ Offline/remap/destruction and container disappearance need explicit reconciliati
 
 No world-transfer UI success may be shown until those steps have native evidence.
 Keep Dev18 rollback, the production installation and public release unchanged.
+
+## Native crate transaction candidate
+
+The foundation engine `eba95c79833053bf7e6f6158883da66ce0d46fc9` compiled
+successfully in CI40508770954. It was not installed over the verified Dev18 lab.
+
+A subsequent opt-in `-sqa3-world-storage` candidate adds actor/crate transfers.
+`LoadedStorageSession` stages actor and world candidates together, preflights the
+complete loaded footprint on acquisition, and only exposes both results after
+full native acknowledgement.121 debug/release checks and all three independent
+restart forms pass. Ground custody remains deliberately unsupported.
+
+The native candidate uses one server event to validate crate access, persistent
+custody and all live facts, silently detach/attach every member, and roll back
+before broadcasting if any member fails. Publication reserves incoming objects
+or excludes departing objects until all client parents match. Saves remain gated.
+Crate lists hide logical descendants while their weight still counts once; ordinary
+single-item release cannot bypass custody. Actual native compilation, physical
+release/reacquisition, partial-failure and fresh game reload tests are pending.

@@ -43,3 +43,11 @@ bool InventoryNextPurchaseValidate(u16 source,u16 owner,u64 token,xr_vector<u16>
 bool InventoryNextPurchaseFinish(bool accepted) noexcept;
 void InventoryNextPurchaseClientReady() noexcept;
 void InventoryNextPurchaseProbe(u16 source,const xr_vector<u16>& items) noexcept;
+bool InventoryNextWorldStorageEnabled() noexcept;
+bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live) noexcept;
+bool InventoryNextWorldValidate(u16 source,u16 destination,u64 token,xr_vector<u16>& items) noexcept;
+bool InventoryNextWorldFinish(bool accepted) noexcept;
+void InventoryNextWorldClientReady() noexcept;
+bool InventoryNextWorldCanSave() noexcept;
+bool InventoryNextWorldCanRelease(u16 live) noexcept;
+bool InventoryNextWorldVisible(u16 live) noexcept;

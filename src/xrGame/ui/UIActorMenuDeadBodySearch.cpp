@@ -23,6 +23,7 @@
 
 void move_item_from_to(u16 from_id, u16 to_id, u16 what_id)
 {
+    if(InventoryNextWorldRequest(from_id,to_id,what_id))return;
     if(InventoryNextLogicalStorage()&&Actor()&&from_id==Actor()->ID()&&!InventoryNextCanRelease(what_id)) {
         InventoryNextPickupStatus("Cannot transfer this item. Inventory unchanged.");
         return;
@@ -104,6 +105,7 @@ void CUIActorMenu::FilterDeadBodyList(int mode)
 	for (; it != it_e; ++it)
 	{
 		PIItem iitm = *it;
+		if(!InventoryNextWorldVisible(iitm->object_id()))continue;
 		int kinds = _GetItemCount(m_sort_kinds[mode]);
 
 		if (0 == xr_strcmp(m_sort_kinds[mode], "s_all"))
@@ -170,6 +172,7 @@ void CUIActorMenu::InitDeadBodySearchMode()
 	for (; it != it_e; ++it)
 	{
 		CUICellItem* itm = create_cell_item(*it);
+		if(!InventoryNextWorldVisible((*it)->object_id())){xr_delete(itm);continue;}
 		m_pDeadBodyBagList->SetItem(itm);
 	}
 
@@ -232,6 +235,8 @@ bool CUIActorMenu::ToDeadBodyBag(CUICellItem* itm, bool b_use_cursor_pos)
 	PIItem quest_item = (PIItem)itm->m_pData;
 	if (quest_item->IsQuestItem())
 		return false;
+    const u16 destination=m_pPartnerInvOwner?m_pPartnerInvOwner->object_id():m_pInvBox->ID();
+    if(InventoryNextWorldRequest(m_pActorInvOwner->object_id(),destination,quest_item->object_id()))return true;
     if(quest_item->parent_id()==m_pActorInvOwner->object_id()&&!InventoryNextCanRelease(quest_item->object_id())) {
         InventoryNextPickupStatus("Cannot transfer this item. Inventory unchanged.");
         m_sqaRefresh=true;
@@ -278,7 +283,7 @@ void CUIActorMenu::UpdateDeadBodyBag()
 	LPCSTR kg_str = CStringTable().translate("st_kg").c_str();
 	float total = 0.f;
 
-	if (xr_strcmp(m_sort_kinds[current_sort_mode()], "s_all"))
+	if (InventoryNextWorldStorageEnabled()||xr_strcmp(m_sort_kinds[current_sort_mode()], "s_all"))
 	{
 		TIItemContainer items_list;
 

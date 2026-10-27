@@ -1,4 +1,5 @@
 #pragma once
+u16 InventoryNextIdentityServer(u64 identity) noexcept;
 class IReader;
 class IWriter;
 // Developer mode only; saves with this chunk require the same explicit mode.

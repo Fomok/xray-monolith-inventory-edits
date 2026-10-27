@@ -50,7 +50,7 @@ bool InventoryNextIdentityCanSave() noexcept try {
     if(!InventoryNextEnabled())return true;
     if(!InventoryNextPickupCanSave()){Msg("! SQA3 save refused: pickup acknowledgement pending");return false;}
     if(!ai().get_alife())return ledger().entries().empty();
-    if(!InventoryNextLayoutSync())return false;
+    if(!InventoryNextLayoutSync()||!InventoryNextWorldCanSave())return false;
     for(const auto& entry:ledger().entries()) {
         u16 id=entry.first;
         for(unsigned depth=0;;++depth) {
@@ -65,6 +65,10 @@ bool InventoryNextIdentityCanSave() noexcept try {
     }
     return true;
 } catch (...) { Msg("! SQA3 identity save validation failed");return false; }
+u16 InventoryNextIdentityServer(u64 identity) noexcept try {
+    for(const auto& entry:ledger().entries())if(entry.second==identity)return entry.first;
+    return 0xffff;
+} catch (...) {return 0xffff;}
 void InventoryNextIdentitySave(IWriter& stream) noexcept try {
     if(!InventoryNextEnabled())return;
     // Save even an empty map: high-water survives destruction of all enrolled items.
