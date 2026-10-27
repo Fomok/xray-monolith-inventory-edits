@@ -453,7 +453,12 @@ bool InventoryNextPurchaseRequest(CTrade* trade,const xr_vector<u16>& items) noe
         InventoryNextPickupStatus("Purchase unavailable. Finish the pending transfer first.");return true;
     }
     auto seller=trade->pThis.inv_owner;auto source_object=smart_cast<CGameObject*>(seller);
-    if(!seller||!source_object||items.empty()){InventoryNextPickupStatus("Purchase source unavailable.");return true;}
+    if(!seller||!source_object||items.empty()||items.size()>512){InventoryNextPickupStatus("Purchase source or selection unavailable.");return true;}
+    auto creature=smart_cast<CEntityAlive*>(source_object);
+    if((creature&&!creature->g_Alive())||
+       (source_object->Position().distance_to(Actor()->Position())>3.0f&&!seller->NeedOsoznanieMode())) {
+        InventoryNextPickupStatus("Seller out of reach. Purchase cancelled.");return true;
+    }
     auto prepared=std::make_unique<NativePurchase>();prepared->source=source_object->ID();
     prepared->source_identity=InventoryNextIdentity(prepared->source);if(!prepared->source_identity)return true;
     auto& registry=prepared->registry;

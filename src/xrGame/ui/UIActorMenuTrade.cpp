@@ -682,10 +682,28 @@ void CUIActorMenu::OnBtnPerformTradeSell(CUIWindow* w, void* d)
 void CUIActorMenu::SqaPurchaseRefresh()
 {
     if(m_currMenuMode!=mmTrade)return;
+    xr_vector<u16> queued_sales;
+    for(u32 n=0;n<m_pTradeActorList->ItemsCount();++n) {
+        auto cell=m_pTradeActorList->GetItemIdx(n);
+        queued_sales.push_back(static_cast<PIItem>(cell->m_pData)->object().ID());
+        for(u32 child=0;child<cell->ChildsCount();++child)
+            queued_sales.push_back(static_cast<PIItem>(cell->Child(child)->m_pData)->object().ID());
+    }
     SetCurrentItem(NULL);
-    m_pTradePartnerList->ClearAll(true);
-    InitPartnerInventoryContents();
+    // InitInventoryContents clears every list. Rebuild the seller afterward,
+    // then restore still-eligible sale selections by native identity.
     InitInventoryContents(m_pTradeActorBagList);
+    InitPartnerInventoryContents();
+    for(u16 live:queued_sales) {
+        CUICellItem* selected=nullptr;
+        for(u32 n=0;n<m_pTradeActorBagList->ItemsCount()&&!selected;++n) {
+            auto cell=m_pTradeActorBagList->GetItemIdx(n);
+            if(static_cast<PIItem>(cell->m_pData)->object().ID()==live)selected=cell;
+            for(u32 child=0;child<cell->ChildsCount()&&!selected;++child)
+                if(static_cast<PIItem>(cell->Child(child)->m_pData)->object().ID()==live)selected=cell->Child(child);
+        }
+        if(selected)ToActorTrade(selected,false);
+    }
     UpdatePrices();
 }
 
