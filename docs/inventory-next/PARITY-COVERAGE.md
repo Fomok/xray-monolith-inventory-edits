@@ -41,7 +41,7 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | B05 | Box/rig live ownership and asynchronous transfer | Native box/corpse acquisition preserves source on refusal and reserves until client acknowledgment; rigs and loaded-box subtree transfer OPEN. |
 | B06 | Recursive weight incl contents | Core recursive mass and native item Weight mapping agree in6/71item fixtures and reloads; broader content/nested-world catalog OPEN. |
 | B07 | Persistent box layout/contents/bolts | Core schema4 roundtrip; game entity/bolt serialization OPEN |
-| X01 | Direct equip from container with full backpack | Physical Dev16 empty-primary take succeeds with original71records and weapon state preserved. Activation fix, explicit occupied-slot refusal and exact q8-condition reload pending; not accepted yet. |
+| X01 | Direct equip from container with full backpack | Dev17 physical empty-primary take, correct active weapon, context-menu occupied-slot refusal and exact reload pass. Occupied-slot drag input, all-slot behavior and swaps remain OPEN. |
 | X02 | Direct unequip into rig/box/stash | Dev16 physical primary-slot to native crate passes with full carried storage; exact71records, both weapon states and fresh reload preserved. Finite target capacity, rigs and loaded-container subtrees OPEN. |
 | X03 | Same-grid/cross-storage swap | Final-state multi-relocation same/cross-container swaps tested, including unequal sizes/rollback; drag route OPEN |
 | X04 | Quick store routing and feedback | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |

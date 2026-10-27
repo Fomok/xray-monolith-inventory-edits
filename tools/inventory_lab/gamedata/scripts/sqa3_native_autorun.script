@@ -240,6 +240,47 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-loaded-release",1,true) then
+        local bag_id
+        commands={"inventory_next_probe export",snapshot,function()
+            db.actor:iterate_inventory(function(_,item)
+                if item:section()=="itm_backpack" then bag_id=item:id() end
+                return false
+            end,db.actor)
+            assert(bag_id,"loaded release needs carried backpack")
+        end}
+        if args:find("-sqa3-fixture-loaded-release-reload",1,true) then
+            commands[#commands+1]=function()
+                crate_id=tonumber(args:match("%-sqa3%-release%-crate=(%d+)"))
+                assert(crate_id,"loaded release reload crate missing")
+            end
+        else
+            commands[#commands+1]=spawn_crate
+            commands[#commands+1]=open_crate
+            commands[#commands+1]=function()
+                started=started+60000
+                printf("[SQA3 AUTORUN] loaded release mouse input window: drag the loaded carried backpack into the empty crate")
+            end
+            commands[#commands+1]="screenshot sqa3_loaded_release_after_input"
+        end
+        commands[#commands+1]=function()
+            local bag=level.object_by_id(bag_id)
+            assert(bag and bag:parent() and bag:parent():id()==db.actor:id(),"loaded backpack left actor")
+            local box=level.object_by_id(crate_id)
+            assert(box and box:is_inv_box_empty(),"loaded release crate gained an item")
+            printf("[SQA3 AUTORUN] loaded release retained bag=%s empty_crate=%s",tostring(bag_id),tostring(crate_id))
+        end
+        commands[#commands+1]=function() if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end end
+        commands[#commands+1]=open_crate
+        commands[#commands+1]="screenshot sqa3_loaded_release_reopened"
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_loaded_release"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-direct-unequip",1,true) then
         local moved,retained
         local function weapons(prefix)
