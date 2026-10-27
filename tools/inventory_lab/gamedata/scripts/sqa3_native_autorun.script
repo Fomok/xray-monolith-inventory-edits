@@ -377,7 +377,7 @@ function on_game_start()
             end
             commands[#commands+1]=function()
                 level.press_action(DIK_keys.MOUSE_2);level.release_action(DIK_keys.MOUSE_2)
-                started=started+30000
+                started=started+90000
                 printf("[SQA3 AUTORUN] native context input dispatched; menu visibility and Use action still require observation")
             end
         else
