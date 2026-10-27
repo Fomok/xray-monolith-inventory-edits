@@ -348,6 +348,12 @@ function on_game_start()
             assert(refused==2,"owned full-grid retry accepted surplus")
             printf("[SQA3 AUTORUN] repeated full-grid refusal retained two exact owned sources")
         end
+        if args:find("-sqa3-fixture-owned-status-hold",1,true) then
+            commands[#commands+1]=function()
+                started=started+30000
+                printf("[SQA3 AUTORUN] bounded refusal status inspection window")
+            end
+        end
         commands[#commands+1]="screenshot sqa3_owned_"..kind
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
