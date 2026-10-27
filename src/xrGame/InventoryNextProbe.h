@@ -13,3 +13,4 @@ bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated) noexcept;
 bool InventoryNextNativeDrop(u16 live,int x,int y) noexcept;
 bool InventoryNextNativeDragBegin(u16 live) noexcept;
 bool InventoryNextNativeDragCurrent(u16 live) noexcept;
+bool InventoryNextNativeRotate(u16 live) noexcept;

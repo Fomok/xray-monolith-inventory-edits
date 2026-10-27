@@ -442,6 +442,21 @@ bool CUIActorMenu::OnMouseAction(float x, float y, EUIMessages mouse_action)
 bool CUIActorMenu::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 {
 	InfoCurItem(NULL);
+    if(InventoryNextEnabled() && is_binded(kWPN_RELOAD,dik)) {
+        if(keyboard_action!=WINDOW_KEY_PRESSED)return true;
+        auto selected=CurrentItem();
+        if(CUIDragDropListEx::m_drag_item) {
+            if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Finish dragging, then rotate the selected item.");
+            return true;
+        }
+        if(selected && selected->OwnerList()==m_pInventoryBagList && selected->m_pData) {
+            auto item=static_cast<PIItem>(selected->m_pData);
+            const bool rotated=InventoryNextNativeRotate(item->object().ID());
+            if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText(rotated?"":"Cannot rotate here.");
+            m_sqaRefresh=true;
+        }
+        return true;
+    }
 	if (is_binded(kDROP, dik))
 	{
 		if (WINDOW_KEY_PRESSED == keyboard_action && CurrentIItem() && !CurrentIItem()->IsQuestItem()

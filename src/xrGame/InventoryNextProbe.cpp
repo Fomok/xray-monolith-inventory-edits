@@ -126,3 +126,13 @@ bool InventoryNextNativeDragCurrent(u16 live) noexcept try {
     if(!valid){Msg("! SQA3 native drag rejected: stale_drag; inventory refreshed");native_drag().cancel();}
     return valid;
 } catch (...) {return false;}
+bool InventoryNextNativeRotate(u16 live) noexcept try {
+    if(!InventoryNextEnabled()||!InventoryNextLayoutSync())return false;
+    const auto id=InventoryNextIdentity(live);const auto& model=layout().model();
+    const auto found=model.nodes().find(id);
+    if(found==model.nodes().end()||found->second.location!=inventory_next::Location::Grid)return false;
+    auto position=found->second.position;position.rotated=!position.rotated;
+    const auto result=layout().move({id,1,position,model.revision(),model.session()});
+    Msg("* SQA3 native rotate id=%llu result=%s",id,result.ok?"accepted":result.error.c_str());
+    return result.ok;
+} catch (...) {return false;}

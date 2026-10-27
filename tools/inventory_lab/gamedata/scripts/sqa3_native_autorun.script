@@ -186,6 +186,13 @@ function on_game_start()
         commands[#commands+1]=consume_native
         commands[#commands+1]=check_consumed
     end
+    if args:find("-sqa3-fixture-rotate",1,true) then
+        commands[#commands+1]=unequip_fixture
+        commands[#commands+1]=args:find("-sqa3-fixture-rotate-edge",1,true) and "inventory_next_move 103 7 6 1" or "inventory_next_move 103 5 6 0"
+        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]=function() printf("[SQA3 AUTORUN] select the bag pistol, then press the reload binding to rotate") end
+    end
     if args:find("-sqa3-fixture-hold",1,true) then
         commands[#commands+1]=function()
             started=started+60000;changing=args:find("-sqa3-fixture-changing",1,true)~=nil
@@ -207,6 +214,8 @@ function on_game_start()
     local save=args:find("-sqa3-fixture-reload",1,true) and "sqa3_replacement_reload" or "sqa3_replacement"
     if args:find("-sqa3-fixture-corpse",1,true) then save="sqa3_corpse" end
     if args:find("-sqa3-fixture-consume",1,true) then save="sqa3_consumed" end
+    if args:find("-sqa3-fixture-rotate",1,true) then save="sqa3_rotation" end
+    if args:find("-sqa3-fixture-rotate-edge",1,true) then save="sqa3_rotation_edge" end
     commands[#commands+1]="save "..save
     commands[#commands+1]=toggle_inventory
     commands[#commands+1]=function() assert(not ActorMenu.get_actor_menu():IsShown(),"inventory key did not close") end

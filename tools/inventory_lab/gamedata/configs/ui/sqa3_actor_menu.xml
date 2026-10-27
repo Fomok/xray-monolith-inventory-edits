@@ -95,6 +95,9 @@
     <auto_static x="35" y="181" width="270" height="18">
       <text font="letterica16" align="l" r="150" g="150" b="150">Right-click an item for its actions.</text>
     </auto_static>
+    <auto_static x="35" y="208" width="300" height="18">
+      <text font="letterica16" align="l" r="150" g="150" b="150">Select, then press your reload key to rotate.</text>
+    </auto_static>
     <auto_static x="702" y="94" width="285" height="18">
       <text font="letterica18" align="l" r="190" g="190" b="190">CARRIED ITEMS</text>
     </auto_static>
