@@ -240,6 +240,32 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-purchase-refusal-mouse",1,true) then
+        local actor_money,seller_money
+        local sources={}
+        commands={"inventory_next_probe export",snapshot,function()
+            npc_id=tonumber(args:match("%-sqa3%-purchase%-seller=(%d+)"))
+            local npc=npc_id and level.object_by_id(npc_id);assert(npc and npc:alive(),"refusal seller missing")
+            npc:movement_enabled(false);local pos=db.actor:position();pos.x=pos.x+1.2;npc:set_npc_position(pos)
+            local ids=args:match("%-sqa3%-purchase%-sources=([%d,]+)");assert(ids,"refusal sources missing")
+            for value in ids:gmatch("%d+") do sources[#sources+1]=tonumber(value) end
+            assert(#sources==2,"refusal needs two exact sources")
+            actor_money=db.actor:money();seller_money=npc:money()
+        end,open_trade,function()
+            started=started+60000
+            printf("[SQA3 AUTORUN] purchase refusal mouse input window seller=%s actor_money=%s seller_money=%s",tostring(npc_id),tostring(actor_money),tostring(seller_money))
+        end,function()
+            local npc=level.object_by_id(npc_id);assert(npc and db.actor:money()==actor_money and npc:money()==seller_money,"refused mouse purchase changed money")
+            for _,id in ipairs(sources) do
+                local item=level.object_by_id(id);assert(item and item:parent() and item:parent():id()==npc_id,"refused mouse purchase moved source")
+                assert(item:section()=="bandage" and item:condition()==1 and math.abs(item:weight()*1000-38)<0.01,"refused source state changed")
+                printf("[SQA3 AUTORUN] purchase refusal mouse retained live=%s seller=%s",tostring(id),tostring(npc_id))
+            end
+            printf("[SQA3 AUTORUN] purchase refusal mouse verified actor_money=%s seller_money=%s",tostring(actor_money),tostring(seller_money))
+        end,"screenshot sqa3_purchase_refusal_mouse",function() ActorMenu.get_actor_menu():HideDialog() end,snapshot,"inventory_next_probe export","save sqa3_purchase_refusal_mouse","quit"}
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-purchase-mouse",1,true) then
         local source_id,actor_money,seller_money
         commands={"inventory_next_probe export",snapshot}
