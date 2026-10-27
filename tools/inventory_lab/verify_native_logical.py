@@ -12,11 +12,14 @@ def main():
     ap.add_argument("export", type=Path)
     ap.add_argument("--phase", choices=["unequipped", "equipped", "carried"], required=True)
     ap.add_argument("--previous", type=Path)
+    ap.add_argument("--exact-reload", action="store_true", help="Require every exported item field to match the previous process")
     ap.add_argument("--med-position", nargs=2, type=int, default=[1, 1])
     ap.add_argument("--bandage-position", nargs=2, type=int, default=[2, 0])
     ap.add_argument("--minimum-drags", type=int, default=0)
     ap.add_argument("--output", type=Path, required=True)
     a = ap.parse_args()
+    if a.exact_reload and not a.previous:
+        ap.error("--exact-reload requires --previous")
     report = verify(a.log, a.export, True, logical_ownership=True)
     items, digest = read(a.export)
     assert set(items) == set(range(100, 106)), "lost or unexpected native identity"
@@ -46,6 +49,9 @@ def main():
             if identity != 105:
                 assert item["parent"] == previous[identity]["parent"], "reload reassigned contents"
         report["previous_sha256"] = old_digest
+        if a.exact_reload:
+            assert items == previous, "item state or placement changed across fresh-process reload"
+            report["exact_item_reload"] = True
     report.update(phase=a.phase, items=items, export_sha256=digest, accepted_native_drags=accepted_drags,
                   limits="Native carried backpack ownership and protected drop only. World subtree transfer, strict pickup admission, rig gates and full parity remain unverified.")
     a.output.write_text(json.dumps(report, indent=2)+"\n")

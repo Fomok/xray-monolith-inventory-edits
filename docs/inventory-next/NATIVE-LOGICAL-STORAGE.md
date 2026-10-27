@@ -85,7 +85,7 @@ tests a scripted drop refusal before saving `sqa3_logical_unequipped`.
 `-sqa3-fixture-logical-reload` loads that save and re-equips it; optional
 `-sqa3-fixture-hold` provides a bounded physical drag window. The verifier checks
 all six actual item identities, native mass/condition, medkit parent/placement,
-pocket assignment, native equipment and the refused drop. Runtime pending.
+pocket assignment, native equipment and the refused drop. Corrected native runtime acceptance is recorded below.
 
 91 debug/release core checks and both independent restart checks now pass. The
 additional test verifies presentation coordinates round-trip to the correct
@@ -107,5 +107,13 @@ before prepare and dispatch; this core extension is not native admission wiring.
 93 debug/release checks and both independent restart checks pass in
 `native-physical-owner-build`, including physical actor acknowledgment, refused
 nested release, foreign-owner rejection and intermediate-ancestor disappearance.
-The native storage UI build remains pinned to49e973de and its91-check source;
-this subsequent coordinator extension is not part of that binary.
+The corrected native storage binary is pinned to1a6d98fb and includes this coordinator extension. Native admission producers remain unwired.
+
+
+## Corrected native acceptance, 27 October 2026
+
+CI40468423845 built1a6d98fb successfully. The earlier49e973de runtime failed at shutdown because a loaded-bag guard intercepted internal server teardown. The correction guards ordinary network release events while allowing internal rejection/destruction.
+
+Five bounded native processes passed: unequip, fresh re-equip, three physical bag/pocket drags, two further medkit pocket/backpack drags, then an input-free fresh restart. All retained six real objects and2458g. Final pack105 is carried in pockets0,0; medkit102 remains inside105 at2,2. Exact item records survive reload, including native IDs, condition, mass, placement and equipment; whole-export hashes differ because of model metadata. Each fixture verifies loaded-drop refusal and clean quit. The verifier now supports --exact-reload with --previous to enforce that stronger restart assertion.
+
+Corrected Dev11 overlayb5e06c83 uses the existing FieldKit atlas, with separately labelled pockets/backpack/recovery. Its twelve installed payloads and original test save were hash checked. Evidence: ci-40468423845 under the dated preview directory; stage1, carried and carried-reload logs/exports/verifications plus screenshots and final-installed-save-audit.json. No game remains running. This is carried storage acceptance only; strict acquisition admission, loaded world-bag transfers, rigs and full compatibility remain open.
