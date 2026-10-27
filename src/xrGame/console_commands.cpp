@@ -1853,6 +1853,17 @@ public:
     }
 };
 
+class CCC_InventoryNextPurchase : public IConsole_Command {
+public:
+    CCC_InventoryNextPurchase(LPCSTR name):IConsole_Command(name){}
+    void Execute(LPCSTR args) override {
+        std::istringstream input(args);unsigned source,value;xr_vector<u16> items;
+        if(!(input>>source)||source>=0xffff)return;
+        while(input>>value){if(value>=0xffff||items.size()>=512)return;items.push_back(static_cast<u16>(value));}
+        if(!input.eof()||items.empty())return;
+        InventoryNextPurchaseProbe(static_cast<u16>(source),items);
+    }
+};
 class CCC_InventoryNextStore : public IConsole_Command {
 public:
     CCC_InventoryNextStore(LPCSTR name):IConsole_Command(name){}
@@ -2767,6 +2778,7 @@ void CCC_RegisterCommands()
 		CMD1(CCC_InventoryNextProbe, "inventory_next_probe");
         CMD1(CCC_InventoryNextMove, "inventory_next_move");
         CMD1(CCC_InventoryNextStore, "inventory_next_store");
+        CMD1(CCC_InventoryNextPurchase, "inventory_next_purchase");
     }
 
 	// Physics

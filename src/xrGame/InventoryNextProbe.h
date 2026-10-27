@@ -40,3 +40,4 @@ bool InventoryNextPurchaseRequest(CTrade* trade,const xr_vector<u16>& items) noe
 bool InventoryNextPurchaseValidate(u16 source,u16 owner,u64 token,xr_vector<u16>& items) noexcept;
 bool InventoryNextPurchaseFinish(bool accepted) noexcept;
 void InventoryNextPurchaseClientReady() noexcept;
+void InventoryNextPurchaseProbe(u16 source,const xr_vector<u16>& items) noexcept;

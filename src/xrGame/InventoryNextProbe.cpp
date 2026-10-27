@@ -407,6 +407,12 @@ bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept try
 bool InventoryNextStrictTradePickup() noexcept {
     return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-strict-trade-pickup")!=nullptr;
 }
+void InventoryNextPurchaseProbe(u16 source,const xr_vector<u16>& items) noexcept try {
+    if(!InventoryNextStrictTradePickup()||!strstr(Core.Params,"-sqa3-fixture"))return;
+    auto seller=smart_cast<CInventoryOwner*>(Level().Objects.net_Find(source));
+    if(!seller||!seller->GetTrade()){Msg("! SQA3 purchase fixture source missing");return;}
+    InventoryNextPurchaseRequest(seller->GetTrade(),items);
+} catch (...) {Msg("! SQA3 purchase fixture failed");}
 namespace {
 CInventoryOwner* purchase_seller(u16 source) {
     return smart_cast<CInventoryOwner*>(Level().Objects.net_Find(source));
