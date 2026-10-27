@@ -222,6 +222,21 @@ function on_game_start()
         end
         commands[#commands+1]=function() changing=false;printf("[SQA3 AUTORUN] condition update ticks=%s",tostring(condition_tick)) end
     end
+    if args:find("-sqa3-fixture-bound-rotate",1,true) then
+        commands[#commands+1]=function()
+            -- The computer-use test positions the real cursor over the observed pistol.
+            -- Route selection and the configured key through normal engine input;
+            -- this is not evidence that OS-level keyboard injection succeeded.
+            level.press_action(DIK_keys.MOUSE_1);level.release_action(DIK_keys.MOUSE_1)
+            printf("[SQA3 AUTORUN] native mouse selection at current cursor")
+        end
+        commands[#commands+1]=function()
+            local key=bind_to_dik(key_bindings.kWPN_RELOAD,-1)
+            assert(key and key>0,"reload key missing")
+            level.press_action(key);level.release_action(key)
+            printf("[SQA3 AUTORUN] native reload binding dispatched key=%s",tostring(key))
+        end
+    end
     if args:find("-sqa3-fixture-use",1,true) then commands[#commands+1]=check_consumed end
     if args:find("-sqa3-fixture-filter",1,true) then
         commands[#commands+1]=filter_consumables
