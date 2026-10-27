@@ -14,7 +14,7 @@ ap.add_argument("--baseline", type=Path, required=True)
 ap.add_argument("--previous", type=Path)
 ap.add_argument("--output", type=Path, required=True)
 a = ap.parse_args()
-report = verify(a.log, a.export, True, logical_ownership=True)
+report = verify(a.log, a.export, logical_ownership=True)
 items, _ = read(a.export)
 baseline, _ = read(a.baseline)
 assert len(items) == 71 and len(baseline) == 72

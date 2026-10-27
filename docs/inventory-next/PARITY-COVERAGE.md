@@ -5,7 +5,7 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment:104 core checks per debug/release build and independent reload. Native Dev15 a6036dbe/CI40488824434 plus overlayde40090d passes finite carried storage, ground/container/corpse admission, physical transfers, nested bread context use, whole-basket purchases, physical Buy/refusal and exact item/money save-reload checks. All are bounded slices; no row is certified complete across every accepted scenario. Current evidence and limitations are in NATIVE-LOGICAL-STORAGE.md. Earlier appendices below are dated history, not the current status.
+Current increment:106 core checks per debug/release build and independent reload. Native Dev15 a6036dbe/CI40488824434 plus overlayde40090d passes finite carried storage, ground/container/corpse admission, physical transfers, nested bread context use, whole-basket purchases, physical Buy/refusal and exact item/money save-reload checks. All are bounded slices; no row is certified complete across every accepted scenario. Current evidence and limitations are in NATIVE-LOGICAL-STORAGE.md. Earlier appendices below are dated history, not the current status.
 
 Non-negotiable presentation requirement: one replacement inventory through the normal inventory key and normal loot/container paths; preserve useful native controls and semantics; **no3D player-model panel**. Diagnostic windows are not acceptance. Vanilla ui_inventory.script intercepts the normal entry; the scoped enable_feature guard retires this old Lua presentation only in SQA3 development mode.
 
@@ -41,8 +41,8 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | B05 | Box/rig live ownership and asynchronous transfer | Native box/corpse acquisition preserves source on refusal and reserves until client acknowledgment; rigs and loaded-box subtree transfer OPEN. |
 | B06 | Recursive weight incl contents | Core recursive mass and native item Weight mapping agree in6/71item fixtures and reloads; broader content/nested-world catalog OPEN. |
 | B07 | Persistent box layout/contents/bolts | Core schema4 roundtrip; game entity/bolt serialization OPEN |
-| X01 | Direct equip from container with full backpack | Core world/container-to-equipment direct route bypasses full grid; native event route OPEN |
-| X02 | Direct unequip into rig/box/stash | Core Move unequips into validated destination grid; native event route OPEN |
+| X01 | Direct equip from container with full backpack | Physical Dev16 empty-primary take succeeds with original71records and weapon state preserved. Activation fix, explicit occupied-slot refusal and exact q8-condition reload pending; not accepted yet. |
+| X02 | Direct unequip into rig/box/stash | Dev16 physical primary-slot to native crate passes with full carried storage; exact71records, both weapon states and fresh reload preserved. Finite target capacity, rigs and loaded-container subtrees OPEN. |
 | X03 | Same-grid/cross-storage swap | Final-state multi-relocation same/cross-container swaps tested, including unequal sizes/rollback; drag route OPEN |
 | X04 | Quick store routing and feedback | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | X05 | Quick open, context actions, keyboard controls | Nested carried bread right-click/Eat and exact removal/reload pass. Quick-open and broad keyboard/custom-action parity OPEN. |
