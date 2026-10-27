@@ -51,6 +51,17 @@ local function check_equipment()
     assert(weapon and weapon:section()=="wpn_pm","native pistol slot mismatch")
     printf("[SQA3 AUTORUN] equipment slot2 verified live=%s",tostring(weapon:id()))
 end
+local function filter_consumables()
+    level.press_action(DIK_keys.DIK_7);level.release_action(DIK_keys.DIK_7)
+    local button=ActorMenu.get_actor_menu():FindChild("button_sort_tab_7")
+    assert(button and not button:IsEnabled(),"consumables filter did not activate")
+    printf("[SQA3 AUTORUN] consumables filter active; PDA remains model-occupied at4,3")
+end
+local function filter_all()
+    level.press_action(DIK_keys.DIK_1);level.release_action(DIK_keys.DIK_1)
+    local button=ActorMenu.get_actor_menu():FindChild("button_sort_tab_1")
+    assert(button and not button:IsEnabled(),"all-items filter did not restore")
+end
 local function snapshot()
     local count, grams = 0, 0
     db.actor:iterate_inventory(function(_, item)
@@ -109,6 +120,13 @@ function on_game_start()
         commands[#commands+1]="inventory_next_probe export"
     end
     if args:find("-sqa3-fixture-hold",1,true) then commands[#commands+1]=function() started=started+60000;printf("[SQA3 AUTORUN] holding view for bounded input test") end end
+    if args:find("-sqa3-fixture-filter",1,true) then
+        commands[#commands+1]=filter_consumables
+        commands[#commands+1]="screenshot sqa3_filtered"
+        commands[#commands+1]="inventory_next_move 101 4 3 0" -- hidden PDA still reserves these cells
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]=filter_all
+    end
     commands[#commands+1]="screenshot sqa3_native"
     commands[#commands+1]=snapshot
     local save=args:find("-sqa3-fixture-reload",1,true) and "sqa3_replacement_reload" or "sqa3_replacement"

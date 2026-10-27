@@ -44,45 +44,45 @@
     <auto_static x="469" y="326" width="82" height="82" stretch="1">
       <texture>sqa_fk_window</texture>
     </auto_static>
-    <auto_text x="448" y="0" width="130" height="22">
+    <auto_static x="448" y="0" width="130" height="22">
       <text font="letterica18" align="c">SQUARED AWAY</text>
-    </auto_text>
-    <auto_text x="345" y="398.0" width="108" height="14">
+    </auto_static>
+    <auto_static x="345" y="398.0" width="108" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Knife</text>
-    </auto_text>
-    <auto_text x="359" y="292.0" width="82" height="14">
+    </auto_static>
+    <auto_static x="359" y="292.0" width="82" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Sidearm</text>
-    </auto_text>
-    <auto_text x="581" y="292.0" width="82" height="14">
+    </auto_static>
+    <auto_static x="581" y="292.0" width="82" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Primary</text>
-    </auto_text>
-    <auto_text x="354" y="350.0" width="41" height="14">
+    </auto_static>
+    <auto_static x="354" y="350.0" width="41" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Grenade</text>
-    </auto_text>
-    <auto_text x="359" y="41.0" width="82" height="14">
+    </auto_static>
+    <auto_static x="359" y="41.0" width="82" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Binoculars</text>
-    </auto_text>
-    <auto_text x="404" y="350.0" width="41" height="14">
+    </auto_static>
+    <auto_static x="404" y="350.0" width="41" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Bolt</text>
-    </auto_text>
-    <auto_text x="469" y="266.0" width="82" height="14">
+    </auto_static>
+    <auto_static x="469" y="266.0" width="82" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Outfit</text>
-    </auto_text>
-    <auto_text x="586" y="344.0" width="72" height="14">
+    </auto_static>
+    <auto_static x="586" y="344.0" width="72" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">PDA</text>
-    </auto_text>
-    <auto_text x="586" y="398.0" width="72" height="14">
+    </auto_static>
+    <auto_static x="586" y="398.0" width="72" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Detector</text>
-    </auto_text>
-    <auto_text x="581" y="41.0" width="82" height="14">
+    </auto_static>
+    <auto_static x="581" y="41.0" width="82" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Torch</text>
-    </auto_text>
-    <auto_text x="469" y="91.0" width="82" height="14">
+    </auto_static>
+    <auto_static x="469" y="91.0" width="82" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Helmet</text>
-    </auto_text>
-    <auto_text x="469" y="394.0" width="82" height="14">
+    </auto_static>
+    <auto_static x="469" y="394.0" width="82" height="14">
       <text font="letterica16" align="c" r="120" g="130" b="120">Backpack</text>
-    </auto_text>
+    </auto_static>
   </main>
   <left_background x="0" y="0" width="341" height="768" stretch="1">
     <texture a="0">ui_inGame2_left_side</texture>

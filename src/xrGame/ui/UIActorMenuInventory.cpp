@@ -521,7 +521,15 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 
 void CUIActorMenu::FilterActorBagList(int mode)
 {
+	if (InventoryNextEnabled()) InventoryNextLayoutSync();
 	m_pInventoryBagList->ClearAll(true);
+	auto placeFilteredItem = [this](CUICellItem* cell, PIItem item) {
+		int x=0,y=0;bool rotated=false;
+		if (InventoryNextEnabled() && InventoryNextNativePosition(item->object().ID(),x,y,rotated)) {
+			cell->SetSqaRotation(rotated);
+			m_pInventoryBagList->SetItem(cell,Ivector2().set(x,y));
+		} else m_pInventoryBagList->SetItem(cell);
+	};
 
 	CUIDragDropListEx* templist = NULL;
 
@@ -543,7 +551,7 @@ void CUIActorMenu::FilterActorBagList(int mode)
 		if (0 == xr_strcmp(m_sort_kinds[mode], "s_all"))
 		{
 			CUICellItem* itm = create_cell_item(iitm);
-			m_pInventoryBagList->SetItem(itm);
+			placeFilteredItem(itm,iitm);
 			if (m_currMenuMode == mmTrade && m_pPartnerInvOwner)
 				ColorizeItem(itm, !CanMoveToPartner(iitm));
 		}
@@ -557,7 +565,7 @@ void CUIActorMenu::FilterActorBagList(int mode)
 				if (iitm->m_kind != NULL && iitm->m_kind.equal(kind))
 				{
 					CUICellItem* itm = create_cell_item(iitm);
-					m_pInventoryBagList->SetItem(itm);
+					placeFilteredItem(itm,iitm);
 					if (m_currMenuMode == mmTrade && m_pPartnerInvOwner)
 						ColorizeItem(itm, !CanMoveToPartner(iitm));
 				}
@@ -723,6 +731,8 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 		VERIFY(result);
 
 		CUICellItem* i = old_owner->RemoveItem(itm, (old_owner == new_owner));
+		// Equipment lists own their orientation; discard the bag-only rotation.
+		if (InventoryNextEnabled()) i->SetSqaRotation(false);
 
 		while (i->ChildsCount())
 		{
@@ -955,6 +965,7 @@ bool CUIActorMenu::ToBelt(CUICellItem* itm, bool b_use_cursor_pos)
 		bool result = (!b_own_item) || m_pActorInvOwner->inventory().Belt(iitem);
 		VERIFY(result);
 		CUICellItem* i = old_owner->RemoveItem(itm, (old_owner == new_owner));
+		if (InventoryNextEnabled()) i->SetSqaRotation(false);
 
 		if (b_use_cursor_pos)
 			new_owner->SetItem(i, old_owner->GetDragItemPosition());
