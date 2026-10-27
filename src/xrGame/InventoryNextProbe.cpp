@@ -374,6 +374,9 @@ void InventoryNextPickupStatus(const char* text) noexcept try {
 } catch (...) {Msg("! SQA3 acquisition status refresh failed");}
 bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept try {
     if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||source==0xffff)return false;
-    NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_ACQUIRE,owner);packet.w_u16(source);packet.w_u16(live);CGameObject::u_EventSend(packet);
+    const auto source_identity=InventoryNextIdentity(source),item_identity=InventoryNextIdentity(live);
+    if(!source_identity||!item_identity){InventoryNextPickupStatus("Item unavailable. Transfer cancelled.");return true;}
+    NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_ACQUIRE,owner);
+    packet.w_u16(source);packet.w_u16(live);packet.w_u64(source_identity);packet.w_u64(item_identity);CGameObject::u_EventSend(packet);
     InventoryNextPickupStatus("Checking storage...");return true;
 } catch (...) {InventoryNextPickupStatus("Transfer unavailable. Item stayed at source.");return true;}
