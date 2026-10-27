@@ -362,6 +362,7 @@ function on_game_start()
         local ground=args:find("-sqa3-cycle-ground",1,true)~=nil
         local corpse=args:find("-sqa3-cycle-corpse",1,true)~=nil
         local destroy_attempt=args:find("-sqa3-cycle-destroy-attempt",1,true)~=nil
+        local resume_offline=args:find("-sqa3-cycle-resume-offline",1,true)~=nil
         assert(not(ground and corpse),"conflicting cycle custodians")
         local box,members
         local label=corpse and "corpse" or (ground and "ground" or "crate")
@@ -382,7 +383,8 @@ function on_game_start()
             box=alife():object(original);assert(box and box:section_name()==(corpse and "sim_default_stalker_1" or (ground and "sqa3_ground_backpack" or "inventory_box")),"wrong cycle custodian")
             members={}
             alife():iterate_objects(function(obj) if obj.parent_id==box.id then members[obj.id]=obj end return false end)
-            inspect("initial",true)
+            inspect("initial",not resume_offline)
+            if resume_offline then printf("[SQA3 AUTORUN] fresh process resumed offline custody live=%s",tostring(box.id)) end
             ActorMenu.get_actor_menu():HideDialog()
             alife():set_switch_online(box.id,false);alife():set_switch_offline(box.id,true)
             started=started+10000

@@ -16,6 +16,7 @@ def main():
     ap.add_argument('--ground', action='store_true')
     ap.add_argument('--corpse', action='store_true')
     ap.add_argument('--destroy-retained', action='store_true')
+    ap.add_argument('--resume-offline', action='store_true')
     a = ap.parse_args()
     log = a.stem.with_suffix('.log').read_text(errors='replace')
     report = verify(a.stem.with_suffix('.log'), a.stem.with_suffix('.inv'), logical_ownership=True)
@@ -36,7 +37,7 @@ def main():
         custodians = re.findall(rf'cycle custodian phase={phase} before=(\d+) live=(\d+) online=(true|false) level=(\w+)', log)
         assert len(custodians) == 1
         _, owner, online, _ = custodians[0]
-        expected_online = 'false' if phase == 'offline' else 'true'
+        expected_online = 'false' if phase == 'offline' or (a.resume_offline and phase == 'initial') else 'true'
         assert online == expected_online
         assert all(row[1] == int(owner) and row[3] == expected_online and row[2] == initial[old][2] for old, row in rows.items())
     drift = {}
@@ -70,6 +71,11 @@ def main():
     assert len(re.findall(r'cycle returned before=', log)) == 3
     if a.ground:
         assert 'empty ground proxy cleanup live=' in log
+    if a.resume_offline:
+        assert len(re.findall(r'fresh process resumed offline custody live=\d+', log)) == 1
+        report['fresh_process_offline_save_resumed'] = True
+    run = json.loads(a.stem.with_name(a.stem.name+'-run.json').read_text(encoding='utf-8-sig'))
+    assert run['exit_code'] == 0 and not run['timed_out']
     report.update(real_offline_online_cycle=True, area_transition_tested=False,
                   persistent_item_state_preserved=True, transient_ruck_slot_resets=drift,
                   world_sha256=digest, limits='Real ALife offline/online lifetime cycle and retrieval; not area travel. Physical UI observed separately.')
