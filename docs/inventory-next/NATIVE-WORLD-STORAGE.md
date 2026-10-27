@@ -5,14 +5,19 @@
 Dev19 verifies complete nested actor/crate transfer in both directions, physical
 Take All, full-pocket refusal and exact reloads. Dev20 adds verified rollback
 after an actual partial native move, in both directions, with exact reloads.
-Dev21 is installed only in the isolated lab.121 core checks pass.
+Dev23 is installed only in the isolated lab.121 unchanged core checks pass.
 
 Ground engine033e851c built successfully in CI40520705952. Twelve native runs
 verify physical loaded drop/retrieval, full-pocket refusal, provisioning timeout,
 partial-transfer rollback in both directions, and exact fresh reloads of each.
 See [Dev21 ground acceptance](GROUND-BAG-ACCEPTANCE.md) for identities, hashes,
 processes and limits. Vanilla Create stash, loaded corpse custody and broad
-world lifecycle remain unfinished. The sections below preserve earlier evidence.
+world lifecycle remain unfinished. Dev22 real offline/online ground and crate
+cycles passed. Dev23 initialized-world ground travel, retrieval and reload passed,
+as did pending-transfer travel refusal. Actual crate travel stopped on a Paused
+screen and remains unverified. See [lifecycle evidence](WORLD-LIFECYCLE.md).
+The opt-in [corpse candidate](CORPSE-STORAGE.md) is building, not runtime accepted.
+The sections below preserve earlier evidence.
 
 ## Historical foundation checkpoint
 

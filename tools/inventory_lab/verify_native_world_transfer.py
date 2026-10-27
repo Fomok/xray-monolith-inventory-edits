@@ -44,6 +44,8 @@ def main():
     ap.add_argument("--phase", choices=["prepared", "release", "return", "nofit", "rollback-release", "rollback-return", "timeout"], required=True)
     ap.add_argument("--ground", action="store_true", help="Verify dedicated ground-proxy lifecycle as well as contents")
     ap.add_argument("--travel-blocked", action="store_true", help="Require a real pending-transfer level-change refusal")
+    ap.add_argument("--corpse", action="store_true")
+    ap.add_argument("--destroy-retained", action="store_true")
     ap.add_argument("--previous", type=Path)
     ap.add_argument("--output", type=Path, required=True)
     a = ap.parse_args()
@@ -87,6 +89,20 @@ def main():
         result = re.search(r"world transfer phase=(release|return|nofit|rollback-release|rollback-return|timeout) crate=(\d+) actor=(\d+) members=3", log)
         assert result and result[1] == a.phase
         crate, actor_live = int(result[2]), int(result[3])
+        if a.corpse:
+            assert not a.ground
+            counts = re.findall(rf'corpse custodian live={crate} dead=true native_items=(\d+)', log)
+            assert counts == ['0' if a.phase in ('return', 'rollback-release') else '3']
+            assert f'Game sqa3_corpse_{a.phase.replace("-", "_")}.scop is successfully saved' in log
+            report['native_corpse_custody'] = True
+        if a.destroy_retained:
+            assert a.phase == 'release' and not a.previous
+            assert f'requesting real loaded-custodian destruction live={crate}' in log
+            assert f'SQA3 retained stored inventory during destroy event live={crate}' in log
+            attempted = re.findall(r'requesting real loaded-member destruction live=(\d+)', log)
+            assert len(attempted) == len(set(attempted)) == 3
+            assert all(f'SQA3 retained stored inventory during destroy event live={live}' in log for live in attempted)
+            report['online_cleanup_retained_loaded_custodian'] = True
         rows = re.findall(r"world member live=(\d+) owner=(\d+) section=(\S+) grams=(\S+) condition=(\S+)", log)
         assert len(rows) == 3 and len({row[0] for row in rows}) == 3
         observed = {live: (section, math.floor(float(grams)+0.5), math.floor(float(condition)*10000+0.5))
@@ -151,6 +167,10 @@ def main():
             report["ground_proxy_lifecycle_observed"] = True
     report.update(world_sha256=world_hash, world_persistence_observed=a.world is not None, phase=a.phase,
                   limits=("Bounded native ground-proxy lifecycle; vanilla Create stash, corpse custody and broad travel remain unverified." if a.ground else "Bounded nested actor/crate transfer and persistence. Physical UI requires separate inspection; ground custody and broader gameplay remain unverified."))
+    if a.corpse:
+        report['limits'] = 'Opt-in loaded corpse custody and recorded cleanup checks only; no vanilla stash or complete corpse lifecycle claim.'
+        run = json.loads(a.log.with_name(a.log.stem+'-run.json').read_text(encoding='utf-8-sig'))
+        assert run['exit_code'] == 0 and not run['timed_out']
     a.output.write_text(json.dumps(report, indent=2)+"\n")
     print(json.dumps(report))
 

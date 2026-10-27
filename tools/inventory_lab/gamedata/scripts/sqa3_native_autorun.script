@@ -360,8 +360,11 @@ function on_game_start()
     if args:find("-sqa3-fixture-world-cycle",1,true) then
         local original=tonumber(args:match("%-sqa3%-cycle%-crate=(%d+)"))
         local ground=args:find("-sqa3-cycle-ground",1,true)~=nil
+        local corpse=args:find("-sqa3-cycle-corpse",1,true)~=nil
+        local destroy_attempt=args:find("-sqa3-cycle-destroy-attempt",1,true)~=nil
+        assert(not(ground and corpse),"conflicting cycle custodians")
         local box,members
-        local label=ground and "ground" or "crate"
+        local label=corpse and "corpse" or (ground and "ground" or "crate")
         local function inspect(phase,online)
             assert(box and box.online==online,"custodian online state mismatch")
             assert((level.object_by_id(box.id)~=nil)==online,"custodian client lifetime mismatch")
@@ -376,21 +379,36 @@ function on_game_start()
             printf("[SQA3 AUTORUN] cycle custodian phase=%s before=%s live=%s online=%s level=%s",phase,tostring(original),tostring(box.id),tostring(box.online),level.name())
         end
         commands={"inventory_next_probe export",snapshot,function()
-            box=alife():object(original);assert(box and box:section_name()==(ground and "sqa3_ground_backpack" or "inventory_box"),"wrong cycle custodian")
+            box=alife():object(original);assert(box and box:section_name()==(corpse and "sim_default_stalker_1" or (ground and "sqa3_ground_backpack" or "inventory_box")),"wrong cycle custodian")
             members={}
             alife():iterate_objects(function(obj) if obj.parent_id==box.id then members[obj.id]=obj end return false end)
             inspect("initial",true)
             ActorMenu.get_actor_menu():HideDialog()
             alife():set_switch_online(box.id,false);alife():set_switch_offline(box.id,true)
             started=started+10000
-        end,function() inspect("offline",false) end,
+        end,function()
+            inspect("offline",false)
+            if destroy_attempt then
+                printf("[SQA3 AUTORUN] requesting real offline-custodian destruction live=%s",tostring(box.id))
+                alife_release(box)
+                assert(alife():object(box.id),"offline custodian was destroyed")
+                for _,obj in pairs(members) do
+                    local id=obj.id
+                    printf("[SQA3 AUTORUN] requesting real offline-member destruction live=%s",tostring(id))
+                    alife_release(obj)
+                    local retained=alife():object(id)
+                    assert(retained and retained.parent_id==box.id,"offline member destroyed")
+                end
+            end
+        end,
         "inventory_next_probe export","save sqa3_cycle_"..label.."_offline",
         function()
             alife():set_switch_online(box.id,true);alife():set_switch_offline(box.id,false)
             started=started+10000
         end,function()
             inspect("online",true);alife():set_switch_offline(box.id,true)
-            crate_id=box.id;open_crate()
+            crate_id=box.id
+            if corpse then npc_id=box.id;open_corpse() else open_crate() end
         end,function()
             started=started+60000
             printf("[SQA3 AUTORUN] cycle physical retrieval window custodian=%s",tostring(box.id))
@@ -400,6 +418,10 @@ function on_game_start()
                 printf("[SQA3 AUTORUN] cycle returned before=%s live=%s section=%s",tostring(old),tostring(obj.id),obj:section_name())
             end
             if ground then assert(not alife():object(crate_id),"retrieved ground proxy survived")
+            elseif corpse then
+                local count=0;local npc=level.object_by_id(crate_id)
+                npc:iterate_inventory(function() count=count+1;return false end,npc)
+                assert(count==0,"corpse did not empty")
             else assert(level.object_by_id(crate_id):is_inv_box_empty(),"crate did not empty") end
             ActorMenu.get_actor_menu():HideDialog()
         end,snapshot,"inventory_next_probe export","save sqa3_cycle_"..label.."_return","quit"}
@@ -506,11 +528,28 @@ function on_game_start()
         end,snapshot,"inventory_next_probe export","save sqa3_world_prepared","quit"}
         RegisterScriptCallback("actor_on_update",update);return
     end
+    if args:find("-sqa3-fixture-empty-corpse-cleanup",1,true) then
+        local id=tonumber(args:match("%-sqa3%-world%-crate=(%d+)"));assert(id,"cleanup corpse ID missing")
+        commands={function()
+            local npc=level.object_by_id(id);assert(npc and not npc:alive(),"empty corpse missing")
+            local count=0;npc:iterate_inventory(function() count=count+1;return false end,npc)
+            assert(count==0,"cleanup corpse is not empty")
+            alife_release(alife():object(id))
+        end,function()
+            assert(not alife():object(id) and not level.object_by_id(id),"empty corpse cleanup was blocked")
+            printf("[SQA3 AUTORUN] empty corpse cleanup completed live=%s",tostring(id))
+        end,snapshot,"inventory_next_probe export","save sqa3_corpse_cleaned","quit"}
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-world-transfer",1,true) then
+        local corpse=args:find("-sqa3-world-corpse",1,true)~=nil
+        local destroy_attempt=args:find("-sqa3-world-destroy-attempt",1,true)~=nil
+        if corpse then assert(args:find("-sqa3-corpse-storage",1,true),"corpse custody opt-in missing") end
         local returning=args:find("-sqa3-world-return",1,true)~=nil
         local reload=args:find("-sqa3-world-reload",1,true)~=nil
         local nofit=args:find("-sqa3-world-nofit",1,true)~=nil
         local ground_source=args:find("-sqa3-world-ground-proxy",1,true)~=nil
+        assert(not(corpse and ground_source),"conflicting world custodians")
         assert(not ground_source or nofit,"ground-source world fixture is only for full-storage refusal")
         local rollback=args:find("-sqa3-world-rollback",1,true)~=nil
         assert(not(nofit and (returning or rollback)),"conflicting world fixture modes")
@@ -520,6 +559,26 @@ function on_game_start()
         if returning or reload or nofit then
             commands[#commands+1]=function()
                 crate_id=tonumber(args:match("%-sqa3%-world%-crate=(%d+)"));assert(crate_id,"world transfer crate missing")
+            end
+        elseif corpse then
+            commands[#commands+1]=spawn_npc
+            commands[#commands+1]=function()
+                local npc=level.object_by_id(npc_id);assert(npc,"corpse fixture NPC not online")
+                npc:movement_enabled(false)
+                local pos=db.actor:position();pos.x=pos.x+1.2;npc:set_npc_position(pos)
+                kill_npc();crate_id=npc_id
+            end
+            commands[#commands+1]=function()
+                local npc=level.object_by_id(npc_id);assert(npc and not npc:alive(),"fixture NPC not dead")
+                local remove={}
+                npc:iterate_inventory(function(_,item) remove[#remove+1]=item:id();return false end,npc)
+                for _,id in ipairs(remove) do alife_release(alife():object(id)) end
+                printf("[SQA3 AUTORUN] disposable corpse prepared live=%s removed_generated_items=%s",tostring(npc_id),tostring(#remove))
+            end
+            commands[#commands+1]=function()
+                local count=0;local npc=level.object_by_id(npc_id)
+                npc:iterate_inventory(function() count=count+1;return false end,npc)
+                assert(count==0,"generated corpse items remain")
             end
         else commands[#commands+1]=spawn_crate end
         if nofit and not reload then
@@ -545,11 +604,29 @@ function on_game_start()
                 printf("[SQA3 AUTORUN] world nofit six fillers acquired; drag crate bag to full pockets")
             end
         end
-        commands[#commands+1]=open_crate
+        commands[#commands+1]=function()
+            if corpse then npc_id=crate_id;open_corpse()
+            else open_crate() end
+        end
         if not reload then
             commands[#commands+1]=function()
                 started=started+60000
                 printf("[SQA3 AUTORUN] world transfer mouse window returning=%s: drag outer loaded bag between actor pockets and crate",tostring(returning))
+            end
+        end
+        if destroy_attempt and not reload then
+            assert(not actor_has_bag and not nofit and not rollback,"cleanup refusal requires a successful release")
+            commands[#commands+1]=function()
+                local owner=alife():object(crate_id);assert(owner,"cleanup target missing")
+                local children={}
+                alife():iterate_objects(function(obj) if obj.parent_id==crate_id then children[#children+1]=obj.id end return false end)
+                assert(#children==3,"loaded cleanup needs complete custody")
+                printf("[SQA3 AUTORUN] requesting real loaded-custodian destruction live=%s",tostring(crate_id))
+                alife_release(owner)
+                for _,id in ipairs(children) do
+                    printf("[SQA3 AUTORUN] requesting real loaded-member destruction live=%s",tostring(id))
+                    alife_release(alife():object(id))
+                end
             end
         end
         commands[#commands+1]="screenshot sqa3_world_transfer"
@@ -574,7 +651,12 @@ function on_game_start()
                 end
                 return false
             end
-            box:iterate_inventory_box(function(_,item) count=count+1;if not actor_has_bag then record(nil,item) end return false end,box)
+            local function visit(_,item) count=count+1;if not actor_has_bag then record(nil,item) end return false end
+            if corpse then
+                assert(not box:alive() and box:section()=="sim_default_stalker_1","wrong corpse custodian")
+                box:iterate_inventory(visit,box)
+                printf("[SQA3 AUTORUN] corpse custodian live=%s dead=true native_items=%s",tostring(crate_id),tostring(count))
+            else box:iterate_inventory_box(visit,box) end
             if actor_has_bag then db.actor:iterate_inventory(record,db.actor) end
             assert(count==(actor_has_bag and 0 or 3) and members==3,"world transfer source membership mismatch")
             printf("[SQA3 AUTORUN] world transfer phase=%s crate=%s actor=%s members=3",phase,tostring(crate_id),tostring(db.actor:id()))
@@ -582,7 +664,7 @@ function on_game_start()
         commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
-        commands[#commands+1]="save "..(ground_source and "sqa3_ground_" or "sqa3_world_")..phase:gsub("-","_")
+        commands[#commands+1]="save "..(corpse and "sqa3_corpse_" or (ground_source and "sqa3_ground_" or "sqa3_world_"))..phase:gsub("-","_")
         commands[#commands+1]="quit"
         RegisterScriptCallback("actor_on_update",update);return
     end

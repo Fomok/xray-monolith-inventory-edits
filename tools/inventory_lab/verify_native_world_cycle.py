@@ -14,6 +14,8 @@ def main():
     ap.add_argument('stem', type=Path)
     ap.add_argument('--baseline', type=Path, required=True)
     ap.add_argument('--ground', action='store_true')
+    ap.add_argument('--corpse', action='store_true')
+    ap.add_argument('--destroy-retained', action='store_true')
     a = ap.parse_args()
     log = a.stem.with_suffix('.log').read_text(errors='replace')
     report = verify(a.stem.with_suffix('.log'), a.stem.with_suffix('.inv'), logical_ownership=True)
@@ -51,7 +53,16 @@ def main():
                 drift[str(identity)] = {'before': attrs['native_slot'], 'after': actual_slot}
                 attrs['native_slot'] = actual_slot
     assert actor == expected
-    kind = 'ground' if a.ground else 'crate'
+    assert not (a.ground and a.corpse)
+    kind = 'corpse' if a.corpse else ('ground' if a.ground else 'crate')
+    if a.destroy_retained:
+        requested = re.findall(r'requesting real offline-custodian destruction live=(\d+)', log)
+        assert len(requested) == 1
+        assert f'SQA3 retained stored inventory during ALife release live={requested[0]}' in log
+        attempted = re.findall(r'requesting real offline-member destruction live=(\d+)', log)
+        assert len(attempted) == len(set(attempted)) == 3
+        assert all(f'SQA3 retained stored inventory during ALife release live={live}' in log for live in attempted)
+        report['offline_cleanup_retained_loaded_custodian'] = True
     assert f'Game sqa3_cycle_{kind}_offline.scop is successfully saved' in log
     assert f'Game sqa3_cycle_{kind}_return.scop is successfully saved' in log
     assert log.count('loaded transfer server committed count=3') == 1
