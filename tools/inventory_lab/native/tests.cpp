@@ -605,6 +605,17 @@ int main(int argc,char** argv) {
             Model foreign;yes(foreign.initialize({root(3,Kind::ActorRoot)}));no(a.restore(foreign.serialize()),"native_layout_root");
             check(a.model().nodes().count(101)==1,"bad restore lost state");
         });
+        test("native equipment and belt preserve carried mass outside bag placement",[]{
+            Node p=item(100,1,100);p.attributes["native_section"]="pda";
+            Node gun=item(101,1,3000);gun.attributes["native_section"]="gun";gun.location=Location::Equipment;gun.wear_slots=gun.equipped_slots=4;
+            Node belt=item(102,1,500);belt.attributes={{"native_section","artifact"},{"native_place","2"}};
+            ActorLayout layout;yes(layout.reconcile({p,gun,belt}));
+            check(layout.model().nodes().at(101).location==Location::Equipment&&layout.model().nodes().at(102).location==Location::Equipment,"equipped item occupied bag");
+            check(layout.model().carried_mass()==3600&&layout.model().nodes().at(1).grid.w==8,"native mass/grid");
+            ActorLayout loaded;yes(loaded.restore(layout.model().serialize()));yes(loaded.reconcile({p,gun,belt}));
+            gun.location=Location::Grid;gun.wear_slots=gun.equipped_slots=0;yes(loaded.reconcile({p,gun,belt}));
+            check(loaded.model().nodes().at(101).location==Location::Grid&&loaded.model().carried_mass()==3600,"unequip recovery lost item");
+        });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));
             yes(move(m,{20,11,{1,0,false},0})); yes(save_atomic(m,path));

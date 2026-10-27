@@ -99,7 +99,7 @@ void CUICellItem::Draw()
 
 void CUICellItem::Update()
 {
-	EnableHeading(m_pParentList->GetVerticalPlacement());
+	EnableHeading(m_sqaRotated || m_pParentList->GetVerticalPlacement());
 	if (Heading())
 	{
 		SetHeading(90.0f * (PI / 180.0f));

@@ -8,3 +8,6 @@ void InventoryNextLayoutReset() noexcept;
 void InventoryNextLayoutSave(IWriter&) noexcept;
 void InventoryNextLayoutLoad(IReader&) noexcept;
 void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept;
+
+bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated) noexcept;
+bool InventoryNextNativeDrop(u16 live,int x,int y) noexcept;

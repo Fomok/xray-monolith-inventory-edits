@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "UIActorMenu.h"
+#include "../InventoryNextIdentity.h"
 #include "UIActorStateInfo.h"
 #include "../actor.h"
 #include "../uigamesp.h"
@@ -207,6 +208,10 @@ void CUIActorMenu::Draw()
 
 void CUIActorMenu::Update()
 {
+    if(m_sqaRefresh && !CUIDragDropListEx::m_drag_item && (m_currMenuMode==mmInventory||m_currMenuMode==mmDeadBodySearch)) {
+        m_sqaRefresh=false;
+        if(m_currMenuMode==mmDeadBodySearch)InitDeadBodySearchMode();else InitInventoryContents(m_pInventoryBagList);
+    }
 	{
 		// all mode
 		m_last_time = Device.dwTimeGlobal;

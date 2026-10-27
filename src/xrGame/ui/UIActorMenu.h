@@ -192,6 +192,7 @@ public:
 	void SetInvBox(CInventoryBox* box);
 	CInventoryBox* GetInvBox() { return m_pInvBox; };
 	bool b_sort_hotkeys;
+    bool m_sqaRefresh=false;
 	void SelectInventoryTab(int tab);
 private:
 	void PropertiesBoxForSlots(PIItem item, bool& b_show);

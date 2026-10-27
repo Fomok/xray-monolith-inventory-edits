@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "UIActorMenu.h"
+#include "../InventoryNextIdentity.h"
+#include "UITextureMaster.h"
+#include "UIFrameWindow.h"
 #include "UIXmlInit.h"
 #include "xrUIXmlParser.h"
 #include "UICharacterInfo.h"
@@ -45,8 +48,17 @@ CUIActorMenu::~CUIActorMenu()
 void CUIActorMenu::Construct()
 {
 	CUIXml uiXml;
-	uiXml.Load(CONFIG_PATH, UI_PATH, "actor_menu.xml");
+	if(InventoryNextEnabled()) {
+        CUITextureMaster::ParseShTexInfo("sqa3_native.xml");
+        uiXml.Load(CONFIG_PATH, UI_PATH, "sqa3_actor_menu.xml");
+        Msg("* SQA3 replacement actor menu: native inventory, equipment, trade and loot controls; no 3D model");
+    } else uiXml.Load(CONFIG_PATH, UI_PATH, "actor_menu.xml");
 
+    if(InventoryNextEnabled()) {
+        auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);
+        frame->SetWndPos(Fvector2().set(0,0));frame->SetWndSize(Fvector2().set(1024,768));
+        frame->InitTexture("sqa_fk_window");frame->Enable(false);
+    }
 	CUIXmlInit xml_init;
 
 	xml_init.InitWindow(uiXml, "main", 0, this);

@@ -7,6 +7,8 @@
 
 #include "stdafx.h"
 #include "UIActorMenu.h"
+#include "../InventoryNextIdentity.h"
+#include "../InventoryNextProbe.h"
 #include "UIActorStateInfo.h"
 #include "../actor.h"
 #include "../uigamesp.h"
@@ -92,6 +94,14 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 		return true;
 	}
 
+    if(InventoryNextEnabled() && old_owner==new_owner && old_owner==m_pInventoryBagList) {
+        const auto cell=old_owner->PickCell(old_owner->GetDragItemPosition());
+        auto item=static_cast<PIItem>(itm->m_pData);
+        if(item&&InventoryNextNativeDrop(item->object().ID(),cell.x,cell.y)) {
+            auto moved=old_owner->RemoveItem(itm,true);old_owner->SetItem(moved,cell);
+        }
+        return true;
+    }
 	if (old_owner == new_owner)
 	{
 		//Alundaio: Here we export the action of dragging one inventory item ontop of another! 

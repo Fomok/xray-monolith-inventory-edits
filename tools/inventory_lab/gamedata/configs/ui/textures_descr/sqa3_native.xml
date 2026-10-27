@@ -10,5 +10,6 @@
     <texture id="sqa_fk_window_lb" x="8" y="124" width="12" height="12" />
     <texture id="sqa_fk_window_b" x="20" y="124" width="104" height="12" />
     <texture id="sqa_fk_window_rb" x="124" y="124" width="12" height="12" />
+    <texture id="sqa_fk_window" x="8" y="8" width="128" height="128" />
   </file>
 </w>

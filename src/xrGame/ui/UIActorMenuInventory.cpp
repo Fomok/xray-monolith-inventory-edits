@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "UIActorMenu.h"
+#include "../InventoryNextIdentity.h"
+#include "../InventoryNextProbe.h"
 #include "../inventory.h"
 #include "../inventoryOwner.h"
 #include "UIInventoryUtilities.h"
@@ -239,6 +241,7 @@ bool RemoveItemFromList(CUIDragDropListEx* lst, PIItem pItem)
 
 void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 {
+    if(InventoryNextEnabled())m_sqaRefresh=true;
 	CUIDragDropListEx* all_lists[] =
 	{
 		m_pInventoryBeltList,
@@ -450,6 +453,7 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 
 void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 {
+    if(InventoryNextEnabled())InventoryNextLayoutSync();
 	ClearAllLists();
 	m_UIPropertiesBox->Hide();
 	SetCurrentItem(NULL);
@@ -493,8 +497,11 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 		if (bag)
 			continue;
 
-		CUICellItem* itm = create_cell_item(*itb);
-		curr_list->SetItem(itm);
+        CUICellItem* itm = create_cell_item(*itb);
+        int x=0,y=0;bool rotated=false;
+        if(InventoryNextEnabled()&&InventoryNextNativePosition((*itb)->object().ID(),x,y,rotated)) {
+            itm->SetSqaRotation(rotated);curr_list->SetItem(itm,Ivector2().set(x,y));
+        } else curr_list->SetItem(itm);
 		if (m_currMenuMode == mmTrade && m_pPartnerInvOwner)
 			ColorizeItem(itm, !CanMoveToPartner(*itb));
 	}
