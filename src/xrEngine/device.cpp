@@ -761,7 +761,10 @@ void CRenderDevice::Pause(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason)
 {
 	PROF_EVENT();
     if(strstr(Core.Params,"-inventory-lab")&&strstr(Core.Params,"-sqa3-pause-trace"))
+    {
         Msg("* SQA3 pause request on=%d timer=%d sound=%d was_paused=%d reason=%s",bOn,bTimer,bSound,Paused(),reason);
+        FlushLog(); // Preserve opt-in diagnostics if the paused game needs forced shutdown.
+    }
 
 	static int snd_emitters_ = -1;
 
