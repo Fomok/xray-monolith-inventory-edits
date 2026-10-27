@@ -39,7 +39,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("log", type=Path)
     ap.add_argument("export", type=Path)
-    ap.add_argument("--world", type=Path, required=True)
+    ap.add_argument("--world", type=Path, help="Required for transfers; optional for Dev18 preparation only")
     ap.add_argument("--baseline", type=Path, required=True)
     ap.add_argument("--phase", choices=["prepared", "release", "return"], required=True)
     ap.add_argument("--previous", type=Path)
@@ -48,7 +48,8 @@ def main():
     report = verify(a.log, a.export, logical_ownership=True)
     actor, _ = read(a.export)
     baseline, _ = read(a.baseline)
-    records, world_hash = world_records(a.world)
+    assert a.world or a.phase == "prepared", "transfer requires world ledger evidence"
+    records, world_hash = world_records(a.world) if a.world else ({}, None)
     log = a.log.read_text(errors="replace")
     if a.phase == "prepared":
         assert len(actor) == 7 and report["grams"] == 3278 and not records
@@ -105,7 +106,7 @@ def main():
             assert log.count("loaded transfer server committed count=3") == 1
             assert log.count("loaded transfer client completed count=3 save_ready=1") == 1
         report.update(crate=crate, complete_nested_subtree_preserved=True)
-    report.update(world_sha256=world_hash, phase=a.phase,
+    report.update(world_sha256=world_hash, world_persistence_observed=a.world is not None, phase=a.phase,
                   limits="Bounded nested actor/crate transfer and persistence. Physical UI requires separate inspection; ground custody and broader gameplay remain unverified.")
     a.output.write_text(json.dumps(report, indent=2)+"\n")
     print(json.dumps(report))
