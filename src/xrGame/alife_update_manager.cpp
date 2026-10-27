@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "InventoryNextIdentity.h"
+#include "InventoryNextProbe.h"
 #include "alife_update_manager.h"
 #include "alife_simulator_header.h"
 #include "alife_time_manager.h"
@@ -166,6 +168,14 @@ bool CALifeUpdateManager::change_level(NET_Packet& net_packet)
 	if (ai().script_engine().functor("_G.CALifeUpdateManager__on_before_change_level", funct))
 		funct(&net_packet);
 #endif
+	// A level transition must not discard a loaded-storage transaction whose
+	// native/client ownership acknowledgements have not completed.
+	if (!InventoryNextIdentityCanSave())
+	{
+		InventoryNextPickupStatus("Finish the pending inventory transfer before travelling.");
+		Msg("! SQA3 level change refused: inventory state is not saveable");
+		return false;
+	}
 
 	//	prepare_objects_for_save		();
 	// we couldn't use prepare_objects_for_save since we need 
@@ -220,9 +230,10 @@ bool CALifeUpdateManager::change_level(NET_Packet& net_packet)
 	LPCSTR temp0 = strstr(**m_server_command_line, "/");
 	VERIFY(temp0);
 	string256 temp;
+	const shared_str previous_command_line = *m_server_command_line;
 	*m_server_command_line = strconcat(sizeof(temp), temp, autoave_name, temp0);
 
-	save(autoave_name);
+	const bool transition_saved = save(autoave_name);
 
 	graph().actor()->m_tGraphID = safe_graph_vertex_id;
 	graph().actor()->m_tNodeID = safe_level_vertex_id;
@@ -239,6 +250,14 @@ bool CALifeUpdateManager::change_level(NET_Packet& net_packet)
 		holder->o_Angle = holder_safe_angles;
 	}
 
+	if (InventoryNextEnabled() && !transition_saved)
+	{
+		*m_server_command_line = previous_command_line;
+		m_changing_level = false;
+		InventoryNextPickupStatus("Travel cancelled because the inventory save failed.");
+		Msg("! SQA3 level change cancelled: transition save failed");
+		return false;
+	}
 	return (true);
 }
 
