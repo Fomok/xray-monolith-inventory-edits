@@ -1,7 +1,21 @@
-# Loaded world storage: dependency milestone
+# Native loaded world storage
 
-The installed Dev18 build still safely refuses loaded-container release. This
-milestone does not enable loaded-bag transfers or certify their gameplay behavior.
+## Current checkpoint - 27 October 2026
+
+Dev19 verifies complete nested actor/crate transfer in both directions, physical
+Take All, full-pocket refusal and exact reloads. Dev20 adds verified rollback
+after an actual partial native move, in both directions, with exact reloads.
+Dev20 is installed only in the isolated lab.121 core checks pass.
+
+Ground-drop candidate033e851c is compiling in CI40520705952 and is not installed
+or gameplay-verified. Dedicated ground custody, timeout and cleanup tests are
+prepared. Vanilla Create stash, corpse custody and broad world lifecycle remain
+unfinished. The sections below preserve the development evidence.
+
+## Historical foundation checkpoint
+
+Dev18 safely refused loaded-container release. The initial foundation described
+below did not yet enable native loaded-bag transfer.
 
 ## Why this comes first
 
@@ -42,7 +56,7 @@ ledger. Evidence: `native-subtree-ack-build` under the dated preview workspace.
 Unchanged core objects were reused from `native-ground-pickup-build`; the changed
 transfer unit and test translation unit were rebuilt with warnings as errors.
 
-## Remaining native dependency
+## Native dependency identified before Dev19
 
 The engine must stage a complete native transaction, validate physical custody
 and identity for every descendant, update all server parents with rollback before
