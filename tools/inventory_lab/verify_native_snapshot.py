@@ -10,11 +10,12 @@ from pathlib import Path
 from verify_native_placement import read
 
 
-def verify(log_path, export_path, preserve_initial=False, logical_ownership=False):
+def verify(log_path, export_path, preserve_initial=False, logical_ownership=False,
+           completion_pattern=r"\[SQA3 AUTORUN\] step=\d+ execute quit"):
     log = log_path.read_text(errors="replace")
     assert "[SQA3 AUTORUN] FAIL" not in log, "fixture failed"
     assert "FATAL ERROR" not in log, "engine crashed"
-    assert re.search(r"\[SQA3 AUTORUN\] step=\d+ execute quit", log), "fixture did not complete"
+    assert re.search(completion_pattern, log), "fixture did not complete"
     pending, snapshots, raw_mass = {}, [], 0.0
     for line in log.splitlines():
         item = re.search(r"\[SQA3 AUTORUN\] item id=(\d+) section=(\S+) grams=(\S+) condition=(\S+)", line)

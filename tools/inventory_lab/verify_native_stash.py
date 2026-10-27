@@ -37,7 +37,8 @@ def main():
     actor_path = a.stem.with_suffix(".inv")
     world_path = a.stem.with_suffix(".world")
     log = log_path.read_text(errors="replace")
-    report = verify(log_path, actor_path, logical_ownership=True)
+    report = verify(log_path, actor_path, logical_ownership=True,
+                    completion_pattern=r"\[SQA3 STASH TEST\] completed phase=")
     actor, _ = read(actor_path)
     baseline, _ = read(a.baseline)
     records, world_hash = world_records(world_path)
