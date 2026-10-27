@@ -100,7 +100,10 @@
     </auto_static>
   </main>
   <left_background x="0" y="0" width="341" height="768" stretch="1">
-    <texture a="255">sqa_fk_window</texture>
+    <texture a="255">sqa_fk_window_back</texture>
+    <auto_static x="20" y="94" width="300" height="18">
+      <text font="letterica18" r="190" g="190" b="190">OTHER INVENTORY</text>
+    </auto_static>
   </left_background>
   <actor_ch_info x="694" y="10" width="321" height="89">
     <name_static x="10" y="18" width="140" height="16">

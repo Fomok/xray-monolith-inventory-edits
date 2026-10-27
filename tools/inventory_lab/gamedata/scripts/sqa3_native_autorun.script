@@ -108,6 +108,13 @@ local function check_consumed()
     printf("[SQA3 AUTORUN] native consumption verified count4 grams1448")
     if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
 end
+local function consume_native()
+    local bread
+    db.actor:iterate_inventory(function(_,item) if item:section()=="bread" then bread=item end return false end,db.actor)
+    assert(bread,"native consumption fixture needs bread")
+    db.actor:eat(bread)
+    printf("[SQA3 AUTORUN] scripted native inventory Eat dispatched; not a mouse-action test")
+end
 local function snapshot()
     local count, grams = 0, 0
     db.actor:iterate_inventory(function(_, item)
@@ -175,6 +182,10 @@ function on_game_start()
         commands[#commands+1]=check_equipment
         commands[#commands+1]="inventory_next_probe export"
     end
+    if args:find("-sqa3-fixture-consume",1,true) then
+        commands[#commands+1]=consume_native
+        commands[#commands+1]=check_consumed
+    end
     if args:find("-sqa3-fixture-hold",1,true) then
         commands[#commands+1]=function()
             started=started+60000;changing=args:find("-sqa3-fixture-changing",1,true)~=nil
@@ -195,6 +206,7 @@ function on_game_start()
     commands[#commands+1]=snapshot
     local save=args:find("-sqa3-fixture-reload",1,true) and "sqa3_replacement_reload" or "sqa3_replacement"
     if args:find("-sqa3-fixture-corpse",1,true) then save="sqa3_corpse" end
+    if args:find("-sqa3-fixture-consume",1,true) then save="sqa3_consumed" end
     commands[#commands+1]="save "..save
     commands[#commands+1]=toggle_inventory
     commands[#commands+1]=function() assert(not ActorMenu.get_actor_menu():IsShown(),"inventory key did not close") end

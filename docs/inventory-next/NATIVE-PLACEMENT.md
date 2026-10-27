@@ -16,6 +16,8 @@ The checked-in sqa3_native.xml contains nine slices from the existing Squared Aw
 
 ## Validation
 
+Current replacement evidence: a193b694/CI40447241129 passes normal-key inventory, equipment, real container loot and exact5-item/1638g restart. Physical PDA drag to6,4 and hidden-PDA overlap rejection are logged and survive fresh reload.83a937b2/CI40450044564 passes the visible-grid, filtered-occupancy and rotated-pistol equip fixture. Corpse Take All found an occupied-cell assertion after a transient identity sync failure. a3acc9d1 and7cd29f89 correct stale placement and gesture guards; native retest pending.78 core checks per debug/release plus independent reload pass. Mouse bread-use is unverified. The paragraphs below preserve earlier prototype evidence and are superseded where noted.
+
 76 core behavior tests in debug/release and independent restart pass. Native acc4e204 CI40443443210 succeeded. Two fresh native runs accepted PDA100 at4,3, rejected overlap/bounds, saved and reloaded with identical export SHA256088dc85fde7461b1dfee2b73aad826970d01fcd9d038cfad3dc79b205e287943. Three real items retain native IDs, condition and638g. Real screenshot confirms Field Kit frame and item icons render. Physical input test remains inconclusive; do not treat command-driven movement as mouse verification. Prior4e9a11c0 runtime verified PDA identity save/reload and real bandage/medkit spawn,638g total, successful save/quit. This does not establish current layout chunk or visual behavior.
 
 ## Manual input gate

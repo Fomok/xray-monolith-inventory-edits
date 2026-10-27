@@ -5,7 +5,7 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment:77 core checks per build and independent reload. Native acc4e204 placement/reject/save/reload passed; PDA Select->Right user-verified. New a193b694 replaces the normal actor-menu presentation, retires the parallel probe dialog and retains native equipment/mouse/context/loot plumbing. Native build/runtime verification pending.
+Current increment:78 core checks per build and independent reload. Native a193b694 replacement passes normal-key open/close/reopen, pistol unequip/equip, container Take All and exact5-item/1638g fresh reload. Physical mouse PDA drag and hidden-PDA collision refusal persist across restart. Native83a937b2 adds visible Field Kit cells and passes rotated-pistol equip and filter occupancy checks. Corpse Take All exposed a stale-layout collision; a3acc9d1 fixes synchronization/fallback placement and includes7cd29f89 stale-drag guarding, but their native build/runtime acceptance is pending. Mouse bread-use remains unverified; failed fixture assertions are not gameplay success.
 
 Non-negotiable presentation requirement: one replacement inventory through the normal inventory key and normal loot/container paths; preserve useful native controls and semantics; **no3D player-model panel**. Diagnostic windows are not acceptance. Vanilla ui_inventory.script intercepts the normal entry; the scoped enable_feature guard retires this old Lua presentation only in SQA3 development mode.
 
@@ -14,11 +14,11 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | I01 | Ownership independent of visible panels | Core tree and read-only snapshots; actual engine ownership events OPEN |
 | I02 | Player grid, pockets and backpack sections | Core blocked cells/partial rows and compartments; real pockets/backpack definitions and UI OPEN |
 | I03 | Backpack capacity and equip/remove transitions | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| I04 | All native equipment slots, including knife and pistol | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| I05 | Equipment outside grids; grouped arrows | Core equipment and native slot/belt projection preserve mass outside bag. Native equipment controls retained in replacement; runtime equip/unequip and grouped-arrow acceptance OPEN |
+| I04 | All native equipment slots, including knife and pistol | Native slots retained; pistol unequip/re-equip including rotated bag origin passes. Other slots/full parity OPEN |
+| I05 | Equipment outside grids; grouped arrows | Core equipment and native slot/belt projection preserve mass outside bag. Pistol runtime equip/unequip and reload pass; grouped arrows and all-slot coverage OPEN |
 | I06 | Capacity enforcement on all acquisition paths | Core Spawn/batches validate; actual item producers not hooked |
 | I07 | Full-grid policy and protected items | Strict ordinary pickup; explicit owned recovery overflow tested, no manual overflow capacity. Native forced-arrival/protected-item policy and per-container recovery OPEN |
-| I08 | Manual placement and rotation persistence | Native save/reload placement passed; prototype Select/Right user-verified. Native actor-menu drag persistence wired a193b694; runtime drag/rotation acceptance OPEN |
+| I08 | Manual placement and rotation persistence | Native physical PDA drag6,4 survives fresh reload; hidden PDA blocks visible bandage overlap. Command-driven rotated pistol renders and equips correctly. Physical rotation control/full edge cases OPEN |
 | I09 | Valid/invalid/swap/overflow/new-item highlights | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | I10 | Finite stack ceilings and overrides | Per-type stack ceiling tested; actual catalog and context overrides OPEN |
 | I11 | Stack member identity/state and partial transfers | Fungible type/state split/merge and stable stack IDs tested; heterogeneous per-member records/inspection OPEN |
