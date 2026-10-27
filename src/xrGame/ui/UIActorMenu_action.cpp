@@ -87,6 +87,13 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 	}
 	EDDListType t_new = GetListType(new_owner);
 	EDDListType t_old = GetListType(old_owner);
+    if(InventoryNextEnabled() && strstr(Core.Params,"-sqa3-fixture-direct-equip")) {
+        const auto item=static_cast<PIItem>(itm->m_pData);
+        u16 requested_slot=NO_ACTIVE_SLOT;
+        const bool compatible=item&&CanSetItemToList(item,new_owner,requested_slot);
+        Msg("* SQA3 fixture drop live=%u from=%d to=%d same_list=%d compatible=%d slot=%u",
+            item?item->object_id():0xffff,int(t_old),int(t_new),old_owner==new_owner,compatible,requested_slot);
+    }
 	if (InventoryNextEnabled() && old_owner==m_pInventoryBagList) {
 		auto item=static_cast<PIItem>(itm->m_pData);
 		if (!item || !InventoryNextNativeDragCurrent(item->object().ID())) {
