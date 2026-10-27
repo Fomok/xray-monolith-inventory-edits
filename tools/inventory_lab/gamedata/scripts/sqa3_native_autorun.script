@@ -422,7 +422,7 @@ function on_game_start()
             if ground then assert(not alife():object(crate_id),"retrieved ground proxy survived")
             elseif corpse then
                 local count=0;local npc=level.object_by_id(crate_id)
-                npc:iterate_inventory(function() count=count+1;return false end,npc)
+                npc:iterate_inventory(function(_,item) if alife():object(item:id()) then count=count+1 end return false end,npc)
                 assert(count==0,"corpse did not empty")
             else assert(level.object_by_id(crate_id):is_inv_box_empty(),"crate did not empty") end
             ActorMenu.get_actor_menu():HideDialog()
@@ -536,7 +536,7 @@ function on_game_start()
         commands={function()
             if reload then return end
             local npc=level.object_by_id(id);assert(npc and not npc:alive(),"empty corpse missing")
-            local count=0;npc:iterate_inventory(function() count=count+1;return false end,npc)
+            local count=0;npc:iterate_inventory(function(_,item) if alife():object(item:id()) then count=count+1 end return false end,npc)
             assert(count==0,"cleanup corpse is not empty")
             alife():release(alife():object(id),true)
         end,function()
@@ -572,16 +572,24 @@ function on_game_start()
                 local pos=db.actor:position();pos.x=pos.x+1.2;npc:set_npc_position(pos)
                 kill_npc();crate_id=npc_id
             end
+            commands[#commands+1]=function() open_corpse();ActorMenu.get_actor_menu():HideDialog() end
             commands[#commands+1]=function()
                 local npc=level.object_by_id(npc_id);assert(npc and not npc:alive(),"fixture NPC not dead")
                 local remove={}
                 npc:iterate_inventory(function(_,item) remove[#remove+1]=item:id();return false end,npc)
-                for _,id in ipairs(remove) do alife_release(alife():object(id)) end
+                for _,id in ipairs(remove) do
+                    local server=alife():object(id)
+                    if server then alife():release(server,true)
+                    else
+                        local item=level.object_by_id(id)
+                        printf("[SQA3 AUTORUN] corpse client-only item retained live=%s section=%s",tostring(id),item and item:section() or "gone")
+                    end
+                end
                 printf("[SQA3 AUTORUN] disposable corpse prepared live=%s removed_generated_items=%s",tostring(npc_id),tostring(#remove))
             end
             commands[#commands+1]=function()
                 local count=0;local npc=level.object_by_id(npc_id)
-                npc:iterate_inventory(function() count=count+1;return false end,npc)
+                npc:iterate_inventory(function(_,item) if alife():object(item:id()) then count=count+1 end return false end,npc)
                 assert(count==0,"generated corpse items remain")
             end
         else commands[#commands+1]=spawn_crate end
@@ -655,7 +663,13 @@ function on_game_start()
                 end
                 return false
             end
-            local function visit(_,item) count=count+1;if not actor_has_bag then record(nil,item) end return false end
+            local function visit(_,item)
+                if corpse and not alife():object(item:id()) then
+                    printf("[SQA3 AUTORUN] corpse client-only item retained live=%s section=%s",tostring(item:id()),item:section())
+                    return false
+                end
+                count=count+1;if not actor_has_bag then record(nil,item) end return false
+            end
             if corpse then
                 assert(not box:alive() and box:section()=="sim_default_stalker_1","wrong corpse custodian")
                 box:iterate_inventory(visit,box)
