@@ -89,6 +89,41 @@ int main(int argc,char** argv) {
             yes(transfer.acknowledge(event.token,1,true));check(m.carried_mass()==7&&m.revision()==1&&transfer.can_save(),"ack did not publish exactly once");
             no(transfer.acknowledge(event.token,1,true),"transfer_ack");
         });
+        test("logical backpack pickup acknowledges physical actor while preserving logical destination",[]{
+            auto pack=item(10,1,50);pack.container=true;pack.grid={3,3};
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),pack,item(11,2,7)}));
+            EntityRegistry registry;for(Id id:{1,2,10,11}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+100)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(11,true,true));
+            Command c;c.operation=Operation::Move;c.item=11;c.destination=10;c.session=m.session();
+            TransferSession transfer(m,access,registry);TransferSession::PhysicalOwners physical;physical.destination=registry.handle(1);
+            auto before=m.serialize();yes(transfer.prepare({c,access.revision()},false,physical));
+            TransferSession::Dispatch event;yes(transfer.dispatch(event));
+            check(event.destination.live==101&&event.command.destination==10&&m.serialize()==before,"physical and logical destination conflated");
+            yes(transfer.acknowledge(event.token,101,true));
+            check(m.nodes().at(11).parent==10&&m.carried_mass()==57,"actor acknowledgment flattened destination or doubled weight");
+            // Returning a nested object still physically detaches from the actor.
+            c.destination=2;c.revision=m.revision();physical={};physical.source=registry.handle(1);
+            yes(transfer.prepare({c,access.revision()},false,physical));yes(transfer.dispatch(event));
+            check(event.source&&event.source->live==101,"nested source used bag as physical owner");
+            no(transfer.acknowledge(event.token,101,false),"native_rejected");
+            check(m.nodes().at(11).parent==10&&m.carried_mass()==57&&transfer.can_save(),"rejected native release altered subtree");
+        });
+        test("physical ownership override rejects foreign actors and stale intermediate containers",[]{
+            auto pack=item(10,1,50);pack.container=true;pack.grid={3,3};
+            auto pouch=item(11,10,5);pouch.container=true;pouch.grid={2,2};
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),root(3,Kind::ActorRoot),pack,pouch,item(12,2,7)}));
+            EntityRegistry registry;for(Id id:{1,2,3,10,11,12}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(12,true,true));
+            Command c;c.operation=Operation::Move;c.item=12;c.destination=11;c.session=m.session();
+            TransferSession transfer(m,access,registry);TransferSession::PhysicalOwners physical;physical.destination=registry.handle(3);
+            auto before=m.serialize();no(transfer.prepare({c,access.revision()},false,physical),"native_physical_owner");
+            physical.destination=registry.handle(1);yes(transfer.prepare({c,access.revision()},false,physical));
+            yes(registry.unbind(*registry.handle(10)));TransferSession::Dispatch event;no(transfer.dispatch(event),"stale_entity");
+            check(m.serialize()==before&&transfer.can_save(),"stale ancestor mutated or locked source");
+            yes(registry.bind(10,10));yes(transfer.prepare({c,access.revision()},false,physical));yes(transfer.dispatch(event));
+            no(transfer.acknowledge(event.token,11,true),"native_parent_mismatch");
+            check(m.serialize()==before&&!transfer.can_save(),"logical bag ID accepted as physical native parent");
+        });
         test("one transfer authority serializes two pickups competing for the last cell",[]{
             Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),root(2,Kind::WorldRoot),item(10,2,7),item(11,2,9,{1,0,false})}));
             EntityRegistry registry;for(Id id:{1,2,10,11}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}

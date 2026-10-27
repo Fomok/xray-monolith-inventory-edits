@@ -1,18 +1,21 @@
 #include "transfer_session.h"
 #include <limits>
 namespace inventory_next {
-void TransferSession::clear() { state_=State::Idle;candidate_.reset();subtree_.clear();dispatch_={}; }
+void TransferSession::clear() { state_=State::Idle;candidate_.reset();subtree_.clear();physical_ancestry_.clear();dispatch_={};logical_source_.reset();logical_destination_.reset(); }
 Result TransferSession::current() {
     if(model_.session()!=ticket_.command.session||model_.revision()!=ticket_.command.revision)return {false,"stale_model"};
     if(!registry_.resolve(dispatch_.destination)||(dispatch_.source&&!registry_.resolve(*dispatch_.source)))return {false,"stale_entity"};
+    if((logical_source_&&!registry_.resolve(*logical_source_))||
+       (logical_destination_&&!registry_.resolve(*logical_destination_)))return {false,"stale_entity"};
     if(!dispatch_.source) {
         const auto parent=model_.nodes().at(ticket_.command.item).parent;
         if(model_.nodes().at(parent).kind!=Kind::WorldRoot||registry_.known(parent))return {false,"native_ground_source"};
     }
     for(const auto& handle:subtree_)if(!registry_.resolve(handle))return {false,"stale_entity"};
+    for(const auto& handle:physical_ancestry_)if(!registry_.resolve(handle))return {false,"stale_entity"};
     return access_.preview(ticket_).result;
 }
-Result TransferSession::prepare(const AccessGate::Ticket& ticket,bool ground_source) {
+Result TransferSession::prepare(const AccessGate::Ticket& ticket,bool ground_source,const PhysicalOwners& physical) {
     if(state_!=State::Idle)return {false,"transfer_busy"};
     const auto& command=ticket.command;
     if(command.operation!=Operation::Move&&command.operation!=Operation::Equip&&command.operation!=Operation::Mount)return {false,"native_operation"};
@@ -20,10 +23,32 @@ Result TransferSession::prepare(const AccessGate::Ticket& ticket,bool ground_sou
     const auto& item=model_.nodes().at(command.item);
     auto source=registry_.handle(item.parent),target=registry_.handle(command.destination),handle=registry_.handle(command.item);
     if(!target||!handle)return {false,"offline_entity"};
+    const auto logical_source=source,logical_target=target;
+    std::vector<EntityRegistry::Handle> physical_ancestry;
+    auto physical_owner=[&](const EntityRegistry::Handle& actual,Id logical) {
+        if(!registry_.resolve(actual))return false;
+        const auto root=model_.nodes().find(actual.item);
+        if(root==model_.nodes().end()||root->second.kind!=Kind::ActorRoot)return false;
+        for(unsigned depth=0;logical&&depth<=64;++depth) {
+            auto ancestor=registry_.handle(logical);if(!ancestor)return false;
+            physical_ancestry.push_back(*ancestor);
+            if(logical==actual.item)return true;
+            logical=model_.nodes().at(logical).parent;
+        }
+        return false;
+    };
+    if(physical.destination) {
+        if(!physical_owner(*physical.destination,command.destination))return {false,"native_physical_owner"};
+        target=physical.destination;
+    }
     if(ground_source) {
-        if(model_.nodes().at(item.parent).kind!=Kind::WorldRoot||registry_.known(item.parent))return {false,"native_ground_source"};
+        if(physical.source||model_.nodes().at(item.parent).kind!=Kind::WorldRoot||registry_.known(item.parent))return {false,"native_ground_source"};
         source.reset();
     } else if(!source)return {false,"offline_entity"};
+    if(physical.source) {
+        if(!physical_owner(*physical.source,item.parent))return {false,"native_physical_owner"};
+        source=physical.source;
+    }
     if(next_token_==std::numeric_limits<std::uint64_t>::max())return {false,"transfer_tokens"};
     std::vector<EntityRegistry::Handle> tree;
     for(const auto& pair:model_.nodes()) {
@@ -36,6 +61,8 @@ Result TransferSession::prepare(const AccessGate::Ticket& ticket,bool ground_sou
     Model candidate=model_;auto result=candidate.execute(command);if(!result)return result;
     // Publish prepared state only after allocations and validation finish.
     candidate_=std::move(candidate);subtree_=std::move(tree);ticket_=ticket;
+    physical_ancestry_=std::move(physical_ancestry);
+    logical_source_=ground_source?std::nullopt:logical_source;logical_destination_=logical_target;
     dispatch_={++next_token_,*handle,*target,source,command};state_=State::Prepared;
     return {true,{}};
 }

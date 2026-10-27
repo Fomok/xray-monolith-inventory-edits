@@ -91,3 +91,21 @@ pocket assignment, native equipment and the refused drop. Runtime pending.
 additional test verifies presentation coordinates round-trip to the correct
 logical owner, headers/recovery do not grant capacity, and rendering does not
 mutate ownership or mass.
+
+## Physical ownership acknowledgments
+
+`TransferSession::PhysicalOwners` now permits an explicit physical actor source
+or destination while the command retains a logical backpack/pouch endpoint.
+The override must be the endpoint's actor ancestor; foreign actors are rejected.
+Every intermediate container and physical owner handle remains generation-checked
+through dispatch and acknowledgement. A bag's native ID is not accepted as the
+observed parent when the physical owner is the actor. Rejected release retains
+the logical subtree, while mismatched post-dispatch ownership blocks saves until
+reconciliation. Native producers must still verify actual source parent/state
+before prepare and dispatch; this core extension is not native admission wiring.
+
+93 debug/release checks and both independent restart checks pass in
+`native-physical-owner-build`, including physical actor acknowledgment, refused
+nested release, foreign-owner rejection and intermediate-ancestor disappearance.
+The native storage UI build remains pinned to49e973de and its91-check source;
+this subsequent coordinator extension is not part of that binary.
