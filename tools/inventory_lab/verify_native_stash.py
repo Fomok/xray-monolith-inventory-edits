@@ -31,6 +31,7 @@ def main():
     ap.add_argument("stem", type=Path)
     ap.add_argument("--baseline", type=Path, required=True)
     ap.add_argument("--previous", type=Path)
+    ap.add_argument("--empty", action="store_true", help="Use the actor/world corpse-release baseline for one new empty shell")
     a = ap.parse_args()
     log_path = a.stem.with_suffix(".log")
     actor_path = a.stem.with_suffix(".inv")
@@ -42,15 +43,40 @@ def main():
     records, world_hash = world_records(world_path)
     run = json.loads(Path(str(a.stem)+"-run.json").read_text(encoding="utf-8-sig"))
     assert run["exit_code"] == 0 and not run["timed_out"], "supervised run failed"
-    matches = re.findall(r"\[SQA3 STASH TEST\] completed phase=(\w+) empty=false carried=(true|false) created=(\d+) removed=(\d+)", log)
-    assert len(matches) == 1, "loaded stash fixture did not complete"
+    matches = re.findall(rf"\[SQA3 STASH TEST\] completed phase=(\w+) empty={str(a.empty).lower()} carried=(true|false) created=(\d+) removed=(\d+)", log)
+    assert len(matches) == 1, "stash fixture did not complete"
     phase, carried, created, removed = matches[0]
     carried = carried == "true"
-    assert f"Game sqa3_stash_{phase}.scop is successfully saved" in log
-    assert len(baseline) == 7 and set(baseline) == set(range(100, 107))
-    subtree = {key: baseline[key] for key in (102, 105, 106)}
+    assert f"Game sqa3_stash_{'empty_' if a.empty else ''}{phase}.scop is successfully saved" in log
+    count = 1 if a.empty else 3
+    if a.empty:
+        old_world, _ = world_records(a.baseline.with_suffix('.world'))
+        assert len(baseline)==4 and set(old_world)=={105}
+        assert all(records.get(key)==value for key,value in old_world.items()), "unrelated corpse storage changed"
+        identities=re.findall(r'shell live=(\d+) persistent=(\d+) empty=true',log)
+        assert len(identities)==1
+        live,shell=map(int,identities[0])
+        assert shell not in baseline and all(shell not in row[1] for row in old_world.values())
+        assert all(actor.get(key)==value for key,value in baseline.items())
+        if carried:
+            assert records==old_world and set(actor)==set(baseline)|{shell}
+            node=actor[shell];assert node['parent']==1
+            assert names(world_path)==names(a.baseline.with_suffix('.world'))
+        else:
+            assert actor==baseline and set(records)==set(old_world)|{shell}
+            custody,nodes=records[shell];assert custody>=100 and set(nodes)=={shell}
+            node=nodes[shell];assert node['parent']==2 and node['position']==[0,0,0]
+            assert names(world_path)=={shell:'SQA3 field stash'}
+            assert 'stored members=1 marker=true' in log
+        assert node['grams']==820 and node['condition']==10000 and node['location']==0 and node['equipped_slots']==0
+        assert node['attributes']['native_section']=='itm_backpack' and node['attributes']['native_live_id']==str(live)
+    else:
+        assert len(baseline) == 7 and set(baseline) == set(range(100, 107))
+    subtree = {key: baseline[key] for key in (102, 105, 106)} if not a.empty else {}
     retained = {key: value for key, value in baseline.items() if key not in subtree}
-    if carried:
+    if a.empty:
+        pass  # The independent empty-shell identity/custody checks above apply.
+    elif carried:
         assert not records and not names(world_path)
         assert actor == baseline, "carried state or identity changed"
     else:
@@ -77,12 +103,12 @@ def main():
         assert created == removed == "0"
         report["exact_reload"] = True
     elif phase in ("release", "return"):
-        assert log.count("loaded transfer server committed count=3") == 1
-        assert log.count("loaded transfer client completed count=3 save_ready=1") == 1
+        assert log.count(f"loaded transfer server committed count={count}") == 1
+        assert log.count(f"loaded transfer client completed count={count} save_ready=1") == 1
         assert (created, removed) == (("1", "0") if phase == "release" else ("0", "1"))
     elif phase.startswith("rollback_"):
         assert log.count("loaded transfer fixture interrupted after moved=1 before client notification") == 1
-        assert log.count("loaded transfer rejection restored count=3 save_ready=1") == 1
+        assert log.count(f"loaded transfer rejection restored count={count} save_ready=1") == 1
         assert "loaded transfer server committed" not in log
     elif phase == "timeout":
         assert "ground bag provisioning shell=" in log and "empty ground proxy cleanup live=" in log
@@ -98,8 +124,8 @@ def main():
         if phase=="nofit":assert "loaded transfer refused reason=" in log
     else:
         raise AssertionError("unsupported phase")
-    report.update(phase=phase, world_sha256=world_hash, original_shell_and_nested_state_preserved=True,
-                  limits="Loaded stash fixture only; physical dialog/drag observation is separate. Empty/equipped bags, travel and full parity are not inferred.")
+    report.update(phase=phase, empty_shell=a.empty, world_sha256=world_hash, original_shell_and_nested_state_preserved=True,
+                  limits="Bounded stash fixture; physical dialog/drag observation is separate. Equipped entry, travel and full parity are not inferred.")
     Path(str(a.stem)+"-verification.json").write_text(json.dumps(report, indent=2)+"\n")
     print(json.dumps(report))
 
