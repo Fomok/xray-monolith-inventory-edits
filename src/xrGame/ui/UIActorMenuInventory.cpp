@@ -133,6 +133,7 @@ void CUIActorMenu::SendEvent_Item_Eat(PIItem pItem, u16 recipient)
 
 void CUIActorMenu::SendEvent_Item_Drop(PIItem pItem, u16 recipient)
 {
+    if(InventoryNextGroundDrop(pItem->object().ID()))return;
     if(!InventoryNextCanRelease(pItem->object().ID()))return;
 	R_ASSERT(pItem->parent_id()==recipient);
 	if (!IsGameTypeSingle())

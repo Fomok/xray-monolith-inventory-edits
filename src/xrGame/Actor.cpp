@@ -1,5 +1,6 @@
 #include "pch_script.h"
 #include "Actor_Flags.h"
+#include "InventoryNextProbe.h"
 #include "hudmanager.h"
 #ifdef DEBUG
 
@@ -1148,6 +1149,7 @@ void CActor::UpdateCL()
 	}
 
 	UpdateInventoryOwner(Device.dwTimeDelta);
+    if(this==Actor())InventoryNextGroundUpdate();
 
 	if (m_feel_touch_characters > 0)
 	{

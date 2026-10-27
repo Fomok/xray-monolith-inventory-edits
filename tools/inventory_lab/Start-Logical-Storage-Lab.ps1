@@ -5,7 +5,8 @@ param(
     [switch]$StrictGroundPickup,
     [switch]$StrictOwnedPickup,
     [switch]$StrictTradePickup,
-    [switch]$WorldStorage
+    [switch]$WorldStorage,
+    [switch]$GroundStorage
 )
 $ErrorActionPreference='Stop'
 $lab=(Resolve-Path -LiteralPath $LabRoot).Path
@@ -18,7 +19,9 @@ if($StrictGroundPickup -and !$manifest.ground_pickup_opt_in){throw 'This engine 
 if($StrictOwnedPickup -and !$manifest.owned_pickup_opt_in){throw 'This engine package has no strict owned-source pickup mode.'}
 if($StrictTradePickup -and !$manifest.trade_pickup_opt_in){throw 'This engine package has no strict purchase mode.'}
 if($Save -like 'sqa3_world_*'){$WorldStorage=$true}
+if($GroundStorage){$WorldStorage=$true}
 if($WorldStorage -and !$manifest.world_storage_opt_in){throw 'This engine package has no loaded world-storage mode.'}
+if($GroundStorage -and !$manifest.ground_storage_opt_in){throw 'This engine package has no loaded ground-storage mode.'}
 $engine=Join-Path $lab 'bin/AnomalyDX11AVX.exe'
 $expected=$manifest.files.'bin/AnomalyDX11AVX.exe'.sha256
 if((Get-FileHash -LiteralPath $engine -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected){throw 'Lab engine hash does not match its package.'}
@@ -29,5 +32,6 @@ if($StrictGroundPickup){$arguments+=' -sqa3-strict-ground-pickup'}
 if($StrictOwnedPickup){$arguments+=' -sqa3-strict-owned-pickup'}
 if($StrictTradePickup){$arguments+=' -sqa3-strict-trade-pickup'}
 if($WorldStorage){$arguments+=' -sqa3-world-storage'}
+if($GroundStorage){$arguments+=' -sqa3-ground-storage'}
 $game=Start-Process -FilePath $engine -WorkingDirectory $lab -ArgumentList $arguments -WindowStyle Normal -PassThru
 Write-Output ('Logical-storage lab started, PID '+$game.Id+'. Close the game when finished.')

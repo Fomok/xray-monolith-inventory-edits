@@ -42,6 +42,7 @@
 #include "ai_space.h"
 #include "alife_simulator.h"
 #include "alife_object_registry.h"
+#include "ai_object_location.h"
 
 namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
@@ -74,9 +75,18 @@ struct NativeWorldTransfer {
     u16 source=0xffff,destination=0xffff;
     u64 custodian=0,token=0;
     bool acquire=false,committed=false;
+    bool created_ground_proxy=false,retire_ground_proxy=false;
 };
 std::unique_ptr<NativeWorldTransfer> world_transfer;
 u64 next_world_token=0;
+struct NativeGroundProvision {
+    u16 shell=0xffff,proxy=0xffff;
+    u64 shell_identity=0;
+    u32 started=0;
+    std::string actor_before;
+};
+std::unique_ptr<NativeGroundProvision> ground_provision;
+constexpr LPCSTR ground_proxy_section="sqa3_ground_backpack";
 
 
 bool read_storage_catalog(inventory_next::StorageCatalog& output) {
@@ -164,7 +174,7 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
@@ -358,7 +368,7 @@ bool InventoryNextStrictPickup() noexcept {
     return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-ground-pickup")||InventoryNextStrictOwnedPickup());
 }
 bool InventoryNextPickupCanSave() noexcept {
-    return !pickup_fault&&!pickup_transaction&&!purchase&&!world_transfer&&pending_pickups.empty();
+    return !pickup_fault&&!pickup_transaction&&!purchase&&!world_transfer&&!ground_provision&&pending_pickups.empty();
 }
 void InventoryNextPickupForget(u16 live) noexcept try {
     const auto identity=InventoryNextIdentity(live);
@@ -705,7 +715,7 @@ bool InventoryNextWorldVisible(u16 live) noexcept try {
     return true;
 } catch (...) {return false;}
 bool InventoryNextWorldCanSave() noexcept try {
-    if(world_transfer||pickup_fault)return false;
+    if(world_transfer||ground_provision||pickup_fault)return false;
     for(const auto& record:world_storage().records()) {
         const u16 custodian=InventoryNextIdentityServer(record.second.custodian);
         if(!record.second.custodian||custodian==0xffff||!ai().alife().objects().object(custodian,true))return false;
@@ -718,6 +728,22 @@ bool InventoryNextWorldCanSave() noexcept try {
     return true;
 } catch (...) {return false;}
 namespace {
+bool cleanup_ground_proxy(u16 live) {
+    if(live==0xffff)return true;
+    auto server=ai().alife().objects().object(live,true);
+    if(!server)return true;
+    if(xr_strcmp(server->s_name.c_str(),ground_proxy_section)||!server->children.empty())return false;
+    const auto identity=InventoryNextIdentity(live);
+    for(const auto& record:world_storage().records())if(record.second.custodian==identity)return false;
+    auto box=smart_cast<CInventoryBox*>(Level().Objects.net_Find(live));
+    if(box) {
+        if(!box->IsEmpty())return false;
+        if(box->getDestroy())return true;
+        if(CurrentGameUI()&&CurrentGameUI()->GetActorMenu().GetInvBox()==box)CurrentGameUI()->HideActorMenu();
+        box->DestroyObject();
+    } else ai().alife().release(server,true);
+    Msg("* SQA3 empty ground proxy cleanup live=%u",live);return true;
+}
 bool world_access(u16 source,u16 destination) {
     if(!Actor()||(source==Actor()->ID())==(destination==Actor()->ID()))return false;
     const u16 box_id=source==Actor()->ID()?destination:source;
@@ -750,10 +776,13 @@ bool world_node(u16 live,u16 parent,inventory_next::Node& node) {
     return true;
 }
 void world_refused(const char* message) {
-    world_transfer.reset();InventoryNextPickupStatus(message);
+    const u16 proxy=world_transfer&&world_transfer->created_ground_proxy?world_transfer->destination:u16(0xffff);
+    world_transfer.reset();
+    if(!cleanup_ground_proxy(proxy))pickup_fault=true;
+    InventoryNextPickupStatus(message);
 }
 }
-bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live) noexcept try {
+bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live,bool created_ground_proxy) noexcept try {
     if(!InventoryNextWorldStorageEnabled()||!Actor())return false;
     if(!InventoryNextPickupCanSave()){InventoryNextPickupStatus("Finish the pending transfer first.");return true;}
     if(!InventoryNextLayoutSync())return true;
@@ -770,6 +799,9 @@ bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live) noexcept try
     }
     if(!world_access(source,destination)){InventoryNextPickupStatus("Container unavailable. Bag unchanged.");return true;}
     auto prepared=std::make_unique<NativeWorldTransfer>();prepared->source=source;prepared->destination=destination;prepared->acquire=acquire;
+    prepared->created_ground_proxy=created_ground_proxy;
+    auto source_object=Level().Objects.net_Find(source);
+    prepared->retire_ground_proxy=acquire&&source_object&&!xr_strcmp(source_object->cNameSect().c_str(),ground_proxy_section);
     prepared->custodian=InventoryNextIdentity(acquire?source:destination);
     if(!prepared->custodian)return true;
     std::vector<inventory_next::Id> members;
@@ -861,8 +893,54 @@ void InventoryNextWorldClientReady() noexcept try {
         if(!item||InventoryNextIdentity(record.live)!=record.identity){pickup_fault=true;return;}
         if(!item->object().H_Parent()||item->parent_id()!=world_transfer->destination)return;
     }
-    const auto count=world_transfer->records.size();world_transfer.reset();
+    const auto count=world_transfer->records.size();
+    const u16 proxy=world_transfer->retire_ground_proxy?world_transfer->source:u16(0xffff);
+    world_transfer.reset();
+    if(!cleanup_ground_proxy(proxy)){pickup_fault=true;return;}
     if(!InventoryNextLayoutSync()||!InventoryNextWorldCanSave()){pickup_fault=true;return;}
     InventoryNextPickupStatus("");
     Msg("* SQA3 loaded transfer client completed count=%u save_ready=%d",static_cast<unsigned>(count),InventoryNextPickupCanSave());
 } catch (...) {pickup_fault=true;}
+
+bool InventoryNextGroundStorageEnabled() noexcept {
+    return InventoryNextWorldStorageEnabled()&&strstr(Core.Params,"-sqa3-ground-storage")!=nullptr;
+}
+bool InventoryNextGroundDrop(u16 live) noexcept try {
+    if(!InventoryNextGroundStorageEnabled()||!Actor())return false;
+    if(!InventoryNextPickupCanSave()){InventoryNextPickupStatus("Finish the pending transfer first.");return true;}
+    if(!InventoryNextLayoutSync())return true;
+    const auto shell=InventoryNextIdentity(live);bool loaded=false;
+    for(const auto& pair:layout().model().nodes())if(pair.second.parent==shell){loaded=true;break;}
+    if(!loaded)return false;
+    const auto found=layout().model().nodes().find(shell);
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    if(found==layout().model().nodes().end()||!found->second.container||!item||item->IsQuestItem()||item->parent_id()!=Actor()->ID())return true;
+    if(!pSettings->section_exist(ground_proxy_section)){InventoryNextPickupStatus("Ground bag configuration unavailable. Bag unchanged.");return true;}
+    auto pending=std::make_unique<NativeGroundProvision>();pending->shell=live;pending->shell_identity=shell;
+    pending->started=Device.dwTimeGlobal;pending->actor_before=layout().model().serialize();ground_provision=std::move(pending);
+    const auto& location=Actor()->ai_location();
+    auto server=ai().alife().spawn_item(ground_proxy_section,Actor()->Position(),location.level_vertex_id(),location.game_vertex_id(),0xffff);
+    if(!server){ground_provision.reset();InventoryNextPickupStatus("Cannot place the bag here. Bag unchanged.");return true;}
+    ground_provision->proxy=server->ID;
+    InventoryNextIdentity(server->ID);
+    InventoryNextPickupStatus("Placing loaded bag...");
+    Msg("* SQA3 ground bag provisioning shell=%u proxy=%u; save blocked",live,server->ID);return true;
+} catch (...) {pickup_fault=true;InventoryNextPickupStatus("Ground bag placement needs reconciliation.");return true;}
+void InventoryNextGroundUpdate() noexcept try {
+    if(!ground_provision||!Actor()||!g_pGameLevel)return;
+    const u16 proxy=ground_provision->proxy,shell=ground_provision->shell;
+    const bool timed_out=Device.dwTimeGlobal-ground_provision->started>5000;
+    const bool current=InventoryNextIdentity(shell)==ground_provision->shell_identity&&InventoryNextLayoutSync()&&
+        layout().model().serialize()==ground_provision->actor_before;
+    if(!current||timed_out) {
+        ground_provision.reset();if(!cleanup_ground_proxy(proxy))pickup_fault=true;
+        InventoryNextPickupStatus("Ground placement changed or timed out. Bag stayed carried.");return;
+    }
+    if(strstr(Core.Params,"-sqa3-fixture-ground-proxy-timeout"))return;
+    auto box=smart_cast<CInventoryBox*>(Level().Objects.net_Find(proxy));
+    if(!box)return;
+    const auto identity=ground_provision->shell_identity;
+    ground_provision.reset();
+    InventoryNextWorldRequest(Actor()->ID(),proxy,shell,true);
+    if(!world_transfer&&!world_storage().records().count(identity)&&!cleanup_ground_proxy(proxy))pickup_fault=true;
+} catch (...) {pickup_fault=true;InventoryNextPickupStatus("Ground bag placement needs reconciliation.");}

@@ -29,6 +29,7 @@ def main():
     owned_pickup=False
     trade_pickup=False
     world_storage=False
+    ground_storage=False
     if logical is not None:
         engine_source=subprocess.check_output(['git','show',a.commit+':src/xrGame/InventoryNextProbe.cpp'],cwd=repo)
         assert b'-sqa3-logical-storage' in engine_source, 'This engine revision has no native logical-storage mode'
@@ -36,6 +37,9 @@ def main():
         owned_pickup=b'-sqa3-strict-owned-pickup' in engine_source
         trade_pickup=b'-sqa3-strict-trade-pickup' in engine_source
         world_storage=b'-sqa3-world-storage' in engine_source
+        ground_storage=b'-sqa3-ground-storage' in engine_source
+        if ground_storage:
+            files["gamedata/configs/mod_system_sqa3_ground.ltx"]=read_overlay('tools/inventory_lab/gamedata/configs/mod_system_sqa3_ground.ltx')
         files["NATIVE-LOGICAL-STORAGE.md"]=logical
         launcher=read_overlay('tools/inventory_lab/Start-Logical-Storage-Lab.ps1',optional=True)
         if launcher is not None:files["Start-Logical-Storage-Lab.ps1"]=launcher
@@ -51,13 +55,15 @@ def main():
         ("Experimental ground pickup: Start-Logical-Storage-Lab.ps1 -StrictGroundPickup.\n" if ground_pickup else "")+
         ("Experimental ground plus corpse/container Move/Take All: -StrictOwnedPickup. External equip/use admission remains unfinished.\n" if owned_pickup else "")+
         ("Experimental batch purchases: -StrictTradePickup. Includes owned/ground admission; native purchase acceptance must be checked against the evidence.\n" if trade_pickup else "")+
-        ("Experimental loaded actor/crate transfers: -WorldStorage. World fixture saves automatically select this mode. Ground bags and full gameplay compatibility remain unfinished; consult current test evidence.\n" if world_storage else "")).encode()
+        ("Experimental loaded actor/crate transfers: -WorldStorage. World fixture saves automatically select this mode. Consult current test evidence.\n" if world_storage else "")+
+        ("Experimental loaded bag drop/retrieval: -GroundStorage. Dedicated ground custodian preserves original items; vanilla Create stash and full ground interaction remain unfinished.\n" if ground_storage else "")).encode()
     manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":overlay,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     manifest['logical_storage_opt_in']=logical is not None
     manifest['ground_pickup_opt_in']=ground_pickup
     manifest['owned_pickup_opt_in']=owned_pickup
     manifest['trade_pickup_opt_in']=trade_pickup
     manifest['world_storage_opt_in']=world_storage
+    manifest['ground_storage_opt_in']=ground_storage
     files["manifest.json"]=(json.dumps(manifest,indent=2)+"\n").encode()
     a.output.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(a.output,"w",zipfile.ZIP_DEFLATED,compresslevel=6) as z:
