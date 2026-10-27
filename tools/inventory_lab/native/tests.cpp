@@ -334,6 +334,46 @@ int main(int argc,char** argv) {
             check(node.parent==100&&node.position.x==1&&node.position.rotated&&node.condition==7500&&node.intrinsic==25&&node.attributes.at("ammo")=="3","saved state overrode native facts or placement lost");
             check(ledger.records().at(100).tree.subtree_mass(100)==125,"world native mass refresh failed");
         });
+        test("named stash survives native refresh and restart without changing item facts",[]{
+            auto shell=bag(100,2,100);shell.attributes["native_section"]="itm_backpack";
+            auto child=item(101,100,20,{1,0,true});child.attributes["native_section"]="medkit";
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),shell,child}));
+            WorldSubtrees world;yes(world.capture(m,100,900));yes(world.name_stash(100,900,"Cordon supplies"));
+            child.condition=8000;yes(world.refresh(100,900,{shell,child}));
+            WorldSubtrees restored;yes(restored.restore(world.serialize()));
+            check(restored.stash_name(100)=="Cordon supplies"&&restored.records().at(100).custodian==900,"stash label or persistent custody lost");
+            const auto& saved=restored.records().at(100).tree.nodes().at(101);
+            check(saved.condition==8000&&saved.parent==100&&saved.position.rotated&&saved.attributes==child.attributes,"stash metadata changed native contents");
+        });
+        test("stash naming rejects stale custody and malformed text atomically",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,2,100)}));
+            WorldSubtrees world;yes(world.capture(m,100,900));yes(world.name_stash(100,900,"Original"));const auto before=world.serialize();
+            no(world.name_stash(100,901,"Wrong owner"),"world_storage_custodian");
+            for(const auto& name:std::vector<std::string>{"",std::string(241,'x'),"line\nbreak",std::string("nul\0byte",8)})
+                no(world.name_stash(100,900,name),"world_storage_stash_name");
+            check(world.serialize()==before&&world.stash_name(999).empty(),"invalid name changed world custody");
+        });
+        test("explicit empty stash roundtrip keeps original shell and discards world-only label",[]{
+            auto shell=bag(100,1,100);shell.condition=8314;shell.attributes={{"native_section","itm_backpack"},{"upgrade","retained"}};
+            Model actor;yes(actor.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),shell}));
+            WorldSubtrees world;EntityRegistry registry;
+            for(Id id:{1,100,900}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            LoadedStorageSession release(actor,world,registry);yes(release.prepare_release(100,900,"Empty stash"));TransferSession::Dispatch event;yes(release.dispatch(true,event));
+            yes(release.acknowledge(event.token,{{*registry.handle(100),900}},true));actor=*release.committed_actor();world=*release.committed_world();
+            check(world.stash_name(100)=="Empty stash","acknowledged stash name missing");
+            LoadedStorageSession take(actor,world,registry);yes(take.prepare_acquire(100,900,{1}));yes(take.dispatch(true,event));yes(take.acknowledge(event.token,{{*registry.handle(100),1}},true));
+            actor=*take.committed_actor();world=*take.committed_world();
+            check(world.records().empty()&&actor.nodes().size()==3&&actor.carried_mass()==100,"empty stash duplicated shell or lost mass");
+            check(actor.nodes().at(100).condition==shell.condition&&actor.nodes().at(100).attributes==shell.attributes&&actor.nodes().at(2).attributes.empty(),"empty stash recreated item state or leaked naming metadata");
+        });
+        test("invalid stash naming refuses before native dispatch or publication",[]{
+            Model actor;yes(actor.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,1,100)}));
+            WorldSubtrees world;EntityRegistry registry;for(Id id:{1,100,900}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            const auto before=actor.serialize();LoadedStorageSession release(actor,world,registry);
+            no(release.prepare_release(100,900,std::string(241,'x')),"world_storage_stash_name");
+            TransferSession::Dispatch event;no(release.dispatch(true,event),"transfer_state");
+            check(release.can_save()&&!release.committed_actor()&&world.records().empty()&&actor.serialize()==before,"invalid named stash changed source or blocked saving");
+        });
         test("world storage refresh rejects missing replaced and resized contents atomically",[]{
             auto shell=bag(100,2,100);shell.attributes["native_section"]="itm_backpack";
             auto child=item(101,100,20,{1,0,true});child.attributes["native_section"]="wpn_pm";

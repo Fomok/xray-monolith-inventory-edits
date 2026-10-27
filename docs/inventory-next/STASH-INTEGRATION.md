@@ -1,6 +1,6 @@
 # Vanilla stash integration contract â€” source audit
 
-Not implemented or gameplay accepted. Reference files were extracted from the
+Native stash integration is not implemented or gameplay accepted. Reference files were extracted from the
 isolated vanilla data into sqa-previews/inventory-next-20261027/vanilla-script-reference.
 Production scripts remain unchanged.
 
@@ -39,4 +39,10 @@ vanilla stashes need their original path until a separate migration is designed.
    offline/online and real travel. Existing corpse/ground tests are not substitutes.
 
 Ground implementation currently accepts loaded bags only. New script/API glue,
-empty explicit stash support, naming metadata and compatibility tests remain open.
+empty explicit stash support in the engine, marker/callback integration and gameplay compatibility tests remain open.
+
+## Persistent naming core — 2026-10-27
+
+WorldSubtrees::name_stash stores a bounded name on the detached world-root metadata, keyed by persistent shell/custodian identities. Existing schema1 records remain readable. Native fact refresh preserves the name, while reacquisition excludes world-only metadata from carried items. LoadedStorageSession::prepare_release can stage the name before dispatch, so malformed/oversized text refuses without moving the shell or blocking saves. No native stash command or game script calls this yet.
+
+Four new behavioral checks cover nested state and naming roundtrip, wrong custody/control-character/oversize atomic refusal, complete empty-shell release/reacquisition preserving condition/upgrades without duplication, and invalid naming before dispatch.125 checks pass in both debug and optimized builds, plus the existing independent ordinary/logical/world restart checks. Evidence C:/GAMMA/sqa-previews/inventory-next-20261027/native-stash-metadata/. This is offline core evidence, not a game Create stash acceptance.

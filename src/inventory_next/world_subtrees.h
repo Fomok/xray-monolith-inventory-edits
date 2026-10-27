@@ -15,6 +15,29 @@ class WorldSubtrees {
 public:
     struct Record { Id custodian=0; Model tree; }; // 0 = ground; otherwise persistent owner ID
     const std::map<Id,Record>& records() const { return records_; }
+    // Explicit stash names belong to persistent custody, not a recyclable live ID.
+    // Keep this metadata on the detached world root so native item refresh cannot
+    // discard it and reacquisition cannot copy it into an actor item.
+    Result name_stash(Id shell,Id expected_custodian,const std::string& name) {
+        const auto found=records_.find(shell);
+        if(found==records_.end()||found->second.custodian!=expected_custodian)return {false,"world_storage_custodian"};
+        if(!valid_stash_name(name))return {false,"world_storage_stash_name"};
+        std::vector<Node> nodes;
+        for(const auto& pair:found->second.tree.nodes()) {
+            auto node=pair.second;
+            if(node.id==2)node.attributes["stash_name"]=name;
+            nodes.push_back(std::move(node));
+        }
+        Model tree;auto result=tree.initialize(nodes);if(!result)return result;
+        auto candidate=*this;candidate.records_.at(shell).tree=std::move(tree);
+        if(candidate.serialize().size()>max_bytes)return {false,"world_storage_size"};
+        *this=std::move(candidate);return {true,{}};
+    }
+    std::string stash_name(Id shell) const {
+        const auto record=records_.find(shell);if(record==records_.end())return {};
+        const auto& attrs=record->second.tree.nodes().at(2).attributes;
+        const auto name=attrs.find("stash_name");return name==attrs.end()?std::string{}:name->second;
+    }
     Result capture(const Model& committed,Id shell,Id custodian) {
         const auto found=committed.nodes().find(shell);
         if(found==committed.nodes().end()||found->second.kind!=Kind::Item||
@@ -108,6 +131,11 @@ public:
         *this=std::move(candidate);return {true,{}};
     }
 private:
+    static bool valid_stash_name(const std::string& name) {
+        if(name.empty()||name.size()>240)return false;
+        for(unsigned char c:name)if(c<32||c==127)return false;
+        return true;
+    }
     static constexpr std::size_t max_bytes=2*1024*1024;
     static std::uint32_t crc(const std::string& bytes) {
         std::uint32_t value=~std::uint32_t{0};
@@ -122,6 +150,8 @@ private:
             if(shell==nodes.end()||shell->second.kind!=Kind::Item||!shell->second.container||shell->second.parent!=2||
                (pair.second.custodian&&pair.second.custodian<100))return {false,"world_storage_shell"};
             if(nodes.count(1)!=1||nodes.count(2)!=1||nodes.at(1).kind!=Kind::ActorRoot||nodes.at(2).kind!=Kind::WorldRoot)return {false,"world_storage_root"};
+            const auto name=nodes.at(2).attributes.find("stash_name");
+            if(name!=nodes.at(2).attributes.end()&&!valid_stash_name(name->second))return {false,"world_storage_stash_name"};
             for(const auto& node:nodes)if(node.first!=1&&node.first!=2) {
                 if(node.first<100||node.second.kind!=Kind::Item||!identities.insert(node.first).second)return {false,"world_storage_identity"};
                 if(identities.size()>4094)return {false,"world_storage_size"};

@@ -13,9 +13,9 @@ class LoadedStorageSession {
 public:
     LoadedStorageSession(const Model& actor,const WorldSubtrees& world,const EntityRegistry& registry)
         : actor_(actor),world_(world),registry_(registry) {}
-    Result prepare_release(Id shell,Id custodian) { return prepare(shell,custodian,false,{}); }
+    Result prepare_release(Id shell,Id custodian,const std::string& stash_name={}) { return prepare(shell,custodian,false,{},stash_name); }
     Result prepare_acquire(Id shell,Id custodian,const std::vector<Id>& destinations) {
-        return prepare(shell,custodian,true,destinations);
+        return prepare(shell,custodian,true,destinations,{});
     }
     Result dispatch(bool accessible,TransferSession::Dispatch& output) {
         if(!transfer_||committed_||transfer_->state()!=TransferSession::State::Prepared)return {false,"transfer_state"};
@@ -42,7 +42,7 @@ private:
         if(world_.serialize()!=world_before_)return {false,"stale_world_storage"};
         return {true,{}};
     }
-    Result prepare(Id shell,Id custodian,bool acquire,const std::vector<Id>& destinations) {
+    Result prepare(Id shell,Id custodian,bool acquire,const std::vector<Id>& destinations,const std::string& stash_name) {
         if(transfer_||fault_||committed_)return {false,"transfer_busy"};
         if(custodian<100||!registry_.handle(custodian)||actor_.nodes().count(custodian))return {false,"world_storage_custodian"};
         if(!actor_.nodes().count(1)||!actor_.nodes().count(2))return {false,"native_layout_root"};
@@ -80,6 +80,9 @@ private:
         auto next_world=world_;
         result=acquire?next_world.release(shell,custodian):next_world.capture(completed,shell,custodian);
         if(!result)return result;
+        if(!acquire&&!stash_name.empty()) {
+            result=next_world.name_stash(shell,custodian,stash_name);if(!result)return result;
+        }
         std::vector<Node> actor_nodes;
         for(const auto& pair:completed.nodes()) {
             Id root=pair.first;while(completed.nodes().at(root).parent)root=completed.nodes().at(root).parent;
