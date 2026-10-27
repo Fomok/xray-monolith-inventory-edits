@@ -1,0 +1,23 @@
+SQA3_SCENARIO 1
+root 1 actor 2 2 1000 1
+definition input 10 1 1 1 1 1 1 1 0 0 0 0 1 0
+definition output 25 1 1 1 1 1 1 1 0 0 0 0 1 0
+seed 10 1 input 0 0 0
+begin
+batch_begin
+erase 10 0 queued
+spawn 20 output 1 3 3 0 0 queued
+batch_end bounds
+assert parent 10 1
+assert mass 10
+assert high_water 10
+batch_begin
+erase 10 0 queued
+spawn 20 output 1 0 0 0 0 queued
+batch_end ok
+assert mass 25
+assert high_water 20
+assert revision 1
+save crafted
+load crafted
+assert parent 20 1

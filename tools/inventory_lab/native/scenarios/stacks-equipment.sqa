@@ -1,0 +1,52 @@
+SQA3_SCENARIO 1
+root 1 actor 2 2 1000 3
+root 2 world 8 8 0 3
+equipment_policy 1 3 3 2
+definition ammo 5 1 1 1 1 1 1 1 0 0 0 0 3 0
+stack_definition ammo 100 7 20 30
+definition bag 100 1 1 1 2 1 2 2 1 1 2 2 3 500
+wear_definition bag 3 1 0 9
+definition vest 10 1 1 1 1 1 1 1 0 0 0 0 3 0
+wear_definition vest 3 1 0 9
+seed 10 2 ammo 0 0 0
+seed 11 2 bag 2 0 0
+seed 12 2 vest 4 0 0
+begin
+assert mass 0
+assert accessible_count 2 0
+observe 2 1 1
+assert accessible_count 2 3
+guarded split 10 5 20 1 0 0 0 0 ok
+assert mass 25
+assert quantity 10 15
+guarded merge 20 10 3 1 ok
+assert quantity 20 2
+guarded merge 20 10 2 2 ok
+assert mass 0
+guarded equip 11 1 1 3 ok
+guarded equip 12 1 1 4 equipment_conflict
+guarded equip 12 1 2 4 ok
+assert group_count 9 2
+assert cycle 9 11 1 12
+assert cycle 9 12 1 11
+assert revision 5
+assert mass 110
+capture_access
+preview guarded move 10 11 0 0 0 5 ok
+observe 2 1 0
+guarded_captured move 10 11 0 0 0 5 stale_access
+guarded move 10 11 0 0 0 5 world_unavailable
+assert accessible_count 2 0
+observe 2 1 1
+guarded move 10 11 0 0 0 5 ok
+assert footprint 11 2 1
+assert mass 210
+assert equipped 11 1
+snapshot equipped
+save equipment
+load equipment
+assert quantity 10 20
+assert equipped 12 2
+assert group_count 9 2
+assert accessible_count 2 0
+snapshot restored

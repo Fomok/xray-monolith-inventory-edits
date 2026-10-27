@@ -27,6 +27,13 @@ for variant in ['debug','release']:
     dest=root/f'{variant}-lifecycle';launch(exe,scenarios/'lifecycle.sqa',dest)
     launch(exe,scenarios/'resume.sqa',root/f'{variant}-resume',dest/'final.inv')
     launch(exe,scenarios/'rigid.sqa',root/f'{variant}-rigid')
+    launch(exe,scenarios/'stacks-equipment.sqa',root/f'{variant}-stacks-equipment')
+    launch(exe,scenarios/'crafting.sqa',root/f'{variant}-crafting')
+    launch(exe,scenarios/'swap.sqa',root/f'{variant}-swap')
+    launch(exe,scenarios/'compartments.sqa',root/f'{variant}-compartments')
+    view=json.loads((root/f'{variant}-stacks-equipment'/'snapshot-restored.json').read_text())
+    assert len(view['items'])==3 and view['carried_grams']==210
+    assert sum(n['quantity'] for n in view['items'] if n['type']==100)==20
 exe=a.build/'inventory-lab-release.exe'
 base='SQA3_SCENARIO 1\nroot 1 actor 4 4 0 1\nbegin\n'
 cases={

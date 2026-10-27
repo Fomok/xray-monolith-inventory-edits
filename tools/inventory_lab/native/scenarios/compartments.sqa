@@ -1,0 +1,15 @@
+SQA3_SCENARIO 1
+root 1 actor 2 2 1000 1
+root 2 world 8 8 0 1
+root_cells 1 4 1 2 1 2
+definition long 10 1 2 1 2 1 2 1 0 0 0 0 1 0
+seed 10 2 long 0 0 0
+begin
+move 10 1 0 0 0 0 compartment
+move 10 1 0 0 1 0 ok
+assert mass 10
+snapshot rotated
+save compartments
+load compartments
+assert footprint 10 2 1
+assert parent 10 1

@@ -1,4 +1,4 @@
-# Squared Away 3.0 background lab — Dev 2
+# Squared Away 3.0 background lab — Dev 3
 
 This is a runnable, renderer-independent C++ command lab. It uses the SAME static
 inventory core as the native tests. It does not launch Anomaly, create a window,
@@ -20,7 +20,7 @@ Inside the new run directory:
   whether a console was attached. Opening the EXE alone does not establish success.
 - events.jsonl: commands/assertions and expected rejection checks, resulting
   revision/session/high-water ID and carried/projected mass.
-- final.inv and named checkpoints: durable schema 2 core state, not Anomaly saves.
+- final.inv and named checkpoints: durable schema 4 core state, not Anomaly saves.
 
 The optional hidden PowerShell launcher provides an additional 45-second watchdog
 and runs/last-run.json with exact output paths and binary/scenario hashes. The native
@@ -96,7 +96,7 @@ Spawn IDs must exceed the persisted high-water mark; failed proposals do not con
 IDs, committed deleted IDs stay retired. Mass updates revalidate all ancestor/actor
 limits. Intrinsic mass excludes items with child IDs, including ammo/fluid only when
 not separate child nodes. No quantity/stack or crafting batch transaction is implied.
-Schema 2 persists high-water ID and rejects schema 1; fresh fixtures/saves are intended.
+Schema 4 persists identity, stacks, equipment and cells and rejects earlier schemas; fresh fixtures/saves are intended.
 
 ## Tests and remaining work
 
@@ -117,3 +117,77 @@ forced-output recovery, native engine entity adapter and save lifecycle remain n
 Engine hook inspection shows InventoryBox::OnEvent immediately mutates parent IDs,
 visibility and callbacks; a tested event-completion/reconciliation boundary must
 precede integrating this core. No speculative uncompiled engine hook was added.
+
+## Dev3 commands and fixtures
+
+Schema4 now persists fungible stack type/state, per-unit mass, quantity/limit,
+equipment definitions/location and authored compartment cells. No heterogeneous
+per-member stack object history is claimed. No real item catalog/recipes imported.
+
+Pre-begin definition extensions:
+
+    stack_definition NAME TYPE_ID STATE_KEY QUANTITY LIMIT
+    wear_definition NAME ALLOWED_SLOT_BITS REQUIRED_SLOT_COUNT BLOCKED_SLOT_BITS GROUP
+    equipment_policy ACTOR_ROOT ALLOWED_SLOT_BITS ACCEPTED_CATEGORIES MAX_MEMBERS
+    cells_definition NAME CELL_COUNT ROW_MAJOR_REGION_IDS...
+    root_cells ROOT_ID CELL_COUNT ROW_MAJOR_REGION_IDS...
+
+Cell0is blocked, positive values identify separate compartments. An item cannot
+bridge regions even when total free area is sufficient. Empty cell data means one
+full rectangular region. Slot masks represent explicit gameplay locations/layers;
+two-handed items require two chosen slots. Groups only affect read-only browsing.
+
+    split SOURCE QUANTITY NEW_ID DESTINATION X Y ROTATED REV EXPECTED
+    merge SOURCE TARGET QUANTITY REV EXPECTED
+    equip ITEM ACTOR_ROOT SLOT_BITS REV EXPECTED
+    snapshot NAME
+    assert quantity ID QUANTITY
+    assert equipped ID SLOT_BITS
+    assert group_count GROUP COUNT
+    assert cycle GROUP SELECTED_ID DIRECTION EXPECTED_ID
+
+Move on equipped items means validated unequip/drop into a real grid. Equipped bags
+still have full ownership/mass and changing exterior, but occupy no actor grid cells.
+`mass` sets per-unit intrinsic grams on stack records. Merge requires matching type,
+state, category, per-unit mass, limit and footprint. Only explicitly fungible,
+noncontainer/nonwearable nodes may stack. Exhausted source IDs remain retired.
+
+Compound commands:
+
+    batch_begin
+    erase INPUT_ID REV queued
+    spawn OUTPUT_ID DEFINITION PARENT X Y ROTATED REV queued
+    batch_end ok
+
+Ordered batches validate each stage on a copy, then publish once; if output creation
+fails, consumed inputs stay intact. All staged requests carry the same base revision.
+For occupied swaps/permutations use the distinct final-state transaction:
+
+    layout_begin
+    move FIRST PARENT X Y ROTATED REV queued
+    move SECOND PARENT X Y ROTATED REV queued
+    layout_end ok
+
+Only moves in a layout; duplicate item targets rejected. No temporary fake cells.
+Each compound operation accepts at most64commands. No guarded compound engine action
+is implied: world authorization must be rechecked by the eventual native adapter.
+
+Access-boundary scenarios:
+
+    observe WORLD_ROOT EXISTS REACHABLE
+    capture_access
+    guarded <ordinary command>
+    preview guarded <ordinary command>
+    guarded_captured <ordinary command>
+    assert accessible_count CONTAINER COUNT
+
+Observations are synthetic inputs in this test lab. AccessGate rechecks source and
+destination ancestry; loss of reachability invalidates tickets even without model
+mutation. Load clears observations. This is not actual world discovery/LOS/security.
+
+New scenarios: stacks-equipment.sqa, crafting.sqa, swap.sqa, compartments.sqa.
+`snapshot NAME` writes snapshot-NAME.json through the shared read API. Offscreen
+inventory-snapshot.exe consumes .inv saves and writes diagnostic BMP files without
+opening windows; see source/tools/inventory_lab/viewer/README.md. It is not an
+interactive interface or game screenshot.46 core checks per build,27 runner checks,
+10 renderer checks passed; full77-row parity remains tracked in PARITY-COVERAGE.md.

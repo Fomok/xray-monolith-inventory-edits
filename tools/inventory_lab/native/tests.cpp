@@ -1,4 +1,5 @@
 #include "model.h"
+#include "access_gate.h"
 #include "persistence.h"
 #include <cstdlib>
 #include <fstream>
@@ -202,6 +203,134 @@ int main(int argc,char** argv) {
             check(m.session()==c.session,"failed load invalidated epoch");
             yes(m.deserialize(before));check(m.revision()==c.revision,"fixture revision mismatch");
             no(m.execute(c),"stale_session");c.session=m.session();yes(m.initialize(fixture()));no(m.execute(c),"stale_session");
+        });
+        test("stack split merge conserve quantity mass and stable surviving identity",[]{
+            auto a=root(1,Kind::ActorRoot);auto w=root(2,Kind::WorldRoot);auto ammo=item(10,1,5);
+            ammo.type=100;ammo.state=7;ammo.quantity=20;ammo.stack_limit=30;Model m;yes(m.initialize({a,w,ammo}));
+            Command c;c.operation=Operation::Split;c.item=10;c.new_id=11;c.destination=2;c.quantity=5;c.session=m.session();
+            yes(m.execute(c));check(m.nodes().at(10).quantity==15&&m.nodes().at(11).quantity==5,"split identity");
+            check(m.carried_mass()==75&&m.subtree_mass(11)==25,"split mass");
+            c.operation=Operation::Merge;c.item=11;c.destination=10;c.revision=1;yes(m.execute(c));
+            check(m.nodes().count(11)==0&&m.nodes().at(10).quantity==20&&m.carried_mass()==100,"merge conservation");
+            Model n;yes(n.deserialize(m.serialize()));check(n.serialize()==m.serialize()&&n.high_water_id()==11,"stack persistence");
+        });
+        test("partial merge refuses incompatible state and overflow atomically",[]{
+            auto a=root(1,Kind::ActorRoot);auto x=item(10,1,5);x.type=10;x.state=1;x.quantity=20;x.stack_limit=30;
+            auto y=x;y.id=11;y.position={2,0,false};y.quantity=15;Model m;yes(m.initialize({a,x,y}));
+            Command c;c.operation=Operation::Merge;c.item=11;c.destination=10;c.quantity=11;c.session=m.session();auto old=m.serialize();
+            no(m.execute(c),"merge_quantity");check(m.serialize()==old,"overflow partial mutation");
+            c.quantity=10;yes(m.execute(c));check(m.nodes().at(10).quantity==30&&m.nodes().at(11).quantity==5,"partial quantities");
+            y.state=2;yes(m.initialize({a,x,y}));c.session=m.session();c.revision=0;c.quantity=1;
+            no(m.execute(c),"stack_compatibility");y.state=1;y.type=99;yes(m.initialize({a,x,y}));c.session=m.session();no(m.execute(c),"stack_compatibility");
+        });
+        test("split collision rolls back quantities high-water and ancestor growth",[]{
+            auto m=make();auto v=fixture();v[6].type=10;v[6].quantity=5;v[6].stack_limit=10;yes(m.initialize(v));
+            Command c;c.operation=Operation::Split;c.item=20;c.quantity=2;c.new_id=30;c.destination=11;c.position={0,0,false};c.session=m.session();
+            auto old=m.serialize();no(m.execute(c),"overlap");check(m.serialize()==old,"failed split mutation");
+            c.position={1,0,false};yes(m.execute(c));check(m.nodes().at(20).quantity==3&&m.nodes().at(30).quantity==2,"successful split");
+        });
+        test("stack unit-mass update and definition bounds are validated",[]{
+            auto a=root(1,Kind::ActorRoot);a.max_contents=110;auto x=item(10,1,5);x.type=10;x.quantity=20;x.stack_limit=30;
+            Model m;yes(m.initialize({a,x}));Command c;c.operation=Operation::SetMass;c.item=10;c.mass=6;c.session=m.session();
+            no(m.execute(c),"mass_capacity");c.mass=4;yes(m.execute(c));check(m.carried_mass()==80,"unit mass count");
+            x.quantity=0;no(m.initialize({a,x}),"stack_definition");x.quantity=31;no(m.initialize({a,x}),"stack_definition");
+            x.quantity=2;x.container=true;x.grid={2,2};no(m.initialize({a,x}),"stack_definition");
+        });
+        test("equipment is outside grid and compatible layers share view group",[]{
+            auto a=root(1,Kind::ActorRoot,{1,1});a.allowed_slots=7;a.equipment_accepts=1;a.equipment_capacity=3;
+            auto w=root(2,Kind::WorldRoot);auto blocker=item(5,1,1);auto x=item(10,2,10);x.wear_slots=3;x.presentation_group=8;
+            auto y=x;y.id=11;y.position={2,0,false};Model m;yes(m.initialize({a,w,blocker,x,y}));
+            Command c;c.operation=Operation::Equip;c.item=10;c.destination=1;c.slots=1;c.session=m.session();yes(m.execute(c));
+            c.item=11;c.slots=2;c.revision=1;yes(m.execute(c));check(m.carried_mass()==21,"equipment weight");
+            check(m.equipment_group(8)==std::vector<Id>({10,11}),"group members");auto old=m.serialize();
+            check(m.cycle_equipment(8,10,1)==11&&m.cycle_equipment(8,10,-1)==11,"cycle wrap");
+            check(m.cycle_equipment(8,999,1)==10&&m.cycle_equipment(99,10,1)==0,"selection fallback");
+            check(m.serialize()==old,"arrows changed equipment");rollback(m,{10,1,{0,0,false},2},"overlap");
+            Model n;yes(n.deserialize(old));check(n.nodes().at(10).location==Location::Equipment&&n.equipment_group(8).size()==2,"equipment restore");
+        });
+        test("equipment slot overlap blocked layers and required slots reject",[]{
+            auto a=root(1,Kind::ActorRoot);a.allowed_slots=7;a.equipment_accepts=1;a.equipment_capacity=3;
+            auto x=item(10,1,10);x.wear_slots=7;x.blocked_slots=2;auto y=x;y.id=11;y.position={2,0,false};y.blocked_slots=0;
+            Model m;yes(m.initialize({a,x,y}));Command c;c.operation=Operation::Equip;c.item=10;c.destination=1;c.slots=1;c.session=m.session();yes(m.execute(c));
+            c.item=11;c.revision=1;no(m.execute(c),"equipment_conflict");c.slots=2;no(m.execute(c),"equipment_conflict");
+            c.slots=3;no(m.execute(c),"equipment");c.slots=4;yes(m.execute(c));
+        });
+        test("equipped soft bag grows without grid collision and cannot unequip illegally",[]{
+            auto a=root(1,Kind::ActorRoot,{1,1});a.allowed_slots=1;a.equipment_accepts=1;a.equipment_capacity=1;
+            auto w=root(2,Kind::WorldRoot);auto b=bag(10,2,100);b.wear_slots=1;auto i=item(11,2,10,{3,0,false});
+            Model m;yes(m.initialize({a,w,b,i}));Command c;c.operation=Operation::Equip;c.item=10;c.destination=1;c.slots=1;c.session=m.session();yes(m.execute(c));
+            yes(move(m,{11,10,{0,0,false},1}));check(m.footprint(10).w==2&&m.carried_mass()==110,"equipped growth");
+            rollback(m,{10,1,{0,0,false},2},"bounds");yes(move(m,{10,2,{0,0,false},2}));check(m.carried_mass()==0,"drop full equipment mass");
+        });
+        test("structured read snapshot is immutable and reports rotated quantity mass",[]{
+            auto a=root(1,Kind::ActorRoot);auto x=item(10,1,5);x.type=10;x.quantity=3;x.stack_limit=5;x.empty={2,1};x.position.rotated=true;
+            Model m;yes(m.initialize({a,x}));auto old=m.serialize();auto v=m.snapshot();
+            check(v.size()==1&&v[0].quantity==3&&v[0].gross_mass==15&&v[0].footprint.w==1&&v[0].footprint.h==2,"view values");
+            check(m.serialize()==old,"snapshot mutation");
+        });
+        test("world reach changes invalidate preview without inventory revision change",[]{
+            auto m=make();AccessGate gate(m);Command c;c.item=20;c.destination=11;c.position={1,0,false};c.session=m.session();
+            AccessGate::Ticket t{c,gate.revision()};no(gate.execute(t),"unobserved_source");
+            yes(gate.observe(2,true,true));t.access_revision=gate.revision();yes(gate.preview(t).result);auto old=m.serialize();
+            yes(gate.observe(2,true,false));no(gate.execute(t),"stale_access");check(m.serialize()==old,"reach failure mutation");
+            t.access_revision=gate.revision();no(gate.execute(t),"world_unavailable");
+            yes(gate.observe(2,true,true));t.access_revision=gate.revision();yes(gate.execute(t));check(m.carried_mass()==197,"guarded transfer");
+        });
+        test("world and nested views are read-only and observation resets on load",[]{
+            auto m=make();AccessGate gate(m);check(gate.children(2).empty(),"unobserved world exposed");
+            yes(gate.observe(2,true,true));auto old=m.serialize();check(gate.children(2)==std::vector<Id>({20,21}),"world direct children");
+            check(gate.children(11)==std::vector<Id>({12}),"nested view");check(m.serialize()==old,"view mutation");
+            auto rev=gate.revision();yes(m.deserialize(old));check(gate.children(2).empty()&&gate.revision()!=rev,"load retained stale observations");
+        });
+        test("ordered crafting batch either consumes and creates or changes nothing",[]{
+            auto m=make();Command erase;erase.operation=Operation::Erase;erase.item=12;erase.session=m.session();
+            Command spawn;spawn.operation=Operation::Spawn;spawn.spawned=item(30,11,60,{2,2,false});spawn.session=m.session();
+            auto old=m.serialize();no(m.execute_batch({erase,spawn}),"bounds");check(m.serialize()==old&&m.high_water_id()==21,"craft lost input");
+            spawn.spawned.position={0,0,false};yes(m.execute_batch({erase,spawn}));
+            check(m.nodes().count(12)==0&&m.nodes().count(30)==1&&m.carried_mass()==187&&m.revision()==1,"craft commit");
+        });
+        test("batch stale requests and empty batches fail without publishing partial state",[]{
+            auto m=make();Command c;c.operation=Operation::SetMass;c.item=12;c.mass=20;c.session=m.session();
+            Command stale=c;stale.revision=1;auto old=m.serialize();no(m.execute_batch({c,stale}),"stale_revision");
+            check(m.serialize()==old,"batch partial publish");no(m.execute_batch({}),"batch_size");
+        });
+        test("simultaneous relocation swaps occupied cells and publishes once",[]{
+            auto a=root(1,Kind::ActorRoot,{2,1});auto x=item(10,1,10);auto y=item(11,1,20,{1,0,false});Model m;yes(m.initialize({a,x,y}));
+            rollback(m,{10,1,{1,0,false},0},"overlap");auto epoch=m.session();
+            yes(m.relocate({{10,1,{1,0,false},0,epoch},{11,1,{0,0,false},0,epoch}}));
+            check(m.nodes().at(10).position.x==1&&m.carried_mass()==30&&m.revision()==1,"swap commit");
+        });
+        test("cross-container unequal-size swap validates only complete final arrangement",[]{
+            auto a=root(1,Kind::ActorRoot,{2,1});auto w=root(2,Kind::WorldRoot,{2,1});
+            auto x=item(10,1,10);x.empty={2,1};auto y=item(11,2,20);Model m;yes(m.initialize({a,w,x,y}));auto e=m.session();
+            yes(m.relocate({{10,2,{0,0,false},0,e},{11,1,{0,0,false},0,e}}));check(m.carried_mass()==20,"cross swap mass");
+            auto old=m.serialize();no(m.relocate({{10,1,{1,0,false},1,e},{11,2,{0,0,false},1,e}}),"bounds");
+            check(m.serialize()==old,"failed final fit mutated model");
+        });
+        test("layout duplicate targets cycles restrictions and stale sessions reject",[]{
+            auto m=make();auto e=m.session();auto old=m.serialize();Move a{20,1,{5,5,false},0,e};
+            no(m.relocate({a,a}),"duplicate_target");no(m.relocate({{10,11,{0,0,false},0,e}}),"cycle");
+            a.session=0;no(m.relocate({a}),"stale_session");check(m.serialize()==old,"layout rollback");
+            auto v=fixture();v[1].accepts=2;v.erase(v.begin()+6,v.end());yes(m.initialize(v));
+            no(m.relocate({{12,2,{0,0,false},0,m.session()}}),"restriction");
+        });
+        test("blocked cells and compartment crossing reject despite sufficient total area",[]{
+            auto a=root(1,Kind::ActorRoot,{2,2});a.cells={1,2,1,2};auto w=root(2,Kind::WorldRoot);auto x=item(10,2,10);x.empty={2,1};
+            Model m;yes(m.initialize({a,w,x}));rollback(m,{10,1,{0,0,false},0},"compartment");
+            yes(move(m,{10,1,{0,0,true},0}));check(m.cell_region(1,1,0)==2,"region projection");
+            a.cells={1,0,1,0};yes(m.initialize({a,w,x}));rollback(m,{10,1,{0,0,false},0},"blocked_cell");
+            check(m.cell_region(1,1,0)==0&&m.cell_region(1,-1,0)==0,"blocked projection");
+        });
+        test("soft fullness uses usable cells and region data survives saving",[]{
+            auto a=root(1,Kind::ActorRoot);auto b=bag(10,1,100);b.cells={1,0,1,0};auto x=item(11,10,10);
+            auto w=root(2,Kind::WorldRoot);auto y=item(12,2,10);Model m;yes(m.initialize({a,w,b,x,y}));
+            check(m.footprint(10).h==1,"half usable capacity");yes(move(m,{12,10,{0,1,false},0}));
+            check(m.footprint(10).h==2,"full usable capacity");Model n;yes(n.deserialize(m.serialize()));
+            check(n.nodes().at(10).cells==b.cells&&n.serialize()==m.serialize(),"mask persistence");
+        });
+        test("invalid masks cannot create unreachable legal capacity",[]{
+            Model m;auto a=root(1,Kind::ActorRoot,{2,2});a.cells={1};no(m.initialize({a}),"cell_definition");
+            a.cells={0,0,0,0};no(m.initialize({a}),"cell_definition");a.cells={1,1,4097,1};no(m.initialize({a}),"cell_definition");
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));

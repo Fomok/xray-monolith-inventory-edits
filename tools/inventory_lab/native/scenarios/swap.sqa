@@ -1,0 +1,17 @@
+SQA3_SCENARIO 1
+root 1 actor 2 1 1000 1
+definition thing 10 1 1 1 1 1 1 1 0 0 0 0 1 0
+seed 10 1 thing 0 0 0
+seed 11 1 thing 1 0 0
+begin
+move 10 1 1 0 0 0 overlap
+layout_begin
+move 10 1 1 0 0 0 queued
+move 11 1 0 0 0 0 queued
+layout_end ok
+assert revision 1
+assert mass 20
+snapshot swapped
+save swapped
+load swapped
+assert count 3

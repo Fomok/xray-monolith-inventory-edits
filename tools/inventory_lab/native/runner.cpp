@@ -1,4 +1,5 @@
 #include "model.h"
+#include "access_gate.h"
 #include "persistence.h"
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -41,6 +42,11 @@ bool safe_name(const std::string& s) {
 }
 struct Lab {
     Model model;
+    AccessGate access{model};
+    std::uint64_t captured_access=0;
+    bool batching=false;
+    bool relocating=false;
+    std::vector<Command> batch;
     std::map<std::string,Node> definitions;
     std::vector<Node> seeds;
     std::ofstream events;
@@ -63,6 +69,34 @@ struct Lab {
         current_command.clear();
         for(const auto& token:t) { if(!current_command.empty()) current_command+=' '; current_command+=token; }
         auto count=[&](std::size_t n){require(t.size()==n,"argument_count");};
+        if(t[0]=="cells_definition"||t[0]=="root_cells") {
+            require(!begun&&t.size()>=3,"cell_definition");auto size=number<std::size_t>(t[2]);
+            require(size<=4096&&t.size()==size+3,"cell_definition");std::vector<unsigned> cells;
+            for(std::size_t i=3;i<t.size();++i)cells.push_back(number<unsigned>(t[i]));
+            if(t[0]=="cells_definition") {require(definitions.count(t[1])!=0,"unknown_definition");definitions.at(t[1]).cells=std::move(cells);}
+            else {bool found=false;Id id=number<Id>(t[1]);for(Node& n:seeds)if(n.id==id){n.cells=cells;found=true;}require(found,"policy_root");}
+            return;
+        }
+        if(t[0]=="stack_definition"||t[0]=="wear_definition") {
+            require(!begun,"definition_after_begin");count(6);
+            require(definitions.count(t[1])!=0,"unknown_definition");Node& n=definitions.at(t[1]);
+            if(t[0]=="stack_definition") {
+                n.type=number<Id>(t[2]);n.state=number<Id>(t[3]);
+                n.quantity=number<std::uint32_t>(t[4]);n.stack_limit=number<std::uint32_t>(t[5]);
+            } else {
+                n.wear_slots=number<std::uint64_t>(t[2]);n.required_slots=number<unsigned>(t[3]);
+                n.blocked_slots=number<std::uint64_t>(t[4]);n.presentation_group=number<unsigned>(t[5]);
+            }
+            return;
+        }
+        if(t[0]=="equipment_policy") {
+            require(!begun,"policy_after_begin");count(5);Id id=number<Id>(t[1]);bool found=false;
+            for(Node& n:seeds) if(n.id==id&&n.kind==Kind::ActorRoot) {
+                n.allowed_slots=number<std::uint64_t>(t[2]);n.equipment_accepts=number<std::uint64_t>(t[3]);
+                n.equipment_capacity=number<unsigned>(t[4]);found=true;
+            }
+            require(found,"policy_root");return;
+        }
         if(t[0]=="definition") {
             require(!begun,"definition_after_begin");count(16);require(safe_name(t[1]),"definition_name");
             Node n;n.intrinsic=number<Mass>(t[2]);n.category=number<std::uint64_t>(t[3]);
@@ -90,6 +124,20 @@ struct Lab {
             begun=true;captured_session=model.session();event(index,"begin","ok",true);return;
         }
         require(begun,"begin_required");++steps;
+        if(t[0]=="batch_begin"||t[0]=="layout_begin") {
+            count(1);require(!batching,"nested_batch");batching=true;relocating=t[0]=="layout_begin";batch.clear();return;
+        }
+        if(t[0]=="batch_end"||t[0]=="layout_end") {
+            count(2);require(batching,"batch_required");auto before=model.serialize();auto epoch=model.session();
+            require((t[0]=="layout_end")==relocating,"batch_mode");
+            std::vector<Move> moves;
+            for(const auto& c:batch) moves.push_back({c.item,c.destination,c.position,c.revision,c.session});
+            auto r=relocating?model.relocate(moves):model.execute_batch(batch);std::string actual=r.ok?"ok":r.error;
+            if(!r)require(model.serialize()==before&&model.session()==epoch,"rollback_invariant");
+            event(index,"batch_end",actual,actual==t[1]);batching=false;batch.clear();require(actual==t[1],"unexpected_result");return;
+        }
+        if(batching) require(t[0]=="spawn"||t[0]=="move"||t[0]=="mass"||t[0]=="erase"||t[0]=="split"||t[0]=="merge"||t[0]=="equip","batch_command_only");
+        if(batching&&relocating)require(t[0]=="move","layout_move_only");
         if(t[0]=="assert") {
             require(t.size()>=3,"assert_syntax");bool pass=false;
             if(t[1]=="mass") {count(3);pass=model.carried_mass()==number<Mass>(t[2]);}
@@ -97,7 +145,12 @@ struct Lab {
             else if(t[1]=="revision") {count(3);pass=model.revision()==number<std::uint64_t>(t[2]);}
             else if(t[1]=="high_water") {count(3);pass=model.high_water_id()==number<Id>(t[2]);}
             else if(t[1]=="world_count") {count(3);pass=model.world_items().size()==number<std::size_t>(t[2]);}
+            else if(t[1]=="accessible_count") {count(4);pass=access.children(number<Id>(t[2])).size()==number<std::size_t>(t[3]);}
             else if(t[1]=="parent") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.parent==number<Id>(t[3]);}
+            else if(t[1]=="quantity") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.quantity==number<unsigned>(t[3]);}
+            else if(t[1]=="equipped") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.location==Location::Equipment&&n->second.equipped_slots==number<std::uint64_t>(t[3]);}
+            else if(t[1]=="group_count") {count(4);pass=model.equipment_group(number<unsigned>(t[2])).size()==number<std::size_t>(t[3]);}
+            else if(t[1]=="cycle") {count(6);pass=model.cycle_equipment(number<unsigned>(t[2]),number<Id>(t[3]),number<int>(t[4]))==number<Id>(t[5]);}
             else if(t[1]=="footprint") {count(5);auto s=model.footprint(number<Id>(t[2]));pass=s.w==number<int>(t[3])&&s.h==number<int>(t[4]);}
             else throw std::runtime_error("unknown_assert");
             event(index,"assert_"+t[1],pass?"ok":"assertion",pass);require(pass,"assertion");return;
@@ -109,9 +162,33 @@ struct Lab {
             event(index,t[0],r.ok?"ok":r.error,r.ok);require(r.ok,r.error);return;
         }
         if(t[0]=="capture_session") {count(1);captured_session=model.session();return;}
-        bool preview=false,old_session=false;
+        if(t[0]=="capture_access") {count(1);captured_access=access.revision();return;}
+        if(t[0]=="observe") {
+            count(4);auto r=access.observe(number<Id>(t[1]),boolean(t[2]),boolean(t[3]));
+            event(index,"observe",r.ok?"ok":r.error,r.ok);require(r.ok,r.error);return;
+        }
+        if(t[0]=="snapshot") {
+            count(2);require(safe_name(t[1]),"snapshot_name");
+            std::ofstream file(output/("snapshot-"+t[1]+".json"));require(static_cast<bool>(file),"snapshot_open");
+            file<<"{\"revision\":"<<model.revision()<<",\"carried_grams\":"<<model.carried_mass()<<",\"items\":[";
+            bool first=true;
+            for(const auto& n:model.snapshot()) {
+                if(!first)file<<',';
+                first=false;
+                file<<"{\"id\":"<<n.id<<",\"parent\":"<<n.parent<<",\"type\":"<<n.type<<",\"state\":"<<n.state
+                    <<",\"quantity\":"<<n.quantity<<",\"equipped\":"<<(n.location==Location::Equipment?"true":"false")
+                    <<",\"slots\":"<<n.equipped_slots<<",\"group\":"<<n.presentation_group<<",\"x\":"<<n.position.x
+                    <<",\"y\":"<<n.position.y<<",\"width\":"<<n.footprint.w<<",\"height\":"<<n.footprint.h
+                    <<",\"gross_grams\":"<<n.gross_mass<<'}';
+            }
+            file<<"]}\n";file.flush();require(static_cast<bool>(file),"snapshot_write");event(index,"snapshot","ok",true);return;
+        }
+        bool preview=false,old_session=false,guarded=false,old_access=false;
         if(t[0]=="preview") {preview=true;t.erase(t.begin());require(!t.empty(),"preview_command");}
         if(t[0]=="captured") {old_session=true;t.erase(t.begin());require(!t.empty(),"captured_command");}
+        if(t[0]=="guarded"||t[0]=="guarded_captured") {
+            guarded=true;old_access=t[0]=="guarded_captured";t.erase(t.begin());require(!t.empty(),"guarded_command");
+        }
         Command c;c.session=old_session?captured_session:model.session();
         std::string op=t[0];
         if(op=="spawn") {
@@ -125,10 +202,23 @@ struct Lab {
             count(5);c.operation=Operation::SetMass;c.item=number<Id>(t[1]);c.mass=number<Mass>(t[2]);c.revision=number<std::uint64_t>(t[3]);
         } else if(op=="erase") {
             count(4);c.operation=Operation::Erase;c.item=number<Id>(t[1]);c.revision=number<std::uint64_t>(t[2]);
+        } else if(op=="split") {
+            count(10);c.operation=Operation::Split;c.item=number<Id>(t[1]);c.quantity=number<std::uint32_t>(t[2]);c.new_id=number<Id>(t[3]);
+            c.destination=number<Id>(t[4]);c.position={number<int>(t[5]),number<int>(t[6]),boolean(t[7])};c.revision=number<std::uint64_t>(t[8]);
+        } else if(op=="merge") {
+            count(6);c.operation=Operation::Merge;c.item=number<Id>(t[1]);c.destination=number<Id>(t[2]);
+            c.quantity=number<std::uint32_t>(t[3]);c.revision=number<std::uint64_t>(t[4]);
+        } else if(op=="equip") {
+            count(6);c.operation=Operation::Equip;c.item=number<Id>(t[1]);c.destination=number<Id>(t[2]);
+            c.slots=number<std::uint64_t>(t[3]);c.revision=number<std::uint64_t>(t[4]);
         } else throw std::runtime_error("unknown_command");
+        if(batching) {
+            require(t.back()=="queued"&&batch.size()<64,"batch_queue");batch.push_back(c);event(index,op,"queued",true);return;
+        }
         auto before=model.serialize();auto epoch=model.session();Result r{false,{}};Mass projected=-1;
-        if(preview) {auto p=model.preview(c);r=p.result;projected=p.carried_mass;}
-        else r=model.execute(c);
+        AccessGate::Ticket ticket{c,old_access?captured_access:access.revision()};
+        if(preview) {auto p=guarded?access.preview(ticket):model.preview(c);r=p.result;projected=p.carried_mass;}
+        else r=guarded?access.execute(ticket):model.execute(c);
         std::string actual=r.ok?"ok":r.error;bool pass=actual==t.back();
         if(preview||!r) require(model.serialize()==before&&model.session()==epoch,"rollback_invariant");
         event(index,(preview?"preview_":"")+op,actual,pass,projected);require(pass,"unexpected_result");
@@ -171,7 +261,7 @@ int main(int argc,char** argv) {
             while(s>>token)tokens.push_back(token);
             lab.line(std::move(tokens),lines+1);
         }
-        require(file.eof(),"scenario_read");require(lab.begun&&lab.steps>0,"empty_scenario");
+        require(file.eof(),"scenario_read");require(lab.begun&&lab.steps>0,"empty_scenario");require(!lab.batching,"unclosed_batch");
         auto saved=save_atomic(lab.model,output/"final.inv");require(saved.ok,saved.error);
         Model restored;auto loaded=load_file(restored,output/"final.inv");
         require(loaded.ok&&restored.serialize()==lab.model.serialize(),"final_reload");
