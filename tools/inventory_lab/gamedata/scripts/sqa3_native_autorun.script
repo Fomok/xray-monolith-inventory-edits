@@ -240,6 +240,34 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-logical-rotate",1,true) then
+        local edge=args:find("-sqa3-rotation-edge",1,true)~=nil
+        local reload=args:find("-sqa3-rotation-reload",1,true)~=nil
+        commands={"inventory_next_probe export",snapshot}
+        if not reload then
+            commands[#commands+1]=unequip_fixture
+            commands[#commands+1]=edge and "inventory_next_store 103 105 7 6 1" or "inventory_next_store 103 105 5 6 0"
+        end
+        commands[#commands+1]=toggle_inventory
+        if not reload then
+            commands[#commands+1]=function()
+                started=started+60000
+                printf("[SQA3 AUTORUN] logical rotation mouse/key input window: select backpack pistol and press R once; edge=%s",tostring(edge))
+            end
+        end
+        commands[#commands+1]="screenshot sqa3_logical_rotate"
+        commands[#commands+1]=function()
+            assert(not db.actor:item_in_slot(2),"logical rotation unexpectedly equipped pistol")
+            printf("[SQA3 AUTORUN] logical rotation finished edge=%s reload=%s",tostring(edge),tostring(reload))
+            if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end
+        end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save "..(edge and "sqa3_logical_rotate_edge" or "sqa3_logical_rotate")
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-loaded-bulk",1,true) then
         local function check()
             local found={}
