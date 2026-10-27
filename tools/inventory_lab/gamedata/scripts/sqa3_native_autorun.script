@@ -240,6 +240,49 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-direct-unequip",1,true) then
+        local moved,retained
+        local function weapons(prefix)
+            for _,id in ipairs({moved,retained}) do
+                local item=level.object_by_id(id);assert(item and item:parent(),"direct unequip weapon missing")
+                printf("[SQA3 AUTORUN] direct unequip %sweapon live=%s parent=%s grams=%s condition=%s ammo=%s",prefix,tostring(id),tostring(item:parent():id()),tostring(item:weight()*1000),tostring(item:condition()),tostring(item:get_ammo_in_magazine()))
+            end
+        end
+        commands={function()
+            crate_id=tonumber(args:match("%-sqa3%-equip%-source=(%d+)"))
+            moved=tonumber(args:match("%-sqa3%-equip%-item=(%d+)"))
+            retained=tonumber(args:match("%-sqa3%-equip%-retained=(%d+)"))
+            assert(crate_id and moved and retained,"direct unequip IDs missing")
+        end,"inventory_next_probe export",snapshot}
+        if not args:find("-sqa3-fixture-direct-unequip-reload",1,true) then
+            commands[#commands+1]=function()
+                assert(db.actor:item_in_slot(3) and db.actor:item_in_slot(3):id()==moved,"direct unequip needs primary rifle")
+                weapons("before ")
+            end
+            commands[#commands+1]=open_crate
+            commands[#commands+1]=function()
+                started=started+60000
+                printf("[SQA3 AUTORUN] direct unequip mouse input window: drag primary rifle straight into crate")
+            end
+        end
+        commands[#commands+1]=function()
+            assert(not db.actor:item_in_slot(3),"direct unequip primary slot still occupied")
+            for _,id in ipairs({moved,retained}) do
+                local item=level.object_by_id(id)
+                assert(item and item:parent() and item:parent():id()==crate_id,"direct unequip wrong owner")
+            end
+            printf("[SQA3 AUTORUN] direct unequip result moved=%s retained=%s source=%s",tostring(moved),tostring(retained),tostring(crate_id))
+            weapons("")
+        end
+        commands[#commands+1]="screenshot sqa3_direct_unequip"
+        commands[#commands+1]=function() if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_direct_unequip"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-direct-equip",1,true) then
         local sources,acquired,retained={}
         local function weapons(prefix)
@@ -269,7 +312,9 @@ function on_game_start()
             commands[#commands+1]=function()
                 for i,id in ipairs(sources) do
                     local item=level.object_by_id(id);assert(item,"direct equip weapon not online")
-                    item:set_condition(i==1 and 0.83 or 0.91);item:set_ammo_elapsed(i==1 and 5 or 9)
+                    -- Weapon saves use NET_Packet q8 condition (read divisor
+                    -- 255.0001). Use representable values for exact reload checks.
+                    item:set_condition((i==1 and 212 or 232)/255.0001);item:set_ammo_elapsed(i==1 and 5 or 9)
                 end
             end
             commands[#commands+1]=function() weapons("before ") end
