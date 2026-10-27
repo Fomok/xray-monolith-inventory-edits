@@ -27,7 +27,7 @@ assert all(n["location"] == 0 and n["attributes"]["native_section"] == "bandage"
 log = a.log.read_text(errors="replace")
 if not a.reload:
     accepted = re.findall(r"SQA3 ground pickup server accepted live=(\d+)", log)
-    ack = re.findall(r"SQA3 ground pickup client acknowledged live=(\d+)", log)
+    ack = re.findall(r"SQA3 (?:ground )?pickup client acknowledged live=(\d+)", log)
     refused = re.findall(r"SQA3 ground pickup refused live=(\d+) reason=no_fit; source retained", log)
     assert len(accepted) == len(set(accepted)) == 65 and sorted(accepted) == sorted(ack)
     assert len(refused) == 4 and len(set(refused)) == 2, "full-grid retries did not preserve two sources"

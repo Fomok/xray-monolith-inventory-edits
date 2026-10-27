@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "xrserver.h"
 #include "InventoryNextProbe.h"
+#include "actor.h"
 #include "xrserver_objects.h"
 #include "xrserver_objects_alife_monsters.h"
 #include "xrServer_svclient_validation.h"
@@ -97,4 +98,36 @@ void xrServer::Process_event_ownership(NET_Packet& P, ClientID sender, u32 time,
 		SendBroadcast(BroadcastCID, P, MODE);
 	}
 	else if(sqa_ground)InventoryNextPickupFinish(id_parent,id_entity,false);
+}
+
+
+// One server event admits before detach. Rejection never emits a client detach.
+void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,u16 owner)
+{
+    if(!InventoryNextStrictOwnedPickup()||game->Type()!=eGameIDSingle||!Actor()||owner!=Actor()->ID())return;
+    const u16 source=P.r_u16(),live=P.r_u16();
+    auto from=game->get_entity_from_eid(source);auto to=game->get_entity_from_eid(owner);auto item=game->get_entity_from_eid(live);
+    if(!from||!to||!item||source==owner||item->ID_Parent!=source||
+       !is_object_valid_on_svclient(source)||!is_object_valid_on_svclient(owner)||!is_object_valid_on_svclient(live)) {
+        InventoryNextPickupStatus("Source unavailable. Transfer cancelled.");return;
+    }
+    auto client=ID_to_client(sender);
+    if(client!=GetServerClient()&&client!=to->owner)return;
+    if(!InventoryNextPickupPrepare(owner,live,source))return;
+    NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_OWNERSHIP_REJECT);reject.w_u16(source);reject.w_u16(live);
+    if(!Process_event_reject(reject,sender,time,source,live,false)) {
+        InventoryNextPickupFinish(owner,live,false);return;
+    }
+    if(!game->OnTouch(owner,live,FALSE)) {
+        // Single-player OnTouch normally always accepts. Restore the original
+        // ALife/native owner before acknowledging a rejected transaction.
+        if(game->OnTouch(source,live,FALSE)){item->ID_Parent=source;from->children.push_back(live);}
+        InventoryNextPickupFinish(owner,live,false);return;
+    }
+    if(from->owner!=to->owner)PerformMigration(item,from->owner,to->owner);
+    item->ID_Parent=owner;to->children.push_back(live);
+    InventoryNextPickupFinish(owner,live,true);
+    NET_Packet take;take.w_begin(M_EVENT);take.w_u32(time);take.w_u16(GE_OWNERSHIP_TAKE);take.w_u16(owner);take.w_u16(live);
+    const u32 mode=net_flags(TRUE,TRUE,FALSE,TRUE);
+    SendBroadcast(BroadcastCID,reject,mode);SendBroadcast(BroadcastCID,take,mode);
 }

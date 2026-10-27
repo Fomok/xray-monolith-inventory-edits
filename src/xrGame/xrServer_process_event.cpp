@@ -87,6 +87,9 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 			}
 		}
 		break;
+	case GE_SQA_ACQUIRE:
+		Process_event_sqa_acquire(P,sender,timestamp,destination);
+		break;
 	case GE_TRADE_BUY:
 	case GE_OWNERSHIP_TAKE:
 		{

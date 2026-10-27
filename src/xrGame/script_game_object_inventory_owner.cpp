@@ -4,6 +4,7 @@
 
 #include "pch_script.h"
 #include "script_game_object.h"
+#include "InventoryNextProbe.h"
 #include "script_game_object_impl.h"
 #include "InventoryOwner.h"
 #include "Pda.h"
@@ -621,6 +622,7 @@ void CScriptGameObject::TransferItem(CScriptGameObject* pItem, CScriptGameObject
 	}
 
 	// выбросить у себя
+	if(InventoryNextRequestOwnedPickup(object().ID(),pForWho->object().ID(),pIItem->object().ID()))return;
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GE_TRADE_SELL, object().ID());
 	P.w_u16(pIItem->object().ID());
@@ -656,6 +658,7 @@ void CScriptGameObject::TakeItem(CScriptGameObject* pItem)
 		const CGameObject* parentGO = smart_cast<CGameObject*>(pIItem->object().H_Parent());
 		if ((inventory_owner || inventory_box) && parentGO)
 		{
+			if(InventoryNextRequestOwnedPickup(parentGO->ID(),object().ID(),pIItem->object().ID()))return;
 			NET_Packet P;
 			CGameObject::u_EventGen(P, GE_TRADE_SELL, parentGO->ID());
 			P.w_u16(pIItem->object().ID());

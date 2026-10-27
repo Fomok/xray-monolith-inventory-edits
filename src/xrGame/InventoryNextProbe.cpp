@@ -20,6 +20,7 @@
 #include "ui/UIStatic.h"
 #include "string_table.h"
 #include "../xrServerEntities/inventory_space.h"
+#include "../xrServerEntities/xrMessages.h"
 #include "../inventory_next/drag_session.h"
 #include "../inventory_next/entity_registry.h"
 #include "../inventory_next/persistence.h"
@@ -41,6 +42,7 @@ std::map<u16,inventory_next::Node> pending_pickups;
 std::unique_ptr<inventory_next::EntityRegistry> pickup_registry;
 std::unique_ptr<inventory_next::GroundPickup> pickup_transaction;
 bool pickup_fault=false;
+u16 pickup_source=0xffff;
 
 
 bool read_storage_catalog(inventory_next::StorageCatalog& output) {
@@ -279,7 +281,7 @@ void InventoryNextCapacityProbe() noexcept try {
 
 
 bool InventoryNextStrictPickup() noexcept {
-    return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-strict-ground-pickup")!=nullptr;
+    return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-ground-pickup")||InventoryNextStrictOwnedPickup());
 }
 bool InventoryNextPickupCanSave() noexcept {
     return !pickup_fault&&!pickup_transaction&&pending_pickups.empty();
@@ -287,14 +289,17 @@ bool InventoryNextPickupCanSave() noexcept {
 void InventoryNextPickupForget(u16 live) noexcept try {
     pending_pickups.erase(live);
 } catch (...) {pickup_fault=true;}
-bool InventoryNextPickupPrepare(u16 owner,u16 live) noexcept try {
+bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
     if(pickup_fault||pickup_transaction||!InventoryNextLayoutSync())return false;
     auto object=Level().Objects.net_Find(live);
     auto item=smart_cast<CInventoryItem*>(object);
     const auto server=ai().alife().objects().object(live,true);
-    if(!item||!server||server->ID_Parent!=0xffff||item->object().H_Parent())return false;
+    if(!item||!server||server->ID_Parent!=source)return false;
+    const auto actual_parent=item->object().H_Parent();
+    if(source==0xffff?actual_parent!=nullptr:(!actual_parent||actual_parent->ID()!=source))return false;
+    if(source!=0xffff&&!InventoryNextStrictOwnedPickup())return false;
     const auto id=InventoryNextIdentity(live);if(!id)return false;
     InventoryNextIdentityOnline(*item);
     Node n;n.id=id;n.parent=2;
@@ -319,12 +324,13 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live) noexcept try {
         if(!registry->add(pair.first)||!registry->bind(pair.first,static_cast<u16>(std::stoul(pair.second.attributes.at("native_live_id")))))return false;
         if(pair.second.container&&pair.second.location!=Location::Overflow&&layout().model().storage_active(pair.first))destinations.push_back(pair.first);
     }
+    if(source!=0xffff&&(!registry->add(2)||!registry->bind(2,source)))return false;
     if(!registry->add(id)||!registry->bind(id,live))return false;
     auto transaction=std::make_unique<GroundPickup>(*registry);
-    const auto result=transaction->prepare(layout().model(),n,destinations);
-    if(!result){Msg("! SQA3 ground pickup refused live=%u reason=%s; source retained",live,result.error.c_str());return false;}
-    pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);
-    Msg("* SQA3 ground pickup reserved live=%u; save blocked=%d",live,!InventoryNextPickupCanSave());
+    const auto result=transaction->prepare(layout().model(),n,destinations,source==0xffff);
+    if(!result){Msg("! SQA3 %s pickup refused live=%u reason=%s; source retained",source==0xffff?"ground":"owned",live,result.error.c_str());InventoryNextPickupStatus("No space. Item stayed at source.");return false;}
+    pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);pickup_source=source;
+    Msg("* SQA3 %s pickup reserved live=%u; save blocked=%d",source==0xffff?"ground":"owned",live,!InventoryNextPickupCanSave());
     return true;
 } catch (...) {Msg("! SQA3 ground pickup prepare exception; source retained");return false;}
 void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
@@ -339,7 +345,7 @@ void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
         if(!restored){pickup_fault=true;Msg("! SQA3 pickup publish failed: %s",restored.error.c_str());return;}
         pending_pickups.emplace(live,admitted);
         if(InventoryNextIdentityCanSave()){pickup_fault=true;Msg("! SQA3 pending pickup incorrectly allowed save");return;}
-        Msg("* SQA3 ground pickup server accepted live=%u owner=%llu cell=%d,%d",live,admitted.parent,admitted.position.x,admitted.position.y);
+        Msg("* SQA3 %s pickup server accepted live=%u owner=%llu cell=%d,%d",pickup_source==0xffff?"ground":"owned",live,admitted.parent,admitted.position.x,admitted.position.y);
     } else if(accepted||result.error!="native_rejected") {
         pickup_fault=true;Msg("! SQA3 pickup acknowledgement failed: %s",result.error.c_str());return;
     }
@@ -353,5 +359,21 @@ void InventoryNextPickupTaken(u16 live) noexcept try {
     if(found==layout().model().nodes().end()||found->second.location==inventory_next::Location::Overflow) {
         pickup_fault=true;Msg("! SQA3 ordinary pickup lost reserved placement; saves blocked");return;
     }
-    Msg("* SQA3 ground pickup client acknowledged live=%u; pending=%u save_ready=%d",live,static_cast<unsigned>(pending_pickups.size()),InventoryNextPickupCanSave());
+    InventoryNextPickupStatus("");
+    Msg("* SQA3 pickup client acknowledged live=%u; pending=%u save_ready=%d",live,static_cast<unsigned>(pending_pickups.size()),InventoryNextPickupCanSave());
 } catch (...) {pickup_fault=true;}
+
+
+bool InventoryNextStrictOwnedPickup() noexcept {
+    return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-strict-owned-pickup")!=nullptr;
+}
+void InventoryNextPickupStatus(const char* text) noexcept try {
+    if(!CurrentGameUI())return;
+    auto& menu=CurrentGameUI()->GetActorMenu();menu.m_sqaRefresh=true;menu.m_sqaRetryAfter=Device.dwTimeGlobal+250;
+    if(menu.m_sqaStatus)menu.m_sqaStatus->TextItemControl()->SetText(text);
+} catch (...) {Msg("! SQA3 acquisition status refresh failed");}
+bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept try {
+    if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||source==0xffff)return false;
+    NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_ACQUIRE,owner);packet.w_u16(source);packet.w_u16(live);CGameObject::u_EventSend(packet);
+    InventoryNextPickupStatus("Checking storage...");return true;
+} catch (...) {InventoryNextPickupStatus("Transfer unavailable. Item stayed at source.");return true;}

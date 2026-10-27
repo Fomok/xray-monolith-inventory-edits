@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "UIActorMenu.h"
+#include "../InventoryNextProbe.h"
 #include "UIDragDropListEx.h"
 #include "UICharacterInfo.h"
 #include "UIInventoryUtilities.h"
@@ -43,6 +44,7 @@ bool move_item_check(PIItem itm, CInventoryOwner* from, CInventoryOwner* to, boo
 			return false;
 		}
 	}
+	if(InventoryNextRequestOwnedPickup(from->object_id(),to->object_id(),itm->object_id()))return true;
 	move_item_from_to(from->object_id(), to->object_id(), itm->object_id());
 	return true;
 }
@@ -302,7 +304,7 @@ void CUIActorMenu::TakeAllFromPartner(CUIWindow* w, void* d)
 		move_item_check(item, m_pPartnerInvOwner, m_pActorInvOwner, false);
 	}
 
-	m_pDeadBodyBagList->ClearAll(true);
+	if(InventoryNextStrictOwnedPickup())m_sqaRefresh=true;else m_pDeadBodyBagList->ClearAll(true);
 }
 
 void CUIActorMenu::TakeAllFromInventoryBox()
@@ -316,14 +318,16 @@ void CUIActorMenu::TakeAllFromInventoryBox()
 		for (u32 j = 0; j < ci->ChildsCount(); ++j)
 		{
 			PIItem j_item = (PIItem)(ci->Child(j)->m_pData);
-			move_item_from_to(m_pInvBox->ID(), actor_id, j_item->object_id());
+			if(!InventoryNextRequestOwnedPickup(m_pInvBox->ID(),actor_id,j_item->object_id()))
+				move_item_from_to(m_pInvBox->ID(), actor_id, j_item->object_id());
 		}
 
 		PIItem item = (PIItem)(ci->m_pData);
-		move_item_from_to(m_pInvBox->ID(), actor_id, item->object_id());
+		if(!InventoryNextRequestOwnedPickup(m_pInvBox->ID(),actor_id,item->object_id()))
+			move_item_from_to(m_pInvBox->ID(), actor_id, item->object_id());
 	}
 
-	m_pDeadBodyBagList->ClearAll(true);
+	if(InventoryNextStrictOwnedPickup())m_sqaRefresh=true;else m_pDeadBodyBagList->ClearAll(true);
 }
 
 void CUIActorMenu::PutAllToPartner(CUIWindow* w, void* d)

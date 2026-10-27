@@ -905,6 +905,7 @@ bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 
 	if (m_pActorInvOwner->inventory().CanPutInRuck(iitem) || (b_already && (new_owner != old_owner)))
 	{
+		if(!b_own_item&&InventoryNextRequestOwnedPickup(iitem->parent_id(),m_pActorInvOwner->object_id(),iitem->object_id()))return true;
 		bool result = b_already || (!b_own_item || m_pActorInvOwner->inventory().Ruck(iitem));
 		VERIFY(result);
 

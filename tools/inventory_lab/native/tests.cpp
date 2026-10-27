@@ -907,6 +907,25 @@ int main(int argc,char** argv) {
             GroundPickup vanished(registry);yes(vanished.prepare(layout.model(),incoming,{1,100}));yes(registry.unbind(*registry.handle(101)));
             no(vanished.acknowledge(11,true),"stale_entity");check(!vanished.can_save(),"disappeared source acknowledgement allowed save");
         });
+        test("owned source admission refuses before detach and rolls back native rejection",[]{
+            ActorLayout layout;ActorStorage storage{{1,1},{},true};yes(layout.reconcile({},storage));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            auto incoming=item(100,2,38);incoming.attributes["native_section"]="bandage";
+            GroundPickup rejected(registry);yes(rejected.prepare(layout.model(),incoming,{1},false));
+            no(rejected.acknowledge(12,false),"native_rejected");check(rejected.can_save()&&rejected.model().nodes().at(100).parent==2,"owned refusal lost source or blocked saves");
+            GroundPickup accepted(registry);yes(accepted.prepare(layout.model(),incoming,{1},false));yes(accepted.acknowledge(11,true));
+            yes(layout.restore(accepted.model().serialize()));
+            yes(registry.add(101));yes(registry.bind(101,111));incoming.id=101;
+            const auto full=layout.model().serialize();GroundPickup overflow(registry);no(overflow.prepare(layout.model(),incoming,{1},false),"no_fit");
+            check(layout.model().serialize()==full,"owned capacity refusal changed carried state");
+        });
+        test("owned source disappearing after reservation requires reconciliation",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            auto incoming=item(100,2,38);incoming.attributes["native_section"]="bandage";
+            GroundPickup pending(registry);yes(pending.prepare(layout.model(),incoming,{1},false));
+            yes(registry.unbind(*registry.handle(2)));no(pending.acknowledge(11,true),"stale_entity");check(!pending.can_save(),"vanished owned source allowed save");
+        });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));
             yes(move(m,{20,11,{1,0,false},0})); yes(save_atomic(m,path));

@@ -9,7 +9,7 @@ namespace inventory_next {
 class GroundPickup {
 public:
     explicit GroundPickup(const EntityRegistry& registry):registry_(registry) {}
-    Result prepare(const Model& carried,Node incoming,const std::vector<Id>& destinations) {
+    Result prepare(const Model& carried,Node incoming,const std::vector<Id>& destinations,bool ground_source=true) {
         if(transfer_)return {false,"transfer_busy"};
         if(carried.nodes().count(incoming.id))return {false,"duplicate_item"};
         std::vector<Node> nodes;
@@ -32,7 +32,7 @@ public:
         command.position=plan.moves[0].position;command.session=model_.session();command.revision=model_.revision();
         transfer_=std::make_unique<TransferSession>(model_,*access_,registry_);
         TransferSession::PhysicalOwners physical;physical.destination=actor;
-        result=transfer_->prepare({command,access_->revision()},true,physical);
+        result=transfer_->prepare({command,access_->revision()},ground_source,physical);
         if(!result){transfer_.reset();return result;}
         return transfer_->dispatch(dispatch_);
     }

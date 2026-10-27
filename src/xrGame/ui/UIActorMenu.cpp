@@ -211,7 +211,7 @@ void CUIActorMenu::Update()
     if(m_sqaRefresh && Device.dwTimeGlobal>=m_sqaRetryAfter && !CUIDragDropListEx::m_drag_item && (m_currMenuMode==mmInventory||m_currMenuMode==mmDeadBodySearch)) {
         m_sqaRetryAfter=Device.dwTimeGlobal+250;
         m_sqaRefresh=false;
-        if(m_currMenuMode==mmDeadBodySearch)InitDeadBodySearchMode();else InitInventoryContents(m_pInventoryBagList);
+        if(m_currMenuMode==mmDeadBodySearch){SetCurrentItem(NULL);m_pDeadBodyBagList->ClearAll(true);InitDeadBodySearchMode();}else InitInventoryContents(m_pInventoryBagList);
     }
 	{
 		// all mode
