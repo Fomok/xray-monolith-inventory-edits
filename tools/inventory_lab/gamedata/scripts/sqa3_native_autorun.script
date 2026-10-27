@@ -3,6 +3,7 @@ local started, stage, failed = nil, 1, false
 local commands = {}
 local crate_id,loot_id
 local changing,condition_tick=false,0
+local travel_block_test,travel_block_attempted=false,false
 local npc_id,corpse_loot_id
 local capacity_rifle,capacity_pack
 local sale_item,sale_actor_money,sale_partner_money
@@ -217,6 +218,18 @@ local function spawn()
 end
 function update()
     if failed or not db or not db.actor then return end
+    if travel_block_test and not travel_block_attempted then
+        local pending_proxy=false
+        level.iterate_nearest(db.actor:position(),5,function(obj)
+            if obj and obj:section()=="sqa3_ground_backpack" then pending_proxy=true end
+            return false
+        end)
+        if pending_proxy then
+            travel_block_attempted=true
+            printf("[SQA3 AUTORUN] attempting real level change while ground provisioning is pending")
+            exec_console_cmd("jump_to_level l01_escape")
+        end
+    end
     if changing then
         condition_tick=condition_tick+1
         db.actor:iterate_inventory(function(_,item)
@@ -240,6 +253,10 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    travel_block_test=args:find("-sqa3-fixture-travel-blocked",1,true)~=nil
+    if travel_block_test then
+        assert(args:find("-sqa3-fixture-ground-proxy-timeout",1,true),"blocked travel needs pending-ground timeout fixture")
+    end
     if args:find("-sqa3-fixture-world-travel",1,true) then
         local original_release=_G.alife_release
         _G.alife_release=function(obj,msg)
@@ -418,6 +435,10 @@ function on_game_start()
             end
         end
         commands[#commands+1]=function()
+            if travel_block_test then
+                assert(travel_block_attempted and level.name()=="fake_start","pending travel was not attempted or was not blocked")
+                printf("[SQA3 AUTORUN] pending inventory travel blocked; original level retained")
+            end
             local found=find_proxies()
             if actor_has_bag then
                 assert(#found==0,"empty ground proxy survived retrieval/refusal")
