@@ -240,6 +240,32 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-ground-disappear",1,true) then
+        local gone
+        commands={"inventory_next_probe export",snapshot}
+        commands[#commands+1]=function()
+            local a=db.actor;local pos=a:position();pos.x=pos.x+2
+            local item=alife():create("bandage",pos,a:level_vertex_id(),a:game_vertex_id())
+            assert(item,"disappearing source spawn failed");gone=item.id
+        end
+        commands[#commands+1]=function()
+            local item=level.object_by_id(gone);local server=alife():object(gone)
+            assert(item and server and not item:parent(),"disappearing source not online")
+            alife():release(server,true)
+            db.actor:take_item(item) -- queued after destruction while client reference still exists
+            printf("[SQA3 AUTORUN] queued ground source destruction before pickup live=%s",tostring(gone))
+        end
+        commands[#commands+1]=function()
+            assert(not level.object_by_id(gone) and not alife():object(gone),"destroyed source remained live")
+            printf("[SQA3 AUTORUN] disappearing ground source removed without acquisition")
+        end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_ground_disappear"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-ground",1,true) then
         local sources={}
         commands={"inventory_next_probe export",snapshot}

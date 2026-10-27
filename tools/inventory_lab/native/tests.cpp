@@ -878,6 +878,25 @@ int main(int argc,char** argv) {
             yes(rejected.prepare(empty.model(),incoming,{1}));no(rejected.acknowledge(0xffff,false),"native_rejected");
             check(rejected.can_save()&&rejected.model().nodes().at(100).parent==2,"native refusal lost source");
         });
+        test("server acknowledged arrivals reserve cells through client facts reconciliation",[]{
+            ActorLayout layout;ActorStorage storage{{2,1},{},true};yes(layout.reconcile({},storage));
+            EntityRegistry registry;yes(registry.add(1));yes(registry.bind(1,1));
+            std::vector<Node> pending;
+            for(Id id=100;id<102;++id) {
+                yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));
+                auto incoming=item(id,2,38);incoming.attributes["native_section"]="bandage";incoming.attributes["native_place"]="3";
+                GroundPickup pickup(registry);yes(pickup.prepare(layout.model(),incoming,{1}));yes(pickup.acknowledge(1,true));
+                yes(layout.restore(pickup.model().serialize()));
+                auto fact=layout.model().nodes().at(id);fact.parent=1;fact.location=Location::Overflow;fact.position={};pending.push_back(fact);
+                yes(layout.reconcile(pending,storage));
+                check(layout.model().nodes().at(id).location==Location::Grid&&layout.model().nodes().at(id).position.x==static_cast<int>(id-100),"pending server item lost its reserved cell");
+            }
+            yes(registry.add(102));yes(registry.bind(102,102));auto extra=item(102,2,38);extra.attributes["native_section"]="bandage";
+            GroundPickup blocked(registry);no(blocked.prepare(layout.model(),extra,{1}),"no_fit");
+            check(layout.model().carried_mass()==76,"pending/client reconciliation duplicated mass");
+            ActorLayout restarted;yes(restarted.restore(layout.model().serialize()));yes(restarted.reconcile(pending,storage));
+            check(restarted.model().nodes().at(100).position.x==0&&restarted.model().nodes().at(101).position.x==1,"accepted positions lost on restart");
+        });
         test("native ground pickup nested target and disappearing source fail closed",[]{
             ActorLayout layout;ActorStorage storage{{1,1},{},true};auto pack=bag(100,1,820);pack.soft=false;pack.empty=pack.half=pack.full={1,1};pack.attributes["native_section"]="itm_backpack";
             yes(layout.reconcile({pack},storage));yes(layout.move({100,1,{0,0,false},layout.model().revision(),layout.model().session()}));
