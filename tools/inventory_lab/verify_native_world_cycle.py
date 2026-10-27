@@ -56,6 +56,9 @@ def main():
     assert actor == expected
     assert not (a.ground and a.corpse)
     kind = 'corpse' if a.corpse else ('ground' if a.ground else 'crate')
+    if a.corpse and not a.resume_offline:
+        assert len(re.findall(r'explicit native corpse offline transition live=\d+', log)) == 1
+        report['corpse_offline_transition_explicit'] = True
     if a.destroy_retained:
         requested = re.findall(r'requesting real offline-custodian destruction live=(\d+)', log)
         assert len(requested) == 1

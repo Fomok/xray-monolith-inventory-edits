@@ -387,6 +387,12 @@ function on_game_start()
             if resume_offline then printf("[SQA3 AUTORUN] fresh process resumed offline custody live=%s",tostring(box.id)) end
             ActorMenu.get_actor_menu():HideDialog()
             alife():set_switch_online(box.id,false);alife():set_switch_offline(box.id,true)
+            if corpse and not resume_offline then
+                -- Dead creatures intentionally reject scheduler-driven offlining.
+                -- Exercise the exposed native lifetime transition, without changing health.
+                printf("[SQA3 AUTORUN] explicit native corpse offline transition live=%s",tostring(box.id))
+                box:switch_offline()
+            end
             started=started+10000
         end,function()
             inspect("offline",false)
