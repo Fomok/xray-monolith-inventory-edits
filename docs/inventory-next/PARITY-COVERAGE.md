@@ -153,3 +153,10 @@ Physical loaded-bag release/reacquisition and full-pocket refusal each passed wi
 ## Dev25 travel acceptance follow-up - 2026-10-27
 
 Trace engine5999c340/overlay0761f1a2: corpse actual map travel PID7340 and fresh return reload PID36432 passed. Crate first retry PID22704 completed travel but failed retrieval because no physical drag was completed; exit0 alone is not acceptance. Repeat PID25296 passed actual fake_start -> l01_escape -> fake_start, physical drag retrieval, saves and clean exit0/no timeout. All seven items/3278g restored with original persistent nesting and condition; outer105 transient ruck slot resets13->0. Final actor SHA68892c85f81c66281035c424e3787232dbc41ca77ee618cb58603147f755c3e3; empty world d424329db21a0d533be204a9b6ecf662a313f433305332524d97e3ecca6f1cee. Evidence ci-40545302619/crate-travel-retry and corpse-travel-trace/reload. Earlier stuck-pause and initialization shutdown failures remain historical unresolved risks, not erased by clean retries.
+
+
+### Physical-input retest limit - 2026-10-27
+
+Dev26 enginefd20bc7b/overlayd20fb6e (stash mode disabled): PID38548 physically selected pistol103, then Computer Use sent R. No native DIK19 or rotation event appeared; final103 remained parent105 at5,6,0. Clean exit0/6items2458g does not establish rotation. Evidence ci-40549072785/physical-rotation-verification.json has status manual_input_required. Do not repeat unchanged injection attempts.
+
+PID5252 physical first crate rifle -> empty primary slot succeeded, acquired20225. The remaining20224 stayed in crate19969 after an occupied-slot drag attempt, but no native drop callback for20224 appeared. This is not accepted native refusal coverage. Exact72records/8324g, original71records unchanged; both magazines/condition and active weapon preserved. PID27300 fresh reload passed exactactor/weapon comparison; both exit0/no timeout. Evidence occupied-slot-drag-verification.json is partial; occupied-slot-drag-reload-verification.json proves persistence only. Existing context-menu refusal and scripted rotation evidence remain separate.
