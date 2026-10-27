@@ -10,14 +10,26 @@ namespace inventory_next {
 class TransferSession {
 public:
     enum class State { Idle, Prepared, Dispatched, ReconcileRequired };
+    struct Ownership {
+        EntityRegistry::Handle item;
+        std::optional<EntityRegistry::Handle> source, destination;
+    };
+    struct ParentObservation {
+        EntityRegistry::Handle item;
+        std::uint16_t parent=0xffff;
+    };
     struct Dispatch {
         std::uint64_t token=0;
         EntityRegistry::Handle item, destination;
         std::optional<EntityRegistry::Handle> source; // absent only for explicit unowned ground
         Command command;
+        std::vector<Ownership> subtree;
     };
     struct PhysicalOwners {
         std::optional<EntityRegistry::Handle> source, destination;
+        // Explicit native custody policy. Logical children can all be held by
+        // an actor or world inventory root while retaining their logical tree.
+        bool flatten_source=false, flatten_destination=false;
     };
     TransferSession(Model& model,AccessGate& access,const EntityRegistry& registry)
         : model_(model),access_(access),registry_(registry) {}
@@ -25,10 +37,11 @@ public:
     // before prepare AND dispatch; the logical world root must be unregistered.
     // Logical storage can be backed by physical actor ownership. Overrides must
     // resolve to the corresponding logical endpoint's actual actor ancestor.
-    Result prepare(const AccessGate::Ticket& ticket,bool ground_source=false,
-                   const PhysicalOwners& physical = {});
+    Result prepare(const AccessGate::Ticket& ticket,bool ground_source=false);
+    Result prepare(const AccessGate::Ticket& ticket,bool ground_source,const PhysicalOwners& physical);
     Result dispatch(Dispatch& output);
     Result acknowledge(std::uint64_t token,std::uint16_t observed_parent,bool accepted);
+    Result acknowledge_subtree(std::uint64_t token,const std::vector<ParentObservation>& observed,bool accepted);
     Result cancel();
     Result reconciled(); // caller must rebuild Model from native truth first
     State state() const { return state_; }

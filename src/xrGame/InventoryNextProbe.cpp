@@ -29,6 +29,7 @@
 #include <stdexcept>
 #include "../inventory_next/ground_pickup.h"
 #include "../inventory_next/purchase_session.h"
+#include "../inventory_next/world_subtrees.h"
 #include "trade.h"
 #include "InventoryOwner.h"
 #include "entity_alive.h"
@@ -42,8 +43,10 @@
 
 namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
+inventory_next::WorldSubtrees& world_storage(){static inventory_next::WorldSubtrees value;return value;}
 inventory_next::DragSession& native_drag(){static inventory_next::DragSession value;return value;}
 constexpr u32 layout_chunk=0x33514c59;
+constexpr u32 world_storage_chunk=0x33515753;
 bool layout_current=false;
 inventory_next::NativeStorageView storage_view;
 std::map<u16,inventory_next::Node> pending_pickups;
@@ -144,17 +147,32 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
     stream.w(bytes.data(),static_cast<u32>(bytes.size()));stream.close_chunk();
+    if(InventoryNextLogicalStorage()) {
+        const auto world_bytes=world_storage().serialize();stream.open_chunk(world_storage_chunk);
+        stream.w(world_bytes.data(),static_cast<u32>(world_bytes.size()));stream.close_chunk();
+    }
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
-    layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
+    layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};auto chunk=stream.open_chunk(layout_chunk);
+    if(!chunk) {
+        auto orphan=stream.open_chunk(world_storage_chunk);const bool has_world=orphan!=nullptr;if(orphan)orphan->close();
+        CHECK_OR_EXIT(!has_world,"SQA3 world storage missing actor layout");return;
+    }
     CHECK_OR_EXIT(InventoryNextEnabled()&&chunk->length()<=2*1024*1024,"Invalid SQA3 layout mode/size");
     const std::string bytes(reinterpret_cast<const char*>(chunk->pointer()),chunk->length());chunk->close();
     CHECK_OR_EXIT(layout().restore(bytes).ok,"Invalid SQA3 layout data");
+    auto world_chunk=stream.open_chunk(world_storage_chunk);
+    if(world_chunk) {
+        CHECK_OR_EXIT(world_chunk->length()<=2*1024*1024,"Invalid SQA3 world storage size");
+        const std::string world_bytes(reinterpret_cast<const char*>(world_chunk->pointer()),world_chunk->length());world_chunk->close();
+        CHECK_OR_EXIT(world_storage().restore(world_bytes).ok,"Invalid SQA3 world storage data");
+        CHECK_OR_EXIT(world_storage().records().empty()||InventoryNextLogicalStorage(),"SQA3 world storage requires logical storage mode");
+    }
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout load failed");}
 void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept try {
     if(!InventoryNextLayoutSync()||!layout().initialized())return;

@@ -6,6 +6,7 @@
 #include "identity_ledger.h"
 #include "identity_state.h"
 #include "transfer_session.h"
+#include "world_subtrees.h"
 #include "ground_pickup.h"
 #include "purchase_session.h"
 #include "drag_session.h"
@@ -57,6 +58,15 @@ std::string reseal(std::string body) {
 }
 int main(int argc,char** argv) {
     try {
+        if(argc==3 && std::string(argv[1])=="--read-world") {
+            std::ifstream in(argv[2],std::ios::binary);check(bool(in),"world fixture missing");
+            const std::string bytes((std::istreambuf_iterator<char>(in)),{});
+            WorldSubtrees restored;yes(restored.restore(bytes));check(restored.serialize()==bytes,"world ledger restart changed encoding");
+            const auto& record=restored.records().at(100);const auto& nodes=record.tree.nodes();
+            check(record.custodian==900&&nodes.at(101).parent==100&&nodes.at(102).parent==101,"world restart lost custody or nested owners");
+            check(record.tree.carried_mass()==0&&record.tree.subtree_mass(100)==150&&nodes.at(102).condition==8314&&nodes.at(102).attributes.at("ammo")=="5","world restart lost state or mass");
+            std::cout<<"PASS independent detached world subtree restart\n";return 0;
+        }
         if(argc==3 && std::string(argv[1])=="--read") {
             Model m; yes(load_file(m,argv[2])); check(m.carried_mass()==197,"restart mass");
             check(m.revision()==1 && m.nodes().at(20).parent==11,"restart ownership/revision");
@@ -196,6 +206,145 @@ int main(int argc,char** argv) {
             yes(transfer.prepare({c,access.revision()}));yes(transfer.dispatch(event));Command changed;c.revision=m.revision();
             changed.operation=Operation::SetMass;changed.item=10;changed.mass=8;changed.session=m.session();yes(m.execute(changed));
             no(transfer.acknowledge(event.token,2,true),"stale_model");check(m.carried_mass()==8&&!transfer.can_save(),"stale acknowledgment overwrote live state");
+        });
+        test("loaded native custody moves every descendant before publishing and survives roundtrip",[]{
+            auto shell=bag(10,1,100);auto inner=bag(11,10,20);auto child=item(12,11,30);
+            child.condition=8314;child.attributes={{"ammo","5"},{"serial","kept"}};
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),shell,inner,child}));
+            EntityRegistry registry;for(Id id:{1,2,10,11,12}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+100)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(10,true,true));
+            TransferSession transfer(m,access,registry);TransferSession::PhysicalOwners physical;
+            physical.flatten_source=true;physical.flatten_destination=true;
+            for(Id destination:{2,1}) {
+                Command c;c.item=10;c.destination=destination;c.session=m.session();c.revision=m.revision();
+                const auto before=m.serialize();const auto revision=m.revision();
+                yes(transfer.prepare({c,access.revision()},false,physical));TransferSession::Dispatch event;yes(transfer.dispatch(event));
+                check(event.subtree.size()==3&&!transfer.can_save()&&m.serialize()==before,"subtree published before all acknowledgments");
+                no(transfer.acknowledge(event.token,event.destination.live,true),"subtree_ack_required");
+                std::vector<TransferSession::ParentObservation> observed;
+                for(const auto& member:event.subtree) {
+                    check(member.source&&member.destination&&member.destination->live==destination+100,"wrong flattened custody plan");
+                    observed.insert(observed.begin(),{member.item,member.destination->live});
+                }
+                yes(transfer.acknowledge_subtree(event.token,observed,true));
+                check(m.revision()==revision+1&&transfer.can_save(),"subtree did not publish exactly once");
+                check(m.nodes().at(10).parent==destination&&m.nodes().at(11).parent==10&&m.nodes().at(12).parent==11,"logical subtree flattened");
+                check(m.carried_mass()==(destination==1?150:0)&&m.subtree_mass(10)==150,"subtree mass lost or counted twice");
+                check(m.nodes().at(12).condition==8314&&m.nodes().at(12).attributes==child.attributes,"contained state lost");
+                Model saved;yes(saved.deserialize(m.serialize()));check(saved.serialize()==m.serialize(),"world subtree persistence changed state");
+                no(transfer.acknowledge_subtree(event.token,observed,true),"transfer_ack");
+            }
+        });
+        test("partial duplicate and wrong-parent subtree acknowledgments block saves without publishing",[]{
+            for(int failure=0;failure<3;++failure) {
+                Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(10,1,100),item(11,10,20)}));
+                EntityRegistry registry;for(Id id:{1,2,10,11}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+                AccessGate access(m);yes(access.observe(2,true,true));TransferSession transfer(m,access,registry);
+                TransferSession::PhysicalOwners physical;physical.flatten_source=true;physical.flatten_destination=true;
+                Command c;c.item=10;c.destination=2;c.session=m.session();const auto before=m.serialize();
+                yes(transfer.prepare({c,access.revision()},false,physical));TransferSession::Dispatch event;yes(transfer.dispatch(event));
+                std::vector<TransferSession::ParentObservation> observed{{*registry.handle(10),2},{*registry.handle(11),2}};
+                if(failure==0)observed.pop_back();
+                if(failure==1)observed[1]=observed[0];
+                if(failure==2)observed[1].parent=1;
+                no(transfer.acknowledge_subtree(event.token,observed,true),failure==0?"native_subtree_incomplete":failure==1?"native_subtree_identity":"native_parent_mismatch");
+                check(m.serialize()==before&&!transfer.can_save()&&transfer.state()==TransferSession::State::ReconcileRequired,"partial native move published or became saveable");
+                no(transfer.cancel(),"native_reconcile_required");no(transfer.reconciled(),"rebuild_required");
+                yes(m.deserialize(before));yes(transfer.reconciled());check(transfer.can_save(),"rebuilt ownership remained locked");
+            }
+        });
+        test("subtree rejection requires every descendant restored to original native custody",[]{
+            for(bool restored:{false,true}) {
+                Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(10,1,100),item(11,10,20)}));
+                EntityRegistry registry;for(Id id:{1,2,10,11}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+                AccessGate access(m);yes(access.observe(2,true,true));TransferSession transfer(m,access,registry);
+                TransferSession::PhysicalOwners physical;physical.flatten_source=true;physical.flatten_destination=true;
+                Command c;c.item=10;c.destination=2;c.session=m.session();const auto before=m.serialize();
+                yes(transfer.prepare({c,access.revision()},false,physical));TransferSession::Dispatch event;yes(transfer.dispatch(event));
+                no(transfer.acknowledge_subtree(event.token,{{*registry.handle(10),1},{*registry.handle(11),static_cast<std::uint16_t>(restored?1:2)}},false),restored?"native_rejected":"native_parent_mismatch");
+                check(m.serialize()==before&&transfer.can_save()==restored,"rejected subtree lost source or unlocked partial native state");
+            }
+        });
+        test("descendant live ID reuse invalidates complete subtree acknowledgment",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(10,1,100),item(11,10,20)}));
+            EntityRegistry registry;for(Id id:{1,2,10,11}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));TransferSession transfer(m,access,registry);
+            Command c;c.item=10;c.destination=2;c.session=m.session();const auto before=m.serialize();
+            yes(transfer.prepare({c,access.revision()}));TransferSession::Dispatch event;yes(transfer.dispatch(event));
+            const auto old=*registry.handle(11);yes(registry.unbind(old));yes(registry.bind(11,11));
+            no(transfer.acknowledge_subtree(event.token,{{*registry.handle(10),2},{*registry.handle(11),10}},true),"stale_entity");
+            check(m.serialize()==before&&!transfer.can_save(),"reused descendant slot authorized transfer");
+        });
+        test("natural subtree custody preserves child native parent and flat item endpoints are refused",[]{
+            auto target=bag(20,2,10);target.soft=false;target.grid={4,4};
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(10,1,100),item(11,10,20),target}));
+            EntityRegistry registry;for(Id id:{1,2,10,11,20}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(20,true,true));TransferSession transfer(m,access,registry);
+            Command c;c.item=10;c.destination=20;c.session=m.session();TransferSession::PhysicalOwners physical;physical.flatten_destination=true;
+            no(transfer.prepare({c,access.revision()},false,physical),"native_subtree_owner");
+            physical.destination=registry.handle(2);yes(transfer.prepare({c,access.revision()},false,physical));yes(transfer.cancel());
+            yes(transfer.prepare({c,access.revision()}));TransferSession::Dispatch event;yes(transfer.dispatch(event));
+            check(event.subtree.size()==2&&event.subtree[1].destination->live==10,"natural child custody changed");
+            yes(transfer.acknowledge_subtree(event.token,{{*registry.handle(10),20},{*registry.handle(11),10}},true));
+            check(m.nodes().at(10).parent==20&&m.nodes().at(11).parent==10&&m.carried_mass()==0,"natural subtree transfer lost nested structure");
+        });
+        test("detached world subtree persistence retains nested identity layout and state",[&]{
+            auto shell=bag(100,2,100);auto inner=bag(101,100,20);auto child=item(102,101,30,{1,0,true});
+            child.condition=8314;child.attributes={{"ammo","5"},{"section","wpn_pm"}};
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),shell,inner,child,item(103,1,7)}));
+            WorldSubtrees ledger;yes(ledger.capture(m,100,900));const auto before=m.serialize();
+            const auto& saved=ledger.records().at(100).tree;
+            check(saved.nodes().size()==5&&saved.carried_mass()==0&&saved.subtree_mass(100)==150,"world archive included actor items or lost weight");
+            check(saved.nodes().at(102).parent==101&&saved.nodes().at(102).position.rotated&&saved.nodes().at(102).position.x==1&&saved.nodes().at(102).attributes==child.attributes,"world archive changed interior layout/state");
+            WorldSubtrees loaded;yes(loaded.restore(ledger.serialize()));check(loaded.serialize()==ledger.serialize()&&m.serialize()==before,"archive load mutated source or record");
+            std::ofstream out(std::string(argv[1])+".world",std::ios::binary);out<<ledger.serialize();check(bool(out),"world fixture write failed");
+        });
+        test("world ledger refuses actor capture duplicate descendants and wrong custody release",[]{
+            Model carried;yes(carried.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,1,100),item(101,100,20)}));
+            WorldSubtrees ledger;no(ledger.capture(carried,100,900),"world_storage_owner");
+            yes(move(carried,{100,2,{0,0,false},carried.revision()}));yes(ledger.capture(carried,100,900));const auto before=ledger.serialize();
+            no(ledger.capture(carried,100,900),"world_storage_duplicate");no(ledger.release(100,901),"world_storage_custodian");
+            Model overlapping;yes(overlapping.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(110,2,100),item(101,110,20)}));
+            no(ledger.capture(overlapping,110,901),"world_storage_identity");check(ledger.serialize()==before,"invalid archive operation changed ledger");
+            yes(ledger.release(100,900));check(ledger.records().empty(),"acknowledged release retained duplicate archive");
+        });
+        test("world ledger corrupt truncated and forged custody data cannot replace valid records",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,2,100),item(101,100,20)}));
+            WorldSubtrees ledger;yes(ledger.capture(m,100,900));const auto before=ledger.serialize();
+            auto corrupt=before;corrupt[corrupt.find("900")]='8';no(ledger.restore(corrupt),"world_storage_checksum");
+            check(!ledger.restore(before.substr(0,before.size()-1)),"truncated world ledger accepted");
+            no(ledger.capture(m,100,101),"world_storage_custodian");
+            check(ledger.serialize()==before,"failed world restore replaced valid records");
+        });
+        test("world ledger supports distinct ground and crate bags without merging their items",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),bag(100,2,100),item(101,100,20),bag(110,2,200,{3,0,false}),item(111,110,30)}));
+            WorldSubtrees ledger;yes(ledger.capture(m,100,0));yes(ledger.capture(m,110,900));
+            WorldSubtrees loaded;yes(loaded.restore(ledger.serialize()));check(loaded.records().size()==2&&loaded.records().at(100).custodian==0&&loaded.records().at(110).custodian==900,"world custodians merged");
+            check(loaded.records().at(100).tree.subtree_mass(100)==120&&loaded.records().at(110).tree.subtree_mass(110)==230,"world records mass merged");
+            yes(loaded.release(100,0));check(loaded.records().size()==1&&loaded.records().count(110),"ground release removed other bag");
+        });
+        test("world storage refresh uses actual native state while retaining nested placement",[]{
+            auto shell=bag(100,2,100);shell.attributes["native_section"]="itm_backpack";
+            auto child=item(101,100,20,{1,0,true});child.attributes={{"native_section","wpn_pm"},{"ammo","5"}};
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),shell,child}));
+            WorldSubtrees ledger;yes(ledger.capture(m,100,900));
+            auto actual=child;actual.parent=2;actual.position={};actual.condition=7500;actual.intrinsic=25;actual.attributes["ammo"]="3";
+            yes(ledger.refresh(100,900,{shell,actual}));const auto& node=ledger.records().at(100).tree.nodes().at(101);
+            check(node.parent==100&&node.position.x==1&&node.position.rotated&&node.condition==7500&&node.intrinsic==25&&node.attributes.at("ammo")=="3","saved state overrode native facts or placement lost");
+            check(ledger.records().at(100).tree.subtree_mass(100)==125,"world native mass refresh failed");
+        });
+        test("world storage refresh rejects missing replaced and resized contents atomically",[]{
+            auto shell=bag(100,2,100);shell.attributes["native_section"]="itm_backpack";
+            auto child=item(101,100,20,{1,0,true});child.attributes["native_section"]="wpn_pm";
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),shell,child}));
+            WorldSubtrees ledger;yes(ledger.capture(m,100,900));const auto before=ledger.serialize();
+            no(ledger.refresh(100,901,{shell,child}),"world_storage_custodian");
+            no(ledger.refresh(100,900,{shell}),"world_storage_incomplete");
+            no(ledger.refresh(100,900,{shell,shell}),"world_storage_identity");
+            auto changed=child;changed.attributes["native_section"]="wpn_ak74";
+            no(ledger.refresh(100,900,{shell,changed}),"world_storage_section");
+            changed=child;changed.empty={3,3};check(!ledger.refresh(100,900,{shell,changed}),"resized subtree accepted invalid placement");
+            check(ledger.serialize()==before,"failed native refresh altered ledger");
         });
         test("dismantling consumes once and retains all outputs with visible remainder",[]{
             Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),item(10,1,30)}));

@@ -37,4 +37,6 @@ foreach ($variant in @('debug','release')) {
     if ($LASTEXITCODE -ne 0) { throw "Persistence restart failed: $variant" }
     & $exe --read-logical "$fixture.logical" 2>&1 | Tee-Object (Join-Path $out "$variant-logical-restart.log")
     if ($LASTEXITCODE -ne 0) { throw "Logical forest restart failed: $variant" }
+    & $exe --read-world "$fixture.world" 2>&1 | Tee-Object (Join-Path $out "$variant-world-restart.log")
+    if ($LASTEXITCODE -ne 0) { throw "Detached world subtree restart failed: $variant" }
 }
