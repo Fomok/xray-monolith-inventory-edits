@@ -109,6 +109,10 @@ public:
     Result recover_rig_condition(Id rig, unsigned condition, Id actor,
                                  std::uint64_t revision, std::uint64_t session);
     bool storage_active(Id container) const;
+    // Explicit controller action after capacity changes, never called by layout.
+    // Tries only requested actor-owned storage, preserving all legal placements.
+    Result retry_recovery(Id actor, const std::vector<Id>& destinations,
+                          std::uint64_t revision, std::uint64_t session);
     Result execute_batch(const std::vector<Command>& requests);
     Result relocate(const std::vector<Move>& requests);
     Preview preview(const Command& request) const;

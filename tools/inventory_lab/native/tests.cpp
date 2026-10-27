@@ -553,6 +553,39 @@ int main(int argc,char** argv) {
             rollback(m,{20,10,{0,0,false},0},"container_stack_limit");Command c;c.operation=Operation::Split;c.item=20;c.quantity=5;c.new_id=21;c.destination=10;c.session=m.session();yes(m.execute(c));
             check(m.nodes().at(20).quantity==5&&m.nodes().at(21).quantity==5&&m.carried_mass()==70,"domain split conservation");
         });
+        test("explicit recovery retry preserves manual placements and publishes fitting items once",[]{
+            auto a=root(1,Kind::ActorRoot,{3,1});auto fixed=item(10,1,10,{1,0,false});
+            auto x=item(20,1,20);x.location=Location::Overflow;auto y=item(21,1,30);y.location=Location::Overflow;
+            Model m;yes(m.initialize({a,fixed,x,y}));auto before=m.carried_mass();
+            yes(m.retry_recovery(1,{1},0,m.session()));
+            check(m.revision()==1&&m.nodes().at(10).position.x==1,"retry rearranged manual position");
+            check(m.nodes().at(20).position.x==0&&m.nodes().at(21).position.x==2&&m.carried_mass()==before,"retry identity placement mass");
+            auto saved=m.serialize();yes(m.retry_recovery(1,{1},1,m.session()));check(m.serialize()==saved,"no-op retry changed revision");
+        });
+        test("recovery retry uses requested owned storage and rotation without losing no-fit items",[]{
+            auto a=root(1,Kind::ActorRoot,{1,1});auto b=item(10,1,10);b.container=true;b.grid={1,2};
+            auto x=item(20,1,20);x.location=Location::Overflow;x.empty={2,1};auto y=x;y.id=21;y.empty={3,3};
+            Model m;yes(m.initialize({a,b,x,y}));yes(m.retry_recovery(1,{10},0,m.session()));
+            check(m.nodes().at(20).parent==10&&m.nodes().at(20).position.rotated,"retry rotated fit");
+            check(m.nodes().at(21).location==Location::Overflow&&m.carried_mass()==50,"no-fit lost identity/mass");
+            auto saved=m.serialize();Model loaded;yes(loaded.deserialize(saved));check(loaded.serialize()==saved,"retry persistence");
+        });
+        test("recovery retry rejects stale or foreign destination lists atomically",[]{
+            auto a=root(1,Kind::ActorRoot);auto w=root(2,Kind::WorldRoot);auto x=item(10,1,7);x.location=Location::Overflow;
+            Model m;yes(m.initialize({a,w,x}));auto old=m.serialize();
+            no(m.retry_recovery(1,{1,2},0,m.session()),"recovery_ownership");
+            no(m.retry_recovery(1,{1,1},0,m.session()),"recovery_destinations");
+            no(m.retry_recovery(1,{},0,m.session()),"recovery_destinations");
+            no(m.retry_recovery(1,{1},1,m.session()),"stale_revision");
+            no(m.retry_recovery(1,{1},0,0),"stale_session");check(m.serialize()==old,"invalid retry published partial changes");
+        });
+        test("recovery retry cannot bypass category mask or self-ownership rules",[]{
+            auto a=root(1,Kind::ActorRoot,{1,1});auto b=item(10,1,10);b.container=true;b.grid={2,1};b.cells={1,0};b.accepts=2;
+            auto x=item(20,1,20);x.location=Location::Overflow;x.empty={2,1};x.category=2;
+            auto y=item(21,1,30);y.location=Location::Overflow;y.container=true;y.grid={1,1};
+            Model m;yes(m.initialize({a,b,x,y}));auto old=m.serialize();yes(m.retry_recovery(1,{10,21},0,m.session()));
+            check(m.serialize()==old,"blocked grid/self destination bypassed");
+        });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));
             yes(move(m,{20,11,{1,0,false},0})); yes(save_atomic(m,path));

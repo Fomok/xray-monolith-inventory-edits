@@ -147,6 +147,17 @@ struct Lab {
         }
         if(batching) require(t[0]=="spawn"||t[0]=="move"||t[0]=="mass"||t[0]=="erase"||t[0]=="split"||t[0]=="merge"||t[0]=="equip"||t[0]=="mount"||t[0]=="state","batch_command_only");
         if(batching&&relocating)require(t[0]=="move","layout_move_only");
+        if(t[0]=="recover_condition"||t[0]=="retry_recovery") {
+            const auto before=model.serialize();Result r{false,"syntax"};
+            if(t[0]=="recover_condition") {
+                count(6);r=model.recover_rig_condition(number<Id>(t[1]),number<unsigned>(t[2]),number<Id>(t[3]),number<std::uint64_t>(t[4]),model.session());
+            } else {
+                count(5);r=model.retry_recovery(number<Id>(t[1]),{number<Id>(t[2])},number<std::uint64_t>(t[3]),model.session());
+            }
+            const std::string actual=r.ok?"ok":r.error;
+            if(!r)require(model.serialize()==before,"rollback_invariant");
+            event(index,t[0],actual,actual==t.back());require(actual==t.back(),"unexpected_result");return;
+        }
         if(t[0]=="assert") {
             require(t.size()>=3,"assert_syntax");bool pass=false;
             if(t[1]=="mass") {count(3);pass=model.carried_mass()==number<Mass>(t[2]);}
@@ -159,6 +170,8 @@ struct Lab {
             else if(t[1]=="quantity") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.quantity==number<unsigned>(t[3]);}
             else if(t[1]=="equipped") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.location==Location::Equipment&&n->second.equipped_slots==number<std::uint64_t>(t[3]);}
             else if(t[1]=="mounted") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.location==Location::Mounted&&n->second.mounted_slot==number<Id>(t[3]);}
+            else if(t[1]=="storage_active") {count(4);pass=model.storage_active(number<Id>(t[2]))==(number<unsigned>(t[3])!=0);}
+            else if(t[1]=="overflow") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&(n->second.location==Location::Overflow)==(number<unsigned>(t[3])!=0);}
             else if(t[1]=="group_count") {count(4);pass=model.equipment_group(number<unsigned>(t[2])).size()==number<std::size_t>(t[3]);}
             else if(t[1]=="cycle") {count(6);pass=model.cycle_equipment(number<unsigned>(t[2]),number<Id>(t[3]),number<int>(t[4]))==number<Id>(t[5]);}
             else if(t[1]=="footprint") {count(5);auto s=model.footprint(number<Id>(t[2]));pass=s.w==number<int>(t[3])&&s.h==number<int>(t[4]);}

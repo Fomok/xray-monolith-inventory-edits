@@ -22,7 +22,7 @@ guarded move 30 20 0 0 0 1 ok
 assert footprint 10 2 1
 assert mass 127
 move 20 1 4 0 0 2 mounted_not_empty
-state 10 100 9 4000 2 mount
+state 10 100 9 4000 2 inactive_mount_contents
 state 10 100 9 7000 2 ok
 snapshot mounted
 save mounted

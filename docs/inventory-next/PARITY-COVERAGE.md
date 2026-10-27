@@ -5,7 +5,7 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment:70 core checks per build,31runner integrations,10offscreen checks; shared presentation/registry/placement/drag checks. See OVERFLOW.md,NATIVE-IDENTITY.md,NATIVE-TRANSFERS.md. Full DX11-AVX CI40434583470 passed earlier0bb50dfb; latest native changes pending compile. No game launch or ownership adapter completion.
+Current increment:74 core checks per build,33runner integrations,10offscreen checks; shared presentation/registry/placement/drag checks. See OVERFLOW.md,NATIVE-IDENTITY.md,NATIVE-TRANSFERS.md. Full DX11-AVX CI40434583470 passed earlier0bb50dfb; latest native changes pending compile. No game launch or ownership adapter completion.
 
 | ID | Accepted behavior | Current evidence / remaining work |
 |---|---|---|

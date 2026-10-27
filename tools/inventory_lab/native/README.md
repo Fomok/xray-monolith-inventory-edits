@@ -111,3 +111,7 @@ download another base copy. Do not launch this as an Inventory Next test yet.
 No installed game/mod changes, public release, website or production-engine update.
 Reference reads: KnoxInventoryBeta shared KnoxGrid.lua/KnoxFootprint.lua and client
 KnoxContainerWindow.lua, plus Anomaly filesystem config. No Knox code/assets copied.
+
+### Explicit recovery controller commands
+
+`recover_condition RIG CONDITION ACTOR REVISION EXPECTED` reconciles forced rig condition for a directly actor-owned rig. `retry_recovery ACTOR DESTINATION REVISION EXPECTED` attempts valid placement of recovery items into that one requested storage domain, without rearranging already valid items. Both use the current session, are forbidden inside ordinary command batches, and are separate from guarded user actions. `assert storage_active ID 0|1` and `assert overflow ID 0|1` inspect their results. See scenarios/condition-recovery.sqa and docs/inventory-next/RIG-CONDITION.md. Native damage/capacity callbacks are not connected yet.
