@@ -159,3 +159,10 @@ native game observer is implemented here. Performance of many large open panels
 requires native profiling; controls rebuild on explicit invalidation, not each frame.
 The next integration step is the engine-owned actor probe binding and MSVC build,
 followed by native read-only input/lifetime testing before mutation controls.
+
+
+## Engine integration increment
+
+Linked in xrGame.vcxproj. Explicit `inventory_next_probe view` under -inventory-lab -dbg builds the actor snapshot with saved core identities and opens a native dialog. Existing dialogs must first be closed. Escape closes it; execute again to refresh. CUIGameCustom owns/deletes it at unload/destruction and hides it on native inventory actions. It is explicitly a frozen snapshot, not a synchronized live ownership view. Probe layout is16columns and64rows, restricted to widths<=16; oversize input fails clearly instead of truncating. No game launch or native input test.
+
+All engine-facing CInventoryNextView callbacks now have noexcept exception containment; failure clears controls/actions/snapshot and releases its input capture without changing the authoritative model. This source alone opts into the same narrow exception boundary as the other SQA3 adapters. Private render helpers may throw only into those boundaries. Pending native compile determines API/link correctness, not runtime lifetime safety.

@@ -2,6 +2,10 @@
 #include "stdafx.h"
 #include "InventoryNextIdentity.h"
 #include "../inventory_next/identity_ledger.h"
+#include "../inventory_next/entity_registry.h"
+#include "inventory_item.h"
+#include "PhysicsShellHolder.h"
+#include "level.h"
 #include "ai_space.h"
 #include "alife_simulator.h"
 #include "alife_object_registry.h"
@@ -9,20 +13,39 @@
 namespace {
 constexpr u32 identity_chunk = 0x33514944; // SQA3 identity chunk, outside legacy IDs
 inventory_next::IdentityLedger& ledger() { static inventory_next::IdentityLedger value; return value; }
+inventory_next::EntityRegistry& live_registry() { static inventory_next::EntityRegistry value; return value; }
+std::map<u16,const CInventoryItem*>& live_objects() { static std::map<u16,const CInventoryItem*> value;return value; }
 }
 bool InventoryNextEnabled() noexcept try { return strstr(Core.Params,"-inventory-lab") && strstr(Core.Params,"-dbg"); } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); return 0; }
 u64 InventoryNextIdentity(u16 server_id) noexcept try {
     if(!InventoryNextEnabled()||!ai().get_alife()||!ai().alife().objects().object(server_id,true))return 0;
+    u16 parent=server_id;
+    for(unsigned depth=0;;++depth) {
+        const auto object=ai().alife().objects().object(parent,true);
+        if(depth>64||!object||!object->can_save()||object->redundant()) {
+            Msg("! SQA3 identity enrollment refused for unsaveable entity/ancestor %u",server_id);return 0;
+        }
+        if(object->ID_Parent==0xffff)break;parent=object->ID_Parent;
+    }
     try {
         inventory_next::Id id=0;const auto result=ledger().enroll(server_id,id);
         if(!result) { Msg("! SQA3 identity: %s",result.error.c_str());return 0; }
         return id;
     } catch(const std::exception& e) { Msg("! SQA3 identity: %s",e.what());return 0; }
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); return 0; }
-void InventoryNextIdentityReset() noexcept try { ledger()=inventory_next::IdentityLedger{}; } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
-void InventoryNextIdentityRetire(u16 server_id) noexcept try { if(InventoryNextEnabled())ledger().retire(server_id); } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
+void InventoryNextIdentityReset() noexcept try { ledger()=inventory_next::IdentityLedger{};live_objects().clear();const auto result=live_registry().restore_known({});CHECK_OR_EXIT(result.ok,"SQA3 live identity reset failed"); } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
+void InventoryNextIdentityRetire(u16 server_id) noexcept try { if(InventoryNextEnabled()) {
+    const auto core=ledger().lookup(server_id);
+    if(auto handle=live_registry().handle(core))live_registry().unbind(*handle);
+    if(live_registry().known(core))live_registry().forget(core);
+    live_objects().erase(server_id);ledger().retire(server_id);
+} } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityRemap(u16 before,u16 after) noexcept try {
     if(!InventoryNextEnabled())return;
+    if(before!=after) {
+        if(auto handle=live_registry().handle(ledger().lookup(before)))live_registry().unbind(*handle);
+        live_objects().erase(before);
+    }
     const auto result=ledger().remap(before,after);
     CHECK_OR_EXIT(result.ok,"SQA3 persistent identity remap conflict");
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
@@ -63,3 +86,26 @@ void InventoryNextIdentityValidate() noexcept try {
     for(const auto& entry:ledger().entries())
         CHECK_OR_EXIT(ai().alife().objects().object(entry.first,true)!=nullptr,"SQA3 saved identity refers to a missing ALife entity");
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
+
+const inventory_next::EntityRegistry& InventoryNextLiveRegistry() noexcept try { return live_registry(); } catch (...) { CHECK_OR_EXIT(false,"SQA3 live registry initialization failed");std::terminate(); }
+void InventoryNextIdentityOnline(CInventoryItem& item) noexcept try {
+    if(!InventoryNextEnabled())return;
+    const auto server=item.object().ID();const auto core=ledger().lookup(server);if(!core)return;
+    auto& objects=live_objects();const auto existing=objects.find(server);
+    if(existing!=objects.end()&&existing->second!=&item) {
+        CHECK_OR_EXIT(false,"SQA3 native live ID reused before prior object detached");return;
+    }
+    const auto added=live_registry().add(core);
+    const auto bound=added?live_registry().bind(core,server):added;
+    CHECK_OR_EXIT(bound.ok,"SQA3 live identity binding failed");objects[server]=&item;
+} catch (...) { CHECK_OR_EXIT(false,"SQA3 online identity boundary failure"); }
+void InventoryNextIdentityOffline(CInventoryItem& item) noexcept try {
+    if(!InventoryNextEnabled())return;
+    const auto server=item.object().ID();auto& objects=live_objects();const auto found=objects.find(server);
+    if(found==objects.end()||found->second!=&item)return;
+    const auto core=ledger().lookup(server);
+    if(auto handle=live_registry().handle(core)) {
+        const auto result=live_registry().unbind(*handle);CHECK_OR_EXIT(result.ok,"SQA3 offline identity unbind failed");
+    }
+    objects.erase(found); // persistent ledger entry remains for offline ALife item
+} catch (...) { CHECK_OR_EXIT(false,"SQA3 offline identity boundary failure"); }

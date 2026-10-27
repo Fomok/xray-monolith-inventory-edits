@@ -2049,6 +2049,17 @@
     </ClCompile>
     <ClCompile Include="ui\InventoryNextView.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+    <ClCompile Include="..\inventory_next\transfer_session.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_transfer_session.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\inventory_next\drag_session.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_drag_session.obj</ObjectFileName>
     </ClCompile>
     <ClCompile Include="InventoryNextProbe.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>

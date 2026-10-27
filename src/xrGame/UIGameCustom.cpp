@@ -2,6 +2,7 @@
 #include "UIGameCustom.h"
 #include "level.h"
 #include "ui/UIXmlInit.h"
+#include "ui/UIDialogWnd.h"
 #include "ui/UIStatic.h"
 #include "object_broker.h"
 #include "string_table.h"
@@ -50,6 +51,7 @@ bool g_b_ClearGameCaptions = false;
 
 CUIGameCustom::~CUIGameCustom()
 {
+	SetInventoryNextDialog(nullptr);
 	delete_data(CustomStatics);
 	g_b_ClearGameCaptions = false;
 }
@@ -149,6 +151,7 @@ void CUIGameCustom::RemoveCustomStatic(const char* id)
 
 void CUIGameCustom::OnInventoryAction(PIItem item, u16 actionType)
 {
+	if (InventoryNextDialog) InventoryNextDialog->HideDialog();
 	if (ActorMenu->IsShown())
 		ActorMenu->OnInventoryAction(item, actionType);
 }
@@ -264,6 +267,7 @@ void CUIGameCustom::SetClGame(game_cl_GameState* gameState)
 
 void CUIGameCustom::UnLoad()
 {
+	SetInventoryNextDialog(nullptr);
 	xr_delete(MsgConfig);
 	xr_delete(ActorMenu);
 	xr_delete(PdaMenu);
@@ -494,4 +498,12 @@ const xr_vector<MPWeatherDesc>& CMapListHelper::GetGameWeathers()
 	if (m_weathers.size() == 0)
 		Load();
 	return m_weathers;
+}
+
+void CUIGameCustom::SetInventoryNextDialog(CUIDialogWnd* dialog)
+{
+	if (InventoryNextDialog == dialog) return;
+	if (InventoryNextDialog) InventoryNextDialog->HideDialog();
+	xr_delete(InventoryNextDialog);
+	InventoryNextDialog = dialog;
 }

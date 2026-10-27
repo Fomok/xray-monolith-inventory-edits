@@ -1,3 +1,4 @@
+#define SQA3_EXCEPTION_BOUNDARY
 #include "stdafx.h"
 #include "InventoryNextView.h"
 #include "UIScrollView.h"
@@ -100,8 +101,7 @@ CInventoryNextView::~CInventoryNextView()
     m_actions.clear();
 }
 
-void CInventoryNextView::Initialize(const Fvector2& position, const Fvector2& size)
-{
+void CInventoryNextView::Initialize(const Fvector2& position, const Fvector2& size) noexcept try {
     SetWndPos(position);
     SetWndSize(Fvector2().set((std::max)(size.x, 300.0f), (std::max)(size.y, 160.0f)));
     if (!m_scroll)
@@ -119,11 +119,10 @@ void CInventoryNextView::Initialize(const Fvector2& position, const Fvector2& si
     }
     Show(true);
     Invalidate();
-}
+} catch (...) { FailClosed(); }
 
 bool CInventoryNextView::Bind(const inventory_next::Model& model,
-    const inventory_next::Presentation& state, inventory_next::Id actor, const Visuals& visuals)
-{
+    const inventory_next::Presentation& state, inventory_next::Id actor, const Visuals& visuals) noexcept try {
     // Copy first: source may be destroyed immediately after this call returns.
     auto snapshot = std::unique_ptr<const inventory_next::Model>(new inventory_next::Model(model));
     auto presentation = state;
@@ -140,25 +139,22 @@ bool CInventoryNextView::Bind(const inventory_next::Model& model,
     m_visuals = visuals;
     Invalidate();
     return true;
-}
+} catch (...) { FailClosed(); return false; }
 
 bool CInventoryNextView::Refresh(const inventory_next::Model& model,
-    const inventory_next::Presentation& state, inventory_next::Id actor, const Visuals& visuals)
-{
+    const inventory_next::Presentation& state, inventory_next::Id actor, const Visuals& visuals) noexcept try {
     return Bind(model, state, actor, visuals);
-}
+} catch (...) { FailClosed(); return false; }
 
-void CInventoryNextView::Unbind()
-{
+void CInventoryNextView::Unbind() noexcept try {
     m_snapshot.reset();
     m_state = inventory_next::Presentation{};
     m_visuals.clear();
     m_actor = 0;
     Invalidate();
-}
+} catch (...) { FailClosed(); }
 
-void CInventoryNextView::Invalidate()
-{
+void CInventoryNextView::Invalidate() noexcept try {
     m_dirty = true;
     m_actions.clear();
     // Cancel gestures owned by this subtree, without disturbing another dialog.
@@ -172,10 +168,10 @@ void CInventoryNextView::Invalidate()
         captured->ReleaseMouseCapture();
     }
     if (m_scroll) { m_scroll->Enable(false); m_scroll->Show(false); }
-}
+} catch (...) { FailClosed(); }
 
-std::uint64_t CInventoryNextView::BoundSession() const { return m_snapshot ? m_snapshot->session() : 0; }
-std::uint64_t CInventoryNextView::BoundRevision() const { return m_snapshot ? m_snapshot->revision() : 0; }
+std::uint64_t CInventoryNextView::BoundSession() const noexcept try { return m_snapshot ? m_snapshot->session() : 0; } catch (...) { const_cast<CInventoryNextView*>(this)->FailClosed(); return 0; }
+std::uint64_t CInventoryNextView::BoundRevision() const noexcept try { return m_snapshot ? m_snapshot->revision() : 0; } catch (...) { const_cast<CInventoryNextView*>(this)->FailClosed(); return 0; }
 
 CUIStatic* CInventoryNextView::Text(CUIWindow* parent, const std::string& value,
     float x, float y, float width, float height, u32 color)
@@ -320,14 +316,12 @@ void CInventoryNextView::Rebuild()
     m_scroll->Show(true);
 }
 
-void CInventoryNextView::Update()
-{
+void CInventoryNextView::Update() noexcept try {
     if (m_dirty) Rebuild(); // never delete a button inside its own SendMessage stack
     CUIWindow::Update();
-}
+} catch (...) { FailClosed(); }
 
-void CInventoryNextView::SendMessage(CUIWindow* sender, s16 message, void* data)
-{
+void CInventoryNextView::SendMessage(CUIWindow* sender, s16 message, void* data) noexcept try {
     const auto found = m_actions.find(sender);
     if (message != BUTTON_CLICKED || found == m_actions.end() || !m_snapshot)
     {
@@ -346,4 +340,14 @@ void CInventoryNextView::SendMessage(CUIWindow* sender, s16 message, void* data)
     case ActionKind::Open: m_state.open(*m_snapshot, action.id); break;
     }
     Invalidate();
+} catch (...) { FailClosed(); }
+
+void CInventoryNextView::FailClosed() noexcept {
+    // No allocation or authoritative model mutation while handling a failure.
+    CancelInput(this);m_actions.clear();m_snapshot.reset();m_dirty=false;m_actor=0;
+    if(m_scroll){m_scroll->Enable(false);m_scroll->Show(false);}
+    Msg("! SQA3 native view invalidated after a presentation failure");
 }
+inventory_next::Presentation CInventoryNextView::PresentationState() const noexcept try {
+    return m_state;
+} catch (...) { const_cast<CInventoryNextView*>(this)->FailClosed();return {}; }

@@ -15,7 +15,7 @@ foreach ($variant in @('debug','release')) {
     if ($variant -eq 'debug') { $flags += @('-O0','-g','-D_GLIBCXX_ASSERTIONS') }
     else { $flags += @('-O2','-DNDEBUG') }
     $objects = @()
-    foreach ($unit in @('model','persistence_win32','presentation','entity_registry','placement','identity_ledger')) {
+    foreach ($unit in @('model','persistence_win32','presentation','entity_registry','placement','identity_ledger','transfer_session','drag_session')) {
         $object = Join-Path $out "$unit-$variant.o"
         & $compilerPath @flags -c (Join-Path $source "$unit.cpp") -o $object
         if ($LASTEXITCODE -ne 0) { throw "Compilation failed: $unit ($variant)" }

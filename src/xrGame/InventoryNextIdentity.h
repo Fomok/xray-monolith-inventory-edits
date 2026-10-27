@@ -11,3 +11,9 @@ bool InventoryNextIdentityCanSave() noexcept;
 void InventoryNextIdentitySave(IWriter& stream) noexcept;
 void InventoryNextIdentityLoad(IReader& stream) noexcept;
 void InventoryNextIdentityValidate() noexcept;
+
+class CInventoryItem;
+namespace inventory_next { class EntityRegistry; }
+void InventoryNextIdentityOnline(CInventoryItem& item) noexcept;
+void InventoryNextIdentityOffline(CInventoryItem& item) noexcept;
+const inventory_next::EntityRegistry& InventoryNextLiveRegistry() noexcept;

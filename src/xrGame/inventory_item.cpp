@@ -12,6 +12,7 @@
 //#include "stdafx.h"
 #include "pch_script.h"
 #include "inventory_item.h"
+#include "InventoryNextIdentity.h"
 #include "inventory_item_impl.h"
 #include "inventory.h"
 //#include "Physics.h"
@@ -340,6 +341,7 @@ bool CInventoryItem::Detach(const char* item_section_name, bool b_spawn_item)
 /////////// network ///////////////////////////////
 BOOL CInventoryItem::net_Spawn(CSE_Abstract* DC)
 {
+	InventoryNextIdentityOnline(*this);
 	VERIFY(!m_pInventory);
 
 	m_flags.set(FInInterpolation, FALSE);
@@ -378,6 +380,7 @@ BOOL CInventoryItem::net_Spawn(CSE_Abstract* DC)
 
 void CInventoryItem::net_Destroy()
 {
+	InventoryNextIdentityOffline(*this);
 	if (m_pInventory)
 	{
 		VERIFY(std::find(m_pInventory->m_all.begin(), m_pInventory->m_all.end(), this)==m_pInventory->m_all.end());

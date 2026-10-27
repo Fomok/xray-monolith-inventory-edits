@@ -1,6 +1,7 @@
 #include "model.h"
 #include "access_gate.h"
 #include "identity_ledger.h"
+#include "transfer_session.h"
 #include "persistence.h"
 #include <cstdlib>
 #include <fstream>
@@ -58,6 +59,40 @@ int main(int argc,char** argv) {
         auto test=[&](const char* name, const std::function<void()>& fn) {
             fn(); ++passed; std::cout<<"PASS "<<name<<'\n';
         };
+        test("native transfer publishes once only after matching ownership acknowledgment",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,2,7)}));
+            EntityRegistry registry;for(Id id:{1,2,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(10,true,true));
+            Command c;c.operation=Operation::Move;c.item=10;c.destination=1;c.session=m.session();
+            TransferSession transfer(m,access,registry);auto old=m.serialize();yes(transfer.prepare({c,access.revision()}));
+            check(m.serialize()==old&&!transfer.can_save(),"prepared transfer published early");
+            TransferSession::Dispatch event;yes(transfer.dispatch(event));check(m.serialize()==old,"dispatch published early");
+            no(transfer.cancel(),"native_reconcile_required");no(transfer.acknowledge(event.token+1,1,true),"transfer_ack");
+            yes(transfer.acknowledge(event.token,1,true));check(m.carried_mass()==7&&m.revision()==1&&transfer.can_save(),"ack did not publish exactly once");
+            no(transfer.acknowledge(event.token,1,true),"transfer_ack");
+        });
+        test("native rejection preserves source and uncertain parent requires explicit rebuild",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,1,7)}));
+            EntityRegistry registry;for(Id id:{1,2,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));Command c;c.operation=Operation::Move;c.item=10;c.destination=2;c.session=m.session();
+            TransferSession transfer(m,access,registry);TransferSession::Dispatch event;auto old=m.serialize();
+            yes(transfer.prepare({c,access.revision()}));yes(transfer.dispatch(event));no(transfer.acknowledge(event.token,1,false),"native_rejected");
+            check(m.serialize()==old&&transfer.can_save(),"rejection lost item");
+            yes(transfer.prepare({c,access.revision()}));yes(transfer.dispatch(event));no(transfer.acknowledge(event.token,99,true),"native_parent_mismatch");
+            no(transfer.reconciled(),"rebuild_required");check(m.serialize()==old,"uncertain event published");
+            yes(m.deserialize(old));yes(transfer.reconciled());check(transfer.can_save(),"explicit recovery failed");
+        });
+        test("native transfer rejects reused live IDs and concurrent model edits",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,1,7)}));
+            EntityRegistry registry;for(Id id:{1,2,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));Command c;c.operation=Operation::Move;c.item=10;c.destination=2;c.session=m.session();
+            TransferSession transfer(m,access,registry);TransferSession::Dispatch event;
+            yes(transfer.prepare({c,access.revision()}));yes(registry.unbind(*registry.handle(10)));yes(registry.bind(10,10));
+            no(transfer.dispatch(event),"stale_entity");check(transfer.can_save(),"stale preflight held reservation");
+            yes(transfer.prepare({c,access.revision()}));yes(transfer.dispatch(event));Command changed;c.revision=m.revision();
+            changed.operation=Operation::SetMass;changed.item=10;changed.mass=8;changed.session=m.session();yes(m.execute(changed));
+            no(transfer.acknowledge(event.token,2,true),"stale_model");check(m.carried_mass()==8&&!transfer.can_save(),"stale acknowledgment overwrote live state");
+        });
         test("native identity survives save restore remap and retires reused server IDs",[]{
             IdentityLedger ledger;Id first=0,again=0;yes(ledger.enroll(42,first));yes(ledger.enroll(42,again));check(first==again,"identity changed");
             const auto saved=ledger.serialize();IdentityLedger restored;yes(restored.deserialize(saved));

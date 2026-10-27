@@ -24,20 +24,20 @@ public:
 
     CInventoryNextView();
     ~CInventoryNextView() override;
-    void Initialize(const Fvector2& position, const Fvector2& size);
+    void Initialize(const Fvector2& position, const Fvector2& size) noexcept;
     bool Bind(const inventory_next::Model& model, const inventory_next::Presentation& state,
-              inventory_next::Id actor, const Visuals& visuals);
+              inventory_next::Id actor, const Visuals& visuals) noexcept;
     // Same binding contract as Bind. Caller supplies synchronized permissions.
     bool Refresh(const inventory_next::Model& model, const inventory_next::Presentation& state,
-                 inventory_next::Id actor, const Visuals& visuals);
-    void Unbind();
+                 inventory_next::Id actor, const Visuals& visuals) noexcept;
+    void Unbind() noexcept;
     // Hide stale data immediately; rebuild on next UI Update, not in a callback.
-    void Invalidate();
-    inventory_next::Presentation PresentationState() const { return m_state; }
-    std::uint64_t BoundSession() const;
-    std::uint64_t BoundRevision() const;
-    void Update() override;
-    void SendMessage(CUIWindow* sender, s16 message, void* data = nullptr) override;
+    void Invalidate() noexcept;
+    inventory_next::Presentation PresentationState() const noexcept;
+    std::uint64_t BoundSession() const noexcept;
+    std::uint64_t BoundRevision() const noexcept;
+    void Update() noexcept override;
+    void SendMessage(CUIWindow* sender, s16 message, void* data = nullptr) noexcept override;
 
 private:
     enum class ActionKind { Collapse, Scroll, Cycle, Open };
@@ -48,6 +48,7 @@ private:
         int direction;
         unsigned group;
     };
+    void FailClosed() noexcept;
     void Rebuild();
     CUIStatic* Text(CUIWindow* parent, const std::string& value,
                    float x, float y, float width, float height, u32 color);

@@ -82,6 +82,7 @@ class CUIGameCustom :
 	public CDialogHolder
 {
 protected:
+	CUIDialogWnd* InventoryNextDialog = nullptr;
 	CUIWindow* Window;
 	CUIXml* MsgConfig;
 	xr_vector<StaticDrawableWrapper*> CustomStatics;
@@ -120,6 +121,7 @@ public:
 	void ShowCrosshair(bool show) { psHUD_Flags.set(HUD_CROSSHAIR_RT, show); }
 	bool CrosshairShown() { return !!psHUD_Flags.test(HUD_CROSSHAIR_RT); }
 
+	void SetInventoryNextDialog(CUIDialogWnd* dialog); // owns explicit developer snapshot dialog
 	CUIWindow* GetWindow() { return Window; }
 
 	virtual void HideShownDialogs()
