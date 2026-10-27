@@ -48,3 +48,5 @@ human instruction to continue independent work was verified in Planning.
 it does not force unpause or claim physical keyboard acceptance. The next CI also
 retains matching PDBs for three days, downloaded only if crash diagnosis needs
 them. Earlier initialization shutdown access violation remains unresolved.
+
+Fixture correction: cleanup requests use alife():release directly. Vanilla _g.script alife_release can return false without native release for a standalone NPC; for squad members it calls squad:remove_npc first. Native veto acceptance must not be mistaken for validation of that Lua bookkeeping path. Squad-managed cleanup compatibility remains open.

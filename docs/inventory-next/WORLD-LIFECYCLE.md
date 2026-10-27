@@ -109,3 +109,19 @@ overlaya950edef0681be999db0a2b3ba1386419a4e7381. Three superseded Dev22ZIPs
 were removed after exact-path/hash verification (32357382bytes), retaining all
 evidence and current/rollback packages. This is a development package, not the
 completed mod. No loaded-corpse implementation was introduced in this checkpoint.
+
+## Independent continuation and offline-save restart
+
+The later human instruction to continue independent work despite a blocked test
+was verified in Planning. The paused crate run remains unverified and closed;
+it does not block the separate corpse candidate or offline-save checks.
+
+PID7800, engine477d889b/overlay4a429d72, loaded sqa3_cycle_ground_offline in a
+fresh process. The custodian and all3 members were initially offline with no
+client objects, then returned online and were physically retrieved. Strict
+verify_native_world_cycle.py --resume-offline --ground passes; final7/3278g,
+same original state except transient unequipped slot reset, empty world, exit0.
+ci-40530438260/ground-offline-restart retains evidence. This extends restart
+coverage, not the unverified crate area-transition result.
+
+PID16228 repeats the fresh offline-save restart with crate19712: passes the same strict verifier and exact final records, exit0/no timeout. Evidence ci-40530438260/crate-offline-restart. Crate actual map travel remains separately unverified.

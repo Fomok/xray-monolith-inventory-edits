@@ -392,12 +392,12 @@ function on_game_start()
             inspect("offline",false)
             if destroy_attempt then
                 printf("[SQA3 AUTORUN] requesting real offline-custodian destruction live=%s",tostring(box.id))
-                alife_release(box)
+                alife():release(box,true)
                 assert(alife():object(box.id),"offline custodian was destroyed")
                 for _,obj in pairs(members) do
                     local id=obj.id
                     printf("[SQA3 AUTORUN] requesting real offline-member destruction live=%s",tostring(id))
-                    alife_release(obj)
+                    alife():release(obj,true)
                     local retained=alife():object(id)
                     assert(retained and retained.parent_id==box.id,"offline member destroyed")
                 end
@@ -538,7 +538,7 @@ function on_game_start()
             local npc=level.object_by_id(id);assert(npc and not npc:alive(),"empty corpse missing")
             local count=0;npc:iterate_inventory(function() count=count+1;return false end,npc)
             assert(count==0,"cleanup corpse is not empty")
-            alife_release(alife():object(id))
+            alife():release(alife():object(id),true)
         end,function()
             assert(not alife():object(id) and not level.object_by_id(id),"empty corpse cleanup was blocked")
             printf("[SQA3 AUTORUN] empty corpse cleanup completed live=%s",tostring(id))
@@ -626,10 +626,10 @@ function on_game_start()
                 alife():iterate_objects(function(obj) if obj.parent_id==crate_id then children[#children+1]=obj.id end return false end)
                 assert(#children==3,"loaded cleanup needs complete custody")
                 printf("[SQA3 AUTORUN] requesting real loaded-custodian destruction live=%s",tostring(crate_id))
-                alife_release(owner)
+                alife():release(owner,true)
                 for _,id in ipairs(children) do
                     printf("[SQA3 AUTORUN] requesting real loaded-member destruction live=%s",tostring(id))
-                    alife_release(alife():object(id))
+                    alife():release(alife():object(id),true)
                 end
             end
         end
