@@ -49,6 +49,9 @@ local function prepare_sale()
 end
 local function hold_sale()
     local npc=level.object_by_id(npc_id);assert(npc,"sale NPC missing")
+    local distance=npc:position():distance_to(db.actor:position())
+    printf("[SQA3 AUTORUN] sale readiness distance=%s menu=%s",tostring(distance),tostring(ActorMenu.get_actor_menu():IsShown()))
+    assert(ActorMenu.get_actor_menu():IsShown(),"sale menu closed before input window")
     sale_actor_money=db.actor:money();sale_partner_money=npc:money()
     started=started+60000
     printf("[SQA3 AUTORUN] sale input window live=%s actor_money=%s partner_money=%s",tostring(sale_item),tostring(sale_actor_money),tostring(sale_partner_money))
