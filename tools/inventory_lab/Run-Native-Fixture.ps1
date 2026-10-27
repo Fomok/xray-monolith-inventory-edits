@@ -49,6 +49,13 @@ try {
 }
 New-Item -ItemType Directory -Path $evidence -Force > $null
 $copied=@{}
+$screenshots=@()
+foreach($shot in @(Get-ChildItem -LiteralPath (Join-Path $lab 'appdata/screenshots') -Filter '*.jpg' -File -ErrorAction SilentlyContinue | Where-Object {$_.LastWriteTimeUtc -ge $started} | Sort-Object LastWriteTimeUtc)){
+    $name=$EvidenceStem+'-screenshot-'+($screenshots.Count+1)+'.jpg'
+    $destination=Join-Path $evidence $name
+    Copy-Item -LiteralPath $shot.FullName -Destination $destination
+    $screenshots+=@{file=$name;source=$shot.Name;sha256=(Get-FileHash -LiteralPath $destination -Algorithm SHA256).Hash.ToLowerInvariant()}
+}
 foreach($entry in @(
     @{source='appdata/logs/xray_fomok.log';suffix='.log'},
     @{source='appdata/sqa3-native-probe.inv';suffix='.inv'},
@@ -64,7 +71,7 @@ foreach($entry in @(
 $report=@{
     pid=$game.Id;started_utc=$started.ToString('o');finished_utc=[DateTime]::UtcNow.ToString('o');
     exit_code=$exitCode;timed_out=$timedOut;engine_commit=$manifest.engine_commit;
-    overlay_commit=$manifest.overlay_commit;arguments=$Arguments;evidence=$copied;
+    overlay_commit=$manifest.overlay_commit;arguments=$Arguments;evidence=$copied;screenshots=$screenshots;
     limits='Process supervision and evidence capture only; run the corresponding behavioral verifier.'
 }
 $json=$report | ConvertTo-Json -Depth 5
