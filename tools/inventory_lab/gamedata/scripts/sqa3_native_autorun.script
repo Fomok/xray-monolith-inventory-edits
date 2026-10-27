@@ -240,6 +240,76 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-world-prepare",1,true) then
+        local nested_live
+        commands={"inventory_next_probe export",snapshot,function()
+            local a=db.actor
+            local item=alife():create("itm_backpack",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
+            assert(item,"nested backpack spawn failed");nested_live=item.id
+        end,function()
+            local item=level.object_by_id(nested_live);assert(item,"nested backpack not online")
+            db.actor:move_to_ruck(item)
+            assert(not db.actor:item_in_slot(13) or db.actor:item_in_slot(13):id()~=nested_live,"nested backpack remained equipped")
+        end,"inventory_next_probe export",function()
+            local encoded=tostring(nested_live):gsub(".",function(c)return string.format("%02x",string.byte(c)) end)
+            local file=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"r"))
+            local identity
+            for line in file:lines() do
+                if line:find(" native_live_id x"..encoded.." ",1,true) then identity=tonumber(line:match("^(%d+)")) end
+            end
+            file:close();assert(identity,"nested backpack persistent identity missing")
+            exec_console_cmd("inventory_next_store "..identity.." 105 4 4 0")
+            exec_console_cmd("inventory_next_store 102 "..identity.." 1 1 0")
+            printf("[SQA3 AUTORUN] prepared world nested bag live=%s identity=%s outer=105 child=102",tostring(nested_live),tostring(identity))
+        end,snapshot,"inventory_next_probe export","save sqa3_world_prepared","quit"}
+        RegisterScriptCallback("actor_on_update",update);return
+    end
+    if args:find("-sqa3-fixture-world-transfer",1,true) then
+        local returning=args:find("-sqa3-world-return",1,true)~=nil
+        local reload=args:find("-sqa3-world-reload",1,true)~=nil
+        commands={"inventory_next_probe export",snapshot}
+        if returning or reload then
+            commands[#commands+1]=function()
+                crate_id=tonumber(args:match("%-sqa3%-world%-crate=(%d+)"));assert(crate_id,"world transfer crate missing")
+            end
+        else commands[#commands+1]=spawn_crate end
+        commands[#commands+1]=open_crate
+        if not reload then
+            commands[#commands+1]=function()
+                started=started+60000
+                printf("[SQA3 AUTORUN] world transfer mouse window returning=%s: drag outer loaded bag between actor pockets and crate",tostring(returning))
+            end
+        end
+        commands[#commands+1]="screenshot sqa3_world_transfer"
+        commands[#commands+1]=function()
+            local bags,medkits=0,0
+            db.actor:iterate_inventory(function(_,item)
+                if item:section()=="itm_backpack" then bags=bags+1 end
+                if item:section()=="medkit" then medkits=medkits+1 end
+                return false
+            end,db.actor)
+            assert(bags==(returning and 2 or 0) and medkits==(returning and 1 or 0),"world transfer actor membership mismatch")
+            local box=level.object_by_id(crate_id);assert(box,"world transfer crate missing")
+            local count,members=0,0
+            local function record(_,item)
+                if item:section()=="itm_backpack" or item:section()=="medkit" then
+                    members=members+1
+                    printf("[SQA3 AUTORUN] world member live=%s owner=%s section=%s grams=%s condition=%s",tostring(item:id()),tostring(item:parent():id()),item:section(),tostring(item:weight()*1000),tostring(item:condition()))
+                end
+                return false
+            end
+            box:iterate_inventory_box(function(_,item) count=count+1;if not returning then record(nil,item) end return false end,box)
+            if returning then db.actor:iterate_inventory(record,db.actor) end
+            assert(count==(returning and 0 or 3) and members==3,"world transfer source membership mismatch")
+            printf("[SQA3 AUTORUN] world transfer phase=%s crate=%s actor=%s members=3",returning and "return" or "release",tostring(crate_id),tostring(db.actor:id()))
+        end
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save "..(returning and "sqa3_world_return" or "sqa3_world_release")
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-logical-rotate",1,true) then
         local edge=args:find("-sqa3-rotation-edge",1,true)~=nil
         local reload=args:find("-sqa3-rotation-reload",1,true)~=nil
