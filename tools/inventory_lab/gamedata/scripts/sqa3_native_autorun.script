@@ -300,6 +300,10 @@ function on_game_start()
         end
         commands[#commands+1]="screenshot sqa3_direct_equip"
         commands[#commands+1]=function() if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end end
+        commands[#commands+1]=function()
+            local active=db.actor:active_item()
+            printf("[SQA3 AUTORUN] direct equip active after close live=%s",active and tostring(active:id()) or "none")
+        end
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
         commands[#commands+1]="save sqa3_direct_equip"
