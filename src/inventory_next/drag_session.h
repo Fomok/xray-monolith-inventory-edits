@@ -22,6 +22,7 @@ public:
     DropProposal release(const Model&,Id destination,int x,int y,bool swap_enabled,
                          const std::set<Id>& accessible_swap_items);
     Id item() const { return item_; }
+    bool is_current(const Model& m) const { return current(m); }
 private:
     bool current(const Model&) const;
     Id item_ = 0;

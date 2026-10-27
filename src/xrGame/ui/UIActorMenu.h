@@ -193,6 +193,7 @@ public:
 	CInventoryBox* GetInvBox() { return m_pInvBox; };
 	bool b_sort_hotkeys;
     bool m_sqaRefresh=false;
+    CUIStatic* m_sqaStatus=nullptr;
 	void SelectInventoryTab(int tab);
 private:
 	void PropertiesBoxForSlots(PIItem item, bool& b_show);

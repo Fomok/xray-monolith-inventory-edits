@@ -62,6 +62,7 @@ void CUIActorMenu::Construct()
 	CUIXmlInit xml_init;
 
 	xml_init.InitWindow(uiXml, "main", 0, this);
+	if (InventoryNextEnabled()) m_sqaStatus=UIHelper::CreateStatic(uiXml,"sqa_status",this);
 	m_hint_wnd = UIHelper::CreateHint(uiXml, "hint_wnd");
 
 	m_LeftBackground = xr_new<CUIStatic>();

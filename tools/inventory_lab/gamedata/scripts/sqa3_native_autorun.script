@@ -2,6 +2,40 @@
 local started, stage, failed = nil, 1, false
 local commands = {}
 local crate_id,loot_id
+local changing,condition_tick=false,0
+local npc_id,corpse_loot_id
+local function spawn_npc()
+    local a=db.actor;local pos=a:position();pos.x=pos.x+1.2
+    local npc=alife():create("sim_default_stalker_1",pos,a:level_vertex_id(),a:game_vertex_id())
+    assert(npc,"fixture NPC spawn failed");npc_id=npc.id
+end
+local function open_trade()
+    local npc=level.object_by_id(npc_id);assert(npc and npc:alive(),"fixture NPC not online")
+    npc:start_trade(db.actor)
+    assert(ActorMenu.get_actor_menu():IsShown() and ActorMenu.get_menu_mode()==2,"native trade menu did not open")
+    printf("[SQA3 AUTORUN] native trade menu opened NPC=%s",tostring(npc_id))
+end
+local function kill_npc()
+    ActorMenu.get_actor_menu():HideDialog()
+    local npc=level.object_by_id(npc_id);assert(npc and npc:alive(),"fixture NPC missing before kill")
+    npc:kill(npc)
+end
+local function fill_corpse()
+    local npc=level.object_by_id(npc_id);assert(npc and not npc:alive(),"fixture NPC did not die")
+    local a=db.actor;local item=alife():create("bread",a:position(),a:level_vertex_id(),a:game_vertex_id(),npc_id)
+    assert(item,"corpse bread spawn failed");corpse_loot_id=item.id
+end
+local function open_corpse()
+    local npc=level.object_by_id(npc_id);assert(npc and not npc:alive(),"corpse not online")
+    assert(npc:use(db.actor),"corpse use rejected")
+    assert(ActorMenu.get_actor_menu():IsShown() and ActorMenu.get_menu_mode()==4,"native corpse menu did not open")
+end
+local function check_corpse_loot()
+    local found=false
+    db.actor:iterate_inventory(function(_,item) if item:id()==corpse_loot_id then found=true end return false end,db.actor)
+    assert(found,"corpse bread identity missing from actor")
+    printf("[SQA3 AUTORUN] native corpse loot verified live=%s",tostring(corpse_loot_id))
+end
 local function spawn_crate()
     local a=db.actor;local pos=a:position();pos.x=pos.x+0.8
     local box=alife():create("inventory_box",pos,a:level_vertex_id(),a:game_vertex_id())
@@ -62,6 +96,18 @@ local function filter_all()
     local button=ActorMenu.get_actor_menu():FindChild("button_sort_tab_1")
     assert(button and not button:IsEnabled(),"all-items filter did not restore")
 end
+local function check_consumed()
+    local count,grams,has_bread=0,0,false
+    db.actor:iterate_inventory(function(_,item)
+        if item:section()=="bread" then has_bread=true end
+        count=count+1;grams=grams+item:weight()*1000;return false
+    end,db.actor)
+    -- Assert outside the engine's Lua callback boundary so pcall can report failure.
+    assert(not has_bread,"bread was not consumed through item action")
+    assert(count==4 and math.abs(grams-1448)<0.01,"unexpected consumption count or mass")
+    printf("[SQA3 AUTORUN] native consumption verified count4 grams1448")
+    if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
+end
 local function snapshot()
     local count, grams = 0, 0
     db.actor:iterate_inventory(function(_, item)
@@ -83,6 +129,13 @@ local function spawn()
 end
 function update()
     if failed or not db or not db.actor then return end
+    if changing then
+        condition_tick=condition_tick+1
+        db.actor:iterate_inventory(function(_,item)
+            if item:section()=="bandage" then item:set_condition(0.6+(condition_tick%100)/1000) end
+            return false
+        end,db.actor)
+    end
     -- Actor updates can begin before the native precache input gate has cleared.
     if not started then started=time_global()+10000;printf("[SQA3 AUTORUN] actor ready; waiting for startup input gate") end
     if time_global()-started < stage*2000 then return end
@@ -109,17 +162,27 @@ function on_game_start()
         commands[#commands+1]="inventory_next_move 100 -1 3 0" -- must reject bounds
         commands[#commands+1]="inventory_next_probe export"
     end
+    if args:find("-sqa3-fixture-use",1,true) then commands[#commands+1]="inventory_next_move 104 3 5 0" end
     commands[#commands+1]=toggle_inventory
     commands[#commands+1]=function() assert(ActorMenu.get_actor_menu():IsShown(),"normal inventory did not open") end
     if args:find("-sqa3-fixture-equipment",1,true) then
         commands[#commands+1]=unequip_fixture
+        commands[#commands+1]="inventory_next_move 103 5 6 1" -- rotated bag pistol must enter its native slot correctly
         commands[#commands+1]=toggle_inventory
         commands[#commands+1]=toggle_inventory
+        commands[#commands+1]="screenshot sqa3_rotated_pistol"
         commands[#commands+1]=equip_fixture
         commands[#commands+1]=check_equipment
         commands[#commands+1]="inventory_next_probe export"
     end
-    if args:find("-sqa3-fixture-hold",1,true) then commands[#commands+1]=function() started=started+60000;printf("[SQA3 AUTORUN] holding view for bounded input test") end end
+    if args:find("-sqa3-fixture-hold",1,true) then
+        commands[#commands+1]=function()
+            started=started+60000;changing=args:find("-sqa3-fixture-changing",1,true)~=nil
+            printf("[SQA3 AUTORUN] holding view for bounded input test; changing=%s",tostring(changing))
+        end
+        commands[#commands+1]=function() changing=false;printf("[SQA3 AUTORUN] condition update ticks=%s",tostring(condition_tick)) end
+    end
+    if args:find("-sqa3-fixture-use",1,true) then commands[#commands+1]=check_consumed end
     if args:find("-sqa3-fixture-filter",1,true) then
         commands[#commands+1]=filter_consumables
         commands[#commands+1]="screenshot sqa3_filtered"
@@ -131,6 +194,7 @@ function on_game_start()
     commands[#commands+1]="inventory_next_probe export"
     commands[#commands+1]=snapshot
     local save=args:find("-sqa3-fixture-reload",1,true) and "sqa3_replacement_reload" or "sqa3_replacement"
+    if args:find("-sqa3-fixture-corpse",1,true) then save="sqa3_corpse" end
     commands[#commands+1]="save "..save
     commands[#commands+1]=toggle_inventory
     commands[#commands+1]=function() assert(not ActorMenu.get_actor_menu():IsShown(),"inventory key did not close") end
@@ -147,6 +211,22 @@ function on_game_start()
         commands[#commands+1]=check_loot
         commands[#commands+1]="inventory_next_probe export"
         commands[#commands+1]="screenshot sqa3_loot_after"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="save "..save
+    end
+    if args:find("-sqa3-fixture-corpse",1,true) then
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        commands[#commands+1]=spawn_npc
+        commands[#commands+1]=open_trade
+        commands[#commands+1]="screenshot sqa3_trade"
+        commands[#commands+1]=kill_npc
+        commands[#commands+1]=fill_corpse
+        commands[#commands+1]=open_corpse
+        commands[#commands+1]="screenshot sqa3_corpse_before"
+        commands[#commands+1]=take_all
+        commands[#commands+1]=check_corpse_loot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="screenshot sqa3_corpse_after"
         commands[#commands+1]=snapshot
         commands[#commands+1]="save "..save
     end

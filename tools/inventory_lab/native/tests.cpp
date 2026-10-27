@@ -4,6 +4,7 @@
 #include "identity_ledger.h"
 #include "identity_state.h"
 #include "transfer_session.h"
+#include "drag_session.h"
 #include "presentation.h"
 #include "persistence.h"
 #include <cstdlib>
@@ -586,6 +587,25 @@ int main(int argc,char** argv) {
             auto y=item(21,1,30);y.location=Location::Overflow;y.container=true;y.grid={1,1};
             Model m;yes(m.initialize({a,b,x,y}));auto old=m.serialize();yes(m.retry_recovery(1,{10,21},0,m.session()));
             check(m.serialize()==old,"blocked grid/self destination bypassed");
+        });
+        test("native facts changing during drag reject stale release without moving items",[]{
+            for(int change=0;change<3;++change) {
+                Node x=item(100,1,100);x.attributes["native_section"]="pda";
+                Node y=item(101,1,38);y.attributes["native_section"]="bandage";
+                y.type=1;y.stack_limit=2;
+                ActorLayout a;yes(a.reconcile({x,y}));DragSession drag;
+                yes(drag.begin(a.model(),100));yes(a.reconcile({x,y}));check(drag.is_current(a.model()),"unchanged facts cancelled drag");
+                std::vector<Node> facts{x,y};
+                if(change==0)facts[1].condition=9000;
+                if(change==1)facts[1].quantity=2;
+                if(change==2){auto z=y;z.id=102;facts.push_back(z);}
+                yes(a.reconcile(facts));auto before=a.model().serialize();
+                auto proposal=drag.release(a.model(),1,5,4,false,{});
+                no(proposal.result,"stale_drag");check(proposal.moves.empty()&&!drag.item(),"stale ghost/proposal survived");
+                check(a.model().serialize()==before,"stale gesture changed refreshed inventory");
+                yes(drag.begin(a.model(),100));proposal=drag.release(a.model(),1,5,4,false,{});
+                yes(proposal.result);yes(a.move(proposal.moves.front()));
+            }
         });
         test("native layout preserves manual position and stale guards across facts and reload",[]{
             Node n=item(100,1,100);n.attributes["native_section"]="pda";ActorLayout a;yes(a.reconcile({n}));

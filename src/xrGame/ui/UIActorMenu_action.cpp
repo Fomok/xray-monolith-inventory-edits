@@ -87,6 +87,14 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 	}
 	EDDListType t_new = GetListType(new_owner);
 	EDDListType t_old = GetListType(old_owner);
+	if (InventoryNextEnabled() && old_owner==m_pInventoryBagList) {
+		auto item=static_cast<PIItem>(itm->m_pData);
+		if (!item || !InventoryNextNativeDragCurrent(item->object().ID())) {
+			m_sqaRefresh=true;
+			if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Inventory changed. Drag again.");
+			return true;
+		}
+	}
 
 	if (!AllowItemDrops(t_old, t_new))
 	{
@@ -238,6 +246,11 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
 {
 	InfoCurItem(NULL);
+	if (InventoryNextEnabled() && itm->OwnerList()==m_pInventoryBagList) {
+		auto item=static_cast<PIItem>(itm->m_pData);
+		if(!item || !InventoryNextNativeDragBegin(item->object().ID())) {m_sqaRefresh=true;return true;}
+		if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("");
+	}
 	return false; //default behaviour
 }
 

@@ -13,6 +13,7 @@
 #include "xr_level_controller.h"
 #include "../xrEngine/xr_input.h"
 #include "../inventory_next/native_layout.h"
+#include "../inventory_next/drag_session.h"
 #include "../inventory_next/entity_registry.h"
 #include "../inventory_next/persistence.h"
 #include <cmath>
@@ -21,6 +22,7 @@
 
 namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
+inventory_next::DragSession& native_drag(){static inventory_next::DragSession value;return value;}
 constexpr u32 layout_chunk=0x33514c59;
 
 }
@@ -56,14 +58,14 @@ bool InventoryNextLayoutSync() noexcept try {
         if(!result)Msg("! SQA3 native layout sync: %s",result.error.c_str());
         return result.ok;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {native_drag().cancel();layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
     stream.w(bytes.data(),static_cast<u32>(bytes.size()));stream.close_chunk();
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
-    layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
+    native_drag().cancel();layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
     CHECK_OR_EXIT(InventoryNextEnabled()&&chunk->length()<=2*1024*1024,"Invalid SQA3 layout mode/size");
     const std::string bytes(reinterpret_cast<const char*>(chunk->pointer()),chunk->length());chunk->close();
     CHECK_OR_EXIT(layout().restore(bytes).ok,"Invalid SQA3 layout data");
@@ -106,6 +108,19 @@ bool InventoryNextNativeDrop(u16 live,int x,int y) noexcept try {
     if(!InventoryNextEnabled()||!InventoryNextLayoutSync())return false;
     const auto id=InventoryNextIdentity(live);const auto& model=layout().model();
     const auto found=model.nodes().find(id);if(found==model.nodes().end()||found->second.location!=inventory_next::Location::Grid)return false;
-    const auto result=layout().move({id,1,{x,y,found->second.position.rotated},model.revision(),model.session()});
+    if(native_drag().item()!=id){Msg("! SQA3 native drag missing source token");native_drag().cancel();return false;}
+    const auto proposal=native_drag().release(model,1,x,y,false,{});
+    const auto result=proposal.result.ok ? layout().move(proposal.moves.front()) : proposal.result;
     Msg("* SQA3 native drag id=%llu destination=%d,%d result=%s",id,x,y,result.ok?"accepted":result.error.c_str());return result.ok;
+} catch (...) {return false;}
+bool InventoryNextNativeDragBegin(u16 live) noexcept try {
+    native_drag().cancel();
+    if(!InventoryNextEnabled()||!InventoryNextLayoutSync())return false;
+    return native_drag().begin(layout().model(),InventoryNextIdentity(live)).ok;
+} catch (...) {return false;}
+bool InventoryNextNativeDragCurrent(u16 live) noexcept try {
+    if(!InventoryNextEnabled()||!InventoryNextLayoutSync())return false;
+    const bool valid=native_drag().item()==InventoryNextIdentity(live)&&native_drag().is_current(layout().model());
+    if(!valid){Msg("! SQA3 native drag rejected: stale_drag; inventory refreshed");native_drag().cancel();}
+    return valid;
 } catch (...) {return false;}

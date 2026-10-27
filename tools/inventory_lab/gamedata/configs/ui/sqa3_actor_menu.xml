@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <w>
+  <sqa_status x="702" y="714" width="300" height="18">
+    <text font="letterica16" r="220" g="190" b="120" />
+  </sqa_status>
   <properties_box>
     <texture>ui_inGame2_demo_player_info_window</texture>
     <list x="0" y="0" width="10" height="10" item_height="18" always_show_scroll="0" can_select="1" bottom_indent="10" right_ident="10" left_ident="20">
