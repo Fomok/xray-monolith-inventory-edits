@@ -26,6 +26,10 @@
 #include <cmath>
 #include <exception>
 #include <stdexcept>
+#include "../inventory_next/ground_pickup.h"
+#include "ai_space.h"
+#include "alife_simulator.h"
+#include "alife_object_registry.h"
 
 namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
@@ -33,6 +37,11 @@ inventory_next::DragSession& native_drag(){static inventory_next::DragSession va
 constexpr u32 layout_chunk=0x33514c59;
 bool layout_current=false;
 inventory_next::NativeStorageView storage_view;
+std::map<u16,inventory_next::Node> pending_pickups;
+std::unique_ptr<inventory_next::EntityRegistry> pickup_registry;
+std::unique_ptr<inventory_next::GroundPickup> pickup_transaction;
+bool pickup_fault=false;
+
 
 bool read_storage_catalog(inventory_next::StorageCatalog& output) {
     using namespace inventory_next;
@@ -102,6 +111,12 @@ bool InventoryNextLayoutSync() noexcept try {
             }
             nodes.push_back(n);
         }
+        // Server-acknowledged ownership already reserves storage. Keep the
+        // admitted facts until CInventory::Take observes the actual client item.
+        for(const auto& pending:pending_pickups) {
+            bool present=false;for(const auto& n:nodes)if(n.id==pending.second.id){present=true;break;}
+            if(!present){auto n=pending.second;n.parent=1;n.location=Location::Overflow;n.position={};nodes.push_back(std::move(n));}
+        }
         auto storage=logical?catalog.pockets:ActorStorage{};storage.logical=logical;
         const auto result=layout().reconcile(std::move(nodes),storage);
         if(!result)Msg("! SQA3 native layout sync: %s",result.error.c_str());
@@ -109,14 +124,14 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
     stream.w(bytes.data(),static_cast<u32>(bytes.size()));stream.close_chunk();
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
-    layout_current=false;native_drag().cancel();layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
+    layout_current=false;native_drag().cancel();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
     CHECK_OR_EXIT(InventoryNextEnabled()&&chunk->length()<=2*1024*1024,"Invalid SQA3 layout mode/size");
     const std::string bytes(reinterpret_cast<const char*>(chunk->pointer()),chunk->length());chunk->close();
     CHECK_OR_EXIT(layout().restore(bytes).ok,"Invalid SQA3 layout data");
@@ -135,6 +150,7 @@ void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcep
 } catch (...) {Msg("! SQA3 logical store exception");}
 bool InventoryNextCanRelease(u16 live) noexcept try {
     if(!InventoryNextLogicalStorage())return true;
+    if(!pending_pickups.empty()||pickup_transaction)return false;
     if(!InventoryNextLayoutSync())return false;
     const auto id=InventoryNextIdentity(live);
     if(!id||!layout().model().nodes().count(id))return true;
@@ -260,3 +276,82 @@ void InventoryNextCapacityProbe() noexcept try {
         section.empty()?"none":section.c_str(),storage.grid.w,storage.grid.h,legal,recovery,
         static_cast<long long>(preview.model().carried_mass()),result.ok?"saved":result.error.c_str());
 } catch (...) {Msg("! SQA3 capacity preview exception");}
+
+
+bool InventoryNextStrictPickup() noexcept {
+    return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-strict-ground-pickup")!=nullptr;
+}
+bool InventoryNextPickupCanSave() noexcept {
+    return !pickup_fault&&!pickup_transaction&&pending_pickups.empty();
+}
+void InventoryNextPickupForget(u16 live) noexcept try {
+    pending_pickups.erase(live);
+} catch (...) {pickup_fault=true;}
+bool InventoryNextPickupPrepare(u16 owner,u16 live) noexcept try {
+    if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
+    using namespace inventory_next;
+    if(pickup_fault||pickup_transaction||!InventoryNextLayoutSync())return false;
+    auto object=Level().Objects.net_Find(live);
+    auto item=smart_cast<CInventoryItem*>(object);
+    const auto server=ai().alife().objects().object(live,true);
+    if(!item||!server||server->ID_Parent!=0xffff||item->object().H_Parent())return false;
+    const auto id=InventoryNextIdentity(live);if(!id)return false;
+    InventoryNextIdentityOnline(*item);
+    Node n;n.id=id;n.parent=2;
+    const double grams=double(item->Weight())*1000.0,condition=item->GetCondition();
+    const Irect shape=item->GetInvGridRect();
+    if(!std::isfinite(grams)||grams<0||grams>1e12||!std::isfinite(condition)||condition<0||condition>1||
+       shape.x2<1||shape.y2<1||shape.x2>16||shape.y2>64)return false;
+    n.intrinsic=static_cast<Mass>(std::llround(grams));n.condition=static_cast<unsigned>(std::llround(condition*10000));
+    n.empty=n.half=n.full={shape.x2,shape.y2};
+    n.attributes["native_section"]=item->m_section_id.c_str();n.attributes["native_live_id"]=std::to_string(live);
+    n.attributes["native_place"]="3";n.attributes["native_slot"]=std::to_string(item->CurrSlot());
+    if(smart_cast<CBackpack*>(item)) {
+        StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+        const std::string section=item->m_section_id.c_str();
+        const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
+        const auto& storage=catalog.resolve(section,kind);n.container=true;n.grid=storage.grid;n.cells=storage.cells;
+    }
+    auto registry=std::make_unique<EntityRegistry>();
+    if(!registry->add(1)||!registry->bind(1,owner))return false;
+    std::vector<Id> destinations{1};
+    for(const auto& pair:layout().model().nodes())if(pair.second.kind==Kind::Item) {
+        if(!registry->add(pair.first)||!registry->bind(pair.first,static_cast<u16>(std::stoul(pair.second.attributes.at("native_live_id")))))return false;
+        if(pair.second.container&&pair.second.location!=Location::Overflow&&layout().model().storage_active(pair.first))destinations.push_back(pair.first);
+    }
+    if(!registry->add(id)||!registry->bind(id,live))return false;
+    auto transaction=std::make_unique<GroundPickup>(*registry);
+    const auto result=transaction->prepare(layout().model(),n,destinations);
+    if(!result){Msg("! SQA3 ground pickup refused live=%u reason=%s; source retained",live,result.error.c_str());return false;}
+    pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);
+    Msg("* SQA3 ground pickup reserved live=%u; save blocked=%d",live,!InventoryNextPickupCanSave());
+    return true;
+} catch (...) {Msg("! SQA3 ground pickup prepare exception; source retained");return false;}
+void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
+    if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID()||!pickup_transaction)return;
+    const auto server=ai().alife().objects().object(live,true);
+    const auto result=pickup_transaction->acknowledge(server?server->ID_Parent:0xffff,accepted);
+    if(accepted&&result) {
+        const auto id=InventoryNextIdentity(live);
+        const auto admitted=pickup_transaction->model().nodes().at(id);
+        // Restore only the acknowledged actor forest, never a rejected source.
+        const auto restored=layout().restore(pickup_transaction->model().serialize());
+        if(!restored){pickup_fault=true;Msg("! SQA3 pickup publish failed: %s",restored.error.c_str());return;}
+        pending_pickups.emplace(live,admitted);
+        if(InventoryNextIdentityCanSave()){pickup_fault=true;Msg("! SQA3 pending pickup incorrectly allowed save");return;}
+        Msg("* SQA3 ground pickup server accepted live=%u owner=%llu cell=%d,%d",live,admitted.parent,admitted.position.x,admitted.position.y);
+    } else if(accepted||result.error!="native_rejected") {
+        pickup_fault=true;Msg("! SQA3 pickup acknowledgement failed: %s",result.error.c_str());return;
+    }
+    pickup_transaction.reset();pickup_registry.reset();
+} catch (...) {pickup_fault=true;Msg("! SQA3 pickup acknowledgement exception; saves blocked");}
+void InventoryNextPickupTaken(u16 live) noexcept try {
+    if(!pending_pickups.count(live))return;
+    pending_pickups.erase(live);
+    if(!InventoryNextLayoutSync()){pickup_fault=true;return;}
+    const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
+    if(found==layout().model().nodes().end()||found->second.location==inventory_next::Location::Overflow) {
+        pickup_fault=true;Msg("! SQA3 ordinary pickup lost reserved placement; saves blocked");return;
+    }
+    Msg("* SQA3 ground pickup client acknowledged live=%u; pending=%u save_ready=%d",live,static_cast<unsigned>(pending_pickups.size()),InventoryNextPickupCanSave());
+} catch (...) {pickup_fault=true;}

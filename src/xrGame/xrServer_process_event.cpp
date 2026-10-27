@@ -90,7 +90,7 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_TRADE_BUY:
 	case GE_OWNERSHIP_TAKE:
 		{
-			Process_event_ownership(P, sender, timestamp, destination);
+			Process_event_ownership(P, sender, timestamp, destination, FALSE, type==GE_OWNERSHIP_TAKE);
 #ifdef DEBUG
 			VERIFY(verify_entities());
 #endif

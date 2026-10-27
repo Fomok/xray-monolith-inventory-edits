@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "xrserver.h"
+#include "InventoryNextProbe.h"
 #include "xrserver_objects.h"
 #include "xrserver_objects_alife_monsters.h"
 #include "xrServer_svclient_validation.h"
@@ -11,7 +12,7 @@ void ReplaceOwnershipHeader(NET_Packet& P)
 	CopyMemory(&P.B.data[6], &NewType, 2);
 };
 
-void xrServer::Process_event_ownership(NET_Packet& P, ClientID sender, u32 time, u16 ID, BOOL bForced)
+void xrServer::Process_event_ownership(NET_Packet& P, ClientID sender, u32 time, u16 ID, BOOL bForced, bool sqa_ground)
 {
 	u32 MODE = net_flags(TRUE,TRUE, FALSE, TRUE);
 
@@ -76,6 +77,7 @@ void xrServer::Process_event_ownership(NET_Packet& P, ClientID sender, u32 time,
 		return;
 	};
 
+	if(sqa_ground&&!InventoryNextPickupPrepare(id_parent,id_entity))return;
 	// Game allows ownership of entity
 	if (game->OnTouch(id_parent, id_entity, bForced))
 	{
@@ -85,6 +87,7 @@ void xrServer::Process_event_ownership(NET_Packet& P, ClientID sender, u32 time,
 		// Rebuild parentness
 		e_entity->ID_Parent = id_parent;
 		e_parent->children.push_back(id_entity);
+		if(sqa_ground)InventoryNextPickupFinish(id_parent,id_entity,true);
 
 		if (bForced)
 		{
@@ -93,4 +96,5 @@ void xrServer::Process_event_ownership(NET_Packet& P, ClientID sender, u32 time,
 		// Signal to everyone (including sender)
 		SendBroadcast(BroadcastCID, P, MODE);
 	}
+	else if(sqa_ground)InventoryNextPickupFinish(id_parent,id_entity,false);
 }

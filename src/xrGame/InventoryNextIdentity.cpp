@@ -39,6 +39,7 @@ void InventoryNextIdentityReset() noexcept try {
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityRetire(u16 server_id) noexcept try {
     if(!InventoryNextEnabled())return;
+    InventoryNextPickupForget(server_id);
     const auto result=identities().retire(server_id);CHECK_OR_EXIT(result.ok,"SQA3 identity retirement failed");
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityRemap(u16 before,u16 after) noexcept try {
@@ -47,6 +48,7 @@ void InventoryNextIdentityRemap(u16 before,u16 after) noexcept try {
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 bool InventoryNextIdentityCanSave() noexcept try {
     if(!InventoryNextEnabled())return true;
+    if(!InventoryNextPickupCanSave()){Msg("! SQA3 save refused: pickup acknowledgement pending");return false;}
     if(!ai().get_alife())return ledger().entries().empty();
     if(!InventoryNextLayoutSync())return false;
     for(const auto& entry:ledger().entries()) {

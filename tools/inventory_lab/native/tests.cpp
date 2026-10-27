@@ -6,6 +6,7 @@
 #include "identity_ledger.h"
 #include "identity_state.h"
 #include "transfer_session.h"
+#include "ground_pickup.h"
 #include "drag_session.h"
 #include "presentation.h"
 #include "persistence.h"
@@ -859,6 +860,33 @@ int main(int argc,char** argv) {
             check(catalog.resolve("equ_tourist_pack","").grid.h==15,"tourist catalog capacity");
             check(catalog.resolve("addon_pack","i_backpack").grid.w==11,"kind fallback lost width");
             check(catalog.resolve("addon_pack","unknown").grid.w==7&&catalog.resolve("addon_pack","unknown").grid.h==10,"default fallback");
+        });
+        test("native ground pickup reserves last slot and preserves rejected source",[]{
+            ActorLayout layout;ActorStorage storage{{1,1},{},true};yes(layout.reconcile({},storage));
+            EntityRegistry registry;yes(registry.add(1));yes(registry.bind(1,7));
+            yes(registry.add(100));yes(registry.bind(100,40));yes(registry.add(101));yes(registry.bind(101,41));
+            auto incoming=item(100,2,38);incoming.attributes["native_section"]="bandage";
+            GroundPickup first(registry);const auto before=layout.model().serialize();
+            yes(first.prepare(layout.model(),incoming,{1}));check(!first.can_save(),"pending acquisition allowed save");
+            check(layout.model().serialize()==before,"reservation changed live actor before acknowledgement");
+            yes(first.acknowledge(7,true));yes(layout.restore(first.model().serialize()));
+            check(layout.model().nodes().at(100).location==Location::Grid&&layout.model().carried_mass()==38,"accepted pickup used recovery or counted mass twice");
+            GroundPickup second(registry);incoming.id=101;const auto full=layout.model().serialize();
+            no(second.prepare(layout.model(),incoming,{1}),"no_fit");
+            check(layout.model().serialize()==full,"last slot competing pickup changed actor");
+            ActorLayout empty;yes(empty.reconcile({},storage));GroundPickup rejected(registry);incoming.id=100;
+            yes(rejected.prepare(empty.model(),incoming,{1}));no(rejected.acknowledge(0xffff,false),"native_rejected");
+            check(rejected.can_save()&&rejected.model().nodes().at(100).parent==2,"native refusal lost source");
+        });
+        test("native ground pickup nested target and disappearing source fail closed",[]{
+            ActorLayout layout;ActorStorage storage{{1,1},{},true};auto pack=bag(100,1,820);pack.soft=false;pack.empty=pack.half=pack.full={1,1};pack.attributes["native_section"]="itm_backpack";
+            yes(layout.reconcile({pack},storage));yes(layout.move({100,1,{0,0,false},layout.model().revision(),layout.model().session()}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{100},Id{101}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            auto incoming=item(101,2,500);incoming.attributes["native_section"]="medkit";
+            GroundPickup nested(registry);yes(nested.prepare(layout.model(),incoming,{1,100}));yes(nested.acknowledge(11,true));
+            check(nested.model().nodes().at(101).parent==100&&nested.model().carried_mass()==1320,"nested pickup flattened or duplicated weight");
+            GroundPickup vanished(registry);yes(vanished.prepare(layout.model(),incoming,{1,100}));yes(registry.unbind(*registry.handle(101)));
+            no(vanished.acknowledge(11,true),"stale_entity");check(!vanished.can_save(),"disappeared source acknowledgement allowed save");
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));

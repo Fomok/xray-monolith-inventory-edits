@@ -240,6 +240,51 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-ground",1,true) then
+        local sources={}
+        commands={"inventory_next_probe export",snapshot}
+        if not args:find("-sqa3-fixture-ground-reload",1,true) then
+            commands[#commands+1]=function()
+                local a=db.actor;local pos=a:position();pos.x=pos.x+2
+                for i=1,67 do
+                    local item=alife():create("bandage",pos,a:level_vertex_id(),a:game_vertex_id())
+                    assert(item,"ground fixture spawn failed");sources[#sources+1]=item.id
+                end
+            end
+            commands[#commands+1]=function()
+                for _,id in ipairs(sources) do
+                    local item=level.object_by_id(id);assert(item and not item:parent(),"ground source missing before request")
+                    db.actor:take_item(item)
+                end
+            end
+            commands[#commands+1]=function()
+                local accepted,refused=0,0
+                for _,id in ipairs(sources) do
+                    local item=level.object_by_id(id);assert(item,"pickup lost real source identity")
+                    if item:parent() and item:parent():id()==db.actor:id() then accepted=accepted+1
+                    else assert(not item:parent(),"refused source changed owner");refused=refused+1 end
+                end
+                printf("[SQA3 AUTORUN] ground admission accepted=%s source_retained=%s",tostring(accepted),tostring(refused))
+                assert(accepted==65 and refused==2,"last-slot competition or capacity admission failed")
+                -- Repeat the refused requests after client acknowledgements.
+                for _,id in ipairs(sources) do local item=level.object_by_id(id);if not item:parent() then db.actor:take_item(item) end end
+            end
+            commands[#commands+1]=function()
+                local refused=0
+                for _,id in ipairs(sources) do local item=level.object_by_id(id);assert(item,"repeat refusal destroyed source");if not item:parent() then refused=refused+1 end end
+                assert(refused==2,"full grid repeat pickup accepted surplus")
+                printf("[SQA3 AUTORUN] repeated full-grid refusal retained two exact ground sources")
+            end
+        end
+        commands[#commands+1]=function() if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end end
+        commands[#commands+1]="screenshot sqa3_ground_admission"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_ground_admission"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-logical",1,true) then
         commands={"inventory_next_probe export",snapshot,toggle_inventory}
         if not args:find("-sqa3-fixture-logical-reload",1,true) then

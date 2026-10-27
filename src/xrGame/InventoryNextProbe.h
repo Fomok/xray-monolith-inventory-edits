@@ -21,3 +21,11 @@ void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcep
 class CUIDragDropListEx;
 void InventoryNextStorageView(CUIDragDropListEx* list) noexcept;
 int InventoryNextStorageCell(int x,int y) noexcept;
+
+// Opt-in ground ownership path; trade/loot pre-detach admission is separate.
+bool InventoryNextStrictPickup() noexcept;
+bool InventoryNextPickupPrepare(u16 owner,u16 live) noexcept;
+void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept;
+void InventoryNextPickupTaken(u16 live) noexcept;
+void InventoryNextPickupForget(u16 live) noexcept;
+bool InventoryNextPickupCanSave() noexcept;

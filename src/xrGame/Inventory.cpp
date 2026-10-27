@@ -208,6 +208,7 @@ void CInventory::Take(CGameObject* pObj, bool bNotActivate, bool strict_placemen
 		}
 	}
 
+	InventoryNextPickupTaken(pIItem->object().ID());
 	m_pOwner->OnItemTake(pIItem);
 
 	CalcTotalWeight();
