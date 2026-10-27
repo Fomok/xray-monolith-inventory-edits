@@ -454,6 +454,9 @@ bool CUIActorMenu::OnKeyboardAction(int dik, EUIMessages keyboard_action)
             const bool rotated=InventoryNextNativeRotate(item->object().ID());
             if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText(rotated?"":"Cannot rotate here.");
             m_sqaRefresh=true;
+        } else {
+            if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Select an item in your bag to rotate.");
+            Msg("! SQA3 native rotate ignored: no selected actor-bag item");
         }
         return true;
     }

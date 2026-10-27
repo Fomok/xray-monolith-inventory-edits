@@ -454,6 +454,10 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 
 void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 {
+    // Keep the native object, never a cell pointer, across the synchronous rebuild.
+    // Re-select only if that same object is still present in the rebuilt bag.
+    PIItem sqaSelected = InventoryNextEnabled() && CurrentItem() &&
+        CurrentItem()->OwnerList()==pBagList ? CurrentIItem() : nullptr;
     if(InventoryNextEnabled()) {
         if(!InventoryNextLayoutSync()) {
             m_sqaRefresh=true;
@@ -529,6 +533,12 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 			m_sort_buttons.at(i)->Enable(true);
 	}
 
+    if(sqaSelected) {
+        for(u32 i=0;i<pBagList->ItemsCount();++i) {
+            auto cell=pBagList->GetItemIdx(i);
+            if(cell->m_pData==sqaSelected) {SetCurrentItem(cell);break;}
+        }
+    }
 	m_pQuickSlot->ReloadReferences(m_pActorInvOwner);
 }
 
@@ -537,6 +547,8 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 void CUIActorMenu::FilterActorBagList(int mode)
 {
 	if (InventoryNextEnabled() && !InventoryNextLayoutSync()) m_sqaRefresh=true;
+    // Filtering destroys the old cells. A hidden selection must not remain usable.
+    if(InventoryNextEnabled())SetCurrentItem(nullptr);
 	m_pInventoryBagList->ClearAll(true);
 	auto placeFilteredItem = [this](CUICellItem* cell, PIItem item) {
 		int x=0,y=0;bool rotated=false;
