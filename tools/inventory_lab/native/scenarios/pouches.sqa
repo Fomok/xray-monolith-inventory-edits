@@ -1,0 +1,32 @@
+SQA3_SCENARIO 1
+root 1 actor 8 8 1000 3
+root 2 world 8 8 0 3
+definition rig 100 1 1 1 2 1 3 1 1 1 1 1 3 0
+mount_definition rig 101 b1 1 1 2 5000 1
+definition pouch 20 2 1 1 1 1 1 1 1 0 1 2 3 0
+pouch_definition pouch
+compartment_name pouch 1 p1_1
+attribute_definition pouch repair_note retained
+definition loot 7 1 1 1 1 1 1 1 0 0 0 0 3 0
+seed 10 1 rig 0 0 0
+seed 20 1 pouch 4 0 0
+seed 30 2 loot 0 0 0
+begin
+mount 20 10 101 0 ok
+assert mounted 20 101
+assert footprint 10 1 1
+observe 2 1 1
+guarded move 30 20 0 0 0 1 unrevealed_item
+reveal 30 1 1
+guarded move 30 20 0 0 0 1 ok
+assert footprint 10 2 1
+assert mass 127
+move 20 1 4 0 0 2 mounted_not_empty
+state 10 100 9 4000 2 mount
+state 10 100 9 7000 2 ok
+snapshot mounted
+save mounted
+load mounted
+assert mounted 20 101
+assert footprint 10 2 1
+assert mass 127

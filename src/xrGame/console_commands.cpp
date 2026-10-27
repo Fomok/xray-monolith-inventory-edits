@@ -48,6 +48,7 @@
 #include "cameralook.h"
 #include "character_hit_animations_params.h"
 #include "inventory_upgrade_manager.h"
+#include "InventoryNextProbe.h"
 
 #include "ai_debug_variables.h"
 #include "../xrphysics/console_vars.h"
@@ -1818,6 +1819,16 @@ struct CCC_JumpToLevel : public IConsole_Command
 };
 
 //#ifndef MASTER_GOLD
+class CCC_InventoryNextProbe : public IConsole_Command
+{
+public:
+    CCC_InventoryNextProbe(LPCSTR name) : IConsole_Command(name) { bEmptyArgsHandled = true; }
+    void Execute(LPCSTR args) override {
+        if (*args && xr_strcmp(args, "export")) { Msg("! usage: inventory_next_probe [export]"); return; }
+        InventoryNextProbe(*args != 0);
+    }
+};
+
 class CCC_Script : public IConsole_Command
 {
 public:
@@ -2716,6 +2727,9 @@ void CCC_RegisterCommands()
 #ifndef MASTER_GOLD
 	CMD3(CCC_Mask, "ai_ignore_actor", &psAI_Flags, aiIgnoreActor);
 #endif // MASTER_GOLD
+
+	if (strstr(Core.Params, "-inventory-lab") && strstr(Core.Params, "-dbg"))
+		CMD1(CCC_InventoryNextProbe, "inventory_next_probe");
 
 	// Physics
 	CMD1(CCC_PHFps, "ph_frequency");

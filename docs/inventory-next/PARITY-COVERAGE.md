@@ -5,7 +5,7 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current test evidence: 46 core checks per build, 27 runner integrations, 10 offscreen renderer checks plus equipment/compartment visual inspection. No game launch, MSVC build or native adapter integration.
+Current increment: 54 core checks per build, 29 runner integrations; presentation 7, registry 5 and placement 5 scenario groups per build. Real-content geometry:2353 cases/56 fixtures. See MILESTONE-4.md. Native read-only probe wired for CI compilation; no game launch or ownership adapter integration.
 
 | ID | Accepted behavior | Current evidence / remaining work |
 |---|---|---|
@@ -24,8 +24,8 @@ Current test evidence: 46 core checks per build, 27 runner integrations, 10 offs
 | I13 | Stack inspection picker | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | R01 | Rig compartment geometry and authored layout | Core compartments/masks tested; rig/pouch content/attachment policy OPEN |
 | R02 | Equipped and spare-rig windows | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| R03 | Pouch fitting and granted storage | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| R04 | Occupied/worn pouch refusal and rollback | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| R03 | Pouch fitting and granted storage | Stable mounted pouch ownership/grids, category/condition/slot checks and soft-host fullness tested; actual native mount/catalog integration OPEN |
+| R04 | Occupied/worn pouch refusal and rollback | Nonempty unmount and invalid condition/slot failures roll back; native UI/events OPEN |
 | R05 | Rig wear, damaged slots and loot condition | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | R06 | Pouch/rig upgrades and weapon state retention | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | R07 | Safe rig dismantle and pouch return | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |

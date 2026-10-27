@@ -13,7 +13,7 @@ constexpr std::size_t max_nodes = 4096;
 constexpr Mass max_mass = 1000000000000LL;
 constexpr std::size_t max_save = 2 * 1024 * 1024;
 std::atomic<std::uint64_t> session_sequence{0};
-struct Derived { Size size; Mass mass = 0; int depth = 0; };
+struct Derived { Size size; Mass mass = 0; int depth = 0; int occupied = 0; int capacity = 0; };
 using DerivedMap = std::map<Id, Derived>;
 Result good() { return {true, {}}; }
 Result bad(const std::string& why) { return {false, why}; }
@@ -28,7 +28,22 @@ bool stack_compatible(const Node& a, const Node& b) {
     return !a.container && !b.container && !a.wear_slots && !b.wear_slots &&
         a.stack_limit > 1 && a.type && a.type == b.type && a.state == b.state &&
         a.intrinsic == b.intrinsic && a.category == b.category && a.stack_limit == b.stack_limit &&
+        a.condition == b.condition && a.attributes == b.attributes &&
         a.empty.w == b.empty.w && a.empty.h == b.empty.h;
+}
+bool key_ok(const std::string& key) {
+    if(key.empty()||key.size()>48)return false;
+    for(char c:key)if(!((c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||c=='_'))return false;
+    return true;
+}
+std::string encode(const std::string& value) {
+    const char* h="0123456789abcdef";std::string out="x";
+    for(unsigned char c:value){out+=h[c>>4];out+=h[c&15];}return out;
+}
+bool decode(const std::string& text, std::string& value) {
+    if(text.empty()||text[0]!='x'||text.size()>2049||text.size()%2!=1)return false;
+    auto digit=[](char c){return c>='0'&&c<='9'?c-'0':c>='a'&&c<='f'?c-'a'+10:-1;};
+    value.clear();for(std::size_t i=1;i<text.size();i+=2){int a=digit(text[i]),b=digit(text[i+1]);if(a<0||b<0)return false;value+=static_cast<char>(a*16+b);}return true;
 }
 unsigned region_of(const Node& n, int x, int y) {
     if (!n.container || x<0 || y<0 || x>=n.grid.w || y>=n.grid.h) return 0;
@@ -38,6 +53,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
     if (nodes.empty() || nodes.size() > max_nodes) return bad("node_count");
     std::map<Id, std::vector<Id>> children;
     std::size_t authored_cells = 0;
+    std::size_t metadata_bytes = 0;
     for (const auto& [id, n] : nodes) {
         if (!id || id != n.id || n.intrinsic < 0 || n.intrinsic > max_mass ||
             n.max_contents < 0 || n.max_contents > max_mass) return bad("identity_or_mass");
@@ -47,7 +63,19 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         if (!n.quantity || !n.stack_limit || n.stack_limit > 1000000 || n.quantity > n.stack_limit ||
             (n.stack_limit > 1 && (!n.type || n.container || n.wear_slots)) ||
             n.intrinsic > max_mass / n.quantity) return bad("stack_definition");
-        if (n.location != Location::Grid && n.location != Location::Equipment) return bad("location");
+        if (n.location != Location::Grid && n.location != Location::Equipment && n.location != Location::Mounted) return bad("location");
+        if(n.condition>10000||n.max_stack_quantity>1000000||n.mounts.size()>64||n.compartment_names.size()>64||n.attributes.size()>32)return bad("metadata");
+        for(const auto& [key,value]:n.attributes){if(!key_ok(key)||value.size()>1024)return bad("metadata");metadata_bytes+=key.size()+value.size();}
+        if(metadata_bytes>65536)return bad("metadata_budget");
+        if((n.pouch||!n.mounts.empty()||n.max_stack_quantity||!n.compartment_names.empty())&&!n.container)return bad("not_container");
+        if(n.pouch&&n.kind!=Kind::Item)return bad("pouch");
+        if(n.location!=Location::Mounted&&n.mounted_slot)return bad("mount");
+        std::map<Id,bool> slot_ids;std::map<std::string,bool> slot_names;
+        for(const auto& slot:n.mounts){
+            metadata_bytes+=slot.name.size()+64;
+            if(!slot.id||!key_ok(slot.name)||!size_ok(slot.footprint)||slot.minimum_condition>10000||
+                !slot_ids.emplace(slot.id,true).second||!slot_names.emplace(slot.name,true).second)return bad("mount_definition");
+        }
         if (n.required_slots == 0 || n.required_slots > 64) return bad("slot_count");
         if (n.kind != Kind::ActorRoot && (n.allowed_slots || n.equipment_accepts || n.equipment_capacity))
             return bad("equipment_policy");
@@ -56,6 +84,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
             if (p == nodes.end() || !p->second.container) return bad("parent");
             if (!n.category || (n.category & (n.category - 1))) return bad("category");
             if (!(p->second.accepts & n.category)) return bad("restriction");
+            if(p->second.max_stack_quantity&&n.quantity>p->second.max_stack_quantity)return bad("container_stack_limit");
             if (n.location == Location::Equipment) {
                 const Node& owner = p->second;
                 if (owner.kind != Kind::ActorRoot || n.quantity != 1 || !n.wear_slots ||
@@ -64,6 +93,14 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
                     bits(n.equipped_slots) != n.required_slots ||
                     n.position.x || n.position.y || n.position.rotated) return bad("equipment");
             } else if (n.equipped_slots) return bad("equipment");
+            if(n.location==Location::Mounted){
+                const Node& owner=p->second;
+                auto slot=std::find_if(owner.mounts.begin(),owner.mounts.end(),[&](const MountSlot& s){return s.id==n.mounted_slot;});
+                if(!n.pouch||!n.container||owner.kind!=Kind::Item||slot==owner.mounts.end()||!slot->enabled||
+                    owner.condition<slot->minimum_condition||!(slot->accepts&n.category)||n.position.x||n.position.y||n.position.rotated)return bad("mount");
+                if(!((n.empty.w<=slot->footprint.w&&n.empty.h<=slot->footprint.h)||
+                    (n.empty.h<=slot->footprint.w&&n.empty.w<=slot->footprint.h)))return bad("mount_fit");
+            }
             children[n.parent].push_back(id);
         } else if (n.kind == Kind::ActorRoot || n.kind == Kind::WorldRoot) {
             if (n.parent || !n.container || n.soft || n.intrinsic || n.category ||
@@ -83,7 +120,14 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         } else if (n.soft || n.grid.w || n.grid.h || n.max_contents || !n.cells.empty()) return bad("not_container");
         if (n.soft && (n.half.w < n.empty.w || n.half.h < n.empty.h ||
             n.full.w < n.half.w || n.full.h < n.half.h ||
-            n.full.w * n.full.h < n.grid.w * n.grid.h)) return bad("growth_definition");
+            n.full.w * n.full.h < (n.cells.empty() ? n.grid.w * n.grid.h : static_cast<int>(std::count_if(n.cells.begin(),n.cells.end(),[](unsigned c){return c!=0;}))))) return bad("growth_definition");
+        std::map<std::string,bool> names;
+        for(const auto& [region,name]:n.compartment_names){
+            metadata_bytes+=name.size()+8;
+            if(!region||!key_ok(name)||!names.emplace(name,true).second||
+                (n.cells.empty()?region!=1:std::find(n.cells.begin(),n.cells.end(),region)==n.cells.end()))return bad("compartment_name");
+        }
+        if(metadata_bytes>65536)return bad("metadata_budget");
     }
     std::map<Id, int> color;
     std::function<Result(Id, int)> visit = [&](Id id, int call_depth) -> Result {
@@ -94,7 +138,9 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         const Node& n = nodes.at(id);
         Derived d{n.empty, n.intrinsic * n.quantity, 1};
         int used = 0;
+        int granted_capacity = 0;
         std::vector<const Node*> equipped;
+        std::map<Id,bool> mounted;
         std::vector<std::pair<Position, Size>> rectangles;
         for (Id child : children[id]) {
             auto check = visit(child, call_depth + 1);
@@ -105,6 +151,13 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
             d.mass += cd.mass;
             d.depth = std::max(d.depth, cd.depth + 1);
             if (d.depth > 64) return bad("depth");
+            if(c.location==Location::Mounted){
+                if(!mounted.emplace(c.mounted_slot,true).second)return bad("mount_occupied");
+                // Count occupied granted cells once, excluding the pouch shell.
+                used += cd.occupied;
+                granted_capacity += cd.capacity;
+                continue; // pouch retains its own grid and stable slot identity
+            }
             if (c.location == Location::Equipment) {
                 for (const Node* other : equipped) {
                     if ((c.equipped_slots & other->equipped_slots) ||
@@ -134,6 +187,9 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         if (n.max_contents && d.mass - n.intrinsic > n.max_contents) return bad("mass_capacity");
         int capacity=n.grid.w*n.grid.h;
         if (!n.cells.empty()) capacity=static_cast<int>(std::count_if(n.cells.begin(),n.cells.end(),[](unsigned c){return c!=0;}));
+        capacity += granted_capacity;
+        d.occupied = used; d.capacity = capacity;
+        if (n.soft && n.full.w*n.full.h < capacity) return bad("growth_definition");
         if (n.soft && used) d.size = used * 2 <= capacity ? n.half : n.full;
         result[id] = d;
         color[id] = 2;
@@ -216,6 +272,10 @@ Result Model::relocate(const std::vector<Move>& requests) {
         item->second.position = request.position;
         item->second.location = Location::Grid;
         item->second.equipped_slots = 0;
+        if(item->second.mounted_slot){
+            for(const auto& [id,n]:nodes_){(void)id;if(n.parent==request.item)return bad("mounted_not_empty");}
+            item->second.mounted_slot=0;
+        }
     }
     DerivedMap derived;
     auto r = analyze(candidate, derived);
@@ -240,16 +300,27 @@ Result Model::execute(const Command& request) {
         if (item == candidate.end() || item->second.kind != Kind::Item) return bad("item");
         switch (request.operation) {
         case Operation::Move:
+            if(item->second.location==Location::Mounted){
+                for(const auto& [id,n]:candidate){(void)id;if(n.parent==request.item)return bad("mounted_not_empty");}
+            }
             item->second.parent = request.destination;
             item->second.position = request.position;
             item->second.location = Location::Grid;
             item->second.equipped_slots = 0;
+            item->second.mounted_slot = 0;
             break;
         case Operation::Equip:
+            if(item->second.location==Location::Mounted)return bad("mounted_item");
             item->second.parent = request.destination;
             item->second.position = {};
             item->second.location = Location::Equipment;
             item->second.equipped_slots = request.slots;
+            break;
+        case Operation::Mount:
+            if(item->second.location==Location::Mounted)return bad("mounted_item");
+            for(const auto& [id,n]:candidate){(void)id;if(n.parent==request.item)return bad("pouch_not_empty");}
+            item->second.parent=request.destination;item->second.location=Location::Mounted;
+            item->second.position={};item->second.equipped_slots=0;item->second.mounted_slot=request.mount_slot;
             break;
         case Operation::Split: {
             Node& source = item->second;
@@ -278,6 +349,7 @@ Result Model::execute(const Command& request) {
             break;
         }
         case Operation::Erase:
+            if(item->second.location==Location::Mounted)return bad("mounted_item");
             for (const auto& [id, n] : candidate) {
                 (void)id;
                 if (n.parent == request.item) return bad("not_empty");
@@ -285,6 +357,10 @@ Result Model::execute(const Command& request) {
             candidate.erase(item);
             break;
         case Operation::SetMass: item->second.intrinsic = request.mass; break;
+        case Operation::SetState:
+            item->second.intrinsic=request.mass;item->second.state=request.state;
+            item->second.condition=request.condition;item->second.attributes=request.attributes;
+            break;
         default: return bad("operation");
         }
     }
@@ -326,7 +402,7 @@ std::vector<ItemView> Model::snapshot() const {
     for (const auto& [id, n] : nodes_) if (n.kind == Kind::Item) {
         view.push_back({id, n.parent, n.type, n.state, n.location, n.position,
             rotated(d.at(id).size, n.position.rotated), d.at(id).mass,
-            n.quantity, n.equipped_slots, n.presentation_group});
+            n.quantity, n.equipped_slots, n.presentation_group, n.mounted_slot, n.condition, n.attributes});
     }
     return view;
 }
@@ -351,7 +427,7 @@ Id Model::cycle_equipment(unsigned group, Id selected, int direction) const {
 std::string Model::serialize() const {
     std::ostringstream s;
     s.imbue(std::locale::classic());
-    s << "INVENTORY_NEXT 4 " << revision_ << ' ' << nodes_.size() << ' ' << high_water_id_ << '\n';
+    s << "INVENTORY_NEXT 5 " << revision_ << ' ' << nodes_.size() << ' ' << high_water_id_ << '\n';
     for (const auto& [id, n] : nodes_) {
         s << id << ' ' << n.parent << ' ' << static_cast<int>(n.kind) << ' ' << n.intrinsic << ' '
           << n.category << ' ' << n.position.x << ' ' << n.position.y << ' ' << n.position.rotated << ' '
@@ -363,6 +439,13 @@ std::string Model::serialize() const {
           << n.equipped_slots << ' ' << n.required_slots << ' ' << n.presentation_group << ' '
           << n.allowed_slots << ' ' << n.equipment_accepts << ' ' << n.equipment_capacity << ' ' << n.cells.size();
         for (unsigned cell:n.cells) s << ' ' << cell;
+        s << ' ' << n.compartment_names.size();
+        for(const auto& [region,name]:n.compartment_names)s << ' ' << region << ' ' << name;
+        s << ' ' << n.mounts.size();
+        for(const auto& slot:n.mounts)s << ' ' << slot.id << ' ' << slot.name << ' ' << slot.footprint.w << ' '
+            << slot.footprint.h << ' ' << slot.accepts << ' ' << slot.minimum_condition << ' ' << slot.enabled;
+        s << ' ' << n.pouch << ' ' << n.mounted_slot << ' ' << n.condition << ' ' << n.max_stack_quantity << ' ' << n.attributes.size();
+        for(const auto& [key,value]:n.attributes)s << ' ' << key << ' ' << encode(value);
         s << '\n';
     }
     std::string body = s.str();
@@ -385,7 +468,7 @@ Result Model::deserialize(const std::string& bytes) {
     std::uint64_t revision;
     std::size_t count;
     Id high_water;
-    if (!(s >> magic >> version >> revision >> count >> high_water) || magic != "INVENTORY_NEXT" || version != 4 ||
+    if (!(s >> magic >> version >> revision >> count >> high_water) || magic != "INVENTORY_NEXT" || version != 5 ||
         count == 0 || count > max_nodes) return bad("header");
     std::vector<Node> nodes;
     for (std::size_t i = 0; i < count; ++i) {
@@ -397,12 +480,25 @@ Result Model::deserialize(const std::string& bytes) {
             >> n.type >> n.state >> n.quantity >> n.stack_limit >> location >> n.wear_slots >> n.blocked_slots
             >> n.equipped_slots >> n.required_slots >> n.presentation_group >> n.allowed_slots
             >> n.equipment_accepts >> n.equipment_capacity) ||
-            kind > 2 || rotation > 1 || container > 1 || soft > 1 || location > 1) return bad("record");
+            kind > 2 || rotation > 1 || container > 1 || soft > 1 || location > 2) return bad("record");
         n.location = static_cast<Location>(location);
         std::size_t cell_count;
         if (!(s >> cell_count) || cell_count>4096) return bad("cell_definition");
         n.cells.resize(cell_count);
         for (auto& cell:n.cells) if (!(s >> cell)) return bad("cell_definition");
+        std::size_t names,mounts,attributes;
+        if(!(s>>names)||names>64)return bad("metadata");
+        for(std::size_t j=0;j<names;++j){unsigned region;std::string name;if(!(s>>region>>name)||!n.compartment_names.emplace(region,name).second)return bad("metadata");}
+        if(!(s>>mounts)||mounts>64)return bad("metadata");
+        for(std::size_t j=0;j<mounts;++j){
+            MountSlot slot;unsigned enabled;
+            if(!(s>>slot.id>>slot.name>>slot.footprint.w>>slot.footprint.h>>slot.accepts>>slot.minimum_condition>>enabled)||enabled>1)return bad("metadata");
+            slot.enabled=enabled!=0;n.mounts.push_back(slot);
+        }
+        unsigned pouch;
+        if(!(s>>pouch>>n.mounted_slot>>n.condition>>n.max_stack_quantity>>attributes)||pouch>1||attributes>32)return bad("metadata");
+        n.pouch=pouch!=0;
+        for(std::size_t j=0;j<attributes;++j){std::string key,encoded,value;if(!(s>>key>>encoded)||!decode(encoded,value)||!n.attributes.emplace(key,value).second)return bad("metadata");}
         n.kind = static_cast<Kind>(kind);
         n.position.rotated = rotation != 0;
         n.container = container != 0;

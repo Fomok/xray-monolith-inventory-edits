@@ -271,14 +271,14 @@ int main(int argc,char** argv) {
         test("world reach changes invalidate preview without inventory revision change",[]{
             auto m=make();AccessGate gate(m);Command c;c.item=20;c.destination=11;c.position={1,0,false};c.session=m.session();
             AccessGate::Ticket t{c,gate.revision()};no(gate.execute(t),"unobserved_source");
-            yes(gate.observe(2,true,true));t.access_revision=gate.revision();yes(gate.preview(t).result);auto old=m.serialize();
+            yes(gate.observe(2,true,true));yes(gate.observe_item(20,true,true));t.access_revision=gate.revision();yes(gate.preview(t).result);auto old=m.serialize();
             yes(gate.observe(2,true,false));no(gate.execute(t),"stale_access");check(m.serialize()==old,"reach failure mutation");
             t.access_revision=gate.revision();no(gate.execute(t),"world_unavailable");
             yes(gate.observe(2,true,true));t.access_revision=gate.revision();yes(gate.execute(t));check(m.carried_mass()==197,"guarded transfer");
         });
         test("world and nested views are read-only and observation resets on load",[]{
             auto m=make();AccessGate gate(m);check(gate.children(2).empty(),"unobserved world exposed");
-            yes(gate.observe(2,true,true));auto old=m.serialize();check(gate.children(2)==std::vector<Id>({20,21}),"world direct children");
+            yes(gate.observe(2,true,true));yes(gate.observe_item(20,true,true));yes(gate.observe_item(21,true,true));auto old=m.serialize();check(gate.children(2)==std::vector<Id>({20,21}),"world direct children");
             check(gate.children(11)==std::vector<Id>({12}),"nested view");check(m.serialize()==old,"view mutation");
             auto rev=gate.revision();yes(m.deserialize(old));check(gate.children(2).empty()&&gate.revision()!=rev,"load retained stale observations");
         });
@@ -331,6 +331,78 @@ int main(int argc,char** argv) {
         test("invalid masks cannot create unreachable legal capacity",[]{
             Model m;auto a=root(1,Kind::ActorRoot,{2,2});a.cells={1};no(m.initialize({a}),"cell_definition");
             a.cells={0,0,0,0};no(m.initialize({a}),"cell_definition");a.cells={1,1,4097,1};no(m.initialize({a}),"cell_definition");
+        });
+        test("world action admission rejects hidden children and non-actionable ancestors",[]{
+            auto a=root(1,Kind::ActorRoot);auto w=root(2,Kind::WorldRoot);auto b=bag(10,2,100);auto x=item(11,10,20);
+            Model m;yes(m.initialize({a,w,b,x}));AccessGate gate(m);yes(gate.observe(2,true,true));yes(gate.observe_item(10,true,true));
+            check(gate.children(10).empty(),"hidden child disclosed");Command c;c.item=11;c.destination=1;c.session=m.session();
+            AccessGate::Ticket t{c,gate.revision()};no(gate.execute(t),"unrevealed_item");
+            yes(gate.observe_item(11,true,true));yes(gate.observe_item(10,true,false));t.access_revision=gate.revision();
+            check(gate.children(10)==std::vector<Id>({11}),"visible child withheld");no(gate.execute(t),"item_action_denied");
+            yes(gate.observe_item(10,true,true));t.access_revision=gate.revision();yes(gate.execute(t));check(m.carried_mass()==20,"revealed pickup");
+        });
+        test("mounted pouch identity remains stable when first neighboring pouch is removed",[]{
+            auto a=root(1,Kind::ActorRoot);auto w=root(2,Kind::WorldRoot);auto rig=item(10,1,100);rig.container=true;rig.grid={2,2};
+            rig.mounts={{101,"b1",{1,1},2,5000,true},{102,"b2",{1,1},2,5000,true}};
+            auto p=item(20,1,20,{3,0,false});p.category=2;p.container=true;p.pouch=true;p.grid={1,2};p.compartment_names={{1,"p1_1"}};
+            auto q=p;q.id=21;q.position={4,0,false};auto x=item(30,2,25);Model m;yes(m.initialize({a,w,rig,p,q,x}));
+            Command c;c.operation=Operation::Mount;c.item=20;c.destination=10;c.mount_slot=101;c.session=m.session();yes(m.execute(c));
+            c.item=21;c.mount_slot=102;c.revision=1;yes(m.execute(c));yes(move(m,{30,21,{0,0,false},2}));
+            yes(move(m,{20,1,{3,0,false},3}));check(m.nodes().at(21).mounted_slot==102&&m.nodes().at(30).parent==21,"renumbered pouch storage");
+            rollback(m,{21,1,{4,0,false},4},"mounted_not_empty");check(m.carried_mass()==165,"mounted mass counted twice");
+            auto saved=m.serialize();Model n;yes(n.deserialize(saved));check(n.serialize()==saved&&n.nodes().at(21).compartment_names.at(1)=="p1_1","named pouch restore");
+        });
+        test("mounted contents grow soft rig and reject grandparent overlap atomically",[]{
+            auto a=root(1,Kind::ActorRoot);auto w=root(2,Kind::WorldRoot);
+            auto outer=bag(9,1,5);outer.grid={3,1};outer.half={2,1};outer.full={4,2};
+            auto rig=bag(10,9,100);rig.grid={1,1};rig.half={2,1};rig.full={3,1};
+            rig.mounts={{101,"b1",{1,1},2,0,true}};
+            auto p=item(20,10,20);p.category=2;p.container=true;p.pouch=true;p.grid={1,2};p.location=Location::Mounted;p.mounted_slot=101;
+            auto blocker=item(40,1,1,{2,0,false});auto loot=item(30,2,7);
+            Model m;yes(m.initialize({a,w,outer,rig,p,blocker,loot}));
+            check(m.footprint(10).w==1,"empty mounted pouch expanded rig");
+            rollback(m,{30,20,{0,0,false},0},"overlap");
+            yes(move(m,{40,1,{8,0,false},0}));yes(move(m,{30,20,{0,0,false},1}));
+            check(m.footprint(10).w==2&&m.footprint(9).w==4,"mounted contents failed ancestor growth");
+            check(m.carried_mass()==133,"pouch contents double counted");
+            yes(move(m,{30,2,{0,0,false},2}));check(m.footprint(10).w==1,"unloaded rig did not fold");
+        });
+        test("shaped soft storage excludes blocked gutters from growth capacity",[]{
+            auto a=root(1,Kind::ActorRoot);auto b=bag(10,1,5);b.grid={3,1};b.cells={1,0,2};b.half={1,1};b.full={2,1};
+            Model m;yes(m.initialize({a,b,item(20,10,2),item(21,10,3,{2,0,false})}));
+            check(m.footprint(10).w==2,"usable-cell growth threshold");
+        });
+        test("mount restrictions condition and occupied slot failures preserve original pouch",[]{
+            auto a=root(1,Kind::ActorRoot);auto rig=item(10,1,100);rig.container=true;rig.grid={1,1};rig.mounts={{1,"b1",{1,1},2,5000,true}};
+            auto p=item(20,1,20,{3,0,false});p.category=2;p.container=true;p.pouch=true;p.grid={1,2};auto q=p;q.id=21;q.position={4,0,false};
+            Model m;yes(m.initialize({a,rig,p,q}));Command c;c.operation=Operation::Mount;c.item=20;c.destination=10;c.mount_slot=1;c.session=m.session();yes(m.execute(c));
+            c.item=21;c.revision=1;auto old=m.serialize();no(m.execute(c),"mount_occupied");check(m.serialize()==old,"occupied mount consumed pouch");
+            c.operation=Operation::SetState;c.item=10;c.mass=100;c.condition=4000;no(m.execute(c),"mount");check(m.serialize()==old,"failed damage changed attached state");
+            c.operation=Operation::Erase;c.item=20;no(m.execute(c),"mounted_item");
+        });
+        test("empty rig dismantle returns pouches atomically and retains state",[]{
+            auto a=root(1,Kind::ActorRoot);auto rig=item(10,1,100);rig.container=true;rig.grid={1,1};rig.mounts={{1,"b1",{1,1},2,0,true}};
+            auto p=item(20,10,20);p.category=2;p.container=true;p.pouch=true;p.grid={1,2};p.location=Location::Mounted;p.mounted_slot=1;p.attributes={{"condition_note","worn-but-repaired"}};
+            Model m;yes(m.initialize({a,rig,p}));Command moveP;moveP.item=20;moveP.destination=1;moveP.position={0,0,false};moveP.session=m.session();
+            Command remove;remove.operation=Operation::Erase;remove.item=10;remove.session=m.session();
+            // Ordered unmount needs a real free position; final-state swaps use relocate separately.
+            moveP.position={2,0,false};yes(m.execute_batch({moveP,remove}));
+            check(m.nodes().count(10)==0&&m.nodes().at(20).parent==1&&m.nodes().at(20).attributes.at("condition_note")=="worn-but-repaired","dismantle lost state");
+        });
+        test("per-instance state persists verbatim and incompatible members never merge",[]{
+            auto a=root(1,Kind::ActorRoot);auto x=item(10,1,40);x.type=100;x.quantity=2;x.stack_limit=5;
+            x.attributes={{"ammo","9x19:fmj,3"},{"parts","barrel=0.75;bolt=0.50"},{"upgrades","scope rail\noptic"}};
+            auto y=x;y.id=11;y.position={2,0,false};y.attributes["ammo"]="9x19:ap,3";Model m;yes(m.initialize({a,x,y}));
+            Command c;c.operation=Operation::Merge;c.item=10;c.destination=11;c.quantity=1;c.session=m.session();no(m.execute(c),"stack_compatibility");
+            c.operation=Operation::SetState;c.item=10;c.mass=45;c.state=20;c.condition=7500;c.attributes=x.attributes;c.attributes["parts"]="barrel=0.95;bolt=0.50";yes(m.execute(c));
+            auto saved=m.serialize();Model n;yes(n.deserialize(saved));check(n.serialize()==saved&&n.nodes().at(10).attributes==c.attributes&&n.nodes().at(10).condition==7500,"state restore");
+            check(n.carried_mass()==170,"state mass update");
+        });
+        test("container-specific stack ceiling rejects full move but permits legal split",[]{
+            auto a=root(1,Kind::ActorRoot);auto box=item(10,1,20);box.container=true;box.grid={2,2};box.max_stack_quantity=5;
+            auto x=item(20,1,5,{3,0,false});x.type=100;x.quantity=10;x.stack_limit=30;Model m;yes(m.initialize({a,box,x}));
+            rollback(m,{20,10,{0,0,false},0},"container_stack_limit");Command c;c.operation=Operation::Split;c.item=20;c.quantity=5;c.new_id=21;c.destination=10;c.session=m.session();yes(m.execute(c));
+            check(m.nodes().at(20).quantity==5&&m.nodes().at(21).quantity==5&&m.carried_mass()==70,"domain split conservation");
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));

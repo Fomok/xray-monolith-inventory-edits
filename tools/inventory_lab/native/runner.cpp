@@ -69,6 +69,15 @@ struct Lab {
         current_command.clear();
         for(const auto& token:t) { if(!current_command.empty()) current_command+=' '; current_command+=token; }
         auto count=[&](std::size_t n){require(t.size()==n,"argument_count");};
+        if(t[0]=="pouch_definition"||t[0]=="container_stack_limit"||t[0]=="attribute_definition"||t[0]=="compartment_name"||t[0]=="mount_definition") {
+            require(!begun&&t.size()>=2,"definition_after_begin");require(definitions.count(t[1])!=0,"unknown_definition");Node& n=definitions.at(t[1]);
+            if(t[0]=="pouch_definition"){count(2);n.pouch=true;}
+            else if(t[0]=="container_stack_limit"){count(3);n.max_stack_quantity=number<std::uint32_t>(t[2]);}
+            else if(t[0]=="attribute_definition"){count(4);n.attributes[t[2]]=t[3];}
+            else if(t[0]=="compartment_name"){count(4);n.compartment_names[number<unsigned>(t[2])]=t[3];}
+            else {count(9);MountSlot slot;slot.id=number<Id>(t[2]);slot.name=t[3];slot.footprint={number<int>(t[4]),number<int>(t[5])};slot.accepts=number<std::uint64_t>(t[6]);slot.minimum_condition=number<unsigned>(t[7]);slot.enabled=boolean(t[8]);n.mounts.push_back(slot);}
+            return;
+        }
         if(t[0]=="cells_definition"||t[0]=="root_cells") {
             require(!begun&&t.size()>=3,"cell_definition");auto size=number<std::size_t>(t[2]);
             require(size<=4096&&t.size()==size+3,"cell_definition");std::vector<unsigned> cells;
@@ -136,7 +145,7 @@ struct Lab {
             if(!r)require(model.serialize()==before&&model.session()==epoch,"rollback_invariant");
             event(index,"batch_end",actual,actual==t[1]);batching=false;batch.clear();require(actual==t[1],"unexpected_result");return;
         }
-        if(batching) require(t[0]=="spawn"||t[0]=="move"||t[0]=="mass"||t[0]=="erase"||t[0]=="split"||t[0]=="merge"||t[0]=="equip","batch_command_only");
+        if(batching) require(t[0]=="spawn"||t[0]=="move"||t[0]=="mass"||t[0]=="erase"||t[0]=="split"||t[0]=="merge"||t[0]=="equip"||t[0]=="mount"||t[0]=="state","batch_command_only");
         if(batching&&relocating)require(t[0]=="move","layout_move_only");
         if(t[0]=="assert") {
             require(t.size()>=3,"assert_syntax");bool pass=false;
@@ -149,6 +158,7 @@ struct Lab {
             else if(t[1]=="parent") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.parent==number<Id>(t[3]);}
             else if(t[1]=="quantity") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.quantity==number<unsigned>(t[3]);}
             else if(t[1]=="equipped") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.location==Location::Equipment&&n->second.equipped_slots==number<std::uint64_t>(t[3]);}
+            else if(t[1]=="mounted") {count(4);auto n=model.nodes().find(number<Id>(t[2]));pass=n!=model.nodes().end()&&n->second.location==Location::Mounted&&n->second.mounted_slot==number<Id>(t[3]);}
             else if(t[1]=="group_count") {count(4);pass=model.equipment_group(number<unsigned>(t[2])).size()==number<std::size_t>(t[3]);}
             else if(t[1]=="cycle") {count(6);pass=model.cycle_equipment(number<unsigned>(t[2]),number<Id>(t[3]),number<int>(t[4]))==number<Id>(t[5]);}
             else if(t[1]=="footprint") {count(5);auto s=model.footprint(number<Id>(t[2]));pass=s.w==number<int>(t[3])&&s.h==number<int>(t[4]);}
@@ -167,6 +177,10 @@ struct Lab {
             count(4);auto r=access.observe(number<Id>(t[1]),boolean(t[2]),boolean(t[3]));
             event(index,"observe",r.ok?"ok":r.error,r.ok);require(r.ok,r.error);return;
         }
+        if(t[0]=="reveal") {
+            count(4);auto r=access.observe_item(number<Id>(t[1]),boolean(t[2]),boolean(t[3]));
+            event(index,"reveal",r.ok?"ok":r.error,r.ok);require(r.ok,r.error);return;
+        }
         if(t[0]=="snapshot") {
             count(2);require(safe_name(t[1]),"snapshot_name");
             std::ofstream file(output/("snapshot-"+t[1]+".json"));require(static_cast<bool>(file),"snapshot_open");
@@ -177,7 +191,7 @@ struct Lab {
                 first=false;
                 file<<"{\"id\":"<<n.id<<",\"parent\":"<<n.parent<<",\"type\":"<<n.type<<",\"state\":"<<n.state
                     <<",\"quantity\":"<<n.quantity<<",\"equipped\":"<<(n.location==Location::Equipment?"true":"false")
-                    <<",\"slots\":"<<n.equipped_slots<<",\"group\":"<<n.presentation_group<<",\"x\":"<<n.position.x
+                    <<",\"slots\":"<<n.equipped_slots<<",\"mount\":"<<n.mounted_slot<<",\"condition\":"<<n.condition<<",\"group\":"<<n.presentation_group<<",\"x\":"<<n.position.x
                     <<",\"y\":"<<n.position.y<<",\"width\":"<<n.footprint.w<<",\"height\":"<<n.footprint.h
                     <<",\"gross_grams\":"<<n.gross_mass<<'}';
             }
@@ -211,6 +225,11 @@ struct Lab {
         } else if(op=="equip") {
             count(6);c.operation=Operation::Equip;c.item=number<Id>(t[1]);c.destination=number<Id>(t[2]);
             c.slots=number<std::uint64_t>(t[3]);c.revision=number<std::uint64_t>(t[4]);
+        } else if(op=="mount") {
+            count(6);c.operation=Operation::Mount;c.item=number<Id>(t[1]);c.destination=number<Id>(t[2]);c.mount_slot=number<Id>(t[3]);c.revision=number<std::uint64_t>(t[4]);
+        } else if(op=="state") {
+            count(7);c.operation=Operation::SetState;c.item=number<Id>(t[1]);c.mass=number<Mass>(t[2]);c.state=number<Id>(t[3]);c.condition=number<unsigned>(t[4]);c.revision=number<std::uint64_t>(t[5]);
+            auto item=model.nodes().find(c.item);if(item!=model.nodes().end())c.attributes=item->second.attributes;
         } else throw std::runtime_error("unknown_command");
         if(batching) {
             require(t.back()=="queued"&&batch.size()<64,"batch_queue");batch.push_back(c);event(index,op,"queued",true);return;

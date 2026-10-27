@@ -11,7 +11,15 @@ using Mass = std::int64_t; // integer grams, intrinsic mass excludes child item 
 struct Size { int w = 1, h = 1; };
 struct Position { int x = 0, y = 0; bool rotated = false; };
 enum class Kind { Item, ActorRoot, WorldRoot };
-enum class Location { Grid, Equipment };
+enum class Location { Grid, Equipment, Mounted };
+struct MountSlot {
+    Id id = 0;
+    std::string name;
+    Size footprint;
+    std::uint64_t accepts = 0;
+    unsigned minimum_condition = 0;
+    bool enabled = true;
+};
 struct Node {
     Id id = 0, parent = 0;
     Kind kind = Kind::Item;
@@ -34,6 +42,13 @@ struct Node {
     // Row-major authored regions: zero is blocked, positive IDs are compartments.
     // Empty means the entire rectangle is one usable compartment.
     std::vector<unsigned> cells;
+    std::map<unsigned, std::string> compartment_names;
+    std::vector<MountSlot> mounts;
+    bool pouch = false;
+    Id mounted_slot = 0;
+    unsigned condition = 10000; // basis points, no hidden randomization
+    std::uint32_t max_stack_quantity = 0; // optional per-container ceiling
+    std::map<std::string, std::string> attributes; // lossless per-instance payload
 };
 struct Result {
     bool ok;
@@ -41,7 +56,7 @@ struct Result {
     explicit operator bool() const { return ok; }
 };
 struct Move { Id item, destination; Position position; std::uint64_t revision; std::uint64_t session = 0; };
-enum class Operation { Move, Spawn, Erase, SetMass, Split, Merge, Equip };
+enum class Operation { Move, Spawn, Erase, SetMass, Split, Merge, Equip, Mount, SetState };
 struct Command {
     Operation operation = Operation::Move;
     Id item = 0, destination = 0;
@@ -53,6 +68,9 @@ struct Command {
     Id new_id = 0;
     std::uint32_t quantity = 0;
     std::uint64_t slots = 0;
+    Id mount_slot = 0, state = 0;
+    unsigned condition = 10000;
+    std::map<std::string, std::string> attributes;
 };
 struct Preview {
     Result result;
@@ -69,6 +87,9 @@ struct ItemView {
     std::uint32_t quantity;
     std::uint64_t equipped_slots;
     unsigned presentation_group;
+    Id mounted_slot;
+    unsigned condition;
+    std::map<std::string,std::string> attributes;
 };
 
 // Single-threaded value model. UI never gets mutable node access. Each transaction

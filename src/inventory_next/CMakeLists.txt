@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(inventory_next_core LANGUAGES CXX)
-add_library(inventory_next STATIC model.cpp)
+add_library(inventory_next STATIC model.cpp presentation.cpp entity_registry.cpp placement.cpp)
 target_compile_features(inventory_next PUBLIC cxx_std_17)
 target_include_directories(inventory_next PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if(WIN32)

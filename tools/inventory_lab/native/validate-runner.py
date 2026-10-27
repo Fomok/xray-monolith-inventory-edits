@@ -31,6 +31,7 @@ for variant in ['debug','release']:
     launch(exe,scenarios/'crafting.sqa',root/f'{variant}-crafting')
     launch(exe,scenarios/'swap.sqa',root/f'{variant}-swap')
     launch(exe,scenarios/'compartments.sqa',root/f'{variant}-compartments')
+    launch(exe,scenarios/'pouches.sqa',root/f'{variant}-pouches')
     view=json.loads((root/f'{variant}-stacks-equipment'/'snapshot-restored.json').read_text())
     assert len(view['items'])==3 and view['carried_grams']==210
     assert sum(n['quantity'] for n in view['items'] if n['type']==100)==20

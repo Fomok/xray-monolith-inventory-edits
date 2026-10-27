@@ -15,6 +15,9 @@ begin
 assert mass 0
 assert accessible_count 2 0
 observe 2 1 1
+reveal 10 1 1
+reveal 11 1 1
+reveal 12 1 1
 assert accessible_count 2 3
 guarded split 10 5 20 1 0 0 0 0 ok
 assert mass 25

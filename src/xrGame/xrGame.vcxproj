@@ -2012,6 +2012,36 @@
     <ClInclude Include="ZudaArtifact.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\inventory_next\model.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_model.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\inventory_next\entity_registry.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_registry.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\inventory_next\persistence_win32.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_persistence.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\inventory_next\presentation.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_presentation.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\inventory_next\placement.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_placement.obj</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="InventoryNextProbe.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_probe.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="..\xrServerEntities\alife_human_brain.cpp" />
     <ClCompile Include="..\xrServerEntities\alife_monster_brain.cpp" />
     <ClCompile Include="..\xrServerEntities\alife_space.cpp" />

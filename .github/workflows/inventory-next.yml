@@ -1,0 +1,33 @@
+name: SQA3 isolated native compile
+on:
+  push:
+    branches: [inventory-next-harness]
+    paths: ['src/**', '.github/workflows/inventory-next.yml']
+permissions:
+  contents: read
+concurrency:
+  group: inventory-next-native
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: microsoft/setup-msbuild@v2
+      - name: Compile DX11 AVX including shared inventory core
+        run: msbuild src/engine-vs2022.sln /m:2 /p:Configuration=DX11-AVX /p:Platform=x64 /verbosity:minimal /fileLogger /fileLoggerParameters:LogFile=inventory-next-msbuild.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: inventory-next-compile-log
+          path: inventory-next-msbuild.log
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        with:
+          name: inventory-next-DX11-AVX-development
+          path: _build/_game/bin_dbg/*.exe
+          if-no-files-found: error
+          retention-days: 14
