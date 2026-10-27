@@ -5,6 +5,8 @@
 namespace inventory_next {
 // Native adapter delivers events only after dispatch(), then acknowledges the
 // observed native parent. Never interprets event-send success as ownership success.
+// Keep one coordinator per ownership authority and share it across all views.
+// Independent instances do not share reservations; UI panels must not own one each.
 class TransferSession {
 public:
     enum class State { Idle, Prepared, Dispatched, ReconcileRequired };

@@ -76,6 +76,32 @@ int main(int argc,char** argv) {
             yes(transfer.acknowledge(event.token,1,true));check(m.carried_mass()==7&&m.revision()==1&&transfer.can_save(),"ack did not publish exactly once");
             no(transfer.acknowledge(event.token,1,true),"transfer_ack");
         });
+        test("one transfer authority serializes two pickups competing for the last cell",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),root(2,Kind::WorldRoot),item(10,2,7),item(11,2,9,{1,0,false})}));
+            EntityRegistry registry;for(Id id:{1,2,10,11}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(10,true,true));yes(access.observe_item(11,true,true));
+            TransferSession transfer(m,access,registry);Command first;first.operation=Operation::Move;first.item=10;first.destination=1;first.session=m.session();
+            Command second=first;second.item=11;auto before=m.serialize();
+            yes(transfer.prepare({first,access.revision()}));no(transfer.prepare({second,access.revision()}),"transfer_busy");
+            check(m.serialize()==before,"competing pickup changed source before ack");
+            TransferSession::Dispatch event;yes(transfer.dispatch(event));yes(transfer.acknowledge(event.token,1,true));
+            second.revision=m.revision();no(transfer.prepare({second,access.revision()}),"overlap");
+            check(m.nodes().at(11).parent==2&&m.nodes().at(11).intrinsic==9&&m.carried_mass()==7&&transfer.can_save(),"losing pickup lost owner or mass");
+        });
+        test("source disappearance before dispatch cancels and after dispatch requires reconciliation",[]{
+            for(bool sent:{false,true}) {
+                Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,2,7)}));
+                EntityRegistry registry;for(Id id:{1,2,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+                AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(10,true,true));
+                TransferSession transfer(m,access,registry);Command command;command.operation=Operation::Move;command.item=10;command.destination=1;command.session=m.session();
+                yes(transfer.prepare({command,access.revision()}));TransferSession::Dispatch event;auto before=m.serialize();
+                if(sent)yes(transfer.dispatch(event));
+                yes(registry.unbind(*registry.handle(2)));
+                if(sent){no(transfer.acknowledge(event.token,1,true),"stale_entity");check(!transfer.can_save(),"uncertain source disappearance allowed save");}
+                else {no(transfer.dispatch(event),"stale_entity");check(transfer.can_save(),"cancelled preparation held save lock");}
+                check(m.serialize()==before&&m.nodes().at(10).parent==2,"source disappearance fabricated transfer");
+            }
+        });
         test("native rejection preserves source and uncertain parent requires explicit rebuild",[]{
             Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,1,7)}));
             EntityRegistry registry;for(Id id:{1,2,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
