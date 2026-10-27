@@ -240,6 +240,54 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-world-cycle",1,true) then
+        local original=tonumber(args:match("%-sqa3%-cycle%-crate=(%d+)"))
+        local ground=args:find("-sqa3-cycle-ground",1,true)~=nil
+        local box,members
+        local label=ground and "ground" or "crate"
+        local function inspect(phase,online)
+            assert(box and box.online==online,"custodian online state mismatch")
+            assert((level.object_by_id(box.id)~=nil)==online,"custodian client lifetime mismatch")
+            local count=0
+            alife():iterate_objects(function(obj) if obj.parent_id==box.id then count=count+1 end return false end)
+            assert(count==3,"cycle custody count changed")
+            for old,obj in pairs(members) do
+                assert(obj.parent_id==box.id and obj.online==online,"member custody/online state changed")
+                assert((level.object_by_id(obj.id)~=nil)==online,"member client lifetime mismatch")
+                printf("[SQA3 AUTORUN] cycle member phase=%s before=%s live=%s parent=%s section=%s online=%s",phase,tostring(old),tostring(obj.id),tostring(obj.parent_id),obj:section_name(),tostring(obj.online))
+            end
+            printf("[SQA3 AUTORUN] cycle custodian phase=%s before=%s live=%s online=%s level=%s",phase,tostring(original),tostring(box.id),tostring(box.online),level.name())
+        end
+        commands={"inventory_next_probe export",snapshot,function()
+            box=alife():object(original);assert(box and box:section_name()==(ground and "sqa3_ground_backpack" or "inventory_box"),"wrong cycle custodian")
+            members={}
+            alife():iterate_objects(function(obj) if obj.parent_id==box.id then members[obj.id]=obj end return false end)
+            inspect("initial",true)
+            ActorMenu.get_actor_menu():HideDialog()
+            alife():set_switch_online(box.id,false);alife():set_switch_offline(box.id,true)
+            started=started+10000
+        end,function() inspect("offline",false) end,
+        "inventory_next_probe export","save sqa3_cycle_"..label.."_offline",
+        function()
+            alife():set_switch_online(box.id,true);alife():set_switch_offline(box.id,false)
+            started=started+10000
+        end,function()
+            inspect("online",true);alife():set_switch_offline(box.id,true)
+            crate_id=box.id;open_crate()
+        end,function()
+            started=started+60000
+            printf("[SQA3 AUTORUN] cycle physical retrieval window custodian=%s",tostring(box.id))
+        end,function()
+            for old,obj in pairs(members) do
+                assert(obj.parent_id==db.actor:id(),"cycle retrieval incomplete")
+                printf("[SQA3 AUTORUN] cycle returned before=%s live=%s section=%s",tostring(old),tostring(obj.id),obj:section_name())
+            end
+            if ground then assert(not alife():object(crate_id),"retrieved ground proxy survived")
+            else assert(level.object_by_id(crate_id):is_inv_box_empty(),"crate did not empty") end
+            ActorMenu.get_actor_menu():HideDialog()
+        end,snapshot,"inventory_next_probe export","save sqa3_cycle_"..label.."_return","quit"}
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-ground-bag",1,true) then
         local returning=args:find("-sqa3-ground-return",1,true)~=nil
         local reload=args:find("-sqa3-ground-reload",1,true)~=nil
