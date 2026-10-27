@@ -240,6 +240,75 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-purchase",1,true) then
+        local sources,actor_money,seller_money={},nil,nil
+        commands={"inventory_next_probe export",snapshot}
+        if args:find("-sqa3-fixture-purchase-reload",1,true) then
+            commands[#commands+1]=function()
+                npc_id=tonumber(args:match("%-sqa3%-purchase%-seller=(%d+)"))
+                local npc=npc_id and level.object_by_id(npc_id);assert(npc and npc:alive(),"saved purchase seller missing")
+                local expected_actor=tonumber(args:match("%-sqa3%-purchase%-actor%-money=(%d+)"))
+                local expected_seller=tonumber(args:match("%-sqa3%-purchase%-seller%-money=(%d+)"))
+                assert(db.actor:money()==expected_actor and npc:money()==expected_seller,"purchase money changed on reload")
+                local ids=args:match("%-sqa3%-purchase%-sources=([%d,]+)");assert(ids,"purchase reload needs retained IDs")
+                local count=0
+                for value in ids:gmatch("%d+") do
+                    local item=level.object_by_id(tonumber(value));assert(item and item:parent() and item:parent():id()==npc_id,"purchase source changed on reload")
+                    assert(item:section()=="bandage" and item:condition()==1 and math.abs(item:weight()*1000-38)<0.01,"purchase source state changed")
+                    count=count+1;printf("[SQA3 AUTORUN] purchase reloaded retained live=%s seller=%s",value,tostring(npc_id))
+                end
+                assert(count==2,"purchase reload needs two sources")
+                printf("[SQA3 AUTORUN] purchase money reloaded actor=%s seller=%s",tostring(expected_actor),tostring(expected_seller))
+            end
+        else
+            commands[#commands+1]=spawn_npc
+            commands[#commands+1]=function()
+                local a=db.actor;local npc=level.object_by_id(npc_id);assert(npc and npc:alive(),"purchase seller missing")
+                npc:movement_enabled(false);local pos=a:position();pos.x=pos.x+1.2;npc:set_npc_position(pos)
+                a:give_money(1000000);npc:give_money(1000000)
+                for i=1,67 do
+                    local item=alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),npc_id)
+                    assert(item,"purchase item spawn failed");sources[#sources+1]=item.id
+                end
+            end
+            commands[#commands+1]=open_trade
+            commands[#commands+1]=function()
+                actor_money=db.actor:money();seller_money=level.object_by_id(npc_id):money()
+                exec_console_cmd("inventory_next_purchase "..npc_id.." "..table.concat(sources," "))
+            end
+            commands[#commands+1]=function()
+                for _,id in ipairs(sources) do local item=level.object_by_id(id);assert(item and item:parent() and item:parent():id()==npc_id,"refused basket partially moved") end
+                assert(db.actor:money()==actor_money and level.object_by_id(npc_id):money()==seller_money,"refused basket changed money")
+                printf("[SQA3 AUTORUN] purchase whole basket refused count67 actor_money=%s seller_money=%s",tostring(actor_money),tostring(seller_money))
+                local chosen={};for i=1,65 do chosen[#chosen+1]=sources[i] end
+                exec_console_cmd("inventory_next_purchase "..npc_id.." "..table.concat(chosen," "))
+            end
+            commands[#commands+1]=function()
+                for i,id in ipairs(sources) do
+                    local item=level.object_by_id(id);assert(item and item:parent(),"purchase lost or detached item")
+                    assert(item:parent():id()==(i<=65 and db.actor:id() or npc_id),"purchase batch ownership mismatch")
+                    if i>65 then printf("[SQA3 AUTORUN] purchase retained live=%s seller=%s",tostring(id),tostring(npc_id)) end
+                end
+                local spent=actor_money-db.actor:money();local gained=level.object_by_id(npc_id):money()-seller_money
+                assert(spent>0 and spent==gained,"purchase money not conserved")
+                printf("[SQA3 AUTORUN] purchase verified count65 spent=%s actor_money=%s seller_money=%s owner=%s",tostring(spent),tostring(db.actor:money()),tostring(level.object_by_id(npc_id):money()),tostring(npc_id))
+                actor_money=db.actor:money();seller_money=level.object_by_id(npc_id):money()
+                exec_console_cmd("inventory_next_purchase "..npc_id.." "..sources[66].." "..sources[67])
+            end
+            commands[#commands+1]=function()
+                for i=66,67 do local item=level.object_by_id(sources[i]);assert(item and item:parent() and item:parent():id()==npc_id,"purchase retry detached source") end
+                assert(db.actor:money()==actor_money and level.object_by_id(npc_id):money()==seller_money,"full purchase retry changed money")
+                printf("[SQA3 AUTORUN] purchase full retry retained sources and money")
+            end
+        end
+        commands[#commands+1]="screenshot sqa3_purchase"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_purchase"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-nested-prepare",1,true) then
         commands={"inventory_next_store 104 105 3 3 0",snapshot,"inventory_next_probe export","save sqa3_nested_manual","quit"}
         RegisterScriptCallback("actor_on_update",update)

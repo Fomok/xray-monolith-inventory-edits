@@ -3,7 +3,8 @@ param(
     [string]$Save='sqa3_logical_carried',
     [string]$LabRoot=$PSScriptRoot,
     [switch]$StrictGroundPickup,
-    [switch]$StrictOwnedPickup
+    [switch]$StrictOwnedPickup,
+    [switch]$StrictTradePickup
 )
 $ErrorActionPreference='Stop'
 $lab=(Resolve-Path -LiteralPath $LabRoot).Path
@@ -14,6 +15,7 @@ $manifest=Get-Content -LiteralPath (Join-Path $lab 'sqa3-development-manifest.js
 if(!$manifest.logical_storage_opt_in){throw 'This lab currently has a different engine package installed.'}
 if($StrictGroundPickup -and !$manifest.ground_pickup_opt_in){throw 'This engine package has no strict ground-pickup mode.'}
 if($StrictOwnedPickup -and !$manifest.owned_pickup_opt_in){throw 'This engine package has no strict owned-source pickup mode.'}
+if($StrictTradePickup -and !$manifest.trade_pickup_opt_in){throw 'This engine package has no strict purchase mode.'}
 $engine=Join-Path $lab 'bin/AnomalyDX11AVX.exe'
 $expected=$manifest.files.'bin/AnomalyDX11AVX.exe'.sha256
 if((Get-FileHash -LiteralPath $engine -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected){throw 'Lab engine hash does not match its package.'}
@@ -22,5 +24,6 @@ if(!(Test-Path -LiteralPath (Join-Path $lab ('appdata/savedgames/'+$Save+'.scop'
 $arguments='-dbg -inventory-lab -sqa3-logical-storage -start server('+ $Save +'/single/alife/load)'
 if($StrictGroundPickup){$arguments+=' -sqa3-strict-ground-pickup'}
 if($StrictOwnedPickup){$arguments+=' -sqa3-strict-owned-pickup'}
+if($StrictTradePickup){$arguments+=' -sqa3-strict-trade-pickup'}
 $game=Start-Process -FilePath $engine -WorkingDirectory $lab -ArgumentList $arguments -WindowStyle Normal -PassThru
 Write-Output ('Logical-storage lab started, PID '+$game.Id+'. Close the game when finished.')
