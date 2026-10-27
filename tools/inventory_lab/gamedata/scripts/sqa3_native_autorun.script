@@ -5,6 +5,7 @@ local crate_id,loot_id
 local changing,condition_tick=false,0
 local npc_id,corpse_loot_id
 local capacity_rifle,capacity_pack
+local sale_item,sale_actor_money,sale_partner_money
 local function capacity_spawn_rifle()
     local a=db.actor;local item=alife():create("wpn_ak74",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
     assert(item,"capacity rifle spawn failed");capacity_rifle=item.id
@@ -36,6 +37,32 @@ local function open_trade()
     npc:start_trade(db.actor)
     assert(ActorMenu.get_actor_menu():IsShown() and ActorMenu.get_menu_mode()==2,"native trade menu did not open")
     printf("[SQA3 AUTORUN] native trade menu opened NPC=%s",tostring(npc_id))
+end
+local function prepare_sale()
+    local npc=level.object_by_id(npc_id);assert(npc and npc:alive(),"sale NPC missing")
+    npc:give_money(100000)
+    db.actor:iterate_inventory(function(_,item)
+        if item:section()=="bread" then sale_item=item:id() end
+        return false
+    end,db.actor)
+    assert(sale_item,"sale fixture needs bread")
+end
+local function hold_sale()
+    local npc=level.object_by_id(npc_id);assert(npc,"sale NPC missing")
+    sale_actor_money=db.actor:money();sale_partner_money=npc:money()
+    started=started+60000
+    printf("[SQA3 AUTORUN] sale input window live=%s actor_money=%s partner_money=%s",tostring(sale_item),tostring(sale_actor_money),tostring(sale_partner_money))
+end
+local function check_sale()
+    local npc=level.object_by_id(npc_id);assert(npc,"sale NPC missing")
+    local actor_has,partner_has=false,false
+    db.actor:iterate_inventory(function(_,item) if item:id()==sale_item then actor_has=true end return false end,db.actor)
+    npc:iterate_inventory(function(_,item) if item:id()==sale_item then partner_has=true end return false end,npc)
+    assert(not actor_has and partner_has,"sale did not transfer exact bread identity")
+    local gained=db.actor:money()-sale_actor_money
+    assert(gained>0 and sale_partner_money-npc:money()==gained,"sale money not conserved")
+    printf("[SQA3 AUTORUN] native sale verified live=%s actor_gain=%s partner_loss=%s",tostring(sale_item),tostring(gained),tostring(sale_partner_money-npc:money()))
+    ActorMenu.get_actor_menu():HideDialog()
 end
 local function kill_npc()
     ActorMenu.get_actor_menu():HideDialog()
@@ -316,6 +343,17 @@ function on_game_start()
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
         commands[#commands+1]="save sqa3_capacity"
+    end
+    if args:find("-sqa3-fixture-trade",1,true) then
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        commands[#commands+1]=spawn_npc
+        commands[#commands+1]=prepare_sale
+        commands[#commands+1]=open_trade
+        commands[#commands+1]=hold_sale
+        commands[#commands+1]=check_sale
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_trade_sale"
     end
     commands[#commands+1]="quit"
     printf("[SQA3 AUTORUN] registered isolated native fixture")
