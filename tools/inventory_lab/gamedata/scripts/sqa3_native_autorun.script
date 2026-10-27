@@ -243,6 +243,7 @@ function on_game_start()
     if args:find("-sqa3-fixture-logical-rotate",1,true) then
         local edge=args:find("-sqa3-rotation-edge",1,true)~=nil
         local reload=args:find("-sqa3-rotation-reload",1,true)~=nil
+        local native_input=args:find("-sqa3-rotation-native-input",1,true)~=nil
         commands={"inventory_next_probe export",snapshot}
         if not reload then
             commands[#commands+1]=unequip_fixture
@@ -251,8 +252,19 @@ function on_game_start()
         commands[#commands+1]=toggle_inventory
         if not reload then
             commands[#commands+1]=function()
-                started=started+60000
+                started=started+(native_input and 20000 or 60000)
                 printf("[SQA3 AUTORUN] logical rotation mouse/key input window: select backpack pistol and press R once; edge=%s",tostring(edge))
+            end
+            if native_input then
+                commands[#commands+1]=function()
+                    level.press_action(DIK_keys.MOUSE_1);level.release_action(DIK_keys.MOUSE_1)
+                    printf("[SQA3 AUTORUN] logical rotation native selection dispatched; not physical keyboard evidence")
+                end
+                commands[#commands+1]=function()
+                    local key=bind_to_dik(key_bindings.kWPN_RELOAD,-1);assert(key and key>0)
+                    level.press_action(key);level.release_action(key)
+                    printf("[SQA3 AUTORUN] logical rotation native reload binding dispatched key=%s",tostring(key))
+                end
             end
         end
         commands[#commands+1]="screenshot sqa3_logical_rotate"

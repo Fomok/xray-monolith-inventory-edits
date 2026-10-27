@@ -35,6 +35,7 @@ else:
     results = re.findall(r"SQA3 native rotate id=103 result=(\S+)", log)
     assert len(results) == 1 and ((results[0] != "accepted") if a.edge else results[0] == "accepted")
 report.update(edge_refusal=a.edge, unchanged_other_five_records=True,
-              limits="One physical select/R input on a carried-backpack pistol, or its boundary refusal. Dragging while rotating and other storage/weapon shapes remain separate checks.")
+              input_route="native fixture dispatch" if "logical rotation native reload binding dispatched" in log else ("reload" if a.previous else "external keyboard input"),
+              limits="One selected-item rotation inside a carried backpack, or boundary refusal. Native fixture dispatch is not physical keyboard evidence; drag-time rotation and other shapes remain separate checks.")
 a.output.write_text(json.dumps(report, indent=2)+"\n")
 print(json.dumps(report))
