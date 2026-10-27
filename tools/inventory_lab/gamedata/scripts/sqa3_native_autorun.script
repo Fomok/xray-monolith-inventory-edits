@@ -240,6 +240,33 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-owned-disappear",1,true) then
+        local gone=nil
+        commands={"inventory_next_probe export",snapshot,spawn_crate}
+        commands[#commands+1]=function()
+            local a=db.actor
+            local item=alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),crate_id)
+            assert(item,"disappearing owned item spawn failed");gone=item.id
+        end
+        commands[#commands+1]=function()
+            local item=level.object_by_id(gone);local server=alife():object(gone)
+            assert(item and server and item:parent() and item:parent():id()==crate_id,"disappearing item not in source")
+            alife():release(server,true)
+            db.actor:take_item(item)
+            printf("[SQA3 AUTORUN] queued owned item destruction before acquisition live=%s owner=%s",tostring(gone),tostring(crate_id))
+        end
+        commands[#commands+1]=function()
+            assert(not level.object_by_id(gone) and not alife():object(gone),"destroyed owned item remained live")
+            assert(level.object_by_id(crate_id) and alife():object(crate_id),"source container disappeared")
+            printf("[SQA3 AUTORUN] disappearing owned item removed without acquisition; source container retained")
+        end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_owned_disappear"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-owned-box",1,true) or args:find("-sqa3-fixture-owned-corpse",1,true) then
         local corpse=args:find("-sqa3-fixture-owned-corpse",1,true)
         local kind=corpse and "corpse" or "box"

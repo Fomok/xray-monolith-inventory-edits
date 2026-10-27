@@ -45,6 +45,6 @@ else:
     refused = re.findall(r"SQA3 owned pickup refused live=(\d+) reason=no_fit; source retained", log)
     assert refused and set(refused) <= source_ids
     report.update(accepted_native_transfer=accepted[0], dropped_native_item=dropped[0], full_grid_refusals=len(refused))
-report["limits"] = "Owned-source mouse drag/context drop path only; trade, external equip/use and loaded-world-subtree parity remain open."
+report["limits"] = "Owned-source mouse acquisition and ground-drop drag path only; trade, external equip/use and loaded-world-subtree parity remain open."
 a.output.write_text(json.dumps(report, indent=2)+"\n")
 print(json.dumps(report))
