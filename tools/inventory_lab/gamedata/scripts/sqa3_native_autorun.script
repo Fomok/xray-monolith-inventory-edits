@@ -240,40 +240,131 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
-    if args:find("-sqa3-fixture-owned-box",1,true) then
-        local sources={}
-        commands={"inventory_next_probe export",snapshot,spawn_crate}
+    if args:find("-sqa3-fixture-owned-box",1,true) or args:find("-sqa3-fixture-owned-corpse",1,true) then
+        local corpse=args:find("-sqa3-fixture-owned-corpse",1,true)
+        local kind=corpse and "corpse" or "box"
+        local sources,source_owner={},nil
+        commands={"inventory_next_probe export",snapshot,corpse and spawn_npc or spawn_crate}
+        if corpse then
+            commands[#commands+1]=function()
+                local npc=level.object_by_id(npc_id);assert(npc,"owned corpse NPC missing")
+                npc:movement_enabled(false);local pos=db.actor:position();pos.x=pos.x+1.2;npc:set_npc_position(pos)
+                kill_npc()
+            end
+            commands[#commands+1]=function() open_corpse();ActorMenu.get_actor_menu():HideDialog() end
+            commands[#commands+1]=function()
+                local npc=level.object_by_id(npc_id);assert(npc,"owned corpse missing")
+                local remove={};npc:iterate_inventory(function(_,item) remove[#remove+1]=item:id();return false end,npc)
+                for _,id in ipairs(remove) do local server=alife():object(id);if server then alife():release(server,true) end end
+            end
+        end
         commands[#commands+1]=function()
+            source_owner=corpse and npc_id or crate_id
             local a=db.actor
             for i=1,67 do
-                local item=alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),crate_id)
+                local item=alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),source_owner)
                 assert(item,"owned source spawn failed");sources[#sources+1]=item.id
             end
         end
-        commands[#commands+1]=open_crate
+        commands[#commands+1]=corpse and open_corpse or open_crate
         commands[#commands+1]=take_all
         commands[#commands+1]=function()
             local accepted,refused=0,0
             for _,id in ipairs(sources) do
                 local item=level.object_by_id(id);assert(item and item:parent(),"owned transfer detached or lost item")
                 if item:parent():id()==db.actor:id() then accepted=accepted+1
-                else assert(item:parent():id()==crate_id,"owned refusal changed source");refused=refused+1
-                    printf("[SQA3 AUTORUN] refused owned source live=%s owner=%s",tostring(id),tostring(crate_id)) end
+                else assert(item:parent():id()==source_owner,"owned refusal changed source");refused=refused+1
+                    printf("[SQA3 AUTORUN] refused owned source live=%s owner=%s",tostring(id),tostring(source_owner)) end
             end
-            printf("[SQA3 AUTORUN] box admission accepted=%s source_retained=%s box=%s",tostring(accepted),tostring(refused),tostring(crate_id))
+            printf("[SQA3 AUTORUN] owned admission kind=%s accepted=%s source_retained=%s owner=%s",kind,tostring(accepted),tostring(refused),tostring(source_owner))
             assert(accepted==65 and refused==2,"owned last-cell competition failed")
         end
         commands[#commands+1]=take_all
         commands[#commands+1]=function()
             local refused=0
-            for _,id in ipairs(sources) do local item=level.object_by_id(id);assert(item and item:parent(),"owned retry detached item");if item:parent():id()==crate_id then refused=refused+1 end end
+            for _,id in ipairs(sources) do local item=level.object_by_id(id);assert(item and item:parent(),"owned retry detached item");if item:parent():id()==source_owner then refused=refused+1 end end
             assert(refused==2,"owned full-grid retry accepted surplus")
-            printf("[SQA3 AUTORUN] repeated full-grid refusal retained two exact box sources")
+            printf("[SQA3 AUTORUN] repeated full-grid refusal retained two exact owned sources")
         end
-        commands[#commands+1]="screenshot sqa3_owned_box"
+        commands[#commands+1]="screenshot sqa3_owned_"..kind
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
-        commands[#commands+1]="save sqa3_owned_box"
+        commands[#commands+1]="save sqa3_owned_"..kind
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
+    if args:find("-sqa3-fixture-owned-mouse",1,true) then
+        local source_owner=tonumber(args:match("%-sqa3%-fixture%-owned%-owner=(%d+)"))
+        local source_list=args:match("%-sqa3%-fixture%-owned%-sources=([%d,]+)")
+        local reload=args:find("-sqa3-fixture-owned-mouse-reload",1,true)
+        local old_actor={}
+        commands={"inventory_next_probe export",snapshot}
+        commands[#commands+1]=function()
+            assert(source_owner and source_list,"owned mouse test needs exact source IDs")
+            if reload then
+                local dropped=tonumber(args:match("%-sqa3%-fixture%-owned%-dropped=(%d+)"))
+                assert(dropped,"mouse reload needs exact dropped ID");old_actor={dropped}
+            else
+                db.actor:iterate_inventory(function(_,item) old_actor[#old_actor+1]=item:id();return false end,db.actor)
+                assert(#old_actor==71,"owned mouse test needs full saved storage")
+            end
+            local owner=level.object_by_id(source_owner);assert(owner and owner:use(db.actor),"owned mouse source cannot open")
+        end
+        if not reload then
+            commands[#commands+1]=function()
+                started=started+60000
+                printf("[SQA3 AUTORUN] owned mouse input window: refuse full-grid drag, drop one new actor bandage, acquire one source bandage")
+            end
+        end
+        commands[#commands+1]=function()
+            local acquired,retained=0,0
+            for value in source_list:gmatch("%d+") do
+                local item=level.object_by_id(tonumber(value));assert(item and item:parent(),"mouse source lost or detached")
+                if item:parent():id()==db.actor:id() then acquired=acquired+1 else assert(item:parent():id()==source_owner,"mouse source changed owner");retained=retained+1 end
+                printf("[SQA3 AUTORUN] mouse source live=%s parent=%s",value,tostring(item:parent():id()))
+            end
+            assert(acquired==1 and retained==1,"mouse acquisition must move exactly one source item")
+            local ground=0
+            for _,id in ipairs(old_actor) do
+                local item=level.object_by_id(id);assert(item,"mouse test lost prior actor item")
+                if not item:parent() then
+                    assert(item:section()=="bandage" and math.abs(item:weight()*1000-38)<0.01 and item:condition()==1,"wrong dropped item or state")
+                    ground=ground+1;printf("[SQA3 AUTORUN] mouse dropped actor bandage live=%s grams=38 condition=1",tostring(id))
+                else assert(item:parent():id()==db.actor:id(),"prior actor item changed to unexpected owner") end
+            end
+            assert(ground==1,"mouse test must drop exactly one actor bandage")
+            printf("[SQA3 AUTORUN] owned mouse transfer verified acquired=1 retained=1 dropped=1")
+        end
+        commands[#commands+1]="screenshot sqa3_owned_mouse"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_owned_mouse"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
+    if args:find("-sqa3-fixture-owned-reload",1,true) then
+        local source_owner=tonumber(args:match("%-sqa3%-fixture%-owned%-owner=(%d+)"))
+        local source_list=args:match("%-sqa3%-fixture%-owned%-sources=([%d,]+)")
+        local kind=args:find("-sqa3-owned-kind-corpse",1,true) and "corpse" or "box"
+        commands={"inventory_next_probe export",snapshot}
+        commands[#commands+1]=function()
+            assert(source_owner and source_list,"owned reload needs exact source owner and IDs")
+            local count=0
+            for value in source_list:gmatch("%d+") do
+                local item=level.object_by_id(tonumber(value))
+                assert(item and item:parent() and item:parent():id()==source_owner,"refused owned source lost across reload")
+                assert(item:section()=="bandage" and math.abs(item:weight()*1000-38)<0.01 and item:condition()==1,"owned source state changed")
+                printf("[SQA3 AUTORUN] reloaded refused owned source live=%s owner=%s grams=38 condition=1",value,tostring(source_owner));count=count+1
+            end
+            assert(count==2,"owned reload source count")
+            local owner=level.object_by_id(source_owner);assert(owner and owner:use(db.actor),"saved owned source cannot open")
+        end
+        commands[#commands+1]="screenshot sqa3_owned_reload"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_owned_"..kind
         commands[#commands+1]="quit"
         RegisterScriptCallback("actor_on_update",update)
         return
