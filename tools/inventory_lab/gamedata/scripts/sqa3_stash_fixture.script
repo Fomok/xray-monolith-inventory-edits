@@ -77,13 +77,22 @@ function start(args,snapshot,open_inventory)
                 for i=1,6 do assert(alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()),"full-pocket fixture spawn failed") end
             end
         end
+        if equipped then
+            commands[#commands+1]=function()
+                assert(open_inventory,"inventory entry unavailable");open_inventory()
+            end
+            commands[#commands+1]=function()
+                assert(not db.actor:item_in_slot(13),"backpack slot already occupied")
+                assert(ActorMenu.get_actor_menu():ToSlot(level.object_by_id(shell),true,13),"fixture backpack equip refused")
+            end
+        end
         commands[#commands+1]=function()
             if returning then
                 assert(proxy,"stash proxy missing for retrieval")
                 local box=level.object_by_id(proxy);assert(box and box:use(db.actor),"stash loot menu did not open")
             elseif equipped then
-                assert(not db.actor:item_in_slot(13),"backpack slot already occupied")
-                assert(ActorMenu.get_actor_menu():ToSlot(level.object_by_id(shell),true,13),"fixture backpack equip refused")
+                local slotted=db.actor:item_in_slot(13)
+                assert(slotted and slotted:id()==shell,"fixture backpack did not enter equipment slot")
             elseif context then
                 assert(open_inventory,"inventory entry unavailable");open_inventory()
             else

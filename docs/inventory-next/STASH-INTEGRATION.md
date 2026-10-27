@@ -67,3 +67,17 @@ Dev26 PID16348 timed out without current exports or a stash dialog; not accepted
 
 
 Overlay d566d3a0/fb29164f prepares a physical context-menu entry, callback cancellation and capacity refusal, actual map travel/marker checks and a strict empty-shell verifier against the retained corpse baseline. Syntax passed; these additions are not runtime acceptance. Superseded Dev24 ZIP and downloaded EXE were exact-hash checked and deleted (37660560bytes); cleanup manifest dev24-superseded-download-cleanup.json. Verified Dev25 rollback and all evidence remain. Original user test save hashes and pristine c57fe5b9 baseline were rechecked unchanged.
+
+
+## Dev27 first native stash acceptance - 2026-10-27
+
+CI40552310845 SUCCESS/artifact12757221312, engineeb76e14adde1a5750915c0e65536aa030621cf40, EXE26887168bytes SHA699eb2037503a1a5332f91eb479ca4acc2e7df28dcc1ea4faa4a6f6a34af6884. Overlay275d02116f778bfa2f4a2ffca93291b4563b543a, Dev27 ZIP10811120bytes SHA74fffe109d7b628108dc26a3c30493a32234e2465196b53b05d8b44687dc7771;16payloads verified before/after isolated install. Identity binding now returns decimal105 and the fixture progresses beyond the prior stall.
+
+PID6836 normal backpack right-click -> Create stash -> naming dialog -> physical OK: PASS loaded creation, exact original shell105/nested106/medkit102, 3members2140g under dedicatedproxy336. Actor4/1138g remains exactf80ca0cccd9b61b816c73bd7235a6747a22bbc28b073cb996f264298fd8c1109. One post-client creation callback, saved name SQA3 field stash and marker present; worldSHA089a8820aa64d4bc101b1a160bb4038fbac85bdaa13952342c60d62d1e47e07d. Test label was preset by the fixture, not physically typed. PID8548 fresh reload PASS exact actor/world/name/marker and no callback replay. Both exit0/no timeout. Evidence ci-40552310845/stash-context-release and stash-release-reload. Initial verifier rejected the different fixture log format; d89fe305 explicitly selects the stash completion marker while retaining FAIL/crash, saved-game, clean-exit, custody and native/model checks. No game behavior was weakened to pass verification. Retrieval and remaining failure/lifecycle cases still pending at this checkpoint.
+
+
+### Loaded roundtrip accepted; empty shutdown failure
+
+PID35692 physical loaded-stash retrieval and PID15364 fresh return reload both PASS, exit0/no timeout. Actor7/3278g exactly matches initialized03ac30edb03ae8fab51bb61be7433b7e22b9e62ccb50f5fd89952cf05092855a; world emptyd424329db21a0d533be204a9b6ecf662a313f433305332524d97e3ecca6f1cee, proxy/marker removed, no reload callback replay.
+
+Empty PID2640 created original shell1040/live1117 under proxy1034, one member and marker, then saved sqa3_stash_empty_release. Shutdown exit0xc0000005 means FAIL, not acceptance. Exact PDB/disassembly identifies AddOne's shared-string container access; candidate SDK lifetime fix4e263457 builds in CI40558659909. See SHUTDOWN-LIFETIME.md for confirmed evidence versus unknown caller. No further game run before assessment/build. Equipped fixture now opens inventory before ToSlot and asserts actual slot13 membership before use; LuaJIT syntax and seven mocked bridge checks PASS, native equipped acceptance pending. Failed Dev26 ZIP/EXE removed after exact hash/path verification,37697214bytes freed; Dev25 rollback and evidence retained.
