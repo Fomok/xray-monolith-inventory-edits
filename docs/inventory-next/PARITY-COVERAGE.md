@@ -124,3 +124,8 @@ Native sale through physical drag and Sell click passed on79017989 with stationa
 ### 27 October: carried native storage acceptance
 
 Corrected1a6d98fb/CI40468423845 passes native unequip/re-equip, five accepted physical mouse drags across two runs, and exact item-record preservation after fresh reload: six items/2458g. Pockets4x2, carried backpack8x8 and explicit recovery render with FieldKit textures. Loaded-drop refusal no longer blocks shutdown. See NATIVE-LOGICAL-STORAGE.md for exact evidence and remaining admission/world-transfer/rig limits.
+
+
+### Dev12 native ground acceptance
+
+4e556e9a/CI40473269081 succeeds. PID16648 admits exactly65 of67 ground bandages, with65 server/client acknowledgments and pending-save refusals. The two excess sources stay unowned across retries.71 carried objects/4928g preserve all six pre-existing records and place every ordinary arrival in Grid, never recovery. Fresh PIDs20468/28092 preserve byte-identical exportb43ec3a8f0df129cfe01277cc3d68be751608b0aa4f53b338521181d5c0606a8; the latter checks refused ground IDs19521/19522 and their mass/condition. PID13092 queues source destruction before pickup with room available: no acquisition, original six records unchanged. All quit cleanly. Final overlay0b0ed8e5; twelve payloads and original test save verified; no game running. Evidence and screenshot under ci-40473269081. This is actual native scripted pickup/ownership testing, not OS pickup-key testing. Corpse/container/trade admission and loaded world subtrees remain open.
