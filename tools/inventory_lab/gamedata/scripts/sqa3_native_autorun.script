@@ -1,12 +1,23 @@
--- Isolated lab fixture only. Never install into a player profile.
+-- Isolated lab fixture. Inert unless launched with -sqa3-fixture.
 local started, stage, failed = nil, 1, false
-local commands = {
-    "inventory_next_probe export",
-    "inventory_next_probe view",
-    "screenshot sqa3_native",
-    "save sqa3_automation_reload",
-    "quit"
-}
+local commands = {}
+local function snapshot()
+    local count, grams = 0, 0
+    db.actor:iterate_inventory(function(_, item)
+        count=count+1;grams=grams+item:weight()*1000
+        printf("[SQA3 AUTORUN] item id=%s section=%s grams=%s condition=%s",tostring(item:id()),item:section(),tostring(item:weight()*1000),tostring(item:condition()))
+        return false
+    end,db.actor)
+    printf("[SQA3 AUTORUN] native count=%s grams=%s",tostring(count),tostring(grams))
+end
+local function spawn()
+    local a=db.actor
+    for _,section in ipairs({"bandage","medkit"}) do
+        assert(system_ini():section_exist(section),"missing fixture section "..section)
+        local item=alife():create(section,a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
+        assert(item,"fixture spawn failed "..section)
+    end
+end
 function update()
     if failed or not db or not db.actor then return end
     if not started then started=time_global();printf("[SQA3 AUTORUN] actor ready") end
@@ -14,14 +25,31 @@ function update()
     local command=commands[stage]
     if not command then return end
     stage=stage+1
-    printf("[SQA3 AUTORUN] execute %s",command)
-    local ok,err=pcall(exec_console_cmd,command)
+    printf("[SQA3 AUTORUN] step=%s execute %s",tostring(stage-1),type(command)=="string" and command or "native fixture")
+    local ok,err
+    if type(command)=="string" then ok,err=pcall(exec_console_cmd,command) else ok,err=pcall(command) end
     if not ok then
-        failed=true;printf("[SQA3 AUTORUN] FAIL %s",tostring(err))
-        exec_console_cmd("quit")
+        failed=true;printf("[SQA3 AUTORUN] FAIL %s",tostring(err));exec_console_cmd("quit")
     end
 end
 function on_game_start()
+    local args=command_line()
+    if not args:find("-sqa3-fixture",1,true) then return end
+    commands={"inventory_next_probe export"}
+    if args:find("-sqa3-fixture-spawn",1,true) then commands[#commands+1]=spawn end
+    commands[#commands+1]=snapshot
+    commands[#commands+1]="inventory_next_probe export"
+    if args:find("-sqa3-fixture-edit",1,true) then
+        commands[#commands+1]="inventory_next_move 100 4 3 0"
+        commands[#commands+1]="inventory_next_move 101 4 3 0" -- must reject overlap
+        commands[#commands+1]="inventory_next_move 100 -1 3 0" -- must reject bounds
+        commands[#commands+1]="inventory_next_probe export"
+    end
+    commands[#commands+1]="inventory_next_probe view"
+    commands[#commands+1]="screenshot sqa3_native"
+    commands[#commands+1]=snapshot
+    commands[#commands+1]=args:find("-sqa3-fixture-reload",1,true) and "save sqa3_layout_reload" or "save sqa3_layout"
+    commands[#commands+1]="quit"
     printf("[SQA3 AUTORUN] registered isolated native fixture")
     RegisterScriptCallback("actor_on_update",update)
 end
