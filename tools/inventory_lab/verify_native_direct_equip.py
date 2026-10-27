@@ -55,5 +55,7 @@ else:
     report["exact_item_reload"] = True
 report.update(acquired=int(acquired), retained=int(retained), source=int(source), weapon_state_preserved=True,
               limits="One empty primary-slot loot path and occupied-slot refusal. All-slot swaps, belt/use, and arbitrary callback reconciliation remain separate checks.")
+if a.previous:
+    report["limits"] = "Exact persistence of direct equipment and retained source; this reload does not establish the original input route or refusal callback."
 a.output.write_text(json.dumps(report, indent=2)+"\n")
 print(json.dumps(report))
