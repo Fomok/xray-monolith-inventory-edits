@@ -5,20 +5,20 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment:78 core checks per build and independent reload. Native a193b694 replacement passes normal-key open/close/reopen, pistol unequip/equip, container Take All and exact5-item/1638g fresh reload. Physical mouse PDA drag and hidden-PDA collision refusal persist across restart. Native83a937b2 adds visible Field Kit cells and passes rotated-pistol equip and filter occupancy checks. Corpse Take All exposed a stale-layout collision; a3acc9d1 fixes synchronization/fallback placement and includes7cd29f89 stale-drag guarding, but their native build/runtime acceptance is pending. Mouse bread-use remains unverified; failed fixture assertions are not gameplay success.
+Current increment:104 core checks per debug/release build and independent reload. Native Dev15 a6036dbe/CI40488824434 plus overlayde40090d passes finite carried storage, ground/container/corpse admission, physical transfers, nested bread context use, whole-basket purchases, physical Buy/refusal and exact item/money save-reload checks. All are bounded slices; no row is certified complete across every accepted scenario. Current evidence and limitations are in NATIVE-LOGICAL-STORAGE.md. Earlier appendices below are dated history, not the current status.
 
 Non-negotiable presentation requirement: one replacement inventory through the normal inventory key and normal loot/container paths; preserve useful native controls and semantics; **no3D player-model panel**. Diagnostic windows are not acceptance. Vanilla ui_inventory.script intercepts the normal entry; the scoped enable_feature guard retires this old Lua presentation only in SQA3 development mode.
 
 | ID | Accepted behavior | Current evidence / remaining work |
 |---|---|---|
-| I01 | Ownership independent of visible panels | Core tree and read-only snapshots; actual engine ownership events OPEN |
-| I02 | Player grid, pockets and backpack sections | Core blocked cells/partial rows and compartments; real pockets/backpack definitions and UI OPEN |
-| I03 | Backpack capacity and equip/remove transitions | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| I01 | Ownership independent of visible panels | Core tree plus persistent native identities and authoritative ground/owned/purchase ownership acknowledgments pass bounded native fixtures; all producers and loaded-world subtrees OPEN. |
+| I02 | Player grid, pockets and backpack sections | Native4x2pockets, carried8x8backpack and visible recovery pass physical transfers/reloads. Full authored catalog, rigs and section controls OPEN. |
+| I03 | Backpack capacity and equip/remove transitions | Native backpack equip/remove, carried contents and exact reload pass; loaded drop safely refuses. Complete backpack catalog and world subtree transfer OPEN. |
 | I04 | All native equipment slots, including knife and pistol | Native slots retained; pistol unequip/re-equip including rotated bag origin passes. Other slots/full parity OPEN |
 | I05 | Equipment outside grids; grouped arrows | Core equipment and native slot/belt projection preserve mass outside bag. Pistol runtime equip/unequip and reload pass; grouped arrows and all-slot coverage OPEN |
-| I06 | Capacity enforcement on all acquisition paths | Core Spawn/batches validate; actual item producers not hooked |
+| I06 | Capacity enforcement on all acquisition paths | Native ground, box/corpse Move/Take All and UI Buy batch guards pass full-storage refusal and exact reload; external equip/belt/use and other producers OPEN. |
 | I07 | Full-grid policy and protected items | Strict ordinary pickup; explicit owned recovery overflow tested, no manual overflow capacity. Native forced-arrival/protected-item policy and per-container recovery OPEN |
-| I08 | Manual placement and rotation persistence | Native physical PDA drag6,4 survives fresh reload; hidden PDA blocks visible bandage overlap. Command-driven rotated pistol renders and equips correctly. Physical rotation control/full edge cases OPEN |
+| I08 | Manual placement and rotation persistence | Physical cross-storage drags and persistence pass; reload-binding rotation and edge refusal pass via native input fixture. Full physical keyboard/drag rotation coverage OPEN. |
 | I09 | Valid/invalid/swap/overflow/new-item highlights | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | I10 | Finite stack ceilings and overrides | Per-type stack ceiling tested; actual catalog and context overrides OPEN |
 | I11 | Stack member identity/state and partial transfers | Fungible type/state split/merge and stable stack IDs tested; heterogeneous per-member records/inspection OPEN |
@@ -38,16 +38,16 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | B02 | Category-specific box acceptance | Core category masks tested; actual category definitions OPEN |
 | B03 | Box stack limits distinct from inventory | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | B04 | Nesting policy conflict | Core acyclic authored nesting, recursive growth tested; content-specific allowed nesting policy OPEN |
-| B05 | Box/rig live ownership and asynchronous transfer | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| B06 | Recursive weight incl contents | Core exact recursive intrinsic-times-quantity plus descendants; native Weight mapping OPEN |
+| B05 | Box/rig live ownership and asynchronous transfer | Native box/corpse acquisition preserves source on refusal and reserves until client acknowledgment; rigs and loaded-box subtree transfer OPEN. |
+| B06 | Recursive weight incl contents | Core recursive mass and native item Weight mapping agree in6/71item fixtures and reloads; broader content/nested-world catalog OPEN. |
 | B07 | Persistent box layout/contents/bolts | Core schema4 roundtrip; game entity/bolt serialization OPEN |
 | X01 | Direct equip from container with full backpack | Core world/container-to-equipment direct route bypasses full grid; native event route OPEN |
 | X02 | Direct unequip into rig/box/stash | Core Move unequips into validated destination grid; native event route OPEN |
 | X03 | Same-grid/cross-storage swap | Final-state multi-relocation same/cross-container swaps tested, including unequal sizes/rollback; drag route OPEN |
 | X04 | Quick store routing and feedback | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| X05 | Quick open, context actions, keyboard controls | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| X05 | Quick open, context actions, keyboard controls | Nested carried bread right-click/Eat and exact removal/reload pass. Quick-open and broad keyboard/custom-action parity OPEN. |
 | X06 | Sounds, hover opening, pinning and drag feedback | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| X07 | Inventory vs trade filtered views | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| X07 | Inventory vs trade filtered views | Normal inventory, native trade/loot views and hidden-item collision checks pass; complete filter/settings compatibility OPEN. |
 | L01 | Corpse equipment and pockets layout | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | L02 | Looting Takes Time compatibility | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | L03 | Corpse numeric-ID/object normalization | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
@@ -67,26 +67,26 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | U05 | Optional wearable-device inventory | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | D01 | Existing item catalog and addon registration | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | D02 | Crafting and dismantle recipes | Ordered atomic consume/create batch tested; recipes/dismantle/native producers OPEN |
-| D03 | Repair/upgrades/consumables mutate item state | Core mass mutation only; full state repair/upgrades/consumable integration OPEN |
-| D04 | Trade/new-game/death/treasure/reward/script spawn | Core Spawn/batches only; native producers OPEN |
-| D05 | Save schema and engine reconciliation | Standalone schema4 tested; engine serialization/reconciliation OPEN |
+| D03 | Repair/upgrades/consumables mutate item state | Native nested bread use removes exact identity/mass and preserves all survivors after reload. Repair/upgrades/custom consumables OPEN. |
+| D04 | Trade/new-game/death/treasure/reward/script spawn | Ground/owned acquisition and batch UI purchases verified including money/refusal/reload; other trade callers, rewards, death/new-game/treasure producers OPEN. |
+| D05 | Save schema and engine reconciliation | Schema6native chunks, stable identities and exact repeated fresh-process item/money reloads pass bounded fixtures. Full travel/reconciliation/failure recovery OPEN. |
 | K01 | Soft fullness-dependent exterior | Core stepped soft growth through all ancestors and equipped exception tested; game content/UI OPEN |
 | K02 | Masks and separated compartments | Core masks/compartment boundaries, usable-cell fullness, rotation-only fit and persistence tested; content/UI OPEN |
 | K03 | Nearby containers and floor before pickup | Observed source AccessGate revisions, read-only children and loss-of-access rejection tested; real discovery/native authority/UI OPEN |
 | K04 | Independent scroll/collapse/reorder sections | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | K05 | Grouped equipment browsing | Core stable-ID group cycling read-only; selection persistence and arrow widget OPEN |
-| K06 | Queued transfers and reserved cells | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| K06 | Queued transfers and reserved cells | Native accepted ground/owned/basket arrivals reserve cells; actual save gate blocks until client acknowledgment. General queued transfer UI/cancellation/reconciliation OPEN. |
 | K07 | Multi-select, take-all, quick transfer and partial split | Core partial stack transfer, ordered batch and final-state layout transactions; multi-select/take-all policy/UI OPEN |
 | K08 | Locked items and favorite-like protection | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | K09 | Search/reveal and known-item state | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | K10 | Sorting/layout templates/silhouettes | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| K11 | Item details/search/filter/selection feedback | Structured ItemView and offscreen diagnostic render; actual tooltip/search/action UI OPEN |
-| K12 | Visible overflow recovery | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| K11 | Item details/search/filter/selection feedback | Native item tooltip, selection, inventory/trade filters and refusal text exercised; full search and selection requirements OPEN. |
+| K12 | Visible overflow recovery | Visible actor recovery preserves existing displaced items and is not ordinary pickup capacity. Per-container recovery and every forced-output producer OPEN. |
 | K13 | Persist layout/order/settings independently of world ownership | Core save plus explicit load invalidation; UI preference/layout template persistence OPEN |
 | K14 | Item-definition editor and preset import/export | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | K15 | Hotbar ordering, slot candidates and bindings | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | K16 | Detailed item inspection | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| K17 | Context action grouping and refusal reasons | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| K17 | Context action grouping and refusal reasons | Native nested bread Eat/Details/Drop menu observed; full-grid owned/purchase reasons visible. Grouping/localization/all custom actions OPEN. |
 | K18 | Container-content amount transfer UI | Core split/merge quantity commands; amount selection UI OPEN |
 
 ## Next implementation order
@@ -97,7 +97,7 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 4. Engine entity/source discovery and authoritative event/save adapter; mapping u16 live IDs to durable IDs, access checks, event completion/rollback, mass mapping and every item producer/consumer.
 5. Native interactive inventory views, scroll/collapse/selection/actions, localization/settings and upstream-compatible integration build. Validate with real game only under separate launch authorization.
 
-The current GDI tool is a read-only diagnostic renderer; it does not implement game UI, live textures, input, camera capture or engine rendering. Ordered batches validate each intermediate stage; simultaneous occupied-cell permutations use relocate(), which validates final state once. AccessGate currently guards single commands only; batches must not be exposed to untrusted world interactions before a guarded compound-transaction adapter exists.
+The original standalone GDI tool remains a read-only diagnostic renderer. The current lab additionally runs the native replacement UI with FieldKit textures; see current increment above. Ordered batches validate each intermediate stage; simultaneous occupied-cell permutations use relocate(), which validates final state once. AccessGate currently guards single commands only; batches must not be exposed to untrusted world interactions before a guarded compound-transaction adapter exists.
 
 Confirmed user policy27October2026 supersedes old blanket dismantling refusal: consume once, legally place outputs that fit, retain every remainder visibly in recovery. Core recipe transaction tested; native recipe hooks OPEN.
 
@@ -139,3 +139,7 @@ Overlay8bf2df4a stages20s source refusal,30s normal inventory drop,30s reopened-
 ### Dev14 nested context use accepted - 27 October 2026
 
 Engine9bedebc6, overlay30b96748: PID20420 physical empty-space drag positions native cursor, right-click opens nested bread menu, left-click Eat removes exact104 from carried pack105. The Windows pointer alone had not moved the native cursor in prior failed attempts. Native snapshot/model verify5items2268g, all five survivor dictionaries unchanged. Fresh PID21136 reload preserves byte-identical export04ab2835cac593d62247dde8ee33d698f6ad238eb0439f83511ebfb5e1783295. Both exit0; evidence ci-40482714703/nested-use* and verifier855656d3. This resolves nested bread context use only; arbitrary custom actions and external-source use remain open. Purchase a6036dbe/CI40488824434 is still compiling, not runtime accepted.
+
+### Dev15 purchase acceptance - 27 October 2026
+
+Native67-refused/65-bought/2-refused fixture passes71items4928g and one73125RUsettlement; exact source/item/money reload passes. Physical mouse1-item Buy costs1125RU and preserves7items2496g after restart. Physical full-grid Buy refuses with selected basket retained, both sources and balances unchanged. Enginea6036dbe, CI40488824434, final overlayde40090d; source/evidence details and first failed fixture correction are in NATIVE-LOGICAL-STORAGE.md. All instances closed; original test save and12installedpayloads verified. This is purchase-path evidence, not full trade/sale parity.
