@@ -241,6 +241,15 @@ function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
     if args:find("-sqa3-fixture-world-travel",1,true) then
+        local original_release=_G.alife_release
+        _G.alife_release=function(obj,msg)
+            local server=obj and (type(obj.id)=="function" and alife():object(obj:id()) or obj)
+            if server and (server.id==8499 or server.id==19200 or server.id==19456 or server.id==19712) then
+                printf("[SQA3 AUTORUN] travel release requested live=%s parent=%s section=%s reason=%s",tostring(server.id),tostring(server.parent_id),server:section_name(),tostring(msg))
+                callstack()
+            end
+            return original_release(obj,msg)
+        end
         local ground=args:find("-sqa3-travel-ground",1,true)~=nil
         local label=ground and "ground" or "crate"
         local original=tonumber(args:match("%-sqa3%-travel%-crate=(%d+)"))
@@ -263,6 +272,12 @@ function on_game_start()
                 end
                 return false
             end)
+            if count~=3 then
+                for _,id in ipairs({8499,19200,19456,19712}) do
+                    local obj=alife():object(id)
+                    printf("[SQA3 AUTORUN] travel missing diagnostic id=%s exists=%s parent=%s section=%s",tostring(id),tostring(obj~=nil),obj and tostring(obj.parent_id) or "none",obj and obj:section_name() or "none")
+                end
+            end
             assert(count==3,"travel contents incomplete")
             printf("[SQA3 AUTORUN] travel custody phase=%s level=%s live=%s online=%s members=3",phase,level.name(),tostring(box.id),tostring(box.online))
         end
