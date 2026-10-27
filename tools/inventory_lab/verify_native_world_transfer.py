@@ -43,6 +43,7 @@ def main():
     ap.add_argument("--baseline", type=Path, required=True)
     ap.add_argument("--phase", choices=["prepared", "release", "return", "nofit", "rollback-release", "rollback-return", "timeout"], required=True)
     ap.add_argument("--ground", action="store_true", help="Verify dedicated ground-proxy lifecycle as well as contents")
+    ap.add_argument("--travel-blocked", action="store_true", help="Require a real pending-transfer level-change refusal")
     ap.add_argument("--previous", type=Path)
     ap.add_argument("--output", type=Path, required=True)
     a = ap.parse_args()
@@ -52,6 +53,15 @@ def main():
     assert a.world or a.phase == "prepared", "transfer requires world ledger evidence"
     records, world_hash = world_records(a.world) if a.world else ({}, None)
     log = a.log.read_text(errors="replace")
+    if a.travel_blocked:
+        assert a.ground and a.phase == "timeout" and not a.previous
+        assert "attempting real level change while ground provisioning is pending" in log
+        assert "SQA3 level change refused: inventory state is not saveable" in log
+        assert "pending inventory travel blocked; original level retained" in log
+        assert "Game sqa3_ground_timeout.scop is successfully saved" in log
+        run = json.loads(a.log.with_name(a.log.stem+"-run.json").read_text(encoding="utf-8-sig"))
+        assert run['exit_code'] == 0 and not run['timed_out']
+        report['pending_transfer_travel_refused'] = True
     if a.phase == "prepared":
         assert len(actor) == 7 and report["grams"] == 3278 and not records
         added = set(actor) - set(baseline)
