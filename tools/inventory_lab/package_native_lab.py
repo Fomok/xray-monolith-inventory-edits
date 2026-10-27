@@ -43,7 +43,7 @@ def main():
         corpse_storage=b'-sqa3-corpse-storage' in engine_source
         stash_storage=b'-sqa3-stash-storage' in engine_source
         if stash_storage:
-            for script in ['item_backpack.script','sqa3_stash.script']:
+            for script in ['item_backpack.script','sqa3_stash.script','sqa3_stash_fixture.script']:
                 files['gamedata/scripts/'+script]=read_overlay('tools/inventory_lab/gamedata/scripts/'+script)
         if ground_storage:
             files["gamedata/configs/mod_system_sqa3_ground.ltx"]=read_overlay('tools/inventory_lab/gamedata/configs/mod_system_sqa3_ground.ltx')

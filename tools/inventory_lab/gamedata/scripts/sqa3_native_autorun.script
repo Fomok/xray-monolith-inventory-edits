@@ -253,6 +253,7 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-stash",1,true) then sqa3_stash_fixture.start(args,snapshot);return end
     travel_block_test=args:find("-sqa3-fixture-travel-blocked",1,true)~=nil
     if travel_block_test then
         assert(args:find("-sqa3-fixture-ground-proxy-timeout",1,true),"blocked travel needs pending-ground timeout fixture")

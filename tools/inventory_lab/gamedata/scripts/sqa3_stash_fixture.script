@@ -1,0 +1,126 @@
+-- Isolated native stash acceptance fixture; only called by the explicit autorun flag.
+function start(args,snapshot)
+    assert(sqa3_stash.enabled(),"native stash mode missing")
+    local reload=args:find("-sqa3-stash-reload",1,true)~=nil
+    local returning=args:find("-sqa3-stash-return",1,true)~=nil
+    local empty=args:find("-sqa3-stash-empty",1,true)~=nil
+    local cancel=args:find("-sqa3-stash-cancel",1,true)~=nil
+    local timeout=args:find("-sqa3-stash-timeout",1,true)~=nil
+    local rollback=args:find("-sqa3-stash-rollback",1,true)~=nil
+    local equipped=args:find("-sqa3-stash-equipped",1,true)~=nil
+    assert(not timeout or args:find("-sqa3-fixture-ground-proxy-timeout",1,true),"timeout fault flag missing")
+    assert(not rollback or args:find("-sqa3-fixture-world-fail-after-first",1,true),"rollback fault flag missing")
+    assert(not(returning and (cancel or timeout or equipped)),"conflicting stash fixture")
+    local phase=cancel and "cancel" or (timeout and "timeout" or (rollback and (returning and "rollback_return" or "rollback_release") or (returning and "return" or "release")))
+    local label="SQA3 field stash"
+    local shell,proxy,identity,created,removed=nil,nil,nil,0,0
+    local stage,started,failed=1,nil,false
+    local commands={}
+    local function find_named(name)
+        local found,count=nil,0
+        alife():iterate_objects(function(obj) if obj:name()==name then found=obj;count=count+1 end return false end)
+        assert(count==1,"fixture identity name missing or duplicated");return found
+    end
+    RegisterScriptCallback("actor_on_stash_create",function(data)
+        created=created+1;proxy=data.stash_id
+        assert(data.stash_name==label and data.stash_section=="itm_backpack","stash callback metadata changed")
+        local obj=alife():object(proxy);assert(obj,"created stash server missing")
+        save_var(db.actor,"sqa3_stash_proxy_name",obj:name())
+        printf("[SQA3 STASH TEST] created callback proxy=%s name=%s",tostring(proxy),data.stash_name)
+    end)
+    RegisterScriptCallback("actor_on_stash_remove",function(data)
+        removed=removed+1
+        printf("[SQA3 STASH TEST] remove callback proxy=%s",tostring(data.stash_id))
+    end)
+    commands[#commands+1]=function()
+        if reload or returning then
+            local obj=find_named(load_var(db.actor,"sqa3_stash_shell_name",""));shell=obj.id
+            identity=load_var(db.actor,"sqa3_stash_shell_identity","")
+            assert(identity~="" and level.inventory_next_stash_identity(shell)==identity,"saved shell identity changed")
+            local name=load_var(db.actor,"sqa3_stash_proxy_name","")
+            if name~="" then
+                alife():iterate_objects(function(obj) if obj:name()==name then proxy=obj.id end return false end)
+            end
+        elseif empty then
+            local a=db.actor;local obj=alife():create("itm_backpack",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
+            assert(obj,"empty stash shell spawn failed");shell=obj.id
+        else shell=19200 end
+    end
+    commands[#commands+1]=function()
+        local item=level.object_by_id(shell);assert(item and item:section()=="itm_backpack","stash shell not online")
+        if not reload and not returning then
+            assert(item:parent() and item:parent():id()==db.actor:id(),"stash shell not carried")
+            identity=level.inventory_next_stash_identity(shell);assert(identity~="","stash identity unavailable")
+            save_var(db.actor,"sqa3_stash_shell_name",alife():object(shell):name())
+            save_var(db.actor,"sqa3_stash_shell_identity",identity)
+            save_var(db.actor,"sqa3_stash_proxy_name","")
+        end
+        printf("[SQA3 STASH TEST] shell live=%s persistent=%s empty=%s phase=%s reload=%s",tostring(shell),identity,tostring(empty),phase,tostring(reload))
+    end
+    commands[#commands+1]=snapshot
+    if not reload then
+        commands[#commands+1]=function()
+            if returning then
+                assert(proxy,"stash proxy missing for retrieval")
+                local box=level.object_by_id(proxy);assert(box and box:use(db.actor),"stash loot menu did not open")
+            elseif equipped then
+                assert(not db.actor:item_in_slot(13),"backpack slot already occupied")
+                assert(ActorMenu.get_actor_menu():ToSlot(level.object_by_id(shell),true,13),"fixture backpack equip refused")
+            else
+                item_backpack.start(level.object_by_id(shell))
+                assert(item_backpack.GUI and item_backpack.GUI:IsShown(),"normal stash dialog not shown")
+                item_backpack.GUI.input:SetText(label)
+            end
+        end
+        commands[#commands+1]=function()
+            if equipped then
+                -- Exercise the real equipped-bag script entry with the actual equipped shell.
+                local original=sqa3_stash.default_name;sqa3_stash.default_name=function() return label end
+                item_backpack.actor_on_item_use({section=function() return "itm_actor_backpack" end})
+                sqa3_stash.default_name=original
+            else
+                started=started+60000
+                printf("[SQA3 STASH TEST] physical window action=%s",returning and "retrieve" or (cancel and "cancel dialog" or "accept dialog"))
+            end
+        end
+    end
+    commands[#commands+1]=function()
+        local carried=(returning~=rollback) or cancel or timeout
+        local item=level.object_by_id(shell);local server=alife():object(shell)
+        assert(item and server and level.inventory_next_stash_identity(shell)==identity,"original stash shell lost")
+        local expected=carried and db.actor:id() or proxy
+        assert(expected and item:parent() and item:parent():id()==expected and server.parent_id==expected,"stash custody mismatch")
+        if not carried then
+            local owner=alife():object(proxy);assert(owner and owner:section_name()=="sqa3_ground_backpack","wrong stash custodian")
+            local count=0;alife():iterate_objects(function(obj) if obj.parent_id==proxy then count=count+1 end return false end)
+            assert(count==(empty and 1 or 3),"stash member count changed")
+            assert(level.map_has_object_spot(proxy,"treasure")>0,"named stash marker missing")
+            printf("[SQA3 STASH TEST] stored members=%s marker=true proxy=%s",tostring(count),tostring(proxy))
+        else
+            local count=0
+            level.iterate_nearest(db.actor:position(),5,function(obj) if obj:section()=="sqa3_ground_backpack" then count=count+1 end return false end)
+            assert(count==0,"empty or failed stash proxy remained")
+            if proxy then assert(not alife():object(proxy) and level.map_has_object_spot(proxy,"treasure")==0,"stash cleanup or marker removal incomplete") end
+        end
+        if not reload then
+            assert(created==((not returning and not cancel and not timeout and not rollback) and 1 or 0),"creation callback count changed")
+            assert(removed==(returning and 1 or 0),"removal callback count changed")
+        else assert(created==0 and removed==0,"reload replayed stash callbacks") end
+        printf("[SQA3 STASH TEST] completed phase=%s empty=%s carried=%s created=%s removed=%s",phase,tostring(empty),tostring(carried),tostring(created),tostring(removed))
+        if item_backpack.GUI and item_backpack.GUI:IsShown() then item_backpack.GUI:Close() end
+        ActorMenu.get_actor_menu():HideDialog()
+    end
+    commands[#commands+1]=snapshot
+    commands[#commands+1]="inventory_next_probe export"
+    commands[#commands+1]="save sqa3_stash_"..(empty and "empty_" or "")..phase
+    commands[#commands+1]="quit"
+    RegisterScriptCallback("actor_on_update",function()
+        if failed or not db.actor then return end
+        if not started then started=time_global()+10000 end
+        if time_global()-started<stage*2000 then return end
+        local command=commands[stage];if not command then return end;stage=stage+1
+        local ok,err
+        if type(command)=="string" then ok,err=pcall(exec_console_cmd,command) else ok,err=pcall(command) end
+        if not ok then failed=true;printf("[SQA3 AUTORUN] FAIL stash %s",tostring(err));exec_console_cmd("quit") end
+    end)
+end
