@@ -247,7 +247,7 @@ function on_game_start()
             commands[#commands+1]=capacity_equip_pack
             -- Known disposable sqa3_replacement: identities100..104; new pack105.
             commands[#commands+1]="inventory_next_store 102 105 1 1 0"
-            commands[#commands+1]="inventory_next_store 101 1 0 0 0"
+            commands[#commands+1]="inventory_next_store 101 1 2 0 0" -- medkit vacated this pocket; bread occupies0,0
             commands[#commands+1]=capacity_ruck_pack
         else
             commands[#commands+1]=function()

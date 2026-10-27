@@ -22,7 +22,7 @@ def main():
     assert pack["attributes"]["native_section"] == "itm_backpack"
     assert med["attributes"]["native_section"] == "medkit" and med["parent"] == 105
     assert med["position"] == a.med_position+[0], "nested item moved or flattened"
-    assert items[101]["parent"] == 1 and items[101]["position"] == [0, 0, 0], "pocket assignment changed"
+    assert items[101]["parent"] == 1 and items[101]["position"] == [2, 0, 0], "pocket assignment changed"
     assert pack["location"] == (3 if a.phase == "unequipped" else 1)
     assert pack["equipped_slots"] == (0 if a.phase == "unequipped" else 8192)
     rows = {int(f[0]): f for f in (r.split() for r in a.export.read_text().splitlines()[1:-1])}
