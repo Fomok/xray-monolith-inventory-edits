@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('sqa3_logical_unequipped','sqa3_logical_equipped','sqa3_logical_carried','sqa3_nested_manual','sqa3_purchase','sqa3_direct_equip','sqa3_direct_unequip','sqa3_world_prepared','sqa3_world_release','sqa3_world_return')]
+    [ValidateSet('sqa3_logical_unequipped','sqa3_logical_equipped','sqa3_logical_carried','sqa3_nested_manual','sqa3_purchase','sqa3_direct_equip','sqa3_direct_unequip','sqa3_world_prepared','sqa3_world_release','sqa3_world_return','sqa3_world_nofit')]
     [string]$Save='sqa3_logical_carried',
     [string]$LabRoot=$PSScriptRoot,
     [switch]$StrictGroundPickup,

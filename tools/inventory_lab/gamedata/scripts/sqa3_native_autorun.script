@@ -267,12 +267,37 @@ function on_game_start()
     if args:find("-sqa3-fixture-world-transfer",1,true) then
         local returning=args:find("-sqa3-world-return",1,true)~=nil
         local reload=args:find("-sqa3-world-reload",1,true)~=nil
+        local nofit=args:find("-sqa3-world-nofit",1,true)~=nil
+        assert(not(nofit and returning),"conflicting world fixture modes")
         commands={"inventory_next_probe export",snapshot}
-        if returning or reload then
+        if returning or reload or nofit then
             commands[#commands+1]=function()
                 crate_id=tonumber(args:match("%-sqa3%-world%-crate=(%d+)"));assert(crate_id,"world transfer crate missing")
             end
         else commands[#commands+1]=spawn_crate end
+        if nofit and not reload then
+            local fillers={}
+            commands[#commands+1]=function()
+                local a=db.actor;local pos=a:position();pos.x=pos.x+2
+                for i=1,6 do
+                    local item=alife():create("bandage",pos,a:level_vertex_id(),a:game_vertex_id())
+                    assert(item,"world nofit filler spawn failed");fillers[#fillers+1]=item.id
+                end
+            end
+            commands[#commands+1]=function()
+                for _,id in ipairs(fillers) do
+                    local item=level.object_by_id(id);assert(item and not item:parent(),"world filler missing")
+                    db.actor:take_item(item)
+                end
+            end
+            commands[#commands+1]=function()
+                for _,id in ipairs(fillers) do
+                    local item=level.object_by_id(id)
+                    assert(item and item:parent() and item:parent():id()==db.actor:id(),"world filler not acquired")
+                end
+                printf("[SQA3 AUTORUN] world nofit six fillers acquired; drag crate bag to full pockets")
+            end
+        end
         commands[#commands+1]=open_crate
         if not reload then
             commands[#commands+1]=function()
@@ -301,12 +326,12 @@ function on_game_start()
             box:iterate_inventory_box(function(_,item) count=count+1;if not returning then record(nil,item) end return false end,box)
             if returning then db.actor:iterate_inventory(record,db.actor) end
             assert(count==(returning and 0 or 3) and members==3,"world transfer source membership mismatch")
-            printf("[SQA3 AUTORUN] world transfer phase=%s crate=%s actor=%s members=3",returning and "return" or "release",tostring(crate_id),tostring(db.actor:id()))
+            printf("[SQA3 AUTORUN] world transfer phase=%s crate=%s actor=%s members=3",nofit and "nofit" or (returning and "return" or "release"),tostring(crate_id),tostring(db.actor:id()))
         end
         commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
-        commands[#commands+1]="save "..(returning and "sqa3_world_return" or "sqa3_world_release")
+        commands[#commands+1]="save "..(nofit and "sqa3_world_nofit" or (returning and "sqa3_world_return" or "sqa3_world_release"))
         commands[#commands+1]="quit"
         RegisterScriptCallback("actor_on_update",update);return
     end

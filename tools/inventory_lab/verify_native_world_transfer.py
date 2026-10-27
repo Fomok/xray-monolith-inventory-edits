@@ -24,7 +24,7 @@ def world_records(path):
         root, custodian, length = map(int, stream.readline().split())
         payload = stream.read(length)
         assert len(payload) == length and root not in records
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=path.parent, prefix="world-verify-") as directory:
             model_path = Path(directory) / "world.inv"
             model_path.write_bytes(payload)
             nodes, _ = read(model_path)
@@ -41,7 +41,7 @@ def main():
     ap.add_argument("export", type=Path)
     ap.add_argument("--world", type=Path, help="Required for transfers; optional for Dev18 preparation only")
     ap.add_argument("--baseline", type=Path, required=True)
-    ap.add_argument("--phase", choices=["prepared", "release", "return"], required=True)
+    ap.add_argument("--phase", choices=["prepared", "release", "return", "nofit"], required=True)
     ap.add_argument("--previous", type=Path)
     ap.add_argument("--output", type=Path, required=True)
     a = ap.parse_args()
@@ -73,7 +73,7 @@ def main():
             if owner == 105:
                 subtree[key] = node
         assert len(subtree) == 3 and sum(n["grams"] for n in subtree.values()) == 2140
-        result = re.search(r"world transfer phase=(release|return) crate=(\d+) actor=(\d+) members=3", log)
+        result = re.search(r"world transfer phase=(release|return|nofit) crate=(\d+) actor=(\d+) members=3", log)
         assert result and result[1] == a.phase
         crate, actor_live = int(result[2]), int(result[3])
         rows = re.findall(r"world member live=(\d+) owner=(\d+) section=(\S+) grams=(\S+) condition=(\S+)", log)
@@ -83,10 +83,19 @@ def main():
         expected = {n["attributes"]["native_live_id"]: (n["attributes"]["native_section"], n["grams"], n["condition"])
                     for n in subtree.values()}
         assert observed == expected
-        assert all(int(row[1]) == (crate if a.phase == "release" else actor_live) for row in rows)
-        if a.phase == "release":
-            assert actor == {key: n for key, n in baseline.items() if key not in subtree}
-            assert len(actor) == 4 and report["grams"] == 1138
+        assert all(int(row[1]) == (actor_live if a.phase == "return" else crate) for row in rows)
+        if a.phase in ("release", "nofit"):
+            retained = {key: n for key, n in baseline.items() if key not in subtree}
+            assert all(actor.get(key) == n for key, n in retained.items())
+            if a.phase == "nofit":
+                assert len(actor) == 10 and report["grams"] == 1366
+                fillers = set(actor)-set(retained)
+                assert len(fillers) == 6 and not fillers.intersection(subtree)
+                assert all(actor[key]["attributes"]["native_section"] == "bandage" and
+                           actor[key]["grams"] == 38 and actor[key]["condition"] == 10000 and
+                           actor[key]["parent"] == 1 for key in fillers)
+            else:
+                assert actor == retained and len(actor) == 4 and report["grams"] == 1138
             assert set(records) == {105}
             custody, outside = records[105]
             expected_world = dict(subtree)
@@ -102,6 +111,11 @@ def main():
             previous_world, _ = world_records(a.previous.with_suffix(".world"))
             assert records == previous_world
             report["exact_actor_and_world_reload"] = True
+        elif a.phase == "nofit":
+            assert "loaded transfer refused reason=" in log
+            assert "loaded transfer server committed" not in log
+            assert "loaded transfer client completed" not in log
+            report["full_storage_refusal_preserved_subtree"] = True
         else:
             assert log.count("loaded transfer server committed count=3") == 1
             assert log.count("loaded transfer client completed count=3 save_ready=1") == 1
