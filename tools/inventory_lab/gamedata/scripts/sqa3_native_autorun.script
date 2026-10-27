@@ -268,7 +268,10 @@ function on_game_start()
         local returning=args:find("-sqa3-world-return",1,true)~=nil
         local reload=args:find("-sqa3-world-reload",1,true)~=nil
         local nofit=args:find("-sqa3-world-nofit",1,true)~=nil
-        assert(not(nofit and returning),"conflicting world fixture modes")
+        local rollback=args:find("-sqa3-world-rollback",1,true)~=nil
+        assert(not(nofit and (returning or rollback)),"conflicting world fixture modes")
+        local actor_has_bag=returning~=rollback
+        local phase=nofit and "nofit" or (rollback and (returning and "rollback-return" or "rollback-release") or (returning and "return" or "release"))
         commands={"inventory_next_probe export",snapshot}
         if returning or reload or nofit then
             commands[#commands+1]=function()
@@ -313,7 +316,7 @@ function on_game_start()
                 if item:section()=="medkit" then medkits=medkits+1 end
                 return false
             end,db.actor)
-            assert(bags==(returning and 2 or 0) and medkits==(returning and 1 or 0),"world transfer actor membership mismatch")
+            assert(bags==(actor_has_bag and 2 or 0) and medkits==(actor_has_bag and 1 or 0),"world transfer actor membership mismatch")
             local box=level.object_by_id(crate_id);assert(box,"world transfer crate missing")
             local count,members=0,0
             local function record(_,item)
@@ -323,15 +326,15 @@ function on_game_start()
                 end
                 return false
             end
-            box:iterate_inventory_box(function(_,item) count=count+1;if not returning then record(nil,item) end return false end,box)
-            if returning then db.actor:iterate_inventory(record,db.actor) end
-            assert(count==(returning and 0 or 3) and members==3,"world transfer source membership mismatch")
-            printf("[SQA3 AUTORUN] world transfer phase=%s crate=%s actor=%s members=3",nofit and "nofit" or (returning and "return" or "release"),tostring(crate_id),tostring(db.actor:id()))
+            box:iterate_inventory_box(function(_,item) count=count+1;if not actor_has_bag then record(nil,item) end return false end,box)
+            if actor_has_bag then db.actor:iterate_inventory(record,db.actor) end
+            assert(count==(actor_has_bag and 0 or 3) and members==3,"world transfer source membership mismatch")
+            printf("[SQA3 AUTORUN] world transfer phase=%s crate=%s actor=%s members=3",phase,tostring(crate_id),tostring(db.actor:id()))
         end
         commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
-        commands[#commands+1]="save "..(nofit and "sqa3_world_nofit" or (returning and "sqa3_world_return" or "sqa3_world_release"))
+        commands[#commands+1]="save sqa3_world_"..phase:gsub("-","_")
         commands[#commands+1]="quit"
         RegisterScriptCallback("actor_on_update",update);return
     end

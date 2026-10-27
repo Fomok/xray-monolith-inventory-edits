@@ -41,7 +41,7 @@ def main():
     ap.add_argument("export", type=Path)
     ap.add_argument("--world", type=Path, help="Required for transfers; optional for Dev18 preparation only")
     ap.add_argument("--baseline", type=Path, required=True)
-    ap.add_argument("--phase", choices=["prepared", "release", "return", "nofit"], required=True)
+    ap.add_argument("--phase", choices=["prepared", "release", "return", "nofit", "rollback-release", "rollback-return"], required=True)
     ap.add_argument("--previous", type=Path)
     ap.add_argument("--output", type=Path, required=True)
     a = ap.parse_args()
@@ -73,7 +73,7 @@ def main():
             if owner == 105:
                 subtree[key] = node
         assert len(subtree) == 3 and sum(n["grams"] for n in subtree.values()) == 2140
-        result = re.search(r"world transfer phase=(release|return|nofit) crate=(\d+) actor=(\d+) members=3", log)
+        result = re.search(r"world transfer phase=(release|return|nofit|rollback-release|rollback-return) crate=(\d+) actor=(\d+) members=3", log)
         assert result and result[1] == a.phase
         crate, actor_live = int(result[2]), int(result[3])
         rows = re.findall(r"world member live=(\d+) owner=(\d+) section=(\S+) grams=(\S+) condition=(\S+)", log)
@@ -83,8 +83,9 @@ def main():
         expected = {n["attributes"]["native_live_id"]: (n["attributes"]["native_section"], n["grams"], n["condition"])
                     for n in subtree.values()}
         assert observed == expected
-        assert all(int(row[1]) == (actor_live if a.phase == "return" else crate) for row in rows)
-        if a.phase in ("release", "nofit"):
+        actor_has_bag = a.phase in ("return", "rollback-release")
+        assert all(int(row[1]) == (actor_live if actor_has_bag else crate) for row in rows)
+        if not actor_has_bag:
             retained = {key: n for key, n in baseline.items() if key not in subtree}
             assert all(actor.get(key) == n for key, n in retained.items())
             if a.phase == "nofit":
@@ -111,6 +112,12 @@ def main():
             previous_world, _ = world_records(a.previous.with_suffix(".world"))
             assert records == previous_world
             report["exact_actor_and_world_reload"] = True
+        elif a.phase.startswith("rollback-"):
+            assert log.count("loaded transfer fixture interrupted after moved=1 before client notification") == 1
+            assert log.count("loaded transfer rejection restored count=3 save_ready=1") == 1
+            assert "loaded transfer server committed" not in log
+            assert "loaded transfer client completed" not in log
+            report["native_partial_transfer_rolled_back"] = True
         elif a.phase == "nofit":
             assert "loaded transfer refused reason=" in log
             assert "loaded transfer server committed" not in log
