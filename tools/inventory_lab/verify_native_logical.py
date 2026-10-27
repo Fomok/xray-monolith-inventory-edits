@@ -10,9 +10,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("log", type=Path)
     ap.add_argument("export", type=Path)
-    ap.add_argument("--phase", choices=["unequipped", "equipped"], required=True)
+    ap.add_argument("--phase", choices=["unequipped", "equipped", "carried"], required=True)
     ap.add_argument("--previous", type=Path)
     ap.add_argument("--med-position", nargs=2, type=int, default=[1, 1])
+    ap.add_argument("--bandage-position", nargs=2, type=int, default=[2, 0])
+    ap.add_argument("--minimum-drags", type=int, default=0)
     ap.add_argument("--output", type=Path, required=True)
     a = ap.parse_args()
     report = verify(a.log, a.export, True, logical_ownership=True)
@@ -22,15 +24,18 @@ def main():
     assert pack["attributes"]["native_section"] == "itm_backpack"
     assert med["attributes"]["native_section"] == "medkit" and med["parent"] == 105
     assert med["position"] == a.med_position+[0], "nested item moved or flattened"
-    assert items[101]["parent"] == 1 and items[101]["position"] == [2, 0, 0], "pocket assignment changed"
-    assert pack["location"] == (3 if a.phase == "unequipped" else 1)
-    assert pack["equipped_slots"] == (0 if a.phase == "unequipped" else 8192)
+    assert items[101]["parent"] == 1 and items[101]["position"] == a.bandage_position+[0], "pocket assignment changed"
+    assert pack["location"] == {"unequipped": 3, "equipped": 1, "carried": 0}[a.phase]
+    assert pack["equipped_slots"] == (8192 if a.phase == "equipped" else 0)
+    if a.phase == "carried":assert pack["position"] == [0, 0, 0]
     rows = {int(f[0]): f for f in (r.split() for r in a.export.read_text().splitlines()[1:-1])}
     assert rows[1][16:18] == ["4", "2"] and "native_logical_storage" in rows[1]
     assert rows[105][14] == "1" and rows[105][16:18] == ["8", "8"]
     log = a.log.read_text(errors="replace")
     assert "SQA3 loaded storage release refused" in log, "missing server drop refusal"
     assert "loaded backpack drop refused; native parent retained" in log
+    accepted_drags=sum("SQA3 native drag id=" in line and "result=accepted" in line for line in log.splitlines())
+    assert accepted_drags >= a.minimum_drags, "missing accepted native drag evidence"
     if a.previous:
         previous, old_digest = read(a.previous)
         assert set(previous) == set(items)
@@ -41,7 +46,7 @@ def main():
             if identity != 105:
                 assert item["parent"] == previous[identity]["parent"], "reload reassigned contents"
         report["previous_sha256"] = old_digest
-    report.update(phase=a.phase, items=items, export_sha256=digest,
+    report.update(phase=a.phase, items=items, export_sha256=digest, accepted_native_drags=accepted_drags,
                   limits="Native carried backpack ownership and protected drop only. World subtree transfer, strict pickup admission, rig gates and full parity remain unverified.")
     a.output.write_text(json.dumps(report, indent=2)+"\n")
     print(json.dumps(report))

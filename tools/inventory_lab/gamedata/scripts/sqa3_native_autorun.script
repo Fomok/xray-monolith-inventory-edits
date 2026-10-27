@@ -258,7 +258,9 @@ function on_game_start()
                 end,db.actor)
                 assert(count==1,"logical reload needs exactly one backpack")
             end
-            commands[#commands+1]=capacity_equip_pack
+            if not args:find("-sqa3-fixture-logical-no-equip",1,true) then
+                commands[#commands+1]=capacity_equip_pack
+            end
         end
         commands[#commands+1]=function()
             local pack=level.object_by_id(capacity_pack);assert(pack,"logical backpack missing")
@@ -282,7 +284,11 @@ function on_game_start()
         commands[#commands+1]="screenshot sqa3_logical_storage"
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
-        commands[#commands+1]="save "..(args:find("-sqa3-fixture-logical-reload",1,true) and "sqa3_logical_equipped" or "sqa3_logical_unequipped")
+        local logical_save="sqa3_logical_unequipped"
+        if args:find("-sqa3-fixture-logical-reload",1,true) then
+            logical_save=args:find("-sqa3-fixture-logical-no-equip",1,true) and "sqa3_logical_carried" or "sqa3_logical_equipped"
+        end
+        commands[#commands+1]="save "..logical_save
         commands[#commands+1]="quit"
         RegisterScriptCallback("actor_on_update",update)
         return
