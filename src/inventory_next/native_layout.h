@@ -30,6 +30,10 @@ public:
                 n.location=Location::Equipment;n.wear_slots=n.equipped_slots=std::uint64_t{1}<<beltSlot++;
             }
             if(n.location!=Location::Equipment)n.location=Location::Overflow;
+            // Facts may come from an existing projection. Recovery/equipment
+            // staging has no grid coordinates; saved placements are reapplied
+            // from model_ only after the new native facts validate.
+            n.position={};
             factsNodes.push_back(n);
         }
         Model facts;auto result=facts.initialize(factsNodes);if(!result)return result;

@@ -700,6 +700,21 @@ int main(int argc,char** argv) {
             yes(loaded.reconcile({rifle,med},{{8,8},{}}));
             check(loaded.model().nodes().at(100).location==Location::Grid&&loaded.model().carried_mass()==3500,"expanded recovery failed");
         });
+        test("capacity preview normalizes projected positions before recovery staging",[]{
+            auto rifle=item(100,1,3000);rifle.empty=rifle.half=rifle.full={5,2};rifle.attributes["native_section"]="rifle";
+            auto med=item(101,1,500);med.attributes["native_section"]="medkit";
+            ActorLayout active;yes(active.reconcile({rifle,med},{{8,8},{}}));
+            yes(active.move({100,1,{5,2,true},active.model().revision(),active.model().session()}));
+            auto original=active.model().serialize();
+            std::vector<Node> projected;
+            for(const auto& pair:active.model().nodes())if(pair.second.kind==Kind::Item)projected.push_back(pair.second);
+            ActorLayout preview;yes(preview.restore(original));yes(preview.reconcile(projected,{{4,2},{}}));
+            check(preview.model().nodes().at(100).location==Location::Overflow,"projected rifle escaped recovery");
+            check(preview.model().nodes().at(100).position.x==0&&!preview.model().nodes().at(100).position.rotated,"recovery retained grid coordinates");
+            check(preview.model().carried_mass()==3500&&active.model().serialize()==original,"preview mutated mass or active layout");
+            yes(preview.reconcile(projected,{{8,8},{}}));
+            check(preview.model().nodes().at(100).location==Location::Grid&&preview.model().carried_mass()==3500,"projected recovery could not expand");
+        });
         test("native admission preview respects masks rotation and full storage without mutation",[]{
             ActorLayout layout;ActorStorage pockets{{4,2},{1,1,1,1,1,1,1,0}};
             std::vector<Node> live;
