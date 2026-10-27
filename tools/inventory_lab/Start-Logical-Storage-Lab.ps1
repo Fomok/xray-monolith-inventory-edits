@@ -1,10 +1,11 @@
 param(
-    [ValidateSet('sqa3_logical_unequipped','sqa3_logical_equipped','sqa3_logical_carried','sqa3_nested_manual','sqa3_purchase','sqa3_direct_equip','sqa3_direct_unequip')]
+    [ValidateSet('sqa3_logical_unequipped','sqa3_logical_equipped','sqa3_logical_carried','sqa3_nested_manual','sqa3_purchase','sqa3_direct_equip','sqa3_direct_unequip','sqa3_world_prepared','sqa3_world_release','sqa3_world_return')]
     [string]$Save='sqa3_logical_carried',
     [string]$LabRoot=$PSScriptRoot,
     [switch]$StrictGroundPickup,
     [switch]$StrictOwnedPickup,
-    [switch]$StrictTradePickup
+    [switch]$StrictTradePickup,
+    [switch]$WorldStorage
 )
 $ErrorActionPreference='Stop'
 $lab=(Resolve-Path -LiteralPath $LabRoot).Path
@@ -16,6 +17,8 @@ if(!$manifest.logical_storage_opt_in){throw 'This lab currently has a different 
 if($StrictGroundPickup -and !$manifest.ground_pickup_opt_in){throw 'This engine package has no strict ground-pickup mode.'}
 if($StrictOwnedPickup -and !$manifest.owned_pickup_opt_in){throw 'This engine package has no strict owned-source pickup mode.'}
 if($StrictTradePickup -and !$manifest.trade_pickup_opt_in){throw 'This engine package has no strict purchase mode.'}
+if($Save -like 'sqa3_world_*'){$WorldStorage=$true}
+if($WorldStorage -and !$manifest.world_storage_opt_in){throw 'This engine package has no loaded world-storage mode.'}
 $engine=Join-Path $lab 'bin/AnomalyDX11AVX.exe'
 $expected=$manifest.files.'bin/AnomalyDX11AVX.exe'.sha256
 if((Get-FileHash -LiteralPath $engine -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expected){throw 'Lab engine hash does not match its package.'}
@@ -25,5 +28,6 @@ $arguments='-dbg -inventory-lab -sqa3-logical-storage -start server('+ $Save +'/
 if($StrictGroundPickup){$arguments+=' -sqa3-strict-ground-pickup'}
 if($StrictOwnedPickup){$arguments+=' -sqa3-strict-owned-pickup'}
 if($StrictTradePickup){$arguments+=' -sqa3-strict-trade-pickup'}
+if($WorldStorage){$arguments+=' -sqa3-world-storage'}
 $game=Start-Process -FilePath $engine -WorkingDirectory $lab -ArgumentList $arguments -WindowStyle Normal -PassThru
 Write-Output ('Logical-storage lab started, PID '+$game.Id+'. Close the game when finished.')

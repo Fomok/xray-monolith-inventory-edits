@@ -74,3 +74,8 @@ or excludes departing objects until all client parents match. Saves remain gated
 Crate lists hide logical descendants while their weight still counts once; ordinary
 single-item release cannot bypass custody. Actual native compilation, physical
 release/reacquisition, partial-failure and fresh game reload tests are pending.
+
+
+## Nested native fixture prepared - 27 October 2026
+
+Candidate engine4fdfb9936b3a11d960b6ecf75dd3201f25c070a6 is building in CI40511593122. Dev18 engine0be12d07 with temporary fixture overlay21d0e23e prepared disposable save `sqa3_world_prepared` in PID17028 (exit0): outer bag105 contains bag106 at4,4, which contains medkit102 at1,1. All other original records remain exact;7items3278g. Export SHA25647d58479817ca0d3064c5e6774a768ae7735056311f64d97f80591a7491ffd0f. Evidence: ci-40502480472/world-prepared.log/.inv/-verification.json. This verifies preparation only; Dev18 has no world ledger and the report explicitly records world_persistence_observed=false. Original Dev18 rollback ZIP is unchanged.

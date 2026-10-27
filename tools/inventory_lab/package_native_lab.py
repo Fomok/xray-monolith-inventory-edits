@@ -28,12 +28,14 @@ def main():
     ground_pickup=False
     owned_pickup=False
     trade_pickup=False
+    world_storage=False
     if logical is not None:
         engine_source=subprocess.check_output(['git','show',a.commit+':src/xrGame/InventoryNextProbe.cpp'],cwd=repo)
         assert b'-sqa3-logical-storage' in engine_source, 'This engine revision has no native logical-storage mode'
         ground_pickup=b'-sqa3-strict-ground-pickup' in engine_source
         owned_pickup=b'-sqa3-strict-owned-pickup' in engine_source
         trade_pickup=b'-sqa3-strict-trade-pickup' in engine_source
+        world_storage=b'-sqa3-world-storage' in engine_source
         files["NATIVE-LOGICAL-STORAGE.md"]=logical
         launcher=read_overlay('tools/inventory_lab/Start-Logical-Storage-Lab.ps1',optional=True)
         if launcher is not None:files["Start-Logical-Storage-Lab.ps1"]=launcher
@@ -45,15 +47,17 @@ def main():
         "No3D player model. Final pockets, full native recovery and complete gameplay parity remain unfinished.\n"+
         ("Opt-in carried backpack storage: also pass -sqa3-logical-storage. Keep this flag for its saves.\n"
          "Use Start-Logical-Storage-Lab.ps1 for the prepared carried-backpack save; it refuses a second game instance.\n"
-         "Use only disposable sqa3_logical_* saves in the isolated lab. Loaded bag world transfer is blocked; full acquisition admission remains unfinished.\n" if logical is not None else "")+
+         "Use only disposable sqa3_logical_* saves in the isolated lab. Loaded bag world transfer requires a supporting engine and its explicit mode; full compatibility remains unfinished.\n" if logical is not None else "")+
         ("Experimental ground pickup: Start-Logical-Storage-Lab.ps1 -StrictGroundPickup.\n" if ground_pickup else "")+
         ("Experimental ground plus corpse/container Move/Take All: -StrictOwnedPickup. External equip/use admission remains unfinished.\n" if owned_pickup else "")+
-        ("Experimental batch purchases: -StrictTradePickup. Includes owned/ground admission; native purchase acceptance must be checked against the evidence.\n" if trade_pickup else "")).encode()
+        ("Experimental batch purchases: -StrictTradePickup. Includes owned/ground admission; native purchase acceptance must be checked against the evidence.\n" if trade_pickup else "")+
+        ("Experimental loaded actor/crate transfers: -WorldStorage. World fixture saves automatically select this mode. Ground bags and full gameplay compatibility remain unfinished; consult current test evidence.\n" if world_storage else "")).encode()
     manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":overlay,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     manifest['logical_storage_opt_in']=logical is not None
     manifest['ground_pickup_opt_in']=ground_pickup
     manifest['owned_pickup_opt_in']=owned_pickup
     manifest['trade_pickup_opt_in']=trade_pickup
+    manifest['world_storage_opt_in']=world_storage
     files["manifest.json"]=(json.dumps(manifest,indent=2)+"\n").encode()
     a.output.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(a.output,"w",zipfile.ZIP_DEFLATED,compresslevel=6) as z:
