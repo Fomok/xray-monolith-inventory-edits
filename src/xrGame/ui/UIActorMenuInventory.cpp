@@ -454,9 +454,14 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 
 void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 {
-    if(InventoryNextEnabled() && !InventoryNextLayoutSync()) {
-        m_sqaRefresh=true;
-        if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Inventory is updating. Try again.");
+    if(InventoryNextEnabled()) {
+        if(!InventoryNextLayoutSync()) {
+            m_sqaRefresh=true;
+            if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Inventory is updating. Try again.");
+        } else if(m_sqaStatus && m_sqaStatus->TextItemControl()->GetText() &&
+                  0==xr_strcmp(m_sqaStatus->TextItemControl()->GetText(),"Inventory is updating. Try again.")) {
+            m_sqaStatus->TextItemControl()->SetText("");
+        }
     }
 	ClearAllLists();
 	m_UIPropertiesBox->Hide();

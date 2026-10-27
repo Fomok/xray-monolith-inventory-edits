@@ -31,3 +31,12 @@ User confirmed Select PDA->Right. The normal CUIActorMenu is now the replacement
 ### Normal-key interception found and retired
 
 Anomaly1.5.3 ui_inventory.script registered ActorMenu_on_before_init_mode and replaced GetActorMenu/hide helpers with UIInventory. Normal key23 therefore opened the Lua interface while CUIActorMenu::IsShown stayedfalse. The packaged source-derived script changes only enable_feature to disable that old presentation in -inventory-lab -dbg; outside that mode it remains enabled. Helpers remain present. This avoids merely adding another native menu behind the existing Lua frontend. Provenance/hashes are in native-visual-assets.json.
+
+
+### 27 October: a3acc9d1 runtime regression
+
+CI40451986671 succeeded; artifact12711617158; engine SHA2565143ef44dfe0be16da2cce1b52666615b1140b54d530f02d571227a9e24bda90. Corpse Take All now survives a temporary roubles identity (converted to money), transfers bread, and saves8items/2843g. Fresh reload retains all IDs, placement and mass; helmet condition1300->1294 is stock float_q8 serialization (ActorHelmet.cpp92 and CSE_ALifeItemHelmet UPDATE), so exact condition equality is not claimed.
+
+Physical PDA drag during6201 condition-update ticks was rejected as stale_drag, displayed a refusal and preserved PDA4,3; fiveitems/1638g remain. A separate unchanged-state mouse drag succeeds to6,5. Native/model snapshot checks passed. Evidence under previews/inventory-next-20261027/ci-40451986671. Mouse bread-use remains unverified.
+
+Next-stage core now accepts finite authored grids/masks and offers read-only ruck admission preflight.80 debug/release checks plus independent restart pass, including shrink/recovery, partial rows, rotation-only fit and failed admission atomicity. Native caller still uses the8x64 development grid: this is NOT integrated acquisition enforcement or final distinct pockets/backpack/rig storage. Server reservation/commit and explicit native recovery remain required.

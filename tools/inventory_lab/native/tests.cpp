@@ -636,6 +636,36 @@ int main(int argc,char** argv) {
             gun.location=Location::Grid;gun.wear_slots=gun.equipped_slots=0;yes(loaded.reconcile({p,gun,belt}));
             check(loaded.model().nodes().at(101).location==Location::Grid&&loaded.model().carried_mass()==3600,"unequip recovery lost item");
         });
+        test("authored native capacity shrink retains items and mass in recovery",[]{
+            Node rifle=item(100,1,3000);rifle.empty=rifle.half=rifle.full={5,2};rifle.attributes["native_section"]="rifle";
+            Node med=item(101,1,500);med.attributes["native_section"]="medkit";
+            ActorLayout layout;yes(layout.reconcile({rifle,med},{{8,8},{}}));
+            DragSession drag;yes(drag.begin(layout.model(),101));
+            yes(layout.reconcile({rifle,med},{{4,2},{}}));
+            check(!drag.is_current(layout.model()),"capacity change kept old gesture");
+            check(layout.model().nodes().at(100).location==Location::Overflow,"long rifle fit bare pockets");
+            check(layout.model().nodes().at(101).location==Location::Grid&&layout.model().carried_mass()==3500,"shrink lost item or mass");
+            ActorLayout loaded;yes(loaded.restore(layout.model().serialize()));yes(loaded.reconcile({rifle,med},{{4,2},{}}));
+            check(loaded.model().nodes().at(100).location==Location::Overflow,"reload lost recovery");
+            yes(loaded.reconcile({rifle,med},{{8,8},{}}));
+            check(loaded.model().nodes().at(100).location==Location::Grid&&loaded.model().carried_mass()==3500,"expanded recovery failed");
+        });
+        test("native admission preview respects masks rotation and full storage without mutation",[]{
+            ActorLayout layout;ActorStorage pockets{{4,2},{1,1,1,1,1,1,1,0}};
+            std::vector<Node> live;
+            for(Id id=100;id<107;++id){auto n=item(id,1,10);n.attributes["native_section"]="small";live.push_back(n);}
+            yes(layout.reconcile(live,pockets));auto before=layout.model().serialize();
+            no(layout.preview_ruck(item(999,1,20)).result,"capacity");
+            check(layout.model().serialize()==before,"refused admission mutated inventory");
+            live.pop_back();yes(layout.reconcile(live,pockets));before=layout.model().serialize();
+            auto fit=layout.preview_ruck(item(999,1,20));yes(fit.result);
+            check(fit.position.x==2&&fit.position.y==1&&!fit.position.rotated,"partial-row admission used blocked cell");
+            check(layout.model().serialize()==before,"accepted preview mutated inventory");
+            ActorLayout narrow;yes(narrow.reconcile({},{{2,3},{}}));auto tall=item(900,1,25);tall.empty=tall.half=tall.full={3,2};
+            fit=narrow.preview_ruck(tall);yes(fit.result);check(fit.position.rotated,"rotation-only admission refused");
+            auto invalid=narrow.model().serialize();check(!narrow.reconcile({},{{0,3},{}}),"zero capacity accepted");
+            check(narrow.model().serialize()==invalid,"invalid policy destroyed layout");
+        });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));
             yes(move(m,{20,11,{1,0,false},0})); yes(save_atomic(m,path));

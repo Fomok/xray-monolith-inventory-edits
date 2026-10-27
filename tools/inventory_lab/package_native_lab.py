@@ -3,7 +3,9 @@ import argparse,hashlib,json,zipfile
 from pathlib import Path
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument("--engine",type=Path,required=True);ap.add_argument("--engine-sha256",required=True);ap.add_argument("--commit",required=True);ap.add_argument("--ci",required=True);ap.add_argument("--output",type=Path,required=True);a=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument("--engine",type=Path,required=True);ap.add_argument("--engine-sha256",required=True);ap.add_argument("--commit",required=True);ap.add_argument("--ci",required=True);ap.add_argument("--output",type=Path,required=True)
+    ap.add_argument("--overlay-commit", help="Source commit for scripts/XML when newer than the engine commit")
+    a=ap.parse_args()
     source=Path(__file__).parent
     engine=a.engine.read_bytes();assert hashlib.sha256(engine).hexdigest()==a.engine_sha256
     atlas=json.loads((source/"native-visual-assets.json").read_text());texture=Path(atlas["source"]).read_bytes()
@@ -19,7 +21,7 @@ def main():
         "Start windowed with -dbg -inventory-lab. Use the normal inventory key; one replacement menu also handles loot/trade.\n"+
         "Fixture is inert without -sqa3-fixture; it writes only separate sqa3_replacement saves.\n"+
         "No3D player model. Final pockets, full native recovery and complete gameplay parity remain unfinished.\n").encode()
-    manifest={"commit":a.commit,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
+    manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":a.overlay_commit or a.commit,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     files["manifest.json"]=(json.dumps(manifest,indent=2)+"\n").encode()
     a.output.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(a.output,"w",zipfile.ZIP_DEFLATED,compresslevel=6) as z:
