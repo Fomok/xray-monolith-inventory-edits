@@ -1,5 +1,6 @@
 -- Isolated native stash acceptance fixture; only called by the explicit autorun flag.
 function start(args,snapshot)
+    printf("[SQA3 STASH TEST] fixture registered");flush()
     assert(sqa3_stash.enabled(),"native stash mode missing")
     local reload=args:find("-sqa3-stash-reload",1,true)~=nil
     local returning=args:find("-sqa3-stash-return",1,true)~=nil
@@ -116,9 +117,10 @@ function start(args,snapshot)
     commands[#commands+1]="quit"
     RegisterScriptCallback("actor_on_update",function()
         if failed or not db.actor then return end
-        if not started then started=time_global()+10000 end
+        if not started then started=time_global()+10000;printf("[SQA3 STASH TEST] actor ready");flush() end
         if time_global()-started<stage*2000 then return end
         local command=commands[stage];if not command then return end;stage=stage+1
+        printf("[SQA3 STASH TEST] step=%s",tostring(stage-1));flush()
         local ok,err
         if type(command)=="string" then ok,err=pcall(exec_console_cmd,command) else ok,err=pcall(command) end
         if not ok then failed=true;printf("[SQA3 AUTORUN] FAIL stash %s",tostring(err));exec_console_cmd("quit") end
