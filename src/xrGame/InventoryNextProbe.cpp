@@ -13,6 +13,8 @@
 #include "xr_level_controller.h"
 #include "../xrEngine/xr_input.h"
 #include "../inventory_next/native_layout.h"
+#include "../inventory_next/storage_catalog.h"
+#include "../xrServerEntities/inventory_space.h"
 #include "../inventory_next/drag_session.h"
 #include "../inventory_next/entity_registry.h"
 #include "../inventory_next/persistence.h"
@@ -25,6 +27,32 @@ inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;r
 inventory_next::DragSession& native_drag(){static inventory_next::DragSession value;return value;}
 constexpr u32 layout_chunk=0x33514c59;
 bool layout_current=false;
+
+bool read_storage_catalog(inventory_next::StorageCatalog& output) {
+    using namespace inventory_next;
+    string_path path;FS.update_path(path,"$game_config$","sqa3_capacity.ltx");
+    if(!FS.exist(path)){Msg("! SQA3 capacity config missing");return false;}
+    CInifile config(path,TRUE,TRUE,FALSE);
+    StorageCatalog candidate;
+    if(!config.line_exist("sqa3_pockets","size")||!config.line_exist("sqa3_pockets","columns")||
+       !config.line_exist("grid_pack_default","size"))return false;
+    const int columns=config.r_s32("sqa3_pockets","columns");
+    if(!parse_storage_shape(config.r_string("sqa3_pockets","size"),columns,candidate.pockets)||
+       !parse_storage_shape(config.r_string("grid_pack_default","size"),7,candidate.default_pack))return false;
+    auto read_group=[&](LPCSTR group,std::map<std::string,ActorStorage>& shapes) {
+        if(!config.section_exist(group))return true;
+        for(u32 i=0;i<config.line_count(group);++i) {
+            LPCSTR key=nullptr,value=nullptr;
+            if(!config.r_line(group,i,&key,&value)||!key||!value)return false;
+            ActorStorage shape;
+            if(!parse_storage_shape(value,candidate.default_pack.grid.w,shape))return false;
+            shapes.emplace(key,std::move(shape));
+        }
+        return true;
+    };
+    if(!read_group("grid_pack_section",candidate.sections)||!read_group("grid_pack_kind",candidate.kinds))return false;
+    output=std::move(candidate);return true;
+}
 
 }
 
@@ -136,3 +164,30 @@ bool InventoryNextNativeRotate(u16 live) noexcept try {
     Msg("* SQA3 native rotate id=%llu result=%s",id,result.ok?"accepted":result.error.c_str());
     return result.ok;
 } catch (...) {return false;}
+
+void InventoryNextCapacityProbe() noexcept try {
+    if(!InventoryNextEnabled()||!g_pGameLevel||!Actor()||!InventoryNextLayoutSync())return;
+    using namespace inventory_next;
+    StorageCatalog catalog;
+    if(!read_storage_catalog(catalog)){Msg("! SQA3 capacity catalog rejected");return;}
+    auto pack=Actor()->inventory().ItemFromSlot(BACKPACK_SLOT);
+    const std::string section=pack?pack->m_section_id.c_str():"";
+    const std::string kind=pack&&pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
+    const auto& storage=catalog.resolve(section,kind);
+    ActorLayout preview;auto result=preview.restore(layout().model().serialize());
+    if(!result){Msg("! SQA3 capacity preview restore: %s",result.error.c_str());return;}
+    std::vector<Node> live;
+    for(const auto& pair:layout().model().nodes())if(pair.second.kind==Kind::Item)live.push_back(pair.second);
+    result=preview.reconcile(std::move(live),storage);
+    if(!result){Msg("! SQA3 capacity preview rejected: %s",result.error.c_str());return;}
+    unsigned legal=0,recovery=0;
+    for(const auto& pair:preview.model().nodes())if(pair.second.kind==Kind::Item) {
+        if(pair.second.location==Location::Grid)++legal;
+        if(pair.second.location==Location::Overflow)++recovery;
+    }
+    string_path path;FS.update_path(path,"$app_data_root$","sqa3-capacity-preview.inv");
+    result=save_atomic(preview.model(),std::filesystem::path(path));
+    Msg("* SQA3 capacity preview pack=%s grid=%dx%d legal=%u recovery=%u grams=%lld export=%s; preflight only",
+        section.empty()?"none":section.c_str(),storage.grid.w,storage.grid.h,legal,recovery,
+        static_cast<long long>(preview.model().carried_mass()),result.ok?"saved":result.error.c_str());
+} catch (...) {Msg("! SQA3 capacity preview exception");}

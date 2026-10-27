@@ -1835,7 +1835,8 @@ class CCC_InventoryNextProbe : public IConsole_Command
 public:
     CCC_InventoryNextProbe(LPCSTR name) : IConsole_Command(name) { bEmptyArgsHandled = true; }
     void Execute(LPCSTR args) override {
-        if (*args && xr_strcmp(args, "export") && xr_strcmp(args, "view")) { Msg("! usage: inventory_next_probe [export|view]"); return; }
+        if(!xr_strcmp(args,"capacity")){InventoryNextCapacityProbe();return;}
+        if (*args && xr_strcmp(args, "export") && xr_strcmp(args, "view")) { Msg("! usage: inventory_next_probe [export|view|capacity]"); return; }
         InventoryNextProbe(!xr_strcmp(args,"export"), !xr_strcmp(args,"view"));
     }
 };

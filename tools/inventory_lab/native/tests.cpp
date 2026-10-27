@@ -1,4 +1,5 @@
 #include "../../../src/inventory_next/native_layout.h"
+#include "../../../src/inventory_next/storage_catalog.h"
 #include "model.h"
 #include "access_gate.h"
 #include "identity_ledger.h"
@@ -665,6 +666,27 @@ int main(int argc,char** argv) {
             fit=narrow.preview_ruck(tall);yes(fit.result);check(fit.position.rotated,"rotation-only admission refused");
             auto invalid=narrow.model().serialize();check(!narrow.reconcile({},{{0,3},{}}),"zero capacity accepted");
             check(narrow.model().serialize()==invalid,"invalid policy destroyed layout");
+        });
+        test("authored backpack sizes preserve rows-first geometry and partial cells",[]{
+            ActorStorage shape;yes(parse_storage_shape("15x8",7,shape));
+            check(shape.grid.w==8&&shape.grid.h==15&&shape.cells.empty(),"tourist shape transposed");
+            yes(parse_storage_shape(" 2 X 11 ",7,shape));check(shape.grid.w==11&&shape.grid.h==2,"wide backpack clamped");
+            yes(parse_storage_shape("9",4,shape));
+            check(shape.grid.w==4&&shape.grid.h==3&&shape.cells.size()==12&&shape.cells[8]==1&&shape.cells[9]==0,"partial count grants cells");
+            for(const char* invalid:{"0","-1","2x0","65x2","2x65","1x2x3","900000000000000000000","3.5","12garbage","1 2"}) {
+                const auto before=shape.cells;no(parse_storage_shape(invalid,4,shape),"storage_shape");
+                check(shape.grid.w==4&&shape.grid.h==3&&shape.cells==before,"invalid shape changed output");
+            }
+        });
+        test("storage catalog selects equipped section then kind then authored default",[]{
+            StorageCatalog catalog;ActorStorage sack,tourist,family;
+            yes(parse_storage_shape("8x8",7,sack));yes(parse_storage_shape("15x8",7,tourist));yes(parse_storage_shape("4x11",7,family));
+            catalog.sections["itm_backpack"]=sack;catalog.sections["equ_tourist_pack"]=tourist;catalog.kinds["i_backpack"]=family;
+            check(catalog.resolve("","i_backpack").grid.w==4&&catalog.resolve("","i_backpack").grid.h==2,"spare pack granted worn storage");
+            check(catalog.resolve("itm_backpack","i_backpack").grid.h==8,"kind overrode exact section");
+            check(catalog.resolve("equ_tourist_pack","").grid.h==15,"tourist catalog capacity");
+            check(catalog.resolve("addon_pack","i_backpack").grid.w==11,"kind fallback lost width");
+            check(catalog.resolve("addon_pack","unknown").grid.w==7&&catalog.resolve("addon_pack","unknown").grid.h==10,"default fallback");
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));

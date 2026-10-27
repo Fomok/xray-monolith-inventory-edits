@@ -4,6 +4,28 @@ local commands = {}
 local crate_id,loot_id
 local changing,condition_tick=false,0
 local npc_id,corpse_loot_id
+local capacity_rifle,capacity_pack
+local function capacity_spawn_rifle()
+    local a=db.actor;local item=alife():create("wpn_ak74",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
+    assert(item,"capacity rifle spawn failed");capacity_rifle=item.id
+end
+local function capacity_ruck_rifle()
+    local item=level.object_by_id(capacity_rifle);assert(item,"capacity rifle not online")
+    db.actor:move_to_ruck(item)
+end
+local function capacity_spawn_pack()
+    local a=db.actor;local item=alife():create("itm_backpack",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
+    assert(item,"capacity backpack spawn failed");capacity_pack=item.id
+end
+local function capacity_equip_pack()
+    local item=level.object_by_id(capacity_pack);assert(item,"capacity backpack not online")
+    if not db.actor:item_in_slot(13) then assert(ActorMenu.get_actor_menu():ToSlot(item,true,13),"capacity backpack equip failed") end
+    assert(db.actor:item_in_slot(13) and db.actor:item_in_slot(13):id()==capacity_pack,"wrong backpack equipped")
+end
+local function capacity_ruck_pack()
+    local item=db.actor:item_in_slot(13);assert(item and item:id()==capacity_pack,"capacity backpack missing")
+    db.actor:move_to_ruck(item)
+end
 local function spawn_npc()
     local a=db.actor;local pos=a:position();pos.x=pos.x+1.2
     local npc=alife():create("sim_default_stalker_1",pos,a:level_vertex_id(),a:game_vertex_id())
@@ -250,6 +272,19 @@ function on_game_start()
         commands[#commands+1]="screenshot sqa3_corpse_after"
         commands[#commands+1]=snapshot
         commands[#commands+1]="save "..save
+    end
+    if args:find("-sqa3-fixture-capacity",1,true) then
+        commands[#commands+1]=capacity_spawn_rifle
+        commands[#commands+1]=capacity_ruck_rifle
+        commands[#commands+1]="inventory_next_probe capacity"
+        commands[#commands+1]=capacity_spawn_pack
+        commands[#commands+1]=capacity_equip_pack
+        commands[#commands+1]="inventory_next_probe capacity"
+        commands[#commands+1]=capacity_ruck_pack
+        commands[#commands+1]="inventory_next_probe capacity"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_capacity"
     end
     commands[#commands+1]="quit"
     printf("[SQA3 AUTORUN] registered isolated native fixture")
