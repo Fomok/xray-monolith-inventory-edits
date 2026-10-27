@@ -32,6 +32,7 @@
 #include "trade.h"
 #include "InventoryOwner.h"
 #include "entity_alive.h"
+#include "CustomOutfit.h"
 #include "script_callback_ex.h"
 #include "script_game_object.h"
 #include "game_object_space.h"
@@ -308,7 +309,7 @@ void InventoryNextPickupForget(u16 live) noexcept try {
         for(const auto& record:purchase->records)if(record.live==live)pickup_fault=true;
     pending_pickups.erase(live);
 } catch (...) {pickup_fault=true;}
-bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source) noexcept try {
+bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
     if(pickup_fault||pickup_transaction||purchase||!InventoryNextLayoutSync())return false;
@@ -320,6 +321,21 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source) noexcept try {
     if(source==0xffff?actual_parent!=nullptr:(!actual_parent||actual_parent->ID()!=source))return false;
     if(source!=0xffff&&!InventoryNextStrictOwnedPickup())return false;
     if(!Actor()->inventory().CanTakeItem(item)){InventoryNextPickupStatus("Item cannot be taken. Source unchanged.");return false;}
+    if(slot!=0xffff) {
+        auto& inventory=Actor()->inventory();
+        if(source==0xffff||slot==NO_ACTIVE_SLOT||slot>=48||slot>inventory.LastSlot()||!inventory.CanPutInSlot(item,slot)) {
+            InventoryNextPickupStatus("Equipment slot unavailable. Item stayed at source.");return false;
+        }
+        // Outfits can displace other equipment. Those compound changes need a
+        // separate transaction; never silently push an existing item into recovery.
+        auto outfit=smart_cast<CCustomOutfit*>(item);
+        if(slot==OUTFIT_SLOT&&outfit&&
+           (!inventory.m_belt.empty()||
+            (!outfit->bIsHelmetAvaliable&&inventory.ItemFromSlot(HELMET_SLOT))||
+            (!outfit->bIsBackpackAvaliable&&inventory.ItemFromSlot(BACKPACK_SLOT)))) {
+            InventoryNextPickupStatus("Unequip conflicting gear before taking this outfit.");return false;
+        }
+    }
     const auto id=InventoryNextIdentity(live);if(!id)return false;
     InventoryNextIdentityOnline(*item);
     Node n;n.id=id;n.parent=2;
@@ -331,6 +347,10 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source) noexcept try {
     n.empty=n.half=n.full={shape.x2,shape.y2};
     n.attributes["native_section"]=item->m_section_id.c_str();n.attributes["native_live_id"]=std::to_string(live);
     n.attributes["native_place"]="3";n.attributes["native_slot"]=std::to_string(item->CurrSlot());
+    if(slot!=0xffff) {
+        n.wear_slots=std::uint64_t{1}<<slot;
+        n.attributes["native_place"]="1";n.attributes["native_slot"]=std::to_string(slot);
+    }
     if(smart_cast<CBackpack*>(item)) {
         StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
         const std::string section=item->m_section_id.c_str();
@@ -347,7 +367,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source) noexcept try {
     if(source!=0xffff&&(!registry->add(2)||!registry->bind(2,source)))return false;
     if(!registry->add(id)||!registry->bind(id,live))return false;
     auto transaction=std::make_unique<GroundPickup>(*registry);
-    const auto result=transaction->prepare(layout().model(),n,destinations,source==0xffff);
+    const auto result=transaction->prepare(layout().model(),n,destinations,source==0xffff,slot==0xffff?0:n.wear_slots);
     if(!result){Msg("! SQA3 %s pickup refused live=%u reason=%s; source retained",source==0xffff?"ground":"owned",live,result.error.c_str());InventoryNextPickupStatus("No space. Item stayed at source.");return false;}
     pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);pickup_source=source;
     Msg("* SQA3 %s pickup reserved live=%u; save blocked=%d",source==0xffff?"ground":"owned",live,!InventoryNextPickupCanSave());
@@ -374,15 +394,30 @@ void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
 } catch (...) {pickup_fault=true;Msg("! SQA3 pickup acknowledgement exception; saves blocked");}
 void InventoryNextPickupTaken(u16 live) noexcept try {
     if(!pending_pickups.count(live))return;
+    const auto expected=pending_pickups.at(live);
     pending_pickups.erase(live);
     if(!InventoryNextLayoutSync()){pickup_fault=true;return;}
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
-    if(found==layout().model().nodes().end()||found->second.location==inventory_next::Location::Overflow) {
+    if(found==layout().model().nodes().end()||found->second.location==inventory_next::Location::Overflow||
+       (expected.location==inventory_next::Location::Equipment&&
+        (found->second.location!=expected.location||found->second.equipped_slots!=expected.equipped_slots))) {
         pickup_fault=true;Msg("! SQA3 ordinary pickup lost reserved placement; saves blocked");return;
     }
     InventoryNextPickupStatus(nullptr);
     Msg("* SQA3 pickup client acknowledged live=%u; pending=%u save_ready=%d",live,static_cast<unsigned>(pending_pickups.size()),InventoryNextPickupCanSave());
 } catch (...) {pickup_fault=true;}
+
+u16 InventoryNextPickupSlot(u16 owner,u16 live) noexcept try {
+    if(!Actor()||owner!=Actor()->ID())return 0xffff;
+    const auto pending=pending_pickups.find(live);
+    if(pending==pending_pickups.end()||pending->second.location!=inventory_next::Location::Equipment)return 0xffff;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    for(u16 slot=1;slot<48;++slot)if(pending->second.equipped_slots==(std::uint64_t{1}<<slot)) {
+        if(item&&slot<=Actor()->inventory().LastSlot()&&Actor()->inventory().CanPutInSlot(item,slot))return slot;
+        break;
+    }
+    pickup_fault=true;InventoryNextPickupStatus("Equipment changed during transfer. Saving blocked.");return 0xffff;
+} catch (...) {pickup_fault=true;return 0xffff;}
 
 
 bool InventoryNextStrictOwnedPickup() noexcept {
@@ -393,12 +428,13 @@ void InventoryNextPickupStatus(const char* text) noexcept try {
     auto& menu=CurrentGameUI()->GetActorMenu();menu.m_sqaRefresh=true;menu.m_sqaRetryAfter=Device.dwTimeGlobal+250;
     if(text&&menu.m_sqaStatus)menu.m_sqaStatus->TextItemControl()->SetText(text);
 } catch (...) {Msg("! SQA3 acquisition status refresh failed");}
-bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept try {
+bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot) noexcept try {
     if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||source==0xffff)return false;
     const auto source_identity=InventoryNextIdentity(source),item_identity=InventoryNextIdentity(live);
     if(!source_identity||!item_identity){InventoryNextPickupStatus("Item unavailable. Transfer cancelled.");return true;}
     NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_ACQUIRE,owner);
     packet.w_u16(source);packet.w_u16(live);packet.w_u64(source_identity);packet.w_u64(item_identity);
+    packet.w_u16(slot);
     // Local single-player dispatch may finish synchronously. Set the pending
     // label first so the resulting refusal/acceptance remains visible.
     InventoryNextPickupStatus("Checking storage...");CGameObject::u_EventSend(packet);return true;

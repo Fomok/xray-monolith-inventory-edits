@@ -108,6 +108,7 @@ void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,
     if(!InventoryNextStrictOwnedPickup()||game->Type()!=eGameIDSingle||!Actor()||owner!=Actor()->ID())return;
     const u16 source=P.r_u16(),live=P.r_u16();
     u64 expected_source,expected_item;P.r_u64(expected_source);P.r_u64(expected_item);
+    const u16 slot=P.r_u16();
     auto from=game->get_entity_from_eid(source);auto to=game->get_entity_from_eid(owner);auto item=game->get_entity_from_eid(live);
     if(!from||!to||!item||source==owner||item->ID_Parent!=source||
        !is_object_valid_on_svclient(source)||!is_object_valid_on_svclient(owner)||!is_object_valid_on_svclient(live)) {
@@ -118,7 +119,7 @@ void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,
     if(!expected_source||!expected_item||InventoryNextIdentity(source)!=expected_source||InventoryNextIdentity(live)!=expected_item) {
         InventoryNextPickupStatus("Source changed. Transfer cancelled.");return;
     }
-    if(!InventoryNextPickupPrepare(owner,live,source))return;
+    if(!InventoryNextPickupPrepare(owner,live,source,slot))return;
     NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_TRADE_SELL);reject.w_u16(source);reject.w_u16(live);
     if(!Process_event_reject(reject,sender,time,source,live,false)) {
         InventoryNextPickupFinish(owner,live,false);return;

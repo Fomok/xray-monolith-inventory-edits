@@ -9,7 +9,8 @@ namespace inventory_next {
 class GroundPickup {
 public:
     explicit GroundPickup(const EntityRegistry& registry):registry_(registry) {}
-    Result prepare(const Model& carried,Node incoming,const std::vector<Id>& destinations,bool ground_source=true) {
+    Result prepare(const Model& carried,Node incoming,const std::vector<Id>& destinations,bool ground_source=true,
+                   std::uint64_t equipment_slots=0) {
         if(transfer_)return {false,"transfer_busy"};
         if(carried.nodes().count(incoming.id))return {false,"duplicate_item"};
         std::vector<Node> nodes;
@@ -22,14 +23,19 @@ public:
         for(auto& n:nodes)if(n.id==2)n.grid={64,64};
         nodes.push_back(incoming);
         auto result=model_.initialize(nodes);if(!result)return result;
-        const auto plan=find_placement(model_,incoming.id,destinations);
-        if(!plan.result)return plan.result;
+        Command command;command.item=incoming.id;
+        if(equipment_slots) {
+            command.operation=Operation::Equip;command.destination=1;command.slots=equipment_slots;
+        } else {
+            const auto plan=find_placement(model_,incoming.id,destinations);
+            if(!plan.result)return plan.result;
+            command.destination=plan.moves[0].destination;command.position=plan.moves[0].position;
+        }
         access_=std::make_unique<AccessGate>(model_);
         result=access_->observe(2,true,true);if(!result)return result;
         result=access_->observe_item(incoming.id,true,true);if(!result)return result;
         const auto actor=registry_.handle(1);if(!actor)return {false,"offline_actor"};
-        Command command;command.item=incoming.id;command.destination=plan.moves[0].destination;
-        command.position=plan.moves[0].position;command.session=model_.session();command.revision=model_.revision();
+        command.session=model_.session();command.revision=model_.revision();
         transfer_=std::make_unique<TransferSession>(model_,*access_,registry_);
         TransferSession::PhysicalOwners physical;physical.destination=actor;
         result=transfer_->prepare({command,access_->revision()},ground_source,physical);

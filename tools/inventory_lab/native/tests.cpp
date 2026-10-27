@@ -927,6 +927,31 @@ int main(int argc,char** argv) {
             GroundPickup pending(registry);yes(pending.prepare(layout.model(),incoming,{1},false));
             yes(registry.unbind(*registry.handle(2)));no(pending.acknowledge(11,true),"stale_entity");check(!pending.can_save(),"vanished owned source allowed save");
         });
+        test("owned direct equip bypasses full grid and reserves the empty equipment slot",[]{
+            ActorLayout layout;auto existing=item(100,1,38);existing.attributes["native_section"]="bandage";
+            yes(layout.reconcile({existing},{{1,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100},Id{101},Id{102}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            auto incoming=item(101,2,810);incoming.wear_slots=4;incoming.empty=incoming.half=incoming.full={2,2};
+            const auto before=layout.model().serialize();GroundPickup bag_attempt(registry);
+            no(bag_attempt.prepare(layout.model(),incoming,{1},false),"no_fit");
+            GroundPickup equip(registry);yes(equip.prepare(layout.model(),incoming,{},false,4));
+            check(!equip.can_save()&&layout.model().serialize()==before,"pending equip changed live actor");
+            yes(equip.acknowledge(11,true));yes(layout.restore(equip.model().serialize()));
+            check(layout.model().nodes().at(101).location==Location::Equipment&&layout.model().nodes().at(101).equipped_slots==4,"direct equip occupied bag capacity");
+            check(layout.model().carried_mass()==848,"direct equip mass mismatch");
+            incoming.id=102;GroundPickup occupied(registry);
+            const auto full=layout.model().serialize();check(!occupied.prepare(layout.model(),incoming,{},false,4),"second item stole reserved slot");
+            check(layout.model().serialize()==full,"occupied slot refusal mutated actor");
+        });
+        test("direct equip native refusal retains source and invalid slot cannot dispatch",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            auto incoming=item(100,2,810);incoming.wear_slots=4;
+            GroundPickup invalid(registry);check(!invalid.prepare(layout.model(),incoming,{},false,8),"unsupported slot admitted");
+            GroundPickup refused(registry);yes(refused.prepare(layout.model(),incoming,{},false,4));
+            no(refused.acknowledge(12,false),"native_rejected");
+            check(refused.can_save()&&refused.model().nodes().at(100).parent==2&&refused.model().nodes().at(100).location==Location::Grid,"native equip refusal lost source");
+        });
         test("purchase reserves whole batch and publishes only after ownership and money",[]{
             ActorLayout layout;yes(layout.reconcile({},{{2,1},{},true}));
             EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100},Id{101}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}

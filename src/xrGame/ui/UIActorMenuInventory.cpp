@@ -719,6 +719,15 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 	PIItem iitem = (PIItem)itm->m_pData;
 
 	bool b_own_item = (iitem->parent_id() == m_pActorInvOwner->object_id());
+    if(InventoryNextStrictOwnedPickup()) {
+        if(!b_own_item) {
+            if(slot_id==NO_ACTIVE_SLOT||m_currMenuMode==mmTrade)return false;
+            return InventoryNextRequestOwnedPickup(iitem->parent_id(),m_pActorInvOwner->object_id(),iitem->object_id(),slot_id);
+        }
+        if(!InventoryNextPickupCanSave()) {
+            InventoryNextPickupStatus("Finish the pending transfer before changing equipment.");return false;
+        }
+    }
 	if (slot_id == HELMET_SLOT)
 	{
 		CCustomOutfit* pOutfit = m_pActorInvOwner->GetOutfit();

@@ -147,6 +147,14 @@ void CInventory::Take(CGameObject* pObj, bool bNotActivate, bool strict_placemen
 	if (!strict_placement)
 		pIItem->m_ItemCurrPlace.type = eItemPlaceUndefined;
 
+    // A server-acknowledged direct equip reserves its final slot. Apply it
+    // before the normal Take placement and before acknowledging the client.
+    const u16 sqa_slot=InventoryNextPickupSlot(m_pOwner->object_id(),pObj->ID());
+    if(sqa_slot!=0xffff) {
+        pIItem->m_ItemCurrPlace.type=eItemPlaceSlot;
+        pIItem->m_ItemCurrPlace.slot_id=sqa_slot;
+    }
+
 	bool result = false;
 	switch (pIItem->m_ItemCurrPlace.type)
 	{

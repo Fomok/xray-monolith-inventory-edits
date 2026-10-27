@@ -24,14 +24,15 @@ int InventoryNextStorageCell(int x,int y) noexcept;
 
 // Opt-in ground ownership path; trade/loot pre-detach admission is separate.
 bool InventoryNextStrictPickup() noexcept;
-bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source=0xffff) noexcept;
+bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source=0xffff,u16 slot=0xffff) noexcept;
+u16 InventoryNextPickupSlot(u16 owner,u16 live) noexcept;
 void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept;
 void InventoryNextPickupTaken(u16 live) noexcept;
 void InventoryNextPickupForget(u16 live) noexcept;
 bool InventoryNextPickupCanSave() noexcept;
 
 bool InventoryNextStrictOwnedPickup() noexcept;
-bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept;
+bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot=0xffff) noexcept;
 void InventoryNextPickupStatus(const char* text) noexcept;
 
 class CTrade;
