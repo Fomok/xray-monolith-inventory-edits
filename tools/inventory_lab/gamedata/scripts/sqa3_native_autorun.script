@@ -269,6 +269,20 @@ function on_game_start()
     if args:find("-sqa3-fixture-ground",1,true) then
         local sources={}
         commands={"inventory_next_probe export",snapshot}
+        if args:find("-sqa3-fixture-ground-reload",1,true) then
+            commands[#commands+1]=function()
+                local expected=args:match("%-sqa3%-fixture%-ground%-sources=([%d,]+)")
+                if not expected then return end
+                local count=0
+                for value in expected:gmatch("%d+") do
+                    local id=tonumber(value);local item=level.object_by_id(id)
+                    assert(item and not item:parent() and item:section()=="bandage","refused source lost or acquired across reload")
+                    assert(math.abs(item:weight()*1000-38)<0.01 and item:condition()==1,"refused source state changed")
+                    printf("[SQA3 AUTORUN] reloaded refused source live=%s grams=38 condition=1",value);count=count+1
+                end
+                assert(count==2,"reload needs two refused source identities")
+            end
+        end
         if not args:find("-sqa3-fixture-ground-reload",1,true) then
             commands[#commands+1]=function()
                 local a=db.actor;local pos=a:position();pos.x=pos.x+2

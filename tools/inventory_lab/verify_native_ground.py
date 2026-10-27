@@ -11,6 +11,7 @@ ap.add_argument("log", type=Path)
 ap.add_argument("export", type=Path)
 ap.add_argument("--baseline", type=Path, required=True)
 ap.add_argument("--reload", action="store_true")
+ap.add_argument("--verify-sources", action="store_true")
 ap.add_argument("--previous", type=Path)
 ap.add_argument("--output", type=Path, required=True)
 a = ap.parse_args()
@@ -40,6 +41,12 @@ else:
     previous, _ = read(a.previous)
     assert items == previous, "native state/placement changed after restart"
     report["exact_item_reload"] = True
+    if a.verify_sources:
+        previous_log=a.previous.with_suffix(".log").read_text(errors="replace")
+        refused=set(re.findall(r"SQA3 ground pickup refused live=(\d+)",previous_log))
+        retained=re.findall(r"reloaded refused source live=(\d+) grams=38 condition=1",log)
+        assert len(refused)==len(retained)==2 and set(retained)==refused
+        report["refused_sources_preserved_after_reload"]=sorted(refused)
 report["limits"] = "Opt-in ground pickup only. Corpse/container/trade pre-detach admission and loaded world subtrees remain unfinished."
 a.output.write_text(json.dumps(report, indent=2)+"\n")
 print(json.dumps(report))
