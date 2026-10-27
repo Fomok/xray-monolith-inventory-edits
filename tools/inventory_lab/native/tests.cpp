@@ -1,7 +1,9 @@
 #include "model.h"
 #include "access_gate.h"
 #include "identity_ledger.h"
+#include "identity_state.h"
 #include "transfer_session.h"
+#include "presentation.h"
 #include "persistence.h"
 #include <cstdlib>
 #include <fstream>
@@ -92,6 +94,60 @@ int main(int argc,char** argv) {
             yes(transfer.prepare({c,access.revision()}));yes(transfer.dispatch(event));Command changed;c.revision=m.revision();
             changed.operation=Operation::SetMass;changed.item=10;changed.mass=8;changed.session=m.session();yes(m.execute(changed));
             no(transfer.acknowledge(event.token,2,true),"stale_model");check(m.carried_mass()==8&&!transfer.can_save(),"stale acknowledgment overwrote live state");
+        });
+        test("dismantling consumes once and retains all outputs with visible remainder",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),item(10,1,30)}));
+            auto a=item(11,1,10);a.attributes={{"part","barrel:0.75"}};auto b=item(12,1,12);b.attributes={{"part","bolt:0.50"}};
+            yes(m.recover_recipe({10},{a,b},1,0,m.session()));check(!m.nodes().count(10)&&m.nodes().size()==3&&m.revision()==1,"recipe consumed or published incorrectly");
+            check(m.nodes().at(11).location==Location::Grid&&m.nodes().at(12).location==Location::Overflow&&m.carried_mass()==22,"recipe output lost or capacity invented");
+            Presentation view;view.synchronize(m,1,{});view.open(m,1);auto layout=view.overflow_layout(m,1);check(layout.tiles.size()==1&&layout.rows==1,"recipe remainder hidden");
+            auto saved=m.serialize();Model n;yes(n.deserialize(saved));check(n.serialize()==saved&&n.nodes().at(12).attributes==b.attributes,"recovered part state lost");
+        });
+        test("invalid dismantling output rolls back input outputs IDs and revision",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),item(10,1,30)}));auto old=m.serialize();
+            auto a=item(11,1,10);auto invalid=item(12,1,-1);
+            no(m.recover_recipe({10},{a,invalid},1,0,m.session()),"identity_or_mass");check(m.serialize()==old&&m.high_water_id()==10,"partial recipe escaped");
+        });
+        test("forced arrival remains visible owned full-size overflow and survives save",[]{
+            auto actor=root(1,Kind::ActorRoot,{2,2});actor.allowed_slots=1;actor.equipment_accepts=1;actor.equipment_capacity=1;
+            Model m;yes(m.initialize({actor,root(2,Kind::WorldRoot)}));auto rifle=item(10,1,3500);rifle.empty={5,2};rifle.wear_slots=1;rifle.attributes={{"ammo","retained"}};
+            Command c;c.operation=Operation::Spawn;c.spawned=rifle;c.session=m.session();no(m.execute(c),"bounds");
+            yes(m.recover_native_arrival(rifle,0,m.session()));check(m.carried_mass()==3500&&m.footprint(10).w==5,"overflow lost mass or shrank item");
+            Presentation view;view.synchronize(m,1,{});check(view.open(m,1),"panel failed");check(view.visible_items(m,1).empty()&&view.overflow_items(m,1).size()==1,"overflow hidden or legal grid occupied");
+            auto display=view.overflow_layout(m,1);check(display.columns==5&&display.rows==2&&m.nodes().at(1).grid.w==2,"overflow display changed legal grid or shrank rifle");
+            auto saved=m.serialize();Model restored;yes(restored.deserialize(saved));check(restored.serialize()==saved&&restored.nodes().at(10).location==Location::Overflow,"overflow save lost state");
+            rollback(m,{10,1,{0,2,false},1},"bounds");
+            c.operation=Operation::Equip;c.item=10;c.destination=1;c.slots=1;c.revision=1;yes(m.execute(c));check(m.carried_mass()==3500&&m.nodes().at(10).attributes.at("ammo")=="retained","overflow equip changed item");
+        });
+        test("overflow recovery cannot silently pick up world or become manual capacity",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),root(2,Kind::WorldRoot),item(10,1,5),item(20,2,7)}));
+            auto old=m.serialize();no(m.recover_owned_overflow(20,1,0,m.session()),"recovery_ownership");check(m.serialize()==old,"recovery picked up stash/world item");
+            yes(m.recover_owned_overflow(10,1,0,m.session()));check(m.carried_mass()==5,"recovery dropped owned item");
+            Command c;c.operation=Operation::Spawn;c.spawned=item(30,1,9);c.spawned.location=Location::Overflow;c.session=m.session();c.revision=1;no(m.execute(c),"recovery_only");
+            yes(move(m,{10,1,{0,0,false},1}));check(m.nodes().at(10).location==Location::Grid,"overflow could not return to legal space");
+        });
+        test("forced overweight recovery counts all mass while voluntary pickup remains blocked",[]{
+            auto actor=root(1,Kind::ActorRoot,{2,2});actor.max_contents=10;
+            Model m;yes(m.initialize({actor,root(2,Kind::WorldRoot),item(10,1,5),item(20,2,1)}));
+            yes(m.recover_native_arrival(item(30,1,20),0,m.session()));check(m.carried_mass()==25,"overweight recovery lost mass");
+            rollback(m,{20,1,{1,0,false},1},"mass_capacity");yes(move(m,{30,2,{2,0,false},1}));check(m.carried_mass()==5,"overflow drop did not subtract exact mass");
+        });
+        test("splitting recovered stack creates only legal grid placement",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot,{1,1}),root(2,Kind::WorldRoot),item(10,1,5)}));
+            auto ammo=item(20,1,2);ammo.type=1;ammo.stack_limit=10;ammo.quantity=6;yes(m.recover_native_arrival(ammo,0,m.session()));
+            Command split;split.operation=Operation::Split;split.item=20;split.new_id=21;split.destination=1;split.quantity=2;split.session=m.session();split.revision=1;
+            auto old=m.serialize();no(m.execute(split),"overlap");check(m.serialize()==old,"split manufactured overflow capacity");
+            yes(move(m,{10,2,{0,0,false},1}));split.revision=2;yes(m.execute(split));check(m.nodes().at(21).location==Location::Grid&&m.nodes().at(20).location==Location::Overflow&&m.carried_mass()==12,"split lost ownership or location");
+        });
+        test("native callback remap before delayed destroy invalidates old handles",[]{
+            IdentityState state;Id id=0;yes(state.enroll(42,id));yes(state.online(42,1000));auto old=*state.registry().handle(id);
+            yes(state.remap(42,84));check(!state.registry().resolve(old),"remap retained stale online handle");
+            yes(state.online(84,2000));auto current=*state.registry().handle(id);yes(state.offline(42,1000));
+            check(state.registry().resolve(current)==id,"delayed old destroy unbound replacement");
+            yes(state.offline(84,1000));check(state.registry().resolve(current)==id,"wrong lifetime unbound live object");
+            yes(state.offline(84,2000));check(!state.registry().resolve(current)&&state.ledger().lookup(84)==id,"offline retired persistent identity");
+            yes(state.online(84,3000));auto before_load=*state.registry().handle(id);yes(state.restore(state.ledger().serialize()));
+            check(!state.registry().resolve(before_load)&&state.ledger().lookup(84)==id,"load kept online handle or lost identity");
         });
         test("native identity survives save restore remap and retires reused server IDs",[]{
             IdentityLedger ledger;Id first=0,again=0;yes(ledger.enroll(42,first));yes(ledger.enroll(42,again));check(first==again,"identity changed");

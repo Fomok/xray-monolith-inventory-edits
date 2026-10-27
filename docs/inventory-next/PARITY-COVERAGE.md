@@ -5,7 +5,7 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment: 54 core checks per build, 29 runner integrations; presentation 7, registry 5 and placement 5 scenario groups per build. Real-content geometry:2353 cases/56 fixtures. See MILESTONE-4.md. Native read-only probe wired for CI compilation; no game launch or ownership adapter integration.
+Current increment:66 core checks per build,31runner integrations,10offscreen checks; shared presentation/registry/placement/drag checks. See OVERFLOW.md,NATIVE-IDENTITY.md,NATIVE-TRANSFERS.md. Full DX11-AVX CI40434583470 passed earlier0bb50dfb; latest native changes pending compile. No game launch or ownership adapter completion.
 
 | ID | Accepted behavior | Current evidence / remaining work |
 |---|---|---|
@@ -15,7 +15,7 @@ Current increment: 54 core checks per build, 29 runner integrations; presentatio
 | I04 | All native equipment slots, including knife and pistol | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | I05 | Equipment outside grids; grouped arrows | Core slot masks, incompatible layers, multiple members, view-only cycling and equipped bag expansion tested; native slot mapping/UI OPEN |
 | I06 | Capacity enforcement on all acquisition paths | Core Spawn/batches validate; actual item producers not hooked |
-| I07 | Full-grid policy and protected items | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| I07 | Full-grid policy and protected items | Strict ordinary pickup; explicit owned recovery overflow tested, no manual overflow capacity. Native forced-arrival/protected-item policy and per-container recovery OPEN |
 | I08 | Manual placement and rotation persistence | Core rotation/placement persistence and diagnostic image tested; interactive drag OPEN |
 | I09 | Valid/invalid/swap/overflow/new-item highlights | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | I10 | Finite stack ceilings and overrides | Per-type stack ceiling tested; actual catalog and context overrides OPEN |
@@ -96,3 +96,5 @@ Current increment: 54 core checks per build, 29 runner integrations; presentatio
 5. Native interactive inventory views, scroll/collapse/selection/actions, localization/settings and upstream-compatible integration build. Validate with real game only under separate launch authorization.
 
 The current GDI tool is a read-only diagnostic renderer; it does not implement game UI, live textures, input, camera capture or engine rendering. Ordered batches validate each intermediate stage; simultaneous occupied-cell permutations use relocate(), which validates final state once. AccessGate currently guards single commands only; batches must not be exposed to untrusted world interactions before a guarded compound-transaction adapter exists.
+
+Confirmed user policy27October2026 supersedes old blanket dismantling refusal: consume once, legally place outputs that fit, retain every remainder visibly in recovery. Core recipe transaction tested; native recipe hooks OPEN.

@@ -2061,6 +2061,11 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <ObjectFileName>$(IntDir)inventory_next_drag_session.obj</ObjectFileName>
     </ClCompile>
+    <ClCompile Include="..\inventory_next\recovery.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ObjectFileName>$(IntDir)inventory_next_recovery.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="InventoryNextProbe.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ExceptionHandling>Sync</ExceptionHandling>

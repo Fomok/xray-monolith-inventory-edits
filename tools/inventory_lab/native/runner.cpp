@@ -191,7 +191,7 @@ struct Lab {
                 first=false;
                 file<<"{\"id\":"<<n.id<<",\"parent\":"<<n.parent<<",\"type\":"<<n.type<<",\"state\":"<<n.state
                     <<",\"quantity\":"<<n.quantity<<",\"equipped\":"<<(n.location==Location::Equipment?"true":"false")
-                    <<",\"slots\":"<<n.equipped_slots<<",\"mount\":"<<n.mounted_slot<<",\"condition\":"<<n.condition<<",\"group\":"<<n.presentation_group<<",\"x\":"<<n.position.x
+                    <<",\"overflow\":"<<(n.location==Location::Overflow?"true":"false")<<",\"slots\":"<<n.equipped_slots<<",\"mount\":"<<n.mounted_slot<<",\"condition\":"<<n.condition<<",\"group\":"<<n.presentation_group<<",\"x\":"<<n.position.x
                     <<",\"y\":"<<n.position.y<<",\"width\":"<<n.footprint.w<<",\"height\":"<<n.footprint.h
                     <<",\"gross_grams\":"<<n.gross_mass<<'}';
             }
@@ -205,7 +205,7 @@ struct Lab {
         }
         Command c;c.session=old_session?captured_session:model.session();
         std::string op=t[0];
-        if(op=="spawn") {
+        if(op=="spawn"||op=="recover_spawn") {
             count(9);c.operation=Operation::Spawn;require(definitions.count(t[2])!=0,"unknown_definition");
             c.spawned=definitions.at(t[2]);c.spawned.id=number<Id>(t[1]);c.spawned.parent=number<Id>(t[3]);
             c.spawned.position={number<int>(t[4]),number<int>(t[5]),boolean(t[6])};c.revision=number<std::uint64_t>(t[7]);
@@ -236,7 +236,8 @@ struct Lab {
         }
         auto before=model.serialize();auto epoch=model.session();Result r{false,{}};Mass projected=-1;
         AccessGate::Ticket ticket{c,old_access?captured_access:access.revision()};
-        if(preview) {auto p=guarded?access.preview(ticket):model.preview(c);r=p.result;projected=p.carried_mass;}
+        if(op=="recover_spawn") {require(!guarded&&!preview,"explicit_recovery_only");r=model.recover_native_arrival(c.spawned,c.revision,c.session);}
+        else if(preview) {auto p=guarded?access.preview(ticket):model.preview(c);r=p.result;projected=p.carried_mass;}
         else r=guarded?access.execute(ticket):model.execute(c);
         std::string actual=r.ok?"ok":r.error;bool pass=actual==t.back();
         if(preview||!r) require(model.serialize()==before&&model.session()==epoch,"rollback_invariant");

@@ -1,0 +1,16 @@
+SQA3_SCENARIO 1
+root 1 actor 2 2 0 1
+root 2 world 8 8 0 1
+definition rifle 3500 1 5 2 5 2 5 2 0 0 0 0 1 0
+attribute_definition rifle native_section rifle_preserved
+begin
+spawn 10 rifle 1 0 0 0 0 bounds
+recover_spawn 10 rifle 1 0 0 0 0 ok
+assert mass 3500
+assert footprint 10 5 2
+move 10 1 0 2 0 1 bounds
+save overflow
+load overflow
+assert mass 3500
+assert footprint 10 5 2
+snapshot overflow

@@ -107,6 +107,26 @@ Id Presentation::selected(unsigned value) const {
 std::vector<PanelState> Presentation::panels(const Model& m) const {
     return current(m) ? panels_ : std::vector<PanelState>{};
 }
+OverflowLayout Presentation::overflow_layout(const Model& m,Id id) const {
+    OverflowLayout layout;const auto items=overflow_items(m,id);if(items.empty())return layout;
+    layout.columns=m.nodes().at(id).grid.w;
+    for(const auto& item:items)layout.columns=std::max(layout.columns,item.footprint.w);
+    int x=0,y=0,height=0;
+    for(const auto& item:items) {
+        if(x+item.footprint.w>layout.columns){x=0;y+=height;height=0;}
+        layout.tiles.push_back({item,{x,y,false}});x+=item.footprint.w;height=std::max(height,item.footprint.h);
+    }
+    layout.rows=y+height;return layout;
+}
+std::vector<ItemView> Presentation::overflow_items(const Model& m,Id id) const {
+    std::vector<ItemView> result;
+    if(!current(m)||!accessible(m,id))return result;
+    for(const auto& panel:panels_)if(panel.container==id&&!panel.collapsed) {
+        for(const auto& item:m.snapshot())if(item.parent==id&&item.location==Location::Overflow)result.push_back(item);
+        break;
+    }
+    return result;
+}
 std::vector<ItemView> Presentation::visible_items(const Model& m, Id id) const {
     std::vector<ItemView> result;
     if (!current(m) || !accessible(m, id)) return result;

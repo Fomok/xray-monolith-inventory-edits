@@ -63,7 +63,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         if (!n.quantity || !n.stack_limit || n.stack_limit > 1000000 || n.quantity > n.stack_limit ||
             (n.stack_limit > 1 && (!n.type || n.container || n.wear_slots)) ||
             n.intrinsic > max_mass / n.quantity) return bad("stack_definition");
-        if (n.location != Location::Grid && n.location != Location::Equipment && n.location != Location::Mounted) return bad("location");
+        if (n.location != Location::Grid && n.location != Location::Equipment && n.location != Location::Mounted && n.location != Location::Overflow) return bad("location");
         if(n.condition>10000||n.max_stack_quantity>1000000||n.mounts.size()>64||n.compartment_names.size()>64||n.attributes.size()>32)return bad("metadata");
         for(const auto& [key,value]:n.attributes){if(!key_ok(key)||value.size()>1024)return bad("metadata");metadata_bytes+=key.size()+value.size();}
         if(metadata_bytes>65536)return bad("metadata_budget");
@@ -83,8 +83,8 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
             auto p = nodes.find(n.parent);
             if (p == nodes.end() || !p->second.container) return bad("parent");
             if (!n.category || (n.category & (n.category - 1))) return bad("category");
-            if (!(p->second.accepts & n.category)) return bad("restriction");
-            if(p->second.max_stack_quantity&&n.quantity>p->second.max_stack_quantity)return bad("container_stack_limit");
+            if (n.location!=Location::Overflow && !(p->second.accepts & n.category)) return bad("restriction");
+            if(n.location!=Location::Overflow&&p->second.max_stack_quantity&&n.quantity>p->second.max_stack_quantity)return bad("container_stack_limit");
             if (n.location == Location::Equipment) {
                 const Node& owner = p->second;
                 if (owner.kind != Kind::ActorRoot || n.quantity != 1 || !n.wear_slots ||
@@ -101,6 +101,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
                 if(!((n.empty.w<=slot->footprint.w&&n.empty.h<=slot->footprint.h)||
                     (n.empty.h<=slot->footprint.w&&n.empty.w<=slot->footprint.h)))return bad("mount_fit");
             }
+            if(n.location==Location::Overflow && (p->second.kind!=Kind::ActorRoot || n.position.x || n.position.y || n.position.rotated))return bad("overflow_owner");
             children[n.parent].push_back(id);
         } else if (n.kind == Kind::ActorRoot || n.kind == Kind::WorldRoot) {
             if (n.parent || !n.container || n.soft || n.intrinsic || n.category ||
@@ -139,6 +140,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         Derived d{n.empty, n.intrinsic * n.quantity, 1};
         int used = 0;
         int granted_capacity = 0;
+        Mass overflow_mass = 0;
         std::vector<const Node*> equipped;
         std::map<Id,bool> mounted;
         std::vector<std::pair<Position, Size>> rectangles;
@@ -151,6 +153,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
             d.mass += cd.mass;
             d.depth = std::max(d.depth, cd.depth + 1);
             if (d.depth > 64) return bad("depth");
+            if(c.location==Location::Overflow){overflow_mass+=cd.mass;continue;}
             if(c.location==Location::Mounted){
                 if(!mounted.emplace(c.mounted_slot,true).second)return bad("mount_occupied");
                 // Count occupied granted cells once, excluding the pouch shell.
@@ -184,7 +187,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
             rectangles.push_back({p, s});
             used += s.w * s.h;
         }
-        if (n.max_contents && d.mass - n.intrinsic > n.max_contents) return bad("mass_capacity");
+        if (n.max_contents && d.mass - n.intrinsic - overflow_mass > n.max_contents) return bad("mass_capacity");
         int capacity=n.grid.w*n.grid.h;
         if (!n.cells.empty()) capacity=static_cast<int>(std::count_if(n.cells.begin(),n.cells.end(),[](unsigned c){return c!=0;}));
         capacity += granted_capacity;
@@ -280,11 +283,26 @@ Result Model::relocate(const std::vector<Move>& requests) {
     DerivedMap derived;
     auto r = analyze(candidate, derived);
     if (!r) return r;
+    for(const auto& [id,n]:candidate) if(n.kind==Kind::ActorRoot&&n.max_contents &&
+        derived.at(id).mass>n.max_contents && derived.at(id).mass>subtree_mass(id))return bad("mass_capacity");
     nodes_.swap(candidate);
     ++revision_;
     return good();
 }
-Result Model::execute(const Command& request) {
+Result Model::execute(const Command& request) { return execute_internal(request,false); }
+Result Model::recover_owned_overflow(Id item,Id actor,std::uint64_t revision,std::uint64_t session) {
+    auto found=nodes_.find(item);if(found==nodes_.end()||found->second.kind!=Kind::Item)return bad("item");
+    Id root=item;for(unsigned depth=0;nodes_.at(root).parent&&depth<65;++depth)root=nodes_.at(root).parent;
+    if(root!=actor||nodes_.at(root).kind!=Kind::ActorRoot)return bad("recovery_ownership");
+    Command request;request.operation=Operation::Move;request.item=item;request.destination=actor;request.revision=revision;request.session=session;
+    return execute_internal(request,true);
+}
+Result Model::recover_native_arrival(Node item,std::uint64_t revision,std::uint64_t session) {
+    item.location=Location::Overflow;item.position={};item.equipped_slots=0;item.mounted_slot=0;
+    Command request;request.operation=Operation::Spawn;request.spawned=std::move(item);request.revision=revision;request.session=session;
+    return execute_internal(request,true);
+}
+Result Model::execute_internal(const Command& request,bool recovery) {
     if (!session_ || request.session != session_) return bad("stale_session");
     if (request.revision != revision_) return bad("stale_revision");
     if (revision_ == std::numeric_limits<std::uint64_t>::max()) return bad("revision_overflow");
@@ -292,6 +310,7 @@ Result Model::execute(const Command& request) {
     Id next_high_water = high_water_id_;
     if (request.operation == Operation::Spawn) {
         if (request.spawned.kind != Kind::Item) return bad("spawn_root");
+        if(request.spawned.location==Location::Overflow&&!recovery)return bad("recovery_only");
         if (request.spawned.id <= high_water_id_) return bad("id_reuse");
         candidate.emplace(request.spawned.id, request.spawned);
         next_high_water = request.spawned.id;
@@ -300,12 +319,12 @@ Result Model::execute(const Command& request) {
         if (item == candidate.end() || item->second.kind != Kind::Item) return bad("item");
         switch (request.operation) {
         case Operation::Move:
-            if(item->second.location==Location::Mounted){
+            if(!recovery&&item->second.location==Location::Mounted){
                 for(const auto& [id,n]:candidate){(void)id;if(n.parent==request.item)return bad("mounted_not_empty");}
             }
             item->second.parent = request.destination;
             item->second.position = request.position;
-            item->second.location = Location::Grid;
+            item->second.location = recovery ? Location::Overflow : Location::Grid;
             item->second.equipped_slots = 0;
             item->second.mounted_slot = 0;
             break;
@@ -332,6 +351,7 @@ Result Model::execute(const Command& request) {
             split.parent = request.destination;
             split.position = request.position;
             split.quantity = request.quantity;
+            split.location=Location::Grid;split.equipped_slots=0;split.mounted_slot=0;
             source.quantity -= request.quantity;
             candidate.emplace(split.id, split);
             next_high_water = split.id;
@@ -367,6 +387,8 @@ Result Model::execute(const Command& request) {
     DerivedMap derived;
     auto r = analyze(candidate, derived);
     if (!r) return r;
+    if(!recovery) for(const auto& [id,n]:candidate) if(n.kind==Kind::ActorRoot&&n.max_contents &&
+        derived.at(id).mass>n.max_contents && derived.at(id).mass>subtree_mass(id))return bad("mass_capacity");
     nodes_.swap(candidate);
     high_water_id_ = next_high_water;
     ++revision_;
@@ -427,7 +449,7 @@ Id Model::cycle_equipment(unsigned group, Id selected, int direction) const {
 std::string Model::serialize() const {
     std::ostringstream s;
     s.imbue(std::locale::classic());
-    s << "INVENTORY_NEXT 5 " << revision_ << ' ' << nodes_.size() << ' ' << high_water_id_ << '\n';
+    s << "INVENTORY_NEXT 6 " << revision_ << ' ' << nodes_.size() << ' ' << high_water_id_ << '\n';
     for (const auto& [id, n] : nodes_) {
         s << id << ' ' << n.parent << ' ' << static_cast<int>(n.kind) << ' ' << n.intrinsic << ' '
           << n.category << ' ' << n.position.x << ' ' << n.position.y << ' ' << n.position.rotated << ' '
@@ -468,7 +490,7 @@ Result Model::deserialize(const std::string& bytes) {
     std::uint64_t revision;
     std::size_t count;
     Id high_water;
-    if (!(s >> magic >> version >> revision >> count >> high_water) || magic != "INVENTORY_NEXT" || version != 5 ||
+    if (!(s >> magic >> version >> revision >> count >> high_water) || magic != "INVENTORY_NEXT" || version != 6 ||
         count == 0 || count > max_nodes) return bad("header");
     std::vector<Node> nodes;
     for (std::size_t i = 0; i < count; ++i) {
@@ -480,7 +502,7 @@ Result Model::deserialize(const std::string& bytes) {
             >> n.type >> n.state >> n.quantity >> n.stack_limit >> location >> n.wear_slots >> n.blocked_slots
             >> n.equipped_slots >> n.required_slots >> n.presentation_group >> n.allowed_slots
             >> n.equipment_accepts >> n.equipment_capacity) ||
-            kind > 2 || rotation > 1 || container > 1 || soft > 1 || location > 2) return bad("record");
+            kind > 2 || rotation > 1 || container > 1 || soft > 1 || location > 3) return bad("record");
         n.location = static_cast<Location>(location);
         std::size_t cell_count;
         if (!(s >> cell_count) || cell_count>4096) return bad("cell_definition");

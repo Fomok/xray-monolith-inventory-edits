@@ -49,6 +49,7 @@
 #include "character_hit_animations_params.h"
 #include "inventory_upgrade_manager.h"
 #include "InventoryNextProbe.h"
+#include "InventoryNextIdentity.h"
 
 #include "ai_debug_variables.h"
 #include "../xrphysics/console_vars.h"
@@ -1084,7 +1085,12 @@ public:
 			net_packet.w_begin(M_SAVE_GAME);
 			net_packet.w_stringZ(S);
 			net_packet.w_u8(0);
-			Level().Send(net_packet, net_flags(TRUE));
+			if (InventoryNextEnabled())
+			{
+				u16 packet_type; net_packet.r_begin(packet_type);
+				if (!ai().alife().save(net_packet)) { Msg("! SQA3 save refused; no success notification or thumbnail written"); return; }
+			}
+			else Level().Send(net_packet, net_flags(TRUE));
 		}
 		else
 		{
@@ -1098,7 +1104,12 @@ public:
 			net_packet.w_begin(M_SAVE_GAME);
 			net_packet.w_stringZ(S);
 			net_packet.w_u8(1);
-			Level().Send(net_packet, net_flags(TRUE));
+			if (InventoryNextEnabled())
+			{
+				u16 packet_type; net_packet.r_begin(packet_type);
+				if (!ai().alife().save(net_packet)) { Msg("! SQA3 save refused; no success notification or thumbnail written"); return; }
+			}
+			else Level().Send(net_packet, net_flags(TRUE));
 		}
 #ifdef DEBUG
 		Msg("Game save overhead  : %f milliseconds", timer.GetElapsed_sec()*1000.f);

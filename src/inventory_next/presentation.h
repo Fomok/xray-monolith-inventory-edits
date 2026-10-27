@@ -9,6 +9,10 @@ struct PanelState {
     unsigned first_row = 0, visible_rows = 8;
 };
 
+struct OverflowLayout {
+    int columns=0, rows=0;
+    std::vector<std::pair<ItemView,Position>> tiles;
+};
 // Read-only controller shared by a native renderer and the background lab.
 // World permissions are supplied by the adapter for each specific container;
 // allowing a corpse/root does not implicitly reveal nested bags or hidden loot.
@@ -25,6 +29,8 @@ public:
     Id selected(unsigned equipment_group) const;
     std::vector<PanelState> panels(const Model& model) const;
     // Only geometrically visible grid children, never equipment or collapsed rows.
+    OverflowLayout overflow_layout(const Model&, Id container) const;
+    std::vector<ItemView> overflow_items(const Model&, Id container) const;
     std::vector<ItemView> visible_items(const Model& model, Id container) const;
 private:
     bool current(const Model& model) const;

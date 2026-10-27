@@ -44,16 +44,17 @@ CALifeStorageManager::~CALifeStorageManager()
 	*g_last_saved_game = 0;
 }
 
-void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
+bool CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
 {
 	PROF_EVENT();
+	if (!InventoryNextIdentityCanSave()) return false;
 	LPCSTR game_saves_path = FS.get_path("$game_saves$")->m_Path;
 
 	string_path save_name;
 	strncpy_s(save_name, sizeof(save_name), save_name_no_check,
 	          sizeof(save_name) - 5 - xr_strlen(SAVE_EXTENSION) - xr_strlen(game_saves_path));
 
-	xr_strcpy(g_last_saved_game, save_name);
+	if (!InventoryNextEnabled()) xr_strcpy(g_last_saved_game, save_name);
 
 	string_path save;
 	xr_strcpy(save, m_save_name);
@@ -66,7 +67,7 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
 		if (!xr_strlen(m_save_name))
 		{
 			Log("There is no file name specified!");
-			return;
+			return false;
 		}
 	}
 
@@ -78,7 +79,7 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
 #endif
 	//-Alundaio
 
-	if (!InventoryNextIdentityCanSave()) { xr_strcpy(m_save_name, save); return; }
+	if (!InventoryNextIdentityCanSave()) { xr_strcpy(m_save_name, save); return false; }
 
 	u32 source_count;
 	u32 dest_count;
@@ -109,6 +110,7 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
 	writer->w(dest_data, dest_count);
 	xr_free(dest_data);
 	FS.w_close(writer);
+	if (InventoryNextEnabled()) xr_strcpy(g_last_saved_game, save_name);
 #ifdef DEBUG
 	Msg							("* Game %s is successfully saved to file '%s' (%d bytes compressed to %d)",m_save_name,temp,source_count,dest_count + 4);
 #else // DEBUG
@@ -125,6 +127,7 @@ void CALifeStorageManager::save(LPCSTR save_name_no_check, bool update_name)
 
 	if (!update_name)
 		xr_strcpy(m_save_name, save);
+	return true;
 }
 
 void CALifeStorageManager::load(void* buffer, const u32& buffer_size, LPCSTR file_name)
@@ -238,14 +241,15 @@ bool CALifeStorageManager::load(LPCSTR save_name_no_check)
 	return (true);
 }
 
-void CALifeStorageManager::save(NET_Packet& net_packet)
+bool CALifeStorageManager::save(NET_Packet& net_packet)
 {
 	PROF_EVENT();
+	if (!InventoryNextIdentityCanSave()) return false;
 	prepare_objects_for_save();
 
 	shared_str game_name;
 	net_packet.r_stringZ(game_name);
-	save(*game_name, !!net_packet.r_u8());
+	return save(*game_name, !!net_packet.r_u8());
 }
 
 void CALifeStorageManager::prepare_objects_for_save()

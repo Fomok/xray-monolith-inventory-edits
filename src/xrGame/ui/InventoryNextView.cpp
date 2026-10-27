@@ -265,13 +265,15 @@ void CInventoryNextView::Rebuild()
         const auto found = model.nodes().find(panel.container);
         if (found == model.nodes().end()) continue;
         const auto grid = found->second.grid;
+        const auto overflow=m_state.overflow_layout(model,panel.container);
+        std::size_t overflowCount=0;for(const auto& item:snapshot)if(item.parent==panel.container&&item.location==inventory_next::Location::Overflow)++overflowCount;
         // Scale presentation only. Model positions, masks and footprints unchanged.
-        const float cell = (std::min)(m_cell, (width-12.0f) / (std::max)(1, grid.w));
+        const float cell = (std::min)(m_cell, (width-12.0f) / (std::max)(1, (std::max)(grid.w,overflow.columns)));
         const unsigned rows = (std::min)(panel.visible_rows, static_cast<unsigned>(grid.h));
         auto block = xr_new<CUIWindow>();
-        Place(block, 0, 0, width, panel.collapsed ? 30.0f : 34.0f + rows*cell);
+        Place(block, 0, 0, width, panel.collapsed ? 30.0f : 34.0f + rows*cell + (overflow.rows ? 32.0f+overflow.rows*cell : 0.0f));
         m_scroll->AddWindow(block, true);
-        Text(block, Label(panel.container) + "  row " + std::to_string(panel.first_row+1), 4, 2, width-120, 24, textColor);
+        Text(block, Label(panel.container) + "  row " + std::to_string(panel.first_row+1) + (overflowCount ? "  Does not fit: "+std::to_string(overflowCount) : ""), 4, 2, width-120, 24, textColor);
         Button(block, panel.collapsed ? "[+]" : "[-]", width-110, 0, 32, {ActionKind::Collapse, panel.container, 0, 0});
         Button(block, "[up]", width-74, 0, 32, {ActionKind::Scroll, panel.container, -1, 0});
         Button(block, "[dn]", width-38, 0, 32, {ActionKind::Scroll, panel.container, 1, 0});
@@ -308,6 +310,21 @@ void CInventoryNextView::Rebuild()
             if (node != model.nodes().end() && node->second.container)
                 Button(tile, "[+]", 0, (std::max)(0.0f, tile->GetHeight()-24), (std::min)(32.0f, tile->GetWidth()),
                        {ActionKind::Open, item.id, 0, 0});
+        }
+        if(overflow.rows) {
+            const float top=34.0f+rows*cell;
+            Text(block,"RECOVERY OVERFLOW - not legal pocket space",4,top,width-8,24,0xffff7070);
+            for(const auto& placed:overflow.tiles) {
+                const auto& item=placed.first;const auto& position=placed.second;
+                auto tile=xr_new<InventoryNextClip>();tile->SetAutoDelete(true);block->AttachChild(tile);
+                Place(tile,4+position.x*cell,top+28+position.y*cell,item.footprint.w*cell,item.footprint.h*cell);
+                for(int y=0;y<item.footprint.h;++y)for(int x=0;x<item.footprint.w;++x)
+                    Text(tile,"[ ]",x*cell,y*cell,cell,cell,0xffa84040);
+                Text(tile,Label(item.id),2,2,tile->GetWidth()-4,24,0xffff9090);
+                const auto node=model.nodes().find(item.id);
+                if(node!=model.nodes().end()&&node->second.container)
+                    Button(tile,"[+]",0,(std::max)(0.0f,tile->GetHeight()-24),32,{ActionKind::Open,item.id,0,0});
+            }
         }
     }
     m_scroll->ForceUpdate();

@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include "model.h"
+#include "presentation.h"
 #include "persistence.h"
 #include <algorithm>
 #include <filesystem>
@@ -99,8 +100,9 @@ void panel(Surface& s,const Model& model,int x,const std::wstring& title,Id id){
         COLORREF shade=region?(region%2?RGB(40,46,43):RGB(49,42,57)):RGB(14,15,15);
         s.box(gx+col*cell,gy+row*cell,cell-1,cell-1,shade);
     }
-    int children=0,equipped=0,mounted=0;
+    int children=0,equipped=0,mounted=0,overflow=0;
     for(const auto& [child,c]:model.nodes())if(c.kind==Kind::Item&&c.parent==id){
+        if(c.location==Location::Overflow){++overflow;continue;}
         if(c.location==Location::Equipment){++equipped;continue;}
         if(c.location==Location::Mounted){++mounted;continue;}
         ++children;
@@ -111,16 +113,27 @@ void panel(Surface& s,const Model& model,int x,const std::wstring& title,Id id){
         if(cell>=27)s.text(px+3,py+2,f.w*cell-6,num(child)+(c.quantity>1?L" x"+num(c.quantity):L""));
     }
     int line=gy+n.grid.h*cell+20;
+    if(overflow) {
+        Presentation view;view.synchronize(model,id,{});view.open(model,id);
+        const auto layout=view.overflow_layout(model,id);
+        s.text(x+16,line,w-32,L"Does not fit: "+num(overflow)+L" - recovery overflow",RGB(255,120,120));line+=32;
+        const int overflowCell=std::max(1,std::min(cell,(w-32)/std::max(1,layout.columns)));
+        for(const auto& tile:layout.tiles){const auto& v=tile.first;const auto& p=tile.second;
+            s.box(gx+p.x*overflowCell,line+p.y*overflowCell,v.footprint.w*overflowCell-1,v.footprint.h*overflowCell-1,RGB(95,35,35));
+            s.text(gx+p.x*overflowCell+3,line+p.y*overflowCell+2,v.footprint.w*overflowCell-6,L"#"+num(v.id),RGB(255,170,170));
+        }
+        line+=layout.rows*overflowCell+16;
+    }
     s.text(x+16,line,w-32,num(children)+L" grid | "+num(equipped)+L" equipped | "+num(mounted)+L" mounted");
     line+=35;
     int shown=0;
     for(const auto& [child,c]:model.nodes())if(c.kind==Kind::Item&&c.parent==id){
         if(line+25>y+850)break;
         Size f=model.footprint(child);
-        s.text(x+16,line,w-32,L"#"+num(child)+L" x"+num(c.quantity)+L"  "+num(f.w)+L"x"+num(f.h)+L"  "+mass(model.subtree_mass(child))+(c.location==Location::Equipment?L"  [equipped]":c.location==Location::Mounted?L"  [mount "+num(c.mounted_slot)+L"]":(c.container?L"  [container]":L"")));
+        s.text(x+16,line,w-32,L"#"+num(child)+L" x"+num(c.quantity)+L"  "+num(f.w)+L"x"+num(f.h)+L"  "+mass(model.subtree_mass(child))+(c.location==Location::Overflow?L"  [overflow]":c.location==Location::Equipment?L"  [equipped]":c.location==Location::Mounted?L"  [mount "+num(c.mounted_slot)+L"]":(c.container?L"  [container]":L"")));
         line+=27;++shown;
     }
-    if(shown<children+equipped+mounted)s.text(x+16,y+839,w-32,L"Additional item labels omitted; grid is complete",RGB(206,139,155));
+    if(shown<children+equipped+mounted+overflow)s.text(x+16,y+839,w-32,L"Additional item labels omitted; grid is complete",RGB(206,139,155));
 }
 }
 int WINAPI wWinMain(HINSTANCE,HINSTANCE,PWSTR,int){

@@ -11,7 +11,7 @@ using Mass = std::int64_t; // integer grams, intrinsic mass excludes child item 
 struct Size { int w = 1, h = 1; };
 struct Position { int x = 0, y = 0; bool rotated = false; };
 enum class Kind { Item, ActorRoot, WorldRoot };
-enum class Location { Grid, Equipment, Mounted };
+enum class Location { Grid, Equipment, Mounted, Overflow };
 struct MountSlot {
     Id id = 0;
     std::string name;
@@ -99,6 +99,11 @@ public:
     Result initialize(const std::vector<Node>& nodes);
     Result move(const Move& request);
     Result execute(const Command& request);
+    // Native recovery only: never route ordinary UI drops through these entry points.
+    Result recover_owned_overflow(Id item, Id actor, std::uint64_t revision, std::uint64_t session);
+    Result recover_native_arrival(Node item, std::uint64_t revision, std::uint64_t session);
+    Result recover_recipe(const std::vector<Id>& consumed, const std::vector<Node>& outputs,
+                          Id actor, std::uint64_t revision, std::uint64_t session);
     Result execute_batch(const std::vector<Command>& requests);
     Result relocate(const std::vector<Move>& requests);
     Preview preview(const Command& request) const;
@@ -119,6 +124,7 @@ public:
     std::string serialize() const;
     Result deserialize(const std::string& bytes);
 private:
+    Result execute_internal(const Command& request, bool recovery);
     std::map<Id, Node> nodes_;
     std::uint64_t revision_ = 0;
     Id high_water_id_ = 0;
