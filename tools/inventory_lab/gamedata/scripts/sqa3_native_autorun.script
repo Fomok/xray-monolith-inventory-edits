@@ -349,6 +349,7 @@ function on_game_start()
         commands[#commands+1]=spawn_npc
         commands[#commands+1]=prepare_sale
         commands[#commands+1]=open_trade
+        commands[#commands+1]="screenshot sqa3_trade_sale"
         commands[#commands+1]=hold_sale
         commands[#commands+1]=check_sale
         commands[#commands+1]=snapshot
