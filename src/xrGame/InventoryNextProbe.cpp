@@ -28,6 +28,13 @@
 #include <exception>
 #include <stdexcept>
 #include "../inventory_next/ground_pickup.h"
+#include "../inventory_next/purchase_session.h"
+#include "trade.h"
+#include "InventoryOwner.h"
+#include "entity_alive.h"
+#include "script_callback_ex.h"
+#include "script_game_object.h"
+#include "game_object_space.h"
 #include "ai_space.h"
 #include "alife_simulator.h"
 #include "alife_object_registry.h"
@@ -43,6 +50,16 @@ std::unique_ptr<inventory_next::EntityRegistry> pickup_registry;
 std::unique_ptr<inventory_next::GroundPickup> pickup_transaction;
 bool pickup_fault=false;
 u16 pickup_source=0xffff;
+struct PurchaseRecord { u16 live; u64 identity; u32 price; inventory_next::Node node; };
+struct NativePurchase {
+    inventory_next::EntityRegistry registry;
+    std::unique_ptr<inventory_next::PurchaseSession> session;
+    xr_vector<PurchaseRecord> records;
+    u16 source=0xffff;u64 source_identity=0,token=0;
+    bool committed=false;
+};
+std::unique_ptr<NativePurchase> purchase;
+u64 next_purchase_token=0;
 
 
 bool read_storage_catalog(inventory_next::StorageCatalog& output) {
@@ -126,14 +143,14 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
     stream.w(bytes.data(),static_cast<u32>(bytes.size()));stream.close_chunk();
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
-    layout_current=false;native_drag().cancel();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
+    layout_current=false;native_drag().cancel();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();auto chunk=stream.open_chunk(layout_chunk);if(!chunk)return;
     CHECK_OR_EXIT(InventoryNextEnabled()&&chunk->length()<=2*1024*1024,"Invalid SQA3 layout mode/size");
     const std::string bytes(reinterpret_cast<const char*>(chunk->pointer()),chunk->length());chunk->close();
     CHECK_OR_EXIT(layout().restore(bytes).ok,"Invalid SQA3 layout data");
@@ -152,7 +169,7 @@ void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcep
 } catch (...) {Msg("! SQA3 logical store exception");}
 bool InventoryNextCanRelease(u16 live) noexcept try {
     if(!InventoryNextLogicalStorage())return true;
-    if(!pending_pickups.empty()||pickup_transaction)return false;
+    if(!pending_pickups.empty()||pickup_transaction||purchase)return false;
     if(!InventoryNextLayoutSync())return false;
     const auto id=InventoryNextIdentity(live);
     if(!id||!layout().model().nodes().count(id))return true;
@@ -284,15 +301,17 @@ bool InventoryNextStrictPickup() noexcept {
     return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-ground-pickup")||InventoryNextStrictOwnedPickup());
 }
 bool InventoryNextPickupCanSave() noexcept {
-    return !pickup_fault&&!pickup_transaction&&pending_pickups.empty();
+    return !pickup_fault&&!pickup_transaction&&!purchase&&pending_pickups.empty();
 }
 void InventoryNextPickupForget(u16 live) noexcept try {
+    if(purchase&&purchase->session&&purchase->session->state()!=inventory_next::PurchaseSession::State::Prepared)
+        for(const auto& record:purchase->records)if(record.live==live)pickup_fault=true;
     pending_pickups.erase(live);
 } catch (...) {pickup_fault=true;}
 bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
-    if(pickup_fault||pickup_transaction||!InventoryNextLayoutSync())return false;
+    if(pickup_fault||pickup_transaction||purchase||!InventoryNextLayoutSync())return false;
     auto object=Level().Objects.net_Find(live);
     auto item=smart_cast<CInventoryItem*>(object);
     const auto server=ai().alife().objects().object(live,true);
@@ -367,7 +386,7 @@ void InventoryNextPickupTaken(u16 live) noexcept try {
 
 
 bool InventoryNextStrictOwnedPickup() noexcept {
-    return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-strict-owned-pickup")!=nullptr;
+    return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-owned-pickup")!=nullptr||InventoryNextStrictTradePickup());
 }
 void InventoryNextPickupStatus(const char* text) noexcept try {
     if(!CurrentGameUI())return;
@@ -384,3 +403,164 @@ bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept try
     // label first so the resulting refusal/acceptance remains visible.
     InventoryNextPickupStatus("Checking storage...");CGameObject::u_EventSend(packet);return true;
 } catch (...) {InventoryNextPickupStatus("Transfer unavailable. Item stayed at source.");return true;}
+
+bool InventoryNextStrictTradePickup() noexcept {
+    return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-strict-trade-pickup")!=nullptr;
+}
+namespace {
+CInventoryOwner* purchase_seller(u16 source) {
+    return smart_cast<CInventoryOwner*>(Level().Objects.net_Find(source));
+}
+bool purchase_node(u16 live,u16 source,inventory_next::Node& n) {
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    auto server=ai().alife().objects().object(live,true);
+    if(!item||!server||server->ID_Parent!=source||!item->object().H_Parent()||item->parent_id()!=source||
+       !item->CanTrade()||!Actor()->inventory().CanTakeItem(item))return false;
+    const auto id=InventoryNextIdentity(live);if(!id)return false;
+    InventoryNextIdentityOnline(*item);
+    const double grams=double(item->Weight())*1000.0,condition=item->GetCondition();const auto shape=item->GetInvGridRect();
+    if(!std::isfinite(grams)||grams<0||grams>1e12||!std::isfinite(condition)||condition<0||condition>1||
+       shape.x2<1||shape.y2<1||shape.x2>16||shape.y2>64)return false;
+    n.id=id;n.parent=2;n.intrinsic=static_cast<inventory_next::Mass>(std::llround(grams));
+    n.condition=static_cast<unsigned>(std::llround(condition*10000));n.empty=n.half=n.full={shape.x2,shape.y2};
+    n.attributes["native_section"]=item->m_section_id.c_str();n.attributes["native_live_id"]=std::to_string(live);
+    n.attributes["native_place"]="3";n.attributes["native_slot"]=std::to_string(item->CurrSlot());
+    if(smart_cast<CBackpack*>(item)) {
+        inventory_next::StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+        const std::string section=item->m_section_id.c_str();
+        const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
+        const auto& storage=catalog.resolve(section,kind);n.container=true;n.grid=storage.grid;n.cells=storage.cells;
+    }
+    return true;
+}
+bool same_purchase_node(const inventory_next::Node& a,const inventory_next::Node& b) {
+    return a.id==b.id&&a.intrinsic==b.intrinsic&&a.condition==b.condition&&a.empty.w==b.empty.w&&a.empty.h==b.empty.h&&
+        a.container==b.container&&a.grid.w==b.grid.w&&a.grid.h==b.grid.h&&a.cells==b.cells&&a.attributes==b.attributes;
+}
+void purchase_refused(const char* text) {
+    purchase.reset();InventoryNextPickupStatus(text);
+}
+}
+bool InventoryNextPurchaseRequest(CTrade* trade,const xr_vector<u16>& items) noexcept try {
+    if(!InventoryNextStrictTradePickup())return false;
+    if(!Actor()||!trade||trade->GetPartner()!=Actor()||purchase||!InventoryNextPickupCanSave()||!InventoryNextLayoutSync()) {
+        InventoryNextPickupStatus("Purchase unavailable. Finish the pending transfer first.");return true;
+    }
+    auto seller=trade->pThis.inv_owner;auto source_object=smart_cast<CGameObject*>(seller);
+    if(!seller||!source_object||items.empty()){InventoryNextPickupStatus("Purchase source unavailable.");return true;}
+    auto prepared=std::make_unique<NativePurchase>();prepared->source=source_object->ID();
+    prepared->source_identity=InventoryNextIdentity(prepared->source);if(!prepared->source_identity)return true;
+    auto& registry=prepared->registry;
+    if(!registry.add(1)||!registry.bind(1,Actor()->ID())||!registry.add(2)||!registry.bind(2,prepared->source))return true;
+    std::vector<inventory_next::Id> destinations{1};
+    for(const auto& pair:layout().model().nodes())if(pair.second.kind==inventory_next::Kind::Item) {
+        if(!registry.add(pair.first)||!registry.bind(pair.first,static_cast<u16>(std::stoul(pair.second.attributes.at("native_live_id")))))return true;
+        if(pair.second.container&&pair.second.location!=inventory_next::Location::Overflow&&layout().model().storage_active(pair.first))destinations.push_back(pair.first);
+    }
+    std::vector<inventory_next::PurchaseSession::Line> lines;
+    for(u16 live:items) {
+        inventory_next::Node node;if(!purchase_node(live,prepared->source,node)||!registry.add(node.id)||!registry.bind(node.id,live)) {
+            InventoryNextPickupStatus("Purchase changed. Items stayed with seller.");return true;
+        }
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));const u32 price=trade->GetItemPrice(item,false);
+        lines.push_back({node,price});prepared->records.push_back({live,node.id,price,node});
+    }
+    prepared->session=std::make_unique<inventory_next::PurchaseSession>(layout().model(),registry);
+    auto result=prepared->session->prepare(lines,destinations,{Actor()->get_money(),seller->get_money()});
+    if(!result){Msg("! SQA3 purchase refused before callbacks reason=%s",result.error.c_str());InventoryNextPickupStatus(result.error=="no_fit"?"Purchase does not fit. Items and money unchanged.":"Purchase unavailable. Items and money unchanged.");return true;}
+    prepared->token=++next_purchase_token;purchase=std::move(prepared);
+    u32 total=0;for(const auto& record:purchase->records)total+=record.price;
+    // Preserve native before-trade callbacks. The server revalidates everything
+    // afterward; callbacks cannot authorize stale prices, owners or placements.
+    const auto records=purchase->records;
+    trade->OnPerformTrade(total,0);
+    if(!purchase)return true;
+    for(const auto& record:records) {
+        seller=purchase_seller(purchase->source);
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(record.live));
+        if(!seller||InventoryNextIdentity(purchase->source)!=purchase->source_identity||!item||item->object().getDestroy()||
+           InventoryNextIdentity(record.live)!=record.identity){purchase_refused("Purchase changed. Transfer cancelled.");return true;}
+        seller->on_before_sell(item);
+        if(!purchase||!Actor())return true;
+        item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(record.live));
+        if(!item||item->object().getDestroy()||InventoryNextIdentity(record.live)!=record.identity){purchase_refused("Purchase changed. Transfer cancelled.");return true;}
+        Actor()->on_before_buy(item);
+        if(!purchase||!Actor())return true;
+    }
+    NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_PURCHASE,Actor()->ID());
+    packet.w_u16(purchase->source);packet.w_u64(purchase->token);
+    InventoryNextPickupStatus("Checking purchase...");CGameObject::u_EventSend(packet);
+    return true;
+} catch (...) {
+    if(purchase&&purchase->session&&purchase->session->state()!=inventory_next::PurchaseSession::State::Prepared)pickup_fault=true;
+    else purchase_refused("Purchase unavailable. Transfer cancelled.");
+    return true;
+}
+bool InventoryNextPurchaseValidate(u16 source,u16 owner,u64 token,xr_vector<u16>& items) noexcept try {
+    if(!InventoryNextStrictTradePickup()||!purchase||purchase->token!=token||purchase->source!=source||!Actor()||Actor()->ID()!=owner)return false;
+    auto seller=purchase_seller(source);
+    if(!seller||!ai().alife().objects().object(source,true)||InventoryNextIdentity(source)!=purchase->source_identity||!seller->GetTrade()||seller->GetTrade()->GetPartner()!=Actor()) {
+        purchase_refused("Seller unavailable. Purchase cancelled.");return false;
+    }
+    auto source_object=smart_cast<CGameObject*>(seller);
+    auto creature=smart_cast<CEntityAlive*>(source_object);
+    if((creature&&!creature->g_Alive())||!source_object||
+       (source_object->Position().distance_to(Actor()->Position())>3.0f&&!seller->NeedOsoznanieMode())) {
+        purchase_refused("Seller out of reach. Purchase cancelled.");return false;
+    }
+    for(const auto& record:purchase->records) {
+        inventory_next::Node observed;
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(record.live));
+        if(!purchase_node(record.live,source,observed)||!same_purchase_node(observed,record.node)||
+           seller->GetTrade()->GetItemPrice(item,false)!=record.price) {
+            purchase_refused("Purchase changed. Items stayed with seller.");return false;
+        }
+        items.push_back(record.live);
+    }
+    const auto result=purchase->session->dispatch(true,{Actor()->get_money(),seller->get_money()});
+    if(!result){purchase_refused("Purchase changed. Items stayed with seller.");return false;}
+    return true;
+} catch (...) {purchase_refused("Purchase validation failed. Transfer cancelled.");return false;}
+bool InventoryNextPurchaseFinish(bool accepted) noexcept try {
+    if(!purchase||!Actor())return false;
+    auto seller=purchase_seller(purchase->source);if(!seller){pickup_fault=true;return false;}
+    std::map<inventory_next::Id,u16> parents;
+    for(const auto& record:purchase->records) {
+        auto server=ai().alife().objects().object(record.live,true);
+        parents.emplace(record.identity,server?server->ID_Parent:0xffff);
+    }
+    auto result=purchase->session->acknowledge(parents,accepted,{Actor()->get_money(),seller->get_money()});
+    if(!result) {
+        if(purchase->session->can_save())purchase_refused("Purchase refused. Items and money unchanged.");
+        else {pickup_fault=true;InventoryNextPickupStatus("Purchase needs reconciliation. Saving blocked.");}
+        return false;
+    }
+    const auto money=purchase->session->settlement();
+    Actor()->set_money(money.actor,false);seller->set_money(money.seller,false);
+    result=purchase->session->settled({Actor()->get_money(),seller->get_money()});
+    if(!result){pickup_fault=true;return false;}
+    const auto committed=purchase->session->committed_model();
+    if(!committed||!layout().restore(committed->serialize())){pickup_fault=true;return false;}
+    for(const auto& record:purchase->records)pending_pickups.emplace(record.live,committed->nodes().at(record.identity));
+    purchase->committed=true;
+    if(InventoryNextIdentityCanSave()){pickup_fault=true;return false;}
+    Actor()->set_money(Actor()->get_money(),true);seller->set_money(seller->get_money(),true);
+    Msg("* SQA3 purchase committed count=%u actor_money=%u seller_money=%u; client acknowledgement pending",static_cast<unsigned>(purchase->records.size()),money.actor,money.seller);
+    InventoryNextPickupStatus("");return true;
+} catch (...) {pickup_fault=true;return false;}
+void InventoryNextPurchaseClientReady() noexcept try {
+    if(!purchase||!purchase->committed||!pending_pickups.empty()||pickup_fault)return;
+    const auto records=purchase->records;
+    for(const auto& record:records) {
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(record.live));
+        if(!item||InventoryNextIdentity(record.live)!=record.identity||item->parent_id()!=Actor()->ID()){pickup_fault=true;return;}
+    }
+    purchase.reset();
+    if(CurrentGameUI())CurrentGameUI()->GetActorMenu().SqaPurchaseRefresh();
+    for(const auto& record:records) {
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(record.live));
+        if(item&&InventoryNextIdentity(record.live)==record.identity)
+            Actor()->callback(GameObject::eTradeSellBuyItem)(item->object().lua_game_object(),false,record.price);
+    }
+    Msg("* SQA3 purchase client completed count=%u save_ready=%d",static_cast<unsigned>(records.size()),InventoryNextPickupCanSave());
+} catch (...) {pickup_fault=true;}

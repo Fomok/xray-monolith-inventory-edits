@@ -195,6 +195,7 @@ public:
     bool m_sqaRefresh=false;
     CUIStatic* m_sqaStatus=nullptr;
     u32 m_sqaRetryAfter=0;
+    void SqaPurchaseRefresh();
 	void SelectInventoryTab(int tab);
 private:
 	void PropertiesBoxForSlots(PIItem item, bool& b_show);

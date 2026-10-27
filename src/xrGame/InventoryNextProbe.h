@@ -33,3 +33,10 @@ bool InventoryNextPickupCanSave() noexcept;
 bool InventoryNextStrictOwnedPickup() noexcept;
 bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live) noexcept;
 void InventoryNextPickupStatus(const char* text) noexcept;
+
+class CTrade;
+bool InventoryNextStrictTradePickup() noexcept;
+bool InventoryNextPurchaseRequest(CTrade* trade,const xr_vector<u16>& items) noexcept;
+bool InventoryNextPurchaseValidate(u16 source,u16 owner,u64 token,xr_vector<u16>& items) noexcept;
+bool InventoryNextPurchaseFinish(bool accepted) noexcept;
+void InventoryNextPurchaseClientReady() noexcept;

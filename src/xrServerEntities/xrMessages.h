@@ -190,6 +190,7 @@ enum
 	GE_TRADER_FLAGS,
 
 	GE_SQA_ACQUIRE, // isolated single-player atomic owned-source acquisition
+	GE_SQA_PURCHASE, // isolated batch acquisition with delayed money settlement
 	GE_FORCEDWORD = u32(-1)
 };
 

@@ -7,6 +7,7 @@
 #include "identity_state.h"
 #include "transfer_session.h"
 #include "ground_pickup.h"
+#include "purchase_session.h"
 #include "drag_session.h"
 #include "presentation.h"
 #include "persistence.h"
@@ -925,6 +926,60 @@ int main(int argc,char** argv) {
             auto incoming=item(100,2,38);incoming.attributes["native_section"]="bandage";
             GroundPickup pending(registry);yes(pending.prepare(layout.model(),incoming,{1},false));
             yes(registry.unbind(*registry.handle(2)));no(pending.acknowledge(11,true),"stale_entity");check(!pending.can_save(),"vanished owned source allowed save");
+        });
+        test("purchase reserves whole batch and publishes only after ownership and money",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{2,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100},Id{101}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            PurchaseSession purchase(layout.model(),registry);const auto before=layout.model().serialize();
+            yes(purchase.prepare({{item(100,2,38),7},{item(101,2,38),9}},{1},{20,100}));
+            check(!purchase.can_save()&&!purchase.committed_model(),"prepared purchase published");
+            yes(purchase.dispatch(true,{20,100}));
+            yes(purchase.acknowledge({{100,11},{101,11}},true,{20,100}));
+            check(!purchase.can_save()&&!purchase.committed_model(),"unsettled purchase published");
+            check(purchase.settlement().actor==4&&purchase.settlement().seller==116,"incorrect settlement");
+            yes(purchase.settled({4,116}));check(purchase.can_save()&&purchase.committed_model(),"settled purchase unavailable");
+            check(purchase.committed_model()->carried_mass()==76,"purchase lost items");
+            check(layout.model().serialize()==before,"purchase mutated live model before publication");
+        });
+        test("purchase whole-batch no-fit and insufficient money leave live state unchanged",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100},Id{101}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            const auto before=layout.model().serialize();PurchaseSession purchase(layout.model(),registry);
+            no(purchase.prepare({{item(100,2,38),1},{item(101,2,38),1}},{1},{20,100}),"no_fit");
+            check(purchase.can_save()&&!purchase.committed_model(),"failed batch reserved state");
+            no(purchase.prepare({{item(100,2,38),21}},{1},{20,100}),"insufficient_money");
+            check(layout.model().serialize()==before,"failed purchase mutated layout");
+        });
+        test("purchase access money and identity are rechecked before dispatch",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            PurchaseSession purchase(layout.model(),registry);yes(purchase.prepare({{item(100,2,38),1}},{1},{20,100}));
+            no(purchase.dispatch(false,{20,100}),"source_access");no(purchase.dispatch(true,{19,100}),"money_changed");
+            yes(registry.unbind(*registry.handle(100)));yes(registry.bind(100,110));
+            no(purchase.dispatch(true,{20,100}),"stale_entity");yes(purchase.cancel());check(purchase.can_save(),"cancel held save lock");
+        });
+        test("purchase partial native outcome and wrong settlement require reconciliation",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{2,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100},Id{101}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            PurchaseSession partial(layout.model(),registry);yes(partial.prepare({{item(100,2,38),1},{item(101,2,38),1}},{1},{20,100}));yes(partial.dispatch(true,{20,100}));
+            no(partial.acknowledge({{100,11},{101,12}},true,{20,100}),"purchase_reconcile");check(!partial.can_save()&&!partial.committed_model(),"partial purchase published");
+            PurchaseSession unsettled(layout.model(),registry);yes(unsettled.prepare({{item(100,2,38),1}},{1},{20,100}));yes(unsettled.dispatch(true,{20,100}));
+            yes(unsettled.acknowledge({{100,11}},true,{20,100}));no(unsettled.settled({18,101}),"settlement_reconcile");check(!unsettled.can_save(),"wrong money allowed save");
+        });
+        test("purchase rejects noncarried destinations and overflowing seller balance",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            PurchaseSession purchase(layout.model(),registry);
+            no(purchase.prepare({{item(100,2,38),1}},{2},{20,100}),"purchase_destination");
+            no(purchase.prepare({{item(100,2,38),1}},{1},{20,std::numeric_limits<std::uint32_t>::max()}),"money_overflow");
+            check(purchase.can_save()&&!purchase.committed_model(),"invalid purchase held state");
+        });
+        test("purchase native rejection retains source and never settles money",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            PurchaseSession purchase(layout.model(),registry);yes(purchase.prepare({{item(100,2,38),1}},{1},{20,100}));yes(purchase.dispatch(true,{20,100}));
+            no(purchase.acknowledge({{100,12}},false,{20,100}),"native_rejected");check(purchase.can_save()&&!purchase.committed_model(),"rejected purchase published");
+            no(purchase.settled({19,101}),"purchase_state");
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));

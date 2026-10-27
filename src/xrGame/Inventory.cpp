@@ -232,6 +232,7 @@ void CInventory::Take(CGameObject* pObj, bool bNotActivate, bool strict_placemen
 				CurrentGameUI()->OnInventoryAction(pIItem, GE_OWNERSHIP_TAKE);
 		}
 	};
+    InventoryNextPurchaseClientReady();
 }
 
 bool CInventory::DropItem(CGameObject* pObj, bool just_before_destroy, bool dont_create_shell)

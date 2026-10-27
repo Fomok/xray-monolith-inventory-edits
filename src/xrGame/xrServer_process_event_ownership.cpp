@@ -136,3 +136,51 @@ void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,
     const u32 mode=net_flags(TRUE,TRUE,FALSE,TRUE);
     SendBroadcast(BroadcastCID,reject,mode);SendBroadcast(BroadcastCID,take,mode);
 }
+
+void xrServer::Process_event_sqa_purchase(NET_Packet& P,ClientID sender,u32 time,u16 owner)
+{
+    if(!InventoryNextStrictTradePickup()||game->Type()!=eGameIDSingle||!Actor()||owner!=Actor()->ID())return;
+    const u16 source=P.r_u16();u64 token;P.r_u64(token);
+    auto from=game->get_entity_from_eid(source);auto to=game->get_entity_from_eid(owner);
+    auto client=ID_to_client(sender);
+    if(!to||(client!=GetServerClient()&&client!=to->owner))return;
+    xr_vector<u16> items;
+    if(!InventoryNextPurchaseValidate(source,owner,token,items))return;
+    if(!from){InventoryNextPurchaseFinish(false);return;}
+    xr_vector<u16> moved;
+    bool accepted=true;
+    for(u16 live:items) {
+        auto item=game->get_entity_from_eid(live);
+        if(!item||item->ID_Parent!=source||!is_object_valid_on_svclient(live)) {accepted=false;break;}
+        NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_TRADE_SELL);reject.w_u16(source);reject.w_u16(live);
+        if(!Process_event_reject(reject,sender,time,source,live,false)){accepted=false;break;}
+        if(!game->OnTouch(owner,live,FALSE)) {
+            if(game->OnTouch(source,live,FALSE)){item->ID_Parent=source;from->children.push_back(live);}
+            accepted=false;break;
+        }
+        item->ID_Parent=owner;to->children.push_back(live);moved.push_back(live);
+    }
+    if(!accepted) {
+        // No client detach or payment was emitted. Restore every earlier member
+        // through the same ALife hooks before acknowledging rejection.
+        for(auto it=moved.rbegin();it!=moved.rend();++it) {
+            auto item=game->get_entity_from_eid(*it);if(!item)continue;
+            NET_Packet rollback;rollback.w_begin(M_EVENT);rollback.w_u32(time);rollback.w_u16(GE_TRADE_SELL);rollback.w_u16(owner);rollback.w_u16(*it);
+            if(Process_event_reject(rollback,sender,time,owner,*it,false)&&game->OnTouch(source,*it,FALSE)) {
+                item->ID_Parent=source;from->children.push_back(*it);
+            }
+        }
+        InventoryNextPurchaseFinish(false);return;
+    }
+    for(u16 live:items) {
+        auto item=game->get_entity_from_eid(live);
+        if(from->owner!=to->owner)PerformMigration(item,from->owner,to->owner);
+    }
+    if(!InventoryNextPurchaseFinish(true))return;
+    const u32 mode=net_flags(TRUE,TRUE,FALSE,TRUE);
+    for(u16 live:items) {
+        NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_TRADE_SELL);reject.w_u16(source);reject.w_u16(live);
+        NET_Packet take;take.w_begin(M_EVENT);take.w_u32(time);take.w_u16(GE_TRADE_BUY);take.w_u16(owner);take.w_u16(live);
+        SendBroadcast(BroadcastCID,reject,mode);SendBroadcast(BroadcastCID,take,mode);
+    }
+}

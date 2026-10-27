@@ -563,6 +563,16 @@ void CUIActorMenu::OnBtnPerformTradeBuy(CUIWindow* w, void* d)
 
 	if ((actor_money >= 0) /*&& ( partner_money >= 0 )*/ && (actor_price >= 0 || partner_price > 0))
 	{
+		if(InventoryNextStrictTradePickup()) {
+			xr_vector<u16> selected;
+			for(u32 n=0;n<m_pTradePartnerList->ItemsCount();++n) {
+				auto cell=m_pTradePartnerList->GetItemIdx(n);
+				selected.push_back(static_cast<PIItem>(cell->m_pData)->object().ID());
+				for(u32 child=0;child<cell->ChildsCount();++child)
+					selected.push_back(static_cast<PIItem>(cell->Child(child)->m_pData)->object().ID());
+			}
+			if(InventoryNextPurchaseRequest(m_partner_trade,selected))return;
+		}
 		m_partner_trade->OnPerformTrade(partner_price, actor_price);
 
 		//		TransferItems( m_pTradeActorList,   m_pTradePartnerBagList, m_partner_trade, true );
@@ -667,6 +677,16 @@ void CUIActorMenu::OnBtnPerformTradeSell(CUIWindow* w, void* d)
 	}
 
 	UpdateItemsPlace();
+}
+
+void CUIActorMenu::SqaPurchaseRefresh()
+{
+    if(m_currMenuMode!=mmTrade)return;
+    SetCurrentItem(NULL);
+    m_pTradePartnerList->ClearAll(true);
+    InitPartnerInventoryContents();
+    InitInventoryContents(m_pTradeActorBagList);
+    UpdatePrices();
 }
 
 void CUIActorMenu::TransferItems(CUIDragDropListEx* pSellList, CUIDragDropListEx* pBuyList, CTrade* pTrade,
