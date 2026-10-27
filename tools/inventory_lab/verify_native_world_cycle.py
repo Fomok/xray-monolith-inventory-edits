@@ -1,0 +1,70 @@
+"""Verify real ALife lifetime transitions separately from area travel."""
+import argparse
+import copy
+import json
+import re
+from pathlib import Path
+from verify_native_placement import read
+from verify_native_snapshot import verify
+from verify_native_world_transfer import world_records
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument('stem', type=Path)
+    ap.add_argument('--baseline', type=Path, required=True)
+    ap.add_argument('--ground', action='store_true')
+    a = ap.parse_args()
+    log = a.stem.with_suffix('.log').read_text(errors='replace')
+    report = verify(a.stem.with_suffix('.log'), a.stem.with_suffix('.inv'), logical_ownership=True)
+    actor, _ = read(a.stem.with_suffix('.inv'))
+    baseline, _ = read(a.baseline)
+    world, digest = world_records(a.stem.with_suffix('.world'))
+    assert not world and len(actor) == 7 and report['grams'] == 3278
+    stages = {}
+    pattern = r'cycle member phase=(initial|offline|online) before=(\d+) live=(\d+) parent=(\d+) section=(\w+) online=(true|false)'
+    for phase, old, live, parent, section, online in re.findall(pattern, log):
+        stage = stages.setdefault(phase, {})
+        assert int(old) not in stage
+        stage[int(old)] = (int(live), int(parent), section, online)
+    assert set(stages) == {'initial', 'offline', 'online'}
+    initial = stages['initial']
+    assert len(initial) == 3 and all(set(rows) == set(initial) for rows in stages.values())
+    for phase, rows in stages.items():
+        custodians = re.findall(rf'cycle custodian phase={phase} before=(\d+) live=(\d+) online=(true|false) level=(\w+)', log)
+        assert len(custodians) == 1
+        _, owner, online, _ = custodians[0]
+        expected_online = 'false' if phase == 'offline' else 'true'
+        assert online == expected_online
+        assert all(row[1] == int(owner) and row[3] == expected_online and row[2] == initial[old][2] for old, row in rows.items())
+    drift = {}
+    expected = copy.deepcopy(baseline)
+    for identity, node in expected.items():
+        attrs = node['attributes']; old = int(attrs['native_live_id'])
+        if old in initial:
+            attrs['native_live_id'] = str(stages['online'][old][0])
+            actual_slot = actor[identity]['attributes']['native_slot']
+            # CurrSlot is transient for a rucksack item after net_Destroy/net_Spawn.
+            # Permit only its native reset to zero; equipment and all core state stay exact.
+            if actual_slot != attrs['native_slot']:
+                assert attrs['native_place'] == '3' and actual_slot == '0'
+                drift[str(identity)] = {'before': attrs['native_slot'], 'after': actual_slot}
+                attrs['native_slot'] = actual_slot
+    assert actor == expected
+    kind = 'ground' if a.ground else 'crate'
+    assert f'Game sqa3_cycle_{kind}_offline.scop is successfully saved' in log
+    assert f'Game sqa3_cycle_{kind}_return.scop is successfully saved' in log
+    assert log.count('loaded transfer server committed count=3') == 1
+    assert log.count('loaded transfer client completed count=3 save_ready=1') == 1
+    assert len(re.findall(r'cycle returned before=', log)) == 3
+    if a.ground:
+        assert 'empty ground proxy cleanup live=' in log
+    report.update(real_offline_online_cycle=True, area_transition_tested=False,
+                  persistent_item_state_preserved=True, transient_ruck_slot_resets=drift,
+                  world_sha256=digest, limits='Real ALife offline/online lifetime cycle and retrieval; not area travel. Physical UI observed separately.')
+    a.stem.with_name(a.stem.name+'-verification.json').write_text(json.dumps(report, indent=2)+'\n')
+    print(json.dumps(report))
+
+
+if __name__ == '__main__':
+    main()

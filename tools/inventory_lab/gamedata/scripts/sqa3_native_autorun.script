@@ -240,6 +240,75 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-world-travel",1,true) then
+        local ground=args:find("-sqa3-travel-ground",1,true)~=nil
+        local label=ground and "ground" or "crate"
+        local original=tonumber(args:match("%-sqa3%-travel%-crate=(%d+)"))
+        local box
+        local function find_box()
+            local name=load_var(db.actor,"sqa3_travel_box","");local matches=0
+            alife():iterate_objects(function(obj)
+                if obj:name()==name then box=obj;matches=matches+1 end
+                return false
+            end)
+            assert(matches==1,"travel custodian missing or duplicated")
+        end
+        local function custody(phase,online)
+            find_box();assert(box.online==online,"travel custodian lifecycle mismatch")
+            local count=0
+            alife():iterate_objects(function(obj)
+                if obj.parent_id==box.id then
+                    count=count+1;assert(obj.online==online,"travel member lifecycle mismatch")
+                    printf("[SQA3 AUTORUN] travel member phase=%s live=%s parent=%s section=%s online=%s",phase,tostring(obj.id),tostring(box.id),obj:section_name(),tostring(obj.online))
+                end
+                return false
+            end)
+            assert(count==3,"travel contents incomplete")
+            printf("[SQA3 AUTORUN] travel custody phase=%s level=%s live=%s online=%s members=3",phase,level.name(),tostring(box.id),tostring(box.online))
+        end
+        commands={function()
+            local phase=load_var(db.actor,"sqa3_travel_phase",0)
+            printf("[SQA3 AUTORUN] travel resume phase=%s level=%s",tostring(phase),level.name())
+            if phase==0 then
+                assert(level.name()=="fake_start","travel fixture must start in debug map")
+                box=alife():object(original);assert(box and box:section_name()==(ground and "sqa3_ground_backpack" or "inventory_box"),"wrong travel custodian")
+                save_var(db.actor,"sqa3_travel_box",box:name())
+                local pos=db.actor:position()
+                save_var(db.actor,"sqa3_travel_x",pos.x);save_var(db.actor,"sqa3_travel_y",pos.y);save_var(db.actor,"sqa3_travel_z",pos.z)
+                commands={"g_god on",function() custody("source",true) end,"inventory_next_probe export",
+                    function() save_var(db.actor,"sqa3_travel_phase",1) end,"jump_to_level l01_escape"}
+            elseif phase==1 then
+                assert(level.name()=="l01_escape","outbound level transition did not reach Cordon")
+                commands={"g_god on",function() custody("away",false) end,"inventory_next_probe export","save sqa3_travel_"..label.."_away",
+                    function() save_var(db.actor,"sqa3_travel_phase",2) end,"jump_to_level fake_start"}
+            elseif phase==2 then
+                assert(level.name()=="fake_start","return level transition did not reach debug map")
+                commands={function()
+                    db.actor:set_actor_position(vector():set(load_var(db.actor,"sqa3_travel_x",0),load_var(db.actor,"sqa3_travel_y",0),load_var(db.actor,"sqa3_travel_z",0)))
+                    started=started+5000
+                end,function() custody("returned",true);crate_id=box.id;open_crate() end,
+                function() started=started+60000;printf("[SQA3 AUTORUN] travel physical retrieval window") end,
+                function()
+                    local bags,medkits=0,0
+                    db.actor:iterate_inventory(function(_,item)
+                        if item:section()=="itm_backpack" then bags=bags+1 end
+                        if item:section()=="medkit" then medkits=medkits+1 end
+                        return false
+                    end,db.actor)
+                    assert(bags==2 and medkits==1,"travel retrieval incomplete")
+                    if ground then assert(not alife():object(crate_id),"travel ground proxy survived retrieval")
+                    else assert(level.object_by_id(crate_id):is_inv_box_empty(),"travel crate not empty") end
+                    ActorMenu.get_actor_menu():HideDialog();save_var(db.actor,"sqa3_travel_phase",3)
+                    printf("[SQA3 AUTORUN] travel retrieval completed level=%s",level.name())
+                end,snapshot,"inventory_next_probe export","save sqa3_travel_"..label.."_return","quit"}
+            elseif phase==3 then
+                assert(level.name()=="fake_start","unexpected completed travel map")
+                commands={snapshot,"inventory_next_probe export","quit"}
+            else error("unknown travel fixture phase") end
+            stage=1;started=time_global()
+        end}
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-world-cycle",1,true) then
         local original=tonumber(args:match("%-sqa3%-cycle%-crate=(%d+)"))
         local ground=args:find("-sqa3-cycle-ground",1,true)~=nil
