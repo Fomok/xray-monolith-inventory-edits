@@ -222,6 +222,13 @@ function on_game_start()
         end
         commands[#commands+1]=function() changing=false;printf("[SQA3 AUTORUN] condition update ticks=%s",tostring(condition_tick)) end
     end
+    if args:find("-sqa3-fixture-context-use",1,true) then
+        commands[#commands+1]=function()
+            level.press_action(DIK_keys.MOUSE_2);level.release_action(DIK_keys.MOUSE_2)
+            started=started+30000
+            printf("[SQA3 AUTORUN] native context click; bounded 30-second action window")
+        end
+    end
     if args:find("-sqa3-fixture-bound-rotate",1,true) then
         commands[#commands+1]=function()
             -- The computer-use test positions the real cursor over the observed pistol.
