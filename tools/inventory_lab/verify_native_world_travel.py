@@ -14,7 +14,9 @@ def main():
     ap.add_argument('stem', type=Path)
     ap.add_argument('--baseline', type=Path, required=True)
     ap.add_argument('--ground', action='store_true')
+    ap.add_argument('--corpse', action='store_true')
     a = ap.parse_args()
+    assert not (a.ground and a.corpse)
     log = a.stem.with_suffix('.log').read_text(errors='replace')
     run = json.loads(a.stem.with_name(a.stem.name+'-run.json').read_text(encoding='utf-8-sig'))
     assert run['exit_code'] == 0 and not run['timed_out'], 'unclean process termination'
@@ -50,7 +52,9 @@ def main():
             resets[str(identity)] = {'before': attrs['native_slot'], 'after': '0'}
             attrs['native_slot'] = '0'
     assert actor == expected, 'persistent item state changed'
-    kind = 'ground' if a.ground else 'crate'
+    kind = 'corpse' if a.corpse else ('ground' if a.ground else 'crate')
+    if a.corpse:
+        assert len(re.findall(r'travel corpse emptied live=\d+ dead=true', log)) == 1
     for stage in ('away', 'return'):
         assert f'Game sqa3_travel_{kind}_{stage}.scop is successfully saved' in log
     assert 'travel retrieval completed level=fake_start' in log
@@ -61,6 +65,8 @@ def main():
     report.update(area_transition_tested=True, real_offline_online_cycle=True,
                   persistent_item_state_preserved=True, transient_ruck_slot_resets=resets,
                   world_sha256=digest, limits='Actual two-map travel and retrieval; no forced native-ID remapping, corpse storage or vanilla stash claim.')
+    if a.corpse:
+        report['limits'] = 'Actual two-map corpse custody and retrieval; no forced native-ID remapping or vanilla stash claim.'
     a.stem.with_name(a.stem.name+'-verification.json').write_text(json.dumps(report, indent=2)+'\n')
     print(json.dumps(report))
 

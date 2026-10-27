@@ -269,7 +269,10 @@ function on_game_start()
         end
         local ground=args:find("-sqa3-travel-ground",1,true)~=nil
         local initialize=args:find("-sqa3-travel-initialize",1,true)~=nil
-        local label=ground and "ground" or "crate"
+        local corpse=args:find("-sqa3-travel-corpse",1,true)~=nil
+        assert(not(ground and corpse),"conflicting travel custodians")
+        if corpse then assert(args:find("-sqa3-corpse-storage",1,true),"corpse travel opt-in missing") end
+        local label=corpse and "corpse" or (ground and "ground" or "crate")
         local original=tonumber(args:match("%-sqa3%-travel%-crate=(%d+)"))
         local box
         local function find_box()
@@ -306,7 +309,7 @@ function on_game_start()
                 assert(level.name()=="fake_start","travel fixture must start in debug map")
                 if not initialize then
                     assert(alife_storage_manager.get_state().item_removal_done,"complete vanilla first-world initialization before placing travel-test storage")
-                    box=alife():object(original);assert(box and box:section_name()==(ground and "sqa3_ground_backpack" or "inventory_box"),"wrong travel custodian")
+                    box=alife():object(original);assert(box and box:section_name()==(corpse and "sim_default_stalker_1" or (ground and "sqa3_ground_backpack" or "inventory_box")),"wrong travel custodian")
                     save_var(db.actor,"sqa3_travel_box",box:name())
                 end
                 local pos=db.actor:position()
@@ -333,7 +336,10 @@ function on_game_start()
                 commands={function()
                     db.actor:set_actor_position(vector():set(load_var(db.actor,"sqa3_travel_x",0),load_var(db.actor,"sqa3_travel_y",0),load_var(db.actor,"sqa3_travel_z",0)))
                     started=started+5000
-                end,function() custody("returned",true);crate_id=box.id;open_crate() end,
+                end,function()
+                    custody("returned",true);crate_id=box.id
+                    if corpse then npc_id=box.id;open_corpse() else open_crate() end
+                end,
                 function() started=started+60000;printf("[SQA3 AUTORUN] travel physical retrieval window") end,
                 function()
                     local bags,medkits=0,0
@@ -344,6 +350,11 @@ function on_game_start()
                     end,db.actor)
                     assert(bags==2 and medkits==1,"travel retrieval incomplete")
                     if ground then assert(not alife():object(crate_id),"travel ground proxy survived retrieval")
+                    elseif corpse then
+                        local npc=level.object_by_id(crate_id);assert(npc and not npc:alive(),"travel corpse missing or alive")
+                        local count=0;npc:iterate_inventory(function(_,item) if alife():object(item:id()) then count=count+1 end return false end,npc)
+                        assert(count==0,"travel corpse not empty")
+                        printf("[SQA3 AUTORUN] travel corpse emptied live=%s dead=true",tostring(crate_id))
                     else assert(level.object_by_id(crate_id):is_inv_box_empty(),"travel crate not empty") end
                     ActorMenu.get_actor_menu():HideDialog();save_var(db.actor,"sqa3_travel_phase",3)
                     printf("[SQA3 AUTORUN] travel retrieval completed level=%s",level.name())
