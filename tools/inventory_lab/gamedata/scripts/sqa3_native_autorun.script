@@ -269,8 +269,13 @@ function on_game_start()
             assert(pack and pack:parent() and pack:parent():id()==db.actor:id(),"loaded backpack was detached")
             printf("[SQA3 AUTORUN] loaded backpack drop refused; native parent retained")
         end
-        commands[#commands+1]=toggle_inventory
-        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]=function()
+            if ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
+        end
+        commands[#commands+1]=function()
+            if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
+            assert(ActorMenu.get_actor_menu():IsShown(),"logical inventory did not reopen")
+        end
         if args:find("-sqa3-fixture-hold",1,true) then
             commands[#commands+1]=function() started=started+60000;printf("[SQA3 AUTORUN] logical storage input window") end
         end

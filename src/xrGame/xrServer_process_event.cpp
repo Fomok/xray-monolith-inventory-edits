@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "xrServer.h"
+#include "InventoryNextProbe.h"
+#include "actor.h"
 #include "game_sv_single.h"
 #include "alife_simulator.h"
 #include "xrserver_objects.h"
@@ -106,7 +108,12 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_OWNERSHIP_REJECT:
 	case GE_LAUNCH_ROCKET:
 		{
-			Process_event_reject(P, sender, timestamp, destination, P.r_u16());
+            const u16 released=P.r_u16();
+            // Player/script release events need subtree protection. Internal
+            // Perform_reject is also used by teardown/destruction and must run.
+            if(type!=GE_LAUNCH_ROCKET&&InventoryNextLogicalStorage()&&Actor()&&
+               destination==Actor()->ID()&&!InventoryNextCanRelease(released))break;
+			Process_event_reject(P, sender, timestamp, destination, released);
 #ifdef DEBUG
 			VERIFY(verify_entities());
 #endif

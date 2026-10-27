@@ -1,13 +1,10 @@
 #include "stdafx.h"
 #include "xrserver.h"
 #include "xrserver_objects.h"
-#include "InventoryNextProbe.h"
-#include "actor.h"
 
 bool xrServer::Process_event_reject(NET_Packet& P, const ClientID sender, const u32 time, const u16 id_parent,
                                     const u16 id_entity, bool send_message)
 {
-    if(InventoryNextLogicalStorage()&&send_message&&Actor()&&id_parent==Actor()->ID()&&!InventoryNextCanRelease(id_entity))return false;
 	// Parse message
 	CSE_Abstract* e_parent = game->get_entity_from_eid(id_parent);
 	CSE_Abstract* e_entity = game->get_entity_from_eid(id_entity);
