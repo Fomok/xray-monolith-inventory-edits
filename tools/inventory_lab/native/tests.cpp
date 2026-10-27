@@ -1,3 +1,4 @@
+#include "../../../src/inventory_next/native_layout.h"
 #include "model.h"
 #include "access_gate.h"
 #include "identity_ledger.h"
@@ -585,6 +586,24 @@ int main(int argc,char** argv) {
             auto y=item(21,1,30);y.location=Location::Overflow;y.container=true;y.grid={1,1};
             Model m;yes(m.initialize({a,b,x,y}));auto old=m.serialize();yes(m.retry_recovery(1,{10,21},0,m.session()));
             check(m.serialize()==old,"blocked grid/self destination bypassed");
+        });
+        test("native layout preserves manual position and stale guards across facts and reload",[]{
+            Node n=item(100,1,100);n.attributes["native_section"]="pda";ActorLayout a;yes(a.reconcile({n}));
+            auto rev=a.model().revision(),session=a.model().session();yes(a.move({100,1,{4,3,false},rev,session}));
+            yes(a.reconcile({n}));check(a.model().nodes().at(100).position.x==4,"sync reset manual position");
+            no(a.move({100,1,{5,3,false},rev,session}),"stale_revision");
+            ActorLayout b;yes(b.restore(a.model().serialize()));n.intrinsic=150;n.condition=5000;yes(b.reconcile({n}));
+            check(b.model().nodes().at(100).position.x==4&&b.model().carried_mass()==150&&b.model().nodes().at(100).condition==5000,"saved facts overrode native truth");
+            no(b.move({100,1,{5,3,false},b.model().revision(),session}),"stale_session");
+        });
+        test("native layout reconciles arrivals removals and rejects identity mismatch atomically",[]{
+            Node x=item(100,1,100);x.attributes["native_section"]="pda";Node y=x;y.id=101;ActorLayout a;yes(a.reconcile({x,y}));
+            const auto pos=a.model().nodes().at(101).position;auto before=a.model().serialize();
+            check(!a.move({100,1,pos,a.model().revision(),a.model().session()}),"overlap accepted");check(before==a.model().serialize(),"overlap changed state");
+            x.attributes["native_section"]="wrong";no(a.reconcile({x,y}),"native_identity_section");check(a.model().serialize()==before,"mismatch published");
+            yes(a.reconcile({y}));check(a.model().nodes().size()==3&&a.model().nodes().at(101).position.x==pos.x,"removal moved survivor");
+            Model foreign;yes(foreign.initialize({root(3,Kind::ActorRoot)}));no(a.restore(foreign.serialize()),"native_layout_root");
+            check(a.model().nodes().count(101)==1,"bad restore lost state");
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));

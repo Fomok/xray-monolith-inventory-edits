@@ -1,0 +1,7 @@
+{
+  "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\sqa_fk_controls.dds",
+  "sha256": "cab0598b6a001a5f28f47b7b2d3f8e173181dd4a6ba640ba43cd6c0225ed10de",
+  "bytes": 4194432,
+  "destination": "gamedata/textures/ui/sqa_fk_controls.dds",
+  "note": "Unmodified Squared Away Field Kit controls atlas. XML maps center to native CUIFrameWindow back suffix."
+}

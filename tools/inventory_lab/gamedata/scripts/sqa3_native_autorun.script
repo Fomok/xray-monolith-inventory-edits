@@ -1,0 +1,27 @@
+-- Isolated lab fixture only. Never install into a player profile.
+local started, stage, failed = nil, 1, false
+local commands = {
+    "inventory_next_probe export",
+    "inventory_next_probe view",
+    "screenshot sqa3_native",
+    "save sqa3_automation_reload",
+    "quit"
+}
+function update()
+    if failed or not db or not db.actor then return end
+    if not started then started=time_global();printf("[SQA3 AUTORUN] actor ready") end
+    if time_global()-started < stage*2000 then return end
+    local command=commands[stage]
+    if not command then return end
+    stage=stage+1
+    printf("[SQA3 AUTORUN] execute %s",command)
+    local ok,err=pcall(exec_console_cmd,command)
+    if not ok then
+        failed=true;printf("[SQA3 AUTORUN] FAIL %s",tostring(err))
+        exec_console_cmd("quit")
+    end
+end
+function on_game_start()
+    printf("[SQA3 AUTORUN] registered isolated native fixture")
+    RegisterScriptCallback("actor_on_update",update)
+end

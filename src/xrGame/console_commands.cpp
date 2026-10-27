@@ -1840,6 +1840,18 @@ public:
     }
 };
 
+class CCC_InventoryNextMove : public IConsole_Command {
+public:
+    CCC_InventoryNextMove(LPCSTR name):IConsole_Command(name){}
+    void Execute(LPCSTR args) override {
+        unsigned long long id;int x,y,r;char extra;
+        if(sscanf(args,"%llu %d %d %d %c",&id,&x,&y,&r,&extra)!=4||(r!=0&&r!=1)) {
+            Msg("! usage: inventory_next_move <id> <x> <y> <rotated 0|1>");return;
+        }
+        InventoryNextMove(id,x,y,r!=0);
+    }
+};
+
 class CCC_Script : public IConsole_Command
 {
 public:
@@ -2739,8 +2751,10 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask, "ai_ignore_actor", &psAI_Flags, aiIgnoreActor);
 #endif // MASTER_GOLD
 
-	if (strstr(Core.Params, "-inventory-lab") && strstr(Core.Params, "-dbg"))
+	if (strstr(Core.Params, "-inventory-lab") && strstr(Core.Params, "-dbg")) {
 		CMD1(CCC_InventoryNextProbe, "inventory_next_probe");
+        CMD1(CCC_InventoryNextMove, "inventory_next_move");
+    }
 
 	// Physics
 	CMD1(CCC_PHFps, "ph_frequency");

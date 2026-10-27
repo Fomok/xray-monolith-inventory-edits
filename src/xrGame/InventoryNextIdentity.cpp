@@ -1,6 +1,7 @@
 #define SQA3_EXCEPTION_BOUNDARY
 #include "stdafx.h"
 #include "InventoryNextIdentity.h"
+#include "InventoryNextProbe.h"
 #include "../inventory_next/identity_ledger.h"
 #include "../inventory_next/identity_state.h"
 #include "inventory_item.h"
@@ -33,6 +34,7 @@ u64 InventoryNextIdentity(u16 server_id) noexcept try {
     } catch(const std::exception& e) { Msg("! SQA3 identity: %s",e.what());return 0; }
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); return 0; }
 void InventoryNextIdentityReset() noexcept try {
+    InventoryNextLayoutReset();
     const auto result=identities().reset();CHECK_OR_EXIT(result.ok,"SQA3 identity reset failed");
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityRetire(u16 server_id) noexcept try {
@@ -46,6 +48,7 @@ void InventoryNextIdentityRemap(u16 before,u16 after) noexcept try {
 bool InventoryNextIdentityCanSave() noexcept try {
     if(!InventoryNextEnabled())return true;
     if(!ai().get_alife())return ledger().entries().empty();
+    if(!InventoryNextLayoutSync())return false;
     for(const auto& entry:ledger().entries()) {
         u16 id=entry.first;
         for(unsigned depth=0;;++depth) {
@@ -65,6 +68,7 @@ void InventoryNextIdentitySave(IWriter& stream) noexcept try {
     // Save even an empty map: high-water survives destruction of all enrolled items.
     const auto bytes=ledger().serialize();
     stream.open_chunk(identity_chunk);stream.w(bytes.data(),static_cast<u32>(bytes.size()));stream.close_chunk();
+    InventoryNextLayoutSave(stream);
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityLoad(IReader& stream) noexcept try {
     IReader* chunk=stream.open_chunk(identity_chunk);
@@ -74,6 +78,7 @@ void InventoryNextIdentityLoad(IReader& stream) noexcept try {
     const std::string bytes(reinterpret_cast<const char*>(chunk->pointer()),chunk->length());
     const auto result=identities().restore(bytes);chunk->close();
     CHECK_OR_EXIT(result.ok,"Invalid SQA3 persistent identity chunk");
+    InventoryNextLayoutLoad(stream);
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityValidate() noexcept try {
     if(!InventoryNextEnabled())return;

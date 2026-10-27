@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<w>
+  <file name="ui\sqa_fk_controls">
+    <texture id="sqa_fk_window_lt" x="8" y="8" width="12" height="12" />
+    <texture id="sqa_fk_window_t" x="20" y="8" width="104" height="12" />
+    <texture id="sqa_fk_window_rt" x="124" y="8" width="12" height="12" />
+    <texture id="sqa_fk_window_l" x="8" y="20" width="12" height="104" />
+    <texture id="sqa_fk_window_back" x="20" y="20" width="104" height="104" />
+    <texture id="sqa_fk_window_r" x="124" y="20" width="12" height="104" />
+    <texture id="sqa_fk_window_lb" x="8" y="124" width="12" height="12" />
+    <texture id="sqa_fk_window_b" x="20" y="124" width="104" height="12" />
+    <texture id="sqa_fk_window_rb" x="124" y="124" width="12" height="12" />
+  </file>
+</w>

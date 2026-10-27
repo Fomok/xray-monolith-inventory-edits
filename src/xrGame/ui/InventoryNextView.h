@@ -3,6 +3,7 @@
 #include "UIWindow.h"
 #include "../../inventory_next/presentation.h"
 #include <memory>
+#include <functional>
 
 class CUIScrollView;
 class CUIStatic;
@@ -19,9 +20,13 @@ public:
         // Optional, already validated registered CUI texture descriptor ID.
         // Empty means text fallback. This is not a guessed texture filename.
         std::string texture_id;
+        std::string texture_file;
+        Frect texture_rect;
     };
     using Visuals = std::map<inventory_next::Id, ItemVisual>;
 
+    using MoveHandler=std::function<inventory_next::Result(const inventory_next::Move&,inventory_next::Model&)>;
+    void SetMoveHandler(MoveHandler handler){m_move=std::move(handler);Invalidate();}
     CInventoryNextView();
     ~CInventoryNextView() override;
     void Initialize(const Fvector2& position, const Fvector2& size) noexcept;
@@ -40,7 +45,7 @@ public:
     void SendMessage(CUIWindow* sender, s16 message, void* data = nullptr) noexcept override;
 
 private:
-    enum class ActionKind { Collapse, Scroll, Cycle, Open };
+    enum class ActionKind { Collapse, Scroll, Cycle, Open, Select, Move };
     struct Action
     {
         ActionKind kind;
@@ -62,6 +67,9 @@ private:
     Visuals m_visuals;
     CUIScrollView* m_scroll = nullptr; // auto-deleted by this CUIWindow
     std::map<CUIWindow*, Action> m_actions; // child identities only, cleared before deletion
+    MoveHandler m_move;
+    inventory_next::Id m_selected=0;
+    std::string m_status;
     bool m_dirty = false;
     float m_cell = 32.0f;
 };

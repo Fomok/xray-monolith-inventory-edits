@@ -4,6 +4,8 @@
 #include "UIScrollView.h"
 #include "UIStatic.h"
 #include "UIButton.h"
+#include "UITextureMaster.h"
+#include "UIFrameWindow.h"
 #include "../ui_base.h"
 #include "../UICursor.h"
 #include <algorithm>
@@ -106,6 +108,10 @@ void CInventoryNextView::Initialize(const Fvector2& position, const Fvector2& si
     SetWndSize(Fvector2().set((std::max)(size.x, 300.0f), (std::max)(size.y, 160.0f)));
     if (!m_scroll)
     {
+        if(CUITextureMaster::FindItem("sqa_fk_window_back").file.size()) {
+            auto background=xr_new<CUIFrameWindow>();background->SetAutoDelete(true);AttachChild(background);
+            Place(background,0,0,GetWidth(),GetHeight());background->InitTexture("sqa_fk_window");background->Enable(false);
+        }
         m_scroll = xr_new<CUIScrollView>();
         m_scroll->SetAutoDelete(true);
         AttachChild(m_scroll);
@@ -237,10 +243,15 @@ void CInventoryNextView::Rebuild()
     m_scroll->Clear();
     const float width = (std::max)(260.0f, m_scroll->GetDesiredChildWidth() - 8.0f);
     auto header = xr_new<CUIWindow>();
-    Place(header, 0, 0, width, 28.0f);
+    Place(header, 0, 0, width, m_move?60.0f:28.0f);
     m_scroll->AddWindow(header, true);
-    Text(header, m_snapshot ? "Inventory - read only" : "Inventory unavailable", 4, 2, width-8, 24, textColor);
+    Text(header, m_snapshot ? (m_move?"Squared Away - development placement":"Inventory - read only") : "Inventory unavailable", 4, 2, width-8, 24, textColor);
     if (!m_snapshot) { m_scroll->Show(true); m_scroll->Enable(true); return; }
+    if(m_move) {
+        Text(header,m_selected?Label(m_selected)+"  "+m_status:"Select an item to move or rotate",4,30,width-300,24,textColor);
+        const char* labels[]={"Left","Right","Up","Down","Rotate"};
+        for(int i=0;i<5;++i)Button(header,labels[i],width-300+i*60,30,58,{ActionKind::Move,m_selected,i,0});
+    }
     const auto& model = *m_snapshot;
     const auto snapshot = model.snapshot();
     std::set<unsigned> groups;
@@ -295,17 +306,21 @@ void CInventoryNextView::Rebuild()
             Place(tile, item.position.x*cell, (item.position.y-static_cast<int>(panel.first_row))*cell,
                   item.footprint.w*cell, item.footprint.h*cell);
             const auto visual = m_visuals.find(item.id);
-            if (visual != m_visuals.end() && !visual->second.texture_id.empty() && !item.position.rotated)
+            if (visual != m_visuals.end() && (!visual->second.texture_id.empty()||!visual->second.texture_file.empty()) && !item.position.rotated)
             {
                 auto icon = xr_new<CUIStatic>();
                 icon->SetAutoDelete(true);
                 tile->AttachChild(icon);
                 Place(icon, 0, 0, tile->GetWidth(), tile->GetHeight());
-                icon->InitTexture(visual->second.texture_id.c_str());
+                if(!visual->second.texture_file.empty()) {
+                    icon->CreateShader(visual->second.texture_file.c_str());icon->SetTextureRect(visual->second.texture_rect);
+                } else icon->InitTexture(visual->second.texture_id.c_str());
                 icon->SetStretchTexture(true);
                 icon->Enable(false);
             }
-            Text(tile, Label(item.id) + " x" + std::to_string(item.quantity), 1, 1, tile->GetWidth()-2, 20, textColor);
+            if(item.position.rotated)Text(tile,Label(item.id)+" (rotated)",1,1,tile->GetWidth()-2,20,textColor);
+            if(m_move)Button(tile,m_selected==item.id?"Selected":"Select",0,(std::max)(0.0f,tile->GetHeight()-24),tile->GetWidth(),{ActionKind::Select,item.id,0,0});
+            else Text(tile, Label(item.id) + " x" + std::to_string(item.quantity), 1, 1, tile->GetWidth()-2, 20, textColor);
             const auto node = model.nodes().find(item.id);
             if (node != model.nodes().end() && node->second.container)
                 Button(tile, "[+]", 0, (std::max)(0.0f, tile->GetHeight()-24), (std::min)(32.0f, tile->GetWidth()),
@@ -348,6 +363,17 @@ void CInventoryNextView::SendMessage(CUIWindow* sender, s16 message, void* data)
     const auto action = found->second;
     switch (action.kind)
     {
+    case ActionKind::Select: m_selected=action.id;m_status.clear();break;
+    case ActionKind::Move: {
+        const auto item=m_snapshot->nodes().find(m_selected);if(!m_move||item==m_snapshot->nodes().end())break;
+        auto p=item->second.position;
+        if(action.direction==0)--p.x;else if(action.direction==1)++p.x;else if(action.direction==2)--p.y;else if(action.direction==3)++p.y;else p.rotated=!p.rotated;
+        inventory_next::Model refreshed=*m_snapshot;
+        auto result=m_move({m_selected,item->second.parent,p,m_snapshot->revision(),m_snapshot->session()},refreshed);
+        m_status=result.ok?"Placed":result.error;
+        m_snapshot.reset(new inventory_next::Model(std::move(refreshed)));m_state.synchronize(*m_snapshot,m_actor,{});m_state.open(*m_snapshot,m_actor,12);
+        break;
+    }
     case ActionKind::Collapse:
         for (const auto& panel : m_state.panels(*m_snapshot))
             if (panel.container == action.id) { m_state.collapse(action.id, !panel.collapsed); break; }
