@@ -84,3 +84,28 @@ fix the reproduced vanilla initialization cleanup. Engine SHA256:
 
 No public engines or production files changed. Full loaded corpse storage,
 vanilla stash integration, world destruction recovery and parity remain open.
+
+## Crate travel manual-input blocker
+
+Initialized crate release PID32984 passed physical drag, complete three-member
+custody, strict export verification and save; exit0. Crate336/persistent1031,
+actor4/1138g and world3/2140g match the initialized baseline.
+
+Actual travel PID5448 reached Cordon but displayed Paused indefinitely. The
+window remained responsive and mouse cursor moved; two tool Pause presses,
+Escape and a focused click did not resume simulation. No return-trip or final
+retrieval acceptance is claimed. Per the user's stop-on-manual-input instruction,
+the owned process was explicitly stopped (exit-1, not supervisor timeout).
+Evidence ci-40530438260/crate-travel.* is retained. The next manual check is a
+physical Pause/Break key press after the same outbound transition; establish
+whether it resumes before changing game code to bypass the pause.
+
+All games closed at the final elevated process audit. All13 installed payloads
+match the manifest and original test.dds/scoc/scop hashes remain unchanged;
+final-installed-save-audit.json records this. Current tested package:
+Squared Away 3 Travel Gate Test Dev 23.zip,10786556bytes,
+SHA256decb6756b710aba274250e996a790bcaa0e1c889dcd5305a7761158a7add531b,
+overlaya950edef0681be999db0a2b3ba1386419a4e7381. Three superseded Dev22ZIPs
+were removed after exact-path/hash verification (32357382bytes), retaining all
+evidence and current/rollback packages. This is a development package, not the
+completed mod. No loaded-corpse implementation was introduced in this checkpoint.
