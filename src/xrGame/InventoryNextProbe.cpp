@@ -10,6 +10,7 @@
 #include "ui/UIDialogWnd.h"
 #include "ui/InventoryNextView.h"
 #include "xr_level_controller.h"
+#include "../xrEngine/xr_input.h"
 #include "../inventory_next/model.h"
 #include "../inventory_next/entity_registry.h"
 #include "../inventory_next/persistence.h"
