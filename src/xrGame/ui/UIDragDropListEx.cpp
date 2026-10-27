@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "UIDragDropListEx.h"
+#include "UIStatic.h"
 #include "UIScrollBar.h"
 #include "object_broker.h"
 #include "UICellItem.h"
@@ -8,6 +9,7 @@
 //Alundaio
 #include "../Inventory.h"
 #include "../InventoryNextIdentity.h"
+#include "../InventoryNextProbe.h"
 #include <dinput.h>
 //-Alundaio
 
@@ -311,6 +313,8 @@ void CUIDragDropListEx::GetClientArea(Frect& r)
 
 void CUIDragDropListEx::ClearAll(bool bDestroy)
 {
+    for(auto& header:m_storageHeaders) DetachChild(header.second); // auto-delete
+    m_storageHeaders.clear();
 	DestroyDragItem();
 	m_container->ClearAll(bDestroy);
 	m_selected_item = NULL;
@@ -332,8 +336,22 @@ void CUIDragDropListEx::Compact()
 	}
 }
 
+void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color)
+{
+    auto label=xr_new<CUIStatic>();label->SetAutoDelete(true);AttachChild(label);
+    label->SetWndSize(Fvector2().set(GetWndSize().x,18.0f));label->TextureOff();label->Enable(false);
+    label->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
+    label->TextItemControl()->SetEllipsis(true);
+    label->TextItemControl()->SetTextColor(color);label->TextItemControl()->SetText(text);
+    m_storageHeaders.emplace_back(row,label);
+}
 void CUIDragDropListEx::Draw()
 {
+    for(auto& header:m_storageHeaders) {
+        const float y=float(header.first*(CellSize().y+CellsSpacing().y)-ScrollPos());
+        header.second->SetWndPos(Fvector2().set(2.0f,y));
+        header.second->Show(y>=0&&y+18.0f<=GetWndSize().y);
+    }
 	inherited::Draw();
 
 	if (0 && bDebug)
@@ -989,10 +1007,12 @@ void CUICellContainer::Draw()
 		for (int x=0;x<=tgt_cells.width();++x)
 			for (int y=0;y<=tgt_cells.height();++y)
 				for (u32 k=0;k<6;++k) {
+					const int storage=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageCell(x+tgt_cells.lt.x,y+tgt_cells.lt.y):1;
+					if(!storage)continue;
 					const Fvector2& p=pts[k];
 					UIRender->PushPoint(iFloor(drawLT.x+(f_len.x+sp_len.x)*x+p.x*f_len.x)-0.5f,
 						iFloor(drawLT.y+(f_len.y+sp_len.y)*y+p.y*f_len.y)-0.5f,0,
-						color_rgba(160,170,155,170),(8.0f+p.x*128.0f)/1024.0f,(8.0f+p.y*128.0f)/1024.0f);
+						storage==2?color_rgba(210,100,70,170):color_rgba(160,170,155,170),(8.0f+p.x*128.0f)/1024.0f,(8.0f+p.y*128.0f)/1024.0f);
 				}
 		UIRender->SetShader(*hSqaGrid);
 		UIRender->FlushPrimitive();

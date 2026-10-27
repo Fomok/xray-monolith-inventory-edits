@@ -106,7 +106,8 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
         const auto cell=old_owner->PickCell(old_owner->GetDragItemPosition());
         auto item=static_cast<PIItem>(itm->m_pData);
         if(item&&InventoryNextNativeDrop(item->object().ID(),cell.x,cell.y)) {
-            auto moved=old_owner->RemoveItem(itm,true);old_owner->SetItem(moved,cell);
+            if(InventoryNextLogicalStorage())m_sqaRefresh=true;
+            else {auto moved=old_owner->RemoveItem(itm,true);old_owner->SetItem(moved,cell);}
             if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("");
         }
         return true;

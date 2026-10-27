@@ -1,5 +1,6 @@
 //#include "stdafx.h"
 #include "pch_script.h"
+#include "../InventoryNextProbe.h"
 #include "UIActorMenu.h"
 #include "UI3tButton.h"
 #include "UIDragDropListEx.h"
@@ -411,6 +412,7 @@ u32 CUIActorMenu::CalcItemsPrice(CUIDragDropListEx* pList, CTrade* pTrade, bool 
 
 bool CUIActorMenu::CanMoveToPartner(PIItem pItem)
 {
+    if(!InventoryNextCanRelease(pItem->object().ID()))return false;
 	if (!pItem->CanTrade())
 		return false;
 

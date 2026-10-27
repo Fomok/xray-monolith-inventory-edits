@@ -14,6 +14,11 @@
 #include "../xrEngine/xr_input.h"
 #include "../inventory_next/native_layout.h"
 #include "../inventory_next/storage_catalog.h"
+#include "../inventory_next/native_storage_view.h"
+#include "ActorBackpack.h"
+#include "ui/UIDragDropListEx.h"
+#include "ui/UIStatic.h"
+#include "string_table.h"
 #include "../xrServerEntities/inventory_space.h"
 #include "../inventory_next/drag_session.h"
 #include "../inventory_next/entity_registry.h"
@@ -27,6 +32,7 @@ inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;r
 inventory_next::DragSession& native_drag(){static inventory_next::DragSession value;return value;}
 constexpr u32 layout_chunk=0x33514c59;
 bool layout_current=false;
+inventory_next::NativeStorageView storage_view;
 
 bool read_storage_catalog(inventory_next::StorageCatalog& output) {
     using namespace inventory_next;
@@ -56,10 +62,16 @@ bool read_storage_catalog(inventory_next::StorageCatalog& output) {
 
 }
 
+bool InventoryNextLogicalStorage() noexcept {
+    return InventoryNextEnabled()&&strstr(Core.Params,"-sqa3-logical-storage")!=nullptr;
+}
 bool InventoryNextLayoutSync() noexcept try {
     layout_current=false;
     if(!InventoryNextEnabled()||!g_pGameLevel||!Actor())return true;
     using namespace inventory_next;
+    const bool logical=InventoryNextLogicalStorage();
+    StorageCatalog catalog;
+    if(logical&&!read_storage_catalog(catalog))return false;
     std::vector<Node> nodes;
         for (auto* item : Actor()->inventory().m_all) {
             if (!item || nodes.size()>=4094) { Msg("! SQA3 probe: invalid/count-limited inventory"); return false; }
@@ -82,11 +94,20 @@ bool InventoryNextLayoutSync() noexcept try {
             n.attributes["native_live_id"]=std::to_string(item->object().ID());
             n.attributes["native_place"]=std::to_string(item->CurrPlace());
             n.attributes["native_slot"]=std::to_string(item->CurrSlot());
+            if(logical&&smart_cast<CBackpack*>(item)) {
+                const std::string section=item->m_section_id.c_str();
+                const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
+                const auto& shape=catalog.resolve(section,kind);
+                n.container=true;n.grid=shape.grid;n.cells=shape.cells;
+            }
             nodes.push_back(n);
         }
-        const auto result=layout().reconcile(std::move(nodes));
+        auto storage=logical?catalog.pockets:ActorStorage{};storage.logical=logical;
+        const auto result=layout().reconcile(std::move(nodes),storage);
         if(!result)Msg("! SQA3 native layout sync: %s",result.error.c_str());
-        layout_current=result.ok;return result.ok;
+        layout_current=result.ok;
+        if(layout_current&&logical)layout_current=storage_view.build(layout().model()).ok;
+        return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
 void InventoryNextLayoutReset() noexcept try {layout_current=false;native_drag().cancel();layout().reset();} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
@@ -106,6 +127,22 @@ void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept try {
     const auto result=layout().move({id,1,{x,y,rotated},model.revision(),model.session()});
     Msg("* SQA3 layout move %llu: %s",id,result.ok?"accepted":result.error.c_str());
 } catch (...) {Msg("! SQA3 layout move exception");}
+void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcept try {
+    if(!InventoryNextLogicalStorage()||!InventoryNextLayoutSync())return;
+    const auto& model=layout().model();
+    const auto result=layout().move({id,destination,{x,y,rotated},model.revision(),model.session()});
+    Msg("* SQA3 logical store id=%llu owner=%llu result=%s",id,destination,result.ok?"accepted":result.error.c_str());
+} catch (...) {Msg("! SQA3 logical store exception");}
+bool InventoryNextCanRelease(u16 live) noexcept try {
+    if(!InventoryNextLogicalStorage())return true;
+    if(!InventoryNextLayoutSync())return false;
+    const auto id=InventoryNextIdentity(live);
+    if(!id||!layout().model().nodes().count(id))return true;
+    for(const auto& pair:layout().model().nodes())if(pair.second.parent==id) {
+        Msg("! SQA3 loaded storage release refused live=%u; subtree transfer not ready",live);return false;
+    }
+    return true;
+} catch (...) {return false;}
 void InventoryNextProbe(bool export_snapshot,bool show_view) noexcept {
     if(!g_pGameLevel||!Actor()||!InventoryNextLayoutSync())return;
     try {
@@ -131,15 +168,47 @@ void InventoryNextProbe(bool export_snapshot,bool show_view) noexcept {
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated) noexcept try {
     if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
-    if(found==layout().model().nodes().end()||found->second.location!=inventory_next::Location::Grid)return false;
+    if(found==layout().model().nodes().end())return false;
+    if(InventoryNextLogicalStorage()) {
+        inventory_next::Position p;if(!storage_view.position(found->second,p))return false;
+        x=p.x;y=p.y;rotated=p.rotated;return true;
+    }
+    if(found->second.location!=inventory_next::Location::Grid)return false;
     x=found->second.position.x;y=found->second.position.y;rotated=found->second.position.rotated;return true;
 } catch (...) {return false;}
+int InventoryNextStorageCell(int x,int y) noexcept try {
+    if(!layout_current||!InventoryNextLogicalStorage())return 0;
+    inventory_next::Id owner=0;inventory_next::Position local;
+    if(storage_view.destination(x,y,owner,local))return layout().model().cell_region(owner,local.x,local.y)?1:0;
+    return y>=storage_view.recovery_row?2:0;
+} catch (...) {return 0;}
+void InventoryNextStorageView(CUIDragDropListEx* list) noexcept try {
+    if(!InventoryNextLogicalStorage()||!layout_current||!list)return;
+    list->SetStartCellsCapacity(Ivector2().set(storage_view.size.w,storage_view.size.h));
+    list->SetAutoGrow(false);list->SetGrouping(false);
+    for(const auto& band:storage_view.bands) {
+        std::string label="Pockets";
+        if(band.owner!=1) {
+            const auto& n=layout().model().nodes().at(band.owner);
+            const auto& section=n.attributes.at("native_section");
+            label=pSettings->line_exist(section.c_str(),"inv_name")?
+                CStringTable().translate(pSettings->r_string(section.c_str(),"inv_name")).c_str():"Backpack";
+            label+=n.location==inventory_next::Location::Equipment?" (equipped)":" (carried)";
+        }
+        label+="  "+std::to_string(band.grid.w)+" x "+std::to_string(band.grid.h);
+        list->AddStorageHeader(band.row-1,label.c_str(),0xffa8d7ef);
+    }
+    list->AddStorageHeader(storage_view.recovery_row-1,"Recovery - move items into available storage",0xffff9d70);
+} catch (...) {Msg("! SQA3 storage view failed");}
 bool InventoryNextNativeDrop(u16 live,int x,int y) noexcept try {
     if(!InventoryNextEnabled()||!InventoryNextLayoutSync())return false;
     const auto id=InventoryNextIdentity(live);const auto& model=layout().model();
-    const auto found=model.nodes().find(id);if(found==model.nodes().end()||found->second.location!=inventory_next::Location::Grid)return false;
+    const auto found=model.nodes().find(id);if(found==model.nodes().end())return false;
+    if(!InventoryNextLogicalStorage()&&found->second.location!=inventory_next::Location::Grid)return false;
     if(native_drag().item()!=id){Msg("! SQA3 native drag missing source token");native_drag().cancel();return false;}
-    const auto proposal=native_drag().release(model,1,x,y,false,{});
+    inventory_next::Id owner=1;inventory_next::Position local{x,y,false};
+    if(InventoryNextLogicalStorage()&&!storage_view.destination(x,y,owner,local)) {native_drag().cancel();return false;}
+    const auto proposal=native_drag().release(model,owner,local.x,local.y,false,{});
     const auto result=proposal.result.ok ? layout().move(proposal.moves.front()) : proposal.result;
     Msg("* SQA3 native drag id=%llu destination=%d,%d result=%s",id,x,y,result.ok?"accepted":result.error.c_str());return result.ok;
 } catch (...) {return false;}
@@ -160,7 +229,7 @@ bool InventoryNextNativeRotate(u16 live) noexcept try {
     const auto found=model.nodes().find(id);
     if(found==model.nodes().end()||found->second.location!=inventory_next::Location::Grid)return false;
     auto position=found->second.position;position.rotated=!position.rotated;
-    const auto result=layout().move({id,1,position,model.revision(),model.session()});
+    const auto result=layout().move({id,found->second.parent,position,model.revision(),model.session()});
     Msg("* SQA3 native rotate id=%llu result=%s",id,result.ok?"accepted":result.error.c_str());
     return result.ok;
 } catch (...) {return false;}

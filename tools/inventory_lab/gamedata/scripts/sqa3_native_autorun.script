@@ -240,6 +240,48 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-logical",1,true) then
+        commands={"inventory_next_probe export",snapshot,toggle_inventory}
+        if not args:find("-sqa3-fixture-logical-reload",1,true) then
+            commands[#commands+1]=capacity_spawn_pack
+            commands[#commands+1]=capacity_equip_pack
+            -- Known disposable sqa3_replacement: identities100..104; new pack105.
+            commands[#commands+1]="inventory_next_store 102 105 1 1 0"
+            commands[#commands+1]="inventory_next_store 101 1 0 0 0"
+            commands[#commands+1]=capacity_ruck_pack
+        else
+            commands[#commands+1]=function()
+                local count=0
+                db.actor:iterate_inventory(function(_,item)
+                    if item:section()=="itm_backpack" then capacity_pack=item:id();count=count+1 end
+                    return false
+                end,db.actor)
+                assert(count==1,"logical reload needs exactly one backpack")
+            end
+            commands[#commands+1]=capacity_equip_pack
+        end
+        commands[#commands+1]=function()
+            local pack=level.object_by_id(capacity_pack);assert(pack,"logical backpack missing")
+            db.actor:drop_item(pack) -- server must refuse loaded subtree detach
+        end
+        commands[#commands+1]=function()
+            local pack=level.object_by_id(capacity_pack)
+            assert(pack and pack:parent() and pack:parent():id()==db.actor:id(),"loaded backpack was detached")
+            printf("[SQA3 AUTORUN] loaded backpack drop refused; native parent retained")
+        end
+        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]=toggle_inventory
+        if args:find("-sqa3-fixture-hold",1,true) then
+            commands[#commands+1]=function() started=started+60000;printf("[SQA3 AUTORUN] logical storage input window") end
+        end
+        commands[#commands+1]="screenshot sqa3_logical_storage"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save "..(args:find("-sqa3-fixture-logical-reload",1,true) and "sqa3_logical_equipped" or "sqa3_logical_unequipped")
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     commands={"inventory_next_probe export"}
     if args:find("-sqa3-fixture-spawn",1,true) then commands[#commands+1]=spawn end
     commands[#commands+1]=snapshot

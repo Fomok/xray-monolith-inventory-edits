@@ -1853,6 +1853,17 @@ public:
     }
 };
 
+class CCC_InventoryNextStore : public IConsole_Command {
+public:
+    CCC_InventoryNextStore(LPCSTR name):IConsole_Command(name){}
+    void Execute(LPCSTR args) override {
+        unsigned long long id,owner;int x,y,r;char extra;
+        if(sscanf(args,"%llu %llu %d %d %d %c",&id,&owner,&x,&y,&r,&extra)!=5||(r!=0&&r!=1)) {
+            Msg("! usage: inventory_next_store <id> <owner> <x> <y> <rotated 0|1>");return;
+        }
+        InventoryNextStore(id,owner,x,y,r!=0);
+    }
+};
 class CCC_Script : public IConsole_Command
 {
 public:
@@ -2755,6 +2766,7 @@ void CCC_RegisterCommands()
 	if (strstr(Core.Params, "-inventory-lab") && strstr(Core.Params, "-dbg")) {
 		CMD1(CCC_InventoryNextProbe, "inventory_next_probe");
         CMD1(CCC_InventoryNextMove, "inventory_next_move");
+        CMD1(CCC_InventoryNextStore, "inventory_next_store");
     }
 
 	// Physics

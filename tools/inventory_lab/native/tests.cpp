@@ -1,4 +1,5 @@
 #include "../../../src/inventory_next/native_layout.h"
+#include "../../../src/inventory_next/native_storage_view.h"
 #include "../../../src/inventory_next/storage_catalog.h"
 #include "model.h"
 #include "access_gate.h"
@@ -745,6 +746,18 @@ int main(int argc,char** argv) {
             // Native equipment is authoritative even if a weapon was logically stored.
             med.location=Location::Equipment;med.wear_slots=med.equipped_slots=4;yes(b.reconcile({bag,pouch,med},pockets));
             check(b.model().nodes().at(102).parent==1&&b.model().nodes().at(102).location==Location::Equipment,"native equip remained nested");
+        });
+        test("native storage view keeps owner coordinates separate from headers and recovery",[]{
+            auto pack=item(100,1,800);pack.container=true;pack.grid={8,8};pack.attributes["native_section"]="backpack";
+            auto med=item(101,1,200);med.attributes["native_section"]="medkit";
+            ActorLayout a;yes(a.reconcile({pack,med},{{4,2},{},true}));
+            yes(a.move({101,100,{2,3,true},a.model().revision(),a.model().session()}));
+            auto before=a.model().serialize();NativeStorageView view;yes(view.build(a.model()));
+            Position p;check(view.position(a.model().nodes().at(101),p)&&p.x==2&&p.y==7&&p.rotated,"nested coordinate projection");
+            Id owner=0;Position local;check(view.destination(p.x,p.y,owner,local)&&owner==100&&local.y==3,"drop did not recover logical owner");
+            check(!view.destination(4,1,owner,local)&&!view.destination(0,0,owner,local)&&!view.destination(0,3,owner,local),"header or nonexistent pocket accepted");
+            check(view.position(a.model().nodes().at(100),p)&&p.y==13&&!view.destination(p.x,p.y,owner,local),"recovery became legal capacity");
+            check(before==a.model().serialize(),"view changed ownership or mass");
         });
         test("authored native capacity shrink retains items and mass in recovery",[]{
             Node rifle=item(100,1,3000);rifle.empty=rifle.half=rifle.full={5,2};rifle.attributes["native_section"]="rifle";

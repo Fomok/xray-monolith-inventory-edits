@@ -41,7 +41,7 @@ cycles and foreign destinations do not publish a partially changed model.
   actions/crafting and configured combat quick access need distinct queries.
   UI panel visibility is not an ownership or crafting permission. Dropped bags
   cannot enter ordinary actor crafting/use searches. See
-  [the script compatibility audit](NESTED-ACTION-COMPATIBILITY.md).
+  the local Mod/UI handoff `NESTED-ACTION-COMPATIBILITY.md`.
 - Pending descendant actions must also protect ancestors against drop; cached
   identities, state and quantities need revalidation at mutation. Native weapon
   and external script paths remain unverified for logical mode.
@@ -57,3 +57,37 @@ foreign moves, and refusing flat-mode reload of a logical save.
 
 These are core adapter tests. No new game launch, native mode activation,
 ordinary pickup enforcement or gameplay compatibility is claimed.
+
+## Native integration prepared after bda262d1
+
+The explicit additional `-sqa3-logical-storage` lab flag connects current native
+backpacks to authored storage definitions and saves the active logical model.
+The original `-inventory-lab -dbg` requirements still apply. Without the extra
+flag, the Dev10 flat caller remains in use. Logical saves must be loaded with it.
+
+`NativeStorageView` projects each logical owner's local coordinates into labelled
+sections of the native scrolling item list: pockets, each backpack, then red
+recovery. Headers and nonexistent pocket cells are not legal destinations.
+Mouse drop resolves the section back to the actual logical parent before shared
+model validation. Native item cells, equipment and context actions are retained.
+This is a bounded first native storage interface, not complete rigs/world storage.
+
+Loaded backpack release is refused at UI drop/sale, manual-drop dispatch and the
+server detach boundary until subtree world transfer is implemented. Scripted
+forced destruction remains recovery reconciliation. Ordinary pickup/loot/trade
+admission remains unfinished; this flag is an isolated test mode, not permission
+to claim capacity enforcement. Action-aware rig restrictions and external
+crafting integrations remain open.
+
+The `-sqa3-fixture-logical` fixture starts from disposable `sqa3_replacement`,
+creates one backpack, puts the real medkit inside, unequips the loaded bag and
+tests a scripted drop refusal before saving `sqa3_logical_unequipped`.
+`-sqa3-fixture-logical-reload` loads that save and re-equips it; optional
+`-sqa3-fixture-hold` provides a bounded physical drag window. The verifier checks
+all six actual item identities, native mass/condition, medkit parent/placement,
+pocket assignment, native equipment and the refused drop. Runtime pending.
+
+91 debug/release core checks and both independent restart checks now pass. The
+additional test verifies presentation coordinates round-trip to the correct
+logical owner, headers/recovery do not grant capacity, and rendering does not
+mutate ownership or mass.

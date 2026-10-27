@@ -133,6 +133,7 @@ void CUIActorMenu::SendEvent_Item_Eat(PIItem pItem, u16 recipient)
 
 void CUIActorMenu::SendEvent_Item_Drop(PIItem pItem, u16 recipient)
 {
+    if(!InventoryNextCanRelease(pItem->object().ID()))return;
 	R_ASSERT(pItem->parent_id()==recipient);
 	if (!IsGameTypeSingle())
 		pItem->DenyTrade();
@@ -462,12 +463,14 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
         if(!InventoryNextLayoutSync()) {
             m_sqaRefresh=true;
             if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Inventory is updating. Try again.");
+            if(InventoryNextLogicalStorage()){ClearAllLists();return;}
         } else if(m_sqaStatus && m_sqaStatus->TextItemControl()->GetText() &&
                   0==xr_strcmp(m_sqaStatus->TextItemControl()->GetText(),"Inventory is updating. Try again.")) {
             m_sqaStatus->TextItemControl()->SetText("");
         }
     }
 	ClearAllLists();
+	InventoryNextStorageView(pBagList);
 	m_UIPropertiesBox->Hide();
 	SetCurrentItem(NULL);
 
@@ -550,6 +553,7 @@ void CUIActorMenu::FilterActorBagList(int mode)
     // Filtering destroys the old cells. A hidden selection must not remain usable.
     if(InventoryNextEnabled())SetCurrentItem(nullptr);
 	m_pInventoryBagList->ClearAll(true);
+	InventoryNextStorageView(m_pInventoryBagList);
 	auto placeFilteredItem = [this](CUICellItem* cell, PIItem item) {
 		int x=0,y=0;bool rotated=false;
 		if (InventoryNextEnabled() && InventoryNextNativePosition(item->object().ID(),x,y,rotated)) {

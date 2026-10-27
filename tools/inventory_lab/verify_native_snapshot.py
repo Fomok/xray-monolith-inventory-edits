@@ -10,7 +10,7 @@ from pathlib import Path
 from verify_native_placement import read
 
 
-def verify(log_path, export_path, preserve_initial=False):
+def verify(log_path, export_path, preserve_initial=False, logical_ownership=False):
     log = log_path.read_text(errors="replace")
     assert "[SQA3 AUTORUN] FAIL" not in log, "fixture failed"
     assert "FATAL ERROR" not in log, "engine crashed"
@@ -38,7 +38,15 @@ def verify(log_path, export_path, preserve_initial=False):
     for node in nodes.values():
         attrs = node["attributes"]
         live = int(attrs["native_live_id"])
-        assert live not in projected and node["parent"] == 1, "duplicate or incorrect ownership"
+        assert live not in projected, "duplicate native identity"
+        owner = node["parent"]
+        if logical_ownership:
+            visited = set()
+            while owner != 1:
+                assert owner in nodes and owner not in visited, "foreign or cyclic logical ancestry"
+                visited.add(owner)
+                owner = nodes[owner]["parent"]
+        assert owner == 1, "incorrect actor ownership"
         projected[live] = (attrs["native_section"], node["grams"], node["condition"])
     assert projected == snapshots[-1], "native/model item records disagree"
     if preserve_initial:

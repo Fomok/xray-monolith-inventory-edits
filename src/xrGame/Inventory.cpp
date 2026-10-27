@@ -5,6 +5,7 @@
 
 #include "pch_script.h"
 #include "inventory.h"
+#include "InventoryNextProbe.h"
 #include "actor.h"
 #include "../xrEngine/CameraBase.h"
 #include "CustomOutfit.h"
@@ -917,6 +918,7 @@ void CInventory::UpdateDropItem(PIItem pIItem)
 	if (pIItem->GetDropManual())
 	{
 		pIItem->SetDropManual(FALSE);
+        if(InventoryNextLogicalStorage()&&Actor()&&pIItem->parent_id()==Actor()->ID()&&!InventoryNextCanRelease(pIItem->object().ID()))return;
 		pIItem->DenyTrade();
 
 		if (OnServer())
