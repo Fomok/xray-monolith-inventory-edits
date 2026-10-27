@@ -7,6 +7,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
+#include "InventoryNextProbe.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "ai_space.h"
 #include "alife_simulator.h"
@@ -246,6 +247,8 @@ Fvector CSE_ALifeMonsterAbstract::draw_level_position() const
 
 bool CSE_ALifeMonsterAbstract::redundant() const
 {
+	if (!InventoryNextWorldCanDestroy(ID))
+		return (false);
 	if (g_Alive())
 		return (false);
 

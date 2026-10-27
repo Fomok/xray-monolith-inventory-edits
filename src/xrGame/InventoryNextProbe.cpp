@@ -702,6 +702,30 @@ void InventoryNextPurchaseClientReady() noexcept try {
 bool InventoryNextWorldStorageEnabled() noexcept {
     return InventoryNextLogicalStorage()&&strstr(Core.Params,"-sqa3-world-storage")!=nullptr;
 }
+bool InventoryNextWorldCanDestroy(u16 live) noexcept try {
+    // Destruction during level teardown must remain native. During play, reject
+    // the entire recursive deletion before any member or ancestor is removed.
+    if(!InventoryNextWorldStorageEnabled()||!g_pGameLevel||!Level().bReady||
+       !ai().get_alife()||world_storage().records().empty())return true;
+    auto protected_ancestor=[live](u64 identity) {
+        u16 current=InventoryNextIdentityServer(identity);
+        if(current==0xffff)return true;
+        for(unsigned depth=0;current!=0xffff;++depth) {
+            if(current==live)return true;
+            if(depth>=64)return true; // malformed ancestry: fail closed
+            auto object=ai().alife().objects().object(current,true);
+            if(!object)return true;
+            current=object->ID_Parent;
+        }
+        return false;
+    };
+    for(const auto& record:world_storage().records()) {
+        if(protected_ancestor(record.second.custodian))return false;
+        for(const auto& pair:record.second.tree.nodes())
+            if(pair.second.kind==inventory_next::Kind::Item&&protected_ancestor(pair.first))return false;
+    }
+    return true;
+} catch (...) {return false;}
 bool InventoryNextWorldCanRelease(u16 live) noexcept try {
     if(world_storage().records().empty())return true;
     const auto id=InventoryNextIdentity(live);
@@ -747,8 +771,13 @@ bool cleanup_ground_proxy(u16 live) {
 bool world_access(u16 source,u16 destination) {
     if(!Actor()||(source==Actor()->ID())==(destination==Actor()->ID()))return false;
     const u16 box_id=source==Actor()->ID()?destination:source;
-    auto box=smart_cast<CInventoryBox*>(Level().Objects.net_Find(box_id));
-    return box&&!box->getDestroy()&&box->can_take()&&!box->closed()&&box->Position().distance_to(Actor()->Position())<=3.0f;
+    auto object=Level().Objects.net_Find(box_id);
+    if(!object||object->getDestroy()||object->Position().distance_to(Actor()->Position())>3.0f)return false;
+    if(auto box=smart_cast<CInventoryBox*>(object))return box->can_take()&&!box->closed();
+    if(!strstr(Core.Params,"-sqa3-corpse-storage"))return false;
+    auto corpse=smart_cast<CEntityAlive*>(object);
+    auto owner=smart_cast<CInventoryOwner*>(object);
+    return corpse&&!corpse->g_Alive()&&owner&&owner->deadbody_can_take_status();
 }
 bool world_node(u16 live,u16 parent,inventory_next::Node& node) {
     using namespace inventory_next;

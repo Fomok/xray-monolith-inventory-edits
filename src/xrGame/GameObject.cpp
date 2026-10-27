@@ -1,5 +1,6 @@
 #include "pch_script.h"
 #include "GameObject.h"
+#include "InventoryNextProbe.h"
 //#include "../Include/xrRender/RenderVisual.h"
 #include "../Include/xrRender/RenderVisual.h"
 #include "../xrphysics/PhysicsShell.h"
@@ -1062,6 +1063,7 @@ bool CGameObject::NeedToDestroyObject() const
 
 void CGameObject::DestroyObject()
 {
+    if(!InventoryNextWorldCanDestroy(ID()))return;
 	if (m_bObjectRemoved) return;
 	m_bObjectRemoved = true;
 	if (getDestroy()) return;

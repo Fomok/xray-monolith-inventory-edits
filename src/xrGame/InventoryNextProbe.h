@@ -49,6 +49,7 @@ bool InventoryNextWorldValidate(u16 source,u16 destination,u64 token,xr_vector<u
 bool InventoryNextWorldFinish(bool accepted) noexcept;
 void InventoryNextWorldClientReady() noexcept;
 bool InventoryNextWorldCanSave() noexcept;
+bool InventoryNextWorldCanDestroy(u16 live) noexcept;
 bool InventoryNextWorldCanRelease(u16 live) noexcept;
 bool InventoryNextWorldVisible(u16 live) noexcept;
 bool InventoryNextGroundStorageEnabled() noexcept;

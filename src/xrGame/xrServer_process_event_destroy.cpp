@@ -7,6 +7,7 @@
 #include "game_cl_base.h"
 #include "ai_space.h"
 #include "alife_object_registry.h"
+#include "InventoryNextProbe.h"
 
 xr_string xrServer::ent_name_safe(u16 eid)
 {
@@ -22,6 +23,10 @@ xr_string xrServer::ent_name_safe(u16 eid)
 
 void xrServer::Process_event_destroy(NET_Packet& P, ClientID sender, u32 time, u16 ID, NET_Packet* pEPack)
 {
+    if(!InventoryNextWorldCanDestroy(ID)) {
+        Msg("* SQA3 retained stored inventory during destroy event live=%u",ID);
+        return;
+    }
 	u32 MODE = net_flags(TRUE,TRUE);
 	// Parse message
 	u16 id_dest = ID;

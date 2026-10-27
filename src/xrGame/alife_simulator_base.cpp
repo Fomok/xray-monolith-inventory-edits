@@ -22,6 +22,7 @@
 #include "level_graph.h"
 #include "inventory_upgrade_manager.h"
 #include "level.h"
+#include "InventoryNextProbe.h"
 
 #pragma warning(push)
 #pragma warning(disable:4995)
@@ -268,6 +269,10 @@ void CALifeSimulatorBase::create(CSE_ALifeObject* object)
 
 void CALifeSimulatorBase::release(CSE_Abstract* abstract, bool alife_query)
 {
+    if(!InventoryNextWorldCanDestroy(abstract->ID)) {
+        Msg("* SQA3 retained stored inventory during ALife release live=%u",abstract->ID);
+        return;
+    }
 #ifdef DEBUG
 	if (psAI_Flags.test(aiALife)) {
 		Msg							("[LSS] Releasing object [%s][%s][%d][%x]",abstract->name_replace(),*abstract->s_name,abstract->ID,smart_cast<void*>(abstract));
