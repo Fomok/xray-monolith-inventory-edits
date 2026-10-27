@@ -240,6 +240,57 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-purchase-mouse",1,true) then
+        local source_id,actor_money,seller_money
+        commands={"inventory_next_probe export",snapshot}
+        if args:find("-sqa3-fixture-purchase-mouse-reload",1,true) then
+            commands[#commands+1]=function()
+                npc_id=tonumber(args:match("%-sqa3%-purchase%-seller=(%d+)"))
+                source_id=tonumber(args:match("%-sqa3%-purchase%-item=(%d+)"))
+                local npc=npc_id and level.object_by_id(npc_id)
+                local item=source_id and level.object_by_id(source_id)
+                assert(npc and npc:alive() and item and item:parent() and item:parent():id()==db.actor:id(),"mouse purchase reload identity mismatch")
+                actor_money=tonumber(args:match("%-sqa3%-purchase%-actor%-money=(%d+)"))
+                seller_money=tonumber(args:match("%-sqa3%-purchase%-seller%-money=(%d+)"))
+                assert(db.actor:money()==actor_money and npc:money()==seller_money,"mouse purchase reload money mismatch")
+                printf("[SQA3 AUTORUN] mouse purchase reload live=%s seller=%s actor_money=%s seller_money=%s",tostring(source_id),tostring(npc_id),tostring(actor_money),tostring(seller_money))
+            end
+        else
+            commands[#commands+1]=spawn_npc
+            commands[#commands+1]=function()
+                local a=db.actor;local npc=level.object_by_id(npc_id);assert(npc and npc:alive(),"mouse purchase seller missing")
+                npc:movement_enabled(false);local pos=a:position();pos.x=pos.x+1.2;npc:set_npc_position(pos)
+                a:give_money(1000000);npc:give_money(1000000)
+                -- Remove only bandages from this newly spawned disposable seller so
+                -- its visible bandage cell identifies exactly the new test item.
+                local previous={}
+                npc:iterate_inventory(function(_,item) if item:section()=="bandage" then previous[#previous+1]=item:id() end return false end,npc)
+                for _,id in ipairs(previous) do local item=alife():object(id);if item then alife():release(item,true) end end
+                local item=alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),npc_id)
+                assert(item,"mouse purchase source spawn failed");source_id=item.id
+            end
+            commands[#commands+1]=open_trade
+            commands[#commands+1]=function()
+                actor_money=db.actor:money();seller_money=level.object_by_id(npc_id):money()
+                started=started+90000
+                printf("[SQA3 AUTORUN] mouse purchase input window live=%s seller=%s actor_money=%s seller_money=%s",tostring(source_id),tostring(npc_id),tostring(actor_money),tostring(seller_money))
+            end
+            commands[#commands+1]=function()
+                local item=level.object_by_id(source_id);local npc=level.object_by_id(npc_id)
+                assert(item and item:parent() and item:parent():id()==db.actor:id(),"mouse purchase did not acquire exact source")
+                local spent=actor_money-db.actor:money()
+                assert(npc and spent>0 and npc:money()-seller_money==spent,"mouse purchase money not conserved")
+                printf("[SQA3 AUTORUN] mouse purchase verified live=%s seller=%s spent=%s actor_money=%s seller_money=%s",tostring(source_id),tostring(npc_id),tostring(spent),tostring(db.actor:money()),tostring(npc:money()))
+            end
+        end
+        commands[#commands+1]="screenshot sqa3_purchase_mouse"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_purchase_mouse"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-purchase",1,true) then
         local sources,actor_money,seller_money={},nil,nil
         commands={"inventory_next_probe export",snapshot}
@@ -327,7 +378,7 @@ function on_game_start()
             commands[#commands+1]=function()
                 level.press_action(DIK_keys.MOUSE_2);level.release_action(DIK_keys.MOUSE_2)
                 started=started+30000
-                printf("[SQA3 AUTORUN] native context opened for nested item; click visible Use action; not OS right-click validation")
+                printf("[SQA3 AUTORUN] native context input dispatched; menu visibility and Use action still require observation")
             end
         else
             commands[#commands+1]=toggle_inventory
