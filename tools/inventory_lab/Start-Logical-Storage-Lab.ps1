@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('sqa3_logical_unequipped','sqa3_logical_equipped','sqa3_logical_carried','sqa3_nested_manual','sqa3_purchase','sqa3_direct_equip','sqa3_direct_unequip','sqa3_world_prepared','sqa3_world_release','sqa3_world_return','sqa3_world_nofit')]
+    [ValidateSet('sqa3_logical_unequipped','sqa3_logical_equipped','sqa3_logical_carried','sqa3_nested_manual','sqa3_purchase','sqa3_direct_equip','sqa3_direct_unequip','sqa3_world_prepared','sqa3_world_release','sqa3_world_return','sqa3_world_nofit','sqa3_ground_release','sqa3_ground_return','sqa3_ground_nofit','sqa3_ground_timeout','sqa3_ground_rollback_release','sqa3_ground_rollback_return')]
     [string]$Save='sqa3_logical_carried',
     [string]$LabRoot=$PSScriptRoot,
     [switch]$StrictGroundPickup,
@@ -19,6 +19,7 @@ if($StrictGroundPickup -and !$manifest.ground_pickup_opt_in){throw 'This engine 
 if($StrictOwnedPickup -and !$manifest.owned_pickup_opt_in){throw 'This engine package has no strict owned-source pickup mode.'}
 if($StrictTradePickup -and !$manifest.trade_pickup_opt_in){throw 'This engine package has no strict purchase mode.'}
 if($Save -like 'sqa3_world_*'){$WorldStorage=$true}
+if($Save -like 'sqa3_ground_*'){$GroundStorage=$true}
 if($GroundStorage){$WorldStorage=$true}
 if($WorldStorage -and !$manifest.world_storage_opt_in){throw 'This engine package has no loaded world-storage mode.'}
 if($GroundStorage -and !$manifest.ground_storage_opt_in){throw 'This engine package has no loaded ground-storage mode.'}
