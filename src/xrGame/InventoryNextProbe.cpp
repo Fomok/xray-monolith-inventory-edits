@@ -309,6 +309,16 @@ void InventoryNextPickupForget(u16 live) noexcept try {
         for(const auto& record:purchase->records)if(record.live==live)pickup_fault=true;
     pending_pickups.erase(live);
 } catch (...) {pickup_fault=true;}
+namespace {
+bool pickup_slot_compatible(CInventoryItem* item,u16 slot) {
+    if(!item||slot==NO_ACTIVE_SLOT)return false;
+    const auto base=item->BaseSlot();
+    // Match native CanSetItemToList, not just CanPutInSlot (which checks
+    // availability but does not constrain actor item types).
+    return base==slot||(base==INV_SLOT_2&&(slot==INV_SLOT_3||slot==KNIFE_SLOT))||
+        (base==INV_SLOT_3&&slot==INV_SLOT_2);
+}
+}
 bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
@@ -323,7 +333,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept
     if(!Actor()->inventory().CanTakeItem(item)){InventoryNextPickupStatus("Item cannot be taken. Source unchanged.");return false;}
     if(slot!=0xffff) {
         auto& inventory=Actor()->inventory();
-        if(source==0xffff||slot==NO_ACTIVE_SLOT||slot>=48||slot>inventory.LastSlot()||!inventory.CanPutInSlot(item,slot)) {
+        if(source==0xffff||slot>=48||slot>inventory.LastSlot()||!pickup_slot_compatible(item,slot)||!inventory.CanPutInSlot(item,slot)) {
             InventoryNextPickupStatus("Equipment slot unavailable. Item stayed at source.");return false;
         }
         // Outfits can displace other equipment. Those compound changes need a
@@ -413,7 +423,7 @@ u16 InventoryNextPickupSlot(u16 owner,u16 live) noexcept try {
     if(pending==pending_pickups.end()||pending->second.location!=inventory_next::Location::Equipment)return 0xffff;
     auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
     for(u16 slot=1;slot<48;++slot)if(pending->second.equipped_slots==(std::uint64_t{1}<<slot)) {
-        if(item&&slot<=Actor()->inventory().LastSlot()&&Actor()->inventory().CanPutInSlot(item,slot))return slot;
+        if(item&&slot<=Actor()->inventory().LastSlot()&&pickup_slot_compatible(item,slot)&&Actor()->inventory().CanPutInSlot(item,slot))return slot;
         break;
     }
     pickup_fault=true;InventoryNextPickupStatus("Equipment changed during transfer. Saving blocked.");return 0xffff;
