@@ -12,12 +12,15 @@ public:
     enum class State { Idle, Prepared, Dispatched, ReconcileRequired };
     struct Dispatch {
         std::uint64_t token=0;
-        EntityRegistry::Handle item, source, destination;
+        EntityRegistry::Handle item, destination;
+        std::optional<EntityRegistry::Handle> source; // absent only for explicit unowned ground
         Command command;
     };
     TransferSession(Model& model,AccessGate& access,const EntityRegistry& registry)
         : model_(model),access_(access),registry_(registry) {}
-    Result prepare(const AccessGate::Ticket& ticket);
+    // Ground has no native parent entity. The adapter must verify parent=0xffff
+    // before prepare AND dispatch; the logical world root must be unregistered.
+    Result prepare(const AccessGate::Ticket& ticket,bool ground_source=false);
     Result dispatch(Dispatch& output);
     Result acknowledge(std::uint64_t token,std::uint16_t observed_parent,bool accepted);
     Result cancel();

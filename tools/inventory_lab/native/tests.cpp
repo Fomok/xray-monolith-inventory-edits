@@ -102,6 +102,29 @@ int main(int argc,char** argv) {
                 check(m.serialize()==before&&m.nodes().at(10).parent==2,"source disappearance fabricated transfer");
             }
         });
+        test("ground pickup uses no fabricated parent handle and rejection retains ground owner",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,2,7)}));
+            EntityRegistry registry;for(Id id:{1,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(10,true,true));
+            TransferSession transfer(m,access,registry);Command command;command.operation=Operation::Move;command.item=10;command.destination=1;command.session=m.session();
+            auto before=m.serialize();no(transfer.prepare({command,access.revision()}),"offline_entity");
+            yes(transfer.prepare({command,access.revision()},true));TransferSession::Dispatch event;yes(transfer.dispatch(event));
+            check(!event.source,"ground pickup fabricated native source");no(transfer.acknowledge(event.token,0xffff,false),"native_rejected");
+            check(m.serialize()==before&&transfer.can_save(),"ground rejection lost item");
+            yes(transfer.prepare({command,access.revision()},true));yes(transfer.dispatch(event));yes(transfer.acknowledge(event.token,1,true));
+            check(m.nodes().at(10).parent==1&&m.carried_mass()==7,"ground acknowledgment failed");
+        });
+        test("ground admission cannot disguise an offline source and rechecks reachability",[]{
+            Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,2,7)}));
+            EntityRegistry registry;for(Id id:{1,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}
+            AccessGate access(m);yes(access.observe(2,true,true));yes(access.observe_item(10,true,true));
+            TransferSession transfer(m,access,registry);Command command;command.operation=Operation::Move;command.item=10;command.destination=1;command.session=m.session();
+            yes(transfer.prepare({command,access.revision()},true));auto before=m.serialize();yes(access.observe(2,true,false));
+            TransferSession::Dispatch event;no(transfer.dispatch(event),"stale_access");check(m.serialize()==before&&transfer.can_save(),"unreachable ground pickup published");
+            yes(access.observe(2,true,true));yes(registry.add(2));
+            no(transfer.prepare({command,access.revision()},true),"native_ground_source");
+            check(m.serialize()==before,"offline source spoof changed ownership");
+        });
         test("native rejection preserves source and uncertain parent requires explicit rebuild",[]{
             Model m;yes(m.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),item(10,1,7)}));
             EntityRegistry registry;for(Id id:{1,2,10}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id)));}

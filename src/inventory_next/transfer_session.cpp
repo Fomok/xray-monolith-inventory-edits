@@ -4,18 +4,26 @@ namespace inventory_next {
 void TransferSession::clear() { state_=State::Idle;candidate_.reset();subtree_.clear();dispatch_={}; }
 Result TransferSession::current() {
     if(model_.session()!=ticket_.command.session||model_.revision()!=ticket_.command.revision)return {false,"stale_model"};
-    if(!registry_.resolve(dispatch_.source)||!registry_.resolve(dispatch_.destination))return {false,"stale_entity"};
+    if(!registry_.resolve(dispatch_.destination)||(dispatch_.source&&!registry_.resolve(*dispatch_.source)))return {false,"stale_entity"};
+    if(!dispatch_.source) {
+        const auto parent=model_.nodes().at(ticket_.command.item).parent;
+        if(model_.nodes().at(parent).kind!=Kind::WorldRoot||registry_.known(parent))return {false,"native_ground_source"};
+    }
     for(const auto& handle:subtree_)if(!registry_.resolve(handle))return {false,"stale_entity"};
     return access_.preview(ticket_).result;
 }
-Result TransferSession::prepare(const AccessGate::Ticket& ticket) {
+Result TransferSession::prepare(const AccessGate::Ticket& ticket,bool ground_source) {
     if(state_!=State::Idle)return {false,"transfer_busy"};
     const auto& command=ticket.command;
     if(command.operation!=Operation::Move&&command.operation!=Operation::Equip&&command.operation!=Operation::Mount)return {false,"native_operation"};
     auto admitted=access_.preview(ticket).result;if(!admitted)return admitted;
     const auto& item=model_.nodes().at(command.item);
     auto source=registry_.handle(item.parent),target=registry_.handle(command.destination),handle=registry_.handle(command.item);
-    if(!source||!target||!handle)return {false,"offline_entity"};
+    if(!target||!handle)return {false,"offline_entity"};
+    if(ground_source) {
+        if(model_.nodes().at(item.parent).kind!=Kind::WorldRoot||registry_.known(item.parent))return {false,"native_ground_source"};
+        source.reset();
+    } else if(!source)return {false,"offline_entity"};
     if(next_token_==std::numeric_limits<std::uint64_t>::max())return {false,"transfer_tokens"};
     std::vector<EntityRegistry::Handle> tree;
     for(const auto& pair:model_.nodes()) {
@@ -28,7 +36,7 @@ Result TransferSession::prepare(const AccessGate::Ticket& ticket) {
     Model candidate=model_;auto result=candidate.execute(command);if(!result)return result;
     // Publish prepared state only after allocations and validation finish.
     candidate_=std::move(candidate);subtree_=std::move(tree);ticket_=ticket;
-    dispatch_={++next_token_,*handle,*source,*target,command};state_=State::Prepared;
+    dispatch_={++next_token_,*handle,*target,source,command};state_=State::Prepared;
     return {true,{}};
 }
 Result TransferSession::dispatch(Dispatch& output) {
@@ -40,7 +48,7 @@ Result TransferSession::acknowledge(std::uint64_t token,std::uint16_t observed_p
     if(state_!=State::Dispatched||token!=dispatch_.token)return {false,"transfer_ack"};
     auto result=current();
     if(!result){state_=State::ReconcileRequired;return result;}
-    const auto expected=accepted?dispatch_.destination.live:dispatch_.source.live;
+    const auto expected=accepted?dispatch_.destination.live:(dispatch_.source?dispatch_.source->live:std::uint16_t{0xffff});
     if(observed_parent!=expected){state_=State::ReconcileRequired;return {false,"native_parent_mismatch"};}
     if(!accepted){clear();return {false,"native_rejected"};}
     model_=std::move(*candidate_);clear();return {true,{}};
