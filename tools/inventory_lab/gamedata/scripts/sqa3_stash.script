@@ -1,0 +1,35 @@
+-- Native SQA3 stash bridge. Inert on engines without its explicit opt-in.
+function enabled()
+    return level.inventory_next_stash_enabled and level.inventory_next_stash_enabled()
+end
+function default_name()
+    return strformat(game.translate_string("st_itm_stash_of_character"), db.actor:character_name())
+end
+function create(obj, name, identity)
+    if not enabled() then return false end
+    local parent=obj and obj:parent()
+    if not parent or parent:id()~=db.actor:id() or not identity or identity=="" then
+        actor_menu.set_msg(1,"Backpack changed. Stash creation cancelled.",4)
+        return false
+    end
+    if #name==0 or #name>240 or name:find("[%z\1-\31\127]") then
+        actor_menu.set_msg(1,"Choose a shorter stash name without control characters.",4)
+        return false
+    end
+    return level.inventory_next_stash_create(obj:id(),identity,name)
+end
+-- Called only after every native client member acknowledged its new parent.
+function on_created(id, name, section)
+    local box=level.object_by_id(id)
+    assert(box and box:section()=="sqa3_ground_backpack","native stash callback lost its custodian")
+    actor_menu.set_msg(1,game.translate_string("st_stash_created"),4)
+    SendScriptCallback("actor_on_stash_create",{stash_id=id,stash_name=name,stash_section=section})
+end
+-- Called before dispatch, so a cancellation leaves the complete bag at source.
+function can_remove(id)
+    local box=level.object_by_id(id)
+    if not box or box:section()~="sqa3_ground_backpack" then return false end
+    local data={stash_id=id,cancel=false}
+    SendScriptCallback("actor_on_stash_remove",data)
+    return not data.cancel
+end

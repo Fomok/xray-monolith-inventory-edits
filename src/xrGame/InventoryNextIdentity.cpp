@@ -39,11 +39,13 @@ void InventoryNextIdentityReset() noexcept try {
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityRetire(u16 server_id) noexcept try {
     if(!InventoryNextEnabled())return;
+    InventoryNextStashForgetMarker(server_id);
     InventoryNextPickupForget(server_id);
     const auto result=identities().retire(server_id);CHECK_OR_EXIT(result.ok,"SQA3 identity retirement failed");
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 void InventoryNextIdentityRemap(u16 before,u16 after) noexcept try {
     if(!InventoryNextEnabled())return;
+    if(before!=after)InventoryNextStashForgetMarker(before);
     const auto result=identities().remap(before,after);CHECK_OR_EXIT(result.ok,"SQA3 identity remap conflict");
 } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); }
 bool InventoryNextIdentityCanSave() noexcept try {

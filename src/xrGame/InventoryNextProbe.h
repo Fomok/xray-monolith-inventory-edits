@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 // Explicit diagnostic command only; never registered without -inventory-lab -dbg.
 void InventoryNextProbe(bool export_snapshot, bool show_view = false) noexcept;
 
@@ -44,7 +45,7 @@ bool InventoryNextPurchaseFinish(bool accepted) noexcept;
 void InventoryNextPurchaseClientReady() noexcept;
 void InventoryNextPurchaseProbe(u16 source,const xr_vector<u16>& items) noexcept;
 bool InventoryNextWorldStorageEnabled() noexcept;
-bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live,bool created_ground_proxy=false) noexcept;
+bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live,bool created_ground_proxy=false,const char* stash_name=nullptr) noexcept;
 bool InventoryNextWorldValidate(u16 source,u16 destination,u64 token,xr_vector<u16>& items) noexcept;
 bool InventoryNextWorldFinish(bool accepted) noexcept;
 void InventoryNextWorldClientReady() noexcept;
@@ -55,3 +56,7 @@ bool InventoryNextWorldVisible(u16 live) noexcept;
 bool InventoryNextGroundStorageEnabled() noexcept;
 bool InventoryNextGroundDrop(u16 live) noexcept;
 void InventoryNextGroundUpdate() noexcept;
+bool InventoryNextStashEnabled() noexcept;
+std::string InventoryNextStashIdentity(u16 live) noexcept;
+bool InventoryNextStashCreate(u16 live,const char* expected_identity,const char* name) noexcept;
+void InventoryNextStashForgetMarker(u16 live) noexcept;

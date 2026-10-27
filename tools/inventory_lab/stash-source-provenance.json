@@ -1,0 +1,7 @@
+{
+  "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261027\\vanilla-script-reference\\scripts\\item_backpack.script",
+  "source_sha256": "7834a5532a88ae675c6160ad5357ff08557d61da263526804f13d33b565d0869",
+  "supplying_content": "Extracted vanilla Anomaly item_backpack script used by the isolated lab",
+  "derived_file": "tools/inventory_lab/gamedata/scripts/item_backpack.script",
+  "changes": "Opt-in guards for both creation entry points and persistent identity captured by the naming dialog; original disabled-mode behavior retained. Original author comments preserved."
+}
