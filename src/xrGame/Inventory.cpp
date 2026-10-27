@@ -240,6 +240,15 @@ void CInventory::Take(CGameObject* pObj, bool bNotActivate, bool strict_placemen
 				CurrentGameUI()->OnInventoryAction(pIItem, GE_OWNERSHIP_TAKE);
 		}
 	};
+    // Direct source-to-slot admission bypasses the UI's ordinary activation
+    // event. Restore that event only after native Take placed this exact item.
+    if(sqa_slot!=0xffff && pIItem->CurrPlace()==eItemPlaceSlot &&
+       pIItem->CurrSlot()==sqa_slot && ItemFromSlot(sqa_slot)==pIItem) {
+        NET_Packet packet;
+        CGameObject::u_EventGen(packet,GEG_PLAYER_ACTIVATE_SLOT,m_pOwner->object_id());
+        packet.w_u16(sqa_slot);
+        CGameObject::u_EventSend(packet);
+    }
     InventoryNextPurchaseClientReady();
 }
 
