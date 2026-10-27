@@ -3,5 +3,17 @@
   "sha256": "cab0598b6a001a5f28f47b7b2d3f8e173181dd4a6ba640ba43cd6c0225ed10de",
   "bytes": 4194432,
   "destination": "gamedata/textures/ui/sqa_fk_controls.dds",
-  "note": "Unmodified Squared Away Field Kit controls atlas. XML maps center to native CUIFrameWindow back suffix."
+  "note": "Unmodified Squared Away Field Kit controls atlas. XML maps center to native CUIFrameWindow back suffix.",
+  "native_control_contract": {
+    "source": "isolated vanilla1.5.3 configs.db0 -> configs/ui/actor_menu.xml",
+    "source_sha256": "aacfe33922dc741706595666a14cdf263b26407cd923f2d7ff50f622473bd357",
+    "derived": "gamedata/configs/ui/sqa3_actor_menu.xml",
+    "changes": "Native equipment/action targets retained; old backgrounds removed; Field Kit surfaces; eight-column persistent bag grid; no3D player model."
+  },
+  "native_inventory_override": {
+    "source": "isolated vanilla1.5.3 scripts.db0 -> ui_inventory.script",
+    "source_sha256": "01eeb2b22bb128916342cf1ccfee06034f9ff459aac546a3ea47a001b7cc4288",
+    "derived_sha256": "04f4a52fa6e2cfe9b46e8cddda11ffe485c257b878ef298e6146d8ca36511cc8",
+    "change": "Only enable_feature expression changes: retain helper functions, suppress old Lua presentation/callback overrides in -inventory-lab -dbg."
+  }
 }

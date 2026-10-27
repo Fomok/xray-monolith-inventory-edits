@@ -1,6 +1,6 @@
 # Native placement development slice
 
-Only `-inventory-lab -dbg` enables this adapter. It projects actual actor-owned items into a development16x64 grid; it does not enforce final pickup capacity, equip items, or change physical ownership. Do not promote it as complete SQA3.
+Only `-inventory-lab -dbg` enables this adapter. It projects actual actor-owned items into a development8x64 grid, with native equipment and belt items outside the grid. The normal actor menu owns equip/use/loot actions. Final pocket admission and recovery presentation are unfinished. Do not promote it as complete SQA3.
 
 `inventory_next_probe export` reconciles native item facts and exports to lab appdata. `inventory_next_probe view` opens the native window. `inventory_next_move <core ID> <x> <y> <0|1 rotated>` validates through the same model as view controls. Escape closes. Layout persists in ALife chunk0x33514c59 alongside the identity ledger. Saved facts are never authoritative over current native mass/condition/size. Failed moves leave placement intact.
 
@@ -8,11 +8,11 @@ Only `-inventory-lab -dbg` enables this adapter. It projects actual actor-owned 
 
 Use only the disposable lab. Preserve original test save, verify no game process before launching, use one windowed process and terminate that owned PID on timeout. `keypress_on_start off` avoids the startup input gate. Base arguments: `-dbg -inventory-lab -nosound -start server(test/single/alife/load)`.
 
-The autorun script is inert without `-sqa3-fixture`. Add `-sqa3-fixture-spawn` to create bandage/medkit through actual ALife spawn; add `-sqa3-fixture-edit` to move100 to4,3 and attempt overlapping101 and negative bounds. Saves to sqa3_layout and quits. Reload that save with `-sqa3-fixture-reload` (without spawn/edit); export, screenshot, save sqa3_layout_reload and quit. Compare native identities/mass and exported positions across processes. Do not launch concurrently. Automated domain commands do not establish physical mouse input success.
+The autorun script is inert without `-sqa3-fixture`. Add `-sqa3-fixture-spawn` to create bandage/medkit through actual ALife spawn; add `-sqa3-fixture-edit` to move100 to4,3 and attempt overlapping101 and negative bounds. `-sqa3-fixture-equipment` also spawns a pistol, moves it from its automatic slot to the bag, reopens the menu and equips it through native ToSlot. `-sqa3-fixture-loot` spawns a real inventory_box and bread, opens its native loot menu and sends Take All, then checks that exact bread identity belongs to the actor. Saves to sqa3_replacement and quits. Reload that save with `-sqa3-fixture-reload` (without spawn/edit/equipment/loot); export, screenshot, save sqa3_replacement_reload and quit. Compare native identities/mass/equipment and exported positions across processes. Do not launch concurrently. Automated domain commands do not establish physical mouse input success.
 
 ## Visual assets
 
-The checked-in sqa3_native.xml contains nine slices from the existing Squared Away Field Kit controls atlas, with center aliased to native _back. Supply the unmodified atlas recorded in tools/inventory_lab/native-visual-assets.json. Do not copy legacy SQA scripts. Item atlas and rectangle come from each native item using vanilla icon rules. Current rotated icon fallback is text.
+The checked-in sqa3_native.xml contains nine slices from the existing Squared Away Field Kit controls atlas, with center aliased to native _back. Supply the unmodified atlas recorded in tools/inventory_lab/native-visual-assets.json. Do not copy legacy SQA scripts. Item atlas and rectangle come from each native item using vanilla icon rules. Native cell heading displays rotated icons.
 
 ## Validation
 
@@ -21,3 +21,11 @@ The checked-in sqa3_native.xml contains nine slices from the existing Squared Aw
 ## Manual input gate
 
 The lab has a guarded `Check SQA3 inventory controls.lnk` shortcut. It opens the disposable sqa3_layout save and the view automatically; click Select on the PDA, then Right. Check that the PDA moves one cell. The view pauses its fixture for60 seconds; the launcher closes its owned process after a180-second hard limit. No console typing is needed. Do not start another game while this test is open. The original test save is never overwritten. This remains a development test, not a finished mod.
+
+## Replacement direction (supersedes prototype manual gate)
+
+User confirmed Select PDA->Right. The normal CUIActorMenu is now the replacement controller in development mode. It loads SQA3 XML/Field Kit surfaces, retaining native drag/drop, equipment, context/use, trade and corpse/container behavior. The old parallel snapshot dialog is retired; probe view routes to normal ShowActorMenu. No3D player model. Actor development grid is now8x64; old16-column saves reconcile. Equipment/belt mass stays outside grid. Same-bag native dragging commits through core placement. Build/runtime verification of a193b694 pending. Full authored capacity/overflow/ownership parity is still open.
+
+### Normal-key interception found and retired
+
+Anomaly1.5.3 ui_inventory.script registered ActorMenu_on_before_init_mode and replaced GetActorMenu/hide helpers with UIInventory. Normal key23 therefore opened the Lua interface while CUIActorMenu::IsShown stayedfalse. The packaged source-derived script changes only enable_feature to disable that old presentation in -inventory-lab -dbg; outside that mode it remains enabled. Helpers remain present. This avoids merely adding another native menu behind the existing Lua frontend. Provenance/hashes are in native-visual-assets.json.

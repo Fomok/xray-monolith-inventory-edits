@@ -5,7 +5,9 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment:74 core checks per build,33runner integrations,10offscreen checks; shared presentation/registry/placement/drag checks. See OVERFLOW.md,NATIVE-IDENTITY.md,NATIVE-TRANSFERS.md. Full DX11-AVX CI40434583470 passed earlier0bb50dfb; latest native changes pending compile. No game launch or ownership adapter completion.
+Current increment:77 core checks per build and independent reload. Native acc4e204 placement/reject/save/reload passed; PDA Select->Right user-verified. New a193b694 replaces the normal actor-menu presentation, retires the parallel probe dialog and retains native equipment/mouse/context/loot plumbing. Native build/runtime verification pending.
+
+Non-negotiable presentation requirement: one replacement inventory through the normal inventory key and normal loot/container paths; preserve useful native controls and semantics; **no3D player-model panel**. Diagnostic windows are not acceptance. Vanilla ui_inventory.script intercepts the normal entry; the scoped enable_feature guard retires this old Lua presentation only in SQA3 development mode.
 
 | ID | Accepted behavior | Current evidence / remaining work |
 |---|---|---|
@@ -13,10 +15,10 @@ Current increment:74 core checks per build,33runner integrations,10offscreen che
 | I02 | Player grid, pockets and backpack sections | Core blocked cells/partial rows and compartments; real pockets/backpack definitions and UI OPEN |
 | I03 | Backpack capacity and equip/remove transitions | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | I04 | All native equipment slots, including knife and pistol | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| I05 | Equipment outside grids; grouped arrows | Core slot masks, incompatible layers, multiple members, view-only cycling and equipped bag expansion tested; native slot mapping/UI OPEN |
+| I05 | Equipment outside grids; grouped arrows | Core equipment and native slot/belt projection preserve mass outside bag. Native equipment controls retained in replacement; runtime equip/unequip and grouped-arrow acceptance OPEN |
 | I06 | Capacity enforcement on all acquisition paths | Core Spawn/batches validate; actual item producers not hooked |
 | I07 | Full-grid policy and protected items | Strict ordinary pickup; explicit owned recovery overflow tested, no manual overflow capacity. Native forced-arrival/protected-item policy and per-container recovery OPEN |
-| I08 | Manual placement and rotation persistence | Core rotation/placement persistence and diagnostic image tested; interactive drag OPEN |
+| I08 | Manual placement and rotation persistence | Native save/reload placement passed; prototype Select/Right user-verified. Native actor-menu drag persistence wired a193b694; runtime drag/rotation acceptance OPEN |
 | I09 | Valid/invalid/swap/overflow/new-item highlights | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | I10 | Finite stack ceilings and overrides | Per-type stack ceiling tested; actual catalog and context overrides OPEN |
 | I11 | Stack member identity/state and partial transfers | Fungible type/state split/merge and stable stack IDs tested; heterogeneous per-member records/inspection OPEN |

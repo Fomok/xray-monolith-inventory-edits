@@ -20,7 +20,8 @@ def read(path):
         for key in ["native_section","native_live_id","native_place","native_slot"]:
             i=f.index(key);assert f[i+1].startswith("x")
             attrs[key]=bytes.fromhex(f[i+1][1:]).decode()
-        nodes[identity]={"parent":int(f[1]),"grams":int(f[3]),"position":list(map(int,f[5:8])),"condition":int(f[38]),"attributes":attrs}
+        assert int(f[33])==0 and int(f[34])==0 and int(f[35])==0, "native item has unexpected variable storage fields"
+        nodes[identity]={"parent":int(f[1]),"grams":int(f[3]),"position":list(map(int,f[5:8])),"location":int(f[24]),"equipped_slots":int(f[27]),"condition":int(f[38]),"attributes":attrs}
     assert len(rows)==int(header[3]), "declared count"
     return nodes,hashlib.sha256(raw).hexdigest()
 

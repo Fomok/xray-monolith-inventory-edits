@@ -9,16 +9,16 @@ def main():
     atlas=json.loads((source/"native-visual-assets.json").read_text());texture=Path(atlas["source"]).read_bytes()
     assert len(texture)==atlas["bytes"] and hashlib.sha256(texture).hexdigest()==atlas["sha256"]
     files={"bin/AnomalyDX11AVX.exe":engine,atlas["destination"]:texture}
-    for rel in ["configs/ui/textures_descr/sqa3_native.xml","scripts/sqa3_native_autorun.script"]:
+    for rel in ["configs/ui/textures_descr/sqa3_native.xml","configs/ui/sqa3_actor_menu.xml","scripts/sqa3_native_autorun.script","scripts/ui_inventory.script"]:
         files["gamedata/"+rel]=(source/"gamedata"/rel).read_bytes()
     files["Start-Native-Input-Check.ps1"]=(source/"Start-Native-Input-Check.ps1").read_bytes()
     files["NATIVE-PLACEMENT.md"]=(source.parents[1]/"docs/inventory-next/NATIVE-PLACEMENT.md").read_bytes()
     files["README.txt"]=("Squared Away 3 native placement DEVELOPMENT lab\n\n"+
         "Only for the isolated vanilla lab with matching upstream2026.10.11 data overlay.\n"+
         "Not a complete playable mod or public engine release. Preserve test save and one rollback.\n"+
-        "Start windowed with -dbg -inventory-lab. Console: inventory_next_probe view.\n"+
-        "Fixture is inert without -sqa3-fixture; it writes only separate sqa3_layout saves.\n"+
-        "Ownership transfers, final pockets, equipment, gameplay parity and physical input remain unverified.\n").encode()
+        "Start windowed with -dbg -inventory-lab. Use the normal inventory key; one replacement menu also handles loot/trade.\n"+
+        "Fixture is inert without -sqa3-fixture; it writes only separate sqa3_replacement saves.\n"+
+        "No3D player model. Final pockets, full native recovery and complete gameplay parity remain unfinished.\n").encode()
     manifest={"commit":a.commit,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     files["manifest.json"]=(json.dumps(manifest,indent=2)+"\n").encode()
     a.output.parent.mkdir(parents=True,exist_ok=True)

@@ -1,6 +1,56 @@
 -- Isolated lab fixture. Inert unless launched with -sqa3-fixture.
 local started, stage, failed = nil, 1, false
 local commands = {}
+local crate_id,loot_id
+local function spawn_crate()
+    local a=db.actor;local pos=a:position();pos.x=pos.x+0.8
+    local box=alife():create("inventory_box",pos,a:level_vertex_id(),a:game_vertex_id())
+    assert(box,"native crate spawn failed");crate_id=box.id
+end
+local function fill_crate()
+    local a=db.actor;local item=alife():create("bread",a:position(),a:level_vertex_id(),a:game_vertex_id(),crate_id)
+    assert(item,"native crate item spawn failed");loot_id=item.id
+end
+local function open_crate()
+    local box=level.object_by_id(crate_id);assert(box,"crate not online")
+    assert(box:use(db.actor),"native crate use rejected")
+    assert(ActorMenu.get_actor_menu():IsShown() and ActorMenu.get_menu_mode()==4,"normal loot menu not opened")
+    printf("[SQA3 AUTORUN] native loot menu opened crate=%s",tostring(crate_id))
+end
+local function take_all()
+    local key=bind_to_dik(key_bindings.kSPRINT_TOGGLE,-1);assert(key and key>0)
+    level.press_action(key);level.release_action(key)
+end
+local function check_loot()
+    local box=level.object_by_id(crate_id);assert(box and box:is_inv_box_empty(),"crate did not empty")
+    local found=false
+    db.actor:iterate_inventory(function(_,item) if item:id()==loot_id then found=true end return false end,db.actor)
+    assert(found,"native loot identity missing from actor")
+    printf("[SQA3 AUTORUN] native loot transfer verified live=%s",tostring(loot_id))
+end
+local function toggle_inventory()
+    local key=bind_to_dik(key_bindings.kINVENTORY,-1)
+    assert(key and key>0,"inventory key missing")
+    level.press_action(key);level.release_action(key)
+    printf("[SQA3 AUTORUN] normal inventory key=%s shown=%s",tostring(key),tostring(ActorMenu.get_actor_menu():IsShown()))
+end
+local function unequip_fixture()
+    local weapon=db.actor:item_in_slot(2)
+    assert(weapon and weapon:section()=="wpn_pm","spawned pistol not equipped")
+    db.actor:move_to_ruck(weapon)
+end
+local function equip_fixture()
+    assert(not db.actor:item_in_slot(2),"native unequip did not clear slot2")
+    local weapon
+    db.actor:iterate_inventory(function(_,item) if item:section()=="wpn_pm" then weapon=item end return false end,db.actor)
+    assert(weapon,"missing native pistol")
+    assert(ActorMenu.get_actor_menu():ToSlot(weapon,true,2),"native menu equip rejected")
+end
+local function check_equipment()
+    local weapon=db.actor:item_in_slot(2)
+    assert(weapon and weapon:section()=="wpn_pm","native pistol slot mismatch")
+    printf("[SQA3 AUTORUN] equipment slot2 verified live=%s",tostring(weapon:id()))
+end
 local function snapshot()
     local count, grams = 0, 0
     db.actor:iterate_inventory(function(_, item)
@@ -12,7 +62,9 @@ local function snapshot()
 end
 local function spawn()
     local a=db.actor
-    for _,section in ipairs({"bandage","medkit"}) do
+    local sections={"bandage","medkit"}
+    if command_line():find("-sqa3-fixture-equipment",1,true) then sections[#sections+1]="wpn_pm" end
+    for _,section in ipairs(sections) do
         assert(system_ini():section_exist(section),"missing fixture section "..section)
         local item=alife():create(section,a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
         assert(item,"fixture spawn failed "..section)
@@ -20,7 +72,8 @@ local function spawn()
 end
 function update()
     if failed or not db or not db.actor then return end
-    if not started then started=time_global();printf("[SQA3 AUTORUN] actor ready") end
+    -- Actor updates can begin before the native precache input gate has cleared.
+    if not started then started=time_global()+10000;printf("[SQA3 AUTORUN] actor ready; waiting for startup input gate") end
     if time_global()-started < stage*2000 then return end
     local command=commands[stage]
     if not command then return end
@@ -45,11 +98,39 @@ function on_game_start()
         commands[#commands+1]="inventory_next_move 100 -1 3 0" -- must reject bounds
         commands[#commands+1]="inventory_next_probe export"
     end
-    commands[#commands+1]="inventory_next_probe view"
+    commands[#commands+1]=toggle_inventory
+    commands[#commands+1]=function() assert(ActorMenu.get_actor_menu():IsShown(),"normal inventory did not open") end
+    if args:find("-sqa3-fixture-equipment",1,true) then
+        commands[#commands+1]=unequip_fixture
+        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]=equip_fixture
+        commands[#commands+1]=check_equipment
+        commands[#commands+1]="inventory_next_probe export"
+    end
     if args:find("-sqa3-fixture-hold",1,true) then commands[#commands+1]=function() started=started+60000;printf("[SQA3 AUTORUN] holding view for bounded input test") end end
     commands[#commands+1]="screenshot sqa3_native"
     commands[#commands+1]=snapshot
-    commands[#commands+1]=args:find("-sqa3-fixture-reload",1,true) and "save sqa3_layout_reload" or "save sqa3_layout"
+    local save=args:find("-sqa3-fixture-reload",1,true) and "sqa3_replacement_reload" or "sqa3_replacement"
+    commands[#commands+1]="save "..save
+    commands[#commands+1]=toggle_inventory
+    commands[#commands+1]=function() assert(not ActorMenu.get_actor_menu():IsShown(),"inventory key did not close") end
+    commands[#commands+1]=toggle_inventory
+    commands[#commands+1]=function() assert(ActorMenu.get_actor_menu():IsShown(),"inventory key did not reopen") end
+    commands[#commands+1]="screenshot sqa3_reopen"
+    if args:find("-sqa3-fixture-loot",1,true) then
+        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]=spawn_crate
+        commands[#commands+1]=fill_crate
+        commands[#commands+1]=open_crate
+        commands[#commands+1]="screenshot sqa3_loot_before"
+        commands[#commands+1]=take_all
+        commands[#commands+1]=check_loot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="screenshot sqa3_loot_after"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="save "..save
+    end
     commands[#commands+1]="quit"
     printf("[SQA3 AUTORUN] registered isolated native fixture")
     RegisterScriptCallback("actor_on_update",update)
