@@ -2706,7 +2706,9 @@ void CLevel::script_register(lua_State* L)
 			def("stop_weather_fx", stop_weather_fx),
 
             def("inventory_next_stash_enabled", +[](){return InventoryNextStashEnabled();}),
-            def("inventory_next_stash_identity", +[](u16 live){return InventoryNextStashIdentity(live);}),
+            // This luabind fork only converts its allocator-backed string_class.
+            // std::string would be treated as an unregistered userdata type.
+            def("inventory_next_stash_identity", +[](u16 live){return luabind::internal_string(InventoryNextStashIdentity(live).c_str());}),
             def("inventory_next_stash_create", +[](u16 live,LPCSTR identity,LPCSTR name){return InventoryNextStashCreate(live,identity,name);}),
             def("get_weather_weight", get_weather_weight),
             def("set_weather_weight", set_weather_weight),
