@@ -240,6 +240,73 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-direct-equip",1,true) then
+        local sources,acquired,retained={}
+        local function weapons(prefix)
+            for _,id in ipairs(sources) do
+                local item=level.object_by_id(id);assert(item and item:parent(),"direct equip weapon missing")
+                printf("[SQA3 AUTORUN] direct equip %sweapon live=%s parent=%s grams=%s condition=%s ammo=%s",prefix,tostring(id),tostring(item:parent():id()),tostring(item:weight()*1000),tostring(item:condition()),tostring(item:get_ammo_in_magazine()))
+            end
+        end
+        commands={"inventory_next_probe export",snapshot}
+        if args:find("-sqa3-fixture-direct-equip-reload",1,true) then
+            commands[#commands+1]=function()
+                crate_id=tonumber(args:match("%-sqa3%-equip%-source=(%d+)"))
+                acquired=tonumber(args:match("%-sqa3%-equip%-item=(%d+)"))
+                retained=tonumber(args:match("%-sqa3%-equip%-retained=(%d+)"))
+                assert(crate_id and acquired and retained,"direct equip reload IDs missing")
+                sources={acquired,retained}
+            end
+        else
+            commands[#commands+1]=spawn_crate
+            commands[#commands+1]=function()
+                local a=db.actor;assert(not a:item_in_slot(3),"direct equip needs empty primary slot")
+                for i=1,2 do
+                    local item=alife():create("wpn_ak74",a:position(),a:level_vertex_id(),a:game_vertex_id(),crate_id)
+                    assert(item,"direct equip weapon spawn failed");sources[#sources+1]=item.id
+                end
+            end
+            commands[#commands+1]=function()
+                for i,id in ipairs(sources) do
+                    local item=level.object_by_id(id);assert(item,"direct equip weapon not online")
+                    item:set_condition(i==1 and 0.83 or 0.91);item:set_ammo_elapsed(i==1 and 5 or 9)
+                end
+            end
+            commands[#commands+1]=function() weapons("before ") end
+            commands[#commands+1]=open_crate
+            commands[#commands+1]=function()
+                started=started+90000
+                printf("[SQA3 AUTORUN] direct equip mouse input window: drag one rifle into empty primary slot, then try the other into that occupied slot")
+            end
+        end
+        commands[#commands+1]=function()
+            local equipped=db.actor:item_in_slot(3);assert(equipped,"direct equip primary slot empty")
+            local found=0
+            for _,id in ipairs(sources) do
+                local item=level.object_by_id(id);assert(item and item:parent(),"direct equip lost source")
+                if item:parent():id()==db.actor:id() then
+                    found=found+1;assert(equipped:id()==id,"direct equip landed in bag or wrong slot")
+                    if acquired then assert(acquired==id,"direct equip identity changed on reload") end
+                    acquired=id
+                else
+                    assert(item:parent():id()==crate_id,"direct equip source owner changed")
+                    if retained then assert(retained==id,"retained weapon identity changed") end
+                    retained=id
+                end
+            end
+            assert(found==1 and acquired and retained,"direct equip needs one accepted and one retained")
+            printf("[SQA3 AUTORUN] direct equip result acquired=%s retained=%s source=%s slot=3",tostring(acquired),tostring(retained),tostring(crate_id))
+            weapons("")
+        end
+        commands[#commands+1]="screenshot sqa3_direct_equip"
+        commands[#commands+1]=function() if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_direct_equip"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-purchase-refusal-mouse",1,true) then
         local actor_money,seller_money
         local sources={}
