@@ -33,8 +33,9 @@ std::vector<Node> fixture() {
             item(20,2,40),item(21,2,50,{2,0,false})};
 }
 Model make() { Model m; yes(m.initialize(fixture())); return m; }
-void rollback(Model& m, Move move, const char* why) {
-    auto before=m.serialize(); no(m.move(move),why); check(m.serialize()==before,"failed transaction changed state");
+Result move(Model& m, Move request) { request.session=m.session(); return m.move(request); }
+void rollback(Model& m, Move request, const char* why) {
+    auto before=m.serialize(); no(move(m,request),why); check(m.serialize()==before,"failed transaction changed state");
 }
 // Test helper for valid-checksum malformed schema/ownership payloads.
 std::string reseal(std::string body) {
@@ -66,30 +67,30 @@ int main(int argc,char** argv) {
             check(m.serialize()==before,"preview mutation");
         });
         test("pickup updates ownership and exact recursive mass; drop reverses",[]{
-            auto m=make(); yes(m.move({20,11,{1,0,false},0})); check(m.carried_mass()==197,"pickup weight");
+            auto m=make(); yes(move(m,{20,11,{1,0,false},0})); check(m.carried_mass()==197,"pickup weight");
             check(m.world_items()==std::vector<Id>({21}),"pickup world state");
-            yes(m.move({20,2,{0,0,false},1})); check(m.carried_mass()==157,"drop weight");
+            yes(move(m,{20,2,{0,0,false},1})); check(m.carried_mass()==157,"drop weight");
         });
         test("nested root transfer moves complete tree once",[]{
-            auto m=make(); yes(m.move({10,2,{4,4,false},0})); check(m.carried_mass()==7,"drop bag");
-            yes(m.move({10,1,{0,0,false},1})); check(m.carried_mass()==157,"pickup bag");
+            auto m=make(); yes(move(m,{10,2,{4,4,false},0})); check(m.carried_mass()==7,"drop bag");
+            yes(move(m,{10,1,{0,0,false},1})); check(m.carried_mass()==157,"pickup bag");
         });
         test("grandparent growth collision rolls back every field",[]{
-            auto m=make(); yes(m.move({20,11,{1,0,false},0}));
+            auto m=make(); yes(move(m,{20,11,{1,0,false},0}));
             rollback(m,{21,11,{0,1,false},1},"overlap");
             check(m.footprint(10).h==1 && m.footprint(11).h==1,"stale growth");
-            yes(m.move({13,1,{4,4,false},1})); yes(m.move({21,11,{0,1,false},2}));
+            yes(move(m,{13,1,{4,4,false},1})); yes(move(m,{21,11,{0,1,false},2}));
             check(m.footprint(10).h==2 && m.footprint(11).h==2,"recursive growth missing");
             check(m.carried_mass()==247,"grown mass");
         });
         test("soft bag shrinks after removing final contents",[]{
-            auto m=make(); yes(m.move({12,2,{5,0,false},0}));
+            auto m=make(); yes(move(m,{12,2,{5,0,false},0}));
             check(m.footprint(11).w==1,"empty inner");
-            yes(m.move({11,2,{7,0,false},1})); check(m.footprint(10).w==1,"empty outer");
+            yes(move(m,{11,2,{7,0,false},1})); check(m.footprint(10).w==1,"empty outer");
         });
         test("growth beyond ancestor grid boundary rolls back pickup",[]{
             auto v=fixture(); v[0].grid={2,1}; v.erase(v.begin()+5);
-            Model m; yes(m.initialize(v)); yes(m.move({20,11,{1,0,false},0}));
+            Model m; yes(m.initialize(v)); yes(move(m,{20,11,{1,0,false},0}));
             rollback(m,{21,11,{0,1,false},1},"bounds");
         });
         test("cycle and self-parent rejected atomically",[]{
@@ -99,14 +100,14 @@ int main(int argc,char** argv) {
         test("rigid restricted box remains fixed and rejects wrong category",[]{
             auto v=fixture(); v[2].soft=false; v[2].empty={2,2}; v[5].position={4,4,false};
             v[3].soft=false; v[3].empty={2,2}; v[3].accepts=1; v[7].category=2;
-            Model m; yes(m.initialize(v)); yes(m.move({20,11,{1,0,false},0}));
+            Model m; yes(m.initialize(v)); yes(move(m,{20,11,{1,0,false},0}));
             check(m.footprint(10).w==2 && m.footprint(11).h==2,"rigid resized");
             rollback(m,{21,11,{0,1,false},1},"restriction");
         });
         test("rotation changes spatial fit and persists in model",[]{
             auto a=root(1,Kind::ActorRoot,{1,2}); auto w=root(2,Kind::WorldRoot);
             auto i=item(3,2,20); i.empty={2,1}; Model m; yes(m.initialize({a,w,i}));
-            rollback(m,{3,1,{0,0,false},0},"bounds"); yes(m.move({3,1,{0,0,true},0}));
+            rollback(m,{3,1,{0,0,false},0},"bounds"); yes(move(m,{3,1,{0,0,true},0}));
             Model n; yes(n.deserialize(m.serialize())); check(n.nodes().at(3).position.rotated,"rotation save");
         });
         test("ancestor recursive mass limit blocks child insertion",[]{
@@ -118,7 +119,7 @@ int main(int argc,char** argv) {
             rollback(m,{20,11,{1,0,false},0},"mass_capacity");
         });
         test("stale UI request cannot overwrite newer placement",[]{
-            auto m=make(); yes(m.move({20,11,{1,0,false},0})); rollback(m,{21,1,{5,5,false},0},"stale_revision");
+            auto m=make(); yes(move(m,{20,11,{1,0,false},0})); rollback(m,{21,1,{5,5,false},0},"stale_revision");
         });
         test("missing destination and root moves rejected",[]{
             auto m=make(); rollback(m,{20,999,{0,0,false},0},"parent"); rollback(m,{1,2,{},0},"item");
@@ -138,7 +139,7 @@ int main(int argc,char** argv) {
             no(m.initialize(v),"depth");
         });
         test("canonical save roundtrip including revision definitions and ownership",[]{
-            auto m=make(); yes(m.move({20,11,{1,0,false},0})); auto bytes=m.serialize();
+            auto m=make(); yes(move(m,{20,11,{1,0,false},0})); auto bytes=m.serialize();
             Model n; yes(n.deserialize(bytes)); check(n.serialize()==bytes,"roundtrip differs");
         });
         test("truncated corrupt and oversized save preserve live model",[]{
@@ -150,27 +151,68 @@ int main(int argc,char** argv) {
         });
         test("valid-checksum unsupported schema and duplicate IDs rejected",[]{
             auto m=make(); auto old=m.serialize(); auto body=old.substr(0,old.rfind("CRC32 "));
-            auto changed=body; changed.replace(15,1,"2"); no(m.deserialize(reseal(changed)),"header");
+            auto changed=body; changed.replace(15,1,"9"); no(m.deserialize(reseal(changed)),"header");
             auto start=body.find("20 2 0 "); check(start!=std::string::npos,"test fixture record");
             body.replace(start,2,"21"); no(m.deserialize(reseal(body)),"duplicate_id");
             check(m.serialize()==old,"invalid load changed model");
         });
         test("repeated pickup/drop conserves total mass and occupancy",[]{
             auto m=make(); for(int i=0;i<300;++i) {
-                yes(m.move({20,11,{1,0,false},m.revision()})); check(m.carried_mass()==197,"pickup conservation");
-                yes(m.move({20,2,{0,0,false},m.revision()})); check(m.carried_mass()==157,"drop conservation");
+                yes(move(m,{20,11,{1,0,false},m.revision()})); check(m.carried_mass()==197,"pickup conservation");
+                yes(move(m,{20,2,{0,0,false},m.revision()})); check(m.carried_mass()==157,"drop conservation");
             }
+        });
+        test("spawn preview is read-only and commit has identical predicted mass",[]{
+            auto m=make(); Command c; c.operation=Operation::Spawn;c.spawned=item(30,11,40,{1,0,false});c.session=m.session();
+            auto before=m.serialize();auto p=m.preview(c);yes(p.result);
+            check(m.serialize()==before&&m.high_water_id()==21,"preview mutated model");
+            yes(m.execute(c));check(m.carried_mass()==p.carried_mass&&m.nodes().size()==p.node_count,"preview parity");
+        });
+        test("failed spawn through ancestor leaves identity and state intact",[]{
+            auto m=make();yes(move(m,{20,11,{1,0,false},0}));Command c;c.operation=Operation::Spawn;
+            c.spawned=item(30,11,40,{0,1,false});c.revision=1;c.session=m.session();auto before=m.serialize();
+            no(m.execute(c),"overlap");check(m.serialize()==before&&m.high_water_id()==21,"failed spawn changed identity");
+            c.spawned.parent=2;c.spawned.position={5,0,false};yes(m.execute(c));
+        });
+        test("leaf delete updates mass and never reuses committed IDs after reload",[]{
+            auto m=make();Command c;c.operation=Operation::Spawn;c.spawned=item(30,2,40,{5,0,false});c.session=m.session();yes(m.execute(c));
+            c.operation=Operation::Erase;c.item=30;c.revision=1;yes(m.execute(c));
+            auto saved=m.serialize();yes(m.deserialize(saved));c.operation=Operation::Spawn;c.session=m.session();c.revision=2;
+            no(m.execute(c),"id_reuse");check(m.serialize()==saved,"reused ID changed state");
+            c.operation=Operation::Erase;c.item=12;yes(m.execute(c));check(m.carried_mass()==127,"delete mass");
+        });
+        test("nonempty containers and roots cannot be erased",[]{
+            auto m=make();Command c;c.operation=Operation::Erase;c.item=10;c.session=m.session();auto before=m.serialize();
+            no(m.execute(c),"not_empty");c.item=1;no(m.execute(c),"item");check(m.serialize()==before,"delete rollback");
+        });
+        test("intrinsic mass changes revalidate actor and ancestor caps atomically",[]{
+            auto v=fixture();v[0].max_contents=160;Model m;yes(m.initialize(v));Command c;
+            c.operation=Operation::SetMass;c.item=12;c.mass=40;c.session=m.session();auto before=m.serialize();
+            no(m.execute(c),"mass_capacity");check(m.serialize()==before,"mass rollback");
+            c.mass=10;yes(m.execute(c));check(m.carried_mass()==137,"mass delta");
+            c.mass=-1;c.revision=1;no(m.execute(c),"identity_or_mass");
+        });
+        test("preview cannot commit after another command advances revision",[]{
+            auto m=make();Command c;c.operation=Operation::SetMass;c.item=12;c.mass=20;c.session=m.session();
+            yes(m.preview(c).result);yes(move(m,{13,1,{5,5,false},0}));no(m.execute(c),"stale_revision");
+        });
+        test("successful reload and reset invalidate sessions even with same revision",[]{
+            auto m=make();Command c;c.operation=Operation::SetMass;c.item=12;c.mass=20;c.session=m.session();
+            auto before=m.serialize();check(!m.deserialize("broken"),"bad save accepted");
+            check(m.session()==c.session,"failed load invalidated epoch");
+            yes(m.deserialize(before));check(m.revision()==c.revision,"fixture revision mismatch");
+            no(m.execute(c),"stale_session");c.session=m.session();yes(m.initialize(fixture()));no(m.execute(c),"stale_session");
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));
-            yes(m.move({20,11,{1,0,false},0})); yes(save_atomic(m,path));
+            yes(move(m,{20,11,{1,0,false},0})); yes(save_atomic(m,path));
             Model n; yes(load_file(n,path)); check(n.serialize()==m.serialize(),"disk roundtrip");
             Model empty; check(!save_atomic(empty,path),"invalid model saved");
             Model again; yes(load_file(again,path)); check(again.serialize()==m.serialize(),"failed save overwrote file");
             check(!save_atomic(m,path/"missing"/"fixture.inv"),"invalid path succeeded");
             HANDLE lock=CreateFileW(path.c_str(),GENERIC_READ,FILE_SHARE_READ,nullptr,OPEN_EXISTING,0,nullptr);
             check(lock!=INVALID_HANDLE_VALUE,"lock fixture");
-            yes(m.move({20,2,{0,0,false},1}));
+            yes(move(m,{20,2,{0,0,false},1}));
             auto blocked=save_atomic(m,path);
             CloseHandle(lock);
             no(blocked,"replace");

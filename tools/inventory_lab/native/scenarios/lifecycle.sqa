@@ -1,0 +1,50 @@
+SQA3_SCENARIO 1
+# NAME mass category empty half full container soft grid accepts max
+root 1 actor 8 8 500 3
+root 2 world 8 8 0 3
+definition bag 100 1 1 1 2 1 2 2 1 1 2 2 3 200
+definition med 30 1 1 1 1 1 1 1 0 0 0 0 3 0
+definition blocker 7 1 1 1 1 1 1 1 0 0 0 0 3 0
+seed 10 1 bag 0 0 0
+seed 11 10 bag 0 0 0
+seed 12 11 med 0 0 0
+seed 13 1 blocker 0 1 0
+begin
+assert mass 237
+preview spawn 30 med 11 1 0 0 0 ok
+assert revision 0
+spawn 30 med 11 1 0 0 0 ok
+assert mass 267
+spawn 31 med 11 0 1 0 1 overlap
+assert high_water 30
+move 13 1 4 4 0 1 ok
+spawn 31 med 11 0 1 0 2 ok
+assert footprint 10 2 2
+assert footprint 11 2 2
+assert mass 297
+mass 31 80 3 mass_capacity
+assert revision 3
+mass 31 10 3 ok
+assert mass 277
+erase 11 4 not_empty
+preview erase 31 4 ok
+assert count 8
+erase 31 4 ok
+assert footprint 11 2 1
+save checkpoint
+capture_session
+load checkpoint
+captured mass 12 20 5 stale_session
+spawn 31 med 2 0 0 0 5 id_reuse
+spawn 32 med 2 0 0 0 5 ok
+assert world_count 1
+preview move 32 11 0 1 0 6 ok
+mass 12 20 6 ok
+move 32 11 0 1 0 6 stale_revision
+move 32 11 0 1 0 7 ok
+assert world_count 0
+assert mass 287
+save after
+load after
+assert parent 32 11
+assert revision 8

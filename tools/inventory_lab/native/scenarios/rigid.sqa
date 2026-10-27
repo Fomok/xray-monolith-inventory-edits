@@ -1,0 +1,25 @@
+SQA3_SCENARIO 1
+root 1 actor 3 3 1000 1
+root 2 world 8 8 0 3
+definition case 20 1 2 1 2 1 2 1 1 0 2 2 1 100
+definition medicine 25 1 1 1 1 1 1 1 0 0 0 0 3 0
+definition wrong 25 2 1 1 1 1 1 1 0 0 0 0 3 0
+seed 10 1 case 0 0 0
+begin
+spawn 20 wrong 10 0 0 0 0 restriction
+assert high_water 10
+spawn 20 medicine 10 0 0 0 0 ok
+mass 20 101 1 mass_capacity
+mass 20 10 1 ok
+assert mass 30
+erase 10 2 not_empty
+erase 20 2 ok
+assert mass 20
+erase 10 3 ok
+assert mass 0
+spawn 20 medicine 1 0 0 0 4 id_reuse
+save identity
+load identity
+spawn 21 medicine 1 0 0 0 4 ok
+assert high_water 21
+assert mass 25

@@ -28,7 +28,23 @@ struct Result {
     std::string error;
     explicit operator bool() const { return ok; }
 };
-struct Move { Id item, destination; Position position; std::uint64_t revision; };
+struct Move { Id item, destination; Position position; std::uint64_t revision; std::uint64_t session = 0; };
+enum class Operation { Move, Spawn, Erase, SetMass };
+struct Command {
+    Operation operation = Operation::Move;
+    Id item = 0, destination = 0;
+    Position position;
+    Mass mass = 0;
+    Node spawned;
+    std::uint64_t revision = 0;
+    std::uint64_t session = 0;
+};
+struct Preview {
+    Result result;
+    Mass carried_mass = 0;
+    std::size_t node_count = 0;
+    std::uint64_t revision = 0;
+};
 
 // Single-threaded value model. UI never gets mutable node access. Each transaction
 // validates the complete candidate before publishing; no partial resize/mass edits.
@@ -36,8 +52,12 @@ class Model {
 public:
     Result initialize(const std::vector<Node>& nodes);
     Result move(const Move& request);
+    Result execute(const Command& request);
+    Preview preview(const Command& request) const;
     const std::map<Id, Node>& nodes() const { return nodes_; }
     std::uint64_t revision() const { return revision_; }
+    Id high_water_id() const { return high_water_id_; }
+    std::uint64_t session() const { return session_; }
     Size footprint(Id id) const;
     Mass subtree_mass(Id id) const;
     Mass carried_mass() const;
@@ -49,5 +69,7 @@ public:
 private:
     std::map<Id, Node> nodes_;
     std::uint64_t revision_ = 0;
+    Id high_water_id_ = 0;
+    std::uint64_t session_ = 0; // process-local epoch, never serialized
 };
 } // namespace inventory_next

@@ -1,0 +1,7 @@
+SQA3_SCENARIO 1
+begin
+assert mass 287
+assert revision 8
+mass 12 10 8 ok
+assert mass 277
+save resumed

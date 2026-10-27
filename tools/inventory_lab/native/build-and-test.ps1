@@ -27,6 +27,9 @@ foreach ($variant in @('debug','release')) {
     $exe = Join-Path $out "inventory-next-$variant.exe"
     & $compilerPath @flags (Join-Path $PSScriptRoot 'tests.cpp') $library -o $exe
     if ($LASTEXITCODE -ne 0) { throw "Link failed: $variant" }
+    $runner = Join-Path $out "inventory-lab-$variant.exe"
+    & $compilerPath @flags -mwindows (Join-Path $PSScriptRoot 'runner.cpp') $library -o $runner
+    if ($LASTEXITCODE -ne 0) { throw "Runner link failed: $variant" }
     $fixture = Join-Path $out "$variant-fixture.inv"
     & $exe $fixture 2>&1 | Tee-Object (Join-Path $out "$variant-tests.log")
     if ($LASTEXITCODE -ne 0) { throw "Tests failed: $variant" }

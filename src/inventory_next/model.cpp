@@ -1,5 +1,6 @@
 #include "model.h"
 #include <algorithm>
+#include <atomic>
 #include <functional>
 #include <iomanip>
 #include <limits>
@@ -11,6 +12,7 @@ namespace {
 constexpr std::size_t max_nodes = 4096;
 constexpr Mass max_mass = 1000000000000LL;
 constexpr std::size_t max_save = 2 * 1024 * 1024;
+std::atomic<std::uint64_t> session_sequence{0};
 struct Derived { Size size; Mass mass = 0; int depth = 0; };
 using DerivedMap = std::map<Id, Derived>;
 Result good() { return {true, {}}; }
@@ -105,21 +107,60 @@ Result Model::initialize(const std::vector<Node>& nodes) {
     if (!r) return r;
     nodes_ = std::move(candidate);
     revision_ = 0;
+    high_water_id_ = nodes_.rbegin()->first;
+    session_ = ++session_sequence;
     return good();
 }
 Result Model::move(const Move& request) {
+    Command c;
+    c.item = request.item;
+    c.destination = request.destination;
+    c.position = request.position;
+    c.revision = request.revision;
+    c.session = request.session;
+    return execute(c);
+}
+Preview Model::preview(const Command& request) const {
+    Model candidate = *this;
+    auto r = candidate.execute(request);
+    if (!r) return {r, carried_mass(), nodes_.size(), revision_};
+    return {r, candidate.carried_mass(), candidate.nodes_.size(), candidate.revision_};
+}
+Result Model::execute(const Command& request) {
+    if (!session_ || request.session != session_) return bad("stale_session");
     if (request.revision != revision_) return bad("stale_revision");
     if (revision_ == std::numeric_limits<std::uint64_t>::max()) return bad("revision_overflow");
-    auto item = nodes_.find(request.item);
-    if (item == nodes_.end() || item->second.kind != Kind::Item) return bad("item");
     auto candidate = nodes_;
-    Node& n = candidate.at(request.item);
-    n.parent = request.destination;
-    n.position = request.position;
+    Id next_high_water = high_water_id_;
+    if (request.operation == Operation::Spawn) {
+        if (request.spawned.kind != Kind::Item) return bad("spawn_root");
+        if (request.spawned.id <= high_water_id_) return bad("id_reuse");
+        candidate.emplace(request.spawned.id, request.spawned);
+        next_high_water = request.spawned.id;
+    } else {
+        auto item = candidate.find(request.item);
+        if (item == candidate.end() || item->second.kind != Kind::Item) return bad("item");
+        switch (request.operation) {
+        case Operation::Move:
+            item->second.parent = request.destination;
+            item->second.position = request.position;
+            break;
+        case Operation::Erase:
+            for (const auto& [id, n] : candidate) {
+                (void)id;
+                if (n.parent == request.item) return bad("not_empty");
+            }
+            candidate.erase(item);
+            break;
+        case Operation::SetMass: item->second.intrinsic = request.mass; break;
+        default: return bad("operation");
+        }
+    }
     DerivedMap derived;
     auto r = analyze(candidate, derived);
     if (!r) return r;
     nodes_.swap(candidate);
+    high_water_id_ = next_high_water;
     ++revision_;
     return good();
 }
@@ -149,7 +190,7 @@ std::vector<Id> Model::world_items() const {
 std::string Model::serialize() const {
     std::ostringstream s;
     s.imbue(std::locale::classic());
-    s << "INVENTORY_NEXT 1 " << revision_ << ' ' << nodes_.size() << '\n';
+    s << "INVENTORY_NEXT 2 " << revision_ << ' ' << nodes_.size() << ' ' << high_water_id_ << '\n';
     for (const auto& [id, n] : nodes_) {
         s << id << ' ' << n.parent << ' ' << static_cast<int>(n.kind) << ' ' << n.intrinsic << ' '
           << n.category << ' ' << n.position.x << ' ' << n.position.y << ' ' << n.position.rotated << ' '
@@ -176,7 +217,8 @@ Result Model::deserialize(const std::string& bytes) {
     unsigned version;
     std::uint64_t revision;
     std::size_t count;
-    if (!(s >> magic >> version >> revision >> count) || magic != "INVENTORY_NEXT" || version != 1 ||
+    Id high_water;
+    if (!(s >> magic >> version >> revision >> count >> high_water) || magic != "INVENTORY_NEXT" || version != 2 ||
         count == 0 || count > max_nodes) return bad("header");
     std::vector<Node> nodes;
     for (std::size_t i = 0; i < count; ++i) {
@@ -196,6 +238,8 @@ Result Model::deserialize(const std::string& bytes) {
     Model candidate;
     auto r = candidate.initialize(nodes);
     if (!r) return r;
+    if (high_water < candidate.high_water_id_) return bad("high_water");
+    candidate.high_water_id_ = high_water;
     candidate.revision_ = revision;
     *this = std::move(candidate);
     return good();

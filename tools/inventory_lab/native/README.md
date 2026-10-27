@@ -1,4 +1,10 @@
-# Squared Away 3.0 / Inventory Next native core — first implementation
+# Squared Away 3.0 / Inventory Next native core
+
+Current milestone: [Background Lab Dev 2](BACKGROUND-LAB.md) adds atomic spawn,
+leaf deletion, intrinsic mass changes, command preview and session tokens, schema2
+identity persistence, named fixtures and a hidden command runner.28 core tests pass
+per build, plus independent reload;19 runner integration checks pass. The first-slice
+record below is historical where superseded by BACKGROUND-LAB.md.
 
 This is a new C++17 library, not the current SQA grid and not integrated into xrGame.
 Working title is Squared Away 3.0, with fresh code and fresh saves; old SQA code/save
