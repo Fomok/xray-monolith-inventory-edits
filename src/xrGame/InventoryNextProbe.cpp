@@ -179,6 +179,19 @@ bool InventoryNextCanRelease(u16 live) noexcept try {
     }
     return true;
 } catch (...) {return false;}
+bool InventoryNextCanBulkRelease(u16 live) noexcept try {
+    if(!InventoryNextLogicalStorage())return true;
+    if(!InventoryNextCanRelease(live))return false;
+    const auto id=InventoryNextIdentity(live);
+    const auto found=layout().model().nodes().find(id);
+    // Bulk release must not flatten a loaded logical container into unrelated
+    // world items. Manual moves of an individual contained item remain allowed.
+    if(found!=layout().model().nodes().end()&&found->second.parent!=1) {
+        Msg("! SQA3 nested bulk release refused live=%u; containing storage retained",live);
+        return false;
+    }
+    return true;
+} catch (...) {return false;}
 void InventoryNextProbe(bool export_snapshot,bool show_view) noexcept {
     if(!g_pGameLevel||!Actor()||!InventoryNextLayoutSync())return;
     try {

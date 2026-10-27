@@ -17,6 +17,7 @@ bool InventoryNextNativeRotate(u16 live) noexcept;
 void InventoryNextCapacityProbe() noexcept;
 bool InventoryNextLogicalStorage() noexcept;
 bool InventoryNextCanRelease(u16 live) noexcept;
+bool InventoryNextCanBulkRelease(u16 live) noexcept;
 void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcept;
 class CUIDragDropListEx;
 void InventoryNextStorageView(CUIDragDropListEx* list) noexcept;

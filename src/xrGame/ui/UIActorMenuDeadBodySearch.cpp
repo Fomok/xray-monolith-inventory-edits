@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "UIActorMenu.h"
 #include "../InventoryNextProbe.h"
+#include "../actor.h"
+#include "../level.h"
 #include "UIDragDropListEx.h"
 #include "UICharacterInfo.h"
 #include "UIInventoryUtilities.h"
@@ -21,6 +23,10 @@
 
 void move_item_from_to(u16 from_id, u16 to_id, u16 what_id)
 {
+    if(InventoryNextLogicalStorage()&&Actor()&&from_id==Actor()->ID()&&!InventoryNextCanRelease(what_id)) {
+        InventoryNextPickupStatus("Cannot transfer this item. Inventory unchanged.");
+        return;
+    }
 	NET_Packet P;
 	CGameObject::u_EventGen(P, GE_TRADE_SELL, from_id);
 	P.w_u16(what_id);
@@ -47,6 +53,29 @@ bool move_item_check(PIItem itm, CInventoryOwner* from, CInventoryOwner* to, boo
 	if(InventoryNextRequestOwnedPickup(from->object_id(),to->object_id(),itm->object_id()))return true;
 	move_item_from_to(from->object_id(), to->object_id(), itm->object_id());
 	return true;
+}
+
+namespace {
+xr_vector<u16> bulk_release_candidates(CUIDragDropListEx* list)
+{
+    xr_vector<u16> result;
+    const auto append=[&](CUICellItem* cell) {
+        auto item=static_cast<PIItem>(cell->m_pData);
+        if(item->IsQuestItem())return;
+        if(!InventoryNextCanBulkRelease(item->object_id())) {
+            InventoryNextPickupStatus("Some items could not be moved. They stayed with you.");return;
+        }
+        result.push_back(item->object_id());
+    };
+    // Capture identities before synchronous ownership events can remove cells.
+    // Decide protected subtrees against the same pre-transfer inventory.
+    for(u32 i=0;i<list->ItemsCount();++i) {
+        auto cell=list->GetItemIdx(i);
+        for(u32 j=0;j<cell->ChildsCount();++j)append(cell->Child(j));
+        append(cell);
+    }
+    return result;
+}
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -203,6 +232,11 @@ bool CUIActorMenu::ToDeadBodyBag(CUICellItem* itm, bool b_use_cursor_pos)
 	PIItem quest_item = (PIItem)itm->m_pData;
 	if (quest_item->IsQuestItem())
 		return false;
+    if(quest_item->parent_id()==m_pActorInvOwner->object_id()&&!InventoryNextCanRelease(quest_item->object_id())) {
+        InventoryNextPickupStatus("Cannot transfer this item. Inventory unchanged.");
+        m_sqaRefresh=true;
+        return false;
+    }
 
 	CUIDragDropListEx* old_owner = itm->OwnerList();
 	CUIDragDropListEx* new_owner = NULL;
@@ -342,20 +376,12 @@ void CUIActorMenu::PutAllToPartner(CUIWindow* w, void* d)
 		return;
 	}
 
-	u32 const cnt = m_pInventoryBagList->ItemsCount();
-	for (u32 i = 0; i < cnt; ++i)
-	{
-		CUICellItem* ci = m_pInventoryBagList->GetItemIdx(i);
-		for (u32 j = 0; j < ci->ChildsCount(); ++j)
-		{
-			PIItem j_item = (PIItem)(ci->Child(j)->m_pData);
-			if (j_item->IsQuestItem()) continue;
-			move_item_check(j_item, m_pActorInvOwner, m_pPartnerInvOwner, false);
-		}
-		PIItem item = (PIItem)(ci->m_pData);
-		if (item->IsQuestItem()) continue;
-		move_item_check(item, m_pActorInvOwner, m_pPartnerInvOwner, false);
-	}
+    const auto candidates=bulk_release_candidates(m_pInventoryBagList);
+    for(const auto live:candidates) {
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+        if(item&&item->parent_id()==m_pActorInvOwner->object_id()&&!item->IsQuestItem())
+            move_item_check(item,m_pActorInvOwner,m_pPartnerInvOwner,false);
+    }
 
 	FilterActorBagList(current_sort_mode());
 }
@@ -364,21 +390,12 @@ void CUIActorMenu::PutAllToInventoryBox()
 {
 	u16 actor_id = m_pActorInvOwner->object_id();
 
-	u32 const cnt = m_pInventoryBagList->ItemsCount();
-	for (u32 i = 0; i < cnt; ++i)
-	{
-		CUICellItem* ci = m_pInventoryBagList->GetItemIdx(i);
-		for (u32 j = 0; j < ci->ChildsCount(); ++j)
-		{
-			PIItem j_item = (PIItem)(ci->Child(j)->m_pData);
-			if (j_item->IsQuestItem()) continue;
-			move_item_from_to(actor_id, m_pInvBox->ID(), j_item->object_id());
-		}
-
-		PIItem item = (PIItem)(ci->m_pData);
-		if (item->IsQuestItem()) continue;
-		move_item_from_to(actor_id, m_pInvBox->ID(), item->object_id());
-	}
+    const auto candidates=bulk_release_candidates(m_pInventoryBagList);
+    for(const auto live:candidates) {
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+        if(item&&item->parent_id()==actor_id&&!item->IsQuestItem())
+            move_item_from_to(actor_id,m_pInvBox->ID(),live);
+    }
 
 	FilterActorBagList(current_sort_mode());
 }
