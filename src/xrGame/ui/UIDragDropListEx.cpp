@@ -7,6 +7,7 @@
 #include "../Level.h"
 //Alundaio
 #include "../Inventory.h"
+#include "../InventoryNextIdentity.h"
 #include <dinput.h>
 //-Alundaio
 
@@ -570,6 +571,7 @@ CUICellContainer::CUICellContainer(CUIDragDropListEx* parent)
 {
 	m_pParentDragDropList = parent;
 	hShader->create("hud\\fog_of_war", "ui\\ui_grid");
+	if (InventoryNextEnabled()) hSqaGrid->create("hud\\fog_of_war", "ui\\sqa_fk_controls");
 	//	hShader_selected->create	( "hud\\fog_of_war", "ui_grid_selected" );
 	m_cellSpacing.set(0, 0);
 }
@@ -971,6 +973,26 @@ void CUICellContainer::Draw()
 	UI().ClientToScreenScaled(sp_len, float(CellsSpacing().x), float(CellsSpacing().y));
 
 	GetCellsInRange(tgt_cells, m_cells_to_draw);
+
+	// Draw a bounded, scrolling cell surface from the existing Field Kit atlas.
+	// Native selection highlights and item icons are drawn above this pass.
+	if (InventoryNextEnabled() && color_get_A(m_pParentDragDropList->back_color) != 0)
+	{
+		UI().PushScissor(clientArea);
+		UIRender->StartPrimitive((tgt_cells.width()+1)*(tgt_cells.height()+1)*6,
+			IUIRender::ptTriList, UI().m_currentPointType);
+		for (int x=0;x<=tgt_cells.width();++x)
+			for (int y=0;y<=tgt_cells.height();++y)
+				for (u32 k=0;k<6;++k) {
+					const Fvector2& p=pts[k];
+					UIRender->PushPoint(iFloor(drawLT.x+(f_len.x+sp_len.x)*x+p.x*f_len.x)-0.5f,
+						iFloor(drawLT.y+(f_len.y+sp_len.y)*y+p.y*f_len.y)-0.5f,0,
+						color_rgba(160,170,155,170),(8.0f+p.x*128.0f)/1024.0f,(8.0f+p.y*128.0f)/1024.0f);
+				}
+		UIRender->SetShader(*hSqaGrid);
+		UIRender->FlushPrimitive();
+		UI().PopScissor();
+	}
 
 	// fill cell buffer
 	u32 max_prim_cnt = ((tgt_cells.width() + 1) * (tgt_cells.height() + 1) * 6);

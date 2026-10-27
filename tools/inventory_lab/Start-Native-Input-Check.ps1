@@ -6,8 +6,8 @@ if(@(Get-Process | Where-Object {$_.ProcessName -match '^(Anomaly.*|xrEngine|Ver
     'Not started: another Anomaly instance is already running.' | Set-Content -LiteralPath (Join-Path $lab 'native-input-check-status.txt')
     exit 2
 }
-if(!(Test-Path -LiteralPath (Join-Path $lab 'appdata/savedgames/sqa3_layout.scop'))){throw 'Missing disposable sqa3_layout fixture save'}
-$p=Start-Process -FilePath $engine -WorkingDirectory $lab -ArgumentList '-dbg -inventory-lab -nosound -sqa3-fixture-reload -sqa3-fixture-hold -start server(sqa3_layout/single/alife/load)' -WindowStyle Normal -PassThru
+if(!(Test-Path -LiteralPath (Join-Path $lab 'appdata/savedgames/sqa3_replacement.scop'))){throw 'Missing disposable sqa3_replacement fixture save'}
+$p=Start-Process -FilePath $engine -WorkingDirectory $lab -ArgumentList '-dbg -inventory-lab -nosound -sqa3-fixture-reload -sqa3-fixture-hold -start server(sqa3_replacement/single/alife/load)' -WindowStyle Normal -PassThru
 try {
     if(!$p.WaitForExit(180000)){
         $live=Get-Process -Id $p.Id -ErrorAction SilentlyContinue

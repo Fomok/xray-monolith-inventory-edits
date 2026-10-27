@@ -128,6 +128,7 @@ function on_game_start()
         commands[#commands+1]=filter_all
     end
     commands[#commands+1]="screenshot sqa3_native"
+    commands[#commands+1]="inventory_next_probe export"
     commands[#commands+1]=snapshot
     local save=args:find("-sqa3-fixture-reload",1,true) and "sqa3_replacement_reload" or "sqa3_replacement"
     commands[#commands+1]="save "..save

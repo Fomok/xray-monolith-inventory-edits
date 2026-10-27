@@ -44,6 +44,7 @@ void move_item_from_to(u16 from_id, u16 to_id, u16 what_id);
 
 void CUIActorMenu::InitInventoryMode()
 {
+	if (InventoryNextEnabled()) m_LeftBackground->Show(false);
 	m_pInventoryBagList->Show(true);
 	m_pInventoryBeltList->Show(true);
 
