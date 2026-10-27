@@ -284,6 +284,11 @@ function on_game_start()
             end
         end
         commands[#commands+1]="screenshot sqa3_purchase_mouse"
+        commands[#commands+1]=function()
+            -- Vanilla item_device temporarily substitutes device charge while
+            -- trade is open; close normally so its callback restores real state.
+            if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end
+        end
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
         commands[#commands+1]="save sqa3_purchase_mouse"
@@ -353,6 +358,9 @@ function on_game_start()
             end
         end
         commands[#commands+1]="screenshot sqa3_purchase"
+        commands[#commands+1]=function()
+            if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end
+        end
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
         commands[#commands+1]="save sqa3_purchase"
