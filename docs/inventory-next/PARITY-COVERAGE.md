@@ -1,11 +1,11 @@
-# SQA3 implementation coverage — current increment
+# SQA3 implementation coverage â€” current increment
 
 77 accepted parity rows retained. **None is certified complete in game.** This register is a progress handoff, not completion of the user request.
 
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment:66 core checks per build,31runner integrations,10offscreen checks; shared presentation/registry/placement/drag checks. See OVERFLOW.md,NATIVE-IDENTITY.md,NATIVE-TRANSFERS.md. Full DX11-AVX CI40434583470 passed earlier0bb50dfb; latest native changes pending compile. No game launch or ownership adapter completion.
+Current increment:70 core checks per build,31runner integrations,10offscreen checks; shared presentation/registry/placement/drag checks. See OVERFLOW.md,NATIVE-IDENTITY.md,NATIVE-TRANSFERS.md. Full DX11-AVX CI40434583470 passed earlier0bb50dfb; latest native changes pending compile. No game launch or ownership adapter completion.
 
 | ID | Accepted behavior | Current evidence / remaining work |
 |---|---|---|
@@ -25,8 +25,8 @@ Current increment:66 core checks per build,31runner integrations,10offscreen che
 | R01 | Rig compartment geometry and authored layout | Core compartments/masks tested; rig/pouch content/attachment policy OPEN |
 | R02 | Equipped and spare-rig windows | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | R03 | Pouch fitting and granted storage | Stable mounted pouch ownership/grids, category/condition/slot checks and soft-host fullness tested; actual native mount/catalog integration OPEN |
-| R04 | Occupied/worn pouch refusal and rollback | Nonempty unmount and invalid condition/slot failures roll back; native UI/events OPEN |
-| R05 | Rig wear, damaged slots and loot condition | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| R04 | Occupied/worn pouch refusal and rollback | Nonempty unmount/new attachment to inactive mount refused; retained inactive pouch survives condition loss; native UI/events OPEN |
+| R05 | Rig wear, damaged slots and loot condition | CORE: explicit condition reconciliation retains inactive pouch and recovers contents; see RIG-CONDITION.md. Native hit policy, authored tears, loot wear and gameplay OPEN |
 | R06 | Pouch/rig upgrades and weapon state retention | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | R07 | Safe rig dismantle and pouch return | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | R08 | Healing/quick-use from rig pockets | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |

@@ -483,8 +483,51 @@ int main(int argc,char** argv) {
             auto p=item(20,1,20,{3,0,false});p.category=2;p.container=true;p.pouch=true;p.grid={1,2};auto q=p;q.id=21;q.position={4,0,false};
             Model m;yes(m.initialize({a,rig,p,q}));Command c;c.operation=Operation::Mount;c.item=20;c.destination=10;c.mount_slot=1;c.session=m.session();yes(m.execute(c));
             c.item=21;c.revision=1;auto old=m.serialize();no(m.execute(c),"mount_occupied");check(m.serialize()==old,"occupied mount consumed pouch");
-            c.operation=Operation::SetState;c.item=10;c.mass=100;c.condition=4000;no(m.execute(c),"mount");check(m.serialize()==old,"failed damage changed attached state");
-            c.operation=Operation::Erase;c.item=20;no(m.execute(c),"mounted_item");
+            c.operation=Operation::SetState;c.item=10;c.mass=100;c.condition=4000;yes(m.execute(c));
+            check(!m.storage_active(20)&&m.nodes().at(20).mounted_slot==1,"empty pouch detached on damage");
+            c.operation=Operation::Erase;c.item=20;c.revision=m.revision();no(m.execute(c),"mounted_item");
+        });
+        test("forced rig wear retains inactive pouch and recovers full subtree with exact state",[]{
+            auto a=root(1,Kind::ActorRoot,{1,1});auto r=item(10,1,100);r.container=true;r.grid={1,1};
+            r.mounts={{101,"b1",{1,1},2,5000,true}};
+            auto p=item(20,10,20);p.container=true;p.pouch=true;p.category=2;p.grid={2,2};p.location=Location::Mounted;p.mounted_slot=101;
+            auto b=bag(30,20,30);b.attributes={{"serial","keep"}};auto x=item(31,30,7);Model m;yes(m.initialize({a,r,p,b,x}));
+            Command damage;damage.operation=Operation::SetState;damage.item=10;damage.mass=100;damage.condition=4999;damage.session=m.session();
+            auto old=m.serialize();no(m.execute(damage),"inactive_mount_contents");check(m.serialize()==old,"ordinary state partially spilled");
+            yes(m.recover_rig_condition(10,4999,1,0,m.session()));
+            check(m.revision()==1&&m.carried_mass()==157&&m.nodes().at(10).condition==4999,"damage or mass lost");
+            check(m.nodes().at(20).mounted_slot==101&&!m.storage_active(20)&&m.cell_region(20,0,0)==0,"disabled grant exposed");
+            check(m.nodes().at(30).location==Location::Overflow&&m.nodes().at(31).parent==30&&m.nodes().at(30).attributes==b.attributes,"recovery subtree state");
+            auto saved=m.serialize();Model loaded;yes(loaded.deserialize(saved));check(loaded.serialize()==saved&&!loaded.storage_active(20),"inactive mount reload");
+            no(move(m,{30,20,{0,0,false},1}),"inactive_mount_contents");
+            yes(m.recover_rig_condition(10,5000,1,1,m.session()));check(m.storage_active(20)&&m.nodes().at(30).location==Location::Overflow,"repair moved contents implicitly");
+            yes(move(m,{30,20,{0,0,false},2}));check(m.carried_mass()==157,"repair recovery mass");
+        });
+        test("rig condition recovery rejects foreign targets and stale requests atomically",[]{
+            auto a=root(1,Kind::ActorRoot);auto w=root(2,Kind::WorldRoot);auto r=bag(10,2,100);r.mounts={{101,"b1",{1,1},2,5000,true}};
+            Model m;yes(m.initialize({a,w,r}));auto old=m.serialize();
+            no(m.recover_rig_condition(10,1,1,0,m.session()),"recovery_ownership");
+            no(m.recover_rig_condition(10,1,1,0,0),"stale_session");
+            no(m.recover_rig_condition(10,1,1,1,m.session()),"stale_revision");check(m.serialize()==old,"invalid recovery changed world");
+            yes(move(m,{10,1,{0,0,false},0}));old=m.serialize();
+            no(m.recover_rig_condition(10,10001,1,1,m.session()),"metadata");check(m.serialize()==old,"invalid condition changed state");
+        });
+        test("disabled mount rejects new attachment while retained inactive pouch survives",[]{
+            auto a=root(1,Kind::ActorRoot);auto r=bag(10,1,100);r.soft=false;r.condition=4999;
+            r.mounts={{101,"b1",{1,1},2,5000,true}};auto p=item(20,1,20,{5,0,false});p.container=true;p.pouch=true;p.category=2;p.grid={1,1};
+            Model m;yes(m.initialize({a,r,p}));Command c;c.operation=Operation::Mount;c.item=20;c.destination=10;c.mount_slot=101;c.session=m.session();
+            auto old=m.serialize();no(m.execute(c),"mount");
+            c.operation=Operation::Spawn;c.spawned=p;c.spawned.id=21;c.spawned.parent=10;c.spawned.location=Location::Mounted;c.spawned.position={};c.spawned.mounted_slot=101;
+            no(m.execute(c),"mount");check(m.serialize()==old,"inactive admission changed model");
+        });
+        test("loss of pouch grant recovers rig if new fullness collides without losing active contents",[]{
+            auto a=root(1,Kind::ActorRoot,{2,1});auto r=bag(10,1,100);r.grid={2,1};r.half={1,1};r.full={2,2};
+            r.mounts={{101,"b1",{1,1},2,5000,true}};
+            auto p=item(20,10,20);p.container=true;p.pouch=true;p.category=2;p.grid={2,1};p.location=Location::Mounted;p.mounted_slot=101;
+            auto x=item(30,10,7);x.empty={2,1};auto blocker=item(40,1,5,{1,0,false});Model m;yes(m.initialize({a,r,p,x,blocker}));
+            check(m.footprint(10).h==1,"initial half size");yes(m.recover_rig_condition(10,4999,1,0,m.session()));
+            check(m.nodes().at(10).location==Location::Overflow&&m.nodes().at(30).parent==10&&m.nodes().at(20).parent==10,"growth recovery lost rig contents");
+            check(m.carried_mass()==132&&m.nodes().at(40).position.x==1,"recovery moved manual placement or mass");
         });
         test("empty rig dismantle returns pouches atomically and retains state",[]{
             auto a=root(1,Kind::ActorRoot);auto rig=item(10,1,100);rig.container=true;rig.grid={1,1};rig.mounts={{1,"b1",{1,1},2,0,true}};

@@ -49,6 +49,13 @@ unsigned region_of(const Node& n, int x, int y) {
     if (!n.container || x<0 || y<0 || x>=n.grid.w || y>=n.grid.h) return 0;
     return n.cells.empty() ? 1 : n.cells[static_cast<std::size_t>(y*n.grid.w+x)];
 }
+bool active_storage(const std::map<Id,Node>& nodes,const Node& n) {
+    if(n.location!=Location::Mounted)return true;
+    auto owner=nodes.find(n.parent);if(owner==nodes.end())return false;
+    for(const auto& slot:owner->second.mounts)if(slot.id==n.mounted_slot)
+        return slot.enabled&&owner->second.condition>=slot.minimum_condition;
+    return false;
+}
 Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
     if (nodes.empty() || nodes.size() > max_nodes) return bad("node_count");
     std::map<Id, std::vector<Id>> children;
@@ -96,8 +103,8 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
             if(n.location==Location::Mounted){
                 const Node& owner=p->second;
                 auto slot=std::find_if(owner.mounts.begin(),owner.mounts.end(),[&](const MountSlot& s){return s.id==n.mounted_slot;});
-                if(!n.pouch||!n.container||owner.kind!=Kind::Item||slot==owner.mounts.end()||!slot->enabled||
-                    owner.condition<slot->minimum_condition||!(slot->accepts&n.category)||n.position.x||n.position.y||n.position.rotated)return bad("mount");
+                if(!n.pouch||!n.container||owner.kind!=Kind::Item||slot==owner.mounts.end()||
+                    !(slot->accepts&n.category)||n.position.x||n.position.y||n.position.rotated)return bad("mount");
                 if(!((n.empty.w<=slot->footprint.w&&n.empty.h<=slot->footprint.h)||
                     (n.empty.h<=slot->footprint.w&&n.empty.w<=slot->footprint.h)))return bad("mount_fit");
             }
@@ -139,6 +146,8 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         const Node& n = nodes.at(id);
         Derived d{n.empty, n.intrinsic * n.quantity, 1};
         int used = 0;
+        const bool active=active_storage(nodes,n);
+        if(!active&&!children[id].empty())return bad("inactive_mount_contents");
         int granted_capacity = 0;
         Mass overflow_mass = 0;
         std::vector<const Node*> equipped;
@@ -191,6 +200,7 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         int capacity=n.grid.w*n.grid.h;
         if (!n.cells.empty()) capacity=static_cast<int>(std::count_if(n.cells.begin(),n.cells.end(),[](unsigned c){return c!=0;}));
         capacity += granted_capacity;
+        if(!active)capacity=0;
         d.occupied = used; d.capacity = capacity;
         if (n.soft && n.full.w*n.full.h < capacity) return bad("growth_definition");
         if (n.soft && used) d.size = used * 2 <= capacity ? n.half : n.full;
@@ -290,6 +300,36 @@ Result Model::relocate(const std::vector<Move>& requests) {
     return good();
 }
 Result Model::execute(const Command& request) { return execute_internal(request,false); }
+bool Model::storage_active(Id container) const {
+    auto n=nodes_.find(container);return n!=nodes_.end()&&n->second.container&&active_storage(nodes_,n->second);
+}
+Result Model::recover_rig_condition(Id rig,unsigned condition,Id actor,std::uint64_t revision,std::uint64_t session) {
+    if(!session_||session!=session_)return bad("stale_session");
+    if(revision!=revision_)return bad("stale_revision");
+    if(revision_==std::numeric_limits<std::uint64_t>::max())return bad("revision_overflow");
+    auto target=nodes_.find(rig);auto owner=nodes_.find(actor);
+    if(target==nodes_.end()||owner==nodes_.end()||owner->second.kind!=Kind::ActorRoot||
+        target->second.kind!=Kind::Item||target->second.parent!=actor||target->second.mounts.empty())return bad("recovery_ownership");
+    if(condition>10000)return bad("metadata");
+    auto candidate=nodes_;candidate.at(rig).condition=condition;
+    std::vector<Id> inactive;
+    for(const auto& [id,n]:candidate)if(n.parent==rig&&n.location==Location::Mounted&&!active_storage(candidate,n))inactive.push_back(id);
+    for(auto& [id,n]:candidate) {
+        (void)id;
+        if(std::find(inactive.begin(),inactive.end(),n.parent)!=inactive.end()) {
+            n.parent=actor;n.location=Location::Overflow;n.position={};n.equipped_slots=0;n.mounted_slot=0;
+        }
+    }
+    DerivedMap derived;auto result=analyze(candidate,derived);
+    // Loss of granted capacity can change the soft rig's fullness tier. Preserve
+    // the whole rig in recovery if that resulting exterior no longer fits.
+    if(!result&&(result.error=="bounds"||result.error=="overlap"||result.error=="mass_capacity")) {
+        auto& n=candidate.at(rig);n.location=Location::Overflow;n.position={};n.equipped_slots=0;n.mounted_slot=0;
+        derived.clear();result=analyze(candidate,derived);
+    }
+    if(!result)return result;
+    nodes_.swap(candidate);++revision_;return good();
+}
 Result Model::recover_owned_overflow(Id item,Id actor,std::uint64_t revision,std::uint64_t session) {
     auto found=nodes_.find(item);if(found==nodes_.end()||found->second.kind!=Kind::Item)return bad("item");
     Id root=item;for(unsigned depth=0;nodes_.at(root).parent&&depth<65;++depth)root=nodes_.at(root).parent;
@@ -313,6 +353,7 @@ Result Model::execute_internal(const Command& request,bool recovery) {
         if(request.spawned.location==Location::Overflow&&!recovery)return bad("recovery_only");
         if (request.spawned.id <= high_water_id_) return bad("id_reuse");
         candidate.emplace(request.spawned.id, request.spawned);
+        if(request.spawned.location==Location::Mounted&&!active_storage(candidate,request.spawned))return bad("mount");
         next_high_water = request.spawned.id;
     } else {
         auto item = candidate.find(request.item);
@@ -340,6 +381,7 @@ Result Model::execute_internal(const Command& request,bool recovery) {
             for(const auto& [id,n]:candidate){(void)id;if(n.parent==request.item)return bad("pouch_not_empty");}
             item->second.parent=request.destination;item->second.location=Location::Mounted;
             item->second.position={};item->second.equipped_slots=0;item->second.mounted_slot=request.mount_slot;
+            if(!active_storage(candidate,item->second))return bad("mount");
             break;
         case Operation::Split: {
             Node& source = item->second;
@@ -430,7 +472,7 @@ std::vector<ItemView> Model::snapshot() const {
 }
 unsigned Model::cell_region(Id container, int x, int y) const {
     auto n=nodes_.find(container);
-    return n==nodes_.end() ? 0 : region_of(n->second,x,y);
+    return n==nodes_.end()||!active_storage(nodes_,n->second) ? 0 : region_of(n->second,x,y);
 }
 std::vector<Id> Model::equipment_group(unsigned group) const {
     std::vector<Id> ids;

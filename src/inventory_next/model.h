@@ -104,6 +104,11 @@ public:
     Result recover_native_arrival(Node item, std::uint64_t revision, std::uint64_t session);
     Result recover_recipe(const std::vector<Id>& consumed, const std::vector<Node>& outputs,
                           Id actor, std::uint64_t revision, std::uint64_t session);
+    // Forced condition reconciliation for a directly carried rig. Inactive mounts
+    // retain their pouch identity; their contents become explicit recovery items.
+    Result recover_rig_condition(Id rig, unsigned condition, Id actor,
+                                 std::uint64_t revision, std::uint64_t session);
+    bool storage_active(Id container) const;
     Result execute_batch(const std::vector<Command>& requests);
     Result relocate(const std::vector<Move>& requests);
     Preview preview(const Command& request) const;
