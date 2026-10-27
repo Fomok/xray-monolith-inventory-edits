@@ -662,8 +662,13 @@ void Startup()
 
 	Device.Run();
 
-	// Discord
+	// Stop SDK callbacks while the console, logger and shared-string pool are alive.
+	// ClearActivity alone leaves the SDK core (and its log hook) running.
 	clearDiscordPresence();
+	use_discord = false;
+	delete discord_core; // Core::Create uses ordinary new, not xr_new.
+	discord_core = nullptr;
+	Msg("[Discord RPC] SDK destroyed before engine shutdown");
 
 	//Reshade
 	if (use_reshade)
