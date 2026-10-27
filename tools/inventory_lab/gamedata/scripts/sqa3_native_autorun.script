@@ -240,6 +240,36 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-nested-use",1,true) then
+        commands={"inventory_next_probe export",snapshot}
+        if not args:find("-sqa3-fixture-nested-use-reload",1,true) then
+            commands[#commands+1]="inventory_next_store 104 105 3 3 0"
+            commands[#commands+1]="inventory_next_probe export"
+            commands[#commands+1]=toggle_inventory
+            commands[#commands+1]=function()
+                started=started+45000
+                printf("[SQA3 AUTORUN] nested manual-use window: use the selected bread inside backpack")
+            end
+        else
+            commands[#commands+1]=toggle_inventory
+        end
+        commands[#commands+1]=function()
+            local count,grams,has_bread=0,0,false
+            db.actor:iterate_inventory(function(_,item)
+                count=count+1;grams=grams+item:weight()*1000
+                if item:section()=="bread" then has_bread=true end
+                return false
+            end,db.actor)
+            assert(not has_bread and count==5 and math.abs(grams-2268)<0.01,"nested manual consumption mismatch")
+            printf("[SQA3 AUTORUN] nested manual consumption verified count5 grams2268")
+        end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_nested_use"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-owned-disappear",1,true) then
         local gone=nil
         commands={"inventory_next_probe export",snapshot,spawn_crate}
