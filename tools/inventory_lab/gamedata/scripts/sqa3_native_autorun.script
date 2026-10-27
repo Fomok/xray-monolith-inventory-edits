@@ -230,11 +230,19 @@ function on_game_start()
             level.press_action(DIK_keys.MOUSE_1);level.release_action(DIK_keys.MOUSE_1)
             printf("[SQA3 AUTORUN] native mouse selection at current cursor")
         end
-        commands[#commands+1]=function()
+        local rotate_binding=function()
             local key=bind_to_dik(key_bindings.kWPN_RELOAD,-1)
             assert(key and key>0,"reload key missing")
             level.press_action(key);level.release_action(key)
             printf("[SQA3 AUTORUN] native reload binding dispatched key=%s",tostring(key))
+        end
+        commands[#commands+1]=rotate_binding
+        if args:find("-sqa3-fixture-rotation-repeat",1,true) then
+            commands[#commands+1]=rotate_binding
+            commands[#commands+1]=rotate_binding
+            commands[#commands+1]=filter_consumables
+            commands[#commands+1]=rotate_binding -- hidden selection must be cleared
+            commands[#commands+1]=filter_all
         end
     end
     if args:find("-sqa3-fixture-use",1,true) then commands[#commands+1]=check_consumed end

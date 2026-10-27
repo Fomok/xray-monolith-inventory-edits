@@ -11,6 +11,7 @@ def main():
     ap.add_argument("log", type=Path)
     ap.add_argument("export", type=Path)
     ap.add_argument("--edge", action="store_true")
+    ap.add_argument("--repeat-filter", action="store_true")
     ap.add_argument("--reload", type=Path)
     ap.add_argument("--output", type=Path, required=True)
     args = ap.parse_args()
@@ -25,6 +26,10 @@ def main():
     assert "native reload binding dispatched" in log, "missing native binding dispatch"
     expected = "bounds" if args.edge else "accepted"
     assert "SQA3 native rotate id=103 result="+expected in log, "missing expected rotation outcome"
+    if args.repeat_filter:
+        assert not args.edge
+        assert log.count("SQA3 native rotate id=103 result=accepted") == 3
+        assert "SQA3 native rotate ignored: no selected actor-bag item" in log
     if args.reload:
         restored, digest = read(args.reload)
         assert restored == nodes, "fresh restart changed item records"
