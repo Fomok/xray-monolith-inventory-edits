@@ -16,4 +16,8 @@ The checked-in sqa3_native.xml contains nine slices from the existing Squared Aw
 
 ## Validation
 
-76 core behavior tests in debug/release and independent restart pass. Native acc4e204 build/runtime verification pending. Prior4e9a11c0 runtime verified PDA identity save/reload and real bandage/medkit spawn,638g total, successful save/quit. This does not establish current layout chunk or visual behavior.
+76 core behavior tests in debug/release and independent restart pass. Native acc4e204 CI40443443210 succeeded. Two fresh native runs accepted PDA100 at4,3, rejected overlap/bounds, saved and reloaded with identical export SHA256088dc85fde7461b1dfee2b73aad826970d01fcd9d038cfad3dc79b205e287943. Three real items retain native IDs, condition and638g. Real screenshot confirms Field Kit frame and item icons render. Physical input test remains inconclusive; do not treat command-driven movement as mouse verification. Prior4e9a11c0 runtime verified PDA identity save/reload and real bandage/medkit spawn,638g total, successful save/quit. This does not establish current layout chunk or visual behavior.
+
+## Manual input gate
+
+The lab has a guarded `Check SQA3 inventory controls.lnk` shortcut. It opens the disposable sqa3_layout save and the view automatically; click Select on the PDA, then Right. Check that the PDA moves one cell. The view pauses its fixture for60 seconds; the launcher closes its owned process after a180-second hard limit. No console typing is needed. Do not start another game while this test is open. The original test save is never overwritten. This remains a development test, not a finished mod.

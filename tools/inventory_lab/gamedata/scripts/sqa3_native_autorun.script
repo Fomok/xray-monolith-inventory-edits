@@ -46,6 +46,7 @@ function on_game_start()
         commands[#commands+1]="inventory_next_probe export"
     end
     commands[#commands+1]="inventory_next_probe view"
+    if args:find("-sqa3-fixture-hold",1,true) then commands[#commands+1]=function() started=started+60000;printf("[SQA3 AUTORUN] holding view for bounded input test") end end
     commands[#commands+1]="screenshot sqa3_native"
     commands[#commands+1]=snapshot
     commands[#commands+1]=args:find("-sqa3-fixture-reload",1,true) and "save sqa3_layout_reload" or "save sqa3_layout"

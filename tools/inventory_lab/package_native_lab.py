@@ -11,6 +11,7 @@ def main():
     files={"bin/AnomalyDX11AVX.exe":engine,atlas["destination"]:texture}
     for rel in ["configs/ui/textures_descr/sqa3_native.xml","scripts/sqa3_native_autorun.script"]:
         files["gamedata/"+rel]=(source/"gamedata"/rel).read_bytes()
+    files["Start-Native-Input-Check.ps1"]=(source/"Start-Native-Input-Check.ps1").read_bytes()
     files["NATIVE-PLACEMENT.md"]=(source.parents[1]/"docs/inventory-next/NATIVE-PLACEMENT.md").read_bytes()
     files["README.txt"]=("Squared Away 3 native placement DEVELOPMENT lab\n\n"+
         "Only for the isolated vanilla lab with matching upstream2026.10.11 data overlay.\n"+
