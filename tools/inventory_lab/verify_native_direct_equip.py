@@ -29,6 +29,7 @@ def weapons(text, prefix=""):
     return {live: dict(parent=parent, grams=math.floor(float(grams)+0.5), condition=math.floor(float(condition)*10000+0.5), ammo=int(ammo))
             for live, parent, grams, condition, ammo in rows}
 observed = weapons(log)
+assert sorted((row["condition"], row["ammo"]) for row in observed.values()) == [(8314, 5), (9098, 9)]
 active = re.search(r"direct equip active after close live=(\d+|none)", log)
 assert active and active.group(1) == acquired, "equipped rifle was not selected after closing the menu"
 assert set(observed) == {acquired, retained} and observed[retained]["parent"] == source

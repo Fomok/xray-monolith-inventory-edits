@@ -321,7 +321,7 @@ function on_game_start()
             commands[#commands+1]=open_crate
             commands[#commands+1]=function()
                 started=started+90000
-                printf("[SQA3 AUTORUN] direct equip mouse input window: drag one rifle into empty primary slot, then try the other into that occupied slot")
+                printf("[SQA3 AUTORUN] direct equip mouse input window: drag one rifle into empty primary slot; test remaining rifle with occupied-slot drag or Move to slot context action")
             end
         end
         commands[#commands+1]=function()
@@ -349,6 +349,7 @@ function on_game_start()
             local active=db.actor:active_item()
             printf("[SQA3 AUTORUN] direct equip active after close live=%s",active and tostring(active:id()) or "none")
         end
+        commands[#commands+1]="screenshot sqa3_direct_equip_active"
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
         commands[#commands+1]="save sqa3_direct_equip"

@@ -1,5 +1,11 @@
 # Native logical storage adapter
 
+## Current checkpoint — 2026-10-27
+
+106 core checks per debug/release build and independent restarts pass. Dev15 native purchases, ground/container/corpse admission and nested use have bounded acceptance. Dev16 additionally passes physical primary-slot-to-crate unequip and exact reload. Direct equip is not accepted yet: empty-slot acquisition and context-menu occupied-slot refusal work, but weapon activation needs the current a34327d9/CI40498004943 build. Physical occupied-slot drag routing remains under diagnosis. Full parity is unfinished. Detailed evidence below and PARITY-COVERAGE.md distinguish tested slices from open requirements.
+
+## Initial adapter contract (historical starting point)
+
 The opt-in `ActorStorage::logical` mode extends `ActorLayout` to retain an
 actor-owned logical forest while native objects remain physically actor-owned.
 The normal native caller still uses the Dev10 flat layout. This change is not
@@ -211,3 +217,6 @@ Current native candidate a34327d90e15e840580914cf46055fc80de73798 CI40498004943 
 
 
 Dev16 direct-unequip acceptance: engine95dffc08 +overlayf6b60add. PID6612 physical primary-slot3 rifle20225 ->crate19969, retained20224. Both exact condition/ammo/mass preserved; actor returns to71items4928g with original71records exact and export61df8854a7d402e773b2cd487abb2d875783d18d9d0cbe8475b097ea068a99c5. PID13772 fresh sqa3_direct_unequip reload preserves identical actor export and both world weapons. ci-40494446158/direct-unequip.log/inv/-verification.json and direct-unequip-reload equivalents. Both exit0. verify_native_direct_unequip initially incorrectly enabled acquisition-only preserve_initial; corrected to final snapshot agreement plus explicit exactly-one expected rifle removal/all surviving records exact/both native weapons retained. No engine fix was needed for this bounded path. Finite target capacity, rigs and loaded-container subtree transfers remain OPEN. PARITY-COVERAGE X02 updated to bounded native slice, X01 remains unaccepted.
+
+
+PID33548 context-action test exited0: physical empty-slot drag acquired20225; right-click remaining rifle20224 then visible Move to slot produced native direct-equip refusal slot3 and Equipment slot unavailable status.72items8324g; all original71records exact; condition/ammo pairs(8314,5)/(9098,9), export8ba67651a171a3d5ea0a62673038264a77b613f63a0f7173f4da40e0b0494855. Active remains11664PM; NOT accepted. ci-40494446158/direct-equip-context.log/inv/jpg/-findings.json. Physical occupied-slot drag remains unverified; context action is not substituted as proof of that input. installed-save-audit.json verifies12payloads and originaltest.dds/scoc/scop; elevated process count0. Current fixture syntax checked with LuaJIT2.1 from existing optional-bodycam-addons-20261019/validation-tools; Python verifiers compile. Fixture now captures post-close weapon screenshot and requires exact q8condition/ammo pairs; nativea34327d9/CI40498004943 still compiling.
