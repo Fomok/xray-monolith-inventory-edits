@@ -142,3 +142,12 @@ Run offline tests with Python plus `lupa==2.8`:
 - Fixtures must cover resize collisions, full containers, nested-cycle rejection,
   equipment compatibility, selection persistence, transfer failures, nearby object
   disappearance and save/load. These are planned requirements, not delivered features.
+
+## Native core implementation started — 27 October 2026
+
+The initial Lua-helper status above is retained as history. A separate renderer-
+independent C++ model now exists under src/inventory_next, with a native test driver
+and [current contracts/results](native/README.md). It has compiled successfully:
+21 behavioral checks in debug and optimized builds, plus independent-process save
+reload. This is not yet linked into xrGame, and no GUI or redesign integration is
+claimed. See docs/inventory-next/IMPLEMENTATION-PLAN.md for boundaries and next gates.
