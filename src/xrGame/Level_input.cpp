@@ -160,7 +160,10 @@ extern string_path g_last_saved_game;
 void CLevel::IR_OnKeyboardPress(int key)
 {
     if(strstr(Core.Params,"-inventory-lab")&&strstr(Core.Params,"-sqa3-pause-trace"))
+    {
         Msg("* SQA3 keyboard received key=%d precache=%u paused=%d",key,Device.dwPrecacheFrame,Device.Paused());
+        FlushLog(); // Preserve opt-in diagnostics if the paused game needs forced shutdown.
+    }
 	if (Device.dwPrecacheFrame)
 		return;
 
