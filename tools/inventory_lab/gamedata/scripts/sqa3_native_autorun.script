@@ -266,6 +266,7 @@ function on_game_start()
     local save=args:find("-sqa3-fixture-reload",1,true) and "sqa3_replacement_reload" or "sqa3_replacement"
     if args:find("-sqa3-fixture-corpse",1,true) then save="sqa3_corpse" end
     if args:find("-sqa3-fixture-consume",1,true) then save="sqa3_consumed" end
+    if args:find("-sqa3-fixture-use",1,true) then save="sqa3_mouse_consumed" end
     if args:find("-sqa3-fixture-rotate",1,true) then save="sqa3_rotation" end
     if args:find("-sqa3-fixture-rotate-edge",1,true) then save="sqa3_rotation_edge" end
     commands[#commands+1]="save "..save
