@@ -247,8 +247,13 @@ function on_game_start()
             commands[#commands+1]="inventory_next_probe export"
             commands[#commands+1]=toggle_inventory
             commands[#commands+1]=function()
-                started=started+45000
-                printf("[SQA3 AUTORUN] nested manual-use window: use the selected bread inside backpack")
+                started=started+20000
+                printf("[SQA3 AUTORUN] nested manual-use positioning window: point at bread inside backpack")
+            end
+            commands[#commands+1]=function()
+                level.press_action(DIK_keys.MOUSE_2);level.release_action(DIK_keys.MOUSE_2)
+                started=started+30000
+                printf("[SQA3 AUTORUN] native context opened for nested item; click visible Use action; not OS right-click validation")
             end
         else
             commands[#commands+1]=toggle_inventory
