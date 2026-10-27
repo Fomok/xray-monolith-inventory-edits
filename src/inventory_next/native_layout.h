@@ -9,6 +9,8 @@ namespace inventory_next {
 struct ActorStorage {
     Size grid{8,64};
     std::vector<unsigned> cells;
+    // Explicit opt-in until native panels and admission share this forest.
+    bool logical = false;
 };
 struct RuckAdmission {
     Result result{false,"capacity"};
@@ -21,10 +23,13 @@ public:
     Result reconcile(std::vector<Node> live, const ActorStorage& storage = {}) {
         std::sort(live.begin(),live.end(),[](const Node& a,const Node& b){return a.id<b.id;});
         Node actor;actor.id=1;actor.kind=Kind::ActorRoot;actor.category=0;actor.container=true;actor.grid=storage.grid;actor.cells=storage.cells;actor.allowed_slots=~std::uint64_t{0};actor.equipment_accepts=~std::uint64_t{0};actor.equipment_capacity=64;
+        if(storage.logical)actor.attributes["native_logical_storage"]="1";
+        if(initialized()&&model_.nodes().at(1).attributes.count("native_logical_storage")&&!storage.logical)
+            return {false,"native_layout_mode"};
         Node world;world.id=2;world.kind=Kind::WorldRoot;world.category=0;world.container=true;world.grid={8,64};
         std::vector<Node> factsNodes{actor,world};unsigned beltSlot=48;
         for(auto& n:live) {
-            if(n.kind!=Kind::Item||n.id<100||n.parent!=1||n.container)return {false,"native_layout_item"};
+            if(n.kind!=Kind::Item||n.id<100||n.parent!=1||(n.container&&!storage.logical))return {false,"native_layout_item"};
             if(n.attributes.count("native_place")&&n.attributes.at("native_place")=="2") {
                 if(beltSlot>=64)return {false,"native_belt_capacity"};
                 n.location=Location::Equipment;n.wear_slots=n.equipped_slots=std::uint64_t{1}<<beltSlot++;
@@ -41,6 +46,16 @@ public:
         if(signature==signature_)return {true,{}};
         // Build from actual engine values, never import saved mass or item state.
         Model candidate=std::move(facts);
+        // Restore inner contents before their shells. A loaded soft bag must
+        // acquire its final footprint before its old outer placement is tested.
+        auto depth=[&](Id id) {
+            unsigned value=0;auto found=model_.nodes().find(id);
+            while(found!=model_.nodes().end()&&found->second.parent&&value<=64) {
+                ++value;found=model_.nodes().find(found->second.parent);
+            }
+            return value;
+        };
+        std::stable_sort(live.begin(),live.end(),[&](const Node& a,const Node& b){return depth(a.id)>depth(b.id);});
         for(const auto& n:live) {
             auto old=model_.nodes().find(n.id);
             if(old==model_.nodes().end())continue;
@@ -49,11 +64,16 @@ public:
             if(section==old->second.attributes.end()||current==n.attributes.end()||section->second!=current->second)
                 return {false,"native_identity_section"};
             if(n.location==Location::Equipment||old->second.location!=Location::Grid)continue;
-            candidate.move({n.id,1,old->second.position,candidate.revision(),candidate.session()});
+            const Id destination=storage.logical?old->second.parent:1;
+            // Missing/changed storage cannot silently reassign contents to pockets.
+            // The native object remains actor-owned and visible in recovery.
+            candidate.move({n.id,destination,old->second.position,candidate.revision(),candidate.session()});
             // Forced native size/state change may invalidate the prior position.
             // Preserve the actual item in explicit recovery until a valid fit exists.
         }
-        result=candidate.retry_recovery(1,{1},candidate.revision(),candidate.session());if(!result)return result;
+        if(!storage.logical) {
+            result=candidate.retry_recovery(1,{1},candidate.revision(),candidate.session());if(!result)return result;
+        }
         model_=std::move(candidate);signature_=signature;return {true,{}};
     }
     Result restore(const std::string& bytes) {
@@ -64,15 +84,30 @@ public:
             return {false,"native_layout_root"};
         for(const auto& pair:candidate.nodes())if(pair.second.kind!=Kind::Item&&pair.first!=1&&pair.first!=2)
             return {false,"native_layout_root"};
-        for(const auto& pair:candidate.nodes())if(pair.second.kind==Kind::Item&&
-            (pair.second.id<100||pair.second.parent!=1||pair.second.container||
-             (pair.second.location!=Location::Grid&&pair.second.location!=Location::Overflow&&pair.second.location!=Location::Equipment)))return {false,"native_layout_item"};
+        const bool logical=a->second.attributes.count("native_logical_storage")!=0;
+        if(logical&&a->second.attributes.at("native_logical_storage")!="1")return {false,"native_layout_mode"};
+        for(const auto& pair:candidate.nodes())if(pair.second.kind==Kind::Item) {
+            const auto& n=pair.second;
+            if(n.id<100||(!logical&&(n.parent!=1||n.container))||
+               (n.location!=Location::Grid&&n.location!=Location::Overflow&&n.location!=Location::Equipment))return {false,"native_layout_item"};
+            Id owner=n.parent;
+            for(unsigned count=0;candidate.nodes().at(owner).parent&&count<=64;++count)owner=candidate.nodes().at(owner).parent;
+            if(owner!=1)return {false,"native_layout_owner"};
+        }
         model_=std::move(candidate);signature_.clear();return {true,{}};
     }
     void reset(){model_=Model{};signature_.clear();}
     bool initialized() const{return model_.session()!=0;}
     const Model& model()const{return model_;}
-    Result move(const Move& move){if(move.destination!=1)return {false,"native_layout_owner"};return model_.move(move);}
+    Result move(const Move& move){
+        if(move.destination!=1&&(!initialized()||!model_.nodes().at(1).attributes.count("native_logical_storage")))return {false,"native_layout_owner"};
+        const auto found=model_.nodes().find(move.destination);
+        if(found==model_.nodes().end())return {false,"native_layout_owner"};
+        Id owner=move.destination;
+        for(unsigned count=0;model_.nodes().at(owner).parent&&count<=64;++count)owner=model_.nodes().at(owner).parent;
+        if(owner!=1)return {false,"native_layout_owner"};
+        return model_.move(move);
+    }
     // Pure preflight: does not enroll an engine ID, move existing items, reserve
     // cells, or authorize a later asynchronous event. Commit must revalidate.
     RuckAdmission preview_ruck(Node incoming) const {

@@ -59,6 +59,18 @@ int main(int argc,char** argv) {
             check(m.revision()==1 && m.nodes().at(20).parent==11,"restart ownership/revision");
             std::cout<<"PASS independent process persistence\n"; return 0;
         }
+        if(argc==3 && std::string(argv[1])=="--read-logical") {
+            Model disk;yes(load_file(disk,argv[2]));ActorLayout restored;yes(restored.restore(disk.serialize()));
+            std::vector<Node> facts;
+            for(const auto& pair:disk.nodes())if(pair.second.kind==Kind::Item) {
+                auto n=pair.second;n.parent=1;n.location=Location::Grid;n.equipped_slots=0;facts.push_back(n);
+            }
+            yes(restored.reconcile(facts,{{4,4},{},true}));
+            check(restored.model().nodes().at(102).parent==101&&restored.model().nodes().at(101).parent==100,"restart flattened nested storage");
+            check(restored.model().carried_mass()==1100&&restored.model().subtree_mass(101)==300,"restart recursive mass");
+            check(restored.model().nodes().at(100).position.x==2&&restored.model().nodes().at(101).position.y==1,"restart moved containers");
+            std::cout<<"PASS independent native logical forest restart\n";return 0;
+        }
         if(argc!=2) throw std::runtime_error("usage: tests.exe fixture.inv");
         int passed=0;
         auto test=[&](const char* name, const std::function<void()>& fn) {
@@ -685,6 +697,54 @@ int main(int argc,char** argv) {
             ActorLayout loaded;yes(loaded.restore(layout.model().serialize()));yes(loaded.reconcile({p,gun,belt}));
             gun.location=Location::Grid;gun.wear_slots=gun.equipped_slots=0;yes(loaded.reconcile({p,gun,belt}));
             check(loaded.model().nodes().at(101).location==Location::Grid&&loaded.model().carried_mass()==3600,"unequip recovery lost item");
+        });
+        test("logical native bags retain contents through unequip reload and native state changes",[]{
+            auto bag=item(100,1,800);bag.container=true;bag.grid={4,4};bag.attributes["native_section"]="bag";
+            bag.location=Location::Equipment;bag.wear_slots=bag.equipped_slots=8192;
+            auto med=item(101,1,200);med.attributes["native_section"]="medkit";
+            ActorStorage pockets{{4,2},{},true};ActorLayout a;yes(a.reconcile({bag,med},pockets));
+            check(a.model().nodes().at(101).location==Location::Overflow,"forced arrival silently admitted");
+            yes(a.move({101,100,{2,2,true},a.model().revision(),a.model().session()}));
+            auto saved=a.model().serialize();ActorLayout b;yes(b.restore(saved));
+            no(b.reconcile({bag,med}),"native_layout_mode");check(b.model().serialize()==saved,"flat adapter flattened saved forest");
+            bag.location=Location::Grid;bag.equipped_slots=0;med.condition=4500;med.intrinsic=170;
+            yes(b.reconcile({bag,med},pockets));
+            check(b.model().nodes().at(101).parent==100&&b.model().nodes().at(101).position.y==2,"unequip flattened bag");
+            check(b.model().nodes().at(100).location==Location::Overflow,"forced unequip hid recovery");
+            check(b.model().carried_mass()==970&&b.model().subtree_mass(100)==970&&b.model().nodes().at(101).condition==4500,"nested mass/state stale or doubled");
+            bag.location=Location::Equipment;bag.equipped_slots=8192;yes(b.reconcile({bag,med},pockets));
+            check(b.model().nodes().at(101).parent==100&&b.model().nodes().at(100).location==Location::Equipment,"reequip reassigned contents");
+            no(b.move({101,2,{0,0,false},b.model().revision(),b.model().session()}),"native_layout_owner");
+        });
+        test("logical native missing or resized storage keeps survivors in explicit recovery",[]{
+            auto bag=item(100,1,800);bag.container=true;bag.grid={4,4};bag.attributes["native_section"]="bag";
+            auto med=item(101,1,200);med.attributes["native_section"]="medkit";
+            ActorStorage pockets{{4,2},{},true};ActorLayout a;yes(a.reconcile({bag,med},pockets));
+            yes(a.move({101,100,{3,3,false},a.model().revision(),a.model().session()}));
+            bag.grid={2,2};yes(a.reconcile({bag,med},pockets));
+            check(a.model().nodes().at(101).location==Location::Overflow&&a.model().carried_mass()==1000,"shrink lost or silently repacked content");
+            yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
+            yes(a.reconcile({med},pockets));
+            check(a.model().nodes().size()==3&&a.model().nodes().at(101).parent==1&&a.model().nodes().at(101).location==Location::Overflow&&a.model().carried_mass()==200,"removed bag lost surviving native child");
+            ActorLayout b;yes(b.restore(a.model().serialize()));med.condition=7000;yes(b.reconcile({med},pockets));
+            check(b.model().nodes().at(101).location==Location::Overflow,"reload silently admitted orphan");
+        });
+        test("logical native nested soft bags rebuild inside out and reject cycles atomically",[&]{
+            auto bag=item(100,1,800);bag.container=true;bag.grid={4,4};bag.attributes["native_section"]="bag";
+            auto pouch=item(101,1,100);pouch.container=true;pouch.grid={2,2};pouch.soft=true;pouch.half={2,1};pouch.full={2,2};pouch.attributes["native_section"]="pouch";
+            auto med=item(102,1,200);med.attributes["native_section"]="medkit";
+            ActorStorage pockets{{4,4},{},true};ActorLayout a;yes(a.reconcile({bag,pouch,med},pockets));
+            yes(a.move({102,101,{0,0,false},a.model().revision(),a.model().session()}));
+            yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
+            yes(a.move({100,1,{2,2,false},a.model().revision(),a.model().session()}));
+            auto saved=a.model().serialize();check(!a.move({100,101,{0,0,false},a.model().revision(),a.model().session()}),"cycle accepted");check(a.model().serialize()==saved,"cycle changed forest");
+            yes(save_atomic(a.model(),std::string(argv[1])+".logical"));
+            ActorLayout b;yes(b.restore(saved));med.intrinsic=225;yes(b.reconcile({med,bag,pouch},pockets));
+            check(b.model().nodes().at(102).parent==101&&b.model().nodes().at(101).parent==100&&b.model().nodes().at(100).position.x==2,"nested reload flattened or moved bags");
+            check(b.model().carried_mass()==1125&&b.model().subtree_mass(101)==325,"nested mass counted twice");
+            // Native equipment is authoritative even if a weapon was logically stored.
+            med.location=Location::Equipment;med.wear_slots=med.equipped_slots=4;yes(b.reconcile({bag,pouch,med},pockets));
+            check(b.model().nodes().at(102).parent==1&&b.model().nodes().at(102).location==Location::Equipment,"native equip remained nested");
         });
         test("authored native capacity shrink retains items and mass in recovery",[]{
             Node rifle=item(100,1,3000);rifle.empty=rifle.half=rifle.full={5,2};rifle.attributes["native_section"]="rifle";

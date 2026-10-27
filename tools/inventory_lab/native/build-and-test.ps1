@@ -35,4 +35,6 @@ foreach ($variant in @('debug','release')) {
     if ($LASTEXITCODE -ne 0) { throw "Tests failed: $variant" }
     & $exe --read $fixture 2>&1 | Tee-Object (Join-Path $out "$variant-restart.log")
     if ($LASTEXITCODE -ne 0) { throw "Persistence restart failed: $variant" }
+    & $exe --read-logical "$fixture.logical" 2>&1 | Tee-Object (Join-Path $out "$variant-logical-restart.log")
+    if ($LASTEXITCODE -ne 0) { throw "Logical forest restart failed: $variant" }
 }
