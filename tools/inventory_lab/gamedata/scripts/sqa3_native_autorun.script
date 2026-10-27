@@ -240,6 +240,49 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-loaded-bulk",1,true) then
+        local function check()
+            local found={}
+            db.actor:iterate_inventory(function(_,item)
+                found[item:section()]=(found[item:section()] or 0)+1
+                return false
+            end,db.actor)
+            assert(found.itm_backpack==1 and found.medkit==1 and found.wpn_pm==1,"bulk release lost protected items")
+            assert(not found.bandage and not found.bread and not found.device_pda_1,"bulk release did not move loose items")
+            local box=level.object_by_id(crate_id);assert(box,"bulk release crate missing")
+            local count=0
+            box:iterate_inventory_box(function(_,item)
+                count=count+1
+                printf("[SQA3 AUTORUN] loaded bulk source live=%s owner=%s section=%s grams=%s condition=%s",tostring(item:id()),tostring(item:parent():id()),item:section(),tostring(item:weight()*1000),tostring(item:condition()))
+                return false
+            end,box)
+            assert(count==3,"bulk release expected three loose items in crate")
+            printf("[SQA3 AUTORUN] loaded bulk retained backpack subtree; crate=%s loose_items=3",tostring(crate_id))
+        end
+        commands={"inventory_next_probe export",snapshot}
+        if args:find("-sqa3-fixture-loaded-bulk-reload",1,true) then
+            commands[#commands+1]=function()
+                crate_id=tonumber(args:match("%-sqa3%-release%-crate=(%d+)"))
+                assert(crate_id,"bulk release reload crate missing")
+            end
+        else
+            commands[#commands+1]=spawn_crate
+            commands[#commands+1]=open_crate
+            commands[#commands+1]=function()
+                started=started+60000
+                printf("[SQA3 AUTORUN] loaded bulk mouse input window: click Move all; loaded backpack and medkit must stay together")
+            end
+        end
+        commands[#commands+1]="screenshot sqa3_loaded_bulk"
+        commands[#commands+1]=check
+        commands[#commands+1]=function() if ActorMenu.get_actor_menu():IsShown() then ActorMenu.get_actor_menu():HideDialog() end end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_loaded_bulk"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-loaded-release",1,true) then
         local bag_id
         commands={"inventory_next_probe export",snapshot,function()
