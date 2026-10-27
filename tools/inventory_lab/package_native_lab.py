@@ -25,9 +25,11 @@ def main():
     files["Start-Native-Input-Check.ps1"]=read_overlay('tools/inventory_lab/Start-Native-Input-Check.ps1')
     files["NATIVE-PLACEMENT.md"]=read_overlay('docs/inventory-next/NATIVE-PLACEMENT.md')
     logical=read_overlay('docs/inventory-next/NATIVE-LOGICAL-STORAGE.md',optional=True)
+    ground_pickup=False
     if logical is not None:
         engine_source=subprocess.check_output(['git','show',a.commit+':src/xrGame/InventoryNextProbe.cpp'],cwd=repo)
         assert b'-sqa3-logical-storage' in engine_source, 'This engine revision has no native logical-storage mode'
+        ground_pickup=b'-sqa3-strict-ground-pickup' in engine_source
         files["NATIVE-LOGICAL-STORAGE.md"]=logical
         launcher=read_overlay('tools/inventory_lab/Start-Logical-Storage-Lab.ps1',optional=True)
         if launcher is not None:files["Start-Logical-Storage-Lab.ps1"]=launcher
@@ -39,9 +41,11 @@ def main():
         "No3D player model. Final pockets, full native recovery and complete gameplay parity remain unfinished.\n"+
         ("Opt-in carried backpack storage: also pass -sqa3-logical-storage. Keep this flag for its saves.\n"
          "Use Start-Logical-Storage-Lab.ps1 for the prepared carried-backpack save; it refuses a second game instance.\n"
-         "Use only disposable sqa3_logical_* saves in the isolated lab. Loaded bag world transfer is blocked; ordinary pickup admission remains unfinished.\n" if logical is not None else "")).encode()
+         "Use only disposable sqa3_logical_* saves in the isolated lab. Loaded bag world transfer is blocked; full acquisition admission remains unfinished.\n" if logical is not None else "")+
+        ("Experimental ground pickup: Start-Logical-Storage-Lab.ps1 -StrictGroundPickup. Corpse/container/trade admission remains unfinished.\n" if ground_pickup else "")).encode()
     manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":overlay,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     manifest['logical_storage_opt_in']=logical is not None
+    manifest['ground_pickup_opt_in']=ground_pickup
     files["manifest.json"]=(json.dumps(manifest,indent=2)+"\n").encode()
     a.output.parent.mkdir(parents=True,exist_ok=True)
     with zipfile.ZipFile(a.output,"w",zipfile.ZIP_DEFLATED,compresslevel=6) as z:
