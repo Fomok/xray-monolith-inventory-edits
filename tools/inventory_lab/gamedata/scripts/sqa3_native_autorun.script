@@ -240,6 +240,79 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-ground-bag",1,true) then
+        local returning=args:find("-sqa3-ground-return",1,true)~=nil
+        local reload=args:find("-sqa3-ground-reload",1,true)~=nil
+        local rollback=args:find("-sqa3-ground-rollback",1,true)~=nil
+        local timeout=args:find("-sqa3-ground-timeout",1,true)~=nil
+        assert(not(timeout and (returning or rollback)),"conflicting ground fixture modes")
+        local actor_has_bag=timeout or (returning~=rollback)
+        local phase=timeout and "timeout" or (rollback and (returning and "rollback-return" or "rollback-release") or (returning and "return" or "release"))
+        local proxy=tonumber(args:match("%-sqa3%-ground%-proxy=(%d+)"))
+        local function find_proxies()
+            local found={}
+            level.iterate_nearest(db.actor:position(),5,function(obj)
+                if obj and obj:section()=="sqa3_ground_backpack" then found[#found+1]=obj:id() end
+                return false
+            end)
+            return found
+        end
+        commands={"inventory_next_probe export",snapshot}
+        if returning and not reload then
+            commands[#commands+1]=function()
+                assert(proxy,"ground return needs original proxy ID");crate_id=proxy;open_crate()
+            end
+        elseif not reload then commands[#commands+1]=toggle_inventory end
+        if not reload then
+            commands[#commands+1]=function()
+                started=started+60000
+                printf("[SQA3 AUTORUN] ground bag input window phase=%s: %s",phase,returning and "take the loaded bag from ground container" or "drag outer loaded backpack from pockets onto empty world area")
+            end
+        end
+        commands[#commands+1]=function()
+            local found=find_proxies()
+            if actor_has_bag then
+                assert(#found==0,"empty ground proxy survived retrieval/refusal")
+                if proxy then assert(not alife():object(proxy),"ground proxy still exists in ALife") end
+            else
+                assert(#found==1,"loaded ground proxy missing or duplicated")
+                if proxy then assert(found[1]==proxy,"ground proxy identity changed") end
+                proxy=found[1];crate_id=proxy;ActorMenu.get_actor_menu():HideDialog();open_crate()
+            end
+            printf("[SQA3 AUTORUN] ground proxy present=%s live=%s",actor_has_bag and "0" or "1",tostring(proxy or 65535))
+        end
+        commands[#commands+1]="screenshot sqa3_ground_bag"
+        commands[#commands+1]=function()
+            local bags,medkits,members=0,0,0
+            local function record(_,item)
+                if item:section()=="itm_backpack" or item:section()=="medkit" then
+                    members=members+1
+                    printf("[SQA3 AUTORUN] world member live=%s owner=%s section=%s grams=%s condition=%s",tostring(item:id()),tostring(item:parent():id()),item:section(),tostring(item:weight()*1000),tostring(item:condition()))
+                end
+                return false
+            end
+            db.actor:iterate_inventory(function(_,item)
+                if item:section()=="itm_backpack" then bags=bags+1 end
+                if item:section()=="medkit" then medkits=medkits+1 end
+                if actor_has_bag then record(nil,item) end
+                return false
+            end,db.actor)
+            assert(bags==(actor_has_bag and 2 or 0) and medkits==(actor_has_bag and 1 or 0),"ground bag actor membership mismatch")
+            if not actor_has_bag then
+                local box=level.object_by_id(proxy);local count=0
+                box:iterate_inventory_box(function(_,item) count=count+1;record(nil,item);return false end,box)
+                assert(count==3,"ground native custody count mismatch")
+            end
+            assert(members==3,"ground subtree membership mismatch")
+            printf("[SQA3 AUTORUN] world transfer phase=%s crate=%s actor=%s members=3",phase,tostring(proxy or 65535),tostring(db.actor:id()))
+        end
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_ground_"..phase:gsub("-","_")
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-world-prepare",1,true) then
         local nested_live
         commands={"inventory_next_probe export",snapshot,function()

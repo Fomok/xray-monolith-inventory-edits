@@ -741,7 +741,7 @@ bool cleanup_ground_proxy(u16 live) {
         if(box->getDestroy())return true;
         if(CurrentGameUI()&&CurrentGameUI()->GetActorMenu().GetInvBox()==box)CurrentGameUI()->HideActorMenu();
         box->DestroyObject();
-    } else ai().alife().release(server,true);
+    } else const_cast<CALifeSimulator&>(ai().alife()).release(server,true);
     Msg("* SQA3 empty ground proxy cleanup live=%u",live);return true;
 }
 bool world_access(u16 source,u16 destination) {
@@ -919,7 +919,7 @@ bool InventoryNextGroundDrop(u16 live) noexcept try {
     auto pending=std::make_unique<NativeGroundProvision>();pending->shell=live;pending->shell_identity=shell;
     pending->started=Device.dwTimeGlobal;pending->actor_before=layout().model().serialize();ground_provision=std::move(pending);
     const auto& location=Actor()->ai_location();
-    auto server=ai().alife().spawn_item(ground_proxy_section,Actor()->Position(),location.level_vertex_id(),location.game_vertex_id(),0xffff);
+    auto server=const_cast<CALifeSimulator&>(ai().alife()).spawn_item(ground_proxy_section,Actor()->Position(),location.level_vertex_id(),location.game_vertex_id(),0xffff);
     if(!server){ground_provision.reset();InventoryNextPickupStatus("Cannot place the bag here. Bag unchanged.");return true;}
     ground_provision->proxy=server->ID;
     InventoryNextIdentity(server->ID);
