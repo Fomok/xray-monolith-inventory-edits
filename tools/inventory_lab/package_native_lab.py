@@ -51,7 +51,7 @@ def main():
         "No3D player model. Final pockets, full native recovery and complete gameplay parity remain unfinished.\n"+
         ("Opt-in carried backpack storage: also pass -sqa3-logical-storage. Keep this flag for its saves.\n"
          "Use Start-Logical-Storage-Lab.ps1 for the prepared carried-backpack save; it refuses a second game instance.\n"
-         "Use only disposable sqa3_logical_* saves in the isolated lab. Loaded bag world transfer requires a supporting engine and its explicit mode; full compatibility remains unfinished.\n" if logical is not None else "")+
+         "Use only disposable sqa3_* saves in the isolated lab. Loaded bag world transfer requires a supporting engine and its explicit mode; full compatibility remains unfinished.\n" if logical is not None else "")+
         ("Experimental ground pickup: Start-Logical-Storage-Lab.ps1 -StrictGroundPickup.\n" if ground_pickup else "")+
         ("Experimental ground plus corpse/container Move/Take All: -StrictOwnedPickup. External equip/use admission remains unfinished.\n" if owned_pickup else "")+
         ("Experimental batch purchases: -StrictTradePickup. Includes owned/ground admission; native purchase acceptance must be checked against the evidence.\n" if trade_pickup else "")+
