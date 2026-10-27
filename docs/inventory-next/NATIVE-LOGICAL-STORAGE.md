@@ -2,7 +2,7 @@
 
 ## Current checkpoint — 2026-10-27
 
-106 core checks per debug/release build and independent restarts pass. Dev15 native purchases, ground/container/corpse admission and nested use have bounded acceptance. Dev16 additionally passes physical primary-slot-to-crate unequip and exact reload. Direct equip is not accepted yet: empty-slot acquisition and context-menu occupied-slot refusal work, but weapon activation needs the current a34327d9/CI40498004943 build. Physical occupied-slot drag routing remains under diagnosis. Full parity is unfinished. Detailed evidence below and PARITY-COVERAGE.md distinguish tested slices from open requirements.
+106 core checks per debug/release build and independent restarts pass. Dev15 purchases, ground/container/corpse admission and nested use have bounded native acceptance. Dev16 physical primary-slot-to-crate unequip and exact reload pass. Dev17 physical empty-primary direct equip, correct activation, context-menu occupied-slot refusal and exact reload pass; native-fixture carried-backpack rotation and boundary refusal also survive fresh reloads. Physical occupied-slot drag and R-key automation remain unverified. Dev18 loaded-container safety build0be12d07/CI40502480472 passes physical refusal UI, Move all subtree retention and exact reloads in the isolated lab. Ordinary direct-unequip regression and exact fresh reload also pass. Full77-row parity remains unfinished; detailed evidence below separates tested slices from open requirements.
 
 ## Initial adapter contract (historical starting point)
 
@@ -236,3 +236,30 @@ Dev17a34327d9 +overlayb602feaa, PID25628 exited0. Physical drag loaded backpack1
 Candidate0be12d07a14152ffab013acaf93a60d2a0f06b76 CI40502480472 compiling. ToDeadBodyBag checks InventoryNextCanRelease before RemoveItem and displays refusal; global move_item_from_to guards actor outgoing event dispatch. InventoryNextCanBulkRelease retains items with nonactor logical parent and loaded containers, so Move all cannot flatten a loaded subtree. Bulk loot paths snapshot eligible live IDs before synchronous callbacks can mutate cell lists, then re-resolve current item/owner before dispatch. Manual child moves still use ordinary release checks. Native protection is opt-in logical storage; public engine/production untouched. New loaded-release and loaded-bulk fixtures/verifiers require exact protected subtree and native source state; bulk expects three loose items moved and bag/medkit/PM retained. Runtime checks pending.
 
 Dev17package overlayb26e8cf27d1173e1f8fdbb9007e9138d97a74117 currently installed,12payloads verified; same-path ZIP10764842bytes SHA2569ee6bb359ce88c3fbad27269267ee6483662c4c73b2b1b8cc870ab5561fd0d2d. Earlierb602ZIP10764499SHA7930ddae... andb306ZIPb76784... superseded in place. Exact-hash/resolved-path cleanup removed Dev14/16 ZIPs and downloaded EXEs,75164740bytes; dev14-dev16-superseded-download-cleanup.json. Dev15accepted rollback and Dev17current retained, allsource/saves/logs preserved. Initial preflight stopped on a transcription typo in Dev14 expected hash; nothing deleted until correct previously recorded hash matched.
+
+
+### Native-input carried rotation and reload — 2026-10-27
+
+Dev17 engine a34327d90e15e840580914cf46055fc80de73798 with overlay16e8d783c6cc1e37f70db30584714361dc7b00a0. PID13272 native selection/reload-binding fixture accepted rotation of logical103 within parent105 at5,6,1; six items2458g, other five records exact. PID34564 fresh reload preserved all six records exactly. Both exited0. Evidence: ci-40498004943/logical-rotate.log/inv/-verification.json and logical-rotate-reload equivalents. Export hashes1c2a7de289473c486c7246386dade78392a20ad245dc24000483b8316c7226d5 and655eff7561f560f902ec0a2357ec69f12ba51ce22397ee01bd18d50eb10f4273 (item dictionaries exact; export metadata can differ). Native fixture dispatch is explicitly NOT physical keyboard evidence. Boundary fixture pending. Same-path Dev17 ZIP10765800bytes SHAe854eed7741b261b911840067f1136814aa1371521fc02a3e094ecd5023e61cc; all12 lab payloads hash-verified before launch.
+
+
+### Boundary rotation fixture accepted — 2026-10-27
+
+Dev17/overlay16e8d783: PID17172 native-input edge rotation refused, logical103 stayed parent105 at7,6,1; all6items2458g, other5records exact. PID30544 fresh reload exact, both exited0. ci-40498004943/logical-rotate-edge.log/inv/-verification.json and reload equivalents; both exports4f64afff8173fbaf39cf39dc8bd23b0bb18276c4dc54c167114675cb0ed16b9c. This is native fixture input, not physical R-key acceptance. Dev18 loaded-storage safety build0be12d07 CI40502480472 succeeded, artifact12734277570, EXE26867200bytes SHA3633396cd254c3636868cf60c427fd954b0c6dc21f69e097d82659e01bb6bbb5. Packaged with overlay16e8d783: ZIP10766857bytes SHA4c4472041578e1d2448648536b22753f2382034ee1d6b2e429e7f3fc7818e5ca,12payloads verified and installed only in isolated lab. Runtime loaded-container checks ongoing.
+
+
+### Dev18 loaded release refusal accepted — 2026-10-27
+
+Engine0be12d07/CI40502480472 +overlay16e8d783, PID12776: physical carried bag19200 tocrate19456 refused before UI removal; visible pockets bag/medkit grid intact, crateempty, message Cannot transfer this item. Inventory unchanged. Native state exact6items2458g, export46193cb2fac38b7b733e4864815d4addbbc6dfc2c16c1a8c26de46c96972a3d3. PID31464 fresh reload exact, both exited0. ci-40502480472/loaded-release.log/inv/-verification.json and loaded-release-reload equivalents; loaded-release.jpg captured13:39:01. Visual inspection and strict state verifier both passed; loaded subtree world transfer remains unsupported. Bulk test ongoing.
+
+
+### Dev18 loaded bulk retention accepted — 2026-10-27
+
+Engine0be12d07 +overlay16e8d783: PID32468 physical Move all tocrate19456 transferred original PDA100/bandage101/bread104 with exact live IDs, mass and condition; retained logical102medkit parent105,103PM equipment,105backpack. Actor3items2130g, exact protected records, exportd5ebe13bc54f563c5cb634fc46e906284d32ffa67ba8447f2b9086518255ab51. Visible UI showed loose items in crate and backpack+medkit intact with refusal feedback. PID27724 fresh sqa3_loaded_bulk reload exact on both actor/source; both exited0. ci-40502480472/loaded-bulk.log/inv/-verification.json and reload equivalents; loaded-bulk.jpg13:42:04. installed-save-audit.json confirms12payload hashes and originaltest.dds/scoc/scop unchanged. Loaded subtree transfer is refused, not implemented; corpse bulk and larger content coverage remain open. Direct-unequip guard regression underway.
+
+
+### Dev18 direct-unequip regression accepted and checkpoint — 2026-10-27
+
+Engine0be12d07/overlay16e8d783: PID11680 physical primary rifle20225 ->crate19969; retained rifle20224; original71actor records4928g exact, both weapons retain condition/ammo/mass. PID10412 fresh reload exact; both exited0. ci-40502480472/direct-unequip.log/inv/-verification.json and direct-unequip-reload equivalents; both exports61df8854a7d402e773b2cd487abb2d875783d18d9d0cbe8475b097ea068a99c5. Elevated process audit found zero Anomaly/xrEngine/VerifiedDX instances. Existing12payload hash audit and originaltest.dds/scoc/scop comparison pass. No production/pristine/public/FG changes. Read installed lab runtime files, logs and saves only; package atlas remains unmodified Squared Away Hotfix1 FieldKit source.
+
+Exact-path/hash cleanup removed Dev15 ZIP10754811bytes SHA00fe1a58ff382ea302ee998c449d68aa149199ced1b12daa767033ac8d421de1 and CI40488824434 downloaded EXE26860544bytes SHAca21843d281eb999a14a62d824f1914444bb34e47ce2517e13acddb5ffc329b4:37615355bytes freed. Manifest dev15-superseded-download-cleanup.json. Dev17 rollback, Dev18 current and all source/evidence/saves retained. Physical R-key and occupied-slot drag automation remain unverified; native rotation and context refusal are separately verified, not substitutes. Full77-row parity remains open.
