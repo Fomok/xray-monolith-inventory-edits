@@ -313,8 +313,19 @@ function on_game_start()
         end
         if not reload then
             commands[#commands+1]=function()
-                started=started+60000
-                printf("[SQA3 AUTORUN] owned mouse input window: refuse full-grid drag, drop one new actor bandage, acquire one source bandage")
+                started=started+20000
+                printf("[SQA3 AUTORUN] owned mouse phase 1: refuse full-grid source drag")
+            end
+            commands[#commands+1]=function()
+                ActorMenu.get_actor_menu():HideDialog();toggle_inventory()
+                started=started+30000
+                printf("[SQA3 AUTORUN] owned mouse phase 2: drop one new actor bandage from normal inventory")
+            end
+            commands[#commands+1]=function()
+                ActorMenu.get_actor_menu():HideDialog()
+                local owner=level.object_by_id(source_owner);assert(owner and owner:use(db.actor),"mouse source reopen failed")
+                started=started+30000
+                printf("[SQA3 AUTORUN] owned mouse phase 3: drag one source bandage into freed storage")
             end
         end
         commands[#commands+1]=function()
