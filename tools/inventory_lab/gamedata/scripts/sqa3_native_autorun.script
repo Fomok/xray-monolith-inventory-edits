@@ -40,6 +40,10 @@ local function open_trade()
 end
 local function prepare_sale()
     local npc=level.object_by_id(npc_id);assert(npc and npc:alive(),"sale NPC missing")
+    -- This disposable simulation NPC otherwise walks outside native trade range.
+    npc:movement_enabled(false)
+    local pos=db.actor:position();pos.x=pos.x+1.2
+    npc:set_npc_position(pos)
     npc:give_money(100000)
     db.actor:iterate_inventory(function(_,item)
         if item:section()=="bread" then sale_item=item:id() end
@@ -51,7 +55,7 @@ local function hold_sale()
     local npc=level.object_by_id(npc_id);assert(npc,"sale NPC missing")
     local distance=npc:position():distance_to(db.actor:position())
     printf("[SQA3 AUTORUN] sale readiness distance=%s menu=%s",tostring(distance),tostring(ActorMenu.get_actor_menu():IsShown()))
-    assert(ActorMenu.get_actor_menu():IsShown(),"sale menu closed before input window")
+    assert(distance<3 and ActorMenu.get_actor_menu():IsShown(),"sale menu closed before input window")
     sale_actor_money=db.actor:money();sale_partner_money=npc:money()
     started=started+60000
     printf("[SQA3 AUTORUN] sale input window live=%s actor_money=%s partner_money=%s",tostring(sale_item),tostring(sale_actor_money),tostring(sale_partner_money))
