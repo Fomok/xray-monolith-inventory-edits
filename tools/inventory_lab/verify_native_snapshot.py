@@ -11,7 +11,7 @@ from verify_native_placement import read
 
 
 def verify(log_path, export_path, preserve_initial=False, logical_ownership=False,
-           completion_pattern=r"\[SQA3 AUTORUN\] step=\d+ execute quit"):
+           completion_pattern=r"\[SQA3 AUTORUN\] step=\d+ execute quit",reader=read):
     log = log_path.read_text(errors="replace")
     assert "[SQA3 AUTORUN] FAIL" not in log, "fixture failed"
     assert "FATAL ERROR" not in log, "engine crashed"
@@ -34,7 +34,7 @@ def verify(log_path, export_path, preserve_initial=False, logical_ownership=Fals
             snapshots.append(pending)
             pending, raw_mass = {}, 0.0
     assert snapshots, "missing real native snapshot"
-    nodes, digest = read(export_path)
+    nodes, digest = reader(export_path)
     projected = {}
     for node in nodes.values():
         attrs = node["attributes"]

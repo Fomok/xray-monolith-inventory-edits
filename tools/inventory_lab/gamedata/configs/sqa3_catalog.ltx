@@ -1,6 +1,9 @@
 ; SQA3 native catalog, schema1. Generated from audited source data.
 ; Growth stages are provisional test balancing; edit empty/half/full per definition.
 ; Dimensions use ROWS x COLUMNS. Mask rows use | and cell IDs use commas.
+[sqa3_catalog_metadata]
+schema_version = 1
+
 [sqa3_storage_definitions]
 amprig_bandolier = sqa3_storage_amprig_bandolier
 amprig_scout = sqa3_storage_amprig_scout
@@ -330,6 +333,10 @@ half = 2x2
 full = 2x2
 max_contents_grams = 10000
 stack_limit = 99
+accept_kinds = i_medical
+accept_sections =
+reject_sections =
+accept_flags =
 
 [sqa3_storage_ampbox_ammo]
 family = box
@@ -343,6 +350,10 @@ half = 2x2
 full = 2x2
 max_contents_grams = 10000
 stack_limit = 99
+accept_kinds =
+accept_sections =
+reject_sections =
+accept_flags = ammo
 
 [sqa3_storage_ampbox_food]
 family = box
@@ -356,6 +367,10 @@ half = 2x2
 full = 2x2
 max_contents_grams = 10000
 stack_limit = 99
+accept_kinds = i_food|i_drink|i_mutant_cooked|i_mutant_raw
+accept_sections =
+reject_sections =
+accept_flags =
 
 [sqa3_storage_ampbox_armor]
 family = box
@@ -369,6 +384,10 @@ half = 3x2
 full = 3x2
 max_contents_grams = 0
 stack_limit = 1
+accept_kinds = o_light|o_medium|o_heavy|o_sci|o_helmet
+accept_sections =
+reject_sections =
+accept_flags = rig
 
 [sqa3_storage_ampbox_food_small]
 family = box
@@ -382,6 +401,10 @@ half = 1x2
 full = 1x2
 max_contents_grams = 10000
 stack_limit = 99
+accept_kinds = i_food|i_drink|i_mutant_cooked|i_mutant_raw
+accept_sections =
+reject_sections =
+accept_flags =
 
 [sqa3_storage_ampbox_mags]
 family = box
@@ -395,6 +418,10 @@ half = 2x3
 full = 2x3
 max_contents_grams = 15000
 stack_limit = 10
+accept_kinds =
+accept_sections =
+reject_sections =
+accept_flags = magazine
 
 [sqa3_storage_ampbox_ammo_big]
 family = box
@@ -408,6 +435,10 @@ half = 2x3
 full = 2x3
 max_contents_grams = 15000
 stack_limit = 99
+accept_kinds =
+accept_sections =
+reject_sections =
+accept_flags = ammo
 
 [sqa3_storage_ampbox_parts]
 family = box
@@ -421,6 +452,10 @@ half = 2x3
 full = 2x3
 max_contents_grams = 15000
 stack_limit = 999
+accept_kinds = i_part
+accept_sections =
+reject_sections =
+accept_flags =
 
 [sqa3_storage_ampbox_docs]
 family = box
@@ -434,6 +469,10 @@ half = 2x1
 full = 2x1
 max_contents_grams = 0
 stack_limit = 20
+accept_kinds = i_letter
+accept_sections =
+reject_sections =
+accept_flags =
 
 [sqa3_storage_ampbox_weapon]
 family = box
@@ -447,6 +486,10 @@ half = 2x3
 full = 2x3
 max_contents_grams = 0
 stack_limit = 1
+accept_kinds =
+accept_sections =
+reject_sections =
+accept_flags = weapon
 
 [sqa3_storage_ampbox_weapon_big]
 family = box
@@ -460,6 +503,10 @@ half = 2x5
 full = 2x5
 max_contents_grams = 0
 stack_limit = 1
+accept_kinds =
+accept_sections =
+reject_sections =
+accept_flags = weapon
 
 [sqa3_storage_ampbox_hip]
 family = box
@@ -486,6 +533,10 @@ half = 2x2
 full = 2x2
 max_contents_grams = 0
 stack_limit = 1
+accept_kinds =
+accept_sections =
+reject_sections =
+accept_flags = weapon
 
 [sqa3_storage_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v]
 family = box
@@ -499,6 +550,10 @@ half = 2x3
 full = 2x3
 max_contents_grams = 10000
 stack_limit = 99
+accept_kinds = i_arty|i_arty_junk
+accept_sections =
+reject_sections =
+accept_flags =
 
 [sqa3_storage_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo]
 family = box
@@ -512,6 +567,10 @@ half = 2x2
 full = 2x2
 max_contents_grams = 10000
 stack_limit = 99
+accept_kinds = i_arty|i_arty_junk
+accept_sections =
+reject_sections =
+accept_flags =
 
 [sqa3_storage_amp_rig_bandolier]
 family = rig

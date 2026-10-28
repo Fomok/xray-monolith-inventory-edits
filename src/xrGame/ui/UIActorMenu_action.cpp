@@ -87,11 +87,18 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 	}
     if(InventoryNextFieldKitEnabled())for(int index=0;index<3;++index)if(new_owner==m_sqaCustomEquipment[index]){
         auto item=static_cast<PIItem>(itm->m_pData);
-        if(!item||!SqaActorList(old_owner)||!InventoryNextNativeDragCurrent(item->object_id())){m_sqaRefresh=true;return true;}
+        if(!item){m_sqaRefresh=true;return true;}
         const auto rig=InventoryNextCustomItem(1,"sqa3.rig");
         const auto host=index?(rig!=u16(-1)?InventoryNextIdentityLookup(rig):0):u64{1};
         const char* keys[]={"sqa3.rig","sqa3.mount.p1","sqa3.mount.p2"};
-        InventoryNextCustomEquip(item->object_id(),host,keys[index]);m_sqaRefresh=true;return true;
+        if(SqaActorList(old_owner)){
+            if(InventoryNextNativeDragCurrent(item->object_id()))InventoryNextCustomEquip(item->object_id(),host,keys[index]);
+        } else if(SqaLootActive()&&old_owner==m_pDeadBodyBagList){
+            const auto found=m_sqaLootIdentity.find(item->object_id());
+            if(found!=m_sqaLootIdentity.end())InventoryNextLootCustomEquip(m_sqaLootSource,m_sqaLootSourceIdentity,item->object_id(),found->second,host,keys[index]);
+            m_sqaLootAfter=0;
+        }
+        m_sqaRefresh=true;return true;
     }
     if(InventoryNextFieldKitEnabled()&&SqaActorList(new_owner))for(auto custom:m_sqaCustomEquipment)if(old_owner==custom){
         const auto cell=new_owner->PickCell(new_owner->GetDragItemPosition());

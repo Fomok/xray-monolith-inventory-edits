@@ -1695,7 +1695,7 @@ int CWeapon::GetSuitableAmmoTotal(bool use_item_to_spawn) const
 	}
 
 	//÷òîá íå äåëàòü ëèøíèõ ïåðåñ÷åòîâ
-	if (!(InventoryNextLogicalStorage()&&ParentIsActor()) && m_pInventory->ModifyFrame() <= m_BriefInfo_CalcFrame)
+	if (!(InventoryNextLogicalStorage()&&Actor()&&m_pInventory==&Actor()->inventory()) && m_pInventory->ModifyFrame() <= m_BriefInfo_CalcFrame)
 	{
 		return ae_count + m_iAmmoCurrentTotal;
 	}
@@ -1736,7 +1736,7 @@ int CWeapon::GetAmmoCount_forType(shared_str const& ammo_type) const
 	for (; itb != ite; ++itb)
 	{
 		CWeaponAmmo* pAmmo = smart_cast<CWeaponAmmo*>(*itb);
-		if (pAmmo && (pAmmo->cNameSect() == ammo_type) && (!ParentIsActor()||InventoryNextAmmoAccessible(pAmmo->object_id())))
+		if (pAmmo && (pAmmo->cNameSect() == ammo_type) && (!Actor()||m_pInventory!=&Actor()->inventory()||InventoryNextAmmoAccessible(pAmmo->object_id())))
 		{
 			res += pAmmo->m_boxCurr;
 		}
@@ -1747,7 +1747,7 @@ int CWeapon::GetAmmoCount_forType(shared_str const& ammo_type) const
 	for (; itb != ite; ++itb)
 	{
 		CWeaponAmmo* pAmmo = smart_cast<CWeaponAmmo*>(*itb);
-		if (pAmmo && (pAmmo->cNameSect() == ammo_type) && (!ParentIsActor()||InventoryNextAmmoAccessible(pAmmo->object_id())))
+		if (pAmmo && (pAmmo->cNameSect() == ammo_type) && (!Actor()||m_pInventory!=&Actor()->inventory()||InventoryNextAmmoAccessible(pAmmo->object_id())))
 		{
 			res += pAmmo->m_boxCurr;
 		}

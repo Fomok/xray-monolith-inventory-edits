@@ -2711,6 +2711,10 @@ void CLevel::script_register(lua_State* L)
             def("inventory_next_custom_unequip", +[](u16 live){return InventoryNextCustomUnequip(live);}),
             def("inventory_next_identity", +[](u16 live){return luabind::internal_string(std::to_string(InventoryNextIdentityLookup(live)).c_str());}),
             def("inventory_next_custom_item", +[](LPCSTR host,LPCSTR key){try{return InventoryNextCustomItem(std::stoull(host),key);}catch(...){return u16(-1);}}),
+            def("inventory_next_loot_custom_equip", +[](u16 source,LPCSTR source_identity,u16 live,LPCSTR identity,LPCSTR host,LPCSTR key){try{return InventoryNextLootCustomEquip(source,std::stoull(source_identity),live,std::stoull(identity),std::stoull(host),key);}catch(...){return false;}}),
+            def("inventory_next_action_ready", +[](){return InventoryNextActionReady();}),
+            def("inventory_next_ammo_accessible", +[](u16 live){return InventoryNextAmmoAccessible(live);}),
+            def("inventory_next_can_use", +[](u16 live){return InventoryNextCanUse(live);}),
             // This luabind fork only converts its allocator-backed string_class.
             // std::string would be treated as an unregistered userdata type.
             def("inventory_next_stash_identity", +[](u16 live){return luabind::internal_string(InventoryNextStashIdentity(live).c_str());}),

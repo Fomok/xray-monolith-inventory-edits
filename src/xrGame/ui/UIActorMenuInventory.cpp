@@ -1787,7 +1787,13 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
         if(index>=m_sqaEquipmentActions.size()||InventoryNextIdentityLookup(item->object_id())!=m_sqaEquipmentActionSource)return;
         const auto action=m_sqaEquipmentActions[index];
         if(InventoryNextIdentityLookup(action.live)!=action.identity){InventoryNextPickupStatus("Item changed. Reopen its menu.");return;}
-        if(action.open){auto target=smart_cast<CInventoryItem*>(Level().Objects.net_Find(action.live));if(target&&target->parent_id()==Actor()->ID())SqaOpenContainer(target);}
+        if(action.acquire){
+            const auto found=m_sqaLootIdentity.find(action.live);
+            if(SqaLootActive()&&found!=m_sqaLootIdentity.end()&&found->second==action.identity)
+                if(InventoryNextLootCustomEquip(m_sqaLootSource,m_sqaLootSourceIdentity,action.live,action.identity,action.host,action.key.c_str())&&action.key=="sqa3.rig")m_sqaRigView=true;
+            m_sqaLootAfter=0;
+        }
+        else if(action.open){auto target=smart_cast<CInventoryItem*>(Level().Objects.net_Find(action.live));if(target&&target->parent_id()==Actor()->ID())SqaOpenContainer(target);}
         else if(action.detach)InventoryNextCustomUnequip(action.live);
         else if(InventoryNextCustomEquip(action.live,action.host,action.key.c_str())&&action.key=="sqa3.rig")m_sqaRigView=true;
         m_UIPropertiesBox->Hide();SetCurrentItem(nullptr);m_sqaRefresh=true;return;

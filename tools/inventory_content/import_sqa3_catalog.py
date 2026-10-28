@@ -30,6 +30,8 @@ def pouch_layout(grants):
 def compile_catalog(source):
     assert source['schema']=='sqa3.catalog.source.v1'
     definitions={}
+    rules={item['section']:{key:value['value'] for key,value in item['fields'].items()}
+           for item in source['auxiliary_sections']}
     for item in source['items']:
         section=item['section'];assert section not in definitions and len(section)<=63
         family=item['family'];fields=item['effective_fields']
@@ -72,8 +74,18 @@ def compile_catalog(source):
             'empty':empty,'half':half,'full':full,'growing':growing,
             'max_contents_grams':round(float(value('amp_box_kg','0'))*1000),
             'stack_limit':int(value('amp_box_stack','0')),
+            'allow_container_items':False,'exterior_independent':True,
+            'tear_thresholds':[8000,6000,4000,2500,1000] if family=='rig' else [],
             'growth_provenance':'provisional SQA3 test balancing; configurable' if growing else 'fixed source exterior',
             'source_section':section}
+        if family=='box' and value('amp_box_takes','anything')!='anything':
+            rule=rules['amp_box_'+value('amp_box_takes')]
+            tokens=lambda raw:'|'.join(part.strip() for part in raw.split(',') if part.strip())
+            definitions[section]['acceptance']={
+                'accept_kinds':tokens(rule.get('kinds','')),
+                'accept_sections':tokens(rule.get('also','')),
+                'reject_sections':tokens(rule.get('never','')),
+                'accept_flags':'|'.join(flag for key,flag in [('ammo','ammo'),('guns','weapon'),('mags','magazine'),('rigs','rig')] if rule.get(key)=='true')}
     return definitions
 
 def main():
@@ -82,6 +94,7 @@ def main():
     lines=['; SQA3 native catalog, schema1. Generated from audited source data.',
         '; Growth stages are provisional test balancing; edit empty/half/full per definition.',
         '; Dimensions use ROWS x COLUMNS. Mask rows use | and cell IDs use commas.',
+        '[sqa3_catalog_metadata]','schema_version = 1','',
         '[sqa3_storage_definitions]']
     lines += [f'{name} = sqa3_storage_{name}' for name in definitions]
     for name,d in definitions.items():
@@ -95,6 +108,7 @@ def main():
         if d['family']=='rig':
             lines += ['; Released rig tear thresholds, basis points; largest pockets first.',
                       'tear_thresholds = 8000,6000,4000,2500,1000']
+        for key,value in d.get('acceptance',{}).items():lines.append(f'{key} = {value}'.rstrip())
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text('\n'.join(lines)+'\n',encoding='utf-8')
     report={'schema':'sqa3.native.catalog.v1','source_sha256':hashlib.sha256(raw).hexdigest(),'definitions':definitions}
     args.output.with_suffix('.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

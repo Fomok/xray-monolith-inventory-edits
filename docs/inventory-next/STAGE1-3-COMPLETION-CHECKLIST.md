@@ -25,3 +25,9 @@
 - Leave zero games, verify original save/baseline/public engine protections; retain rollback and remove only superseded exact downloads. Planning owns Desktop shortcut last.
 
 External GAMMA/ZONA crafting and magazine/reload bridges belong to Phase5, not this acceptance. ZoneBench integration is later; only authoring/export boundary semantics are required now.
+
+## Later candidate update
+
+Core137 tests pass debug/optimized plus independent restarts (phase1-3/core-mounted-pickup-v1). New coverage includes authored category allow/deny precedence and atomic mixed refusal, direct pouch admission with full actor pockets and occupied-mount source preservation. Four authoring tests pass, including49-definition roundtrip and invalid-output preservation. LOCAL-DEFINITION-AUTHORING.md documents schema/import/export/reset and supported older authoring format migration. Native direct custom equip from loot/ground now has explicit u32 wire data and reserved binding restoration; it is still awaiting actual native acceptance.
+
+CI40640098157/250473d7 failed on Position ambiguity; fixed. CI40640935419/9c407f1d failed on mixed float/int vector overloads and const ParentIsActor calls; fixed. No failed engine installed. Current lab remains the earlier verified a088 engine. Candidate/native acceptance is incomplete; do not count these compile repairs as runtime passes.

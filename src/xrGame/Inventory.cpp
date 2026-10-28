@@ -194,6 +194,9 @@ void CInventory::Take(CGameObject* pObj, bool bNotActivate, bool strict_placemen
         pIItem->m_ItemCurrPlace.type=eItemPlaceSlot;
         pIItem->m_ItemCurrPlace.slot_id=sqa_slot;
     }
+    if(InventoryNextPickupCustomPending(m_pOwner->object_id(),pObj->ID())){
+        pIItem->m_ItemCurrPlace.type=eItemPlaceCustom;pIItem->m_ItemCurrPlace.slot_id=0;
+    }
 
 	bool result = false;
 	switch (pIItem->m_ItemCurrPlace.type)

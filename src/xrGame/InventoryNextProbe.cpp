@@ -51,6 +51,7 @@
 #include "Weapon.h"
 #include "WeaponAmmo.h"
 #include "eatable_item.h"
+#include "UsableScriptObject.h"
 
 namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
@@ -134,6 +135,10 @@ bool read_storage_catalog(inventory_next::StorageCatalog& output) {
     string_path path;FS.update_path(path,"$game_config$","sqa3_capacity.ltx");
     if(!FS.exist(path)){Msg("! SQA3 capacity config missing");return false;}
     CInifile config(path,TRUE,TRUE,FALSE);
+    if(config.section_exist("sqa3_catalog_metadata")&&
+       (!config.line_exist("sqa3_catalog_metadata","schema_version")||config.r_u32("sqa3_catalog_metadata","schema_version")!=1)){
+        Msg("! SQA3 unsupported storage definition schema; use the local definition validator");return false;
+    }
     StorageCatalog candidate;
     if(!config.line_exist("sqa3_pockets","size")||!config.line_exist("sqa3_pockets","columns")||
        !config.line_exist("grid_pack_default","size"))return false;
@@ -170,8 +175,20 @@ bool read_storage_catalog(inventory_next::StorageCatalog& output) {
         definition.family=config.r_string(section,"family");
         definition.growing=config.r_bool(section,"growing");definition.allow_container_items=config.r_bool(section,"allow_container_items");
         if(config.line_exist(section,"exterior_independent"))definition.independent_exterior=config.r_bool(section,"exterior_independent");
-        if(config.line_exist(section,"max_contents_grams"))definition.max_contents=config.r_s32(section,"max_contents_grams");
+        if(config.line_exist(section,"max_contents_grams")){
+            const auto raw=config.r_string(section,"max_contents_grams");if(!raw)return false;
+            std::size_t consumed=0;definition.max_contents=std::stoll(raw,&consumed);
+            if(raw[consumed]||definition.max_contents>1000000000000LL)return false;
+        }
         if(config.line_exist(section,"stack_limit"))definition.stack_limit=config.r_u32(section,"stack_limit");
+        if(config.line_exist(section,"accept_kinds")) {
+            auto text=[&](LPCSTR key){const auto value=config.r_string(section,key);return std::string(value?value:"");};
+            definition.restricted=true;definition.accept_kinds=text("accept_kinds");
+            for(const auto key:{"accept_sections","reject_sections","accept_flags"})if(!config.line_exist(section,key))return false;
+            definition.accept_sections=text("accept_sections");
+            definition.reject_sections=text("reject_sections");
+            definition.accept_flags=text("accept_flags");
+        }
         if(config.line_exist(section,"tear_thresholds")) {
             std::istringstream thresholds(config.r_string(section,"tear_thresholds"));std::string value;unsigned previous=10001;
             while(std::getline(thresholds,value,',')) {
@@ -225,11 +242,14 @@ void native_instance_state(inventory_next::Node& node,CInventoryItem* item) {
     // One native entity is one independently stateful member. Rounds/charges
     // inside it are quantities, never extra inventory identities or fake cells.
     node.quantity=node.stack_limit=1;node.attributes["native_quantity_domain"]="instance";
+    if(item->m_kind.size())node.attributes["native_kind"]=item->m_kind.c_str();
     if(auto ammo=smart_cast<CWeaponAmmo*>(item)){
+        node.attributes["native_is_ammo"]="1";
         node.attributes["native_rounds"]=std::to_string(ammo->m_boxCurr);
         node.attributes["native_round_capacity"]=std::to_string(ammo->m_boxSize);
     }
     if(auto weapon=smart_cast<CWeapon*>(item)){
+        node.attributes["native_is_weapon"]="1";
         node.attributes["native_loaded_rounds"]=std::to_string(weapon->GetAmmoElapsed());
         node.attributes["native_addons"]=std::to_string(weapon->GetAddonsState());
     }
@@ -240,12 +260,14 @@ void native_instance_state(inventory_next::Node& node,CInventoryItem* item) {
     std::string upgrades;
     for(const auto& upgrade:item->upgardes()){if(!upgrades.empty())upgrades+='|';upgrades+=upgrade.c_str();}
     if(!upgrades.empty())node.attributes["native_upgrades"]=upgrades;
+    if(pSettings->line_exist(item->m_section_id,"is_mag")&&pSettings->r_bool(item->m_section_id,"is_mag"))node.attributes["native_is_magazine"]="1";
 }
 void apply_custom_binding(inventory_next::Node& node,CInventoryItem* item) {
     using namespace inventory_next;
     const auto family=node.attributes.find("storage_family");
     if(family!=node.attributes.end()) {
         node.pouch=family->second=="pouch";
+        if(family->second=="rig")node.attributes["native_is_rig"]="1";
         for(const auto& entry:equipment_registry.slots()) {
             const auto& slot=entry.second;
             if(!slot.mounted&&slot.enabled&&slot.accepts(family->second))node.wear_slots|=std::uint64_t{1}<<slot.model_bit;
@@ -383,6 +405,19 @@ u16 InventoryNextCustomItem(u64 host,const char* key) noexcept try {
 std::vector<InventoryNextEquipmentAction> InventoryNextEquipmentActions(u16 live) noexcept try {
     std::vector<InventoryNextEquipmentAction> actions;
     if(!InventoryNextLogicalStorage()||!Actor()||!InventoryNextLayoutSync())return actions;
+    auto native=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    if(native&&native->parent_id()!=Actor()->ID()){
+        StorageCatalog catalog;if(!read_storage_catalog(catalog))return actions;
+        const auto found=catalog.definitions.find(native->m_section_id.c_str());if(found==catalog.definitions.end())return actions;
+        const auto identity=InventoryNextIdentity(live);if(!identity)return actions;
+        for(const auto& entry:equipment_registry.slots()){
+            const auto& slot=entry.second;if(!slot.enabled||!slot.accepts(found->second.family))continue;
+            const auto rig=slot.mounted?InventoryNextCustomItem(1,"sqa3.rig"):u16(-1);
+            if(slot.mounted&&rig==u16(-1))continue;
+            actions.push_back({slot.key,"Equip "+slot.label,slot.mounted?InventoryNextIdentityLookup(rig):u64{1},identity,live,false,false,true});
+        }
+        return actions;
+    }
     const auto id=InventoryNextIdentityLookup(live);const auto& nodes=layout().model().nodes();
     const auto found=nodes.find(id);if(found==nodes.end())return actions;
     const auto family=found->second.attributes.find("storage_family");if(family==found->second.attributes.end())return actions;
@@ -492,7 +527,7 @@ bool InventoryNextLayoutSync() noexcept try {
         // admitted facts until CInventory::Take observes the actual client item.
         for(const auto& pending:pending_pickups) {
             bool present=false;for(const auto& n:nodes)if(n.id==pending.second.id){present=true;break;}
-            if(!present){auto n=pending.second;n.parent=1;n.location=Location::Overflow;n.position={};nodes.push_back(std::move(n));}
+            if(!present){auto n=pending.second;if(n.location==Location::Grid){n.parent=1;n.location=Location::Overflow;n.position={};}nodes.push_back(std::move(n));}
         }
         auto storage=logical?catalog.pockets:ActorStorage{};storage.logical=logical;
         const auto result=layout().reconcile(std::move(nodes),storage);
@@ -747,7 +782,7 @@ bool pickup_slot_compatible(CInventoryItem* item,u16 slot) {
         (base==INV_SLOT_3&&slot==INV_SLOT_2);
 }
 }
-bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept try {
+bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custom_slot,u64 custom_host) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
     if(pickup_fault||pickup_transaction||purchase||world_transfer||!InventoryNextWorldCanRelease(live)||!InventoryNextLayoutSync())return false;
@@ -797,6 +832,22 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept
         const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
         const auto& storage=catalog.resolve(section,kind);n.container=true;n.grid=storage.grid;n.cells=storage.cells;
     }
+    const EquipmentSlotDefinition* custom=nullptr;
+    if(custom_slot) {
+        custom=equipment_registry.find(custom_slot);
+        const auto family=n.attributes.find("storage_family");
+        if(slot!=0xffff||!custom||!custom->enabled||family==n.attributes.end()||!custom->accepts(family->second)||Actor()->inventory().ItemFromCustomSlot(custom_host,custom_slot))return false;
+        if(custom->mounted) {
+            const auto host=layout().model().nodes().find(custom_host);
+            if(host==layout().model().nodes().end()||!host->second.attributes.count("storage_family")||host->second.attributes.at("storage_family")!="rig"||host->second.condition<custom->minimum_condition)return false;
+            n.pouch=true;
+        } else {
+            if(custom_host!=1)return false;
+            n.wear_slots=std::uint64_t{1}<<custom->model_bit;
+        }
+        n.attributes["native_place"]="4";n.attributes["native_slot"]="0";
+        n.attributes["native_custom_slot"]=std::to_string(custom_slot);n.attributes["native_custom_host"]=std::to_string(custom_host);n.attributes["native_custom_key"]=custom->key;
+    }
     auto registry=std::make_unique<EntityRegistry>();
     if(!registry->add(1)||!registry->bind(1,owner))return false;
     std::vector<Id> destinations{1};
@@ -807,7 +858,8 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept
     if(source!=0xffff&&(!registry->add(2)||!registry->bind(2,source)))return false;
     if(!registry->add(id)||!registry->bind(id,live))return false;
     auto transaction=std::make_unique<GroundPickup>(*registry);
-    const auto result=transaction->prepare(layout().model(),n,destinations,source==0xffff,slot==0xffff?0:n.wear_slots);
+    const auto result=transaction->prepare(layout().model(),n,destinations,source==0xffff,
+        custom&&!custom->mounted?n.wear_slots:(slot==0xffff?0:n.wear_slots),custom&&custom->mounted?custom_host:0,custom&&custom->mounted?custom_slot:0);
     if(!result){Msg("! SQA3 %s pickup refused live=%u reason=%s; source retained",source==0xffff?"ground":"owned",live,result.error.c_str());InventoryNextPickupStatus("No space. Item stayed at source.");return false;}
     pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);pickup_source=source;
     if(slot!=0xffff)Msg("* SQA3 direct equip reserved live=%u slot=%u",live,slot);
@@ -836,22 +888,39 @@ void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
 void InventoryNextPickupTaken(u16 live) noexcept try {
     if(!pending_pickups.count(live))return;
     const auto expected=pending_pickups.at(live);
+    if(expected.attributes.count("native_custom_slot")) {
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+        const auto host=std::stoull(expected.attributes.at("native_custom_host"));
+        const auto slot=static_cast<u32>(std::stoul(expected.attributes.at("native_custom_slot")));
+        const auto definition=equipment_registry.find(slot);
+        if(!item||!definition||!definition->enabled){pickup_fault=true;return;}
+        if(definition->mounted){auto owner=layout().model().nodes().find(host);if(owner==layout().model().nodes().end()||owner->second.condition<definition->minimum_condition){pickup_fault=true;return;}}
+        restoring_custom_bindings=true;const bool bound=Actor()->inventory().CustomSlot(host,slot,item,true);restoring_custom_bindings=false;
+        if(!bound){pickup_fault=true;return;}
+    }
     pending_pickups.erase(live);
     if(!InventoryNextLayoutSync()){pickup_fault=true;return;}
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
     if(found==layout().model().nodes().end()||found->second.location==inventory_next::Location::Overflow||
        (expected.location==inventory_next::Location::Equipment&&
-        (found->second.location!=expected.location||found->second.equipped_slots!=expected.equipped_slots))) {
+        (found->second.location!=expected.location||found->second.equipped_slots!=expected.equipped_slots))||
+       (expected.location==inventory_next::Location::Mounted&&
+        (found->second.location!=expected.location||found->second.parent!=expected.parent||found->second.mounted_slot!=expected.mounted_slot))) {
         pickup_fault=true;Msg("! SQA3 ordinary pickup lost reserved placement; saves blocked");return;
     }
     InventoryNextPickupStatus(nullptr);
     Msg("* SQA3 pickup client acknowledged live=%u; pending=%u save_ready=%d",live,static_cast<unsigned>(pending_pickups.size()),InventoryNextPickupCanSave());
-} catch (...) {pickup_fault=true;}
+} catch (...) {restoring_custom_bindings=false;pickup_fault=true;}
 
+bool InventoryNextPickupCustomPending(u16 owner,u16 live) noexcept {
+    const auto found=pending_pickups.find(live);
+    return Actor()&&owner==Actor()->ID()&&found!=pending_pickups.end()&&found->second.attributes.count("native_custom_slot");
+}
 u16 InventoryNextPickupSlot(u16 owner,u16 live) noexcept try {
     if(!Actor()||owner!=Actor()->ID())return 0xffff;
     const auto pending=pending_pickups.find(live);
     if(pending==pending_pickups.end()||pending->second.location!=inventory_next::Location::Equipment)return 0xffff;
+    if(pending->second.attributes.count("native_custom_slot"))return 0xffff;
     auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
     for(u16 slot=1;slot<48;++slot)if(pending->second.equipped_slots==(std::uint64_t{1}<<slot)) {
         if(item&&slot<=Actor()->inventory().LastSlot()&&pickup_slot_compatible(item,slot)&&Actor()->inventory().CanPutInSlot(item,slot))return slot;
@@ -869,17 +938,18 @@ void InventoryNextPickupStatus(const char* text) noexcept try {
     auto& menu=CurrentGameUI()->GetActorMenu();menu.m_sqaRefresh=true;menu.m_sqaRetryAfter=Device.dwTimeGlobal+250;
     if(text&&menu.m_sqaStatus)menu.m_sqaStatus->TextItemControl()->SetText(text);
 } catch (...) {Msg("! SQA3 acquisition status refresh failed");}
-bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot) noexcept try {
-    if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||source==0xffff)return false;
+bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot,u32 custom_slot,u64 custom_host) noexcept try {
+    if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||(source==0xffff&&!custom_slot))return false;
     if(!InventoryNextWorldCanRelease(live)) {
-        if(slot!=0xffff){InventoryNextPickupStatus("Take the loaded bag into storage before equipping it.");return true;}
+        if(slot!=0xffff||custom_slot){InventoryNextPickupStatus("Take the loaded bag into storage before equipping it.");return true;}
         return InventoryNextWorldRequest(source,owner,live);
     }
-    const auto source_identity=InventoryNextIdentity(source),item_identity=InventoryNextIdentity(live);
-    if(!source_identity||!item_identity){InventoryNextPickupStatus("Item unavailable. Transfer cancelled.");return true;}
+    const auto source_identity=source==0xffff?u64{0}:InventoryNextIdentity(source),item_identity=InventoryNextIdentity(live);
+    if((source!=0xffff&&!source_identity)||!item_identity){InventoryNextPickupStatus("Item unavailable. Transfer cancelled.");return true;}
     NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_ACQUIRE,owner);
     packet.w_u16(source);packet.w_u16(live);packet.w_u64(source_identity);packet.w_u64(item_identity);
     packet.w_u16(slot);
+    packet.w_u32(custom_slot);packet.w_u64(custom_host);
     // Local single-player dispatch may finish synchronously. Set the pending
     // label first so the resulting refusal/acceptance remains visible.
     InventoryNextPickupStatus("Checking storage...");CGameObject::u_EventSend(packet);return true;
@@ -1454,13 +1524,27 @@ xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse) noexcept 
     if(!ground.items.empty()){std::sort(ground.items.begin(),ground.items.end());result.insert(result.begin(),std::move(ground));}
     return result;
 } catch (...) {return {};}
-bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot) noexcept try {
+bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot,u32 custom_slot,u64 custom_host) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!Actor()||!InventoryNextPickupCanSave()||!item_identity||InventoryNextIdentity(live)!=item_identity)return false;
-    if(source==0xffff){if(slot!=0xffff){InventoryNextPickupStatus("Take this ground item into storage before equipping it.");return false;}return Actor()->SqaPickup(live);}
+    if(source==0xffff){if(custom_slot)return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host);if(slot!=0xffff){InventoryNextPickupStatus("Take this ground item into storage before equipping it.");return false;}return Actor()->SqaPickup(live);}
     if(!source_identity||InventoryNextIdentity(source)!=source_identity||!world_access(source,Actor()->ID()))return false;
     auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
     if(!item||item->parent_id()!=source||!InventoryNextWorldVisible(live))return false;
-    return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot);
+    return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host);
+} catch (...) {return false;}
+bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 item_identity,u64 host,const char* key) noexcept try {
+    if(!key||!read_equipment_registry()||!Actor())return false;
+    const auto definition=equipment_registry.find(std::string(key));if(!definition||!definition->enabled)return false;
+    const auto slot=definition->id;
+    if(source==0xffff) {
+        if(!Actor()->SqaCanPickup(live)||InventoryNextIdentityLookup(live)!=item_identity)return false;
+        auto object=smart_cast<CGameObject*>(Level().Objects.net_Find(live));luabind::functor<bool> callback;
+        if(ai().script_engine().functor("bind_stalker_ext.actor_on_item_before_pickup",callback)&&!callback(object->lua_game_object()))return false;
+        if(!Actor()->SqaCanPickup(live)||InventoryNextIdentityLookup(live)!=item_identity)return false;
+        if(auto usable=smart_cast<CUsableScriptObject*>(object))usable->use(Actor());
+        if(!Actor()->SqaCanPickup(live)||InventoryNextIdentityLookup(live)!=item_identity)return false;
+    }
+    return InventoryNextLootTake(source,source_identity,live,item_identity,0xffff,slot,host);
 } catch (...) {return false;}
 bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!Actor()||!InventoryNextPickupCanSave())return false;

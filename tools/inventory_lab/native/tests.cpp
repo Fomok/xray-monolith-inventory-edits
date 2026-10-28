@@ -1242,6 +1242,23 @@ int main(int argc,char** argv) {
             const auto full=layout.model().serialize();check(!occupied.prepare(layout.model(),incoming,{},false,4),"second item stole reserved slot");
             check(layout.model().serialize()==full,"occupied slot refusal mutated actor");
         });
+        test("owned pouch admission mounts directly with full pockets and preserves occupied source",[]{
+            auto rig=bag(100,1,900);rig.location=Location::Equipment;rig.wear_slots=rig.equipped_slots=std::uint64_t{1}<<19;
+            rig.attributes={{"native_section","rig"},{"storage_exterior_independent","1"}};
+            rig.mounts.push_back({65537,"left",{1,1},1,1000,true});
+            auto filler=item(101,1,1);filler.attributes["native_section"]="filler";
+            ActorLayout layout;yes(layout.reconcile({rig,filler},{{1,1},{},true}));
+            yes(layout.move({101,1,{},layout.model().revision(),layout.model().session()}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100},Id{101},Id{102},Id{103}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            auto incoming=item(102,2,200);incoming.pouch=incoming.container=true;incoming.grid={1,2};
+            GroundPickup transfer(registry);yes(transfer.prepare(layout.model(),incoming,{},false,0,100,65537));
+            check(!transfer.can_save()&&transfer.model().nodes().at(102).parent==2,"mount published before native acknowledgement");
+            yes(transfer.acknowledge(11,true));yes(layout.restore(transfer.model().serialize()));
+            check(layout.model().nodes().at(102).location==Location::Mounted&&layout.model().nodes().at(102).parent==100,"direct mounted arrival lost host");
+            const auto before=layout.model().serialize();incoming.id=103;GroundPickup occupied(registry);
+            no(occupied.prepare(layout.model(),incoming,{},false,0,100,65537),"mount_occupied");
+            check(layout.model().serialize()==before&&occupied.can_save(),"occupied mount changed actor or held transfer");
+        });
         test("direct equip native refusal retains source and invalid slot cannot dispatch",[]{
             ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
             EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
@@ -1391,6 +1408,24 @@ int main(int argc,char** argv) {
             Node wide=item(10,1,1);wide.empty=wide.half=wide.full={2,1};wide.position={2,2,false};
             Model m;yes(m.initialize({actor,wide}));
             rollback(m,{10,1,{0,2,false},m.revision()},"blocked_cell");
+        });
+        test("authored category admission preserves explicit allow deny and atomic refusal",[]{
+            auto box=bag(10,1,100);box.attributes={{"storage_accept_kinds","i_medical"},{"storage_accept_sections","special"},{"storage_reject_sections","blocked"},{"storage_accept_flags","ammo"}};
+            auto med=item(20,1,10,{4,0,false});med.attributes={{"native_section","medkit"},{"native_kind","i_medical"}};
+            auto bread=item(21,1,10,{5,0,false});bread.attributes={{"native_section","bread"},{"native_kind","i_food"}};
+            auto special=item(22,1,10,{6,0,false});special.attributes["native_section"]="special";
+            auto denied=item(23,1,10,{7,0,false});denied.attributes={{"native_section","blocked"},{"native_kind","i_medical"}};
+            auto ammo=item(24,1,10,{8,0,false});ammo.attributes["native_is_ammo"]="1";
+            Model model;yes(model.initialize({root(1,Kind::ActorRoot),box,med,bread,special,denied,ammo}));
+            rollback(model,{21,10,{0,0,false},model.revision()},"storage_category");
+            rollback(model,{23,10,{0,0,false},model.revision()},"storage_category");
+            const auto before=model.serialize();
+            no(model.relocate({{20,10,{0,0,false},model.revision(),model.session()},{21,10,{1,0,false},model.revision(),model.session()}}),"storage_category");
+            check(model.serialize()==before,"mixed category batch changed state");
+            yes(move(model,{20,10,{0,0,false},model.revision()}));
+            yes(move(model,{22,10,{1,0,false},model.revision()}));
+            yes(move(model,{24,10,{0,1,false},model.revision()}));
+            check(model.carried_mass()==150,"category admission changed mass");
         });
         test("configurable portable-container nesting refuses new relationships and preserves legacy state",[]{
             auto nodes=fixture();nodes[2].attributes["storage_allow_container_items"]="0";

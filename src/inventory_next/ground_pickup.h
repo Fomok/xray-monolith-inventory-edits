@@ -10,7 +10,7 @@ class GroundPickup {
 public:
     explicit GroundPickup(const EntityRegistry& registry):registry_(registry) {}
     Result prepare(const Model& carried,Node incoming,const std::vector<Id>& destinations,bool ground_source=true,
-                   std::uint64_t equipment_slots=0) {
+                   std::uint64_t equipment_slots=0,Id mount_host=0,Id mount_slot=0) {
         if(transfer_)return {false,"transfer_busy"};
         if(carried.nodes().count(incoming.id))return {false,"duplicate_item"};
         std::vector<Node> nodes;
@@ -24,7 +24,10 @@ public:
         nodes.push_back(incoming);
         auto result=model_.initialize(nodes);if(!result)return result;
         Command command;command.item=incoming.id;
-        if(equipment_slots) {
+        if(mount_host||mount_slot) {
+            if(!mount_host||!mount_slot||equipment_slots)return {false,"pickup_mount"};
+            command.operation=Operation::Mount;command.destination=mount_host;command.mount_slot=mount_slot;
+        } else if(equipment_slots) {
             command.operation=Operation::Equip;command.destination=1;command.slots=equipment_slots;
         } else {
             const auto plan=find_placement(model_,incoming.id,destinations);

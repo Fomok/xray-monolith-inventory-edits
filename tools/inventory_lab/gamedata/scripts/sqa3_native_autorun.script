@@ -256,6 +256,14 @@ function on_game_start()
     if args:find("-sqa3-fixture-custom-equipment",1,true) then
         local reload=args:find("-sqa3-custom-reload",1,true)~=nil
         local items={}
+        local function node(identity)
+            exec_console_cmd("inventory_next_probe export")
+            local file=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"r"));local contents=file:read("*a");file:close()
+            for line in contents:gmatch("[^\n]+") do
+                if line:match("^(%d+) ")==identity then local tokens={};for value in line:gmatch("%S+") do tokens[#tokens+1]=value end return tokens end
+            end
+            error("fixture item missing from model")
+        end
         local function identify()
             exec_console_cmd("inventory_next_probe export")
             for key,id in pairs(items) do
@@ -264,7 +272,7 @@ function on_game_start()
                 printf("[SQA3 CUSTOM TEST] item=%s live=%s persistent=%s",key,tostring(id),identity)
             end
         end
-        commands={"g_god on"}
+        commands={"g_god on",snapshot}
         commands[#commands+1]=function()
             if reload then
                 local names={}
@@ -300,15 +308,24 @@ function on_game_start()
                 exec_console_cmd("inventory_next_store "..level.inventory_next_identity(items.bandage).." "..level.inventory_next_identity(items.pouch).." 0 0 0")
             end
             commands[#commands+1]=function()
+                assert(node(level.inventory_next_identity(items.bandage))[2]==level.inventory_next_identity(items.pouch),"bandage was not stored in the pouch")
                 assert(not level.inventory_next_custom_unequip(items.pouch),"nonempty pouch detached")
                 level.object_by_id(items.rig):set_condition(0.05)
                 printf("[SQA3 CUSTOM TEST] damaged rig below both mount thresholds")
             end
             commands[#commands+1]="inventory_next_probe export"
+            commands[#commands+1]=function()
+                local record=node(level.inventory_next_identity(items.bandage))
+                assert(record[2]=="1" and record[25]=="3","inactive mount contents were not recovered")
+                local source=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"rb"));local data=source:read("*a");source:close()
+                local target=assert(io.open(getFS():update_path("$app_data_root$","sqa3-custom-damaged.inv"),"wb"));target:write(data);target:close()
+                printf("[SQA3 CUSTOM TEST] damaged mount recovery verified")
+            end
             commands[#commands+1]="screenshot sqa3_custom_damaged"
             commands[#commands+1]=function() level.object_by_id(items.rig):set_condition(1) end
             commands[#commands+1]=function()
                 exec_console_cmd("inventory_next_store "..level.inventory_next_identity(items.bandage).." "..level.inventory_next_identity(items.pouch).." 0 0 0")
+                assert(node(level.inventory_next_identity(items.bandage))[2]==level.inventory_next_identity(items.pouch),"repaired mount did not accept recovered bandage")
             end
         end
         commands[#commands+1]=function()

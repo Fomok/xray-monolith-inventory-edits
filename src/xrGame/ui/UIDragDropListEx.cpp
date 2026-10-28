@@ -441,7 +441,7 @@ void CUIDragDropListEx::ReinitScroll()
 	//		m_vScrollBar->SetPageSize	(iFloor(GetWndSize().y/float(CellSize().y)));
 	m_vScrollBar->SetPageSize(1/*CellSize().y*/);
 
-	m_container->SetWndPos(Fvector2().set(m_sqaStorageInset, 0));
+	m_container->SetWndPos(Fvector2().set(m_sqaStorageInset, 0.0f));
 }
 
 bool CUIDragDropListEx::OnMouseAction(float x, float y, EUIMessages mouse_action)

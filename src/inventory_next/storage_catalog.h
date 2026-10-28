@@ -68,6 +68,8 @@ struct StorageDefinition {
     Mass max_contents=0;
     std::uint32_t stack_limit=0;
     std::vector<unsigned> tear_thresholds;
+    bool restricted=false;
+    std::string accept_kinds,accept_sections,reject_sections,accept_flags;
 };
 struct StorageCatalog {
     ActorStorage pockets{{4,2},{}};
@@ -97,6 +99,13 @@ struct StorageCatalog {
         item.soft=definition.growing;item.max_contents=definition.max_contents;item.max_stack_quantity=definition.stack_limit;
         item.attributes["storage_family"]=definition.family;
         item.attributes["storage_allow_container_items"]=definition.allow_container_items?"1":"0";
+        for(const auto key:{"storage_accept_kinds","storage_accept_sections","storage_reject_sections","storage_accept_flags"})item.attributes.erase(key);
+        if(definition.restricted){
+            item.attributes["storage_accept_kinds"]=definition.accept_kinds;
+            item.attributes["storage_accept_sections"]=definition.accept_sections;
+            item.attributes["storage_reject_sections"]=definition.reject_sections;
+            item.attributes["storage_accept_flags"]=definition.accept_flags;
+        }
         if(definition.independent_exterior)item.attributes["storage_exterior_independent"]="1";
         return true;
     }

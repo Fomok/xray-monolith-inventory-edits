@@ -80,9 +80,9 @@ void CUIActorMenu::SqaPrepareContainers()
                 const float width=_max(290.0f,float(columns*step)+52.0f);
                 const float delta=width-it->frame->GetWndSize().x;
                 if(delta!=0){auto position=it->frame->GetWndPos();position.x-=delta*0.5f;clamp(position.x,0.0f,1024.0f-width);
-                    it->frame->SetWndPos(position);it->frame->SetWndSize(Fvector2().set(width,380));it->rim->SetWndSize(it->frame->GetWndSize());
-                    it->title->SetWndSize(Fvector2().set(width-44.0f,20));it->close->SetWndPos(Fvector2().set(width-24.0f,4));
-                    it->list->SetWndSize(Fvector2().set(width-24.0f,334));}
+                    it->frame->SetWndPos(position);it->frame->SetWndSize(Fvector2().set(width,380.0f));it->rim->SetWndSize(it->frame->GetWndSize());
+                    it->title->SetWndSize(Fvector2().set(width-44.0f,20.0f));it->close->SetWndPos(Fvector2().set(width-24.0f,4.0f));
+                    it->list->SetWndSize(Fvector2().set(width-24.0f,334.0f));}
             }
             InventoryNextStorageView(it->list,it->owner);
             it->frame->Show(SqaLootActive());++it;
