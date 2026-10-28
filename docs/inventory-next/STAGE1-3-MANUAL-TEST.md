@@ -27,4 +27,7 @@ Other representative sections: `equ_small_pack`, `af_magpouch_l`, `amprig_scout`
 
 Report the failed step, item/section, source/destination and save name. Physical drag, keyboard rotation, stack-picker gestures, New Game flow and long-session behavior require their own native observation; a core/adapter test alone does not prove them.
 
-The five backpacks now use new development compartment layouts: main, side and lower pockets with blocked lower corners. These are clearly marked SQA3 layouts, not claimed recovered SQA2 masks. All22 original authored rig masks remain unchanged. Local authoring/preset export can change these layouts.
+The five backpacks now use new development compartment layouts: main, side, lower and base pockets with blocked lower corners. These are clearly marked SQA3 layouts, not claimed recovered SQA2 masks. All22 original authored rig masks remain unchanged. Local authoring/preset export can change these layouts.
+
+### Backpack capacity audit
+The new development layouts preserve original usable-cell counts: itm_backpack 64 to 64; equ_small_pack 80 to 80; equ_small_military_pack 96 to 96; equ_military_pack 104 to 104; equ_tourist_pack 120 to 120. A four-cell base pocket compensates for four blocked lower-corner cells; overall presentation gains one row. No usable-cell capacity reduction is intended. Compartment boundaries deliberately prevent one item spanning separate pockets, so some shapes may need rearrangement/recovery after a definition change. Growth thresholds remain the already disclosed provisional development balancing. native-backpack-layouts.json records original dimensions and both usable counts; import rejects unequal totals. All22 original rig masks remain unchanged.
