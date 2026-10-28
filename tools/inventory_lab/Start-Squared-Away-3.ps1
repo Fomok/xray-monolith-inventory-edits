@@ -16,4 +16,4 @@ $taskSettings=[regex]::Replace($taskSettings,'(?m)^rs_screenmode\s+\S+','rs_scre
 $taskSettings=[regex]::Replace($taskSettings,'(?m)^vid_mode\s+\S+','vid_mode 1280x720')
 [IO.File]::WriteAllText((Join-Path $taskRoot 'appdata/sqa3-windowed-user.ltx'),$taskSettings,[Text.UTF8Encoding]::new($false))
 $taskArguments='-dbg -inventory-lab -sqa3-logical-storage -sqa3-field-kit -sqa3-world-storage -sqa3-ground-storage -sqa3-corpse-storage -sqa3-stash-storage -sqa3-strict-owned-pickup -sqa3-strict-trade-pickup -ltx sqa3-windowed-user.ltx'
-Start-Process -FilePath (Join-Path $taskRoot 'bin/AnomalyDX11AVX.exe') -WorkingDirectory $taskRoot -ArgumentList $taskArguments -WindowStyle Normal
+Start-Process -FilePath (Join-Path $taskRoot 'bin/AnomalyDX11AVX.exe') -WorkingDirectory $taskRoot -ArgumentList $taskArguments -WindowStyle Normal -PassThru
