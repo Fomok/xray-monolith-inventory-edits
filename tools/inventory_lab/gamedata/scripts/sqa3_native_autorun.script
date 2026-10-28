@@ -270,7 +270,8 @@ function on_game_start()
             assert(alife():create("bandage",pos,a:level_vertex_id(),a:game_vertex_id(),first),"first member")
             member=assert(alife():create("bread",pos,a:level_vertex_id(),a:game_vertex_id(),second),"second member").id
             assert(alife():create("medkit",pos,a:level_vertex_id(),a:game_vertex_id(),corpse),"corpse member")
-            assert(alife():create("bandage",pos,a:level_vertex_id(),a:game_vertex_id()),"ground member")
+            local ground=a:position();ground.x=ground.x+0.3
+            assert(alife():create("bandage",ground,a:level_vertex_id(),a:game_vertex_id()),"ground member")
         end
         commands[#commands+1]=function()
             local npc=assert(level.object_by_id(corpse),"corpse actor offline");npc:kill(npc)
