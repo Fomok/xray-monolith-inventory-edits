@@ -127,12 +127,34 @@ bool read_storage_catalog(inventory_next::StorageCatalog& output) {
             LPCSTR key=nullptr,value=nullptr;
             if(!config.r_line(group,i,&key,&value)||!key||!value)return false;
             ActorStorage shape;
-            if(!parse_storage_shape(value,candidate.default_pack.grid.w,shape))return false;
+            if(value[0]=='@') {
+                const LPCSTR section=value+1;
+                if(!config.section_exist(section)||!config.line_exist(section,"size")||
+                    !parse_storage_shape(config.r_string(section,"size"),candidate.default_pack.grid.w,shape))return false;
+                if(config.line_exist(section,"mask")&&!parse_storage_mask(config.r_string(section,"mask"),shape))return false;
+            } else if(!parse_storage_shape(value,candidate.default_pack.grid.w,shape))return false;
             shapes.emplace(key,std::move(shape));
         }
         return true;
     };
     if(!read_group("grid_pack_section",candidate.sections)||!read_group("grid_pack_kind",candidate.kinds))return false;
+    if(config.section_exist("sqa3_storage_definitions"))for(u32 i=0;i<config.line_count("sqa3_storage_definitions");++i) {
+        LPCSTR item=nullptr,section=nullptr;
+        if(!config.r_line("sqa3_storage_definitions",i,&item,&section)||!item||!section||!config.section_exist(section))return false;
+        StorageDefinition definition;
+        for(const auto key:{"size","mask","family","empty","half","full","growing","allow_container_items"})
+            if(!config.line_exist(section,key))return false;
+        if(!parse_storage_shape(config.r_string(section,"size"),7,definition.interior)||
+            !parse_storage_mask(config.r_string(section,"mask"),definition.interior))return false;
+        auto exterior=[&](LPCSTR key,Size& size){ActorStorage shape;if(!parse_storage_shape(config.r_string(section,key),7,shape))return false;size=shape.grid;return true;};
+        if(!exterior("empty",definition.empty)||!exterior("half",definition.half)||!exterior("full",definition.full))return false;
+        definition.family=config.r_string(section,"family");
+        definition.growing=config.r_bool(section,"growing");definition.allow_container_items=config.r_bool(section,"allow_container_items");
+        if(config.line_exist(section,"max_contents_grams"))definition.max_contents=config.r_s32(section,"max_contents_grams");
+        if(config.line_exist(section,"stack_limit"))definition.stack_limit=config.r_u32(section,"stack_limit");
+        if(definition.max_contents<0||definition.stack_limit>1000000||definition.family.empty())return false;
+        if(!candidate.definitions.emplace(item,std::move(definition)).second)return false;
+    }
     output=std::move(candidate);return true;
 }
 
@@ -174,7 +196,7 @@ bool InventoryNextLayoutSync() noexcept try {
             n.attributes["native_live_id"]=std::to_string(item->object().ID());
             n.attributes["native_place"]=std::to_string(item->CurrPlace());
             n.attributes["native_slot"]=std::to_string(item->CurrSlot());
-            if(logical&&smart_cast<CBackpack*>(item)) {
+            if(logical&&!catalog.apply(item->m_section_id.c_str(),n)&&smart_cast<CBackpack*>(item)) {
                 const std::string section=item->m_section_id.c_str();
                 const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
                 const auto& shape=catalog.resolve(section,kind);
@@ -290,6 +312,12 @@ void InventoryNextProbe(bool export_snapshot,bool show_view) noexcept {
     } catch (...) { Msg("! SQA3 probe failed: unknown core exception"); }
 }
 
+bool InventoryNextNativeFootprint(u16 live,int& width,int& height) noexcept try {
+    if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
+    const auto id=InventoryNextIdentityLookup(live);
+    if(!id||!layout().model().nodes().count(id))return false;
+    const auto size=layout().model().footprint(id);width=size.w;height=size.h;return true;
+} catch (...) {return false;}
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view) noexcept try {
     if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
@@ -469,8 +497,8 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept
         n.wear_slots=std::uint64_t{1}<<slot;
         n.attributes["native_place"]="1";n.attributes["native_slot"]=std::to_string(slot);
     }
-    if(smart_cast<CBackpack*>(item)) {
-        StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+    StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+    if(!catalog.apply(item->m_section_id.c_str(),n)&&smart_cast<CBackpack*>(item)) {
         const std::string section=item->m_section_id.c_str();
         const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
         const auto& storage=catalog.resolve(section,kind);n.container=true;n.grid=storage.grid;n.cells=storage.cells;
@@ -590,8 +618,8 @@ bool purchase_node(u16 live,u16 source,inventory_next::Node& n) {
     n.condition=static_cast<unsigned>(std::llround(condition*10000));n.empty=n.half=n.full={shape.x2,shape.y2};
     n.attributes["native_section"]=item->m_section_id.c_str();n.attributes["native_live_id"]=std::to_string(live);
     n.attributes["native_place"]="3";n.attributes["native_slot"]=std::to_string(item->CurrSlot());
-    if(smart_cast<CBackpack*>(item)) {
-        inventory_next::StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+    inventory_next::StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+    if(!catalog.apply(item->m_section_id.c_str(),n)&&smart_cast<CBackpack*>(item)) {
         const std::string section=item->m_section_id.c_str();
         const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
         const auto& storage=catalog.resolve(section,kind);n.container=true;n.grid=storage.grid;n.cells=storage.cells;
@@ -855,8 +883,8 @@ bool world_node(u16 live,u16 parent,inventory_next::Node& node) {
         if(item->CurrSlot()>=48)return false;
         node.location=Location::Equipment;node.wear_slots=node.equipped_slots=std::uint64_t{1}<<item->CurrSlot();
     }
-    if(smart_cast<CBackpack*>(item)) {
-        StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+    StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+    if(!catalog.apply(item->m_section_id.c_str(),node)&&smart_cast<CBackpack*>(item)) {
         const std::string section=item->m_section_id.c_str();
         const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
         const auto& shape=catalog.resolve(section,kind);node.container=true;node.grid=shape.grid;node.cells=shape.cells;

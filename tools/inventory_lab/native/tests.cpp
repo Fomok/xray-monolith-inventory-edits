@@ -1015,7 +1015,9 @@ int main(int argc,char** argv) {
             yes(a.move({100,1,{2,2,false},a.model().revision(),a.model().session()}));
             auto saved=a.model().serialize();check(!a.move({100,101,{0,0,false},a.model().revision(),a.model().session()}),"cycle accepted");check(a.model().serialize()==saved,"cycle changed forest");
             yes(save_atomic(a.model(),std::string(argv[1])+".logical"));
-            ActorLayout b;yes(b.restore(saved));med.intrinsic=225;yes(b.reconcile({med,bag,pouch},pockets));
+            ActorLayout b;yes(b.restore(saved));med.intrinsic=225;
+            bag.attributes["storage_allow_container_items"]="0";
+            yes(b.reconcile({med,bag,pouch},pockets));
             check(b.model().nodes().at(102).parent==101&&b.model().nodes().at(101).parent==100&&b.model().nodes().at(100).position.x==2,"nested reload flattened or moved bags");
             check(b.model().carried_mass()==1125&&b.model().subtree_mass(101)==325,"nested mass counted twice");
             // Native equipment is authoritative even if a weapon was logically stored.
@@ -1292,6 +1294,49 @@ int main(int argc,char** argv) {
             PurchaseSession purchase(layout.model(),registry);yes(purchase.prepare({{item(100,2,38),1}},{1},{20,100}));yes(purchase.dispatch(true,{20,100}));
             no(purchase.acknowledge({{100,12}},false,{20,100}),"native_rejected");check(purchase.can_save()&&!purchase.committed_model(),"rejected purchase published");
             no(purchase.settled({19,101}),"purchase_state");
+        });
+        test("catalog applies authored storage and preserves native instance state",[]{
+            StorageCatalog catalog;StorageDefinition pack;
+            pack.family="backpack";pack.interior={{3,2},{1,1,0,2,2,0}};
+            pack.empty={1,1};pack.half={2,1};pack.full={2,2};pack.growing=true;
+            catalog.definitions.emplace("test_pack",pack);
+            auto n=item(100,1,820);n.condition=7834;n.attributes["upgrade"]="retained";
+            check(catalog.apply("test_pack",n),"catalog definition missing");
+            check(n.container&&n.soft&&n.cells==pack.interior.cells&&n.grid.w==3,"catalog shape lost");
+            check(n.intrinsic==820&&n.condition==7834&&n.attributes.at("upgrade")=="retained","catalog overwrote native state");
+            check(n.attributes.at("storage_allow_container_items")=="0","nesting default not explicit");
+            auto before=n.attributes;check(!catalog.apply("unknown",n)&&n.attributes==before,"unknown definition changed state");
+        });
+        test("authored backpack mask preserves compartment boundaries and rejects malformed imports atomically",[]{
+            ActorStorage storage;yes(parse_storage_shape("3x4",7,storage));
+            yes(parse_storage_mask("1,1,0,2|1,1,0,2|0,0,3,3",storage));
+            check(storage.cells==std::vector<unsigned>({1,1,0,2,1,1,0,2,0,0,3,3}),"mask changed authored geometry");
+            const auto before=storage.cells;
+            for(const auto& malformed:{"1,1|1,1","1,1,0,2|1,1,0,2|0,0,3,","1,1,0,2|1,1,0,2|0,0,-1,3","0,0,0,0|0,0,0,0|0,0,0,0"}) {
+                no(parse_storage_mask(malformed,storage),"storage_mask");check(storage.cells==before,"failed mask import changed layout");
+            }
+            Node actor=root(1,Kind::ActorRoot,storage.grid);actor.cells=storage.cells;
+            Node wide=item(10,1,1);wide.empty=wide.half=wide.full={2,1};wide.position={2,2,false};
+            Model m;yes(m.initialize({actor,wide}));
+            rollback(m,{10,1,{0,2,false},m.revision()},"blocked_cell");
+        });
+        test("configurable portable-container nesting refuses new relationships and preserves legacy state",[]{
+            auto nodes=fixture();nodes[2].attributes["storage_allow_container_items"]="0";
+            Model m;yes(m.initialize(nodes));
+            check(m.nodes().at(11).parent==10,"legacy nested bag lost");
+            yes(move(m,{11,1,{4,4,false},m.revision()}));
+            rollback(m,{11,10,{0,0,false},m.revision()},"container_nesting_policy");
+            Model disk;yes(disk.deserialize(m.serialize()));check(disk.serialize()==m.serialize(),"policy persistence");
+            auto before=m.serialize();
+            no(m.relocate({{11,10,{0,0,false},m.revision(),m.session()}}),"container_nesting_policy");
+            check(before==m.serialize(),"rejected compound admission mutated state");
+            Node spawned=bag(30,10,10);Command spawn;spawn.operation=Operation::Spawn;spawn.spawned=spawned;spawn.revision=m.revision();spawn.session=m.session();
+            no(m.execute(spawn),"container_nesting_policy");check(before==m.serialize(),"rejected spawn mutated state");
+            nodes[2].attributes["storage_allow_container_items"]="1";
+            Model enabled;yes(enabled.initialize(nodes));yes(move(enabled,{11,1,{4,4,false},enabled.revision()}));
+            yes(move(enabled,{11,10,{0,0,false},enabled.revision()}));
+            auto permitted=fixture();permitted[0].attributes["storage_allow_container_items"]="0";
+            Model actor;yes(actor.initialize(permitted));yes(move(actor,{11,1,{4,4,false},actor.revision()}));
         });
         test("durable file replace then reload and failed write preserves destination",[&]{
             auto m=make(); std::filesystem::path path=argv[1]; yes(save_atomic(m,path));

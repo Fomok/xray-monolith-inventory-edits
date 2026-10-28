@@ -133,7 +133,8 @@ public:
     std::string serialize() const;
     Result deserialize(const std::string& bytes);
 private:
-    Result execute_internal(const Command& request, bool recovery);
+    friend class ActorLayout;
+    Result execute_internal(const Command& request, bool recovery, bool restoring_known_placement=false);
     std::map<Id, Node> nodes_;
     std::uint64_t revision_ = 0;
     Id high_water_id_ = 0;

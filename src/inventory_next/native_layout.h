@@ -67,7 +67,13 @@ public:
             const Id destination=storage.logical?old->second.parent:1;
             // Missing/changed storage cannot silently reassign contents to pockets.
             // The native object remains actor-owned and visible in recovery.
-            candidate.move({n.id,destination,old->second.position,candidate.revision(),candidate.session()});
+            // Reapply only this exact prior identity/section/parent relationship.
+            // New admission policy may forbid creating it, but cannot erase a
+            // previously saved nested bag while rebuilding native facts.
+            Command restore;restore.operation=Operation::Move;restore.item=n.id;
+            restore.destination=destination;restore.position=old->second.position;
+            restore.revision=candidate.revision();restore.session=candidate.session();
+            candidate.execute_internal(restore,false,true);
             // Forced native size/state change may invalidate the prior position.
             // Preserve the actual item in explicit recovery until a valid fit exists.
         }

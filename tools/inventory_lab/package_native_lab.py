@@ -28,6 +28,8 @@ def main():
         data=read_overlay('tools/inventory_lab/gamedata/'+rel,optional=rel=='configs/sqa3_capacity.ltx')
         if data is not None:files["gamedata/"+rel]=data
     files["Start-Native-Input-Check.ps1"]=read_overlay('tools/inventory_lab/Start-Native-Input-Check.ps1')
+    main_launcher=read_overlay('tools/inventory_lab/Start-Squared-Away-3.ps1',optional=True)
+    if main_launcher is not None:files["Start-Squared-Away-3.ps1"]=main_launcher
     files["NATIVE-PLACEMENT.md"]=read_overlay('docs/inventory-next/NATIVE-PLACEMENT.md')
     logical=read_overlay('docs/inventory-next/NATIVE-LOGICAL-STORAGE.md',optional=True)
     ground_pickup=False

@@ -149,7 +149,7 @@ void CRenderDevice::End(void)
 			{
 				WINDOWINFO wi;
 				GetWindowInfo(m_hWnd, &wi);
-				if (wi.dwWindowStatus != WS_ACTIVECAPTION)
+				if (wi.dwWindowStatus != WS_ACTIVECAPTION && !psDeviceFlags2.test(rsAlwaysActive))
 					Pause(TRUE, TRUE, TRUE, "application start");
 			}
 		}

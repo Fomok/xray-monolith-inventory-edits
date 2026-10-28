@@ -11,6 +11,7 @@ void InventoryNextLayoutLoad(IReader&) noexcept;
 void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept;
 
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view=0) noexcept;
+bool InventoryNextNativeFootprint(u16 live,int& width,int& height) noexcept;
 bool InventoryNextNativeDrop(u16 live,int x,int y,u64 view=0) noexcept;
 bool InventoryNextNativeDragBegin(u16 live) noexcept;
 bool InventoryNextNativeDragCurrent(u16 live) noexcept;

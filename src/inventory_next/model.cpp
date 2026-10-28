@@ -49,6 +49,11 @@ unsigned region_of(const Node& n, int x, int y) {
     if (!n.container || x<0 || y<0 || x>=n.grid.w || y>=n.grid.h) return 0;
     return n.cells.empty() ? 1 : n.cells[static_cast<std::size_t>(y*n.grid.w+x)];
 }
+bool container_admission_allowed(const Node& item,const Node& destination) {
+    if(!item.container || destination.kind!=Kind::Item)return true;
+    const auto policy=destination.attributes.find("storage_allow_container_items");
+    return policy==destination.attributes.end() || policy->second!="0";
+}
 bool active_storage(const std::map<Id,Node>& nodes,const Node& n) {
     if(n.location!=Location::Mounted)return true;
     auto owner=nodes.find(n.parent);if(owner==nodes.end())return false;
@@ -281,6 +286,10 @@ Result Model::relocate(const std::vector<Move>& requests) {
         if (!targeted.emplace(request.item, true).second) return bad("duplicate_target");
         auto item = candidate.find(request.item);
         if (item == candidate.end() || item->second.kind != Kind::Item) return bad("item");
+        auto destination=candidate.find(request.destination);
+        if(destination!=candidate.end() &&
+            (item->second.parent!=request.destination || item->second.location!=Location::Grid) &&
+            !container_admission_allowed(item->second,destination->second))return bad("container_nesting_policy");
         item->second.parent = request.destination;
         item->second.position = request.position;
         item->second.location = Location::Grid;
@@ -342,7 +351,7 @@ Result Model::recover_native_arrival(Node item,std::uint64_t revision,std::uint6
     Command request;request.operation=Operation::Spawn;request.spawned=std::move(item);request.revision=revision;request.session=session;
     return execute_internal(request,true);
 }
-Result Model::execute_internal(const Command& request,bool recovery) {
+Result Model::execute_internal(const Command& request,bool recovery,bool restoring_known_placement) {
     if (!session_ || request.session != session_) return bad("stale_session");
     if (request.revision != revision_) return bad("stale_revision");
     if (revision_ == std::numeric_limits<std::uint64_t>::max()) return bad("revision_overflow");
@@ -352,6 +361,9 @@ Result Model::execute_internal(const Command& request,bool recovery) {
         if (request.spawned.kind != Kind::Item) return bad("spawn_root");
         if(request.spawned.location==Location::Overflow&&!recovery)return bad("recovery_only");
         if (request.spawned.id <= high_water_id_) return bad("id_reuse");
+        const auto destination=candidate.find(request.spawned.parent);
+        if(request.spawned.location==Location::Grid && destination!=candidate.end() &&
+            !container_admission_allowed(request.spawned,destination->second))return bad("container_nesting_policy");
         candidate.emplace(request.spawned.id, request.spawned);
         if(request.spawned.location==Location::Mounted&&!active_storage(candidate,request.spawned))return bad("mount");
         next_high_water = request.spawned.id;
@@ -360,6 +372,12 @@ Result Model::execute_internal(const Command& request,bool recovery) {
         if (item == candidate.end() || item->second.kind != Kind::Item) return bad("item");
         switch (request.operation) {
         case Operation::Move:
+            if(!recovery&&!restoring_known_placement) {
+                const auto destination=candidate.find(request.destination);
+                if(destination!=candidate.end() &&
+                    (item->second.parent!=request.destination || item->second.location!=Location::Grid) &&
+                    !container_admission_allowed(item->second,destination->second))return bad("container_nesting_policy");
+            }
             if(!recovery&&item->second.location==Location::Mounted){
                 for(const auto& [id,n]:candidate){(void)id;if(n.parent==request.item)return bad("mounted_not_empty");}
             }

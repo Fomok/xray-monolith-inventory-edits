@@ -535,7 +535,9 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
         CUICellItem* itm = create_cell_item(*itb);
         int x=0,y=0;bool rotated=false;
         if(InventoryNextEnabled()&&InventoryNextNativePosition((*itb)->object().ID(),x,y,rotated,curr_list->sqaViewOwner)) {
-            itm->SetSqaRotation(rotated);
+            int width=0,height=0;
+            if(InventoryNextNativeFootprint((*itb)->object().ID(),width,height))itm->SetSqaFootprint(width,height,rotated);
+            else itm->SetSqaRotation(rotated);
             const auto cell=Ivector2().set(x,y);
             if(curr_list->CanSetItemAt(itm,cell))curr_list->SetItem(itm,cell);
             else {Msg("! SQA3 view placement mismatch live=%u",(*itb)->object().ID());if(InventoryNextFieldKitEnabled()){xr_delete(itm);m_sqaRefresh=true;continue;}else curr_list->SetItem(itm);m_sqaRefresh=true;}
