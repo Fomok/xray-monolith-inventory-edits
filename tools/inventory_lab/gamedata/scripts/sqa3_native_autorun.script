@@ -253,6 +253,31 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-ini-diagnostic",1,true) then
+        local checks=0
+        local function check_ini()
+            local config=axr_main.config
+            local ini=config and config.ini
+            local method=ini and ini.line_exist
+            printf("[SQA3 INI DIAGNOSTIC] check=%s config=%s ini=%s method_type=%s method=%s class_method=%s jit=%s",
+                tostring(checks),tostring(config),tostring(ini),type(method),tostring(method),tostring(ini_file.line_exist),tostring(jit and jit.status()))
+            assert(type(method)=="function","configuration line_exist changed type")
+            for i=1,100 do IsWarfare() end
+            checks=checks+1
+        end
+        commands={"g_god on",check_ini}
+        for i=1,40 do
+            commands[#commands+1]=function()
+                check_ini()
+                if args:find("-sqa3-ini-toggle",1,true) then toggle_inventory() end
+            end
+        end
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]=function() printf("[SQA3 INI DIAGNOSTIC] PASS checks=%s",tostring(checks)) end
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-stash",1,true) then sqa3_stash_fixture.start(args,snapshot,toggle_inventory);return end
     travel_block_test=args:find("-sqa3-fixture-travel-blocked",1,true)~=nil
     if travel_block_test then
