@@ -257,6 +257,52 @@ function on_game_start()
         commands={snapshot,"inventory_next_probe export","quit"}
         RegisterScriptCallback("actor_on_update",update);return
     end
+    if args:find("-sqa3-fixture-box-direct-release",1,true) then
+        local shell_id,proxy_id,bandage_id,shell_identity
+        local function named(name)
+            assert(name~="","saved stash name missing")
+            local found,count=nil,0
+            alife():iterate_objects(function(obj)
+                if obj:name()==name then found=obj;count=count+1 end
+                return false
+            end)
+            assert(count==1,"saved stash identity missing or duplicated")
+            return found.id
+        end
+        commands={"g_god on",snapshot}
+        commands[#commands+1]=function()
+            local a=db.actor
+            shell_id=named(load_var(a,"sqa3_stash_shell_name",""))
+            proxy_id=named(load_var(a,"sqa3_stash_proxy_name",""))
+            shell_identity=level.inventory_next_stash_identity(shell_id)
+            assert(shell_identity==load_var(a,"sqa3_stash_shell_identity",""),"stash shell identity changed")
+            local item=assert(alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()),"direct bandage spawn")
+            bandage_id=item.id
+            save_var(a,"sqa3_box_direct_bandage_name",item:name())
+            printf("[SQA3 BOX DIRECT] source bandage=%s shell=%s proxy=%s",tostring(bandage_id),tostring(shell_id),tostring(proxy_id))
+        end
+        commands[#commands+1]=function()
+            local box=assert(level.object_by_id(proxy_id),"saved stash proxy offline")
+            assert(box:use(db.actor),"saved stash menu unavailable")
+            assert(ActorMenu.get_actor_menu():IsShown(),"stash menu closed")
+            printf("[SQA3 BOX DIRECT] ready: open stashed backpack and drag actor bandage into its empty grid cell")
+        end
+        commands[#commands+1]="screenshot sqa3_box_direct_ready"
+        commands[#commands+1]=function() started=started+120000 end
+        commands[#commands+1]=function()
+            local item=assert(level.object_by_id(bandage_id),"direct bandage disappeared")
+            assert(item:parent() and item:parent():id()==proxy_id,"bandage native custody did not move directly to stash")
+            exec_console_cmd("inventory_next_probe export")
+            local file=assert(io.open(getFS():update_path("$app_data_root$","sqa3-world-storage.inv"),"r"))
+            local world=file:read("*a");file:close()
+            local wanted=level.inventory_next_identity(bandage_id)
+            assert(world:find("\n"..wanted.." "..shell_identity.." ",1,true),"world ledger lost exact stashed-box parent")
+            printf("[SQA3 BOX DIRECT] actor-to-stashed-box native custody and logical parent PASS")
+        end
+        commands[#commands+1]="save sqa3_box_direct_release"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-mixed-sources",1,true) then
         local first,second,corpse,member
         commands={"g_god on",snapshot}
