@@ -30,10 +30,11 @@ def check(stem, mode):
         assert any('up_firsta_pm' in n['attributes'].get('native_upgrades','').split('|') for n in nodes.values())
     else:
         for marker in ['full-pocket direct rig/pouch custody and occupied refusal PASS',
-                       'source switch/disappearance native context routing PASS',
+                       'source switch/disappearance availability PASS',
                        'native medical consume/refusal and ammo 7+13 accounting PASS',
                        'loaded refusal, empty native dismantle, pouch recovery and exact parts PASS']:
             assert '[SQA3 ACTION TEST] '+marker in text,'missing native action: '+marker
+    result['manual_gaps']=re.findall(r'\[SQA3 MANUAL GAP\] (.+)',text)
     return nodes,result
 
 
