@@ -83,6 +83,7 @@ xr_vector<u16> bulk_release_candidates(CUIDragDropListEx* list)
 
 void CUIActorMenu::FilterDeadBodyList(int mode)
 {
+    if(SqaLootActive()){SqaUpdateLoot(true);return;}
 	m_pDeadBodyBagList->ClearAll(true);
 
 	TIItemContainer items_list;
@@ -218,6 +219,7 @@ void CUIActorMenu::DeInitDeadBodySearchMode()
 
 bool CUIActorMenu::ToDeadBodyBag(CUICellItem* itm, bool b_use_cursor_pos)
 {
+    if(SqaLootActive())return SqaPutLoot(static_cast<PIItem>(itm->m_pData));
 	if (m_pPartnerInvOwner)
 	{
 		if (!m_pPartnerInvOwner->deadbody_can_take_status())
@@ -278,6 +280,7 @@ bool CUIActorMenu::ToDeadBodyBag(CUICellItem* itm, bool b_use_cursor_pos)
 
 void CUIActorMenu::UpdateDeadBodyBag()
 {
+    if(SqaLootActive())return;
 	string64 buf;
 
 	LPCSTR kg_str = CStringTable().translate("st_kg").c_str();
@@ -320,6 +323,11 @@ void CUIActorMenu::UpdateDeadBodyBag()
 
 void CUIActorMenu::TakeAllFromPartner(CUIWindow* w, void* d)
 {
+    if(SqaLootActive()){
+        const auto identities=m_sqaLootIdentity;
+        for(const auto& entry:identities){auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(entry.first));if(item)SqaTakeLoot(item);}
+        return;
+    }
 	VERIFY(m_pActorInvOwner);
 	if (!m_pPartnerInvOwner)
 	{
@@ -371,6 +379,11 @@ void CUIActorMenu::TakeAllFromInventoryBox()
 
 void CUIActorMenu::PutAllToPartner(CUIWindow* w, void* d)
 {
+    if(SqaLootActive()){
+        const auto candidates=bulk_release_candidates(m_pInventoryBagList);
+        for(auto live:candidates){auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));if(item)SqaPutLoot(item);}
+        return;
+    }
 	VERIFY(m_pActorInvOwner);
 	if (!m_pPartnerInvOwner)
 	{

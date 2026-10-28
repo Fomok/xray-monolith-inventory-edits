@@ -444,11 +444,12 @@ bool CUIActorMenu::OnItemFocusedUpdate(CUICellItem* itm)
 
 bool CUIActorMenu::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
+    if(InventoryNextFieldKitEnabled()&&SqaMoveWindow(x,y,mouse_action))return true;
     if(InventoryNextFieldKitEnabled()&&mouse_action==WINDOW_LBUTTON_DOWN){
         if(!CUIDragDropListEx::m_drag_item&&y>=75&&y<93&&((x>=88&&x<98)||(x>=163&&x<173))){
             m_sqaRigView=!m_sqaRigView;SetCurrentItem(nullptr);SqaUpdateChest();return true;
         }
-        if(SqaCloseContainerAt(x,y))return true;
+        if(SqaLootClick(x,y)||SqaCloseContainerAt(x,y))return true;
     }
 	inherited::OnMouseAction(x, y, mouse_action);
 	return true; // no click`s

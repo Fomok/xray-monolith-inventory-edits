@@ -75,10 +75,12 @@ this redesign are pending; this plan does not mark any parity row complete.
 
 The original extra pistol uses native binocular slot 5. Read-only provenance:
 `C:/GAMMA/mods/113- Knife Pistol in Binocular Slot - RavenAscendant/gamedata/scripts/binoc_pistol_knife.script`.
-Its slot compatibility maps pistol to 2/1/3/5 and knife to 1/5; no third weapon
-slot is needed. The Field Kit native path adds slot 5 compatibility consistently
-for actor drag and strict external equip. Both 237x96 long rows remain. The
-75x42 sidearm area retains binocular compatibility. No installed source edited.
+Its compatibility explains the public modpack screenshot. Latest direct user
+correction in Planning (28 October) explicitly defers a native third pistol slot:
+keep only its visual frame below the detector for vanilla testing. No native
+slot 17, weapon cycling change, duplicate item control or binocular replacement
+is included. Both 237x96 long rows, knife and separate binocular control remain.
+No installed source edited.
 
 Opt-in `-sqa3-field-kit` now selects measured XML, exact public texture atlases,
 centered/collapsible storage projections, nonempty-only recovery and independent
@@ -91,3 +93,18 @@ centering/collapse/separate views and unchanged serialized ownership. Engine
 compilation and runtime visual acceptance are pending. Nearby source tabs,
 placement preview, movable container windows and full rig content remain open.
 Do not call this checkpoint a completed redesign or player-ready release.
+
+### Follow-up source checkpoint
+
+Nearby tabs now enumerate eligible native ground items, accessible boxes and the
+explicit corpse, retain empty boxes, revalidate identities/access on actions,
+and use existing acquisition/world transactions. Ground pickup preserves native
+callback/deny/visibility checks and does not occur on discovery. Headers use
+actual source mass including hidden loaded descendants. Separate windows can be
+moved by their title bars. Placement coloring uses the same DragSession preview
+as drop commit; per-owner view caching avoids rebuilding a model projection for
+every drawn cell. All these engine integrations await runtime acceptance.
+
+CI40610107317 (44d7c737) failed: duplicate FieldKit.inl include and mixed integer/
+float Fvector2.set overloads. Corrected in following source; no failed artifact
+installed. Pistol remains visual-only under the latest direct user correction.

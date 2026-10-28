@@ -2,7 +2,6 @@
 #include "UIActorMenu.h"
 #include "../InventoryNextIdentity.h"
 #include "../InventoryNextProbe.h"
-#include "../InventoryNextProbe.h"
 #include "UIActorStateInfo.h"
 #include "../actor.h"
 #include "../uigamesp.h"
@@ -32,6 +31,8 @@
 #include "UIProgressBar.h"
 #include "UICursor.h"
 #include "UICellItem.h"
+#include "UICellItemFactory.h"
+#include "../level.h"
 #include "UICharacterInfo.h"
 #include "UIItemInfo.h"
 #include "UIDragDropListEx.h"
@@ -255,6 +256,7 @@ void CUIActorMenu::Update()
 		break;
 	}
 
+    SqaUpdateLoot();
 	inherited::Update();
 	if (m_ItemInfo->CurrentItem())
 		m_ItemInfo->Update();
@@ -827,7 +829,6 @@ void CUIActorMenu::highlight_weapons_for_addon(PIItem addon_item, CUIDragDropLis
 void CUIActorMenu::ClearAllLists()
 {
     for(auto& window:m_sqaContainers)window.list->ClearAll(true);
-    for(auto& window:m_sqaContainers)window.list->ClearAll(true);
 	m_pInventoryBagList->ClearAll(true);
 	m_pInventoryBeltList->ClearAll(true);
 
@@ -888,9 +889,6 @@ void CUIActorMenu::UpdateActorMP()
 bool CUIActorMenu::CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_slot)
 {
 	u16 item_slot = item->BaseSlot();
-    if(InventoryNextFieldKitEnabled()&&l==m_pInvList[BINOCULAR_SLOT]&&(item_slot==INV_SLOT_2||item_slot==KNIFE_SLOT)){
-        ret_slot=BINOCULAR_SLOT;return true;
-    }
 	if (GetSlotList(item_slot) == l)
 	{
 		ret_slot = item_slot;
@@ -947,7 +945,5 @@ void CUIActorMenu::UpdateConditionProgressBars()
 			ci->m_select_equipped = false;
 	}
 }
-
-#include "UIActorMenuFieldKit.inl"
 
 #include "UIActorMenuFieldKit.inl"

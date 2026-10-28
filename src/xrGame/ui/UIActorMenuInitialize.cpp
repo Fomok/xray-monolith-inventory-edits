@@ -202,9 +202,9 @@ void CUIActorMenu::Construct()
             frame->SetWndPos(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"x",0),uiXml.ReadAttribFlt("slot_dragdrop",0,"y",0)));
             frame->SetWndSize(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"width",75),uiXml.ReadAttribFlt("slot_dragdrop",0,"height",42)));
             frame->InitTexture("sqa_fk_slot");
-            const LPCSTR labels[]={"","Knife","Weapon 2","Weapon 1","Grenade","Pistol / optics","Bolt","Armour / rig","PDA","Detector","Torch","","Helmet","Backpack"};
+            const LPCSTR labels[]={"","Knife","Weapon 2","Weapon 1","Grenade","Binoculars","Bolt","Armour / rig","PDA","Detector","Torch","","Helmet","Backpack"};
             if(i<14){auto caption=xr_new<CUIStatic>();caption->SetAutoDelete(true);frame->AttachChild(caption);caption->Enable(false);caption->TextureOff();
-                caption->SetWndPos(Fvector2().set(4,frame->GetWndSize().y-14));caption->SetWndSize(Fvector2().set(frame->GetWndSize().x-8,12));
+                caption->SetWndPos(Fvector2().set(4.0f,frame->GetWndSize().y-14.0f));caption->SetWndSize(Fvector2().set(frame->GetWndSize().x-8.0f,12.0f));
                 caption->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);caption->TextItemControl()->SetTextAlignment(CGameFont::alCenter);caption->TextItemControl()->SetText(labels[i]);}
 
         }
@@ -231,6 +231,12 @@ void CUIActorMenu::Construct()
 	}
 	uiXml.SetLocalRoot(stored_root);
     if(InventoryNextFieldKitEnabled()){
+        // Explicitly visual-only in vanilla: no inventory list, ownership or drop target.
+        auto pistol=xr_new<CUIFrameWindow>();pistol->SetAutoDelete(true);AttachChild(pistol);pistol->Enable(false);
+        pistol->SetWndPos(Fvector2().set(174,171));pistol->SetWndSize(Fvector2().set(75,42));pistol->InitTexture("sqa_fk_slot");
+        auto caption=xr_new<CUIStatic>();caption->SetAutoDelete(true);pistol->AttachChild(caption);caption->Enable(false);caption->TextureOff();
+        caption->SetWndPos(Fvector2().set(4,28));caption->SetWndSize(Fvector2().set(67,12));
+        caption->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);caption->TextItemControl()->SetTextAlignment(CGameFont::alCenter);caption->TextItemControl()->SetText("Pistol");
         for(int side=0;side<2;++side){
             auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);AttachChild(button);button->Enable(false);
             button->SetWndPos(Fvector2().set(side?163:88,75));button->SetWndSize(Fvector2().set(10,18));

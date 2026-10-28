@@ -372,6 +372,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 			}
 
             for(auto& window:m_sqaContainers)RemoveItemFromList(window.list,pItem);
+            if(SqaLootActive())RemoveItemFromList(m_pDeadBodyBagList,pItem);
 			u32 i = 0;
 			while (all_lists[i])
 			{
@@ -475,6 +476,7 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
         }
     }
 	ClearAllLists();
+    m_sqaLootAfter=0;
 	InventoryNextStorageView(pBagList);
     SqaPrepareContainers();
 	m_UIPropertiesBox->Hide();
@@ -747,6 +749,7 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 	CUIDragDropListEx* old_owner = itm->OwnerList();
 	PIItem iitem = (PIItem)itm->m_pData;
 
+    if(SqaLootActive()&&old_owner==m_pDeadBodyBagList)return SqaTakeLoot(iitem,slot_id);
 	bool b_own_item = (iitem->parent_id() == m_pActorInvOwner->object_id());
     if(InventoryNextStrictOwnedPickup()) {
         if(!b_own_item) {
@@ -925,6 +928,7 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 
 bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 {
+    if(SqaLootActive()&&itm->OwnerList()==m_pDeadBodyBagList)return SqaTakeLoot(static_cast<PIItem>(itm->m_pData));
 	PIItem iitem = (PIItem)itm->m_pData;
 
 	bool b_own_item = (iitem->parent_id() == m_pActorInvOwner->object_id());

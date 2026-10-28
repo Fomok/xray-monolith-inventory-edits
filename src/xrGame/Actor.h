@@ -434,6 +434,8 @@ protected:
 
 public:
 	void DrawPickupItems();
+    bool SqaCanPickup(u16 live);
+    bool SqaPickup(u16 live);
 	bool m_bDelayDrawPickupItems;
 
 	//////////////////////////////////////////////////////////////////////////

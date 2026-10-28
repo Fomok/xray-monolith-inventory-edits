@@ -17,13 +17,7 @@
     <auto_static x="260.5" y="0" width="382" height="768" stretch="1">
       <texture>sqa_fk_surface_lining</texture>
     </auto_static>
-    <auto_static x="642.5" y="0" width="381.5" height="768" stretch="1">
-      <texture>sqa_fk_surface_lining</texture>
-    </auto_static>
     <auto_static x="260.5" y="0" width="1" height="768" stretch="1">
-      <texture>sqa_fk_surface_rubber</texture>
-    </auto_static>
-    <auto_static x="642.5" y="0" width="1" height="768" stretch="1">
       <texture>sqa_fk_surface_rubber</texture>
     </auto_static>
     <auto_static x="97" y="199" width="67" height="12" stretch="1">
@@ -148,8 +142,8 @@
       </slot_highlight>
     </slot>
     <slot>
-      <slot_dragdrop x="174" y="171" width="75" height="42" cell_width="36" cell_height="36" rows_num="1" cols_num="2" custom_placement="0" a="0" virtual_cells="1" vc_vert_align="c" vc_horiz_align="c" vertical_placement="0" />
-      <slot_highlight x="174" y="171" width="75" height="42" stretch="1">
+      <slot_dragdrop x="93" y="433" width="75" height="42" cell_width="36" cell_height="36" rows_num="1" cols_num="2" custom_placement="0" a="0" virtual_cells="1" vc_vert_align="c" vc_horiz_align="c" vertical_placement="0" />
+      <slot_highlight x="93" y="433" width="75" height="42" stretch="1">
         <texture>ui_inGame2_detector_highlighter</texture>
       </slot_highlight>
     </slot>
@@ -261,22 +255,22 @@
       </slot_progress>
     </slot>
   </inventory_slot_wnd>
-  <quick_slot_highlight x="12" y="436" width="36" height="36" dx="38" stretch="1">
+  <quick_slot_highlight x="12" y="479" width="36" height="36" dx="60" stretch="1">
     <texture>ui_inGame2_quick_item_highlighter</texture>
   </quick_slot_highlight>
-  <artefact_slot_highlight x="12" y="490" width="36" height="36" dx="48" stretch="1">
+  <artefact_slot_highlight x="12" y="531" width="36" height="36" dx="48" stretch="1">
     <texture>ui_inGame2_artefakt_highlighter</texture>
   </artefact_slot_highlight>
-  <quick_slot1_text x="12" y="473" width="20" height="13">
+  <quick_slot1_text x="12" y="510" width="20" height="13">
     <text align="c" font="letterica16">quick_use_str_1</text>
   </quick_slot1_text>
-  <quick_slot2_text x="50" y="473" width="20" height="13">
+  <quick_slot2_text x="72" y="510" width="20" height="13">
     <text align="c" font="letterica16">quick_use_str_2</text>
   </quick_slot2_text>
-  <quick_slot3_text x="88" y="473" width="20" height="13">
+  <quick_slot3_text x="132" y="510" width="20" height="13">
     <text align="c" font="letterica16">quick_use_str_3</text>
   </quick_slot3_text>
-  <quick_slot4_text x="126" y="473" width="20" height="13">
+  <quick_slot4_text x="192" y="510" width="20" height="13">
     <text align="c" font="letterica16">quick_use_str_4</text>
   </quick_slot4_text>
   <actor_weight_caption x="380" y="742" width="80" height="16">
@@ -318,7 +312,7 @@
       <text align="l" font="letterica16" color="ui_3" />
     </trade_weight_max>
   </right_delimiter>
-  <belt_list_over x="12" y="490" width="36" height="36" dx="48" stretch="1">
+  <belt_list_over x="12" y="531" width="36" height="36" dx="48" stretch="1">
     <texture>ui_inGame2_artefact_blocker</texture>
   </belt_list_over>
   <helmet_over x="12" y="9" width="75" height="96" stretch="1">
@@ -329,13 +323,13 @@
   </backpack_over>
   <dragdrop_trash x="12" y="735" width="237" height="24" cell_width="237" cell_height="24" rows_num="1" cols_num="1" a="0" />
   <dragdrop_bag x="300" y="114" width="306" height="574" cell_width="36" cell_height="36" rows_num="64" cols_num="8" unlimited="1" group_similar="0" always_show_scroll="1" condition_progress_bar="1" custom_placement="1" />
-  <dragdrop_belt x="12" y="490" width="237" height="36" cell_width="36" cell_height="36" rows_num="1" cols_num="5" cell_sp_x="12" cell_sp_y="0" a="0" />
+  <dragdrop_belt x="12" y="531" width="237" height="36" cell_width="36" cell_height="36" rows_num="1" cols_num="5" cell_sp_x="12" cell_sp_y="0" a="0" />
   <dragdrop_actor_trade x="300" y="114" width="306" height="164" cell_width="41" cell_height="41" rows_num="4" cols_num="7" unlimited="1" group_similar="1" always_show_scroll="1" condition_progress_bar="1" />
   <dragdrop_actor_trade_bag x="300" y="340" width="306" height="350" cell_width="36" cell_height="36" rows_num="64" cols_num="8" unlimited="1" group_similar="0" always_show_scroll="1" condition_progress_bar="1" custom_placement="1" />
   <dragdrop_partner_trade x="680" y="114" width="306" height="164" cell_width="41" cell_height="41" rows_num="4" cols_num="7" unlimited="1" group_similar="1" always_show_scroll="1" condition_progress_bar="1" />
   <dragdrop_partner_bag x="680" y="340" width="306" height="350" cell_width="41" cell_height="41" rows_num="9" cols_num="7" unlimited="1" group_similar="1" always_show_scroll="1" condition_progress_bar="1" />
-  <dragdrop_deadbody_bag x="680" y="114" width="306" height="574" cell_width="41" cell_height="41" rows_num="14" cols_num="7" unlimited="1" group_similar="1" always_show_scroll="1" condition_progress_bar="1" />
-  <dragdrop_quick_slots x="12" y="436" width="150" height="36" cell_width="36" cell_height="36" a="0" rows_num="1" cols_num="4" cell_sp_x="2" cell_sp_y="0" custom_placement="1" always_show_scroll="0" />
+  <dragdrop_deadbody_bag x="680" y="114" width="306" height="574" cell_width="41" cell_height="41" rows_num="14" cols_num="7" unlimited="1" group_similar="0" always_show_scroll="1" condition_progress_bar="1" />
+  <dragdrop_quick_slots x="12" y="479" width="237" height="36" cell_width="36" cell_height="36" a="0" rows_num="1" cols_num="4" cell_sp_x="24" cell_sp_y="0" custom_placement="1" always_show_scroll="0" />
   <trade_buy_button x="680" y="284" width="134" height="26" stretch="1" hint="ui_st_buy_hint">
     <window_name>trade_buy_button</window_name>
     <texture>ui_inGame2_inventory_button</texture>
@@ -443,186 +437,186 @@
       <font font="letterica16" r="170" g="170" b="170" align="l" vert_align="t" />
     </text>
   </hint_wnd>
-  <actor_state_info x="0" y="540" width="260" height="190">
-    <hint_wnd x="0.0" y="0" width="387.719" height="170">
-      <background x="0.0" y="0" width="387.719" height="170">
+  <actor_state_info x="0" y="575" width="260" height="125">
+    <hint_wnd x="0.0" y="0.0" width="387.719" height="111.842">
+      <background x="0.0" y="0.0" width="387.719" height="111.842">
         <texture>ui_inGame2_hint_wnd_main_window</texture>
       </background>
-      <text x="15.205" y="20" width="354.269" height="130" always_show_scroll="0" fit_to_height="1" complex_mode="1">
+      <text x="15.205" y="13.158" width="354.269" height="85.526" always_show_scroll="0" fit_to_height="1" complex_mode="1">
         <font font="letterica16" r="170" g="170" b="170" align="l" vert_align="t" />
       </text>
     </hint_wnd>
-    <health_state x="11.404" y="42" width="214.386" height="18">
+    <health_state x="11.404" y="27.632" width="214.386" height="11.842">
       <hint_text delay="800">st_ui_health_sensor_inv</hint_text>
-      <state_progress x="0.0" y="5" width="214.386" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="214.386" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="214.386" height="18">
+      <auto_static x="0.0" y="-7.895" width="214.386" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Health</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="214.386" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="214.386" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </health_state>
-    <bleeding_state x="-941.17" y="6" width="34.211" height="45">
+    <bleeding_state x="-941.17" y="3.947" width="34.211" height="29.605">
       <hint_text delay="800">st_ui_bleeding_sensor</hint_text>
-      <icon x="0.0" y="0" width="34.211" height="45" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
+      <icon x="0.0" y="0.0" width="34.211" height="29.605" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
         <texture>ui_inGame2_bleeding_inv_green</texture>
       </icon>
-      <icon2 x="0.0" y="0" width="34.211" height="45" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
+      <icon2 x="0.0" y="0.0" width="34.211" height="29.605" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
         <texture>ui_inGame2_bleeding_inv_yellow</texture>
       </icon2>
-      <icon3 x="0.0" y="0" width="34.211" height="45" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
+      <icon3 x="0.0" y="0.0" width="34.211" height="29.605" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
         <texture>ui_inGame2_bleeding_inv_red</texture>
       </icon3>
     </bleeding_state>
-    <radiation_state x="-978.421" y="7" width="34.211" height="45">
+    <radiation_state x="-978.421" y="4.605" width="34.211" height="29.605">
       <hint_text delay="800">st_ui_main_sensor</hint_text>
-      <icon x="0.0" y="0" width="34.211" height="45" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
+      <icon x="0.0" y="0.0" width="34.211" height="29.605" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
         <texture>ui_inGame2_radiation_inv_green</texture>
       </icon>
-      <icon2 x="0.0" y="0" width="34.211" height="45" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
+      <icon2 x="0.0" y="0.0" width="34.211" height="29.605" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
         <texture>ui_inGame2_radiation_inv_yellow</texture>
       </icon2>
-      <icon3 x="0.0" y="0" width="34.211" height="45" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
+      <icon3 x="0.0" y="0.0" width="34.211" height="29.605" light_anim="ui_slow_blinking" la_cyclic="1" la_texture="1" la_text="0" la_alpha="1" stretch="1">
         <texture>ui_inGame2_radiation_inv_red</texture>
       </icon3>
     </radiation_state>
-    <radia_sensor x="11.404" y="72" width="110.234" height="18">
+    <radia_sensor x="11.404" y="47.368" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_radiation_protection</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Radiation</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </radia_sensor>
-    <acid_sensor x="11.404" y="100" width="110.234" height="18">
+    <acid_sensor x="11.404" y="65.789" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_chemical_burn_protection</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress>
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Chemical</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </acid_sensor>
-    <shock_sensor x="11.404" y="128" width="110.234" height="18">
+    <shock_sensor x="11.404" y="84.211" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_shock_protection</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Electrical</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </shock_sensor>
-    <fire_sensor x="11.404" y="156" width="110.234" height="18">
+    <fire_sensor x="11.404" y="102.632" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_burn_protection</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Thermal</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </fire_sensor>
-    <psi_sensor x="132.281" y="72" width="110.234" height="18">
+    <psi_sensor x="132.281" y="47.368" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_telepatic_protection</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Psy</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </psi_sensor>
-    <wound_sensor x="132.281" y="100" width="110.234" height="18">
+    <wound_sensor x="132.281" y="65.789" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_wound_protection</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Rupture</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </wound_sensor>
-    <fire_wound_sensor x="132.281" y="128" width="110.234" height="18">
+    <fire_wound_sensor x="132.281" y="84.211" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_fire_wound_protection</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="1" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="1" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Ballistic</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </fire_wound_sensor>
-    <power_sensor x="132.281" y="156" width="110.234" height="18">
+    <power_sensor x="132.281" y="102.632" width="110.234" height="11.842">
       <hint_text delay="800">ui_inv_power_restore</hint_text>
-      <icon x="0.0" y="0" width="13.684" height="18" magnitude="100" stretch="1">
+      <icon x="0.0" y="0.0" width="13.684" height="11.842" magnitude="100" stretch="1">
         <text align="c" vert_align="c" font="graffiti22" color="ui_7">99</text>
       </icon>
-      <state_progress x="0.0" y="5" width="110.234" height="7" horz="1" min="0" max="15" pos="0">
+      <state_progress x="0.0" y="3.289" width="110.234" height="4.605" horz="1" min="0" max="15" pos="0">
         <progress stretch="1">
           <texture r="130" g="155" b="105">sqa_fk_window_t</texture>
         </progress>
       </state_progress>
-      <auto_static x="0.0" y="-12" width="110.234" height="18">
+      <auto_static x="0.0" y="-7.895" width="110.234" height="11.842">
         <text font="letterica16" align="l" r="150" g="150" b="150">Carry capacity</text>
       </auto_static>
-      <auto_static x="0.0" y="5" width="110.234" height="7" stretch="1">
+      <auto_static x="0.0" y="3.289" width="110.234" height="4.605" stretch="1">
         <texture a="180">sqa_fk_window_back</texture>
       </auto_static>
     </power_sensor>

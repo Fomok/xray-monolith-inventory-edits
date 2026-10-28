@@ -1,4 +1,5 @@
 #pragma once
+#include "../InventoryNextProbe.h"
 
 #include "script_export_space.h"
 
@@ -203,6 +204,21 @@ public:
     bool SqaOpenContainer(PIItem item);
     void SqaPrepareContainers();
     bool m_sqaRigView=false;
+    xr_vector<InventoryNextLootSource> m_sqaLootSources;
+    xr_vector<CUIStatic*> m_sqaLootTabs;
+    xr_map<u16,u64> m_sqaLootIdentity;
+    u16 m_sqaLootSource=0xffff;
+    u64 m_sqaLootSourceIdentity=0;
+    u32 m_sqaLootAfter=0;
+    void SqaUpdateLoot(bool force=false);
+    bool SqaLootClick(float x,float y);
+    bool SqaTakeLoot(PIItem item,u16 slot=0xffff);
+    bool SqaPutLoot(PIItem item);
+    bool SqaLootActive() const;
+    void SqaForgetLoot(u16 live);
+    u64 m_sqaMovingWindow=0;
+    Fvector2 m_sqaWindowOffset;
+    bool SqaMoveWindow(float x,float y,EUIMessages action);
     void SqaUpdateChest();
     bool SqaCloseContainerAt(float x,float y);
 

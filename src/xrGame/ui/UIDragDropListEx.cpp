@@ -352,12 +352,12 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
         rim->SetWndSize(label->GetWndSize());rim->InitTexture("sqa_fk_header");rim->Enable(false);
         label->TextItemControl()->SetText("");
         auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);label->AttachChild(title);title->Enable(false);title->TextureOff();
-        title->SetWndPos(Fvector2().set(24,1));title->SetWndSize(Fvector2().set(GetWndSize().x-104,18));
+        title->SetWndPos(Fvector2().set(24,1));title->SetWndSize(Fvector2().set(GetWndSize().x-104.0f,18.0f));
         title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         title->TextItemControl()->SetTextAlignment(CGameFont::alCenter);title->TextItemControl()->SetEllipsis(true);
         title->TextItemControl()->SetTextColor(color);title->TextItemControl()->SetText(text);
         auto weight=xr_new<CUIStatic>();weight->SetAutoDelete(true);label->AttachChild(weight);weight->Enable(false);
-        weight->SetWndPos(Fvector2().set(GetWndSize().x-78,1));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
+        weight->SetWndPos(Fvector2().set(GetWndSize().x-78.0f,1.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
         weight->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
         string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);weight->TextItemControl()->SetText(amount);
@@ -1030,6 +1030,13 @@ void CUICellContainer::Draw()
 
 	GetCellsInRange(tgt_cells, m_cells_to_draw);
 
+    Ivector2 previewCell;previewCell.set(-1,-1);int previewWidth=0,previewHeight=0,preview=0;
+    auto drag=CUIDragDropListEx::m_drag_item;
+    if(InventoryNextFieldKitEnabled()&&m_pParentDragDropList->HasStorageHeaders()&&drag&&drag->BackList()==m_pParentDragDropList){
+        previewCell=m_pParentDragDropList->PickCell(m_pParentDragDropList->GetDragItemPosition());
+        auto item=static_cast<PIItem>(drag->ParentItem()->m_pData);
+        if(item)preview=InventoryNextNativePreview(item->object_id(),previewCell.x,previewCell.y,m_pParentDragDropList->sqaViewOwner,previewWidth,previewHeight);
+    }
 	// Draw a bounded, scrolling cell surface from the existing Field Kit atlas.
 	// Native selection highlights and item icons are drawn above this pass.
 	if (InventoryNextEnabled() && color_get_A(m_pParentDragDropList->back_color) != 0)
@@ -1045,7 +1052,7 @@ void CUICellContainer::Draw()
 					const Fvector2& p=pts[k];
 					UIRender->PushPoint(iFloor(drawLT.x+(f_len.x+sp_len.x)*x+p.x*f_len.x)-0.5f,
 						iFloor(drawLT.y+(f_len.y+sp_len.y)*y+p.y*f_len.y)-0.5f,0,
-						storage==2?color_rgba(210,100,70,170):color_rgba(160,170,155,170),(8.0f+p.x*128.0f)/1024.0f,(8.0f+p.y*128.0f)/1024.0f);
+						(preview&&x+tgt_cells.lt.x>=previewCell.x&&x+tgt_cells.lt.x<previewCell.x+previewWidth&&y+tgt_cells.lt.y>=previewCell.y&&y+tgt_cells.lt.y<previewCell.y+previewHeight)?(preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220)):(storage==2?color_rgba(210,100,70,170):color_rgba(160,170,155,170)),(8.0f+p.x*128.0f)/1024.0f,(8.0f+p.y*128.0f)/1024.0f);
 				}
 		UIRender->SetShader(*hSqaGrid);
 		UIRender->FlushPrimitive();

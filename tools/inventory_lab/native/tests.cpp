@@ -1034,6 +1034,21 @@ int main(int argc,char** argv) {
             check(view.position(a.model().nodes().at(100),p)&&p.y==13&&!view.destination(p.x,p.y,owner,local),"recovery became legal capacity");
             check(before==a.model().serialize(),"view changed ownership or mass");
         });
+        test("cross-window drop preview and commit share local coordinates without preview mutation",[]{
+            auto outer=item(100,1,800);outer.container=true;outer.grid={8,8};outer.empty=outer.half=outer.full={2,2};
+            auto inner=item(101,1,300);inner.container=true;inner.grid={4,4};auto med=item(102,1,200);
+            ActorLayout a;yes(a.reconcile({outer,inner,med},{{4,2},{},true}));
+            yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
+            yes(a.move({102,101,{2,2,false},a.model().revision(),a.model().session()}));
+            StorageViewOptions options;options.owner=100;options.center=true;NativeStorageView view;yes(view.build(a.model(),options));
+            Id owner=0;Position local;check(view.destination(3,4,owner,local)&&owner==100&&local.x==3&&local.y==3,"destination mapping");
+            DragSession drag;yes(drag.begin(a.model(),102));const auto before=a.model().serialize();
+            auto preview=drag.preview(a.model(),owner,local.x,local.y,false,{});yes(preview.result);
+            check(a.model().serialize()==before,"preview mutated authoritative placement");
+            auto proposal=drag.release(a.model(),owner,local.x,local.y,false,{});yes(proposal.result);yes(a.move(proposal.moves.front()));
+            check(a.model().nodes().at(102).parent==100&&a.model().nodes().at(102).position.x==3&&a.model().carried_mass()==1300,"cross-window commit owner or mass");
+            yes(drag.begin(a.model(),102));auto invalid=drag.preview(a.model(),100,1,1,false,{});check(!invalid.result,"occupied cell accepted");
+        });
         test("separate and collapsed storage views preserve model and hide inaccessible display cells",[]{
             auto bag=item(100,1,800);bag.container=true;bag.grid={8,8};bag.empty=bag.half=bag.full={2,2};
             auto inner=item(101,1,300);inner.container=true;inner.grid={4,4};

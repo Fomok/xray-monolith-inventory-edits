@@ -65,3 +65,10 @@ bool InventoryNextFieldKitEnabled() noexcept;
 u64 InventoryNextContainer(u16 live) noexcept;
 u64 InventoryNextViewOwner(u16 live) noexcept;
 void InventoryNextStorageToggle(u64 owner) noexcept;
+
+struct InventoryNextLootSource {u16 live=0xffff;u64 identity=0;s64 grams=0;std::string name;xr_vector<u16> items;};
+xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse=0xffff) noexcept;
+bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot=0xffff) noexcept;
+bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept;
+
+int InventoryNextNativePreview(u16 live,int x,int y,u64 view,int& width,int& height) noexcept;

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "actor.h"
+#include "InventoryNextProbe.h"
+#include "InventoryNextIdentity.h"
 #include "weapon.h"
 #include "mercuryball.h"
 #include "inventory.h"
@@ -394,4 +396,28 @@ void CActor::Feel_Grenade_Update( float rad )
 	}// for it
 
 	HUD().Update_GrenadeView( pos_actor );
+}
+
+// Field Kit uses the native reach, visibility, deny and script callback checks.
+bool CActor::SqaCanPickup(u16 live)
+{
+    if(!InventoryNextFieldKitEnabled()||!InventoryNextStrictPickup())return false;
+    auto object=Level().Objects.net_Find(live);auto item=smart_cast<CInventoryItem*>(object);
+    if(!object||object->getDestroy()||!item||object->H_Parent()||!item->CanTake()||!item->Useful()||smart_cast<CExplosiveRocket*>(object))return false;
+    if(Level().m_feel_deny.is_object_denied(object))return false;
+    Fvector center;object->Center(center);if(center.distance_to_sqr(Position())>4.0f)return false;
+    CFrustum frustum;frustum.CreateFromMatrix(Device.mFullTransform,FRUSTUM_P_LRTB|FRUSTUM_P_FAR);
+    return frustum.testSphere_dirty(center,object->Radius())&&CanPickItem(frustum,Device.vCameraPosition,object);
+}
+bool CActor::SqaPickup(u16 live)
+{
+    if(!SqaCanPickup(live))return false;
+    const auto identity=InventoryNextIdentity(live);if(!identity)return false;
+    auto object=smart_cast<CGameObject*>(Level().Objects.net_Find(live));
+    ::luabind::functor<bool> callback;
+    if(ai().script_engine().functor("bind_stalker_ext.actor_on_item_before_pickup",callback)&&!callback(object->lua_game_object()))return false;
+    if(!SqaCanPickup(live)||InventoryNextIdentity(live)!=identity)return false;
+    if(auto usable=smart_cast<CUsableScriptObject*>(Level().Objects.net_Find(live)))usable->use(this);
+    if(!SqaCanPickup(live)||InventoryNextIdentity(live)!=identity)return false;
+    Game().SendPickUpEvent(ID(),live);return true;
 }

@@ -21,6 +21,7 @@ if(!$manifest.logical_storage_opt_in){throw 'This lab currently has a different 
 if($StrictGroundPickup -and !$manifest.ground_pickup_opt_in){throw 'This engine package has no strict ground-pickup mode.'}
 if($StrictOwnedPickup -and !$manifest.owned_pickup_opt_in){throw 'This engine package has no strict owned-source pickup mode.'}
 if($StrictTradePickup -and !$manifest.trade_pickup_opt_in){throw 'This engine package has no strict purchase mode.'}
+if($FieldKit){$StashStorage=$true;$CorpseStorage=$true;$StrictOwnedPickup=$true}
 if($Save -like 'sqa3_world_*'){$WorldStorage=$true}
 if($Save -like 'sqa3_ground_*'){$GroundStorage=$true}
 if($Save -like 'sqa3_corpse_*'){$CorpseStorage=$true}
