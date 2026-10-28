@@ -81,6 +81,13 @@ void CUIActorMenu::SqaUpdateChest()
         m_pInvList[1]->SetWndPos(Fvector2().set(93,171));m_pInvList[1]->SetWndSize(Fvector2().set(both?36.0f:75.0f,42.0f));
         m_pInvList[5]->SetWndPos(Fvector2().set(both?132.0f:93.0f,171.0f));m_pInvList[5]->SetWndSize(Fvector2().set(both?36.0f:75.0f,42.0f));
         m_pInvList[1]->Show(knife||!binocular);m_pInvList[5]->Show(binocular);
+        for(int slot:{1,5})if(m_pInvList[slot]->ItemsCount()){
+            auto item=m_pInvList[slot]->GetItemIdx(0);const auto grid=item->GetGridSize();
+            const float width=m_pInvList[slot]->GetWndSize().x-4.0f;
+            const float scale=_min(width/float(grid.x),28.0f/float(grid.y));
+            item->SetWndSize(Fvector2().set(scale*grid.x,scale*grid.y));
+            item->SetWndPos(Fvector2().set((width+4.0f-scale*grid.x)*0.5f,(28.0f-scale*grid.y)*0.5f));
+        }
         if(m_pInvSlotHighlight[5])m_pInvSlotHighlight[5]->Show(false);
     }
     if(m_sqaChestCaption)m_sqaChestCaption->TextItemControl()->SetText(m_sqaRigView?"Rig":"Armour");
