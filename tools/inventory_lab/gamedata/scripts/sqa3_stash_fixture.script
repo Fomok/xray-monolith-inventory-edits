@@ -25,6 +25,7 @@ function start(args,snapshot,open_inventory)
     local shell,proxy,identity,created,removed=nil,nil,nil,0,0
     local stage,started,failed=1,nil,false
     local commands={}
+    local filler={}
     local function find_named(name)
         local found,count=nil,0
         alife():iterate_objects(function(obj) if obj:name()==name then found=obj;count=count+1 end return false end)
@@ -75,7 +76,25 @@ function start(args,snapshot,open_inventory)
         if nofit then
             commands[#commands+1]=function()
                 local a=db.actor
-                for i=1,6 do assert(alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()),"full-pocket fixture spawn failed") end
+                for i=1,6 do
+                    local obj=assert(alife():create("bandage",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()),"full-pocket fixture spawn failed")
+                    filler[#filler+1]=obj.id
+                end
+            end
+            commands[#commands+1]="inventory_next_probe export"
+            commands[#commands+1]=function()
+                local file=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"r"))
+                local contents=file:read("*a");file:close()
+                for i,live in ipairs(filler) do
+                    local encoded=tostring(live):gsub(".",function(c)return string.format("%02x",string.byte(c)) end)
+                    local identity
+                    for line in contents:gmatch("[^\n]+") do
+                        if line:find(" native_live_id x"..encoded.." ",1,true) then identity=line:match("^(%d+)") end
+                    end
+                    assert(identity,"filler identity missing")
+                    exec_console_cmd("inventory_next_store "..identity.." 1 "..((i-1)%3).." "..math.floor((i-1)/3).." 0")
+                end
+                printf("[SQA3 STASH TEST] explicitly placed six filler bandages in vacated pocket cells")
             end
         end
         if equipped then
@@ -118,6 +137,7 @@ function start(args,snapshot,open_inventory)
                     elseif cancel then item_backpack.GUI:Close()
                     else item_backpack.GUI:OnAccept() end
                     printf("[SQA3 STASH TEST] native fixture action=%s",returning and "take all" or (cancel and "close dialog" or "accept dialog"))
+                    if timeout then started=started+6000 end
                 else
                     started=started+(context and 90000 or 60000)
                     printf("[SQA3 STASH TEST] physical window action=%s",returning and "retrieve" or (cancel and "cancel dialog" or "accept dialog"))

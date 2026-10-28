@@ -78,3 +78,4 @@ $json=$report | ConvertTo-Json -Depth 5
 [IO.File]::WriteAllText((Join-Path $evidence ($EvidenceStem+'-run.json')),$json,[Text.UTF8Encoding]::new($false))
 Write-Output $json
 if($timedOut -or $exitCode -ne 0){exit 1}
+exit 0
