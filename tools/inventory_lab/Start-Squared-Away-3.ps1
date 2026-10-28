@@ -11,5 +11,9 @@ foreach($entry in $taskManifest.files.PSObject.Properties){
 }
 # Normal main-menu startup: New Game and Load are available. No autorun fixture,
 # diagnostic scenario or forced save is selected by this launcher.
-$taskArguments='-dbg -inventory-lab -sqa3-logical-storage -sqa3-field-kit -sqa3-world-storage -sqa3-ground-storage -sqa3-corpse-storage -sqa3-stash-storage -sqa3-strict-owned-pickup -sqa3-strict-trade-pickup'
+$taskSettings=Get-Content -LiteralPath (Join-Path $taskRoot 'appdata/user.ltx') -Raw
+$taskSettings=[regex]::Replace($taskSettings,'(?m)^rs_screenmode\s+\S+','rs_screenmode windowed')
+$taskSettings=[regex]::Replace($taskSettings,'(?m)^vid_mode\s+\S+','vid_mode 1280x720')
+[IO.File]::WriteAllText((Join-Path $taskRoot 'appdata/sqa3-windowed-user.ltx'),$taskSettings,[Text.UTF8Encoding]::new($false))
+$taskArguments='-dbg -inventory-lab -sqa3-logical-storage -sqa3-field-kit -sqa3-world-storage -sqa3-ground-storage -sqa3-corpse-storage -sqa3-stash-storage -sqa3-strict-owned-pickup -sqa3-strict-trade-pickup -ltx sqa3-windowed-user.ltx'
 Start-Process -FilePath (Join-Path $taskRoot 'bin/AnomalyDX11AVX.exe') -WorkingDirectory $taskRoot -ArgumentList $taskArguments -WindowStyle Normal

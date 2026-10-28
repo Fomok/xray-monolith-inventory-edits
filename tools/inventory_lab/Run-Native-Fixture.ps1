@@ -40,6 +40,8 @@ try {
         $taskSettings=Get-Content -LiteralPath (Join-Path $lab 'appdata/user.ltx') -Raw
         if($taskSettings -notmatch '(?m)^g_always_active\s+'){throw 'Expected native background setting missing.'}
         $taskSettings=[regex]::Replace($taskSettings,'(?m)^g_always_active\s+\S+','g_always_active on')
+        $taskSettings=[regex]::Replace($taskSettings,'(?m)^rs_screenmode\s+\S+','rs_screenmode windowed')
+        $taskSettings=[regex]::Replace($taskSettings,'(?m)^vid_mode\s+\S+','vid_mode 1280x720')
         [IO.File]::WriteAllText((Join-Path $lab 'appdata/sqa3-fixture-user.ltx'),$taskSettings,[Text.UTF8Encoding]::new($false))
         $Arguments+=' -ltx sqa3-fixture-user.ltx'
         if($Background){$taskWindowStyle='Hidden'}
