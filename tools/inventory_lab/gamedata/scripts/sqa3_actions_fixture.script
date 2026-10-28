@@ -6,7 +6,10 @@ function plan(snapshot)
     local function identity(key) return level.inventory_next_identity(ids[key]) end
     local function spawn(key,section,parent)
         local a=db.actor;local pos=a:position();pos.x=pos.x+0.8
-        local item=assert(alife():create(section,pos,a:level_vertex_id(),a:game_vertex_id(),parent))
+        local item
+        if parent then item=alife():create(section,pos,a:level_vertex_id(),a:game_vertex_id(),parent)
+        else item=alife():create(section,pos,a:level_vertex_id(),a:game_vertex_id()) end
+        assert(item,"native spawn refused "..section)
         ids[key]=item.id;names[key]=item:name()
     end
     local function export() exec_console_cmd("inventory_next_probe export") end
