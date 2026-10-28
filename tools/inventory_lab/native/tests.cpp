@@ -350,6 +350,19 @@ int main(int argc,char** argv) {
                 "candidate insertion lost exact cell or item condition");
             check(world.serialize()==original,"candidate insertion mutated published record");
         });
+        test("empty detached box adopts native shell before direct leaf admission",[]{
+            auto box=bag(100,2,200);box.attributes["storage_allow_container_items"]="0";
+            auto med=item(101,2,30);med.condition=8100;
+            WorldSubtrees world;yes(world.adopt_empty(box,900));
+            no(world.adopt_empty(box,900),"world_storage_shell");
+            const auto before=world.serialize();WorldSubtrees inserted;
+            yes(world.with_leaf(100,900,med,{1,1,false},inserted));
+            check(world.serialize()==before&&inserted.records().at(100).tree.nodes().at(101).position.x==1&&
+                inserted.records().at(100).tree.nodes().at(101).condition==8100,
+                "empty shell admission changed source or lost native state");
+            WorldSubtrees loaded;yes(loaded.restore(inserted.serialize()));
+            check(loaded.records().at(100).tree.subtree_mass(100)==230,"empty shell restart lost leaf mass");
+        });
         test("detached boxes relocate one leaf directly with exact cell and no actor staging",[]{
             auto first=bag(100,2,200),second=bag(110,2,200,{3,0,false});
             auto med=item(101,100,30,{0,0,false});med.condition=7600;

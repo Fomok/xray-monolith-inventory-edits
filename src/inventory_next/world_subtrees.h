@@ -67,6 +67,16 @@ public:
         if(candidate.serialize().size()>max_bytes)return {false,"world_storage_size"};
         *this=std::move(candidate);return {true,{}};
     }
+    Result adopt_empty(Node shell,Id custodian) {
+        if(!shell.container||shell.kind!=Kind::Item||shell.id<100||
+           (custodian&&custodian<100)||records_.count(shell.id))return {false,"world_storage_shell"};
+        Node actor;actor.id=1;actor.kind=Kind::ActorRoot;actor.category=0;actor.container=true;actor.grid={1,1};
+        Node world=actor;world.id=2;world.kind=Kind::WorldRoot;world.grid={64,64};
+        shell.parent=2;shell.location=Location::Grid;shell.position={};
+        shell.equipped_slots=0;shell.mounted_slot=0;
+        Model empty;if(const auto result=empty.initialize({actor,world,shell});!result)return result;
+        return capture(empty,shell.id,custodian);
+    }
     Result release(Id shell,Id expected_custodian) {
         auto found=records_.find(shell);
         if(found==records_.end()||found->second.custodian!=expected_custodian)return {false,"world_storage_custodian"};

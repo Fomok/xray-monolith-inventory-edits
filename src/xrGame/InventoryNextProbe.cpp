@@ -1782,6 +1782,24 @@ bool InventoryNextFieldKitEnabled() noexcept {
 u64 InventoryNextContainer(u16 live) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!layout_current)return 0;
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
+    if(found==layout().model().nodes().end()&&!world_storage().records().count(id)&&
+       InventoryNextWorldStorageEnabled()&&InventoryNextPickupCanSave()&&Actor()){
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+        const u16 source=item?item->parent_id():u16(0xffff);
+        auto server=ai().alife().objects().object(live,true);
+        if(item&&source!=0xffff&&source!=Actor()->ID()&&server&&server->ID_Parent==source&&
+           server->children.empty()&&smart_cast<CInventoryBox*>(Level().Objects.net_Find(source))&&
+           world_access(source,Actor()->ID())){
+            inventory_next::Node shell;
+            if(world_node(live,source,shell)&&shell.id==id&&shell.container){
+                auto candidate=world_storage();
+                if(candidate.adopt_empty(shell,InventoryNextIdentity(source))){
+                    world_storage()=std::move(candidate);storage_views.clear();
+                    Msg("* SQA3 empty detached box adopted shell=%llu source=%u",id,source);
+                }
+            }
+        }
+    }
     if(found==layout().model().nodes().end()&&world_storage().records().count(id))return id;
     if(found==layout().model().nodes().end()||!found->second.container)return 0;
     const auto family=found->second.attributes.find("storage_family");
