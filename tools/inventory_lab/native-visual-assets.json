@@ -15,5 +15,14 @@
     "source_sha256": "01eeb2b22bb128916342cf1ccfee06034f9ff459aac546a3ea47a001b7cc4288",
     "derived_sha256": "04f4a52fa6e2cfe9b46e8cddda11ffe485c257b878ef298e6146d8ca36511cc8",
     "change": "Only enable_feature expression changes: retain helper functions, suppress old Lua presentation/callback overrides in -inventory-lab -dbg."
-  }
+  },
+  "additional_textures": [
+    {
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\sqa_fk_panels.dds",
+      "destination": "gamedata/textures/ui/sqa_fk_panels.dds",
+      "bytes": 33554560,
+      "sha256": "32e928dfce68f3c70975f01063d89fc8b23daae639d7b209adade6b4550167f2",
+      "note": "Exact released Field Kit panels; source crops remain in texture descriptors, no raster resampling."
+    }
+  ]
 }

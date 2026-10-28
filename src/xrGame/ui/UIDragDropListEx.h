@@ -74,10 +74,12 @@ protected:
 
 public:
 	static CUIDragItem* m_drag_item;
-    void AddStorageHeader(int row,LPCSTR text,u32 color);
+    void AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner=0,s64 grams=0,bool collapsed=false);
+    u64 sqaViewOwner=0;
     bool HasStorageHeaders() const {return !m_storageHeaders.empty();}
 private:
     xr_vector<std::pair<int,CUIStatic*>> m_storageHeaders;
+    xr_vector<u64> m_storageHeaderOwners;
 public:
 	CUIDragDropListEx();
 	virtual ~CUIDragDropListEx();

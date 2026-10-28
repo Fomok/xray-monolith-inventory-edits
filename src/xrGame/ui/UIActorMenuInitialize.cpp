@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "UIActorMenu.h"
 #include "../InventoryNextIdentity.h"
+#include "../InventoryNextProbe.h"
 #include "UITextureMaster.h"
 #include "UIFrameWindow.h"
 #include "UIXmlInit.h"
@@ -50,7 +51,7 @@ void CUIActorMenu::Construct()
 	CUIXml uiXml;
 	if(InventoryNextEnabled()) {
         CUITextureMaster::ParseShTexInfo("sqa3_native.xml");
-        uiXml.Load(CONFIG_PATH, UI_PATH, "sqa3_actor_menu.xml");
+        uiXml.Load(CONFIG_PATH, UI_PATH, InventoryNextFieldKitEnabled()?"sqa3_field_kit.xml":"sqa3_actor_menu.xml");
         Msg("* SQA3 replacement actor menu: native inventory, equipment, trade and loot controls; no 3D model");
     } else uiXml.Load(CONFIG_PATH, UI_PATH, "actor_menu.xml");
 
@@ -196,6 +197,17 @@ void CUIActorMenu::Construct()
 		if (uiXml.GetNodesNum(slot_node, "slot_dragdrop") == 0)
 			continue;
 
+        if(InventoryNextFieldKitEnabled()&&i!=16){
+            auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
+            frame->SetWndPos(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"x",0),uiXml.ReadAttribFlt("slot_dragdrop",0,"y",0)));
+            frame->SetWndSize(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"width",75),uiXml.ReadAttribFlt("slot_dragdrop",0,"height",42)));
+            frame->InitTexture("sqa_fk_slot");
+            const LPCSTR labels[]={"","Knife","Weapon 2","Weapon 1","Grenade","Pistol / optics","Bolt","Armour / rig","PDA","Detector","Torch","","Helmet","Backpack"};
+            if(i<14){auto caption=xr_new<CUIStatic>();caption->SetAutoDelete(true);frame->AttachChild(caption);caption->Enable(false);caption->TextureOff();
+                caption->SetWndPos(Fvector2().set(4,frame->GetWndSize().y-14));caption->SetWndSize(Fvector2().set(frame->GetWndSize().x-8,12));
+                caption->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);caption->TextItemControl()->SetTextAlignment(CGameFont::alCenter);caption->TextItemControl()->SetText(labels[i]);}
+
+        }
 		m_pInvList[i] = xr_new<CUIDragDropListEx>();
 		AttachChild(m_pInvList[i]);
 		CUIXmlInit::InitDragDropListEx(uiXml, "slot_dragdrop", 0, m_pInvList[i]);
@@ -218,6 +230,15 @@ void CUIActorMenu::Construct()
 		m_pInvSlotProgress[i]->SetAutoDelete(true);
 	}
 	uiXml.SetLocalRoot(stored_root);
+    if(InventoryNextFieldKitEnabled()){
+        for(int side=0;side<2;++side){
+            auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);AttachChild(button);button->Enable(false);
+            button->SetWndPos(Fvector2().set(side?163:88,75));button->SetWndSize(Fvector2().set(10,18));
+            button->InitTexture("sqa_fk_button_e");button->SetStretchTexture(true);
+            button->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
+            button->TextItemControl()->SetTextAlignment(CGameFont::alCenter);button->TextItemControl()->SetText(side?">":"<");
+        }
+    }
 	//-Alun
 
 	m_ActorStateInfo = xr_new<ui_actor_state_wnd>();

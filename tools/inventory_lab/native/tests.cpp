@@ -1034,6 +1034,28 @@ int main(int argc,char** argv) {
             check(view.position(a.model().nodes().at(100),p)&&p.y==13&&!view.destination(p.x,p.y,owner,local),"recovery became legal capacity");
             check(before==a.model().serialize(),"view changed ownership or mass");
         });
+        test("separate and collapsed storage views preserve model and hide inaccessible display cells",[]{
+            auto bag=item(100,1,800);bag.container=true;bag.grid={8,8};bag.empty=bag.half=bag.full={2,2};
+            auto inner=item(101,1,300);inner.container=true;inner.grid={4,4};
+            auto med=item(102,1,200);
+            ActorLayout a;yes(a.reconcile({bag,inner,med},{{4,2},{},true}));
+            yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
+            yes(a.move({102,101,{2,2,false},a.model().revision(),a.model().session()}));
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
+            auto before=a.model().serialize();StorageViewOptions options;options.equipped_only=true;options.center=true;
+            NativeStorageView main;yes(main.build(a.model(),options));
+            check(main.bands.size()==1&&main.bands[0].column==2,"carried container leaked into equipped storage");
+            Position p;check(!main.position(a.model().nodes().at(101),p)&&!main.position(a.model().nodes().at(102),p),"closed nested contents visible");
+            check(main.recovery.empty()&&main.size.h==3,"empty recovery reserves a row");
+            options.owner=101;NativeStorageView window;yes(window.build(a.model(),options));
+            check(window.position(a.model().nodes().at(102),p)&&p.x==4&&p.y==3,"separate window projection");
+            Id owner=0;Position local;check(window.destination(p.x,p.y,owner,local)&&owner==101&&local.x==2&&local.y==2,"window drop changed local coordinates");
+            options.collapsed.insert(101);yes(window.build(a.model(),options));
+            check(!window.position(a.model().nodes().at(102),p)&&!window.destination(4,1,owner,local),"collapsed grid accepts items");
+            check(window.size.h==1&&window.bands.size()==1,"collapsed header missing or reserves grid");
+            options.owner=999;check(!window.build(a.model(),options),"missing window owner accepted");
+            check(a.model().serialize()==before,"view change mutated inventory");
+        });
         test("authored native capacity shrink retains items and mass in recovery",[]{
             Node rifle=item(100,1,3000);rifle.empty=rifle.half=rifle.full={5,2};rifle.attributes["native_section"]="rifle";
             Node med=item(101,1,500);med.attributes["native_section"]="medkit";

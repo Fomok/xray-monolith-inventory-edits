@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "UIDragDropListEx.h"
 #include "UIStatic.h"
+#include "UIFrameWindow.h"
 #include "UIScrollBar.h"
 #include "object_broker.h"
 #include "UICellItem.h"
@@ -314,7 +315,7 @@ void CUIDragDropListEx::GetClientArea(Frect& r)
 void CUIDragDropListEx::ClearAll(bool bDestroy)
 {
     for(auto& header:m_storageHeaders) DetachChild(header.second); // auto-delete
-    m_storageHeaders.clear();
+    m_storageHeaders.clear();m_storageHeaderOwners.clear();
 	DestroyDragItem();
 	m_container->ClearAll(bDestroy);
 	m_selected_item = NULL;
@@ -336,13 +337,38 @@ void CUIDragDropListEx::Compact()
 	}
 }
 
-void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color)
+void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner,s64 grams,bool collapsed)
 {
     auto label=xr_new<CUIStatic>();label->SetAutoDelete(true);AttachChild(label);
     label->SetWndSize(Fvector2().set(GetWndSize().x,18.0f));label->TextureOff();label->Enable(false);
     label->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
     label->TextItemControl()->SetEllipsis(true);
     label->TextItemControl()->SetTextColor(color);label->TextItemControl()->SetText(text);
+    if(InventoryNextFieldKitEnabled()) {
+        label->InitTexture("sqa_fk_surface_olive");label->SetStretchTexture(true);
+        label->SetWndSize(Fvector2().set(GetWndSize().x,20.0f));
+        label->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
+        auto rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);label->AttachChild(rim);
+        rim->SetWndSize(label->GetWndSize());rim->InitTexture("sqa_fk_header");rim->Enable(false);
+        label->TextItemControl()->SetText("");
+        auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);label->AttachChild(title);title->Enable(false);title->TextureOff();
+        title->SetWndPos(Fvector2().set(24,1));title->SetWndSize(Fvector2().set(GetWndSize().x-104,18));
+        title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
+        title->TextItemControl()->SetTextAlignment(CGameFont::alCenter);title->TextItemControl()->SetEllipsis(true);
+        title->TextItemControl()->SetTextColor(color);title->TextItemControl()->SetText(text);
+        auto weight=xr_new<CUIStatic>();weight->SetAutoDelete(true);label->AttachChild(weight);weight->Enable(false);
+        weight->SetWndPos(Fvector2().set(GetWndSize().x-78,1));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
+        weight->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
+        weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
+        string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);weight->TextItemControl()->SetText(amount);
+        if(owner) {
+            auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);label->AttachChild(button);button->Enable(false);
+            button->SetWndPos(Fvector2().set(1,1));button->SetWndSize(Fvector2().set(18,18));button->InitTexture("sqa_fk_button_e");button->SetStretchTexture(true);
+            button->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);button->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
+            button->TextItemControl()->SetText(collapsed?">":"v");
+        }
+    }
+    m_storageHeaderOwners.push_back(owner);
     m_storageHeaders.emplace_back(row,label);
 }
 void CUIDragDropListEx::Draw()
@@ -350,7 +376,7 @@ void CUIDragDropListEx::Draw()
     for(auto& header:m_storageHeaders) {
         const float y=float(header.first*(CellSize().y+CellsSpacing().y)-ScrollPos());
         header.second->SetWndPos(Fvector2().set(2.0f,y));
-        header.second->Show(y>=0&&y+18.0f<=GetWndSize().y);
+        header.second->Show(y>=0&&y+header.second->GetWndSize().y<=GetWndSize().y);
     }
 	inherited::Draw();
 
@@ -414,6 +440,13 @@ void CUIDragDropListEx::ReinitScroll()
 
 bool CUIDragDropListEx::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
+    if(InventoryNextFieldKitEnabled()&&mouse_action==WINDOW_LBUTTON_DOWN&&x>=0&&x<24&&!m_drag_item) {
+        for(size_t i=0;i<m_storageHeaders.size();++i) {
+            const float top=float(m_storageHeaders[i].first*(CellSize().y+CellsSpacing().y)-ScrollPos());
+            if(y>=top&&y<top+20&&m_storageHeaderOwners[i]) {InventoryNextStorageToggle(m_storageHeaderOwners[i]);return true;}
+        }
+    }
+
 	bool b = inherited::OnMouseAction(x, y, mouse_action);
 
 	if (m_vScrollBar->IsShown())
@@ -1007,7 +1040,7 @@ void CUICellContainer::Draw()
 		for (int x=0;x<=tgt_cells.width();++x)
 			for (int y=0;y<=tgt_cells.height();++y)
 				for (u32 k=0;k<6;++k) {
-					const int storage=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageCell(x+tgt_cells.lt.x,y+tgt_cells.lt.y):1;
+					const int storage=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageCell(x+tgt_cells.lt.x,y+tgt_cells.lt.y,m_pParentDragDropList->sqaViewOwner):1;
 					if(!storage)continue;
 					const Fvector2& p=pts[k];
 					UIRender->PushPoint(iFloor(drawLT.x+(f_len.x+sp_len.x)*x+p.x*f_len.x)-0.5f,

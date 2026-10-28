@@ -196,6 +196,16 @@ public:
     CUIStatic* m_sqaStatus=nullptr;
     u32 m_sqaRetryAfter=0;
     void SqaPurchaseRefresh();
+    struct SqaContainerWindow { u64 owner=0; u16 live=0xffff; CUIStatic* frame=nullptr; CUIDragDropListEx* list=nullptr; };
+    xr_vector<SqaContainerWindow> m_sqaContainers;
+    CUIDragDropListEx* SqaContainerList(u64 owner);
+    bool SqaActorList(CUIDragDropListEx* list) const;
+    bool SqaOpenContainer(PIItem item);
+    void SqaPrepareContainers();
+    bool m_sqaRigView=false;
+    void SqaUpdateChest();
+    bool SqaCloseContainerAt(float x,float y);
+
 	void SelectInventoryTab(int tab);
 private:
 	void PropertiesBoxForSlots(PIItem item, bool& b_show);

@@ -19,7 +19,12 @@ def main():
     atlas=json.loads(read_overlay('tools/inventory_lab/native-visual-assets.json'));texture=Path(atlas["source"]).read_bytes()
     assert len(texture)==atlas["bytes"] and hashlib.sha256(texture).hexdigest()==atlas["sha256"]
     files={"bin/AnomalyDX11AVX.exe":engine,atlas["destination"]:texture}
-    for rel in ["configs/sqa3_capacity.ltx","configs/ui/textures_descr/sqa3_native.xml","configs/ui/sqa3_actor_menu.xml","scripts/sqa3_native_autorun.script","scripts/ui_inventory.script"]:
+    for extra in atlas.get("additional_textures",[]):
+        texture=Path(extra["source"]).read_bytes()
+        assert len(texture)==extra["bytes"] and hashlib.sha256(texture).hexdigest()==extra["sha256"]
+        assert extra["destination"] not in files
+        files[extra["destination"]]=texture
+    for rel in ["configs/sqa3_capacity.ltx","configs/ui/sqa3_field_kit.xml","configs/mod_system_sqa3_field_kit.ltx","configs/ui/textures_descr/sqa3_native.xml","configs/ui/sqa3_actor_menu.xml","scripts/sqa3_native_autorun.script","scripts/ui_inventory.script"]:
         data=read_overlay('tools/inventory_lab/gamedata/'+rel,optional=rel=='configs/sqa3_capacity.ltx')
         if data is not None:files["gamedata/"+rel]=data
     files["Start-Native-Input-Check.ps1"]=read_overlay('tools/inventory_lab/Start-Native-Input-Check.ps1')
@@ -67,6 +72,7 @@ def main():
         ("Experimental loaded corpse storage: -CorpseStorage. Recorded loaded storage defers native cleanup until retrieved. See acceptance evidence; no complete corpse lifecycle claim.\n" if corpse_storage else "")+
         ("Experimental identity-preserving named stashes: -StashStorage. Includes empty backpacks; native acceptance remains required.\n" if stash_storage else "")).encode()
     manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":overlay,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
+    manifest['field_kit_opt_in']=b'-sqa3-field-kit' in engine_source
     manifest['logical_storage_opt_in']=logical is not None
     manifest['ground_pickup_opt_in']=ground_pickup
     manifest['owned_pickup_opt_in']=owned_pickup

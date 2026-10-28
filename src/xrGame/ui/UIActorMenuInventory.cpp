@@ -259,6 +259,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 	case GE_TRADE_BUY:
 	case GE_OWNERSHIP_TAKE:
 		{
+            if(InventoryNextFieldKitEnabled())break;
             if(pItem->parent_id()!=m_pActorInvOwner->object_id()&&!InventoryNextWorldVisible(pItem->object_id()))break;
 			u32 i = 0;
 			bool b_already = false;
@@ -357,6 +358,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 	case GE_TRADE_SELL:
 	case GE_OWNERSHIP_REJECT:
 		{
+            if(CurrentIItem()==pItem)SetCurrentItem(nullptr);
 			if (CUIDragDropListEx::m_drag_item)
 			{
 				CUIInventoryCellItem* ici = smart_cast<CUIInventoryCellItem*>(
@@ -369,6 +371,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 				}
 			}
 
+            for(auto& window:m_sqaContainers)RemoveItemFromList(window.list,pItem);
 			u32 i = 0;
 			while (all_lists[i])
 			{
@@ -473,6 +476,7 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
     }
 	ClearAllLists();
 	InventoryNextStorageView(pBagList);
+    SqaPrepareContainers();
 	m_UIPropertiesBox->Hide();
 	SetCurrentItem(NULL);
 
@@ -518,13 +522,20 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 		if (bag)
 			continue;
 
+        curr_list=pBagList;
+        if(InventoryNextFieldKitEnabled()) {
+            const auto owner=InventoryNextViewOwner((*itb)->object().ID());
+            if(owner)curr_list=SqaContainerList(owner);
+            int px=0,py=0;bool pr=false;
+            if(!curr_list||!InventoryNextNativePosition((*itb)->object().ID(),px,py,pr,curr_list->sqaViewOwner))continue;
+        }
         CUICellItem* itm = create_cell_item(*itb);
         int x=0,y=0;bool rotated=false;
-        if(InventoryNextEnabled()&&InventoryNextNativePosition((*itb)->object().ID(),x,y,rotated)) {
+        if(InventoryNextEnabled()&&InventoryNextNativePosition((*itb)->object().ID(),x,y,rotated,curr_list->sqaViewOwner)) {
             itm->SetSqaRotation(rotated);
             const auto cell=Ivector2().set(x,y);
             if(curr_list->CanSetItemAt(itm,cell))curr_list->SetItem(itm,cell);
-            else {Msg("! SQA3 view placement mismatch live=%u",(*itb)->object().ID());curr_list->SetItem(itm);m_sqaRefresh=true;}
+            else {Msg("! SQA3 view placement mismatch live=%u",(*itb)->object().ID());if(InventoryNextFieldKitEnabled()){xr_delete(itm);m_sqaRefresh=true;continue;}else curr_list->SetItem(itm);m_sqaRefresh=true;}
         } else curr_list->SetItem(itm);
 		if (m_currMenuMode == mmTrade && m_pPartnerInvOwner)
 			ColorizeItem(itm, !CanMoveToPartner(*itb));
@@ -551,6 +562,22 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 
 void CUIActorMenu::FilterActorBagList(int mode)
 {
+    if(InventoryNextFieldKitEnabled()){
+        InitInventoryContents(m_pInventoryBagList);
+        if(mode<0||mode>=int(m_sort_kinds.size()))return;
+        const auto matches=[&](PIItem item){
+            if(0==xr_strcmp(m_sort_kinds[mode],"s_all"))return true;
+            const int count=_GetItemCount(m_sort_kinds[mode]);
+            for(int n=0;n<count;++n){string256 kind;_GetItem(m_sort_kinds[mode],n,kind);if(item->m_kind!=NULL&&item->m_kind.equal(kind))return true;}
+            return false;
+        };
+        const auto filter=[&](CUIDragDropListEx* list){
+            for(u32 n=list->ItemsCount();n>0;--n){auto cell=list->GetItemIdx(n-1);if(!matches((PIItem)cell->m_pData)){if(CurrentItem()==cell)SetCurrentItem(nullptr);auto removed=list->RemoveItem(cell,false);xr_delete(removed);}}
+        };
+        filter(m_pInventoryBagList);for(auto& window:m_sqaContainers)filter(window.list);
+        for(int n=0;n<int(m_sort_buttons.size());++n)m_sort_buttons[n]->Enable(n!=mode);
+        return;
+    }
 	if (InventoryNextEnabled() && !InventoryNextLayoutSync()) m_sqaRefresh=true;
     // Filtering destroys the old cells. A hidden selection must not remain usable.
     if(InventoryNextEnabled())SetCurrentItem(nullptr);

@@ -10,8 +10,8 @@ void InventoryNextLayoutSave(IWriter&) noexcept;
 void InventoryNextLayoutLoad(IReader&) noexcept;
 void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept;
 
-bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated) noexcept;
-bool InventoryNextNativeDrop(u16 live,int x,int y) noexcept;
+bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view=0) noexcept;
+bool InventoryNextNativeDrop(u16 live,int x,int y,u64 view=0) noexcept;
 bool InventoryNextNativeDragBegin(u16 live) noexcept;
 bool InventoryNextNativeDragCurrent(u16 live) noexcept;
 bool InventoryNextNativeRotate(u16 live) noexcept;
@@ -21,8 +21,8 @@ bool InventoryNextCanRelease(u16 live) noexcept;
 bool InventoryNextCanBulkRelease(u16 live) noexcept;
 void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcept;
 class CUIDragDropListEx;
-void InventoryNextStorageView(CUIDragDropListEx* list) noexcept;
-int InventoryNextStorageCell(int x,int y) noexcept;
+void InventoryNextStorageView(CUIDragDropListEx* list,u64 view=0) noexcept;
+int InventoryNextStorageCell(int x,int y,u64 view=0) noexcept;
 
 // Opt-in ground ownership path; trade/loot pre-detach admission is separate.
 bool InventoryNextStrictPickup() noexcept;
@@ -60,3 +60,8 @@ bool InventoryNextStashEnabled() noexcept;
 std::string InventoryNextStashIdentity(u16 live) noexcept;
 bool InventoryNextStashCreate(u16 live,const char* expected_identity,const char* name) noexcept;
 void InventoryNextStashForgetMarker(u16 live) noexcept;
+
+bool InventoryNextFieldKitEnabled() noexcept;
+u64 InventoryNextContainer(u16 live) noexcept;
+u64 InventoryNextViewOwner(u16 live) noexcept;
+void InventoryNextStorageToggle(u64 owner) noexcept;

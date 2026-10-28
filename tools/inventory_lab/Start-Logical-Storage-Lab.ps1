@@ -8,6 +8,7 @@ param(
     [switch]$WorldStorage,
     [switch]$GroundStorage,
     [switch]$CorpseStorage,
+    [switch]$FieldKit,
     [switch]$StashStorage
 )
 $ErrorActionPreference='Stop'
@@ -37,6 +38,7 @@ if((Get-FileHash -LiteralPath $engine -Algorithm SHA256).Hash.ToLowerInvariant()
 if(!(Test-Path -LiteralPath (Join-Path $lab ('appdata/savedgames/'+$Save+'.scop')))){throw 'The selected disposable logical-storage save is missing.'}
 # Interactive user launch: no autorun fixture, no original test save, one window.
 $arguments='-dbg -inventory-lab -sqa3-logical-storage -start server('+ $Save +'/single/alife/load)'
+if($FieldKit){if(!$manifest.field_kit_opt_in){throw 'This engine has no Field Kit UI.'};$arguments+=' -sqa3-field-kit'}
 if($StrictGroundPickup){$arguments+=' -sqa3-strict-ground-pickup'}
 if($StrictOwnedPickup){$arguments+=' -sqa3-strict-owned-pickup'}
 if($StrictTradePickup){$arguments+=' -sqa3-strict-trade-pickup'}

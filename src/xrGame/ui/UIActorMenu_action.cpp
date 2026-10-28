@@ -94,7 +94,7 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
         Msg("* SQA3 fixture drop live=%u from=%d to=%d same_list=%d compatible=%d slot=%u",
             item?item->object_id():0xffff,int(t_old),int(t_new),old_owner==new_owner,compatible,requested_slot);
     }
-	if (InventoryNextEnabled() && old_owner==m_pInventoryBagList) {
+	if (InventoryNextEnabled() && SqaActorList(old_owner)) {
 		auto item=static_cast<PIItem>(itm->m_pData);
 		if (!item || !InventoryNextNativeDragCurrent(item->object().ID())) {
 			m_sqaRefresh=true;
@@ -109,10 +109,10 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 		return true;
 	}
 
-    if(InventoryNextEnabled() && old_owner==new_owner && old_owner==m_pInventoryBagList) {
-        const auto cell=old_owner->PickCell(old_owner->GetDragItemPosition());
+    if(InventoryNextEnabled() && SqaActorList(new_owner) && SqaActorList(old_owner)) {
+        const auto cell=new_owner->PickCell(new_owner->GetDragItemPosition());
         auto item=static_cast<PIItem>(itm->m_pData);
-        if(item&&InventoryNextNativeDrop(item->object().ID(),cell.x,cell.y)) {
+        if(item&&InventoryNextNativeDrop(item->object().ID(),cell.x,cell.y,new_owner->sqaViewOwner)) {
             if(InventoryNextLogicalStorage())m_sqaRefresh=true;
             else {auto moved=old_owner->RemoveItem(itm,true);old_owner->SetItem(moved,cell);}
             if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("");
@@ -255,7 +255,7 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
 {
 	InfoCurItem(NULL);
-	if (InventoryNextEnabled() && itm->OwnerList()==m_pInventoryBagList) {
+	if (InventoryNextEnabled() && SqaActorList(itm->OwnerList())) {
 		auto item=static_cast<PIItem>(itm->m_pData);
 		if(!item || !InventoryNextNativeDragBegin(item->object().ID())) {m_sqaRefresh=true;return true;}
 		if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("");
@@ -265,6 +265,7 @@ bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
 
 bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
 {
+    if(InventoryNextFieldKitEnabled()&&SqaActorList(itm->OwnerList())&&SqaOpenContainer(static_cast<PIItem>(itm->m_pData)))return true;
 	SetCurrentItem(itm);
 	InfoCurItem(NULL);
 	CUIDragDropListEx* old_owner = itm->OwnerList();
@@ -443,6 +444,12 @@ bool CUIActorMenu::OnItemFocusedUpdate(CUICellItem* itm)
 
 bool CUIActorMenu::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
+    if(InventoryNextFieldKitEnabled()&&mouse_action==WINDOW_LBUTTON_DOWN){
+        if(!CUIDragDropListEx::m_drag_item&&y>=75&&y<93&&((x>=88&&x<98)||(x>=163&&x<173))){
+            m_sqaRigView=!m_sqaRigView;SetCurrentItem(nullptr);SqaUpdateChest();return true;
+        }
+        if(SqaCloseContainerAt(x,y))return true;
+    }
 	inherited::OnMouseAction(x, y, mouse_action);
 	return true; // no click`s
 }
@@ -457,7 +464,7 @@ bool CUIActorMenu::OnKeyboardAction(int dik, EUIMessages keyboard_action)
             if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Finish dragging, then rotate the selected item.");
             return true;
         }
-        if(selected && selected->OwnerList()==m_pInventoryBagList && selected->m_pData) {
+        if(selected && SqaActorList(selected->OwnerList()) && selected->m_pData) {
             auto item=static_cast<PIItem>(selected->m_pData);
             const bool rotated=InventoryNextNativeRotate(item->object().ID());
             if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText(rotated?"":"Cannot rotate here.");

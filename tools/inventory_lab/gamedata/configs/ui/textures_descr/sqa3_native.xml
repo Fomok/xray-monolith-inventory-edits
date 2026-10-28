@@ -12,4 +12,44 @@
     <texture id="sqa_fk_window_rb" x="124" y="124" width="12" height="12" />
     <texture id="sqa_fk_window" x="8" y="8" width="128" height="128" />
   </file>
+  <file name="ui\sqa_fk_panels">
+    <texture id="sqa_fk_equipment_horizontal" x="8" y="8" width="694" height="1536" />
+    <texture id="sqa_fk_equipment_vertical" x="1760" y="8" width="694" height="1536" />
+    <texture id="sqa_fk_inventory_panel" x="718" y="8" width="1018" height="1536" />
+    <texture id="sqa_fk_trade_separator" x="8" y="1560" width="986" height="118" />
+    <texture id="sqa_fk_surface_lining" x="8" y="1700" width="256" height="128" />
+    <texture id="sqa_fk_surface_olive" x="280" y="1700" width="256" height="128" />
+    <texture id="sqa_fk_surface_rubber" x="552" y="1700" width="256" height="128" />
+    <texture id="sqa_fk_slot_lt" x="40" y="26" width="6" height="6" />
+    <texture id="sqa_fk_slot_t" x="46" y="26" width="188" height="6" />
+    <texture id="sqa_fk_slot_rt" x="234" y="26" width="6" height="6" />
+    <texture id="sqa_fk_slot_l" x="40" y="32" width="6" height="180" />
+    <texture id="sqa_fk_slot_center" x="46" y="32" width="188" height="180" />
+    <texture id="sqa_fk_slot_r" x="234" y="32" width="6" height="180" />
+    <texture id="sqa_fk_slot_lb" x="40" y="212" width="6" height="6" />
+    <texture id="sqa_fk_slot_b" x="46" y="212" width="188" height="6" />
+    <texture id="sqa_fk_slot_rb" x="234" y="212" width="6" height="6" />
+    <texture id="sqa_fk_slot_back" x="46" y="32" width="188" height="180" />
+    <texture id="sqa_fk_header_lt" x="40" y="26" width="6" height="6" />
+    <texture id="sqa_fk_header_t" x="46" y="26" width="188" height="6" />
+    <texture id="sqa_fk_header_rt" x="234" y="26" width="6" height="6" />
+    <texture id="sqa_fk_header_l" x="40" y="32" width="6" height="180" />
+    <texture id="sqa_fk_header_center" x="46" y="32" width="188" height="180" />
+    <texture id="sqa_fk_header_r" x="234" y="32" width="6" height="180" />
+    <texture id="sqa_fk_header_lb" x="40" y="212" width="6" height="6" />
+    <texture id="sqa_fk_header_b" x="46" y="212" width="188" height="6" />
+    <texture id="sqa_fk_header_rb" x="234" y="212" width="6" height="6" />
+    <texture id="sqa_fk_header_back" x="280" y="1700" width="256" height="128" />
+  </file>
+  <file name="ui\sqa_fk_controls">
+    <texture id="sqa_fk_switch_off" x="8" y="160" width="215" height="61" />
+    <texture id="sqa_fk_switch_on" x="240" y="160" width="216" height="61" />
+    <texture id="sqa_fk_switch_thumb" x="472" y="160" width="101" height="61" />
+    <texture id="sqa_fk_close" x="600" y="160" width="48" height="48" />
+    <texture id="sqa_fk_button_e" x="8" y="408" width="240" height="64" />
+    <texture id="sqa_fk_button_h" x="8" y="408" width="240" height="64" />
+    <texture id="sqa_fk_button_t" x="8" y="408" width="240" height="64" />
+    <texture id="sqa_fk_button_d" x="8" y="488" width="240" height="64" />
+    <texture id="sqa_fk_window_center" x="20" y="20" width="104" height="104" />
+  </file>
 </w>

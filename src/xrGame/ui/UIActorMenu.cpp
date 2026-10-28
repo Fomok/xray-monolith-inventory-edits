@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "UIActorMenu.h"
 #include "../InventoryNextIdentity.h"
+#include "../InventoryNextProbe.h"
+#include "../InventoryNextProbe.h"
 #include "UIActorStateInfo.h"
 #include "../actor.h"
 #include "../uigamesp.h"
@@ -208,6 +210,8 @@ void CUIActorMenu::Draw()
 
 void CUIActorMenu::Update()
 {
+    SqaUpdateChest();
+    for(auto& window:m_sqaContainers)window.frame->Show(InventoryNextFieldKitEnabled()&&(m_currMenuMode==mmInventory||m_currMenuMode==mmDeadBodySearch));
     if(m_sqaRefresh && Device.dwTimeGlobal>=m_sqaRetryAfter && !CUIDragDropListEx::m_drag_item && (m_currMenuMode==mmInventory||m_currMenuMode==mmDeadBodySearch)) {
         m_sqaRetryAfter=Device.dwTimeGlobal+250;
         m_sqaRefresh=false;
@@ -301,7 +305,7 @@ void CUIActorMenu::CheckDistance()
 
 EDDListType CUIActorMenu::GetListType(CUIDragDropListEx* l)
 {
-	if (l == m_pInventoryBagList) return iActorBag;
+	if (SqaActorList(l)) return iActorBag;
 	if (l == m_pInventoryBeltList) return iActorBelt;
 
 	for (u8 i = 1; i <= m_slot_count; ++i)
@@ -822,6 +826,8 @@ void CUIActorMenu::highlight_weapons_for_addon(PIItem addon_item, CUIDragDropLis
 
 void CUIActorMenu::ClearAllLists()
 {
+    for(auto& window:m_sqaContainers)window.list->ClearAll(true);
+    for(auto& window:m_sqaContainers)window.list->ClearAll(true);
 	m_pInventoryBagList->ClearAll(true);
 	m_pInventoryBeltList->ClearAll(true);
 
@@ -882,6 +888,9 @@ void CUIActorMenu::UpdateActorMP()
 bool CUIActorMenu::CanSetItemToList(PIItem item, CUIDragDropListEx* l, u16& ret_slot)
 {
 	u16 item_slot = item->BaseSlot();
+    if(InventoryNextFieldKitEnabled()&&l==m_pInvList[BINOCULAR_SLOT]&&(item_slot==INV_SLOT_2||item_slot==KNIFE_SLOT)){
+        ret_slot=BINOCULAR_SLOT;return true;
+    }
 	if (GetSlotList(item_slot) == l)
 	{
 		ret_slot = item_slot;
@@ -938,3 +947,7 @@ void CUIActorMenu::UpdateConditionProgressBars()
 			ci->m_select_equipped = false;
 	}
 }
+
+#include "UIActorMenuFieldKit.inl"
+
+#include "UIActorMenuFieldKit.inl"
