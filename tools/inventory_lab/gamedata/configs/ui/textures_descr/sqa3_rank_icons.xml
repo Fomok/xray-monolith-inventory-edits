@@ -1,0 +1,43 @@
+<w>
+	<file name="ui\ui_actor_menu_rank_icons">
+		<!-- GAMMA -->
+		<texture id="ui_rank_novice"                x="0"   y="0"   width="124" height="124" />
+		<texture id="ui_rank_trainee"               x="124" y="0"   width="124" height="124" />
+		<texture id="ui_rank_experienced"           x="248" y="0"   width="124" height="124" />
+		<texture id="ui_rank_professional"          x="372" y="0"   width="124" height="124" />
+		<texture id="ui_rank_veteran"               x="496" y="0"   width="124" height="124" />
+		<texture id="ui_rank_expert"                x="620" y="0"   width="124" height="124" />
+		<texture id="ui_rank_master"                x="744" y="0"   width="124" height="124" />
+		<texture id="ui_rank_legend"                x="868" y="0"   width="124" height="124" />
+		
+		<!-- Modern UI -->
+		<texture id="ui_rank_novice_mui"            x="0"   y="124" width="124" height="124" />
+		<texture id="ui_rank_trainee_mui"           x="124" y="124" width="124" height="124" />
+		<texture id="ui_rank_experienced_mui"       x="248" y="124" width="124" height="124" />
+		<texture id="ui_rank_professional_mui"      x="372" y="124" width="124" height="124" />
+		<texture id="ui_rank_veteran_mui"           x="496" y="124" width="124" height="124" />
+		<texture id="ui_rank_expert_mui"            x="620" y="124" width="124" height="124" />
+		<texture id="ui_rank_master_mui"            x="744" y="124" width="124" height="124" />
+		<texture id="ui_rank_legend_mui"            x="868" y="124" width="124" height="124" />
+		
+		<!-- Simplified Vision UI -->
+		<texture id="ui_rank_novice_svui"           x="0"   y="248" width="124" height="124" />
+		<texture id="ui_rank_trainee_svui"          x="124" y="248" width="124" height="124" />
+		<texture id="ui_rank_experienced_svui"      x="248" y="248" width="124" height="124" />
+		<texture id="ui_rank_professional_svui"     x="372" y="248" width="124" height="124" />
+		<texture id="ui_rank_veteran_svui"          x="496" y="248" width="124" height="124" />
+		<texture id="ui_rank_expert_svui"           x="620" y="248" width="124" height="124" />
+		<texture id="ui_rank_master_svui"           x="744" y="248" width="124" height="124" />
+		<texture id="ui_rank_legend_svui"           x="868" y="248" width="124" height="124" />
+		
+		<!-- Simplified Vision UI v2 -->
+		<texture id="ui_rank_novice_svui_alt"       x="0"   y="372" width="124" height="124" />
+		<texture id="ui_rank_trainee_svui_alt"      x="124" y="372" width="124" height="124" />
+		<texture id="ui_rank_experienced_svui_alt"  x="248" y="372" width="124" height="124" />
+		<texture id="ui_rank_professional_svui_alt" x="372" y="372" width="124" height="124" />
+		<texture id="ui_rank_veteran_svui_alt"      x="496" y="372" width="124" height="124" />
+		<texture id="ui_rank_expert_svui_alt"       x="620" y="372" width="124" height="124" />
+		<texture id="ui_rank_master_svui_alt"       x="744" y="372" width="124" height="124" />
+		<texture id="ui_rank_legend_svui_alt"       x="868" y="372" width="124" height="124" />
+	</file>
+</w>

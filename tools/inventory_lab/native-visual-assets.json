@@ -39,6 +39,20 @@
       "bytes": 16777344,
       "sha256": "fcf6ac47939bb059ed3c8defe352b313f3c09c54035b411b4c33a4c7f977b266",
       "note": "Mod and UI visual-assets-v1; exact handoff payload."
+    },
+    {
+      "repo_relative": "tools/inventory_lab/gamedata/textures/ui/sqa3_visual_info_v2.dds",
+      "destination": "gamedata/textures/ui/sqa3_visual_info_v2.dds",
+      "bytes": 4194432,
+      "sha256": "e02596c54c17382819bc7a91ef8ea45a36891b113f10eaafb6dc5e45bd4bfb72",
+      "note": "Exact Mod/UI additive v2 handoff."
+    },
+    {
+      "repo_relative": "tools/inventory_lab/gamedata/textures/ui/ui_actor_menu_rank_icons.dds",
+      "destination": "gamedata/textures/ui/ui_actor_menu_rank_icons.dds",
+      "bytes": 4194432,
+      "sha256": "a291df630f624cd7e866c60c1d505e5e4e98bea7c9483c648a08d9c34c2ab5bb",
+      "note": "Exact Sota UI rank atlas; see visual-assets-v2/rank-provenance.json."
     }
   ]
 }

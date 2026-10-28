@@ -35,8 +35,8 @@ bool CUIActorMenu::SqaOpenContainer(PIItem item)
     auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);window.frame->AttachChild(title);title->Enable(false);
     title->SetWndPos(Fvector2().set(10,5));title->SetWndSize(Fvector2().set(246,20));title->TextureOff();
     title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);title->TextItemControl()->SetText(item->NameItem());
-    auto close=xr_new<CUIStatic>();close->SetAutoDelete(true);window.frame->AttachChild(close);close->Enable(false);
-    close->SetWndPos(Fvector2().set(264,4));close->SetWndSize(Fvector2().set(20,20));close->InitTexture("sqa_fk_close");close->SetStretchTexture(true);
+    auto close=xr_new<CUI3tButton>();close->SetAutoDelete(true);window.frame->AttachChild(close);
+    close->InitButton(Fvector2().set(266,4),Fvector2().set(20,20));close->InitTexture("sqa3v2_close");
     window.list=xr_new<CUIDragDropListEx>();window.list->SetAutoDelete(true);window.frame->AttachChild(window.list);
     window.list->InitDragDropList(Fvector2().set(12,32),Fvector2().set(266,334));
     window.list->SetCellSize(Ivector2().set(32,32));window.list->SetCellsSpacing(Ivector2().set(0,0));
@@ -62,7 +62,7 @@ bool CUIActorMenu::SqaCloseContainerAt(float x,float y)
     if(CUIDragDropListEx::m_drag_item)return false;
     for(size_t n=m_sqaContainers.size();n>0;--n) {
         auto& window=m_sqaContainers[n-1];const auto position=window.frame->GetWndPos();
-        if(window.frame->IsShown()&&x>=position.x+264&&x<position.x+284&&y>=position.y+4&&y<position.y+24) {
+        if(window.frame->IsShown()&&x>=position.x+266&&x<position.x+286&&y>=position.y+4&&y<position.y+24) {
             SetCurrentItem(nullptr);window.list->ClearAll(true);DetachChild(window.frame);
             m_sqaContainers.erase(m_sqaContainers.begin()+n-1);m_sqaRefresh=true;return true;
         }
@@ -123,7 +123,7 @@ void CUIActorMenu::SqaUpdateLoot(bool force)
     if(unchanged)for(size_t n=0;n<sources.size();++n)if(sources[n].live!=m_sqaLootSources[n].live||sources[n].identity!=m_sqaLootSources[n].identity||sources[n].items!=m_sqaLootSources[n].items||sources[n].grams!=m_sqaLootSources[n].grams||sources[n].name!=m_sqaLootSources[n].name){unchanged=false;break;}
     if(!force&&unchanged&&sources.empty()&&m_pDeadBodyBagList->ItemsCount()==0){
         m_LeftBackground->Show(false);m_pDeadBodyBagList->Show(false);m_takeall_button->Show(false);m_putall_button->Show(false);
-        m_PartnerCharacterInfo->Show(false);m_PartnerBottomInfo->Show(false);m_PartnerWeight->Show(false);return;
+        m_PartnerCharacterInfo->Show(false);m_PartnerMoney->Show(false);m_PartnerBottomInfo->Show(false);m_PartnerWeight->Show(false);return;
     }
     if(!force&&unchanged&&!sources.empty()&&m_LeftBackground->IsShown()&&m_pDeadBodyBagList->IsShown()&&selected->live==m_sqaLootSource&&selected->identity==m_sqaLootSourceIdentity&&m_sqaLootFilter==current_sort_mode()&&m_pDeadBodyBagList->ItemsCount()==m_sqaLootRenderedCount)return;
     if(CurrentItem()&&CurrentItem()->OwnerList()==m_pDeadBodyBagList){SetCurrentItem(nullptr);InfoCurItem(nullptr);m_UIPropertiesBox->Hide();}
@@ -133,15 +133,26 @@ void CUIActorMenu::SqaUpdateLoot(bool force)
     if(!unchanged){Msg("* SQA3 nearby source count=%u",static_cast<unsigned>(sources.size()));for(const auto& source:sources)Msg("* SQA3 nearby source live=%u items=%u grams=%lld",source.live,static_cast<unsigned>(source.items.size()),source.grams);}
     m_LeftBackground->Show(available);m_pDeadBodyBagList->Show(available);
     m_takeall_button->Show(available);m_putall_button->Show(available&&selected->live!=0xffff);
-    m_PartnerCharacterInfo->Show(false);m_PartnerBottomInfo->Show(available);m_PartnerWeight->Show(available);
+    m_PartnerCharacterInfo->Show(available);m_PartnerMoney->Show(available);m_PartnerBottomInfo->Show(available);m_PartnerWeight->Show(available);
     if(!available){m_sqaLootSources.clear();return;}
     m_sqaLootSource=selected->live;m_sqaLootSourceIdentity=selected->identity;
+    if(selected->live==corpse && m_pPartnerInvOwner && !m_pPartnerInvOwner->use_simplified_visual()) {
+        m_PartnerCharacterInfo->InitCharacter(selected->live);
+        string64 money;xr_sprintf(money,"%u RU",m_pPartnerInvOwner->get_money());m_PartnerMoney->SetText(money);
+    } else {
+        const bool ground=selected->live==0xffff;
+        const bool box=!ground&&smart_cast<CInventoryBox*>(Level().Objects.net_Find(selected->live));
+        m_PartnerCharacterInfo->InitSource(selected->name.c_str(),ground?"Nearby ground":box?"Accessible stash":"Corpse",
+            box?"ui_inGame2_PDA_icon_backpackstash":nullptr);
+        string64 contents;xr_sprintf(contents,"%u items | %.2f kg",static_cast<unsigned>(selected->items.size()),double(selected->grams)/1000.0);
+        m_PartnerMoney->SetText(contents);
+    }
     const float tabHeight=float((sources.size()+2)/3)*22.0f;
-    m_pDeadBodyBagList->InitDragDropList(Fvector2().set(680.0f,114.0f+tabHeight),Fvector2().set(306.0f,_max(100.0f,574.0f-tabHeight)));
+    m_pDeadBodyBagList->InitDragDropList(Fvector2().set(680.0f,138.0f+tabHeight),Fvector2().set(306.0f,_max(100.0f,550.0f-tabHeight)));
     m_pDeadBodyBagList->ReinitScroll();
     for(size_t n=0;n<sources.size();++n){
         auto tab=xr_new<CUIStatic>();tab->SetAutoDelete(true);AttachChild(tab);tab->Enable(false);
-        tab->SetWndPos(Fvector2().set(652+float(n%3)*120,90+float(n/3)*22));tab->SetWndSize(Fvector2().set(116,20));
+        tab->SetWndPos(Fvector2().set(652+float(n%3)*120,114+float(n/3)*22));tab->SetWndSize(Fvector2().set(116,20));
         tab->InitTexture(sources[n].live==selected->live?"sqa_fk_surface_olive":"sqa_fk_surface_rubber");tab->SetStretchTexture(true);
         tab->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);tab->TextItemControl()->SetEllipsis(true);tab->TextItemControl()->SetText(sources[n].name.c_str());
         m_sqaLootTabs.push_back(tab);

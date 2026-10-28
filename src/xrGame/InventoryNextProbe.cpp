@@ -62,7 +62,7 @@ inventory_next::StorageViewOptions view_options(u64 owner=0) {
     inventory_next::StorageViewOptions options;
     options.center=InventoryNextFieldKitEnabled();
     options.equipped_only=options.center&&fieldkit_equipped_view;
-    options.owner=owner;options.collapsed=collapsed_storage;return options;
+    options.owner=owner;if(!owner)options.collapsed=collapsed_storage;return options;
 }
 const inventory_next::NativeStorageView& make_storage_view(u64 owner) {
     const auto cached=storage_views.find(owner);if(cached!=storage_views.end())return cached->second;

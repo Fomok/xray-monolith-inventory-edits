@@ -52,7 +52,11 @@ void CUIActorMenu::Construct()
 	CUIXml uiXml;
 	if(InventoryNextEnabled()) {
         CUITextureMaster::ParseShTexInfo("sqa3_native.xml");
-        if(InventoryNextFieldKitEnabled())CUITextureMaster::ParseShTexInfo("sqa3_visual_assets.xml");
+        if(InventoryNextFieldKitEnabled()){
+            CUITextureMaster::ParseShTexInfo("sqa3_visual_assets.xml");
+            CUITextureMaster::ParseShTexInfo("sqa3_visual_assets_v2.xml");
+            CUITextureMaster::ParseShTexInfo("sqa3_rank_icons.xml");
+        }
         uiXml.Load(CONFIG_PATH, UI_PATH, InventoryNextFieldKitEnabled()?"sqa3_field_kit.xml":"sqa3_actor_menu.xml");
         Msg("* SQA3 replacement actor menu: native inventory, equipment, trade and loot controls; no 3D model");
     } else uiXml.Load(CONFIG_PATH, UI_PATH, "actor_menu.xml");

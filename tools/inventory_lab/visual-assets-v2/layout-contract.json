@@ -1,0 +1,85 @@
+{
+  "canvas": [
+    1024,
+    768
+  ],
+  "group": {
+    "relative_to": "column origin",
+    "x": 10,
+    "y": 10,
+    "width": 362,
+    "height": 94,
+    "texture": "sqa3v2_info_panel"
+  },
+  "regions_relative_to_group": {
+    "identity": {
+      "x": 0,
+      "y": 0,
+      "width": 264,
+      "height": 62
+    },
+    "money": {
+      "x": 0,
+      "y": 66,
+      "width": 264,
+      "height": 28
+    },
+    "portrait_frame": {
+      "x": 268,
+      "y": 6,
+      "width": 92,
+      "height": 88
+    },
+    "portrait_image": {
+      "x": 270,
+      "y": 8,
+      "width": 88,
+      "height": 84
+    },
+    "name": {
+      "x": 8,
+      "y": 14,
+      "width": 158,
+      "height": 18
+    },
+    "faction": {
+      "x": 8,
+      "y": 34,
+      "width": 158,
+      "height": 18
+    },
+    "rank_icon": {
+      "x": 176,
+      "y": 6,
+      "width": 38,
+      "height": 50
+    },
+    "emblem": {
+      "x": 216,
+      "y": 6,
+      "width": 42,
+      "height": 50
+    },
+    "money_text": {
+      "x": 8,
+      "y": 70,
+      "width": 246,
+      "height": 20,
+      "align": "right"
+    }
+  },
+  "close": {
+    "texture_base": "sqa3v2_close",
+    "width": 20,
+    "height": 20,
+    "right_inset": 4,
+    "top_inset": 4,
+    "states": [
+      "e",
+      "h",
+      "t",
+      "d"
+    ]
+  },
+  "semantics": "Engine supplies actual identities; non-character sources hide rank/faction/portrait/money or use genuine source data. No collapse button in separate windows."
+}

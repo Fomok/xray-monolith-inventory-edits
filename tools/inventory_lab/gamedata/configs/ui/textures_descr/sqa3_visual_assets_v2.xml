@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<w>
+  <file name="ui\sqa3_visual_info_v2">
+    <texture id="sqa3v2_info_panel" x="4" y="4" width="724" height="188" />
+    <texture id="sqa3v2_identity_region" x="4" y="200" width="528" height="124" />
+    <texture id="sqa3v2_money_bar" x="4" y="332" width="528" height="56" />
+    <texture id="sqa3v2_portrait_recess" x="540" y="332" width="184" height="176" />
+    <texture id="sqa3v2_portrait_frame" x="732" y="332" width="184" height="176" />
+    <texture id="sqa3v2_close_e" x="924" y="332" width="40" height="40" />
+    <texture id="sqa3v2_close_h" x="972" y="332" width="40" height="40" />
+    <texture id="sqa3v2_close_t" x="4" y="516" width="40" height="40" />
+    <texture id="sqa3v2_close_d" x="52" y="516" width="40" height="40" />
+  </file>
+</w>

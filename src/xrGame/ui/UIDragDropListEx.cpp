@@ -362,7 +362,7 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
         weight->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
         string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);weight->TextItemControl()->SetText(amount);
-        if(owner) {
+        if(owner && !sqaViewOwner) {
             label->Enable(true);
             auto button=xr_new<CUIFieldKitButton>([owner](){InventoryNextStorageToggle(owner);});button->SetAutoDelete(true);label->AttachChild(button);
             button->InitButton(Fvector2().set(2,2),Fvector2().set(18,18));button->InitTexture(collapsed?"sqa3v1_arrow_down":"sqa3v1_arrow_up");

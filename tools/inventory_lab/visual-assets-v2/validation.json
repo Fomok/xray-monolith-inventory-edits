@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "texture_ids": 9,
+  "checks": [
+    "DDS exact pixel roundtrip",
+    "unique IDs, bounds and nonoverlap",
+    "all four close states distinct",
+    "transparent portrait overlay aperture",
+    "composite dimensions",
+    "payload hashes",
+    "v1 payload hashes unchanged",
+    "no v1 ID collisions"
+  ],
+  "native_runtime": "not_run"
+}

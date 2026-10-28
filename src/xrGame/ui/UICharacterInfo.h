@@ -51,10 +51,15 @@ protected:
 		eRelation,
 		eRelationCaption,
 
+		eSqaInfoPanel,
+		eSqaRankIcon,
+		eSqaCommunityIcon,
 		eMaxCaption
 	};
 
 	CUIStatic* m_icons[eMaxCaption];
+	Frect m_sqaIconBounds[eMaxCaption];
+	void FitSqaIcon(UIItemType type, LPCSTR texture);
 	shared_str m_texture_name;
 	u32 m_deadbody_color;
 
@@ -69,6 +74,8 @@ public:
 	void Init_IconInfoItem(CUIXml& xml_doc, LPCSTR item_str, UIItemType type);
 
 	void InitCharacter(u16 id);
+	void InitSource(LPCSTR name, LPCSTR kind, LPCSTR icon);
+	void UpdateSqaIdentityIcons();
 	void ClearInfo();
 	void InitCharacterMP(LPCSTR player_name, LPCSTR player_icon);
 

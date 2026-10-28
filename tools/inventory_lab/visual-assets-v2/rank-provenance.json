@@ -1,0 +1,16 @@
+[
+  {
+    "source": "C:\\GAMMA\\mods\\UI Rework G.A.M.M.A. Style - Sota\\gamedata\\textures\\ui\\ui_actor_menu_rank_icons.dds",
+    "destination": "textures/ui/ui_actor_menu_rank_icons.dds",
+    "sha256": "a291df630f624cd7e866c60c1d505e5e4e98bea7c9483c648a08d9c34c2ab5bb",
+    "bytes": 4194432,
+    "note": "Unmodified Sota UI rank artwork/descriptor; no Sota scripts required."
+  },
+  {
+    "source": "C:\\GAMMA\\mods\\UI Rework G.A.M.M.A. Style - Sota\\gamedata\\configs\\ui\\textures_descr\\z_ui_actor_menu_rank_icons.xml",
+    "destination": "configs/ui/textures_descr/sqa3_rank_icons.xml",
+    "sha256": "288e735ded369e2843fee031593ea993fa9118d1814ae110538fc81e9f807f43",
+    "bytes": 3098,
+    "note": "Unmodified Sota UI rank artwork/descriptor; no Sota scripts required."
+  }
+]

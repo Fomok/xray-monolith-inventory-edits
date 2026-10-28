@@ -11,6 +11,7 @@
 
 #include "xrUIXmlParser.h"
 #include "UIXmlInit.h"
+#include "UITextureMaster.h"
 
 #include "uistatic.h"
 #include "UIScrollView.h"
@@ -54,6 +55,9 @@ void CUICharacterInfo::InitCharacterInfo(Fvector2 pos, Fvector2 size, CUIXml* xm
 	inherited::SetWndPos(pos);
 	inherited::SetWndSize(size);
 
+	Init_IconInfoItem(*xml_doc, "sqa_info_panel", eSqaInfoPanel);
+	Init_IconInfoItem(*xml_doc, "sqa_rank_icon", eSqaRankIcon);
+	Init_IconInfoItem(*xml_doc, "sqa_community_icon", eSqaCommunityIcon);
 	Init_IconInfoItem(*xml_doc, "icon", eIcon);
 	Init_IconInfoItem(*xml_doc, "icon_over", eIconOver);
 
@@ -104,6 +108,7 @@ void CUICharacterInfo::Init_StrInfoItem(CUIXml& xml_doc, LPCSTR item_str, UIItem
 	{
 		CUIStatic* pItem = m_icons[type] = xr_new<CUIStatic>();
 		CUIXmlInit::InitStatic(xml_doc, item_str, 0, pItem);
+		if(m_icons[eSqaInfoPanel])pItem->TextItemControl()->SetEllipsis(true);
 		AttachChild(pItem);
 		pItem->SetAutoDelete(true);
 	}
@@ -115,6 +120,8 @@ void CUICharacterInfo::Init_IconInfoItem(CUIXml& xml_doc, LPCSTR item_str, UIIte
 	{
 		CUIStatic* pItem = m_icons[type] = xr_new<CUIStatic>();
 		CUIXmlInit::InitStatic(xml_doc, item_str, 0, pItem);
+		const auto pos=pItem->GetWndPos();const auto size=pItem->GetWndSize();
+		m_sqaIconBounds[type].set(pos.x,pos.y,pos.x+size.x,pos.y+size.y);
 
 		if (type == eIcon)
 			pItem->SetCoverTexture(true);
@@ -200,6 +207,7 @@ void CUICharacterInfo::InitCharacter(u16 id)
 
 	m_texture_name = chInfo.IconName();
 	if (m_icons[eIcon]) { m_icons[eIcon]->InitTexture(m_texture_name.c_str()); }
+	UpdateSqaIdentityIcons();
 	//	if ( m_icons[eRankIcon        ] ) { m_icons[eRankIcon        ]->InitTexture( chInfo.Rank().id().c_str() ); }
 
 	/*
@@ -232,6 +240,53 @@ void CUICharacterInfo::InitCharacter(u16 id)
 		if ( m_icons[eCommunityIconOver   ] ) { m_icons[eCommunityIconOver]->Show( false ); }
 		if ( m_icons[eCommunityBigIconOver] ) { m_icons[eCommunityBigIconOver]->Show( false ); }
 	*/
+}
+
+void CUICharacterInfo::UpdateSqaIdentityIcons()
+{
+    if(!m_icons[eSqaInfoPanel] || !hasOwner())return;
+    auto trader=ch_info_get_from_id(m_ownerID);if(!trader)return;
+    CCharacterInfo info;info.Init(trader);
+    const std::string rank="ui_rank_"+std::string(info.Rank().id().c_str());
+    const std::string community=std::string(info.Community().id().c_str())+"_icon";
+    const auto show=[&](UIItemType slot,const std::string& texture){
+        auto icon=m_icons[slot];if(!icon)return;
+        const bool exists=CUITextureMaster::FindItem(texture.c_str()).file.size()!=0;
+        icon->Show(exists);if(exists){icon->InitTexture(texture.c_str());icon->TextureOn();FitSqaIcon(slot,texture.c_str());}
+    };
+    show(eSqaRankIcon,rank);show(eSqaCommunityIcon,community);
+    if(m_icons[eIcon]){
+        m_texture_name=info.IconName();m_icons[eIcon]->InitTexture(m_texture_name.c_str());
+        FitSqaIcon(eIcon,m_texture_name.c_str());
+    }
+    if(m_icons[eRank])m_icons[eRank]->TextItemControl()->SetTextST(GetRankAsText(info.Rank().value()));
+    if(m_icons[eName])m_icons[eName]->TextItemControl()->SetTextST(trader->m_character_name.c_str());
+    if(m_icons[eCommunity])m_icons[eCommunity]->TextItemControl()->SetTextST(info.Community().id().c_str());
+}
+
+void CUICharacterInfo::FitSqaIcon(UIItemType type,LPCSTR texture)
+{
+    auto icon=m_icons[type];if(!icon||!m_icons[eSqaInfoPanel])return;
+    const auto info=CUITextureMaster::FindItem(texture);
+    if(!info.file.size()||info.rect.width()<=0||info.rect.height()<=0)return;
+    const auto& bounds=m_sqaIconBounds[type];
+    const float scale=_min(bounds.width()/info.rect.width(),bounds.height()/info.rect.height());
+    const float width=info.rect.width()*scale,height=info.rect.height()*scale;
+    icon->SetCoverTexture(false);icon->SetStretchTexture(true);
+    icon->SetWndSize(Fvector2().set(width,height));
+    icon->SetWndPos(Fvector2().set(bounds.x1+(bounds.width()-width)*0.5f,bounds.y1+(bounds.height()-height)*0.5f));
+}
+
+void CUICharacterInfo::InitSource(LPCSTR name,LPCSTR kind,LPCSTR icon)
+{
+    ClearInfo();m_ownerID=u16(-1);m_bForceUpdate=false;
+    if(m_icons[eSqaInfoPanel])m_icons[eSqaInfoPanel]->Show(true);
+    if(m_icons[eName]){m_icons[eName]->Show(true);m_icons[eName]->TextItemControl()->SetText(name);}
+    if(m_icons[eCommunity]){m_icons[eCommunity]->Show(true);m_icons[eCommunity]->TextItemControl()->SetText(kind);}
+    if(m_icons[eIcon]&&icon&&*icon){
+        m_icons[eIcon]->InitTexture(icon);m_icons[eIcon]->SetTextureColor(0xffffffff);m_icons[eIcon]->Show(true);
+        FitSqaIcon(eIcon,icon);
+    }
 }
 
 void CUICharacterInfo::InitCharacterMP(LPCSTR player_name, LPCSTR player_icon)
@@ -326,6 +381,7 @@ void CUICharacterInfo::Update()
 		else
 		{
 			UpdateRelation();
+			UpdateSqaIdentityIcons();
 		}
 
 		if (m_icons[eIcon])

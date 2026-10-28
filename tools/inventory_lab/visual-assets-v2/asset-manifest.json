@@ -1,0 +1,203 @@
+{
+  "version": 2,
+  "additive": true,
+  "raster_pixels_per_ui_unit": 2,
+  "source_crops": [
+    {
+      "name": "public olive identity",
+      "source": "sqa_fk_panels.dds",
+      "xywh": [
+        740,
+        30,
+        704,
+        124
+      ],
+      "output_pixels": [
+        528,
+        124
+      ],
+      "resampling": "LANCZOS"
+    },
+    {
+      "name": "public dark info bar",
+      "source": "sqa_fk_panels.dds",
+      "xywh": [
+        740,
+        160,
+        704,
+        56
+      ],
+      "output_pixels": [
+        528,
+        56
+      ],
+      "resampling": "LANCZOS"
+    },
+    {
+      "name": "public portrait inset",
+      "source": "sqa_fk_panels.dds",
+      "xywh": [
+        1470,
+        50,
+        224,
+        150
+      ],
+      "output_pixels": [
+        184,
+        176
+      ],
+      "resampling": "LANCZOS"
+    },
+    {
+      "name": "public close button base",
+      "source": "sqa_fk_controls.dds",
+      "xywh": [
+        600,
+        160,
+        48,
+        48
+      ],
+      "output_pixels": [
+        40,
+        40
+      ],
+      "resampling": "LANCZOS"
+    }
+  ],
+  "sources": [
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\sqa_fk_panels.dds",
+      "sha256": "32e928dfce68f3c70975f01063d89fc8b23daae639d7b209adade6b4550167f2"
+    },
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\sqa_fk_controls.dds",
+      "sha256": "cab0598b6a001a5f28f47b7b2d3f8e173181dd4a6ba640ba43cd6c0225ed10de"
+    },
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\ui\\ui_inventory_16.xml",
+      "sha256": "423af93db4eba7919d741fb4c2e399ab6f66f7a85d5e11fc2513f000237c5d6c"
+    }
+  ],
+  "textures": {
+    "sqa3v2_info_panel": {
+      "xywh": [
+        4,
+        4,
+        724,
+        188
+      ],
+      "logical_size": [
+        362.0,
+        94.0
+      ]
+    },
+    "sqa3v2_identity_region": {
+      "xywh": [
+        4,
+        200,
+        528,
+        124
+      ],
+      "logical_size": [
+        264.0,
+        62.0
+      ]
+    },
+    "sqa3v2_money_bar": {
+      "xywh": [
+        4,
+        332,
+        528,
+        56
+      ],
+      "logical_size": [
+        264.0,
+        28.0
+      ]
+    },
+    "sqa3v2_portrait_recess": {
+      "xywh": [
+        540,
+        332,
+        184,
+        176
+      ],
+      "logical_size": [
+        92.0,
+        88.0
+      ]
+    },
+    "sqa3v2_portrait_frame": {
+      "xywh": [
+        732,
+        332,
+        184,
+        176
+      ],
+      "logical_size": [
+        92.0,
+        88.0
+      ]
+    },
+    "sqa3v2_close_e": {
+      "xywh": [
+        924,
+        332,
+        40,
+        40
+      ],
+      "logical_size": [
+        20.0,
+        20.0
+      ]
+    },
+    "sqa3v2_close_h": {
+      "xywh": [
+        972,
+        332,
+        40,
+        40
+      ],
+      "logical_size": [
+        20.0,
+        20.0
+      ]
+    },
+    "sqa3v2_close_t": {
+      "xywh": [
+        4,
+        516,
+        40,
+        40
+      ],
+      "logical_size": [
+        20.0,
+        20.0
+      ]
+    },
+    "sqa3v2_close_d": {
+      "xywh": [
+        52,
+        516,
+        40,
+        40
+      ],
+      "logical_size": [
+        20.0,
+        20.0
+      ]
+    }
+  },
+  "outputs": [
+    {
+      "path": "package\\gamedata\\configs\\ui\\textures_descr\\sqa3_visual_assets_v2.xml",
+      "bytes": 810,
+      "sha256": "b68f84818a476423b7a0cd24c1f8cf648bfbaa71337b00834c0be3a35bd2c51f"
+    },
+    {
+      "path": "package\\gamedata\\textures\\ui\\sqa3_visual_info_v2.dds",
+      "bytes": 4194432,
+      "sha256": "e02596c54c17382819bc7a91ef8ea45a36891b113f10eaafb6dc5e45bd4bfb72"
+    }
+  ]
+}

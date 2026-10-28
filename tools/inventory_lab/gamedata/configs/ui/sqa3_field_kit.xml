@@ -22,33 +22,39 @@
   <left_background x="643" y="0" width="381" height="768" stretch="1">
     <texture a="255">sqa3v1_storage_panel</texture>
   </left_background>
-  <actor_ch_info x="270" y="10" width="361" height="89">
-    <name_static x="10" y="18" width="140" height="16">
+  <actor_ch_info x="270" y="10" width="362" height="94">
+    <sqa_info_panel x="0" y="0" width="362" height="94" stretch="1">
+      <texture>sqa3v2_info_panel</texture>
+    </sqa_info_panel>
+    <name_static x="8" y="14" width="158" height="18">
       <text align="l" font="letterica18" color="ui_2" />
     </name_static>
-    <community_static x="10" y="36" width="140" height="14">
-      <text align="l" font="letterica16" color="ui_3" />
+    <community_static x="8" y="34" width="158" height="18">
+      <text align="l" font="letterica16" color="ui_2" />
     </community_static>
-    <icon x="197" y="1" width="123" height="87" stretch="1">
-      <deadbody r="255" g="160" b="160" a="205" />
-    </icon>
+    <sqa_rank_icon x="176" y="6" width="38" height="50" stretch="1" />
+    <sqa_community_icon x="216" y="6" width="42" height="50" stretch="1" />
+    <icon x="270" y="8" width="88" height="84" stretch="1" />
   </actor_ch_info>
-  <partner_ch_info x="652" y="10" width="361" height="89">
-    <name_static x="10" y="18" width="140" height="16">
+  <partner_ch_info x="652" y="10" width="362" height="94">
+    <sqa_info_panel x="0" y="0" width="362" height="94" stretch="1">
+      <texture>sqa3v2_info_panel</texture>
+    </sqa_info_panel>
+    <name_static x="8" y="14" width="158" height="18">
       <text align="l" font="letterica18" color="ui_2" />
     </name_static>
-    <community_static x="10" y="36" width="140" height="14">
-      <text align="l" font="letterica16" color="ui_3" />
+    <community_static x="8" y="34" width="158" height="18">
+      <text align="l" font="letterica16" color="ui_2" />
     </community_static>
-    <icon x="197" y="1" width="123" height="87" stretch="1">
-      <deadbody r="255" g="160" b="160" a="205" />
-    </icon>
+    <sqa_rank_icon x="176" y="6" width="38" height="50" stretch="1" />
+    <sqa_community_icon x="216" y="6" width="42" height="50" stretch="1" />
+    <icon x="270" y="8" width="88" height="84" stretch="1" />
   </partner_ch_info>
-  <actor_money_static x="495" y="80" width="130" height="22">
-    <text align="r" font="graffiti22" />
+  <actor_money_static x="278" y="80" width="246" height="20">
+    <text align="r" font="letterica18" />
   </actor_money_static>
-  <partner_money_static x="876" y="80" width="130" height="22">
-    <text align="r" font="graffiti22" />
+  <partner_money_static x="660" y="80" width="246" height="20">
+    <text align="r" font="letterica18" />
   </partner_money_static>
   <inventory_slot_wnd>
     <slot>

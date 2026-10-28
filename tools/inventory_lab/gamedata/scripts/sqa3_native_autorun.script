@@ -1440,6 +1440,16 @@ function on_game_start()
     end
     if args:find("-sqa3-fixture-field-kit",1,true) then
         assert(args:find("-sqa3-field-kit",1,true),"Field Kit fixture needs visual mode")
+        if args:find("-sqa3-fixture-field-kit-headers",1,true) then
+            commands={"inventory_next_probe export",snapshot,spawn_crate,fill_crate,function()
+                if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
+                assert(ActorMenu.get_actor_menu():IsShown(),"header inventory did not open")
+                started=started+150000
+                printf("[SQA3 AUTORUN] header input window crate=%s",tostring(crate_id))
+            end,"screenshot sqa3_headers",snapshot,"inventory_next_probe export","save sqa3_headers","quit"}
+            RegisterScriptCallback("actor_on_update",update)
+            return
+        end
         local regression=args:find("-sqa3-fixture-field-kit-regression",1,true)~=nil
         local reload=args:find("-sqa3-fixture-field-kit-regression-reload",1,true)~=nil
         commands={"inventory_next_probe export",snapshot,function()
