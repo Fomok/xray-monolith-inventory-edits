@@ -686,7 +686,7 @@ CUICellContainer::CUICellContainer(CUIDragDropListEx* parent)
 {
 	m_pParentDragDropList = parent;
 	hShader->create("hud\\fog_of_war", "ui\\ui_grid");
-	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3v1_grid_line","hud\\fog_of_war",hSqaGrid,m_sqaGridRect);
+	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3v1_grid_line","hud\\default",hSqaGrid,m_sqaGridRect);
     else if (InventoryNextEnabled()) {hSqaGrid->create("hud\\fog_of_war", "ui\\sqa_fk_controls");m_sqaGridRect.set(8,8,136,136);}
 	//	hShader_selected->create	( "hud\\fog_of_war", "ui_grid_selected" );
 	m_cellSpacing.set(0, 0);
