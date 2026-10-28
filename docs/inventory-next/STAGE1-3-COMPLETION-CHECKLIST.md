@@ -21,7 +21,7 @@
 - Physical context, drag, full source switching and long-session gameplay still need human observation. A third native pistol slot is deferred by the visual-redesign decision recorded in `VISUAL-REDESIGN.md`; the current frame is presentation only.
 
 ## Final through3 handoff
-- Package and hash-verify/install only into isolated lab; fixture-free main-menu launcher with New Game/Load. The menu is visibly reached; automated New Game activation did not work, so fresh ordinary New Game initialization and loadout remain unverified until physical input.
+- PASS: 60-payload package `Squared Away 3 Field Kit Stage 1-3 Dev.zip` SHA256 `f11fbf2567d2ca9df46dca051bd4899e37b46e5574bd2a238c429ddd1f6dc3a7` installed only into the isolated lab with matching engine hash; fixture-free main-menu launcher shows New Game/Load. Automated New Game activation did not work, so fresh ordinary New Game initialization and loadout remain unverified until physical input.
 - Give easy representative item acquisition, manual steps and precise remaining manual-only gaps.
 - Leave zero games, verify original save/baseline/public engine protections; retain rollback and remove only superseded exact downloads. Planning owns Desktop shortcut last.
 
