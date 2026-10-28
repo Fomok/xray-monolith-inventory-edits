@@ -5,6 +5,7 @@
 #include "../../xrEngine/LightAnimLibrary.h"
 #include "uilines.h"
 #include "../ui_base.h"
+#include "../../inventory_next/icon_fit.h"
 
 #include "../Include/xrRender/UIRender.h"
 
@@ -28,8 +29,9 @@ void lanim_cont_xf::set_defaults()
 }
 
 CUIStatic::CUIStatic()
-	: m_bTextureEnable(true),
-	  m_eTextureMode(tmNative),
+	: m_eTextureMode(tmNative),
+	  m_bTextureEnable(true),
+	  m_bContainTexture(false),
 	  m_bHeading(false),
 	  m_bConstHeading(false),
 	  m_fHeading(0.0f),
@@ -157,7 +159,25 @@ void CUIStatic::DrawTexture()
 	{
 		Frect rect;
 		GetAbsoluteRect(rect);
-		m_UIStaticItem.SetPos(rect.left + m_TextureOffset.x, rect.top + m_TextureOffset.y);
+		bool contain=m_bContainTexture&&m_eTextureMode==tmStretch&&
+			(!Heading()||m_UIStaticItem.GetFixedLTWhileHeading());
+		if(contain)
+		{
+			const auto& source=m_UIStaticItem.GetTextureRect();
+			const auto fitted=inventory_next::fit_icon(source.width(),source.height(),
+				rect.width(),rect.height(),UI().ClientToScreenScaledX(1.0f),
+				UI().ClientToScreenScaledY(1.0f),Heading());
+			if(fitted.w>0&&fitted.h>0)
+			{
+				const float kx=UI().get_current_kx();
+				m_UIStaticItem.SetPos(rect.left+fitted.x+m_TextureOffset.x,
+					rect.top+(Heading()?-fitted.y:fitted.y)+m_TextureOffset.y);
+				m_UIStaticItem.SetSize(Heading()?Fvector2().set(fitted.h,fitted.w/kx):
+					Fvector2().set(fitted.w,fitted.h));
+			}
+			else contain=false;
+		}
+		if(!contain)m_UIStaticItem.SetPos(rect.left + m_TextureOffset.x, rect.top + m_TextureOffset.y);
 
 		if (m_eTextureMode == tmNative)
 		{
@@ -178,7 +198,7 @@ void CUIStatic::DrawTexture()
 
 			m_UIStaticItem.SetSize(Fvector2().set(r.width(), r.height()));
 		}
-		else
+		else if(!contain)
 		{
 			// tmStretch and tmCover both fill the slot; cover crops the UV in the renderer
 			if (Heading())

@@ -67,6 +67,8 @@ public:
 	Fvector2 GetTextureOffeset() const { return m_TextureOffset; }
 	void TextureOn() { m_bTextureEnable = true; }
 	void TextureOff() { m_bTextureEnable = false; }
+	void SetContainTexture(bool enabled) { m_bContainTexture = enabled; }
+	bool GetContainTexture() const { return m_bContainTexture; }
 
 
 	// own
@@ -128,6 +130,7 @@ protected:
 
 	ETextureMode m_eTextureMode;
 	bool m_bTextureEnable;
+	bool m_bContainTexture;
 	CUIStaticItem m_UIStaticItem;
 
 	bool m_bHeading;

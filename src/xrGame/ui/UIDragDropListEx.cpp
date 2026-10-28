@@ -1167,6 +1167,11 @@ void CUICellContainer::Draw()
                 if(!m_pParentDragDropList->HasStorageHeaders()||(current==2&&neighbor==2))return true;
                 return InventoryNextStorageSameCompartment(x,y,nx,ny,m_pParentDragDropList->sqaViewOwner);
             };
+            const auto sameVisibleItem=[&](int x,int y,int nx,int ny){
+                if(!same(x,y,nx,ny))return false;
+                const auto first=GetCellAt(Ivector2().set(x,y)).m_item;
+                return first&&first==GetCellAt(Ivector2().set(nx,ny)).m_item;
+            };
             const auto origin=[&](int cx,int cy,float& left,float& top){
                 float dx=0.0f,dy=0.0f;
                 if(m_pParentDragDropList->HasStorageHeaders())
@@ -1203,13 +1208,13 @@ void CUICellContainer::Draw()
                 if(!before)quad(left,top,left+line_x,edge_bottom,0xffffffff,true,&border);
                 if(!above)quad(left,top,edge_right,top+line_y,0xffffffff,true,&border);
                 if(!right)quad(edge_right-line_x,top,edge_right,edge_bottom,0xffffffff,true,&border);
-                else {
+                else if(!sameVisibleItem(cx,cy,cx+1,cy)) {
                     const float center=left+f_len.x+sp_len.x*0.5f;
                     quad(center-line_x*0.5f,top+(above?0.0f:line_y),center+line_x*0.5f,
                         edge_bottom-(bottom?0.0f:line_y),0xffffffff,true,&rule);
                 }
                 if(!bottom)quad(left,edge_bottom-line_y,edge_right,edge_bottom,0xffffffff,true,&border);
-                else {
+                else if(!sameVisibleItem(cx,cy,cx,cy+1)) {
                     const float center=top+f_len.y+sp_len.y*0.5f;
                     quad(left+(before?0.0f:line_x),center-line_y*0.5f,
                         edge_right-(right?0.0f:line_x),center+line_y*0.5f,0xffffffff,true,&rule);

@@ -45,7 +45,7 @@ protected:
 public:
     bool m_sqaRotated=false;
     void SetSqaRotation(bool rotated){if(rotated!=m_sqaRotated){int width=m_grid_size.x;m_grid_size.x=m_grid_size.y;m_grid_size.y=width;m_sqaRotated=rotated;}}
-    void SetSqaFootprint(int width,int height,bool rotated){m_grid_size.set(width,height);m_sqaRotated=rotated;}
+    void SetSqaFootprint(int width,int height,bool rotated){m_grid_size.set(rotated?height:width,rotated?width:height);m_sqaRotated=rotated;}
 	bool SqaRotated() const { return m_sqaRotated; }
 	CUICellItem();
 	virtual ~CUICellItem();

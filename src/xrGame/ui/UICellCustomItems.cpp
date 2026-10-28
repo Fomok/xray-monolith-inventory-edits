@@ -5,6 +5,7 @@
 #include "UIDragDropListEx.h"
 #include "UIProgressBar.h"
 #include "UIXmlInit.h"
+#include "../InventoryNextProbe.h"
 #define INV_GRID_WIDTHF			50.0f
 #define INV_GRID_HEIGHTF		50.0f
 
@@ -41,6 +42,7 @@ CUIInventoryCellItem::CUIInventoryCellItem(CInventoryItem* itm)
 
 	inherited::SetTextureRect(rect);
 	inherited::SetStretchTexture(true);
+	if(InventoryNextNativeGrowingExterior(itm->object_id()))inherited::SetContainTexture(true);
 
 	//Alundaio; Layered icon
 	u8 itrNum = 1;

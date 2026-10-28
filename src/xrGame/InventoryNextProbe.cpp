@@ -760,6 +760,23 @@ bool InventoryNextNativeFootprint(u16 live,int& width,int& height) noexcept try 
     }
     width=size.w;height=size.h;return size.w>0&&size.h>0;
 } catch (...) {return false;}
+bool InventoryNextNativeGrowingExterior(u16 live) noexcept try {
+    if(!InventoryNextFieldKitEnabled()||!layout_current||!layout().initialized())return false;
+    const auto id=InventoryNextIdentityLookup(live);
+    if(!id)return false;
+    const auto growing=[](const inventory_next::Node& node){
+        const auto family=node.attributes.find("storage_family");
+        return node.soft&&family!=node.attributes.end()&&
+            (family->second=="backpack"||family->second=="rig");
+    };
+    const auto local=layout().model().nodes().find(id);
+    if(local!=layout().model().nodes().end())return growing(local->second);
+    for(const auto& record:world_storage().records()){
+        const auto found=record.second.tree.nodes().find(id);
+        if(found!=record.second.tree.nodes().end())return growing(found->second);
+    }
+    return false;
+} catch (...) {return false;}
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view) noexcept try {
     if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
     const auto id=InventoryNextIdentity(live);

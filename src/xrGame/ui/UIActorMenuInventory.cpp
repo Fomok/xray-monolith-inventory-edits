@@ -616,7 +616,6 @@ bool CUIActorMenu::SqaRefreshFieldKitContents()
         if(!InventoryNextNativePosition(item->object_id(),x,y,rotated,list->sqaViewOwner))return;
         if(!InventoryNextNativeFootprint(item->object_id(),width,height)){
             const auto original=item->GetInvGridRect();width=original.x2;height=original.y2;
-            if(rotated)std::swap(width,height);
         }
         if(width<1||height<1){unresolved=true;return;}
         for(auto& target:targets)if(target.list==list){target.items.push_back({item,Ivector2().set(x,y),width,height,rotated});return;}
@@ -646,7 +645,9 @@ bool CUIActorMenu::SqaRefreshFieldKitContents()
             const auto found=std::find_if(target.items.begin(),target.items.end(),[&](const Desired& entry){return entry.item==item;});
             const auto position=list->SqaCellPosition(cell);const auto size=cell->GetGridSize();
             if(found!=target.items.end()&&position.x==found->cell.x&&position.y==found->cell.y&&
-               size.x==found->width&&size.y==found->height&&cell->SqaRotated()==found->rotated){
+               size.x==(found->rotated?found->height:found->width)&&
+               size.y==(found->rotated?found->width:found->height)&&
+               cell->SqaRotated()==found->rotated){
                 ++kept;cell->UpdateConditionProgressBar();continue;
             }
             if(CurrentItem()==cell){SetCurrentItem(nullptr);m_UIPropertiesBox->Hide();}

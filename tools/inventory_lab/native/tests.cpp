@@ -2,6 +2,7 @@
 #include "../../../src/inventory_next/native_storage_view.h"
 #include "../../../src/inventory_next/view_metrics.h"
 #include "../../../src/inventory_next/storage_catalog.h"
+#include "../../../src/inventory_next/icon_fit.h"
 #include "model.h"
 #include "access_gate.h"
 #include "identity_ledger.h"
@@ -24,6 +25,7 @@
 #include <limits>
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -1579,6 +1581,42 @@ int main(int argc,char** argv) {
             check(n.intrinsic==820&&n.condition==7834&&n.attributes.at("upgrade")=="retained","catalog overwrote native state");
             check(n.attributes.at("storage_allow_container_items")=="0","nesting default not explicit");
             auto before=n.attributes;check(!catalog.apply("unknown",n)&&n.attributes==before,"unknown definition changed state");
+        });
+        test("backpack and rig fullness stages validate ancestor fit and survive restart",[]{
+            for(const auto& stages:std::vector<std::pair<Size,Size>>{{{3,3},{4,4}},{{3,4},{3,5}}}){
+                const bool backpack=stages.first.h==3;
+                auto pack=bag(100,1,800);pack.grid={4,2};pack.empty=backpack?Size{2,2}:Size{2,3};
+                pack.half=stages.first;pack.full=stages.second;
+                pack.attributes["storage_family"]=backpack?"backpack":"rig";
+                pack.attributes["storage_exterior_independent"]="1";
+                auto blocker=item(101,1,250,backpack?Position{3,0,false}:Position{0,4,false});
+                std::vector<Node> nodes{root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),pack,blocker};
+                for(int i=0;i<5;++i)nodes.push_back(item(200+i,2,100,{i,0,false}));
+                Model m;yes(m.initialize(nodes));
+                check(m.footprint(100).w==2&&m.footprint(100).h==pack.empty.h,"empty exterior changed");
+                for(int i=0;i<4;++i)yes(move(m,{Id(200+i),100,{i,0,false},m.revision()}));
+                check(m.footprint(100).w==pack.half.w&&m.footprint(100).h==pack.half.h,"half exterior missing");
+                rollback(m,{204,100,{0,1,false},m.revision()},"overlap");
+                yes(move(m,{101,2,{8,0,false},m.revision()}));
+                yes(move(m,{204,100,{0,1,false},m.revision()}));
+                check(m.footprint(100).w==pack.full.w&&m.footprint(100).h==pack.full.h,"full exterior missing");
+                Model restored;yes(restored.deserialize(m.serialize()));
+                check(restored.footprint(100).w==pack.full.w&&restored.subtree_mass(100)==1300,"grown exterior or mass lost on reload");
+                yes(move(m,{204,2,{5,1,false},m.revision()}));
+                check(m.footprint(100).w==pack.half.w,"soft exterior did not shrink");
+                for(int i=0;i<4;++i)yes(move(m,{Id(200+i),2,{i,0,false},m.revision()}));
+                check(m.footprint(100).w==2&&m.footprint(100).h==pack.empty.h,"empty exterior not restored");
+            }
+        });
+        test("grown icon fits screen metric without changing atlas aspect",[]{
+            for(const bool rotated:{false,true})for(const Size box:{Size{2,2},Size{3,3},Size{4,4},Size{2,3},Size{3,4},Size{3,5}}){
+                const float width=float(box.w*34-2),height=float(box.h*34-2);
+                const auto fit=fit_icon(100,150,width,height,1.25f,1.0f,rotated);
+                const float aspect=rotated?150.0f/100.0f:100.0f/150.0f;
+                check(fit.x>=-0.001f&&fit.y>=-0.001f&&fit.x+fit.w<=width+0.001f&&fit.y+fit.h<=height+0.001f,"icon escaped occupied tile");
+                check(std::fabs(fit.w*1.25f/(fit.h*1.0f)-aspect)<0.001f,"icon aspect distorted");
+                check(std::fabs(fit.x*2+fit.w-width)<0.001f&&std::fabs(fit.y*2+fit.h-height)<0.001f,"icon not centered");
+            }
         });
         test("catalog soft exterior is independent of usable interior and rig tears preserve authored restoration",[]{
             StorageCatalog catalog;StorageDefinition definition;

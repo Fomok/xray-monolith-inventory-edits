@@ -13,6 +13,7 @@ void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept;
 
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view=0) noexcept;
 bool InventoryNextNativeFootprint(u16 live,int& width,int& height) noexcept;
+bool InventoryNextNativeGrowingExterior(u16 live) noexcept;
 bool InventoryNextCanCustomEquip(u64 host,u32 slot,u16 live,bool restoring=false) noexcept;
 bool InventoryNextCanCustomSwap(u64 host,u32 slot,u16 incoming) noexcept;
 void InventoryNextCustomChanged() noexcept;

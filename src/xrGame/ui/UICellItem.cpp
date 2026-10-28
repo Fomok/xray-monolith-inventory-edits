@@ -192,6 +192,15 @@ CUIDragItem* CUICellItem::CreateDragItem()
 
 	if (m_UIStaticItem.GetFixedLTWhileHeading())
 	{
+		if(GetContainTexture())
+		{
+			const Fvector2 cp=GetUICursor().GetCursorPosition();
+			const float width=r.width(),height=r.height();
+			r.x1=cp.x-width*0.5f;r.y1=cp.y-height*0.5f;
+			r.x2=r.x1+width;r.y2=r.y1+height;
+		}
+		else
+		{
 		float t1, t2;
 		t1 = r.width();
 		t2 = r.height() * UI().get_current_kx();
@@ -202,6 +211,7 @@ CUIDragItem* CUICellItem::CreateDragItem()
 		r.y1 = (cp.y - t1 / 2.0f);
 		r.x2 = r.x1 + t2;
 		r.y2 = r.y1 + t1;
+		}
 	}
 	tmp->Init(GetShader(), r, GetUIStaticItem().GetTextureRect());
 	return tmp;
@@ -375,6 +385,17 @@ void CUIDragItem::Init(const ui_shader& sh, const Frect& rect, const Frect& text
 	m_static.SetTextureRect(text_rect);
 	m_static.SetWndPos(Fvector2().set(0.0f, 0.0f));
 	m_static.SetWndSize(GetWndSize());
+	if(m_pParent->GetContainTexture())
+	{
+		m_static.SetContainTexture(true);
+		if(m_pParent->Heading())
+		{
+			m_static.EnableHeading(true);
+			m_static.SetHeading(90.0f*(PI/180.0f));
+			m_static.SetHeadingPivot(Fvector2().set(0.0f,0.0f),
+				Fvector2().set(0.0f,GetWndSize().y),true);
+		}
+	}
 	m_static.TextureOn();
 	m_static.SetTextureColor(color_rgba(255, 255, 255, 170));
 	m_static.SetStretchTexture(true);
