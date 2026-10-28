@@ -294,7 +294,7 @@ function on_game_start()
                 assert(spawned[item:section()]==item:id(),"lost or duplicate native catalog member")
                 assert(level.inventory_next_validate_definition(item:id()),"native definition rejected "..item:section())
                 count=count+1
-                printf("[SQA3 CATALOG TEST] section=%s live=%s grams=%s condition=%s",item:section(),tostring(item:id()),tostring(item:weight()*1000),tostring(item:condition()))
+                printf("[SQA3 CATALOG TEST] section=%s live=%s persistent=%s grams=%s condition=%s",item:section(),tostring(item:id()),level.inventory_next_identity(item:id()),tostring(item:weight()*1000),tostring(item:condition()))
                 return false
             end,db.actor)
             assert(count==49,"native catalog count mismatch")
