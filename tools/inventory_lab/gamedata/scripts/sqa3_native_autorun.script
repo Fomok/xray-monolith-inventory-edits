@@ -253,6 +253,47 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-stash-drag",1,true) then
+        local pack_id,bandage_id,box_id
+        commands={"g_god on",snapshot}
+        commands[#commands+1]=function()
+            local actor=db.actor;local pack=assert(actor:item_in_slot(13),"fixture needs the disposable equipped backpack")
+            pack_id=pack:id();local pos=actor:position();pos.x=pos.x+0.8
+            local box=assert(alife():create("inventory_box",pos,actor:level_vertex_id(),actor:game_vertex_id()),"stash fixture box")
+            box_id=box.id
+            bandage_id=assert(alife():create("bandage",pos,actor:level_vertex_id(),actor:game_vertex_id(),box_id),"stash fixture bandage").id
+            exec_console_cmd("inventory_next_probe view")
+        end
+        commands[#commands+1]=function()
+            local box=assert(level.object_by_id(box_id),"stash fixture source not online")
+            ActorMenu.get_actor_menu():HideDialog();assert(box:use(db.actor),"stash fixture source did not open")
+            assert(ActorMenu.get_actor_menu():IsShown(),"stash fixture menu unavailable")
+            printf("[SQA3 STASH DRAG] ready source=%s item=%s equipped_pack=%s; drag bandage directly into backpack cells",box_id,bandage_id,pack_id)
+        end
+        commands[#commands+1]="screenshot sqa3_stash_drag_ready"
+        commands[#commands+1]=function() started=started+120000 end
+        commands[#commands+1]=function()
+            local moved=assert(level.object_by_id(bandage_id),"stash bandage disappeared")
+            assert(moved:parent() and moved:parent():id()==db.actor:id(),"drag did not transfer native custody")
+            exec_console_cmd("inventory_next_probe export")
+            local file=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"r"))
+            local contents=file:read("*a");file:close()
+            local wanted=level.inventory_next_identity(bandage_id)
+            local host=level.inventory_next_identity(pack_id)
+            local found=false
+            for line in contents:gmatch("[^\n]+") do
+                if line:match("^(%d+) ")==wanted then
+                    local fields={};for value in line:gmatch("%S+") do fields[#fields+1]=value end
+                    found=fields[2]==host and fields[25]=="0";break
+                end
+            end
+            assert(found,"drag did not preserve exact equipped-backpack logical destination")
+            printf("[SQA3 STASH DRAG] direct native stash-to-equipped-backpack custody PASS")
+        end
+        commands[#commands+1]="save sqa3_stash_drag"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-definitions",1,true) then
         commands=sqa3_definition_fixture.plan(snapshot)
         RegisterScriptCallback("actor_on_update",update);return
