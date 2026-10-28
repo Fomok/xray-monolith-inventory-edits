@@ -20,9 +20,9 @@ function plan(snapshot)
     local commands={"g_god on",snapshot}
     if reload then
         commands[#commands+1]=function()
-            local names={};for _,key in ipairs({"pack","case","med1","med2","food","pouch"}) do names[load_var(db.actor,"sqa3_definition_"..key,"")]=key end
+            local names={};for _,key in ipairs({"pack","case","med1","med2","food","pouch","backpack_a","backpack_b"}) do names[load_var(db.actor,"sqa3_definition_"..key,"")]=key end
             db.actor:iterate_inventory(function(_,item) local key=names[alife():object(item:id()):name()];if key then assert(not ids[key]);ids[key]=item:id() end return false end,db.actor)
-            for _,key in ipairs({"pack","case","med1","med2","food","pouch"}) do assert(ids[key],"saved definition member missing "..key) end
+            for _,key in ipairs({"pack","case","med1","med2","food","pouch","backpack_a","backpack_b"}) do assert(ids[key],"saved definition member missing "..key) end
         end
     else
         commands[#commands+1]=function()
@@ -46,13 +46,19 @@ function plan(snapshot)
             db.actor:iterate_inventory(function(_,item)
                 if item:section()=="bandage" then ids.original_bandage=item:id() end
                 if item:section()=="bread" and item:id()~=ids.food then ids.original_bread=item:id() end
+                if item:section()=="itm_backpack" then
+                    if not ids.backpack_a then ids.backpack_a=item:id() else ids.backpack_b=item:id() end
+                end
                 return false
             end,db.actor)
+            assert(ids.backpack_a and ids.backpack_b,"two original backpacks missing")
+            for _,key in ipairs({"backpack_a","backpack_b"}) do save_var(db.actor,"sqa3_definition_"..key,alife():object(ids[key]):name()) end
+            object("backpack_a"):set_condition(0.65);object("backpack_b"):set_condition(0.9)
             store("original_bandage","pack",0,0);store("original_bread","pack",1,0)
             assert(node("original_bandage")[2]==identity("pack") and node("original_bread")[2]==identity("pack"),"backpack interior admission failed")
             store("case","root",2,0);assert(node("case")[25]=="0","case not legally placed")
-            object("med1"):set_remaining_uses(1);object("med1"):set_condition(0.65)
-            object("med2"):set_remaining_uses(2);object("med2"):set_condition(0.9)
+            object("med1"):set_remaining_uses(1)
+            object("med2"):set_remaining_uses(2)
         end
         commands[#commands+1]=function()
             store("med1","case",0,0);store("med2","case",1,0)
@@ -75,8 +81,8 @@ function plan(snapshot)
     end
     commands[#commands+1]=function()
         export()
-        assert(object("med1"):get_remaining_uses()==1 and math.abs(object("med1"):condition()-0.65)<0.0002,"first stateful instance changed")
-        assert(object("med2"):get_remaining_uses()==2 and math.abs(object("med2"):condition()-0.9)<0.0002,"second stateful instance changed")
+        assert(object("med1"):get_remaining_uses()==1 and object("med2"):get_remaining_uses()==2,"medical charge instances changed")
+        assert(math.abs(object("backpack_a"):condition()-0.65)<0.0002 and math.abs(object("backpack_b"):condition()-0.9)<0.0002,"backpack condition instances changed")
         assert(node("med1")[2]==identity("case") and node("med2")[2]==identity("case"),"saved compartment identity changed")
         assert(db.actor:item_in_slot(13):id()==ids.pack,"backpack binding changed")
         assert(db.actor:item_in_slot(2):has_upgrade("up_firsta_pm"),"saved native upgrade absent")

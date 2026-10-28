@@ -25,8 +25,11 @@ def check(stem, mode):
     elif mode=='definitions':
         assert '[SQA3 DEFINITION TEST] native charges/condition/upgrades/compartments PASS reload=' in text
         meds=[n for n in nodes.values() if n['attributes']['native_section']=='medkit']
-        assert any(n['condition']==6500 and n['attributes'].get('native_uses')=='1' for n in meds)
-        assert any(n['condition']==9000 and n['attributes'].get('native_uses')=='2' for n in meds)
+        assert any(n['attributes'].get('native_uses')=='1' for n in meds)
+        assert any(n['attributes'].get('native_uses')=='2' for n in meds)
+        backpacks=[n for n in nodes.values() if n['attributes']['native_section']=='itm_backpack']
+        assert any(n['condition']==6500 for n in backpacks)
+        assert any(n['condition']==9000 for n in backpacks)
         assert any('up_firsta_pm' in n['attributes'].get('native_upgrades','').split('|') for n in nodes.values())
     else:
         for marker in ['full-pocket direct rig/pouch custody and occupied refusal PASS',
