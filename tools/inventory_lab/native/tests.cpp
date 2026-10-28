@@ -607,6 +607,10 @@ int main(int argc,char** argv) {
             Model m;yes(m.initialize({a,w,pack,blocker,incoming}));
             rollback(m,{20,10,{0,0,false},0},"overlap");
             m.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
+            Command proposed;proposed.item=20;proposed.destination=10;proposed.revision=m.revision();proposed.session=m.session();
+            const auto before=m.serialize();const auto preview=m.preview(proposed);
+            check(preview.result.ok&&preview.node_count==5&&preview.carried_mass==147&&m.serialize()==before,
+                "recovery preview mutated state or reported wrong mass");
             yes(move(m,{20,10,{0,0,false},0}));
             check(m.nodes().at(10).location==Location::Overflow&&m.nodes().at(10).parent==1&&
                 m.nodes().at(20).parent==10&&m.nodes().at(20).location==Location::Grid&&
@@ -633,6 +637,31 @@ int main(int argc,char** argv) {
             auto fixed=rig;fixed.attributes["storage_family"]="box";Model b;yes(b.initialize({a,w,fixed,incoming}));
             b.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
             rollback(b,{20,10,{0,0,false},0},"bounds");
+        });
+        test("growth recovery never bypasses actor mass capacity",[]{
+            auto a=root(1,Kind::ActorRoot,{2,2});a.max_contents=120;
+            auto w=root(2,Kind::WorldRoot);auto pack=bag(10,1,100,{1,0,false});
+            pack.grid={2,1};pack.empty={1,1};pack.half={2,1};pack.full={2,1};
+            pack.attributes["storage_family"]="backpack";
+            auto incoming=item(20,2,40);Model m;yes(m.initialize({a,w,pack,incoming}));
+            m.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
+            rollback(m,{20,10,{0,0,false},0},"mass_capacity");
+            check(m.carried_mass()==100&&m.nodes().at(10).location==Location::Grid,
+                "mass refusal created hidden recovery capacity");
+        });
+        test("nested rig growth recovers nearest growing shell and keeps backpack",[]{
+            auto a=root(1,Kind::ActorRoot,{4,4});auto w=root(2,Kind::WorldRoot);
+            auto pack=bag(10,1,100,{0,0,false});pack.grid={2,1};pack.empty={2,2};pack.half={2,2};pack.full={2,2};
+            pack.attributes["storage_family"]="backpack";
+            auto rig=bag(11,10,20,{1,0,false});rig.grid={2,1};rig.empty={1,1};rig.half={2,1};rig.full={2,1};
+            rig.attributes["storage_family"]="rig";
+            auto incoming=item(20,2,40);Model m;yes(m.initialize({a,w,pack,rig,incoming}));
+            m.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
+            yes(move(m,{20,11,{0,0,false},0}));
+            check(m.nodes().at(10).location==Location::Grid&&m.nodes().at(10).parent==1&&
+                m.nodes().at(11).location==Location::Overflow&&m.nodes().at(11).parent==1&&
+                m.nodes().at(20).parent==11&&m.carried_mass()==160,
+                "nested growth recovery moved the wrong shell or lost descendants");
         });
         test("cycle and self-parent rejected atomically",[]{
             auto m=make(); rollback(m,{10,11,{0,0,false},0},"cycle");

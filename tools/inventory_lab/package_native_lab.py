@@ -96,7 +96,8 @@ def main():
         "Original Squared Away art; no3D player model. Current build/overlay/CI and every payload hash are in manifest.json.\n"
         "Backpack compartments are new development designs with original usable-cell totals preserved; original rig masks retained.\n"
         "Growth stages are provisional development balancing; external modpack action bridges and long-session parity are later work.\n"
-        "MCM 1.7.2fix is an external dependency for the growth-collision setting. Install it separately; this ZIP includes only Squared Away's MCM entry. Default without MCM is refuse.\n").encode()
+        "MCM 1.7.2fix is an external dependency for the growth-collision setting. Install it separately; this ZIP includes only Squared Away's MCM entry. Default without MCM is refuse.\n"
+        "In MCM: Squared Away 3 > When a filled container cannot grow > Refuse the item / Move container to Recovery.\n").encode()
     manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":overlay,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     manifest['field_kit_opt_in']=b'-sqa3-field-kit' in engine_source
     manifest['logical_storage_opt_in']=logical is not None

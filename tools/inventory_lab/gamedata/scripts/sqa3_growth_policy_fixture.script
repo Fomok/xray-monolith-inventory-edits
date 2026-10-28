@@ -44,17 +44,26 @@ function plan(snapshot)
     else
         commands[#commands+1]=function()
             local a=db.actor
-            for key,section in pairs({pack="equ_small_pack",med="medkit"}) do
-                local o=assert(alife():create(section,a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()))
-                ids[key]=o.id;save_var(a,"sqa3_growth_"..key,o:name())
-            end
+            local chosen=nil
+            a:iterate_inventory(function(_,item)
+                if item:section()=="itm_backpack" then
+                    ids.pack=item:id()
+                    local row=node("pack")
+                    if row[2]=="1" and row[25]=="0" then chosen=item end
+                end
+                return false
+            end,a)
+            assert(chosen,"no actor-grid backpack for growth fixture")
+            ids.pack=chosen:id()
+            save_var(a,"sqa3_growth_pack",alife():object(ids.pack):name())
+            local med=assert(alife():create("medkit",a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()))
+            ids.med=med.id;save_var(a,"sqa3_growth_med",med:name())
             ui_mcm.set("sqa3/growth_collision",0)
             SendScriptCallback("on_option_change",true)
             assert(sqa3_growth_mcm.read_growth_collision()==0,"MCM default not applied")
         end
         commands[#commands+1]=function()
-            store("pack","root",2,0)
-            assert(node("pack")[25]=="0","empty backpack did not fit")
+            assert(node("pack")[25]=="0","source backpack not in actor grid")
             local before=node("med")
             store("med","pack",0,0)
             assert(node("med")[2]==before[2] and node("med")[25]==before[25] and node("pack")[25]=="0",
