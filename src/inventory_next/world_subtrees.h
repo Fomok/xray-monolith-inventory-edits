@@ -72,6 +72,40 @@ public:
         if(found==records_.end()||found->second.custodian!=expected_custodian)return {false,"world_storage_custodian"};
         records_.erase(found);return {true,{}};
     }
+    // Candidate-only leaf edits for a direct move between a detached box and
+    // another custody domain. The caller publishes the candidate only after
+    // native ownership acknowledgement; loaded shells use subtree transfer.
+    Result without_leaf(Id shell,Id expected_custodian,Id leaf,WorldSubtrees& output) const {
+        const auto found=records_.find(shell);
+        if(found==records_.end()||found->second.custodian!=expected_custodian)return {false,"world_storage_custodian"};
+        const auto& saved=found->second.tree.nodes();
+        if(leaf==shell||!saved.count(leaf)||saved.at(leaf).kind!=Kind::Item)return {false,"world_storage_leaf"};
+        for(const auto& pair:saved)if(pair.second.parent==leaf)return {false,"world_storage_loaded"};
+        std::vector<Node> nodes;for(const auto& pair:saved)if(pair.first!=leaf)nodes.push_back(pair.second);
+        Model tree;auto result=tree.initialize(nodes);if(!result)return result;
+        auto candidate=*this;candidate.records_.at(shell).tree=std::move(tree);
+        result=candidate.validate();if(!result)return result;
+        if(candidate.serialize().size()>max_bytes)return {false,"world_storage_size"};
+        output=std::move(candidate);return {true,{}};
+    }
+    Result with_leaf(Id shell,Id expected_custodian,Node leaf,Position position,WorldSubtrees& output) const {
+        const auto found=records_.find(shell);
+        if(found==records_.end()||found->second.custodian!=expected_custodian)return {false,"world_storage_custodian"};
+        auto candidate=*this;auto& tree=candidate.records_.at(shell).tree;
+        if(tree.nodes().count(leaf.id)||tree.high_water_id()==std::numeric_limits<Id>::max())return {false,"world_storage_duplicate"};
+        leaf.parent=shell;leaf.location=Location::Grid;leaf.position=position;
+        leaf.equipped_slots=0;leaf.mounted_slot=0;
+        Model preflight=tree;Command request;request.operation=Operation::Spawn;request.spawned=leaf;
+        request.spawned.id=tree.high_water_id()+1;
+        request.revision=preflight.revision();request.session=preflight.session();
+        auto result=preflight.execute(request);if(!result)return result;
+        std::vector<Node> nodes;for(const auto& pair:tree.nodes())nodes.push_back(pair.second);
+        nodes.push_back(std::move(leaf));Model inserted;result=inserted.initialize(nodes);if(!result)return result;
+        tree=std::move(inserted);
+        result=candidate.validate();if(!result)return result;
+        if(candidate.serialize().size()>max_bytes)return {false,"world_storage_size"};
+        output=std::move(candidate);return {true,{}};
+    }
     // Rebuild saved placement around current engine facts. Caller first checks
     // physical custody and persistent identities for every supplied object.
     Result refresh(Id shell,Id expected_custodian,const std::vector<Node>& actual) {

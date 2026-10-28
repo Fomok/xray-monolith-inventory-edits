@@ -98,6 +98,8 @@ const inventory_next::NativeStorageView& make_storage_view(u64 owner) {
 std::map<u16,inventory_next::Node> pending_pickups;
 std::unique_ptr<inventory_next::EntityRegistry> pickup_registry;
 std::unique_ptr<inventory_next::GroundPickup> pickup_transaction;
+std::unique_ptr<inventory_next::WorldSubtrees> pickup_world_candidate;
+std::string pickup_world_before;
 bool pickup_fault=false;
 u16 pickup_source=0xffff;
 struct PurchaseRecord { u16 live; u64 identity; u32 price; inventory_next::Node node; };
@@ -123,6 +125,16 @@ struct NativeWorldTransfer {
 };
 std::unique_ptr<NativeWorldTransfer> world_transfer;
 u64 next_world_token=0;
+struct NativeWorldMember {
+    inventory_next::Model actor_candidate;
+    inventory_next::WorldSubtrees world_candidate;
+    std::string actor_before,world_before;
+    u16 source=0xffff,destination=0xffff,live=0xffff;
+    u64 source_identity=0,destination_identity=0,item_identity=0,shell=0,token=0;
+    bool committed=false;
+};
+std::unique_ptr<NativeWorldMember> world_member;
+u64 next_world_member_token=0;
 struct NativeGroundProvision {
     u16 shell=0xffff,proxy=0xffff;
     u64 shell_identity=0;
@@ -629,7 +641,7 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model(),view_options()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {source_footprints.clear();dismantling_items.clear();equipment_registry_ready=false;storage_catalog_cache.reset();pending_custom_bindings.clear();restoring_custom_bindings=false;collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {source_footprints.clear();dismantling_items.clear();equipment_registry_ready=false;storage_catalog_cache.reset();pending_custom_bindings.clear();restoring_custom_bindings=false;collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();world_member.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pickup_world_candidate.reset();pickup_world_before.clear();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
@@ -643,7 +655,7 @@ void InventoryNextLayoutLoad(IReader& stream) noexcept try {
     source_footprints.clear();dismantling_items.clear();
     equipment_registry_ready=false;storage_catalog_cache.reset();
     pending_custom_bindings.clear();restoring_custom_bindings=false;
-    collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};auto chunk=stream.open_chunk(layout_chunk);
+    collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();world_transfer.reset();world_member.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pickup_world_candidate.reset();pickup_world_before.clear();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};auto chunk=stream.open_chunk(layout_chunk);
     if(!chunk) {
         auto orphan=stream.open_chunk(world_storage_chunk);const bool has_world=orphan!=nullptr;if(orphan)orphan->close();
         CHECK_OR_EXIT(!has_world,"SQA3 world storage missing actor layout");return;
@@ -867,7 +879,7 @@ bool InventoryNextStrictPickup() noexcept {
     return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-ground-pickup")||InventoryNextStrictOwnedPickup());
 }
 bool InventoryNextPickupCanSave() noexcept {
-    return !pickup_fault&&!pickup_transaction&&!purchase&&!world_transfer&&!ground_provision&&pending_pickups.empty()&&dismantling_items.empty();
+    return !pickup_fault&&!pickup_transaction&&!pickup_world_candidate&&!purchase&&!world_transfer&&!world_member&&!ground_provision&&pending_pickups.empty()&&dismantling_items.empty();
 }
 void InventoryNextPickupForget(u16 live) noexcept try {
     if(CurrentGameUI())CurrentGameUI()->GetActorMenu().SqaForgetLoot(live);
@@ -890,11 +902,26 @@ bool pickup_slot_compatible(CInventoryItem* item,u16 slot) {
     return base==slot||(base==INV_SLOT_2&&(slot==INV_SLOT_3||slot==KNIFE_SLOT))||
         (base==INV_SLOT_3&&slot==INV_SLOT_2);
 }
+u64 detached_leaf_shell(u16 source,u16 live) {
+    if(source==0xffff)return 0;
+    const auto source_identity=InventoryNextIdentity(source),item_identity=InventoryNextIdentity(live);
+    if(!source_identity||!item_identity)return 0;
+    for(const auto& record:world_storage().records())if(record.second.custodian==source_identity&&record.first!=item_identity&&
+        record.second.tree.nodes().count(item_identity)){
+        if(record.second.tree.nodes().at(item_identity).parent!=record.first)return 0;
+        for(const auto& pair:record.second.tree.nodes())if(pair.second.parent==item_identity)return 0;
+        return record.first;
+    }
+    return 0;
 }
-bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custom_slot,u64 custom_host,u64 exact_destination,int exact_x,int exact_y) noexcept try {
+}
+bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custom_slot,u64 custom_host,u64 exact_destination,int exact_x,int exact_y,u64 expected_logical_owner) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
-    if(pickup_fault||pickup_transaction||purchase||world_transfer||!InventoryNextWorldCanRelease(live)||!InventoryNextLayoutSync())return false;
+    if(pickup_fault||pickup_transaction||purchase||world_transfer||!InventoryNextLayoutSync())return false;
+    const auto detached_shell=detached_leaf_shell(source,live);
+    if((detached_shell||expected_logical_owner)&&detached_shell!=expected_logical_owner)return false;
+    if(!InventoryNextWorldCanRelease(live)&&!detached_shell)return false;
     auto object=Level().Objects.net_Find(live);
     auto item=smart_cast<CInventoryItem*>(object);
     const auto server=ai().alife().objects().object(live,true);
@@ -921,6 +948,12 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custo
         }
     }
     const auto id=InventoryNextIdentity(live);if(!id)return false;
+    std::unique_ptr<WorldSubtrees> world_candidate;
+    if(detached_shell){
+        world_candidate=std::make_unique<WorldSubtrees>();
+        const auto result=world_storage().without_leaf(detached_shell,InventoryNextIdentity(source),id,*world_candidate);
+        if(!result)return false;
+    }
     InventoryNextIdentityOnline(*item);
     Node n;n.id=id;n.parent=2;
     const double grams=double(item->Weight())*1000.0,condition=item->GetCondition();
@@ -973,6 +1006,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custo
         exact_destination,{exact_x,exact_y,false});
     if(!result){Msg("! SQA3 %s pickup refused live=%u reason=%s; source retained",source==0xffff?"ground":"owned",live,result.error.c_str());InventoryNextPickupStatus("No space. Item stayed at source.");return false;}
     pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);pickup_source=source;
+    if(world_candidate){pickup_world_before=world_storage().serialize();pickup_world_candidate=std::move(world_candidate);}
     if(slot!=0xffff)Msg("* SQA3 direct equip reserved live=%u slot=%u",live,slot);
     Msg("* SQA3 %s pickup reserved live=%u; save blocked=%d",source==0xffff?"ground":"owned",live,!InventoryNextPickupCanSave());
     return true;
@@ -980,6 +1014,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custo
 void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID()||!pickup_transaction)return;
     const auto server=ai().alife().objects().object(live,true);
+    if(pickup_world_candidate&&world_storage().serialize()!=pickup_world_before){pickup_fault=true;return;}
     const auto result=pickup_transaction->acknowledge(server?server->ID_Parent:0xffff,accepted);
     if(accepted&&result) {
         const auto id=InventoryNextIdentity(live);
@@ -987,6 +1022,7 @@ void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
         // Restore only the acknowledged actor forest, never a rejected source.
         const auto restored=layout().restore(pickup_transaction->model().serialize());
         if(!restored){pickup_fault=true;Msg("! SQA3 pickup publish failed: %s",restored.error.c_str());return;}
+        if(pickup_world_candidate)world_storage()=std::move(*pickup_world_candidate);
         pending_pickups.emplace(live,admitted);
         InventoryNextPickupStatus("");
         if(InventoryNextIdentityCanSave()){pickup_fault=true;Msg("! SQA3 pending pickup incorrectly allowed save");return;}
@@ -994,7 +1030,7 @@ void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept try {
     } else if(accepted||result.error!="native_rejected") {
         pickup_fault=true;Msg("! SQA3 pickup acknowledgement failed: %s",result.error.c_str());return;
     }
-    pickup_transaction.reset();pickup_registry.reset();
+    pickup_transaction.reset();pickup_registry.reset();pickup_world_candidate.reset();pickup_world_before.clear();
 } catch (...) {pickup_fault=true;Msg("! SQA3 pickup acknowledgement exception; saves blocked");}
 void InventoryNextPickupTaken(u16 live) noexcept try {
     if(!pending_pickups.count(live))return;
@@ -1049,10 +1085,10 @@ void InventoryNextPickupStatus(const char* text) noexcept try {
     auto& menu=CurrentGameUI()->GetActorMenu();menu.m_sqaRefresh=true;menu.m_sqaRetryAfter=Device.dwTimeGlobal+250;
     if(text&&menu.m_sqaStatus)menu.m_sqaStatus->TextItemControl()->SetText(text);
 } catch (...) {Msg("! SQA3 acquisition status refresh failed");}
-bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot,u32 custom_slot,u64 custom_host,u64 exact_destination,int exact_x,int exact_y) noexcept try {
+bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot,u32 custom_slot,u64 custom_host,u64 exact_destination,int exact_x,int exact_y,u64 expected_logical_owner) noexcept try {
     if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||(source==0xffff&&!custom_slot))return false;
     if(exact_destination&&(slot!=0xffff||custom_slot||exact_x<0||exact_y<0||exact_x>=64||exact_y>=64))return false;
-    if(!InventoryNextWorldCanRelease(live)) {
+    if(!InventoryNextWorldCanRelease(live)&&!detached_leaf_shell(source,live)) {
         if(exact_destination){InventoryNextPickupStatus("Loaded bag needs a whole-container transfer. Source unchanged.");return false;}
         if(slot!=0xffff||custom_slot){InventoryNextPickupStatus("Take the loaded bag into storage before equipping it.");return true;}
         return InventoryNextWorldRequest(source,owner,live);
@@ -1063,7 +1099,7 @@ bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot,u32 
     packet.w_u16(source);packet.w_u16(live);packet.w_u64(source_identity);packet.w_u64(item_identity);
     packet.w_u16(slot);
     packet.w_u32(custom_slot);packet.w_u64(custom_host);
-    packet.w_u64(exact_destination);packet.w_s32(exact_x);packet.w_s32(exact_y);
+    packet.w_u64(exact_destination);packet.w_s32(exact_x);packet.w_s32(exact_y);packet.w_u64(expected_logical_owner);
     // Local single-player dispatch may finish synchronously. Set the pending
     // label first so the resulting refusal/acceptance remains visible.
     InventoryNextPickupStatus("Checking storage...");CGameObject::u_EventSend(packet);return true;
@@ -1288,11 +1324,15 @@ bool InventoryNextWorldCanRelease(u16 live) noexcept try {
 bool InventoryNextWorldVisible(u16 live) noexcept try {
     if(world_storage().records().empty())return true;
     const auto id=InventoryNextIdentity(live);
-    for(const auto& record:world_storage().records())if(record.second.tree.nodes().count(id))return record.first==id;
+    for(const auto& record:world_storage().records())if(record.second.tree.nodes().count(id)){
+        if(record.first==id)return true;
+        for(const auto& pair:record.second.tree.nodes())if(pair.second.parent==id)return false;
+        return true; // Individual leaf contents may be taken from this stash.
+    }
     return true;
 } catch (...) {return false;}
 bool InventoryNextWorldCanSave() noexcept try {
-    if(world_transfer||ground_provision||pickup_fault)return false;
+    if(world_transfer||world_member||ground_provision||pickup_fault)return false;
     for(const auto& record:world_storage().records()) {
         const u16 custodian=InventoryNextIdentityServer(record.second.custodian);
         if(!record.second.custodian||custodian==0xffff||!ai().alife().objects().object(custodian,true))return false;
@@ -1658,15 +1698,37 @@ xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse) noexcept 
         }
         TIItemContainer items;
         if(box)box->AddAvailableItems(items);else if(auto owner=smart_cast<CInventoryOwner*>(object))owner->inventory().AddAvailableItems(items,false,false);
-        for(auto item:items)if(item){source.grams+=static_cast<s64>(std::llround(item->Weight()*1000.0));if(InventoryNextWorldVisible(item->object_id())){observe(item);source.items.push_back(item->object_id());}}
-        std::sort(source.items.begin(),source.items.end());result.push_back(std::move(source));
+        for(auto item:items)if(item){
+            source.grams+=static_cast<s64>(std::llround(item->Weight()*1000.0));
+            const auto identity=InventoryNextIdentity(item->object_id());bool nested=false;
+            for(const auto& record:world_storage().records())if(record.first!=identity&&record.second.tree.nodes().count(identity)){nested=true;break;}
+            if(!nested&&InventoryNextWorldVisible(item->object_id())){observe(item);source.items.push_back(item->object_id());}
+        }
+        std::sort(source.items.begin(),source.items.end());result.push_back(source);
+        if(box)for(const auto& record:world_storage().records())if(record.second.custodian==source.identity){
+            const u16 shell_live=InventoryNextIdentityServer(record.first);
+            auto shell=smart_cast<CInventoryItem*>(Level().Objects.net_Find(shell_live));
+            if(!shell||shell->parent_id()!=source.live)continue;
+            InventoryNextLootSource interior;interior.live=source.live;interior.identity=source.identity;
+            interior.logical_owner=record.first;interior.name=std::string("Inside ")+(shell->NameItem()?shell->NameItem():"box");
+            const auto& nodes=record.second.tree.nodes();
+            for(const auto& entry:nodes)if(entry.second.parent==record.first){
+                const u16 member=InventoryNextIdentityServer(entry.first);
+                auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(member));
+                if(item&&item->parent_id()==source.live&&InventoryNextWorldVisible(member)){
+                    interior.items.push_back(member);interior.grams+=record.second.tree.subtree_mass(entry.first);
+                    observe(item);
+                }
+            }
+            std::sort(interior.items.begin(),interior.items.end());result.push_back(std::move(interior));
+        }
     }
-    std::sort(result.begin(),result.end(),[](const InventoryNextLootSource& a,const InventoryNextLootSource& b){return a.live<b.live;});
+    std::sort(result.begin(),result.end(),[](const InventoryNextLootSource& a,const InventoryNextLootSource& b){return a.live<b.live||(a.live==b.live&&a.logical_owner<b.logical_owner);});
     unsigned unnamed=0;for(auto& source:result)if(source.name=="Stash")source.name+=" "+std::to_string(++unnamed);
     if(!ground.items.empty()){std::sort(ground.items.begin(),ground.items.end());result.insert(result.begin(),std::move(ground));}
     return result;
 } catch (...) {return {};}
-bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot,u32 custom_slot,u64 custom_host,int drop_x,int drop_y,u64 view) noexcept try {
+bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot,u32 custom_slot,u64 custom_host,int drop_x,int drop_y,u64 view,u64 expected_logical_owner) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!Actor()||!InventoryNextPickupCanSave()||!item_identity||InventoryNextIdentity(live)!=item_identity)return false;
     if(source==0xffff){if(custom_slot)return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host);if(slot!=0xffff){InventoryNextPickupStatus("Take this ground item into storage before equipping it.");return false;}return Actor()->SqaPickup(live);}
     if(!source_identity||InventoryNextIdentity(source)!=source_identity||!world_access(source,Actor()->ID()))return false;
@@ -1678,9 +1740,9 @@ bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_iden
         const auto& selected=view?make_storage_view(view):storage_view;
         if(!selected.destination(drop_x,drop_y,destination,local)){InventoryNextPickupStatus("Drop on an open storage cell. Source unchanged.");return false;}
     }
-    return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host,destination,local.x,local.y);
+    return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host,destination,local.x,local.y,expected_logical_owner);
 } catch (...) {return false;}
-bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 item_identity,u64 host,const char* key) noexcept try {
+bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 item_identity,u64 host,const char* key,u64 expected_logical_owner) noexcept try {
     if(!key||!read_equipment_registry()||!Actor())return false;
     const auto definition=equipment_registry.find(std::string(key));if(!definition||!definition->enabled)return false;
     const auto slot=definition->id;
@@ -1692,7 +1754,7 @@ bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 it
         if(auto usable=smart_cast<CUsableScriptObject*>(object))usable->use(Actor());
         if(!Actor()->SqaCanPickup(live)||InventoryNextIdentityLookup(live)!=item_identity)return false;
     }
-    return InventoryNextLootTake(source,source_identity,live,item_identity,0xffff,slot,host);
+    return InventoryNextLootTake(source,source_identity,live,item_identity,0xffff,slot,host,-1,-1,0,expected_logical_owner);
 } catch (...) {return false;}
 bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!Actor()||!InventoryNextPickupCanSave())return false;

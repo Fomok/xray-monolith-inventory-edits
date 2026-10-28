@@ -219,6 +219,7 @@ public:
     xr_map<u16,u64> m_sqaLootIdentity;
     u16 m_sqaLootSource=0xffff;
     u64 m_sqaLootSourceIdentity=0;
+    u64 m_sqaLootOwner=0;
     u32 m_sqaLootAfter=0;
     int m_sqaLootFilter=-1;
     u32 m_sqaLootRenderedCount=0;

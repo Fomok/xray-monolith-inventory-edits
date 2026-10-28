@@ -49,7 +49,7 @@ unsigned InventoryNextStorageRegion(int x,int y,u64 view=0) noexcept;
 
 // Opt-in ground ownership path; trade/loot pre-detach admission is separate.
 bool InventoryNextStrictPickup() noexcept;
-bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source=0xffff,u16 slot=0xffff,u32 custom_slot=0,u64 custom_host=1,u64 exact_destination=0,int exact_x=0,int exact_y=0) noexcept;
+bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source=0xffff,u16 slot=0xffff,u32 custom_slot=0,u64 custom_host=1,u64 exact_destination=0,int exact_x=0,int exact_y=0,u64 expected_logical_owner=0) noexcept;
 u16 InventoryNextPickupSlot(u16 owner,u16 live) noexcept;
 bool InventoryNextPickupCustomPending(u16 owner,u16 live) noexcept;
 void InventoryNextPickupFinish(u16 owner,u16 live,bool accepted) noexcept;
@@ -58,7 +58,7 @@ void InventoryNextPickupForget(u16 live) noexcept;
 bool InventoryNextPickupCanSave() noexcept;
 
 bool InventoryNextStrictOwnedPickup() noexcept;
-bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot=0xffff,u32 custom_slot=0,u64 custom_host=1,u64 exact_destination=0,int exact_x=0,int exact_y=0) noexcept;
+bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot=0xffff,u32 custom_slot=0,u64 custom_host=1,u64 exact_destination=0,int exact_x=0,int exact_y=0,u64 expected_logical_owner=0) noexcept;
 void InventoryNextPickupStatus(const char* text) noexcept;
 
 class CTrade;
@@ -90,10 +90,10 @@ u64 InventoryNextContainer(u16 live) noexcept;
 u64 InventoryNextViewOwner(u16 live) noexcept;
 void InventoryNextStorageToggle(u64 owner) noexcept;
 
-struct InventoryNextLootSource {u16 live=0xffff;u64 identity=0;s64 grams=0;std::string name;xr_vector<u16> items;};
+struct InventoryNextLootSource {u16 live=0xffff;u64 identity=0,logical_owner=0;s64 grams=0;std::string name;xr_vector<u16> items;};
 xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse=0xffff) noexcept;
-bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot=0xffff,u32 custom_slot=0,u64 custom_host=1,int drop_x=-1,int drop_y=-1,u64 view=0) noexcept;
-bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 item_identity,u64 host,const char* key) noexcept;
+bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot=0xffff,u32 custom_slot=0,u64 custom_host=1,int drop_x=-1,int drop_y=-1,u64 view=0,u64 expected_logical_owner=0) noexcept;
+bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 item_identity,u64 host,const char* key,u64 expected_logical_owner=0) noexcept;
 bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept;
 
 int InventoryNextNativePreview(u16 live,int x,int y,u64 view,int& width,int& height) noexcept;

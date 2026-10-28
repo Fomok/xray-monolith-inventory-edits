@@ -334,6 +334,21 @@ int main(int argc,char** argv) {
             check(loaded.records().at(100).tree.subtree_mass(100)==120&&loaded.records().at(110).tree.subtree_mass(110)==230,"world records mass merged");
             yes(loaded.release(100,0));check(loaded.records().size()==1&&loaded.records().count(110),"ground release removed other bag");
         });
+        test("detached box leaf candidate changes only after explicit publication",[]{
+            auto box=bag(100,2,200);box.attributes["storage_allow_container_items"]="0";
+            auto med=item(101,100,30);med.condition=7600;
+            Model model;yes(model.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),box,med}));
+            WorldSubtrees world;yes(world.capture(model,100,900));const auto original=world.serialize();
+            WorldSubtrees removed;yes(world.without_leaf(100,900,101,removed));
+            check(world.serialize()==original&&removed.records().at(100).tree.nodes().size()==3,
+                "candidate extraction changed published world or retained leaf");
+            WorldSubtrees rejected;no(removed.with_leaf(100,901,med,{0,0,false},rejected),"world_storage_custodian");
+            yes(removed.with_leaf(100,900,med,{1,1,false},rejected));
+            check(rejected.records().at(100).tree.nodes().at(101).position.x==1&&
+                rejected.records().at(100).tree.nodes().at(101).condition==7600,
+                "candidate insertion lost exact cell or item condition");
+            check(world.serialize()==original,"candidate insertion mutated published record");
+        });
         test("world storage refresh uses actual native state while retaining nested placement",[]{
             auto shell=bag(100,2,100);shell.attributes["native_section"]="itm_backpack";
             auto child=item(101,100,20,{1,0,true});child.attributes={{"native_section","wpn_pm"},{"ammo","5"}};
@@ -1063,6 +1078,23 @@ int main(int argc,char** argv) {
             check(!view.destination(1,1,owner,local)&&!view.region(1,1),"gutter accepted a drop");
             check(view.destination(2,1,owner,local)&&owner==100&&local.x==1&&local.y==0,"projected cell lost logical owner coordinate");
             check(model.nodes().at(100).grid.w==2&&model.nodes().at(100).grid.h==2,"projection changed native capacity");
+        });
+        test("actor storage pairs move directly without pocket staging and refuse occupied cells",[]{
+            auto pack=bag(100,1,800,{0,0,false});pack.attributes["storage_family"]="backpack";
+            auto rig=bag(101,1,600,{3,0,false});rig.attributes["storage_family"]="rig";
+            auto box=bag(102,1,400,{6,0,false});box.soft=false;box.half=box.full=box.empty;
+            auto cargo=item(103,100,75);auto blocker=item(104,101,30);
+            Model model;yes(model.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),pack,rig,box,cargo,blocker}));
+            const auto mass=model.carried_mass();
+            for(const auto& route:std::vector<std::pair<Id,Position>>{{101,{1,0,false}},{102,{0,0,false}},{100,{1,0,false}},{1,{9,0,false}}}){
+                yes(move(model,{103,route.first,route.second,model.revision()}));
+                check(model.nodes().at(103).parent==route.first&&model.nodes().at(103).position.x==route.second.x,
+                    "direct actor storage pair lost exact placement");
+                check(model.carried_mass()==mass,"direct actor storage pair changed mass");
+            }
+            const auto before=model.serialize();
+            no(move(model,{103,101,{0,0,false},model.revision()}),"overlap");
+            check(model.serialize()==before,"occupied actor storage refusal changed source");
         });
         test("recovery container windows permit retrieval display but never extra manual capacity",[]{
             auto pack=item(100,1,800);pack.container=true;pack.grid={8,8};pack.empty=pack.half=pack.full={5,5};

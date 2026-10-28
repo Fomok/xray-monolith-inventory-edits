@@ -166,15 +166,15 @@ void CUIActorMenu::SqaUpdateLoot(bool force)
     m_sqaLootAfter=Device.dwTimeGlobal+500;
     const u16 corpse=m_currMenuMode==mmDeadBodySearch&&m_pPartnerInvOwner?m_pPartnerInvOwner->object_id():0xffff;
     auto sources=InventoryNextNearbyLoot(corpse);
-    auto selected=std::find_if(sources.begin(),sources.end(),[&](const InventoryNextLootSource& source){return source.live==m_sqaLootSource&&source.identity==m_sqaLootSourceIdentity;});
+    auto selected=std::find_if(sources.begin(),sources.end(),[&](const InventoryNextLootSource& source){return source.live==m_sqaLootSource&&source.identity==m_sqaLootSourceIdentity&&source.logical_owner==m_sqaLootOwner;});
     if(selected==sources.end()&&!sources.empty())selected=sources.begin();
     bool unchanged=sources.size()==m_sqaLootSources.size();
-    if(unchanged)for(size_t n=0;n<sources.size();++n)if(sources[n].live!=m_sqaLootSources[n].live||sources[n].identity!=m_sqaLootSources[n].identity||sources[n].items!=m_sqaLootSources[n].items||sources[n].grams!=m_sqaLootSources[n].grams||sources[n].name!=m_sqaLootSources[n].name){unchanged=false;break;}
+    if(unchanged)for(size_t n=0;n<sources.size();++n)if(sources[n].live!=m_sqaLootSources[n].live||sources[n].identity!=m_sqaLootSources[n].identity||sources[n].logical_owner!=m_sqaLootSources[n].logical_owner||sources[n].items!=m_sqaLootSources[n].items||sources[n].grams!=m_sqaLootSources[n].grams||sources[n].name!=m_sqaLootSources[n].name){unchanged=false;break;}
     if(!force&&unchanged&&sources.empty()&&m_pDeadBodyBagList->ItemsCount()==0){
         m_LeftBackground->Show(false);m_pDeadBodyBagList->Show(false);m_takeall_button->Show(false);m_putall_button->Show(false);
         m_PartnerCharacterInfo->Show(false);m_PartnerMoney->Show(false);m_PartnerBottomInfo->Show(false);m_PartnerWeight->Show(false);return;
     }
-    if(!force&&unchanged&&!sources.empty()&&m_LeftBackground->IsShown()&&m_pDeadBodyBagList->IsShown()&&selected->live==m_sqaLootSource&&selected->identity==m_sqaLootSourceIdentity&&m_sqaLootFilter==current_sort_mode()&&m_pDeadBodyBagList->ItemsCount()==m_sqaLootRenderedCount)return;
+    if(!force&&unchanged&&!sources.empty()&&m_LeftBackground->IsShown()&&m_pDeadBodyBagList->IsShown()&&selected->live==m_sqaLootSource&&selected->identity==m_sqaLootSourceIdentity&&selected->logical_owner==m_sqaLootOwner&&m_sqaLootFilter==current_sort_mode()&&m_pDeadBodyBagList->ItemsCount()==m_sqaLootRenderedCount)return;
     if(CurrentItem()&&CurrentItem()->OwnerList()==m_pDeadBodyBagList){SetCurrentItem(nullptr);InfoCurItem(nullptr);m_UIPropertiesBox->Hide();}
     m_pDeadBodyBagList->ClearAll(true);m_sqaLootIdentity.clear();
     for(auto tab:m_sqaLootTabs)DetachChild(tab);m_sqaLootTabs.clear();
@@ -184,7 +184,7 @@ void CUIActorMenu::SqaUpdateLoot(bool force)
     m_takeall_button->Show(available);m_putall_button->Show(available&&selected->live!=0xffff);
     m_PartnerCharacterInfo->Show(available);m_PartnerMoney->Show(available);m_PartnerBottomInfo->Show(available);m_PartnerWeight->Show(available);
     if(!available){m_sqaLootSources.clear();return;}
-    m_sqaLootSource=selected->live;m_sqaLootSourceIdentity=selected->identity;
+    m_sqaLootSource=selected->live;m_sqaLootSourceIdentity=selected->identity;m_sqaLootOwner=selected->logical_owner;
     if(selected->live==corpse && m_pPartnerInvOwner && !m_pPartnerInvOwner->use_simplified_visual()) {
         m_PartnerCharacterInfo->InitCharacter(selected->live);
         string64 money;xr_sprintf(money,"%u RU",m_pPartnerInvOwner->get_money());m_PartnerMoney->SetText(money);
@@ -226,13 +226,13 @@ bool CUIActorMenu::SqaLootClick(float x,float y)
     if(!SqaLootActive()||CUIDragDropListEx::m_drag_item)return false;
     for(const auto& window:m_sqaContainers){const auto p=window.frame->GetWndPos();const auto size=window.frame->GetWndSize();if(window.frame->IsShown()&&x>=p.x&&x<p.x+size.x&&y>=p.y&&y<p.y+size.y)return false;}
     for(size_t n=0;n<m_sqaLootTabs.size();++n){auto tab=m_sqaLootTabs[n];const auto p=tab->GetWndPos();const auto size=tab->GetWndSize();
-        if(x>=p.x&&x<p.x+size.x&&y>=p.y&&y<p.y+size.y){m_sqaLootSource=m_sqaLootSources[n].live;m_sqaLootSourceIdentity=m_sqaLootSources[n].identity;SqaUpdateLoot(true);return true;}}
+        if(x>=p.x&&x<p.x+size.x&&y>=p.y&&y<p.y+size.y){m_sqaLootSource=m_sqaLootSources[n].live;m_sqaLootSourceIdentity=m_sqaLootSources[n].identity;m_sqaLootOwner=m_sqaLootSources[n].logical_owner;SqaUpdateLoot(true);return true;}}
     return false;
 }
 bool CUIActorMenu::SqaTakeLoot(PIItem item,u16 slot,int drop_x,int drop_y,u64 view)
 {
     if(!item)return false;const auto found=m_sqaLootIdentity.find(item->object_id());if(found==m_sqaLootIdentity.end())return false;
-    const bool result=InventoryNextLootTake(m_sqaLootSource,m_sqaLootSourceIdentity,found->first,found->second,slot,0,1,drop_x,drop_y,view);
+    const bool result=InventoryNextLootTake(m_sqaLootSource,m_sqaLootSourceIdentity,found->first,found->second,slot,0,1,drop_x,drop_y,view,m_sqaLootOwner);
     m_sqaLootAfter=0;m_sqaRefresh=true;return result;
 }
 bool CUIActorMenu::SqaPutLoot(PIItem item)
@@ -255,7 +255,7 @@ void CUIActorMenu::SqaForgetLoot(u16 live)
     if(CUIDragDropListEx::m_drag_item&&CUIDragDropListEx::m_drag_item->ParentItem()->OwnerList()==m_pDeadBodyBagList)m_pDeadBodyBagList->DestroyDragItem();
     if(CurrentItem()&&CurrentItem()->OwnerList()==m_pDeadBodyBagList){SetCurrentItem(nullptr);InfoCurItem(nullptr);m_UIPropertiesBox->Hide();}
     m_pDeadBodyBagList->ClearAll(true);m_sqaLootIdentity.clear();m_sqaLootAfter=0;
-    if(source||box||partner){m_sqaLootSource=0xffff;m_sqaLootSourceIdentity=0;}
+    if(source||box||partner){m_sqaLootSource=0xffff;m_sqaLootSourceIdentity=0;m_sqaLootOwner=0;}
 }
 bool CUIActorMenu::SqaFixtureAction(const char* action,u16 live)
 {

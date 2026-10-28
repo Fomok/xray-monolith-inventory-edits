@@ -95,7 +95,7 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
             if(InventoryNextNativeDragCurrent(item->object_id()))InventoryNextCustomEquip(item->object_id(),host,keys[index]);
         } else if(SqaLootActive()&&old_owner==m_pDeadBodyBagList){
             const auto found=m_sqaLootIdentity.find(item->object_id());
-            if(found!=m_sqaLootIdentity.end())InventoryNextLootCustomEquip(m_sqaLootSource,m_sqaLootSourceIdentity,item->object_id(),found->second,host,keys[index]);
+            if(found!=m_sqaLootIdentity.end())InventoryNextLootCustomEquip(m_sqaLootSource,m_sqaLootSourceIdentity,item->object_id(),found->second,host,keys[index],m_sqaLootOwner);
             m_sqaLootAfter=0;
         }
         m_sqaRefresh=true;return true;

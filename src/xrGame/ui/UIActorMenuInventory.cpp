@@ -1804,7 +1804,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
         if(action.acquire){
             const auto found=m_sqaLootIdentity.find(action.live);
             if(SqaLootActive()&&found!=m_sqaLootIdentity.end()&&found->second==action.identity)
-                if(InventoryNextLootCustomEquip(m_sqaLootSource,m_sqaLootSourceIdentity,action.live,action.identity,action.host,action.key.c_str())&&action.key=="sqa3.rig")m_sqaRigView=true;
+                if(InventoryNextLootCustomEquip(m_sqaLootSource,m_sqaLootSourceIdentity,action.live,action.identity,action.host,action.key.c_str(),m_sqaLootOwner)&&action.key=="sqa3.rig")m_sqaRigView=true;
             m_sqaLootAfter=0;
         }
         else if(action.open){auto target=smart_cast<CInventoryItem*>(Level().Objects.net_Find(action.live));if(target&&target->parent_id()==Actor()->ID())SqaOpenContainer(target);}
