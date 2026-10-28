@@ -73,11 +73,12 @@ bool CUIActorMenu::SqaOpenContainer(PIItem item)
     Msg("* SQA3 field kit opened container=%llu live=%u",owner,window.live);
     return true;
 }
-void CUIActorMenu::SqaPrepareContainers()
+void CUIActorMenu::SqaPrepareContainers(bool rebuild)
 {
     for(auto it=m_sqaContainers.begin();it!=m_sqaContainers.end();) {
         if(!InventoryNextFieldKitEnabled()||InventoryNextContainer(it->live)!=it->owner) {
-            SetCurrentItem(nullptr);it->list->ClearAll(true);DetachChild(it->frame);it=m_sqaContainers.erase(it);
+            if(CurrentItem()&&CurrentItem()->OwnerList()==it->list)SetCurrentItem(nullptr);
+            it->list->ClearAll(true);DetachChild(it->frame);it=m_sqaContainers.erase(it);
         } else {
             int columns=0,rows=0;
             if(InventoryNextStorageExtent(it->owner,columns,rows)){
@@ -90,9 +91,10 @@ void CUIActorMenu::SqaPrepareContainers()
                     it->title->SetWndSize(Fvector2().set(width-44.0f,20.0f));it->close->SetWndPos(Fvector2().set(width-24.0f,4.0f));
                     it->list->SetWndSize(Fvector2().set(width-24.0f,334.0f));}
             }
+            const bool world=InventoryNextWorldView(it->owner);
+            if(world&&rebuild&&!CUIDragDropListEx::m_drag_item)it->list->ClearAll(true);
             InventoryNextStorageView(it->list,it->owner);
-            if(InventoryNextWorldView(it->owner)&&!CUIDragDropListEx::m_drag_item){
-                it->list->ClearAll(true);
+            if(world&&rebuild&&!CUIDragDropListEx::m_drag_item){
                 for(const auto live:InventoryNextWorldContents(it->owner)){
                     auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
                     int x=0,y=0,w=0,h=0;bool rotated=false;
@@ -155,7 +157,8 @@ void CUIActorMenu::SqaUpdateChest()
         auto item=equipment_live[index]!=u16(-1)?smart_cast<CInventoryItem*>(Level().Objects.net_Find(equipment_live[index])):nullptr;
         const bool same=list->ItemsCount()==(item?1u:0u)&&(!item||list->GetItemIdx(0)->m_pData==item);
         if(!same&&!CUIDragDropListEx::m_drag_item){
-            SetCurrentItem(nullptr);list->ClearAll(true);
+            if(CurrentItem()&&CurrentItem()->OwnerList()==list)SetCurrentItem(nullptr);
+            list->ClearAll(true);
             if(item){auto cell=create_cell_item(item);cell->SetSqaFootprint(1,1,false);list->SetItem(cell);
                 const auto original=item->GetInvGridRect();const float scale=_min((list->GetWndSize().x-4.0f)/float(original.x2),(list->GetWndSize().y-4.0f)/float(original.y2));
                 cell->SetWndSize(Fvector2().set(original.x2*scale,original.y2*scale));cell->SetWndPos(Fvector2().set((list->GetWndSize().x-cell->GetWndSize().x)*0.5f,(list->GetWndSize().y-cell->GetWndSize().y)*0.5f));}

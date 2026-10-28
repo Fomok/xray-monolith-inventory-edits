@@ -48,11 +48,11 @@ add('panel_frame',rim,'Nine-slice outer frame; center replaced with tiled dark l
 add('slot_frame',recess,'Nine-slice equipment/quickslot frame only; never use for grid cells.',[100,96])
 for name,size in [('helmet',(150,192)),('chest',(150,300)),('small',(150,84)),('weapon',(474,192)),('quick',(69,92))]:
     add('slot_'+name,frame(recess,size,6),'Fixed equipment recess; native icons inset and aspect-preserved.')
-cell=Image.new('RGBA',(64,64),(19,20,20,255)); d=ImageDraw.Draw(cell)
-d.line((0,0,63,0),fill=(48,49,47,255),width=2);d.line((0,0,0,63),fill=(48,49,47,255),width=2)
+cell=Image.new('RGBA',(64,64),(21,21,21,255)); d=ImageDraw.Draw(cell)
+d.line((0,0,63,0),fill=(48,48,48,255),width=2);d.line((0,0,0,63),fill=(48,48,48,255),width=2)
 add('grid_cell',cell,'Repeat at actual cell pitch; top/left thin lines only. Add bottom/right outer edges once.',[32,32])
-add('grid_fill',Image.new('RGBA',(8,8),(19,20,20,255)),'Uniform grid interior; safe to stretch.')
-add('grid_line',Image.new('RGBA',(2,2),(48,49,47,255)),'Single logical-pixel grid lines. No metal, bevel or rivets.',[1,1])
+add('grid_fill',Image.new('RGBA',(8,8),(21,21,21,255)),'Uniform public grid interior; safe to stretch.')
+add('grid_line',Image.new('RGBA',(2,2),(255,255,255,255)),'Neutral solid sampler; native tint supplies exact fill, shared line and border colors.',[1,1])
 header=add('section_bar',frame(recess,(708,44),6,olive),'Olive tiled center, metal recess rim; names/weight/collapse are separate live controls.',[354,22])
 add('identity_bar',frame(recess,(708,112),6,olive),'Optional player/source identity header.',[354,56])
 

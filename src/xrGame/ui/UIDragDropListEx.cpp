@@ -317,7 +317,7 @@ void CUIDragDropListEx::GetClientArea(Frect& r)
 void CUIDragDropListEx::ClearAll(bool bDestroy)
 {
     for(auto& header:m_storageHeaders) DetachChild(header.second); // auto-delete
-    m_storageHeaders.clear();m_storageHeaderOwners.clear();
+    m_storageHeaders.clear();m_storageHeaderOwners.clear();m_storageHeaderWeights.clear();m_storageHeaderSeen.clear();
     sqaProjectionExtraX=sqaProjectionExtraY=0;
 	DestroyDragItem();
 	m_container->ClearAll(bDestroy);
@@ -353,7 +353,17 @@ int CUIDragDropListEx::SqaGridContentWidth()
 }
 void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner,s64 grams,bool collapsed)
 {
+    for(size_t index=0;index<m_storageHeaders.size();++index)
+        if(m_storageHeaders[index].first==row&&m_storageHeaderOwners[index]==owner){
+            m_storageHeaderSeen[index]=1;
+            if(auto weight=m_storageHeaderWeights[index]){
+                string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);
+                weight->TextItemControl()->SetText(amount);
+            }
+            return;
+        }
     auto label=xr_new<CUIStatic>();label->SetAutoDelete(true);AttachChild(label);
+    CUIStatic* weightLabel=nullptr;
     label->SetWndSize(Fvector2().set(GetWndSize().x,18.0f));label->TextureOff();label->Enable(false);
     label->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
     label->TextItemControl()->SetEllipsis(true);
@@ -370,6 +380,7 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
         title->TextItemControl()->SetTextAlignment(CGameFont::alCenter);title->TextItemControl()->SetEllipsis(true);
         title->TextItemControl()->SetTextColor(color);title->TextItemControl()->SetText(text);
         auto weight=xr_new<CUIStatic>();weight->SetAutoDelete(true);label->AttachChild(weight);weight->Enable(false);
+        weightLabel=weight;
         weight->SetWndPos(Fvector2().set(contentWidth-78.0f,2.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
         weight->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
@@ -382,6 +393,42 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
     }
     m_storageHeaderOwners.push_back(owner);
     m_storageHeaders.emplace_back(row,label);
+    m_storageHeaderWeights.push_back(weightLabel);
+    m_storageHeaderSeen.push_back(1);
+}
+void CUIDragDropListEx::SqaBeginStorageHeaderUpdate()
+{
+    m_storageHeaderSeen.assign(m_storageHeaders.size(),0);
+}
+void CUIDragDropListEx::SqaEndStorageHeaderUpdate()
+{
+    for(size_t index=m_storageHeaders.size();index>0;--index)if(!m_storageHeaderSeen[index-1]){
+        DetachChild(m_storageHeaders[index-1].second);
+        m_storageHeaders.erase(m_storageHeaders.begin()+index-1);
+        m_storageHeaderOwners.erase(m_storageHeaderOwners.begin()+index-1);
+        m_storageHeaderWeights.erase(m_storageHeaderWeights.begin()+index-1);
+        m_storageHeaderSeen.erase(m_storageHeaderSeen.begin()+index-1);
+    }
+}
+Ivector2 CUIDragDropListEx::SqaCellPosition(CUICellItem* item)
+{
+    return m_container->GetItemPos(item);
+}
+void CUIDragDropListEx::SqaRepositionProjectedItems()
+{
+    if(!HasStorageHeaders())return;
+    const int pitch_x=CellSize().x+CellsSpacing().x,pitch_y=CellSize().y+CellsSpacing().y;
+    for(u32 index=0;index<ItemsCount();++index){
+        auto item=GetItemIdx(index);const auto cell=SqaCellPosition(item);
+        float dx=0.0f,dy=0.0f;
+        if(!InventoryNextStoragePixelOffset(cell.x,cell.y,sqaViewOwner,pitch_x,dx,dy))continue;
+        item->SetWndPos(Fvector2().set(float(cell.x*pitch_x)+dx,float(cell.y*pitch_y)+dy));
+    }
+}
+void CUIDragDropListEx::SqaRestoreScrollPos(int position)
+{
+    m_vScrollBar->SetScrollPos(position);
+    OnScrollV(nullptr,nullptr);
 }
 void CUIDragDropListEx::Draw()
 {
@@ -639,7 +686,7 @@ CUICellContainer::CUICellContainer(CUIDragDropListEx* parent)
 {
 	m_pParentDragDropList = parent;
 	hShader->create("hud\\fog_of_war", "ui\\ui_grid");
-	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3v1_grid_cell","hud\\fog_of_war",hSqaGrid,m_sqaGridRect);
+	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3v1_grid_line","hud\\fog_of_war",hSqaGrid,m_sqaGridRect);
     else if (InventoryNextEnabled()) {hSqaGrid->create("hud\\fog_of_war", "ui\\sqa_fk_controls");m_sqaGridRect.set(8,8,136,136);}
 	//	hShader_selected->create	( "hud\\fog_of_war", "ui_grid_selected" );
 	m_cellSpacing.set(0, 0);
@@ -1092,7 +1139,7 @@ void CUICellContainer::Draw()
         UIRender->SetShader(*hSqaGrid);
         Fvector2 gridTextureSize;UIRender->GetActiveTextureResolution(gridTextureSize);
 		UI().PushScissor(clientArea);
-        UIRender->StartPrimitive((tgt_cells.width()+1)*(tgt_cells.height()+1)*18,
+        UIRender->StartPrimitive((tgt_cells.width()+1)*(tgt_cells.height()+1)*60,
             IUIRender::ptTriList,UI().m_currentPointType);
         const auto storageAt=[&](int x,int y){
             if(x<0||y<0||x>=cell_cnt.x||y>=cell_cnt.y)return 0;
@@ -1105,7 +1152,64 @@ void CUICellContainer::Draw()
                 UIRender->PushPoint(iFloor(left+point.x*(right-left))-0.5f,iFloor(top+point.y*(bottom-top))-0.5f,0,color,u/gridTextureSize.x,v/gridTextureSize.y);
             }
         };
-		for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
+        if(InventoryNextFieldKitEnabled()&&m_pParentDragDropList->HasStorageHeaders()){
+            Fvector2 one;UI().ClientToScreenScaled(one,1.0f,1.0f);
+            const float line_x=_max(1.0f,one.x),line_y=_max(1.0f,one.y);
+            const auto same=[&](int x,int y,int nx,int ny){
+                const int current=storageAt(x,y),neighbor=storageAt(nx,ny);
+                if(!current||!neighbor)return false;
+                if(current==2&&neighbor==2)return true;
+                return InventoryNextStorageSameCompartment(x,y,nx,ny,m_pParentDragDropList->sqaViewOwner);
+            };
+            const auto origin=[&](int cx,int cy,float& left,float& top){
+                float dx=0.0f,dy=0.0f;
+                InventoryNextStoragePixelOffset(cx,cy,m_pParentDragDropList->sqaViewOwner,
+                    m_cellSize.x+m_cellSpacing.x,dx,dy);
+                Fvector2 scaled;UI().ClientToScreenScaled(scaled,dx,dy);
+                left=drawLT.x+(f_len.x+sp_len.x)*float(cx-tgt_cells.lt.x)+scaled.x;
+                top=drawLT.y+(f_len.y+sp_len.y)*float(cy-tgt_cells.lt.y)+scaled.y;
+            };
+            for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
+                const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y;
+                if(!storageAt(cx,cy))continue;
+                float left=0.0f,top=0.0f;origin(cx,cy,left,top);
+                const float right=left+f_len.x+(same(cx,cy,cx+1,cy)?sp_len.x:0.0f);
+                const float bottom=top+f_len.y+(same(cx,cy,cx,cy+1)?sp_len.y:0.0f);
+                quad(left,top,right,bottom,color_rgba(21,21,21,255),true);
+            }
+            if(preview)for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
+                const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y;
+                if(!storageAt(cx,cy)||cx<previewCell.x||cx>=previewCell.x+previewWidth||
+                    cy<previewCell.y||cy>=previewCell.y+previewHeight)continue;
+                float left=0.0f,top=0.0f;origin(cx,cy,left,top);
+                quad(left,top,left+f_len.x,top+f_len.y,
+                    preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220),true);
+            }
+            for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
+                const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y;
+                if(!storageAt(cx,cy))continue;
+                float left=0.0f,top=0.0f;origin(cx,cy,left,top);
+                const bool right=same(cx,cy,cx+1,cy),bottom=same(cx,cy,cx,cy+1);
+                const bool above=same(cx,cy,cx,cy-1),before=same(cx,cy,cx-1,cy);
+                const float edge_right=left+f_len.x+(right?sp_len.x:0.0f);
+                const float edge_bottom=top+f_len.y+(bottom?sp_len.y:0.0f);
+                const u32 edge=color_rgba(88,88,88,255),rule=color_rgba(48,48,48,255);
+                if(!before)quad(left,top,left+line_x,edge_bottom,edge,true);
+                if(!above)quad(left,top,edge_right,top+line_y,edge,true);
+                if(!right)quad(edge_right-line_x,top,edge_right,edge_bottom,edge,true);
+                else {
+                    const float center=left+f_len.x+sp_len.x*0.5f;
+                    quad(center-line_x*0.5f,top+(above?0.0f:line_y),center+line_x*0.5f,
+                        edge_bottom-(bottom?0.0f:line_y),rule,true);
+                }
+                if(!bottom)quad(left,edge_bottom-line_y,edge_right,edge_bottom,edge,true);
+                else {
+                    const float center=top+f_len.y+sp_len.y*0.5f;
+                    quad(left+(before?0.0f:line_x),center-line_y*0.5f,
+                        edge_right-(right?0.0f:line_x),center+line_y*0.5f,rule,true);
+                }
+            }
+        } else for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
             const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y,storage=storageAt(cx,cy);
             if(!storage)continue;
             float offset_x=0.0f,offset_y=0.0f;

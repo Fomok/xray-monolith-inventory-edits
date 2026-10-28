@@ -122,19 +122,25 @@ void CUIDragDropReferenceList::ReloadReferences(CInventoryOwner* pActor)
 	if (m_drag_item)
 		DestroyDragItem();
 
-	m_container->ClearAll(true);
-	m_selected_item = NULL;
-
 	for (u8 i = 0; i < m_container->CellsCapacity().x; i++)
 	{
 		CUIStatic* ref = m_references[i];
 		LPCSTR item_name = ACTOR_DEFS::g_quick_use_slots[i];
+		PIItem desired = item_name && xr_strlen(item_name) ? pActor->inventory().GetAny(item_name) : nullptr;
+		const Ivector2 position=Ivector2().set(i,0);
+		CUICellItem* current=m_container->GetCellAt(position).m_item;
+		const bool retained=current&&current->m_pData==desired;
+		if(current && !retained){
+			if(m_selected_item==current)m_selected_item=NULL;
+			auto removed=m_container->RemoveItem(current,true);
+			xr_delete(removed);
+		}
 		if (item_name && xr_strlen(item_name))
 		{
-			PIItem itm = pActor->inventory().GetAny(item_name);
-			if (itm)
+			if (desired)
 			{
-				SetItem(create_cell_item(itm), Ivector2().set(i, 0));
+				if(!retained)SetItem(create_cell_item(desired),position);
+				ref->SetTextureColor(color_rgba(255,255,255,255));
 			}
 			else
 			{

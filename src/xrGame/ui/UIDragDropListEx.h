@@ -75,6 +75,11 @@ protected:
 public:
 	static CUIDragItem* m_drag_item;
     void AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner=0,s64 grams=0,bool collapsed=false);
+    void SqaBeginStorageHeaderUpdate();
+    void SqaEndStorageHeaderUpdate();
+    Ivector2 SqaCellPosition(CUICellItem* item);
+    void SqaRepositionProjectedItems();
+    void SqaRestoreScrollPos(int position);
     u64 sqaViewOwner=0;
     int sqaProjectionExtraX=0,sqaProjectionExtraY=0;
     bool HasStorageHeaders() const {return !m_storageHeaders.empty();}
@@ -84,6 +89,8 @@ private:
     float m_sqaStorageInset=0.0f;
     xr_vector<std::pair<int,CUIStatic*>> m_storageHeaders;
     xr_vector<u64> m_storageHeaderOwners;
+    xr_vector<CUIStatic*> m_storageHeaderWeights;
+    xr_vector<u8> m_storageHeaderSeen;
 public:
 	CUIDragDropListEx();
 	virtual ~CUIDragDropListEx();
@@ -111,7 +118,7 @@ public:
 	void SetStartCellsCapacity(const Ivector2 c)
 	{
 		m_orig_cell_capacity = c;
-		SetCellsCapacity(c);
+		if (CellsCapacity().x != c.x || CellsCapacity().y != c.y) SetCellsCapacity(c);
 	};
 
 	void ResetCellsCapacity()

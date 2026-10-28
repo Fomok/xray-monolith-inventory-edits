@@ -217,7 +217,36 @@ void CUIActorMenu::Update()
     if(m_sqaRefresh && Device.dwTimeGlobal>=m_sqaRetryAfter && !CUIDragDropListEx::m_drag_item && (m_currMenuMode==mmInventory||m_currMenuMode==mmDeadBodySearch)) {
         m_sqaRetryAfter=Device.dwTimeGlobal+250;
         m_sqaRefresh=false;
-        if(m_currMenuMode==mmDeadBodySearch){SetCurrentItem(NULL);m_pDeadBodyBagList->ClearAll(true);InitDeadBodySearchMode();}else InitInventoryContents(m_pInventoryBagList);
+        if(InventoryNextFieldKitEnabled()&&!InventoryNextLayoutSync()){
+            // A transient custody acknowledgment must not blank every list.
+            m_sqaRefresh=true;
+            if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("Inventory is updating. Try again.");
+        }else if(!SqaRefreshFieldKitContents()){
+            const int actorScroll=m_pInventoryBagList->ScrollPos(),lootScroll=m_pDeadBodyBagList->ScrollPos();
+            const auto selected=CurrentIItem();
+            std::vector<std::pair<u64,int>> windowScroll;
+            for(const auto& window:m_sqaContainers)windowScroll.emplace_back(window.owner,window.list->ScrollPos());
+            if(m_currMenuMode==mmDeadBodySearch){SetCurrentItem(NULL);m_pDeadBodyBagList->ClearAll(true);InitDeadBodySearchMode();}
+            else InitInventoryContents(m_pInventoryBagList);
+            if(InventoryNextFieldKitEnabled()){
+                m_pInventoryBagList->SqaRestoreScrollPos(actorScroll);
+                m_pDeadBodyBagList->SqaRestoreScrollPos(lootScroll);
+                for(const auto& entry:windowScroll)if(auto list=SqaContainerList(entry.first))list->SqaRestoreScrollPos(entry.second);
+                SqaUpdateChest();
+                if(selected&&!CurrentItem()){
+                    const auto restore=[&](CUIDragDropListEx* list){
+                        if(!list)return false;
+                        for(u32 index=0;index<list->ItemsCount();++index){auto cell=list->GetItemIdx(index);
+                            if(cell->m_pData==selected){SetCurrentItem(cell);return true;}}
+                        return false;
+                    };
+                    if(!restore(m_pInventoryBagList))for(auto& window:m_sqaContainers)if(restore(window.list))break;
+                    if(!CurrentItem())for(u8 slot=1;slot<=m_slot_count;++slot)if(restore(GetSlotList(slot)))break;
+                    if(!CurrentItem())restore(m_pInventoryBeltList);
+                }
+                if(strstr(Core.Params,"-sqa3-fixture-refresh-trace"))Msg("* SQA3 structural refresh");
+            }
+        }
     }
     SqaSelectPendingMember();
 	{

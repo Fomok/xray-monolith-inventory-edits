@@ -29,8 +29,8 @@
       "repo_relative": "tools/inventory_lab/gamedata/textures/ui/sqa3_visual_controls.dds",
       "destination": "gamedata/textures/ui/sqa3_visual_controls.dds",
       "bytes": 4194432,
-      "sha256": "5cd44561009aef6d0b06a1a702abe3b93b1d787d5a72830243138aa02b8f3bbc",
-      "note": "Mod and UI visual-assets-v1; exact handoff payload."
+      "sha256": "03342b9ee178cbe804bc288855d27fdffa9474153ab9582f059c85d0cf97581f",
+      "note": "Squared Away visual-assets-v1 controls with a neutral white grid swatch for exact native grid colors."
     },
     {
       "source": "C:\\GAMMA\\sqa-engine-inventory-next-harness\\tools\\inventory_lab\\gamedata\\textures\\ui\\sqa3_visual_panels.dds",

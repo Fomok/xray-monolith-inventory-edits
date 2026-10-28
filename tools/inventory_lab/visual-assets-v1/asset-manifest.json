@@ -470,7 +470,7 @@
       ]
     },
     "sqa3v1_grid_fill": {
-      "usage": "Uniform grid interior; safe to stretch.",
+      "usage": "Uniform public grid interior; safe to stretch.",
       "logical_size": [
         4.0,
         4.0
@@ -484,7 +484,7 @@
       ]
     },
     "sqa3v1_grid_line": {
-      "usage": "Single logical-pixel grid lines. No metal, bevel or rivets.",
+      "usage": "Neutral solid sampler; native tint supplies exact fill, shared line and border colors.",
       "logical_size": [
         1,
         1
@@ -507,7 +507,7 @@
     {
       "path": "package\\gamedata\\textures\\ui\\sqa3_visual_controls.dds",
       "bytes": 4194432,
-      "sha256": "5cd44561009aef6d0b06a1a702abe3b93b1d787d5a72830243138aa02b8f3bbc"
+      "sha256": "03342b9ee178cbe804bc288855d27fdffa9474153ab9582f059c85d0cf97581f"
     },
     {
       "path": "package\\gamedata\\textures\\ui\\sqa3_visual_panels.dds",

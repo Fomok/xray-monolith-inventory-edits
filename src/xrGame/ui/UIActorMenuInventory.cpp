@@ -564,6 +564,130 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 	m_pQuickSlot->ReloadReferences(m_pActorInvOwner);
 }
 
+bool CUIActorMenu::SqaRefreshFieldKitContents()
+{
+    if(!InventoryNextFieldKitEnabled()||!SqaLootActive())return false;
+    InventoryNextStorageMode(true);
+    if(!InventoryNextLayoutSync())return false;
+    int columns=0,rows=0;
+    if(!InventoryNextStorageExtent(0,columns,rows)||m_pInventoryBagList->CellsCapacity().x!=columns||
+        m_pInventoryBagList->CellsCapacity().y!=rows)return false;
+    for(const auto& window:m_sqaContainers){
+        if(InventoryNextContainer(window.live)!=window.owner||
+            !InventoryNextStorageExtent(window.owner,columns,rows)||
+            window.list->CellsCapacity().x!=columns||window.list->CellsCapacity().y!=rows)return false;
+        const int step=_min(32,_max(1,(908-2*_max(0,columns-1))/_max(1,columns)));
+        const float width=_max(290.0f,float(columns*step+2*_max(0,columns-1))+52.0f);
+        if(window.list->CellSize().x!=step||window.frame->GetWndSize().x!=width)return false;
+    }
+    const auto oldBody=m_pInventoryBagList->CellSize();
+    InventoryNextStorageView(m_pInventoryBagList);
+    if(m_pInventoryBagList->CellSize().x!=oldBody.x||m_pInventoryBagList->CellSize().y!=oldBody.y)return false;
+    SqaPrepareContainers(false);
+
+    struct Desired { PIItem item;Ivector2 cell;int width;int height;bool rotated; };
+    struct Target { CUIDragDropListEx* list;std::vector<Desired> items; };
+    std::vector<Target> targets;targets.push_back({m_pInventoryBagList,{}});
+    for(auto& window:m_sqaContainers)targets.push_back({window.list,{}});
+    int filter=0;
+    for(int index=0;index<int(m_sort_buttons.size());++index)if(!m_sort_buttons[index]->IsEnabled()){filter=index;break;}
+    const auto matches=[&](PIItem item){
+        if(filter<0||filter>=int(m_sort_kinds.size())||0==xr_strcmp(m_sort_kinds[filter],"s_all"))return true;
+        const int count=_GetItemCount(m_sort_kinds[filter]);
+        for(int index=0;index<count;++index){string256 kind;_GetItem(m_sort_kinds[filter],index,kind);
+            if(item->m_kind!=NULL&&item->m_kind.equal(kind))return true;}
+        return false;
+    };
+    bool unresolved=false;
+    const auto append=[&](CUIDragDropListEx* list,PIItem item){
+        if(!list||!item||!matches(item))return;
+        int x=0,y=0,width=0,height=0;bool rotated=false;
+        if(!InventoryNextNativePosition(item->object_id(),x,y,rotated,list->sqaViewOwner))return;
+        if(!InventoryNextNativeFootprint(item->object_id(),width,height)){
+            const auto original=item->GetInvGridRect();width=original.x2;height=original.y2;
+            if(rotated)std::swap(width,height);
+        }
+        if(width<1||height<1){unresolved=true;return;}
+        for(auto& target:targets)if(target.list==list){target.items.push_back({item,Ivector2().set(x,y),width,height,rotated});return;}
+    };
+    for(auto item:m_pActorInvOwner->inventory().m_ruck){
+        if(smart_cast<CMPPlayersBag*>(&item->object()))continue;
+        const auto owner=InventoryNextViewOwner(item->object_id());
+        append(owner?SqaContainerList(owner):m_pInventoryBagList,item);
+    }
+    for(auto& window:m_sqaContainers)if(InventoryNextWorldView(window.owner))
+        for(const auto live:InventoryNextWorldContents(window.owner))
+            append(window.list,smart_cast<CInventoryItem*>(Level().Objects.net_Find(live)));
+    if(unresolved)return false;
+
+    PIItem selected=CurrentIItem();unsigned kept=0,removed=0,added=0;
+    for(auto& target:targets){
+        auto list=target.list;
+        for(u32 index=list->ItemsCount();index>0;--index){
+            auto cell=list->GetItemIdx(index-1);
+            auto item=static_cast<PIItem>(cell->m_pData);
+            const auto found=std::find_if(target.items.begin(),target.items.end(),[&](const Desired& entry){return entry.item==item;});
+            const auto position=list->SqaCellPosition(cell);const auto size=cell->GetGridSize();
+            if(found!=target.items.end()&&position.x==found->cell.x&&position.y==found->cell.y&&
+               size.x==found->width&&size.y==found->height&&cell->SqaRotated()==found->rotated){
+                ++kept;cell->UpdateConditionProgressBar();continue;
+            }
+            if(CurrentItem()==cell){SetCurrentItem(nullptr);m_UIPropertiesBox->Hide();}
+            auto detached=list->RemoveItem(cell,true);xr_delete(detached);++removed;
+        }
+        for(const auto& entry:target.items){
+            bool present=false;
+            for(u32 index=0;index<list->ItemsCount();++index)
+                if(list->GetItemIdx(index)->m_pData==entry.item){present=true;break;}
+            if(present)continue;
+            auto cell=create_cell_item(entry.item);cell->SetSqaFootprint(entry.width,entry.height,entry.rotated);
+            if(!list->CanSetItemAt(cell,entry.cell)){xr_delete(cell);return false;}
+            list->SetItem(cell,entry.cell);cell->UpdateConditionProgressBar();++added;
+        }
+        list->SqaRepositionProjectedItems();
+    }
+    for(u8 slot=1;slot<=m_slot_count;++slot){
+        auto list=GetSlotList(slot);if(!list)continue;
+        auto desired=m_pActorInvOwner->inventory().ItemFromSlot(slot);
+        const bool same=list->ItemsCount()==(desired?1u:0u)&&
+            (!desired||list->GetItemIdx(0)->m_pData==desired);
+        if(!same){
+            if(CurrentItem()&&CurrentItem()->OwnerList()==list){SetCurrentItem(nullptr);m_UIPropertiesBox->Hide();}
+            list->ClearAll(true);InitCellForSlot(slot);
+        }else if(desired)list->GetItemIdx(0)->UpdateConditionProgressBar();
+    }
+    bool beltSame=m_pInventoryBeltList->ItemsCount()==m_pActorInvOwner->inventory().m_belt.size();
+    if(beltSame)for(auto item:m_pActorInvOwner->inventory().m_belt){
+        bool present=false;for(u32 index=0;index<m_pInventoryBeltList->ItemsCount();++index)
+            if(m_pInventoryBeltList->GetItemIdx(index)->m_pData==item){present=true;break;}
+        if(!present){beltSame=false;break;}
+    }
+    if(!beltSame){
+        if(CurrentItem()&&CurrentItem()->OwnerList()==m_pInventoryBeltList){SetCurrentItem(nullptr);m_UIPropertiesBox->Hide();}
+        m_pInventoryBeltList->ClearAll(true);
+        for(auto item:m_pActorInvOwner->inventory().m_belt)m_pInventoryBeltList->SetItem(create_cell_item(item));
+    }
+    SqaUpdateChest();m_pQuickSlot->ReloadReferences(m_pActorInvOwner);UpdateConditionProgressBars();
+    if(selected&&!CurrentItem()){
+        const auto restore=[&](CUIDragDropListEx* list){
+            if(!list)return false;
+            for(u32 index=0;index<list->ItemsCount();++index){auto cell=list->GetItemIdx(index);
+                if(cell->m_pData==selected){SetCurrentItem(cell);return true;}}
+            return false;
+        };
+        if(!restore(m_pInventoryBagList))for(auto& window:m_sqaContainers)if(restore(window.list))break;
+        if(!CurrentItem())for(u8 slot=1;slot<=m_slot_count;++slot)if(restore(GetSlotList(slot)))break;
+        if(!CurrentItem())restore(m_pInventoryBeltList);
+    }
+    if(strstr(Core.Params,"-sqa3-fixture-refresh-trace"))
+        Msg("* SQA3 stable refresh kept=%u removed=%u added=%u",kept,removed,added);
+    if(m_sqaStatus&&m_sqaStatus->TextItemControl()->GetText()&&
+       0==xr_strcmp(m_sqaStatus->TextItemControl()->GetText(),"Inventory is updating. Try again."))
+        m_sqaStatus->TextItemControl()->SetText("");
+    m_sqaLootAfter=0;
+    return true;
+}
+
 #include "ui\UI3tButton.h"
 
 void CUIActorMenu::FilterActorBagList(int mode)

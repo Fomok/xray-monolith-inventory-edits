@@ -204,7 +204,8 @@ public:
     bool SqaActorList(CUIDragDropListEx* list) const;
     bool SqaWorldList(CUIDragDropListEx* list) const;
     bool SqaOpenContainer(PIItem item);
-    void SqaPrepareContainers();
+    void SqaPrepareContainers(bool rebuild=true);
+    bool SqaRefreshFieldKitContents();
     bool m_sqaRigView=false;
     u64 m_sqaChestRigSeen=0;
     CUIStatic* m_sqaChestCaption=nullptr;

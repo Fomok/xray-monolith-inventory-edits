@@ -828,6 +828,7 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     list->SetStartCellsCapacity(Ivector2().set(selected.size.w,selected.size.h));
     if(InventoryNextFieldKitEnabled())list->CenterStorageContent();
     list->SetAutoGrow(false);list->SetGrouping(false);
+    list->SqaBeginStorageHeaderUpdate();
     for(const auto& band:selected.bands) {
         if(!band.header)continue;
         std::string label="Pockets";
@@ -850,6 +851,7 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
         for(const auto& item:selected.recovery)contents+=model.subtree_mass(item.first);
         list->AddStorageHeader(selected.recovery_row-1,"Recovery",0xffff9d70,0,contents);
     }
+    list->SqaEndStorageHeaderUpdate();
 } catch (...) {Msg("! SQA3 storage view failed");}
 bool InventoryNextNativeDrop(u16 live,int x,int y,u64 view) noexcept try {
     if(!InventoryNextEnabled()||!InventoryNextLayoutSync())return false;
