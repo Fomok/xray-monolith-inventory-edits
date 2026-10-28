@@ -54,6 +54,7 @@ function plan(snapshot)
             assert(ids.backpack_a and ids.backpack_b,"two original backpacks missing")
             for _,key in ipairs({"backpack_a","backpack_b"}) do save_var(db.actor,"sqa3_definition_"..key,alife():object(ids[key]):name()) end
             object("backpack_a"):set_condition(0.65);object("backpack_b"):set_condition(0.9)
+            assert(math.abs(alife():object(ids.backpack_a).condition-0.65)<0.0002 and math.abs(alife():object(ids.backpack_b).condition-0.9)<0.0002,"server condition did not mirror native equipment state")
             store("original_bandage","pack",0,0);store("original_bread","pack",1,0)
             assert(node("original_bandage")[2]==identity("pack") and node("original_bread")[2]==identity("pack"),"backpack interior admission failed")
             store("case","root",2,0);assert(node("case")[25]=="0","case not legally placed")

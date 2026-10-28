@@ -21,6 +21,7 @@
 #include "string_table.h"
 #include "../xrServerEntities/inventory_space.h"
 #include "../xrServerEntities/xrMessages.h"
+#include "../xrServerEntities/xrServer_Objects_ALife_Items.h"
 #include "../inventory_next/drag_session.h"
 #include "../inventory_next/entity_registry.h"
 #include "../inventory_next/persistence.h"
@@ -308,7 +309,20 @@ bool InventoryNextLogicalStorage() noexcept {
 }
 void InventoryNextCustomChanged() noexcept {layout_current=false;storage_views.clear();InventoryNextPickupStatus(nullptr);}
 void InventoryNextConditionChanged(u16 live) noexcept try {
-    if(!InventoryNextLogicalStorage()||!layout().initialized())return;
+    if(!InventoryNextLogicalStorage())return;
+    // ALife persists the server item condition and restores it on the next
+    // online spawn. Keep the actor-owned server fact in step with native wear,
+    // repair and script condition changes while this isolated mode is active.
+    if(Actor()&&g_pGameLevel){
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+        auto server=ai().alife().objects().object(live,true);
+        auto server_item=smart_cast<CSE_ALifeInventoryItem*>(server);
+        if(item&&server_item&&item->parent_id()==Actor()->ID()&&server->ID_Parent==Actor()->ID()){
+            const float condition=item->GetCondition();
+            if(std::isfinite(condition)&&condition>=0.0f&&condition<=1.0f)server_item->m_fCondition=condition;
+        }
+    }
+    if(!layout().initialized())return;
     const auto id=InventoryNextIdentityLookup(live);const auto found=layout().model().nodes().find(id);
     if(found!=layout().model().nodes().end()&&found->second.container){equipment_dirty=true;layout_current=false;}
 } catch (...) {equipment_dirty=true;}
