@@ -29,8 +29,8 @@
       "repo_relative": "tools/inventory_lab/gamedata/textures/ui/sqa3_visual_controls.dds",
       "destination": "gamedata/textures/ui/sqa3_visual_controls.dds",
       "bytes": 4194432,
-      "sha256": "03342b9ee178cbe804bc288855d27fdffa9474153ab9582f059c85d0cf97581f",
-      "note": "Squared Away visual-assets-v1 controls with a neutral white grid swatch for exact native grid colors."
+      "sha256": "9d7011626eed285715dfcc2c6156a80d615761516e98359bad5c5980ed4919f1",
+      "note": "Squared Away visual-assets-v1 controls with baked opaque grid fill, shared rule, perimeter and placement-preview swatches."
     },
     {
       "source": "C:\\GAMMA\\sqa-engine-inventory-next-harness\\tools\\inventory_lab\\gamedata\\textures\\ui\\sqa3_visual_panels.dds",

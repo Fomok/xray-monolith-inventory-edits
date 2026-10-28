@@ -1,7 +1,7 @@
 {
   "status": "pass",
-  "descriptor_ids": 58,
-  "base_assets": 31,
+  "descriptor_ids": 61,
+  "base_assets": 34,
   "checks": [
     "DDS/PNG exact pixel equality",
     "descriptor bounds and unique IDs",

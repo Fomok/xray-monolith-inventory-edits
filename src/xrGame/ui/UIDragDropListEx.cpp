@@ -686,7 +686,7 @@ CUICellContainer::CUICellContainer(CUIDragDropListEx* parent)
 {
 	m_pParentDragDropList = parent;
 	hShader->create("hud\\fog_of_war", "ui\\ui_grid");
-	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3v1_grid_line","hud\\default",hSqaGrid,m_sqaGridRect);
+	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3v1_grid_fill","hud\\default",hSqaGrid,m_sqaGridRect);
     else if (InventoryNextEnabled()) {hSqaGrid->create("hud\\fog_of_war", "ui\\sqa_fk_controls");m_sqaGridRect.set(8,8,136,136);}
 	//	hShader_selected->create	( "hud\\fog_of_war", "ui_grid_selected" );
 	m_cellSpacing.set(0, 0);
@@ -1145,14 +1145,20 @@ void CUICellContainer::Draw()
             if(x<0||y<0||x>=cell_cnt.x||y>=cell_cnt.y)return 0;
             return m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageCell(x,y,m_pParentDragDropList->sqaViewOwner):1;
         };
-        const auto quad=[&](float left,float top,float right,float bottom,u32 color,bool line){
+        const auto quad=[&](float left,float top,float right,float bottom,u32 color,bool line,const Frect* swatch=nullptr){
             for(const auto& point:pts){
-                const float u=line?m_sqaGridRect.x1+0.5f:m_sqaGridRect.x1+point.x*m_sqaGridRect.width();
-                const float v=line?m_sqaGridRect.y1+0.5f:m_sqaGridRect.y1+point.y*m_sqaGridRect.height();
+                const auto& sample=swatch?*swatch:m_sqaGridRect;
+                const float u=(line||swatch)?sample.x1+0.5f:sample.x1+point.x*sample.width();
+                const float v=(line||swatch)?sample.y1+0.5f:sample.y1+point.y*sample.height();
                 UIRender->PushPoint(iFloor(left+point.x*(right-left))-0.5f,iFloor(top+point.y*(bottom-top))-0.5f,0,color,u/gridTextureSize.x,v/gridTextureSize.y);
             }
         };
         if(InventoryNextFieldKitEnabled()&&m_pParentDragDropList->HasStorageHeaders()){
+            const auto fill=CUITextureMaster::GetTextureRect("sqa3v1_grid_fill");
+            const auto rule=CUITextureMaster::GetTextureRect("sqa3v1_grid_line");
+            const auto border=CUITextureMaster::GetTextureRect("sqa3v1_grid_border");
+            const auto valid=CUITextureMaster::GetTextureRect("sqa3v1_grid_preview_valid");
+            const auto invalid=CUITextureMaster::GetTextureRect("sqa3v1_grid_preview_invalid");
             Fvector2 one;UI().ClientToScreenScaled(one,1.0f,1.0f);
             const float line_x=_max(1.0f,one.x),line_y=_max(1.0f,one.y);
             const auto same=[&](int x,int y,int nx,int ny){
@@ -1175,15 +1181,15 @@ void CUICellContainer::Draw()
                 float left=0.0f,top=0.0f;origin(cx,cy,left,top);
                 const float right=left+f_len.x+(same(cx,cy,cx+1,cy)?sp_len.x:0.0f);
                 const float bottom=top+f_len.y+(same(cx,cy,cx,cy+1)?sp_len.y:0.0f);
-                quad(left,top,right,bottom,color_rgba(21,21,21,255),true);
+                quad(left,top,right,bottom,0xffffffff,true,&fill);
             }
             if(preview)for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
                 const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y;
                 if(!storageAt(cx,cy)||cx<previewCell.x||cx>=previewCell.x+previewWidth||
                     cy<previewCell.y||cy>=previewCell.y+previewHeight)continue;
                 float left=0.0f,top=0.0f;origin(cx,cy,left,top);
-                quad(left,top,left+f_len.x,top+f_len.y,
-                    preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220),true);
+                quad(left,top,left+f_len.x,top+f_len.y,0xffffffff,true,
+                    preview>0?&valid:&invalid);
             }
             for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
                 const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y;
@@ -1193,20 +1199,19 @@ void CUICellContainer::Draw()
                 const bool above=same(cx,cy,cx,cy-1),before=same(cx,cy,cx-1,cy);
                 const float edge_right=left+f_len.x+(right?sp_len.x:0.0f);
                 const float edge_bottom=top+f_len.y+(bottom?sp_len.y:0.0f);
-                const u32 edge=color_rgba(88,88,88,255),rule=color_rgba(48,48,48,255);
-                if(!before)quad(left,top,left+line_x,edge_bottom,edge,true);
-                if(!above)quad(left,top,edge_right,top+line_y,edge,true);
-                if(!right)quad(edge_right-line_x,top,edge_right,edge_bottom,edge,true);
+                if(!before)quad(left,top,left+line_x,edge_bottom,0xffffffff,true,&border);
+                if(!above)quad(left,top,edge_right,top+line_y,0xffffffff,true,&border);
+                if(!right)quad(edge_right-line_x,top,edge_right,edge_bottom,0xffffffff,true,&border);
                 else {
                     const float center=left+f_len.x+sp_len.x*0.5f;
                     quad(center-line_x*0.5f,top+(above?0.0f:line_y),center+line_x*0.5f,
-                        edge_bottom-(bottom?0.0f:line_y),rule,true);
+                        edge_bottom-(bottom?0.0f:line_y),0xffffffff,true,&rule);
                 }
-                if(!bottom)quad(left,edge_bottom-line_y,edge_right,edge_bottom,edge,true);
+                if(!bottom)quad(left,edge_bottom-line_y,edge_right,edge_bottom,0xffffffff,true,&border);
                 else {
                     const float center=top+f_len.y+sp_len.y*0.5f;
                     quad(left+(before?0.0f:line_x),center-line_y*0.5f,
-                        edge_right-(right?0.0f:line_x),center+line_y*0.5f,rule,true);
+                        edge_right-(right?0.0f:line_x),center+line_y*0.5f,0xffffffff,true,&rule);
                 }
             }
         } else for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){

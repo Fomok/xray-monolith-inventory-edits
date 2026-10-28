@@ -60,6 +60,9 @@
     <texture id="sqa3v1_arrow_up_h" x="268" y="620" width="36" height="36" />
     <texture id="sqa3v1_arrow_up_t" x="312" y="620" width="36" height="36" />
     <texture id="sqa3v1_grid_fill" x="356" y="620" width="8" height="8" />
-    <texture id="sqa3v1_grid_line" x="372" y="620" width="2" height="2" />
+    <texture id="sqa3v1_grid_border" x="372" y="620" width="2" height="2" />
+    <texture id="sqa3v1_grid_line" x="382" y="620" width="2" height="2" />
+    <texture id="sqa3v1_grid_preview_invalid" x="392" y="620" width="2" height="2" />
+    <texture id="sqa3v1_grid_preview_valid" x="402" y="620" width="2" height="2" />
   </file>
 </w>

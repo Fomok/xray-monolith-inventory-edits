@@ -483,8 +483,8 @@
         8
       ]
     },
-    "sqa3v1_grid_line": {
-      "usage": "Neutral solid sampler; native tint supplies exact fill, shared line and border colors.",
+    "sqa3v1_grid_border": {
+      "usage": "Opaque public outer grid perimeter.",
       "logical_size": [
         1,
         1
@@ -496,18 +496,60 @@
         2,
         2
       ]
+    },
+    "sqa3v1_grid_line": {
+      "usage": "Opaque public shared grid rule.",
+      "logical_size": [
+        1,
+        1
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        382,
+        620,
+        2,
+        2
+      ]
+    },
+    "sqa3v1_grid_preview_invalid": {
+      "usage": "Native invalid-placement preview.",
+      "logical_size": [
+        1,
+        1
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        392,
+        620,
+        2,
+        2
+      ]
+    },
+    "sqa3v1_grid_preview_valid": {
+      "usage": "Native valid-placement preview.",
+      "logical_size": [
+        1,
+        1
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        402,
+        620,
+        2,
+        2
+      ]
     }
   },
   "outputs": [
     {
       "path": "package\\gamedata\\configs\\ui\\textures_descr\\sqa3_visual_assets.xml",
-      "bytes": 4818,
-      "sha256": "0c2dd24e3bae62fc9e0d831302b283ee5ed079d251f280492a3a7d8040ddebe5"
+      "bytes": 5068,
+      "sha256": "fcc2fbf96a61f4b2b223363c213959ef5bf323116f0281c6b8a98e98071da412"
     },
     {
       "path": "package\\gamedata\\textures\\ui\\sqa3_visual_controls.dds",
       "bytes": 4194432,
-      "sha256": "03342b9ee178cbe804bc288855d27fdffa9474153ab9582f059c85d0cf97581f"
+      "sha256": "9d7011626eed285715dfcc2c6156a80d615761516e98359bad5c5980ed4919f1"
     },
     {
       "path": "package\\gamedata\\textures\\ui\\sqa3_visual_panels.dds",
