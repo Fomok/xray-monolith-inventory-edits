@@ -1,0 +1,85 @@
+-- Native definition/state acceptance. Uses disposable sqa3_* saves only.
+function plan(snapshot)
+    local reload=command_line():find("-sqa3-definitions-reload",1,true)~=nil
+    local ids={}
+    local function object(key) return assert(level.object_by_id(ids[key]),"missing "..key) end
+    local function identity(key) return level.inventory_next_identity(ids[key]) end
+    local function export() exec_console_cmd("inventory_next_probe export") end
+    local function node(key)
+        export();local f=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"r"));local s=f:read("*a");f:close()
+        for line in s:gmatch("[^\n]+") do if line:match("^(%d+) ")==identity(key) then local t={};for v in line:gmatch("%S+") do t[#t+1]=v end return t end end
+        error("missing native model "..key)
+    end
+    local function spawn(key,section)
+        local a=db.actor;local o=assert(alife():create(section,a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()))
+        ids[key]=o.id;save_var(a,"sqa3_definition_"..key,o:name())
+    end
+    local function store(key,host,x,y)
+        exec_console_cmd("inventory_next_store "..identity(key).." "..(host=="root" and "1" or identity(host)).." "..x.." "..y.." 0")
+    end
+    local commands={"g_god on",snapshot}
+    if reload then
+        commands[#commands+1]=function()
+            local names={};for _,key in ipairs({"pack","case","med1","med2","food","pouch"}) do names[load_var(db.actor,"sqa3_definition_"..key,"")]=key end
+            db.actor:iterate_inventory(function(_,item) local key=names[alife():object(item:id()):name()];if key then assert(not ids[key]);ids[key]=item:id() end return false end,db.actor)
+            for _,key in ipairs({"pack","case","med1","med2","food","pouch"}) do assert(ids[key],"saved definition member missing "..key) end
+        end
+    else
+        commands[#commands+1]=function()
+            spawn("pack","equ_small_pack");spawn("case","ampbox_meds");spawn("med1","medkit");spawn("med2","medkit");spawn("food","bread");spawn("pouch","af_magpouch_s")
+        end
+        commands[#commands+1]=function()
+            export();store("pack","root",2,0)
+            assert(node("pack")[25]=="0","empty pack not legally placed")
+            local before=node("med1");store("med1","pack",0,0)
+            assert(node("med1")[2]==before[2] and node("med1")[25]==before[25],"growth overlap failed to preserve source")
+            assert(node("pack")[2]=="1","failed growth moved pack")
+            printf("[SQA3 DEFINITION TEST] empty pack placement and growth-overlap refusal PASS")
+            exec_console_cmd("inventory_next_probe open")
+        end
+        commands[#commands+1]=function()
+            assert(ActorMenu.get_actor_menu():ToSlot(object("pack"),true,13),"native backpack equip failed")
+            assert(db.actor:item_in_slot(13):id()==ids.pack,"wrong native backpack slot")
+            -- Relocate the two original pocket singletons, leaving a legal2x2 case area.
+            db.actor:iterate_inventory(function(_,item)
+                if item:section()=="bandage" then ids.original_bandage=item:id() end
+                if item:section()=="bread" and item:id()~=ids.food then ids.original_bread=item:id() end
+                return false
+            end,db.actor)
+            store("original_bandage","pack",0,0);store("original_bread","pack",1,0)
+            assert(node("original_bandage")[2]==identity("pack") and node("original_bread")[2]==identity("pack"),"backpack interior admission failed")
+            store("case","root",2,0);assert(node("case")[25]=="0","case not legally placed")
+            object("med1"):set_remaining_uses(1);object("med1"):set_condition(0.65)
+            object("med2"):set_remaining_uses(2);object("med2"):set_condition(0.9)
+        end
+        commands[#commands+1]=function()
+            store("med1","case",0,0);store("med2","case",1,0)
+            assert(node("med1")[2]==identity("case") and node("med2")[2]==identity("case"),"medical category refused")
+            local before=node("food");store("food","case",0,1)
+            assert(node("food")[2]==before[2] and node("food")[25]==before[25],"wrong category mutated source")
+            before=node("pouch");store("pouch","pack",2,0)
+            assert(node("pouch")[2]==before[2] and node("pouch")[25]==before[25],"portable nesting bypassed")
+            local pistol=assert(db.actor:item_in_slot(2));assert(pistol:install_upgrade("up_firsta_pm"),"native pistol upgrade failed")
+            assert(pistol:has_upgrade("up_firsta_pm"),"native upgrade state absent")
+            printf("[SQA3 DEFINITION TEST] native category refusal, nesting refusal and weapon upgrade PASS")
+        end
+    end
+    commands[#commands+1]=function()
+        export()
+        assert(object("med1"):get_remaining_uses()==1 and math.abs(object("med1"):condition()-0.65)<0.0002,"first stateful instance changed")
+        assert(object("med2"):get_remaining_uses()==2 and math.abs(object("med2"):condition()-0.9)<0.0002,"second stateful instance changed")
+        assert(node("med1")[2]==identity("case") and node("med2")[2]==identity("case"),"saved compartment identity changed")
+        assert(db.actor:item_in_slot(13):id()==ids.pack,"backpack binding changed")
+        assert(db.actor:item_in_slot(2):has_upgrade("up_firsta_pm"),"saved native upgrade absent")
+        printf("[SQA3 DEFINITION TEST] native charges/condition/upgrades/compartments PASS reload=%s",tostring(reload))
+        exec_console_cmd("inventory_next_probe open")
+        assert(level.inventory_next_fixture_ui("open-container",ids.pack),"backpack inspect failed")
+        assert(level.inventory_next_fixture_ui("open-container",ids.case),"medical case inspect failed")
+    end
+    commands[#commands+1]="screenshot sqa3_definitions"
+    commands[#commands+1]=snapshot;commands[#commands+1]=export
+    commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+    if not reload then commands[#commands+1]="save sqa3_definitions" end
+    commands[#commands+1]="quit"
+    return commands
+end
