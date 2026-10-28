@@ -331,7 +331,11 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
             contents+=layout().model().subtree_mass(pair.first);
         list->AddStorageHeader(band.row-1,label.c_str(),0xffd8dacb,band.owner,contents,band.collapsed);
     }
-    if(!selected.recovery.empty())list->AddStorageHeader(selected.recovery_row-1,"Recovery",0xffff9d70);
+    if(!selected.recovery.empty()){
+        inventory_next::Mass contents=0;
+        for(const auto& item:selected.recovery)contents+=layout().model().subtree_mass(item.first);
+        list->AddStorageHeader(selected.recovery_row-1,"Recovery",0xffff9d70,0,contents);
+    }
 } catch (...) {Msg("! SQA3 storage view failed");}
 bool InventoryNextNativeDrop(u16 live,int x,int y,u64 view) noexcept try {
     if(!InventoryNextEnabled()||!InventoryNextLayoutSync())return false;
