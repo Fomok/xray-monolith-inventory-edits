@@ -53,12 +53,15 @@ function plan(snapshot)
     end
     commands[#commands+1]=function()
         assert(level.inventory_next_custom_item(identity("rig"),"sqa3.mount.p1")==ids.pouch,"direct pouch mount missing")
-        assert(not level.inventory_next_loot_custom_equip(ids.crate,identity("crate"),ids.wrong,identity("wrong"),"1","sqa3.rig"),"occupied foreign equip accepted")
-        assert(object("wrong"):parent():id()==ids.crate,"refused item left source")
-        printf("[SQA3 ACTION TEST] full-pocket direct rig/pouch custody and occupied refusal PASS")
+        -- This return value means request handled, not server admission. Check
+        -- actual custody and the unchanged binding on the following tick.
+        level.inventory_next_loot_custom_equip(ids.crate,identity("crate"),ids.wrong,identity("wrong"),"1","sqa3.rig")
         assert(level.inventory_next_fixture_ui("select-source",ids.other),"second source selection failed")
     end
     commands[#commands+1]=function()
+        assert(object("wrong"):parent():id()==ids.crate,"refused item left source")
+        assert(level.inventory_next_custom_item("1","sqa3.rig")==ids.rig,"occupied refusal replaced equipped identity")
+        printf("[SQA3 ACTION TEST] full-pocket direct rig/pouch custody and occupied refusal PASS")
         assert(level.inventory_next_fixture_ui("select-loot",ids.foreign_bread),"source member context selection failed")
         assert(level.inventory_next_fixture_ui("select-source",ids.crate),"source switch failed")
         assert(level.inventory_next_fixture_ui("selection-clear",0),"source switch retained selection")
