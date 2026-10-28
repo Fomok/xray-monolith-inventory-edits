@@ -1011,7 +1011,7 @@ Ivector2 CUICellContainer::PickCell(const Fvector2& abs_pos)
 	}
 	if(m_pParentDragDropList->HasStorageHeaders()){
         Frect clip;m_pParentDragDropList->GetClientArea(clip);
-        if(!clip.in(abs_pos)){res.set(-1,-1);return res;}
+        if(!clip.in(abs_pos.x,abs_pos.y)){res.set(-1,-1);return res;}
         if(InventoryNextStoragePixelHit(ap.x,ap.y,m_pParentDragDropList->sqaViewOwner,
             m_cellSize.x,m_cellSpacing.x,res.x,res.y))return res;
         res.set(-1,-1);return res;
