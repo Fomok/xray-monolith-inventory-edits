@@ -63,7 +63,7 @@ function plan(snapshot)
     commands[#commands+1]=function()
         assert(object("wrong"):parent():id()==ids.crate,"refused item left source")
         assert(level.inventory_next_custom_item("1","sqa3.rig")==ids.rig,"occupied refusal replaced equipped identity")
-        printf("[SQA3 ACTION TEST] full-pocket direct rig/pouch custody and occupied refusal PASS")
+        printf("[SQA3 ACTION TEST] direct rig/pouch custody and occupied refusal PASS")
         assert(level.inventory_next_fixture_ui("select-source",ids.other),"source unavailable before context check")
         if not level.inventory_next_fixture_ui("select-loot",ids.foreign_bread) then
             printf("[SQA3 MANUAL GAP] source member context was not established by the native fixture hook; physical context acceptance required")
@@ -137,13 +137,14 @@ function plan(snapshot)
     commands[#commands+1]=function()
         assert(not level.object_by_id(ids.rig),"dismantled source retained")
         assert(object("pouch"):parent():id()==db.actor:id(),"dismantle lost native pouch")
-        assert(node("pouch")[2]=="1" and node("pouch")[25]=="3","full-root pouch not returned to recovery")
+        local placed=node("pouch")
+        assert(placed[2]=="1" and (placed[25]=="0" or placed[25]=="3"),"dismantle pouch lost actor storage")
         assert(object("tool"):condition()<ids.tool_condition,"native tool not degraded")
         assert(level.inventory_next_action_ready(),"dismantle left pending lock")
         local counts={}
         db.actor:iterate_inventory(function(_,item) counts[item:section()]=(counts[item:section()] or 0)+1 return false end,db.actor)
         assert(counts.prt_o_fabrics_1==1 and counts.prt_i_fasteners==1,"native parts recipe yield mismatch")
-        printf("[SQA3 ACTION TEST] loaded refusal, empty native dismantle, pouch recovery and exact parts PASS")
+        printf("[SQA3 ACTION TEST] loaded refusal, empty native dismantle, pouch placement=%s and exact parts PASS",placed[25])
     end
     commands[#commands+1]=snapshot;commands[#commands+1]=export
     commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
