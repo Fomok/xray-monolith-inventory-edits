@@ -1,0 +1,37 @@
+-- Explicit local test aid. No callback, autorun, automatic equip or save.
+local busy=false
+
+function give()
+    assert(command_line():find("-inventory-lab",1,true) and command_line():find("-sqa3-field-kit",1,true),"Use only the isolated SQA3 lab launcher")
+    assert(db and db.actor and db.actor:alive(),"Load a game before requesting test items")
+    if busy then return end
+    local items={
+        {"amprig_bandolier",1},{"amprig_bandolier",0.8},{"amprig_scout",1},{"amprig_harness",0.05},
+        {"af_magpouch_s",1},{"af_magpouch_m",1},{"af_magpouch_l",1},
+        {"itm_backpack",1},{"equ_small_pack",1},{"ampbox_meds",1},{"ampbox_ammo",1},{"ampbox_food",1},
+        {"bandage",1},{"bandage",0.7},{"medkit",1},{"bread",1},
+        {"wpn_pm",0.9},{"ammo_9x18_fmj",1},{"ammo_9x18_fmj",1}
+    }
+    assert(system_ini():section_exist("inventory_box"),"Missing native test crate section")
+    for _,record in ipairs(items) do assert(system_ini():section_exist(record[1]),"Missing native test item "..record[1]) end
+    busy=true
+    local a=db.actor;local position=a:position();position.x=position.x+0.8
+    local crate=alife():create("inventory_box",position,a:level_vertex_id(),a:game_vertex_id())
+    if not crate then busy=false;error("Could not create test crate") end
+    local queued={}
+    for _,record in ipairs(items) do
+        local item=alife():create(record[1],position,a:level_vertex_id(),a:game_vertex_id(),crate.id)
+        assert(item,"Could not spawn "..record[1]);queued[#queued+1]={item.id,record[2]}
+    end
+    local function finish()
+        for _,record in ipairs(queued) do
+            local item=level.object_by_id(record[1]);if not item then return false end
+        end
+        for _,record in ipairs(queued) do level.object_by_id(record[1]):set_condition(record[2]) end
+        busy=false
+        printf("[SQA3 TEST ITEMS] crate=%s items=%s; native pickup/equipment rules still apply",tostring(crate.id),tostring(#queued))
+        return true
+    end
+    CreateTimeEvent("sqa3_manual_test_kit","finish",0.5,finish)
+    printf("[SQA3 TEST ITEMS] test crate requested beside actor; no save was overwritten")
+end
