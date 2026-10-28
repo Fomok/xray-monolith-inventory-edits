@@ -184,6 +184,7 @@ private:
 	typedef CUIWindow inherited;
 	ui_shader hShader;
 	ui_shader hSqaGrid;
+    Frect m_sqaGridRect;
 	UI_CELLS_VEC m_cells_to_draw;
 protected:
 	CUIDragDropListEx* m_pParentDragDropList;

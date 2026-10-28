@@ -20,7 +20,7 @@ def main():
     assert len(texture)==atlas["bytes"] and hashlib.sha256(texture).hexdigest()==atlas["sha256"]
     files={"bin/AnomalyDX11AVX.exe":engine,atlas["destination"]:texture}
     for extra in atlas.get("additional_textures",[]):
-        texture=Path(extra["source"]).read_bytes()
+        texture=read_overlay(extra["repo_relative"]) if "repo_relative" in extra else Path(extra["source"]).read_bytes()
         assert len(texture)==extra["bytes"] and hashlib.sha256(texture).hexdigest()==extra["sha256"]
         assert extra["destination"] not in files
         files[extra["destination"]]=texture

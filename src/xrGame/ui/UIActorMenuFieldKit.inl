@@ -73,6 +73,16 @@ bool CUIActorMenu::SqaCloseContainerAt(float x,float y)
 void CUIActorMenu::SqaUpdateChest()
 {
     if(!InventoryNextFieldKitEnabled())return;
+    // Vanilla retains two native identities; present them inside one utility frame.
+    // If both are equipped, share that frame without hiding or moving either item.
+    if(m_pInvList[1]&&m_pInvList[5]){
+        const bool knife=m_pInvList[1]->ItemsCount()!=0,binocular=m_pInvList[5]->ItemsCount()!=0;
+        const bool both=knife&&binocular;
+        m_pInvList[1]->SetWndPos(Fvector2().set(93,171));m_pInvList[1]->SetWndSize(Fvector2().set(both?36.0f:75.0f,42.0f));
+        m_pInvList[5]->SetWndPos(Fvector2().set(both?132.0f:93.0f,171.0f));m_pInvList[5]->SetWndSize(Fvector2().set(both?36.0f:75.0f,42.0f));
+        m_pInvList[1]->Show(knife||!binocular);m_pInvList[5]->Show(binocular);
+        if(m_pInvSlotHighlight[5])m_pInvSlotHighlight[5]->Show(false);
+    }
     if(m_sqaChestCaption)m_sqaChestCaption->TextItemControl()->SetText(m_sqaRigView?"Rig":"Armour");
     if(m_pInvList[OUTFIT_SLOT])m_pInvList[OUTFIT_SLOT]->Show(!m_sqaRigView);
     if(m_pInvList[16])m_pInvList[16]->Show(m_sqaRigView);

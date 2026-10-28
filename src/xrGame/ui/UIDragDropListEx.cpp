@@ -2,6 +2,7 @@
 #include "UIDragDropListEx.h"
 #include "UIStatic.h"
 #include "UIFrameWindow.h"
+#include "UITextureMaster.h"
 #include "UIScrollBar.h"
 #include "object_broker.h"
 #include "UICellItem.h"
@@ -345,27 +346,26 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
     label->TextItemControl()->SetEllipsis(true);
     label->TextItemControl()->SetTextColor(color);label->TextItemControl()->SetText(text);
     if(InventoryNextFieldKitEnabled()) {
+        const float contentWidth=_max(1.0f,GetWndSize().x-m_vScrollBar->GetWidth()-6.0f);
         label->InitTexture("sqa_fk_surface_olive");label->SetStretchTexture(true);
-        label->SetWndSize(Fvector2().set(GetWndSize().x,28.0f));
+        label->SetWndSize(Fvector2().set(contentWidth,28.0f));
         label->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
         auto rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);label->AttachChild(rim);
         rim->SetWndSize(label->GetWndSize());rim->InitTexture("sqa_fk_header");rim->Enable(false);
         label->TextItemControl()->SetText("");
         auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);label->AttachChild(title);title->Enable(false);title->TextureOff();
-        title->SetWndPos(Fvector2().set(78,5));title->SetWndSize(Fvector2().set(GetWndSize().x-156.0f,18.0f));
+        title->SetWndPos(Fvector2().set(78,5));title->SetWndSize(Fvector2().set(contentWidth-156.0f,18.0f));
         title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         title->TextItemControl()->SetTextAlignment(CGameFont::alCenter);title->TextItemControl()->SetEllipsis(true);
         title->TextItemControl()->SetTextColor(color);title->TextItemControl()->SetText(text);
         auto weight=xr_new<CUIStatic>();weight->SetAutoDelete(true);label->AttachChild(weight);weight->Enable(false);
-        weight->SetWndPos(Fvector2().set(GetWndSize().x-78.0f,5.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
+        weight->SetWndPos(Fvector2().set(contentWidth-78.0f,5.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
         weight->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
         string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);weight->TextItemControl()->SetText(amount);
         if(owner) {
             auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);label->AttachChild(button);button->Enable(false);
-            button->SetWndPos(Fvector2().set(4,4));button->SetWndSize(Fvector2().set(20,20));button->InitTexture("sqa_fk_button_e");button->SetStretchTexture(true);
-            button->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);button->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
-            button->TextItemControl()->SetText(collapsed?">":"v");
+            button->SetWndPos(Fvector2().set(4,4));button->SetWndSize(Fvector2().set(20,20));button->InitTexture(collapsed?"sqa3_arrow_down":"sqa3_arrow_up");button->SetStretchTexture(true);
         }
     }
     m_storageHeaderOwners.push_back(owner);
@@ -627,7 +627,8 @@ CUICellContainer::CUICellContainer(CUIDragDropListEx* parent)
 {
 	m_pParentDragDropList = parent;
 	hShader->create("hud\\fog_of_war", "ui\\ui_grid");
-	if (InventoryNextEnabled()) hSqaGrid->create("hud\\fog_of_war", "ui\\sqa_fk_controls");
+	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3_grid_cell","hud\\fog_of_war",hSqaGrid,m_sqaGridRect);
+    else if (InventoryNextEnabled()) {hSqaGrid->create("hud\\fog_of_war", "ui\\sqa_fk_controls");m_sqaGridRect.set(8,8,136,136);}
 	//	hShader_selected->create	( "hud\\fog_of_war", "ui_grid_selected" );
 	m_cellSpacing.set(0, 0);
 }
@@ -1037,10 +1038,12 @@ void CUICellContainer::Draw()
         auto item=static_cast<PIItem>(drag->ParentItem()->m_pData);
         if(item)preview=InventoryNextNativePreview(item->object_id(),previewCell.x,previewCell.y,m_pParentDragDropList->sqaViewOwner,previewWidth,previewHeight);
     }
-	// Draw a bounded, scrolling cell surface from the existing Field Kit atlas.
+	// Draw the descriptor-defined cell surface; assets own its atlas and crop.
 	// Native selection highlights and item icons are drawn above this pass.
 	if (InventoryNextEnabled() && color_get_A(m_pParentDragDropList->back_color) != 0)
 	{
+        UIRender->SetShader(*hSqaGrid);
+        Fvector2 gridTextureSize;UIRender->GetActiveTextureResolution(gridTextureSize);
 		UI().PushScissor(clientArea);
 		UIRender->StartPrimitive((tgt_cells.width()+1)*(tgt_cells.height()+1)*6,
 			IUIRender::ptTriList, UI().m_currentPointType);
@@ -1052,7 +1055,7 @@ void CUICellContainer::Draw()
 					const Fvector2& p=pts[k];
 					UIRender->PushPoint(iFloor(drawLT.x+(f_len.x+sp_len.x)*x+p.x*f_len.x)-0.5f,
 						iFloor(drawLT.y+(f_len.y+sp_len.y)*y+p.y*f_len.y)-0.5f,0,
-						(preview&&x+tgt_cells.lt.x>=previewCell.x&&x+tgt_cells.lt.x<previewCell.x+previewWidth&&y+tgt_cells.lt.y>=previewCell.y&&y+tgt_cells.lt.y<previewCell.y+previewHeight)?(preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220)):(storage==2?color_rgba(210,100,70,170):color_rgba(160,170,155,170)),(8.0f+p.x*128.0f)/1024.0f,(8.0f+p.y*128.0f)/1024.0f);
+						(preview&&x+tgt_cells.lt.x>=previewCell.x&&x+tgt_cells.lt.x<previewCell.x+previewWidth&&y+tgt_cells.lt.y>=previewCell.y&&y+tgt_cells.lt.y<previewCell.y+previewHeight)?(preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220)):(storage==2?color_rgba(210,135,110,255):color_rgba(255,255,255,255)),(m_sqaGridRect.x1+p.x*m_sqaGridRect.width())/gridTextureSize.x,(m_sqaGridRect.y1+p.y*m_sqaGridRect.height())/gridTextureSize.y);
 				}
 		UIRender->SetShader(*hSqaGrid);
 		UIRender->FlushPrimitive();

@@ -11,50 +11,8 @@
     </list>
   </properties_box>
   <main x="0" y="0" width="1024" height="768">
-    <auto_static x="0" y="0" width="260.5" height="768" stretch="1">
-      <texture>sqa_fk_surface_lining</texture>
-    </auto_static>
     <auto_static x="260.5" y="0" width="382" height="768" stretch="1">
-      <texture>sqa_fk_surface_lining</texture>
-    </auto_static>
-    <auto_static x="260.5" y="0" width="1" height="768" stretch="1">
-      <texture>sqa_fk_surface_rubber</texture>
-    </auto_static>
-    <auto_static x="97" y="199" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Knife</text>
-    </auto_static>
-    <auto_static x="16" y="407" width="229" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Weapon 2</text>
-    </auto_static>
-    <auto_static x="16" y="305" width="229" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Weapon 1</text>
-    </auto_static>
-    <auto_static x="178" y="465" width="26.5" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Grenade</text>
-    </auto_static>
-    <auto_static x="178" y="199" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Pistol / optics</text>
-    </auto_static>
-    <auto_static x="218.5" y="465" width="26.5" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Bolt</text>
-    </auto_static>
-    <auto_static x="97" y="145" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Armour / rig</text>
-    </auto_static>
-    <auto_static x="178" y="91" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">PDA</text>
-    </auto_static>
-    <auto_static x="178" y="145" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Detector</text>
-    </auto_static>
-    <auto_static x="178" y="37" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Torch</text>
-    </auto_static>
-    <auto_static x="16" y="91" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Helmet</text>
-    </auto_static>
-    <auto_static x="16" y="199" width="67" height="12" stretch="1">
-      <text font="letterica16" align="c" r="180" g="185" b="164">Backpack</text>
+      <texture>sqa_fk_inventory_panel</texture>
     </auto_static>
     <auto_static x="12" y="735" width="237" height="24" stretch="1">
       <texture>sqa_fk_surface_rubber</texture>
@@ -62,7 +20,7 @@
     </auto_static>
   </main>
   <left_background x="643" y="0" width="381" height="768" stretch="1">
-    <texture a="255">sqa_fk_surface_lining</texture>
+    <texture a="255">sqa_fk_inventory_panel</texture>
   </left_background>
   <actor_ch_info x="270" y="10" width="361" height="89">
     <name_static x="10" y="18" width="140" height="16">
@@ -136,20 +94,20 @@
       </slot_progress>
     </slot>
     <slot>
-      <slot_dragdrop x="174" y="433" width="34.5" height="46" cell_width="36" cell_height="36" rows_num="1" cols_num="2" custom_placement="0" a="0" virtual_cells="1" vc_vert_align="c" vc_horiz_align="c" vertical_placement="0" />
-      <slot_highlight x="174" y="433" width="34.5" height="46" stretch="1">
-        <texture>ui_inGame2_detector_highlighter</texture>
-      </slot_highlight>
-    </slot>
-    <slot>
-      <slot_dragdrop x="93" y="433" width="75" height="42" cell_width="36" cell_height="36" rows_num="1" cols_num="2" custom_placement="0" a="0" virtual_cells="1" vc_vert_align="c" vc_horiz_align="c" vertical_placement="0" />
-      <slot_highlight x="93" y="433" width="75" height="42" stretch="1">
-        <texture>ui_inGame2_detector_highlighter</texture>
-      </slot_highlight>
-    </slot>
-    <slot>
       <slot_dragdrop x="214.5" y="433" width="34.5" height="46" cell_width="36" cell_height="36" rows_num="1" cols_num="2" custom_placement="0" a="0" virtual_cells="1" vc_vert_align="c" vc_horiz_align="c" vertical_placement="0" />
       <slot_highlight x="214.5" y="433" width="34.5" height="46" stretch="1">
+        <texture>ui_inGame2_detector_highlighter</texture>
+      </slot_highlight>
+    </slot>
+    <slot>
+      <slot_dragdrop x="93" y="171" width="75" height="42" cell_width="36" cell_height="36" rows_num="1" cols_num="2" custom_placement="0" a="0" virtual_cells="1" vc_vert_align="c" vc_horiz_align="c" vertical_placement="0" />
+      <slot_highlight x="93" y="171" width="75" height="42" stretch="1">
+        <texture>ui_inGame2_detector_highlighter</texture>
+      </slot_highlight>
+    </slot>
+    <slot>
+      <slot_dragdrop x="174" y="433" width="34.5" height="46" cell_width="36" cell_height="36" rows_num="1" cols_num="2" custom_placement="0" a="0" virtual_cells="1" vc_vert_align="c" vc_horiz_align="c" vertical_placement="0" />
+      <slot_highlight x="174" y="433" width="34.5" height="46" stretch="1">
         <texture>ui_inGame2_detector_highlighter</texture>
       </slot_highlight>
     </slot>
@@ -255,22 +213,22 @@
       </slot_progress>
     </slot>
   </inventory_slot_wnd>
-  <quick_slot_highlight x="12" y="479" width="36" height="36" dx="60" stretch="1">
+  <quick_slot_highlight x="12" y="433" width="33" height="44" dx="40" stretch="1">
     <texture>ui_inGame2_quick_item_highlighter</texture>
   </quick_slot_highlight>
   <artefact_slot_highlight x="12" y="531" width="36" height="36" dx="48" stretch="1">
     <texture>ui_inGame2_artefakt_highlighter</texture>
   </artefact_slot_highlight>
-  <quick_slot1_text x="12" y="510" width="20" height="13">
+  <quick_slot1_text x="12" y="433" width="33" height="13">
     <text align="c" font="letterica16">quick_use_str_1</text>
   </quick_slot1_text>
-  <quick_slot2_text x="72" y="510" width="20" height="13">
+  <quick_slot2_text x="52" y="433" width="33" height="13">
     <text align="c" font="letterica16">quick_use_str_2</text>
   </quick_slot2_text>
-  <quick_slot3_text x="132" y="510" width="20" height="13">
+  <quick_slot3_text x="92" y="433" width="33" height="13">
     <text align="c" font="letterica16">quick_use_str_3</text>
   </quick_slot3_text>
-  <quick_slot4_text x="192" y="510" width="20" height="13">
+  <quick_slot4_text x="132" y="433" width="33" height="13">
     <text align="c" font="letterica16">quick_use_str_4</text>
   </quick_slot4_text>
   <actor_weight_caption x="380" y="742" width="80" height="16">
@@ -329,7 +287,7 @@
   <dragdrop_partner_trade x="680" y="114" width="306" height="164" cell_width="41" cell_height="41" rows_num="4" cols_num="7" unlimited="1" group_similar="1" always_show_scroll="1" condition_progress_bar="1" />
   <dragdrop_partner_bag x="680" y="340" width="306" height="350" cell_width="41" cell_height="41" rows_num="9" cols_num="7" unlimited="1" group_similar="1" always_show_scroll="1" condition_progress_bar="1" />
   <dragdrop_deadbody_bag x="680" y="114" width="306" height="574" cell_width="41" cell_height="41" rows_num="14" cols_num="7" unlimited="1" group_similar="0" always_show_scroll="1" condition_progress_bar="1" />
-  <dragdrop_quick_slots x="12" y="479" width="237" height="36" cell_width="36" cell_height="36" a="0" rows_num="1" cols_num="4" cell_sp_x="24" cell_sp_y="0" custom_placement="1" always_show_scroll="0" />
+  <dragdrop_quick_slots x="12" y="433" width="156" height="44" cell_width="33" cell_height="44" a="0" rows_num="1" cols_num="4" cell_sp_x="7" cell_sp_y="0" custom_placement="1" always_show_scroll="0" />
   <trade_buy_button x="680" y="284" width="134" height="26" stretch="1" hint="ui_st_buy_hint">
     <window_name>trade_buy_button</window_name>
     <texture>ui_inGame2_inventory_button</texture>

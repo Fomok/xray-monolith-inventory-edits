@@ -63,9 +63,9 @@ void CUIActorMenu::Construct()
 	CUIXmlInit xml_init;
 
 	xml_init.InitWindow(uiXml, "main", 0, this);
-    if(InventoryNextFieldKitEnabled())for(int panel=0;panel<2;++panel){
+    if(InventoryNextFieldKitEnabled()){
         auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
-        frame->SetWndPos(Fvector2().set(panel?260.5f:0.0f,0.0f));frame->SetWndSize(Fvector2().set(panel?382.0f:260.5f,768.0f));frame->InitTexture("sqa_fk_panel");
+        frame->SetWndPos(Fvector2().set(0,0));frame->SetWndSize(Fvector2().set(260.5f,768.0f));frame->InitTexture("sqa_fk_panel");
     }
 
 	if (InventoryNextEnabled()) m_sqaStatus=UIHelper::CreateStatic(uiXml,"sqa_status",this);
@@ -75,10 +75,6 @@ void CUIActorMenu::Construct()
 	m_LeftBackground->SetAutoDelete(true);
 	AttachChild(m_LeftBackground);
 	xml_init.InitStatic(uiXml, "left_background", 0, m_LeftBackground);
-    if(InventoryNextFieldKitEnabled()){
-        auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);m_LeftBackground->AttachChild(frame);frame->Enable(false);
-        frame->SetWndPos(Fvector2().set(0,0));frame->SetWndSize(m_LeftBackground->GetWndSize());frame->InitTexture("sqa_fk_panel");
-    }
 
 
 	m_pUpgradeWnd = xr_new<CUIInventoryUpgradeWnd>();
@@ -150,6 +146,10 @@ void CUIActorMenu::Construct()
 	m_pTradePartnerBagList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_partner_bag", this);
 	m_pTradePartnerList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_partner_trade", this);
 	m_pDeadBodyBagList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_deadbody_bag", this);
+    if(InventoryNextFieldKitEnabled())for(int index=0;index<4;++index){
+        auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
+        frame->SetWndPos(Fvector2().set(12.0f+40.0f*index,433.0f));frame->SetWndSize(Fvector2().set(33,44));frame->InitTexture("sqa_fk_slot");
+    }
 	m_pQuickSlot = UIHelper::CreateDragDropReferenceList(uiXml, "dragdrop_quick_slots", this);
 	m_pQuickSlot->Initialize();
 
@@ -207,12 +207,12 @@ void CUIActorMenu::Construct()
 		if (uiXml.GetNodesNum(slot_node, "slot_dragdrop") == 0)
 			continue;
 
-        if(InventoryNextFieldKitEnabled()&&i!=16){
+        if(InventoryNextFieldKitEnabled()&&i!=16&&i!=5){
             auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
             frame->SetWndPos(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"x",0),uiXml.ReadAttribFlt("slot_dragdrop",0,"y",0)));
             frame->SetWndSize(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"width",75),uiXml.ReadAttribFlt("slot_dragdrop",0,"height",42)));
             frame->InitTexture("sqa_fk_slot");
-            const LPCSTR labels[]={"","Knife","Weapon 2","Weapon 1","Grenade","Binoculars","Bolt","Armour / rig","PDA","Detector","Torch","","Helmet","Backpack"};
+            const LPCSTR labels[]={"","Knife / binoc.","Weapon 2","Weapon 1","Grenade","Binoculars","Bolt","Armour / rig","PDA","Detector","Torch","","Helmet","Backpack"};
             if(i<14){auto caption=xr_new<CUIStatic>();caption->SetAutoDelete(true);frame->AttachChild(caption);caption->Enable(false);caption->TextureOff();
                 caption->SetWndPos(Fvector2().set(4.0f,frame->GetWndSize().y-14.0f));caption->SetWndSize(Fvector2().set(frame->GetWndSize().x-8.0f,12.0f));
                 caption->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);caption->TextItemControl()->SetTextAlignment(CGameFont::alCenter);caption->TextItemControl()->SetText(labels[i]);if(i==OUTFIT_SLOT)m_sqaChestCaption=caption;}
@@ -250,9 +250,7 @@ void CUIActorMenu::Construct()
         for(int side=0;side<2;++side){
             auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);AttachChild(button);button->Enable(false);
             button->SetWndPos(Fvector2().set(side?163:88,75));button->SetWndSize(Fvector2().set(10,18));
-            button->InitTexture("sqa_fk_button_e");button->SetStretchTexture(true);
-            button->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
-            button->TextItemControl()->SetTextAlignment(CGameFont::alCenter);button->TextItemControl()->SetText(side?">":"<");
+            button->InitTexture(side?"sqa3_arrow_right":"sqa3_arrow_left");button->SetStretchTexture(true);
         }
     }
 	//-Alun
