@@ -10,6 +10,7 @@ function start(args,snapshot,open_inventory)
     local rollback=args:find("-sqa3-stash-rollback",1,true)~=nil
     local equipped=args:find("-sqa3-stash-equipped",1,true)~=nil
     local context=args:find("-sqa3-stash-context",1,true)~=nil
+    local automatic=args:find("-sqa3-stash-auto",1,true)~=nil
     assert(not context or (not equipped and not returning and not reload),"context test requires creation")
     local dialog_seen=false
     local remove_cancel=args:find("-sqa3-stash-remove-cancel",1,true)~=nil
@@ -108,8 +109,19 @@ function start(args,snapshot,open_inventory)
                 item_backpack.actor_on_item_use({section=function() return "itm_actor_backpack" end})
                 sqa3_stash.default_name=original
             else
-                started=started+(context and 90000 or 60000)
-                printf("[SQA3 STASH TEST] physical window action=%s",returning and "retrieve" or (cancel and "cancel dialog" or "accept dialog"))
+                if automatic then
+                    assert(not context,"context click semantics require physical input")
+                    if returning then
+                        local key=bind_to_dik(key_bindings.kSPRINT_TOGGLE,-1)
+                        assert(key and key>0,"native Take All binding missing")
+                        level.press_action(key);level.release_action(key)
+                    elseif cancel then item_backpack.GUI:Close()
+                    else item_backpack.GUI:OnAccept() end
+                    printf("[SQA3 STASH TEST] native fixture action=%s",returning and "take all" or (cancel and "close dialog" or "accept dialog"))
+                else
+                    started=started+(context and 90000 or 60000)
+                    printf("[SQA3 STASH TEST] physical window action=%s",returning and "retrieve" or (cancel and "cancel dialog" or "accept dialog"))
+                end
             end
         end
     end

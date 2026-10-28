@@ -31,6 +31,7 @@ def main():
     ap.add_argument("stem", type=Path)
     ap.add_argument("--baseline", type=Path, required=True)
     ap.add_argument("--previous", type=Path)
+    ap.add_argument("--equipped", action="store_true", help="Creation fixture first equips shell in real native slot13; preserve its captured native-place metadata")
     ap.add_argument("--empty", action="store_true", help="Use the actor/world corpse-release baseline for one new empty shell")
     a = ap.parse_args()
     log_path = a.stem.with_suffix(".log")
@@ -93,6 +94,12 @@ def main():
         custodian, outside = records[105]
         expected = dict(subtree)
         expected[105] = dict(subtree[105], parent=2, position=[0, 0, 0])
+        if a.equipped:
+            assert phase == "release" and not a.empty
+            if not a.previous:
+                assert "-sqa3-stash-equipped" in run["arguments"]
+            expected[105]["attributes"] = dict(subtree[105]["attributes"], native_place="1")
+            assert expected[105]["attributes"]["native_slot"] == "13"
         assert outside == expected and custodian >= 100
         assert names(world_path) == {105: "SQA3 field stash"}
         assert "stored members=3 marker=true" in log

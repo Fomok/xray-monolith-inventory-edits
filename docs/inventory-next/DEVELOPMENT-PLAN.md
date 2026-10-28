@@ -2,7 +2,7 @@
 
 Squared Away 3 has a working native inventory foundation in the isolated vanilla lab. It can preserve nested item ownership and placement across several tested transfers, saves and map changes. It is not yet the complete replacement mod. The next work should turn that foundation into the full item catalog and everyday inventory interactions, then verify the supported modpack integrations.
 
-This plan retains all 77 requirements in [the coverage register](PARITY-COVERAGE.md). The phases below are proposed for review; preparing this plan does not start them. Dev32 completes the bounded header and container-window correction: actor/one-stash display, textured X, separate-window expansion and exact save/reload checks passed. Its [acceptance record](FIELD-KIT-HEADERS.md) lists the remaining visual and gameplay limits.
+This plan retains all 77 requirements in [the coverage register](PARITY-COVERAGE.md). Fomok authorized implementation through the end of Phase3 on28October2026; stop and report there. Phases4–7 remain proposed. Dev32 completes the bounded header and container-window correction: actor/one-stash display, textured X, separate-window expansion and exact save/reload checks passed. Its [acceptance record](FIELD-KIT-HEADERS.md) lists the remaining visual and gameplay limits.
 
 ## What already works in bounded tests
 
@@ -21,7 +21,7 @@ Every item must have one authoritative owner, retain its individual state, and c
 
 Ordinary pickup stays blocked when storage is full. Forced unequip, lost capacity and dismantling outputs may use visible recovery; recovery is never a manual storage destination. Dismantling consumes its inputs once, places outputs that fit and preserves every remainder.
 
-Soft containers may change exterior size with fullness. Rigid containers keep their exterior and explicit restrictions. Nesting is governed by authored container rules, with no cycles and no unrestricted box-in-box assumption. Personal placement stays manual by default; stash sorting affects only the stash.
+Only backpacks and rigs may change exterior size with fullness. Every other container stays fixed. Backpacks support authored masks and compartments like rigs. Current configurable data policy forbids containers inside containers; preserve safe handling of existing nested states. This supersedes earlier allowed-nesting examples. Preserve released rig geometry and center its whole effective bounds, recentering after pouch changes. Personal placement stays manual by default; stash sorting affects only the stash.
 
 The current pistol frame is presentation only. A third native weapon slot is not part of this visual correction. Existing native equipment semantics remain authoritative. Public Squared Away 2.x, personal frame generation and old saves are outside this development package.
 
@@ -48,6 +48,8 @@ Define a versioned SQA3 authoring/export contract for add-on definitions, with e
 **Depends on:** the stable ownership and save model. **Acceptance:** every supported definition validates; allowed and refused nesting combinations behave correctly; full and partly filled bags survive shrink, growth and restart without losing items; stateful stack members retain condition, charges, ammunition and upgrades.
 
 **Requirements:** I03, I10–I13, B01–B04, B06–B07, D01, K01–K02, K14.
+
+Real future equipment slots require a persistent namespaced registry outside every reserved vanilla slot, including unused slots; no visual-only registration or native-slot repurposing. See [catalog contract](PHASE-2-CATALOG-CONTRACT.md).
 
 ## Phase 3 Complete equipment rigs and pouches
 
