@@ -9,7 +9,7 @@
 | Actor pockets/backpack/rig/pouch/carried box → loose stash | `SqaPutLoot` → native owned release or loaded `InventoryNextWorldRequest` | Earlier loaded bag/crate and source custody fixtures passed; each nested leaf route not individually exercised. |
 | Actor storage/box ↔ other actor storage/box | `InventoryNextNativeDrop` with view owner and cell | Core cross-window preview/commit and prior native nested crate transfers passed; expanded pairs not individually exercised. |
 | Actor box item → equipment | Native `ToSlot`/custom equip after logical access | Native direct equipment paths passed for representative items; box ancestry with full pockets needs a targeted run. |
-| Box already in stash → actor storage/equipment | Detached `WorldSubtrees` suppresses descendant visibility in `InventoryNextWorldVisible`; `InventoryNextWorldCanRelease` blocks an individual child | Not implemented or accepted. Whole-container retrieval remains available; individual contents need a separate world-to-actor transaction and source window. |
+| Box already in stash → actor storage/equipment | `cef1aefd` candidate adds a virtual box-content source and `WorldSubtrees.without_leaf` publication only after native pickup acknowledgment | Core candidate test passes; CI/native build and physical drag/reload pending. Not accepted yet. |
 | Actor storage/equipment/box → box already in stash | `InventoryNextLootPut` addresses the physical stash, not the nested detached box | Not implemented or accepted. Needs a destination view and atomic world-ledger update. |
 | Box in stash ↔ other box in stash | No direct world-to-world child transaction | Not implemented or accepted. |
 

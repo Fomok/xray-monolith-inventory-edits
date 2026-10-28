@@ -349,6 +349,24 @@ int main(int argc,char** argv) {
                 "candidate insertion lost exact cell or item condition");
             check(world.serialize()==original,"candidate insertion mutated published record");
         });
+        test("detached boxes relocate one leaf directly with exact cell and no actor staging",[]{
+            auto first=bag(100,2,200),second=bag(110,2,200,{3,0,false});
+            auto med=item(101,100,30,{0,0,false});med.condition=7600;
+            Model model;yes(model.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),first,med,second}));
+            WorldSubtrees world;yes(world.capture(model,100,900));yes(world.capture(model,110,900));
+            const auto before=world.serialize();WorldSubtrees moved;
+            no(world.relocate_leaf(100,901,101,110,900,{1,1,true},moved),"world_storage_source");
+            check(world.serialize()==before,"wrong source changed world ledger");
+            yes(world.relocate_leaf(100,900,101,110,900,{1,1,true},moved));
+            check(world.serialize()==before&&moved.records().at(100).tree.nodes().count(101)==0,
+                "candidate move changed source or kept duplicate");
+            const auto& child=moved.records().at(110).tree.nodes().at(101);
+            check(child.parent==110&&child.position.x==1&&child.position.y==1&&child.position.rotated&&
+                child.condition==7600&&moved.records().at(110).tree.subtree_mass(110)==230,
+                "candidate relocation lost exact state, position or weight");
+            WorldSubtrees loaded;yes(loaded.restore(moved.serialize()));
+            check(loaded.serialize()==moved.serialize(),"cross-box candidate failed restart");
+        });
         test("world storage refresh uses actual native state while retaining nested placement",[]{
             auto shell=bag(100,2,100);shell.attributes["native_section"]="itm_backpack";
             auto child=item(101,100,20,{1,0,true});child.attributes={{"native_section","wpn_pm"},{"ammo","5"}};

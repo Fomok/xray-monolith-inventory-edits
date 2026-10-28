@@ -106,6 +106,17 @@ public:
         if(candidate.serialize().size()>max_bytes)return {false,"world_storage_size"};
         output=std::move(candidate);return {true,{}};
     }
+    Result relocate_leaf(Id source_shell,Id source_custodian,Id leaf,Id destination_shell,
+                         Id destination_custodian,Position position,WorldSubtrees& output) const {
+        const auto source=records_.find(source_shell);
+        if(source==records_.end()||source->second.custodian!=source_custodian||
+           !source->second.tree.nodes().count(leaf)||source->second.tree.nodes().at(leaf).parent!=source_shell)
+            return {false,"world_storage_source"};
+        const Node item=source->second.tree.nodes().at(leaf);
+        WorldSubtrees removed;
+        if(const auto result=without_leaf(source_shell,source_custodian,leaf,removed);!result)return result;
+        return removed.with_leaf(destination_shell,destination_custodian,item,position,output);
+    }
     // Rebuild saved placement around current engine facts. Caller first checks
     // physical custody and persistent identities for every supplied object.
     Result refresh(Id shell,Id expected_custodian,const std::vector<Node>& actual) {
