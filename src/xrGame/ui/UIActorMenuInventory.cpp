@@ -630,6 +630,12 @@ bool CUIActorMenu::SqaRefreshFieldKitContents()
         for(const auto live:InventoryNextWorldContents(window.owner))
             append(window.list,smart_cast<CInventoryItem*>(Level().Objects.net_Find(live)));
     if(unresolved)return false;
+    // GetSlotList falls back to the actor bag for slots without a dedicated
+    // widget. The stable path cannot treat that fallback as a slot list.
+    for(u8 slot=1;slot<=m_slot_count;++slot)
+        if(!m_pInvList[slot]&&slot!=BOLT_SLOT&&slot!=PDA_SLOT&&
+           !m_pActorInvOwner->inventory().SlotIsPersistent(slot)&&
+           m_pActorInvOwner->inventory().ItemFromSlot(slot))return false;
 
     PIItem selected=CurrentIItem();unsigned kept=0,removed=0,added=0;
     for(auto& target:targets){
@@ -658,7 +664,7 @@ bool CUIActorMenu::SqaRefreshFieldKitContents()
         list->SqaRepositionProjectedItems();
     }
     for(u8 slot=1;slot<=m_slot_count;++slot){
-        auto list=GetSlotList(slot);if(!list)continue;
+        auto list=m_pInvList[slot];if(!list)continue;
         auto desired=m_pActorInvOwner->inventory().ItemFromSlot(slot);
         const bool same=list->ItemsCount()==(desired?1u:0u)&&
             (!desired||list->GetItemIdx(0)->m_pData==desired);
@@ -687,7 +693,7 @@ bool CUIActorMenu::SqaRefreshFieldKitContents()
             return false;
         };
         if(!restore(m_pInventoryBagList))for(auto& window:m_sqaContainers)if(restore(window.list))break;
-        if(!CurrentItem())for(u8 slot=1;slot<=m_slot_count;++slot)if(restore(GetSlotList(slot)))break;
+        if(!CurrentItem())for(u8 slot=1;slot<=m_slot_count;++slot)if(restore(m_pInvList[slot]))break;
         if(!CurrentItem())restore(m_pInventoryBeltList);
     }
     if(strstr(Core.Params,"-sqa3-fixture-refresh-trace"))
