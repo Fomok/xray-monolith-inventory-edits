@@ -294,6 +294,10 @@ function on_game_start()
         commands[#commands+1]="quit"
         RegisterScriptCallback("actor_on_update",update);return
     end
+    if args:find("-sqa3-fixture-growth-policy",1,true) then
+        commands=sqa3_growth_policy_fixture.plan(snapshot)
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-definitions",1,true) then
         commands=sqa3_definition_fixture.plan(snapshot)
         RegisterScriptCallback("actor_on_update",update);return

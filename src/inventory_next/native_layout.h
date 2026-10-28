@@ -41,7 +41,7 @@ public:
             n.position={};
             factsNodes.push_back(n);
         }
-        Model facts;auto result=facts.initialize(factsNodes);if(!result)return result;
+        Model facts;facts.set_growth_collision_policy(growth_policy_);auto result=facts.initialize(factsNodes);if(!result)return result;
         const auto signature=facts.serialize();
         if(signature==signature_)return {true,{}};
         // Build from actual engine values, never import saved mass or item state.
@@ -80,6 +80,7 @@ public:
         if(!storage.logical) {
             result=candidate.retry_recovery(1,{1},candidate.revision(),candidate.session());if(!result)return result;
         }
+        candidate.set_growth_collision_policy(growth_policy_);
         model_=std::move(candidate);signature_=signature;return {true,{}};
     }
     Result restore(const std::string& bytes) {
@@ -100,9 +101,11 @@ public:
             for(unsigned count=0;candidate.nodes().at(owner).parent&&count<=64;++count)owner=candidate.nodes().at(owner).parent;
             if(owner!=1)return {false,"native_layout_owner"};
         }
+        candidate.set_growth_collision_policy(growth_policy_);
         model_=std::move(candidate);signature_.clear();return {true,{}};
     }
-    void reset(){model_=Model{};signature_.clear();}
+    void reset(){model_=Model{};model_.set_growth_collision_policy(growth_policy_);signature_.clear();}
+    void set_growth_collision_policy(GrowthCollisionPolicy policy){growth_policy_=policy;model_.set_growth_collision_policy(policy);}
     bool initialized() const{return model_.session()!=0;}
     const Model& model()const{return model_;}
     Result move(const Move& move){
@@ -135,5 +138,6 @@ public:
 private:
     Model model_;
     std::string signature_;
+    GrowthCollisionPolicy growth_policy_ = GrowthCollisionPolicy::Refuse;
 };
 }

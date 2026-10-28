@@ -1,0 +1,25 @@
+-- MCM registers this script by its *mcm.script name. The option is global;
+-- native saves retain item state while MCM retains this preference.
+function on_mcm_load()
+    return {id="sqa3", sh=true, gr={
+        {id="growth_collision", type="list", val=2, def=0,
+            content={{0,"Refuse the item"},{1,"Move container to Recovery"}},
+            no_str=true},
+    }}
+end
+
+function read_growth_collision()
+    local value=ui_mcm.get("sqa3/growth_collision")
+    return value==1 and 1 or 0
+end
+
+local function apply_policy()
+    if not command_line():find("-inventory-lab",1,true) or not ui_mcm then return end
+    exec_console_cmd("inventory_next_growth_policy " .. (read_growth_collision()==1 and "recover" or "refuse"))
+end
+
+function on_game_start()
+    if not command_line():find("-inventory-lab",1,true) then return end
+    RegisterScriptCallback("actor_on_first_update",apply_policy)
+    RegisterScriptCallback("on_option_change",apply_policy)
+end

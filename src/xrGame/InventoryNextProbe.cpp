@@ -647,6 +647,11 @@ bool InventoryNextLayoutSync() noexcept try {
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
 void InventoryNextLayoutReset() noexcept try {source_footprints.clear();dismantling_items.clear();equipment_registry_ready=false;storage_catalog_cache.reset();pending_custom_bindings.clear();restoring_custom_bindings=false;collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();world_member.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pickup_world_candidate.reset();pickup_world_before.clear();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextGrowthPolicy(bool recover_container) noexcept try {
+    layout().set_growth_collision_policy(recover_container ? inventory_next::GrowthCollisionPolicy::RecoverContainer : inventory_next::GrowthCollisionPolicy::Refuse);
+    native_drag().cancel();
+    Msg("* SQA3 growth collision: %s", recover_container ? "recover_container" : "refuse");
+} catch (...) {Msg("! SQA3 growth collision setting failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);

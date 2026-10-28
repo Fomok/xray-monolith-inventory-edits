@@ -494,6 +494,37 @@ Result Model::execute_internal(const Command& request,bool recovery,bool restori
     }
     DerivedMap derived;
     auto r = analyze(candidate, derived);
+    if (!r && !recovery && request.operation == Operation::Move && growth_collision_policy_ == GrowthCollisionPolicy::RecoverContainer &&
+        (r.error == "bounds" || r.error == "overlap" || r.error == "blocked_cell" || r.error == "compartment")) {
+        const auto prior = nodes_.find(request.destination);
+        if (prior != nodes_.end() && prior->second.kind == Kind::Item && prior->second.container && prior->second.soft &&
+            prior->second.location == Location::Grid) {
+            const auto family = prior->second.attributes.find("storage_family");
+            if (family != prior->second.attributes.end() && (family->second == "backpack" || family->second == "rig")) {
+                DerivedMap before;
+                if (analyze(nodes_, before)) {
+                    Id root = prior->second.parent;
+                    for (unsigned depth = 0; root && candidate.at(root).parent && depth < 65; ++depth) root = candidate.at(root).parent;
+                    if (root && candidate.at(root).kind == Kind::ActorRoot) {
+                        auto& shell = candidate.at(request.destination);
+                        shell.parent = root;
+                        shell.location = Location::Overflow;
+                        shell.position = {};
+                        shell.equipped_slots = 0;
+                        shell.mounted_slot = 0;
+                        DerivedMap recovered;
+                        const auto retry = analyze(candidate, recovered);
+                        const auto old_size = before.at(request.destination).size;
+                        if (retry && (recovered.at(request.destination).size.w > old_size.w ||
+                            recovered.at(request.destination).size.h > old_size.h)) {
+                            derived = std::move(recovered);
+                            r = retry;
+                        }
+                    }
+                }
+            }
+        }
+    }
     if (!r) return r;
     if(!recovery) for(const auto& [id,n]:candidate) if(n.kind==Kind::ActorRoot&&n.max_contents &&
         derived.at(id).mass>n.max_contents && derived.at(id).mass>subtree_mass(id))return bad("mass_capacity");

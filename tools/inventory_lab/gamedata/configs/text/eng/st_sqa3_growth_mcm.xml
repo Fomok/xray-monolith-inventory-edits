@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<string_table>
+  <string id="ui_mcm_menu_sqa3"><text>Squared Away 3</text></string>
+  <string id="ui_mcm_sqa3_growth_collision"><text>When a filled container cannot grow</text></string>
+  <string id="ui_mcm_sqa3_growth_collision_desc"><text>Refuse the item keeps the current container and contents unchanged. Move container to Recovery accepts the item and moves the enlarged rig or backpack, with all its contents, to Recovery. Recovery preserves items that cannot fit; it is not extra storage for manual placement.</text></string>
+</string_table>

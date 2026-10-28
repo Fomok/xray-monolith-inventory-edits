@@ -27,6 +27,8 @@ def main():
     for rel in ["configs/sqa3_capacity.ltx","configs/ui/sqa3_field_kit.xml","configs/mod_system_sqa3_field_kit.ltx","configs/ui/textures_descr/sqa3_native.xml","configs/ui/textures_descr/sqa3_visual_assets.xml","configs/ui/textures_descr/sqa3_visual_assets_v2.xml","configs/ui/textures_descr/sqa3_rank_icons.xml","configs/ui/sqa3_actor_menu.xml","scripts/sqa3_native_autorun.script","scripts/ui_inventory.script"]:
         data=read_overlay('tools/inventory_lab/gamedata/'+rel,optional=rel=='configs/sqa3_capacity.ltx')
         if data is not None:files["gamedata/"+rel]=data
+    files['gamedata/scripts/sqa3_growth_mcm.script']=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_growth_mcm.script')
+    files['gamedata/configs/text/eng/st_sqa3_growth_mcm.xml']=read_overlay('tools/inventory_lab/gamedata/configs/text/eng/st_sqa3_growth_mcm.xml')
     catalog=read_overlay('tools/inventory_lab/native-catalog-assets.json',optional=True)
     if catalog is not None:
         for entry in json.loads(catalog)['files']:
@@ -44,6 +46,8 @@ def main():
         if actions_fixture is not None:files['gamedata/scripts/sqa3_actions_fixture.script']=actions_fixture
         definitions_fixture=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_definition_fixture.script',optional=True)
         if definitions_fixture is not None:files['gamedata/scripts/sqa3_definition_fixture.script']=definitions_fixture
+        growth_fixture=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_growth_policy_fixture.script',optional=True)
+        if growth_fixture is not None:files['gamedata/scripts/sqa3_growth_policy_fixture.script']=growth_fixture
         files['gamedata/scripts/sqa3_test_items.script']=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_test_items.script')
         files['MANUAL-TEST.md']=read_overlay('docs/inventory-next/STAGE1-3-MANUAL-TEST.md')
         parts=read_overlay('tools/inventory_lab/gamedata/configs/items/settings/mod_parts_sqa3_rigs.json',optional=True)
@@ -91,7 +95,8 @@ def main():
         "Preserve the original test save and one verified rollback. Never install this into the public game.\n"
         "Original Squared Away art; no3D player model. Current build/overlay/CI and every payload hash are in manifest.json.\n"
         "Backpack compartments are new development designs with original usable-cell totals preserved; original rig masks retained.\n"
-        "Growth stages are provisional development balancing; external modpack action bridges and long-session parity are later work.\n").encode()
+        "Growth stages are provisional development balancing; external modpack action bridges and long-session parity are later work.\n"
+        "MCM 1.7.2fix is an external dependency for the growth-collision setting. Install it separately; this ZIP includes only Squared Away's MCM entry. Default without MCM is refuse.\n").encode()
     manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":overlay,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     manifest['field_kit_opt_in']=b'-sqa3-field-kit' in engine_source
     manifest['logical_storage_opt_in']=logical is not None

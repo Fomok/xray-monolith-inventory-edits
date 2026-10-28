@@ -599,6 +599,41 @@ int main(int argc,char** argv) {
             Model m; yes(m.initialize(v)); yes(move(m,{20,11,{1,0,false},0}));
             rollback(m,{21,11,{0,1,false},1},"bounds");
         });
+        test("configured backpack growth collision recovers loaded shell atomically",[]{
+            auto a=root(1,Kind::ActorRoot,{3,2});auto w=root(2,Kind::WorldRoot);
+            auto pack=bag(10,1,100,{1,0,false});pack.grid={2,1};pack.empty={1,1};pack.half={2,1};pack.full={2,1};
+            pack.attributes["storage_family"]="backpack";
+            auto blocker=item(11,1,7,{2,0,false});auto incoming=item(20,2,40);
+            Model m;yes(m.initialize({a,w,pack,blocker,incoming}));
+            rollback(m,{20,10,{0,0,false},0},"overlap");
+            m.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
+            yes(move(m,{20,10,{0,0,false},0}));
+            check(m.nodes().at(10).location==Location::Overflow&&m.nodes().at(10).parent==1&&
+                m.nodes().at(20).parent==10&&m.nodes().at(20).location==Location::Grid&&
+                m.carried_mass()==147&&m.footprint(10).w==2,"recovery lost loaded backpack or mass");
+            auto saved=m.serialize();Model restored;yes(restored.deserialize(saved));
+            check(restored.serialize()==saved&&restored.nodes().at(20).parent==10,"recovery save lost contents");
+            restored.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
+            auto extra=item(21,2,5,{1,0,false});Command spawn;spawn.operation=Operation::Spawn;spawn.spawned=extra;
+            spawn.revision=restored.revision();spawn.session=restored.session();yes(restored.execute(spawn));
+            rollback(restored,{21,10,{1,0,false},2},"recovery_storage");
+            yes(move(restored,{20,2,{2,0,false},2}));
+            yes(restored.retry_recovery(1,{1},restored.revision(),restored.session()));
+            check(restored.nodes().at(10).location==Location::Grid&&restored.footprint(10).w==1,
+                "shrunken backpack did not leave Recovery when a legal cell existed");
+        });
+        test("configured rig growth recovery is limited to growing family",[]{
+            auto a=root(1,Kind::ActorRoot,{2,2});auto w=root(2,Kind::WorldRoot);
+            auto rig=bag(10,1,100,{1,0,false});rig.grid={2,1};rig.empty={1,1};rig.half={2,1};rig.full={2,1};
+            rig.attributes["storage_family"]="rig";
+            auto incoming=item(20,2,40);Model m;yes(m.initialize({a,w,rig,incoming}));
+            m.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
+            yes(move(m,{20,10,{0,0,false},0}));
+            check(m.nodes().at(10).location==Location::Overflow&&m.nodes().at(20).parent==10,"rig growth recovery failed");
+            auto fixed=rig;fixed.attributes["storage_family"]="box";Model b;yes(b.initialize({a,w,fixed,incoming}));
+            b.set_growth_collision_policy(GrowthCollisionPolicy::RecoverContainer);
+            rollback(b,{20,10,{0,0,false},0},"bounds");
+        });
         test("cycle and self-parent rejected atomically",[]{
             auto m=make(); rollback(m,{10,11,{0,0,false},0},"cycle");
             rollback(m,{11,11,{0,0,false},0},"cycle");

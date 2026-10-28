@@ -1,0 +1,81 @@
+-- Disposable native/MCM growth-collision test; never touches the user's test save.
+function plan(snapshot)
+    local reload=command_line():find("-sqa3-growth-policy-reload",1,true)~=nil
+    local ids={}
+    local function identity(key) return assert(level.inventory_next_identity(ids[key]),"missing identity "..key) end
+    local function node(key)
+        exec_console_cmd("inventory_next_probe export")
+        local f=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"r"))
+        local s=f:read("*a");f:close()
+        for line in s:gmatch("[^\n]+") do
+            if line:match("^(%d+) ")==identity(key) then
+                local t={};for v in line:gmatch("%S+") do t[#t+1]=v end
+                return t
+            end
+        end
+        error("missing native node "..key)
+    end
+    local function store(key,host,x,y)
+        exec_console_cmd("inventory_next_store "..identity(key).." "..(host=="root" and "1" or identity(host)).." "..x.." "..y.." 0")
+    end
+    local commands={"g_god on",snapshot}
+    if reload then
+        commands[#commands+1]=function()
+            assert(sqa3_growth_mcm.read_growth_collision()==1,"MCM policy did not persist")
+            local names={pack=load_var(db.actor,"sqa3_growth_pack",""),med=load_var(db.actor,"sqa3_growth_med","")}
+            db.actor:iterate_inventory(function(_,item)
+                local server=alife():object(item:id())
+                if server then
+                    for key,name in pairs(names) do if server:name()==name then ids[key]=item:id() end end
+                end
+                return false
+            end,db.actor)
+            assert(ids.pack and ids.med,"saved growth members absent")
+            assert(node("pack")[25]=="3" and node("med")[2]==identity("pack"),"recovery reload lost loaded shell")
+            printf("[SQA3 GROWTH POLICY] MCM persistence and loaded Recovery reload PASS")
+            exec_console_cmd("inventory_next_probe view")
+        end
+        commands[#commands+1]="screenshot sqa3_growth_policy_reload"
+        commands[#commands+1]=function()
+            ui_mcm.set("sqa3/growth_collision",0)
+            SendScriptCallback("on_option_change",true)
+            assert(sqa3_growth_mcm.read_growth_collision()==0,"MCM reset failed")
+        end
+    else
+        commands[#commands+1]=function()
+            local a=db.actor
+            for key,section in pairs({pack="equ_small_pack",med="medkit"}) do
+                local o=assert(alife():create(section,a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id()))
+                ids[key]=o.id;save_var(a,"sqa3_growth_"..key,o:name())
+            end
+            ui_mcm.set("sqa3/growth_collision",0)
+            SendScriptCallback("on_option_change",true)
+            assert(sqa3_growth_mcm.read_growth_collision()==0,"MCM default not applied")
+        end
+        commands[#commands+1]=function()
+            store("pack","root",2,0)
+            assert(node("pack")[25]=="0","empty backpack did not fit")
+            local before=node("med")
+            store("med","pack",0,0)
+            assert(node("med")[2]==before[2] and node("med")[25]==before[25] and node("pack")[25]=="0",
+                "refuse setting mutated item or container")
+            printf("[SQA3 GROWTH POLICY] refuse leaves source and shell unchanged PASS")
+        end
+        commands[#commands+1]=function()
+            ui_mcm.set("sqa3/growth_collision",1)
+            SendScriptCallback("on_option_change",true)
+            assert(sqa3_growth_mcm.read_growth_collision()==1,"MCM recovery setting unavailable")
+            store("med","pack",0,0)
+            assert(node("pack")[25]=="3" and node("pack")[2]=="1" and node("med")[2]==identity("pack"),
+                "recovery did not atomically accept item and retain shell")
+            printf("[SQA3 GROWTH POLICY] enlarged loaded backpack entered Recovery PASS")
+            exec_console_cmd("inventory_next_probe view")
+        end
+        commands[#commands+1]="screenshot sqa3_growth_policy"
+        commands[#commands+1]="save sqa3_growth_policy"
+    end
+    commands[#commands+1]=snapshot
+    commands[#commands+1]="inventory_next_probe export"
+    commands[#commands+1]="quit"
+    return commands
+end

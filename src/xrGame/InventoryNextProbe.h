@@ -41,6 +41,7 @@ bool InventoryNextLogicalStorage() noexcept;
 bool InventoryNextCanRelease(u16 live) noexcept;
 bool InventoryNextCanBulkRelease(u16 live) noexcept;
 void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcept;
+void InventoryNextGrowthPolicy(bool recover_container) noexcept;
 class CUIDragDropListEx;
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view=0) noexcept;
 bool InventoryNextStorageExtent(u64 view,int& width,int& height) noexcept;

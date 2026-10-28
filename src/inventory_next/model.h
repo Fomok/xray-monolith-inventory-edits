@@ -12,6 +12,7 @@ struct Size { int w = 1, h = 1; };
 struct Position { int x = 0, y = 0; bool rotated = false; };
 enum class Kind { Item, ActorRoot, WorldRoot };
 enum class Location { Grid, Equipment, Mounted, Overflow };
+enum class GrowthCollisionPolicy { Refuse, RecoverContainer };
 struct MountSlot {
     Id id = 0;
     std::string name;
@@ -98,6 +99,8 @@ class Model {
 public:
     Result initialize(const std::vector<Node>& nodes);
     Result move(const Move& request);
+    void set_growth_collision_policy(GrowthCollisionPolicy policy) { growth_collision_policy_ = policy; }
+    GrowthCollisionPolicy growth_collision_policy() const { return growth_collision_policy_; }
     Result execute(const Command& request);
     // Native recovery only: never route ordinary UI drops through these entry points.
     Result recover_owned_overflow(Id item, Id actor, std::uint64_t revision, std::uint64_t session);
@@ -140,5 +143,6 @@ private:
     std::uint64_t revision_ = 0;
     Id high_water_id_ = 0;
     std::uint64_t session_ = 0; // process-local epoch, never serialized
+    GrowthCollisionPolicy growth_collision_policy_ = GrowthCollisionPolicy::Refuse;
 };
 } // namespace inventory_next

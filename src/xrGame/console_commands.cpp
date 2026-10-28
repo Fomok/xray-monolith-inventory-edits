@@ -1875,6 +1875,15 @@ public:
         InventoryNextStore(id,owner,x,y,r!=0);
     }
 };
+class CCC_InventoryNextGrowthPolicy : public IConsole_Command {
+public:
+    CCC_InventoryNextGrowthPolicy(LPCSTR name):IConsole_Command(name){}
+    void Execute(LPCSTR args) override {
+        if (!xr_strcmp(args,"refuse")) InventoryNextGrowthPolicy(false);
+        else if (!xr_strcmp(args,"recover")) InventoryNextGrowthPolicy(true);
+        else Msg("! usage: inventory_next_growth_policy refuse|recover");
+    }
+};
 class CCC_Script : public IConsole_Command
 {
 public:
@@ -2778,6 +2787,7 @@ void CCC_RegisterCommands()
 		CMD1(CCC_InventoryNextProbe, "inventory_next_probe");
         CMD1(CCC_InventoryNextMove, "inventory_next_move");
         CMD1(CCC_InventoryNextStore, "inventory_next_store");
+        CMD1(CCC_InventoryNextGrowthPolicy, "inventory_next_growth_policy");
         CMD1(CCC_InventoryNextPurchase, "inventory_next_purchase");
     }
 
