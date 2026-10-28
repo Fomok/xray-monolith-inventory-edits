@@ -1441,12 +1441,20 @@ function on_game_start()
     if args:find("-sqa3-fixture-field-kit",1,true) then
         assert(args:find("-sqa3-field-kit",1,true),"Field Kit fixture needs visual mode")
         if args:find("-sqa3-fixture-field-kit-headers",1,true) then
-            commands={"inventory_next_probe export",snapshot,spawn_crate,fill_crate,function()
+            local header_reload=args:find("-sqa3-fixture-field-kit-headers-reload",1,true)~=nil
+            commands={"inventory_next_probe export",snapshot}
+            if not header_reload then commands[#commands+1]=spawn_crate;commands[#commands+1]=fill_crate end
+            commands[#commands+1]=function()
                 if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
                 assert(ActorMenu.get_actor_menu():IsShown(),"header inventory did not open")
-                started=started+150000
-                printf("[SQA3 AUTORUN] header input window crate=%s",tostring(crate_id))
-            end,"screenshot sqa3_headers",snapshot,"inventory_next_probe export","save sqa3_headers","quit"}
+                started=started+(header_reload and 15000 or 150000)
+                printf("[SQA3 AUTORUN] header input window crate=%s community=%s",tostring(crate_id),tostring(db.actor:character_community()))
+            end
+            commands[#commands+1]="screenshot sqa3_headers"
+            commands[#commands+1]=snapshot
+            commands[#commands+1]="inventory_next_probe export"
+            commands[#commands+1]="save sqa3_headers"
+            commands[#commands+1]="quit"
             RegisterScriptCallback("actor_on_update",update)
             return
         end

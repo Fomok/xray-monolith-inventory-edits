@@ -62,4 +62,17 @@
     <texture id="sqa_fk_button_d" x="8" y="488" width="240" height="64" />
     <texture id="sqa_fk_window_center" x="20" y="20" width="104" height="104" />
   </file>
+  <file name="ui\ui_pda2_noice">
+    <!-- Player community IDs are actor_<faction>; reuse the corresponding vanilla faction UVs. Source: vanilla ui_pda2_noice.xml. -->
+    <texture id="actor_dolg_icon" x="36" y="793" width="56" height="54" />
+    <texture id="actor_killer_icon" x="36" y="956" width="56" height="54" />
+    <texture id="actor_freedom_icon" x="162" y="956" width="56" height="54" />
+    <texture id="actor_stalker_icon" x="289" y="956" width="56" height="54" />
+    <texture id="actor_bandit_icon" x="416" y="956" width="56" height="54" />
+    <texture id="actor_csky_icon" x="543" y="956" width="56" height="54" />
+    <texture id="actor_renegade_icon" x="670" y="956" width="56" height="54" />
+    <texture id="actor_monolith_icon" x="785" y="847" width="56" height="54" />
+    <texture id="actor_army_icon" x="922" y="847" width="56" height="54" />
+    <texture id="actor_ecolog_icon" x="923" y="781" width="56" height="54" />
+  </file>
 </w>
