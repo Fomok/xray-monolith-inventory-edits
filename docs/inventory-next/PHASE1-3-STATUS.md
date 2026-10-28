@@ -1,6 +1,17 @@
 # SQA3 Phases 1 through 3 active implementation checkpoint
 
-28 October 2026. Authorized through end of Phase3, then stop/report. This checkpoint is not completion of those stages.
+28 October 2026. Authorized through end of Phase3, then stop/report. The isolated Stage1–3 native fixture set has now passed; physical New Game and several hand gestures still require user input before full visual/gameplay acceptance.
+
+## Current verified state and next gate
+
+- The isolated lab runs one windowed instance at a time. Original `test` save hashes remain unchanged. The public and personal engines and the pristine baseline are untouched.
+- CI40653024008 (`6f8ed598`) passed. The corrected native loot-list initialization rendered all49 imported items and reloaded their distinct persistent identities exactly: `phase1-3/native-catalog-verification.json`, initial PID25608, reload PID7520. The visual capture is `native-catalog-v1-screenshot-1.jpg`.
+- The action regression passed again on the final condition engine:13 actor records/5508g, zero fixture gaps, PID25292, `phase1-3/native-actions-condition-engine-verification.json`. The prior loot-list engine pass is `native-actions-final-verification.json`, PID32096. Routes cover full-pocket direct rig/pouch custody, occupied refusal, source selection/switch/disappearance, native medicine and ammunition accounting, loaded dismantle refusal and empty-rig parts/pouch recovery. These are native fixture routes, not physical drag or keyboard proof.
+- CI40658856888 (`e2d1b6fa`) passed, EXE SHA256 `3165ed923e8d25762695b31b1ae7616147c5f79f6d615aeeb07de6ae3bf661a7`. `src/xrGame/InventoryNextProbe.cpp` mirrors directly actor-owned condition into the ALife server item only in SQA3 logical-storage mode. Fresh initial PID36068 and independent reload PID30032 passed exact actor/model comparison:14 records/7688g, two backpacks at65%/90%, separate medkit use counts, pistol upgrade, native backpack slot and medical-case compartment identities. Evidence `phase1-3/native-condition-verification.json`; the reloaded case window screenshot is `native-condition-v3-reload-screenshot-1.jpg`. The earlier client-only condition reset on reload is corrected.
+- The normal fixture-free launcher reached the windowed New Game/Load menu. Bounded focused click and Enter did not activate New Game; the owned PID24368 was closed. Fresh ordinary New Game initialization and loadout remain unverified, along with physical R-key rotation, occupied drag and stack-picker acceptance. See `STAGE1-3-MANUAL-TEST.md`.
+- Final isolated package target: `C:/GAMMA/sqa-previews/inventory-next-20261028/Squared Away 3 Field Kit Stage 1-3 Dev.zip`; install only in `C:/GAMMA/sqa-inventory-lab-game`. The manifest pins the exact source/overlay commits and CI engine. Verify the produced archive hash and lab installation before use.
+
+The earlier definition retry timeouts were caused by a fixture edit that omitted the command opening the actor menu. A single minimal dump showed the main thread waiting in the normal idle loop, and restoring the menu command made the case window run and screenshot pass. Do not classify that fixture error as a medical-case freeze.
 
 ## Scope
 

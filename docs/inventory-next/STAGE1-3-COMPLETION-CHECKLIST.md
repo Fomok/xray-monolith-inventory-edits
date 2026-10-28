@@ -1,26 +1,27 @@
 # Authorized Stage1–3 completion checklist
 
-28 October2026. Finish these stages sequentially, then stop before Phase4. Status is implementation evidence, not a claim that every later-phase parity row is required now.
+28 October2026. Finish these stages sequentially, then stop before Phase4. CI40658856888 and its independent condition reload passed. The source/build status below is current; dated detail after the final handoff section is historical evidence. Physical input and visual review remain separate manual acceptance.
 
 ## Stage1 existing storage/UI acceptance
 - PASS: equipped stash creation, dialog cancellation, proxy timeout, partial rollback, full-pocket refusal, removal callback cancellation; each fresh-process reload.
 - PASS: named stash travel offline/online, retrieval, marker removal, exact independent reload.
-- Remaining: source switching/disappearance, multiple sources, scrolling/window/resize/pending-collapse coverage. Physical rotation and occupied-slot drag remain explicitly unverified; do not repeat unchanged blocked input injection.
+- PASS: multiple nearby sources, source selection/switch/disappearance and selected-context invalidation in `phase1-3/native-actions-condition-engine-verification.json`;49-item source rendering and exact fresh reload in `native-catalog-verification.json`.
+- Remaining physical UI: R-key rotation, occupied-slot drag, stack picker and broad scroll/resize/pending-collapse gestures. Do not repeat unchanged blocked input injection.
 
 ## Stage2 real definitions and stateful items
 - Imported49 source records and22 original masks, resolved art/text payload, fixed box/pouch vs growing backpack/rig policy, native item class adapter prepared.
 - PASS offline: authored masks, legacy nesting recovery and new nesting refusal, original state retention, growth and destroyed-pocket definition handling.
-- Candidate: native item sections/assets, grouped instance picker with condition/charges/rounds/upgrades and exact persistent selection; native entities remain individual identities and their internal rounds/uses remain quantities.
-- Remaining: candidate native build/spawn/render/save/reload acceptance, category acceptance, validated versioned local authoring/preset import-export/reset/rejection/migration contract, stateful native picker checks and growth/shrink cases.
+- PASS: CI40653024008 native build,49-item spawn/render/strict fresh reload, authored backpack capacity parity and unchanged22 rig masks, medical-case category admission/refusal, portable nesting refusal, growth-overlap refusal, and loaded case window screenshot. Versioned local authoring/preset import-export/reset/rejection/migration has six passing checks in the Phase2 evidence folder.
+- PASS: CI40658856888 (`e2d1b6fa`) plus fresh-process `native-condition-verification.json`:14 native records/7688g, two backpack conditions65%/90%, distinct medkit use counts, pistol upgrade, backpack binding and medical-case compartment identities exactly retained. The SQA3-only ALife server mirror fixes the first reload's condition reset.
+- Remaining physical UI: grouped instance picker selection and direct gestures. Native item instances and their charges/rounds stay separate; actual physical picker input is not yet certified.
 
 ## Stage3 native equipment, rigs and pouches
-- Candidate: independent persistent u32 native slot registry reserving every vanilla u16 ID; actual CInventory custody and save binding restoration; future extension slot disabled by data.
-- Candidate: real equipped/spare rig windows, pouch mounts, actual-extent centering, loaded removal refusal, torn-pocket recovery/repair, data-configured source rig wear.
-- Candidate: medical quick-use gate/menu exception and ammo lookup/count/commit access; possession queries unchanged.
-- Remaining: native candidate acceptance; direct foreign-source custom equip with full actor storage; every supported unequip route; atomic swaps and occupied targets; native quick-use/ammo state accounting and pending locks; native upgrades/dismantling behavior and failure preservation.
+- PASS: independent persistent u32 custom slot registry outside all vanilla u16 IDs, actual CInventory rig/pouch custody, save binding reload, atomic swaps and occupied/family refusal. Earlier `custom-equipment-verification.json` covers12 native items/7816g after fresh restart; later actions cover direct full-pocket foreign-source rig/pouch admission and exact source preservation on refusal.
+- PASS: centered authored rig/pouch masks, loaded removal refusal, torn-pocket recovery/repair, medical quick-use/refusal and ammo7+13 accounting, pistol upgrade persistence through fresh reload, loaded dismantle refusal, empty dismantle parts and same-pouch recovery. See `native-actions-condition-engine-verification.json` and `native-condition-verification.json`.
+- Physical context, drag, full source switching and long-session gameplay still need human observation. A third native pistol slot is deferred by the visual-redesign decision recorded in `VISUAL-REDESIGN.md`; the current frame is presentation only.
 
 ## Final through3 handoff
-- Package and hash-verify/install only into isolated lab; fixture-free main-menu launcher with New Game/Load.
+- Package and hash-verify/install only into isolated lab; fixture-free main-menu launcher with New Game/Load. The menu is visibly reached; automated New Game activation did not work, so fresh ordinary New Game initialization and loadout remain unverified until physical input.
 - Give easy representative item acquisition, manual steps and precise remaining manual-only gaps.
 - Leave zero games, verify original save/baseline/public engine protections; retain rollback and remove only superseded exact downloads. Planning owns Desktop shortcut last.
 

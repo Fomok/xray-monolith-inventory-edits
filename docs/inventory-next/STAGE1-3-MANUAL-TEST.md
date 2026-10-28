@@ -2,7 +2,7 @@
 
 Development instructions. Consult STAGE1-3-COMPLETION-CHECKLIST.md for actual acceptance; this file does not certify every step as passed.
 
-Close any Anomaly instance. Run `Start-Squared-Away-3.ps1` in the isolated lab. It verifies the package, refuses a second game and opens the normal main menu. Choose New Game normally, or Load a disposable `sqa3_*` save. The original `test` save is a starting reference; save your changes under a new name. The debug F2 map remains available through the normal debug menu.
+Close any Anomaly instance. Run `Start-Squared-Away-3.ps1` in the isolated lab. It verifies the package, refuses a second game and opens the normal windowed main menu. Choose New Game and a starting loadout yourself, or Load a disposable `sqa3_*` save. The menu appeared in the automated check, but automated click/Enter did not activate New Game; fresh ordinary New Game initialization and loadout have not been verified. This is the specific remaining manual input. The original `test` save is a starting reference; save your changes under a new name. The debug F2 map remains available through the normal debug menu. Close the game after this test.
 
 After loading, open the console and enter:
 
