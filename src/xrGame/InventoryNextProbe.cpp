@@ -1618,7 +1618,7 @@ bool InventoryNextWorldMemberMove(u16 live,u16 destination,u64 target_shell,int 
     if(source_shell!=expected_source_owner||(!actor_source&&!target_shell&&!source_shell))return false;
     if(actor_source&&(!InventoryNextCanRelease(live)||!layout().model().nodes().count(id)))return false;
     if(!actor_source&&!source_shell&&!InventoryNextWorldVisible(live))return false;
-    Position position{};
+    inventory_next::Position position{};
     if(target_shell){
         const auto target=world_storage().records().find(target_shell);
         if(target==world_storage().records().end()||target->second.custodian!=destination_identity||
