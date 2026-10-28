@@ -17,6 +17,9 @@ inventory_next::IdentityState& identities() { static inventory_next::IdentitySta
 const inventory_next::IdentityLedger& ledger() { return identities().ledger(); }
 }
 bool InventoryNextEnabled() noexcept try { return strstr(Core.Params,"-inventory-lab") && strstr(Core.Params,"-dbg"); } catch (...) { CHECK_OR_EXIT(false,"SQA3 identity boundary failure"); return 0; }
+u64 InventoryNextIdentityLookup(u16 server_id) noexcept {
+    return ledger().lookup(server_id);
+}
 u64 InventoryNextIdentity(u16 server_id) noexcept try {
     if(!InventoryNextEnabled()||!ai().get_alife()||!ai().alife().objects().object(server_id,true))return 0;
     u16 parent=server_id;

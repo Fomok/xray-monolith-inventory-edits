@@ -1147,7 +1147,9 @@ bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept try 
 
 int InventoryNextNativePreview(u16 live,int x,int y,u64 view,int& width,int& height) noexcept try {
     width=height=0;
-    if(!InventoryNextFieldKitEnabled()||!layout_current||native_drag().item()!=InventoryNextIdentity(live))return 0;
+    // Draw runs alongside parallel Lua GC/map updates. Enrollment calls the
+    // script-overridable can_save(), so rendering must only read existing IDs.
+    if(!InventoryNextFieldKitEnabled()||!layout_current||native_drag().item()!=InventoryNextIdentityLookup(live))return 0;
     const auto& model=layout().model();const auto id=native_drag().item();
     if(!model.nodes().count(id))return 0;
     const auto shape=model.footprint(id);width=shape.w;height=shape.h;

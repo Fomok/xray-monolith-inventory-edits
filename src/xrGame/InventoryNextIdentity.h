@@ -5,6 +5,8 @@ class IWriter;
 // Developer mode only; saves with this chunk require the same explicit mode.
 bool InventoryNextEnabled() noexcept;
 u64 InventoryNextIdentity(u16 server_id) noexcept;
+// Presentation-only lookup: never enroll or invoke script-backed server methods.
+u64 InventoryNextIdentityLookup(u16 server_id) noexcept;
 void InventoryNextIdentityReset() noexcept;
 void InventoryNextIdentityRetire(u16 server_id) noexcept;
 void InventoryNextIdentityRemap(u16 before, u16 after) noexcept;
