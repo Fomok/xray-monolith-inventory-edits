@@ -35,7 +35,6 @@ function plan(snapshot)
             assert(node("med1")[2]==before[2] and node("med1")[25]==before[25],"growth overlap failed to preserve source")
             assert(node("pack")[2]=="1","failed growth moved pack")
             printf("[SQA3 DEFINITION TEST] empty pack placement and growth-overlap refusal PASS")
-            exec_console_cmd("inventory_next_probe view")
         end
         commands[#commands+1]=function()
             assert(ActorMenu.get_actor_menu():ToSlot(object("pack"),true,13),"native backpack equip failed")
@@ -79,8 +78,7 @@ function plan(snapshot)
         assert(db.actor:item_in_slot(13):id()==ids.pack,"backpack binding changed")
         assert(db.actor:item_in_slot(2):has_upgrade("up_firsta_pm"),"saved native upgrade absent")
         printf("[SQA3 DEFINITION TEST] native charges/condition/upgrades/compartments PASS reload=%s",tostring(reload))
-        exec_console_cmd("inventory_next_probe view")
-        assert(level.inventory_next_fixture_ui("open-container",ids.pack),"backpack inspect failed")
+        assert(not level.inventory_next_fixture_ui("open-container",ids.pack),"equipped backpack opened as loose container")
         assert(level.inventory_next_fixture_ui("open-container",ids.case),"medical case inspect failed")
     end
     commands[#commands+1]="screenshot sqa3_definitions"
