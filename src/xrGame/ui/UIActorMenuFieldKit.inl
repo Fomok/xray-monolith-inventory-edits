@@ -16,6 +16,7 @@ CUIDragDropListEx* CUIActorMenu::SqaContainerList(u64 owner)
 bool CUIActorMenu::SqaActorList(CUIDragDropListEx* list) const
 {
     if(list==m_pInventoryBagList)return true;
+    if(list)for(auto equipment:m_sqaCustomEquipment)if(list==equipment)return true;
     if(InventoryNextFieldKitEnabled())for(const auto& window:m_sqaContainers)if(window.list==list)return true;
     return false;
 }
@@ -31,11 +32,11 @@ bool CUIActorMenu::SqaOpenContainer(PIItem item)
     const float offset=float(m_sqaContainers.size())*28.0f;
     window.frame->SetWndPos(Fvector2().set(340+offset,140+offset));window.frame->SetWndSize(Fvector2().set(290,380));
     window.frame->TextureOff();
-    auto rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);window.frame->AttachChild(rim);rim->Enable(false);rim->SetWndSize(window.frame->GetWndSize());rim->InitTexture("sqa3v1_panel_frame");
-    auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);window.frame->AttachChild(title);title->Enable(false);
+    auto rim=window.rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);window.frame->AttachChild(rim);rim->Enable(false);rim->SetWndSize(window.frame->GetWndSize());rim->InitTexture("sqa3v1_panel_frame");
+    auto title=window.title=xr_new<CUIStatic>();title->SetAutoDelete(true);window.frame->AttachChild(title);title->Enable(false);
     title->SetWndPos(Fvector2().set(10,5));title->SetWndSize(Fvector2().set(246,20));title->TextureOff();
     title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);title->TextItemControl()->SetText(item->NameItem());
-    auto close=xr_new<CUI3tButton>();close->SetAutoDelete(true);window.frame->AttachChild(close);
+    auto close=window.close=xr_new<CUI3tButton>();close->SetAutoDelete(true);window.frame->AttachChild(close);
     close->InitButton(Fvector2().set(266,4),Fvector2().set(20,20));close->InitTexture("sqa3v2_close");
     window.list=xr_new<CUIDragDropListEx>();window.list->SetAutoDelete(true);window.frame->AttachChild(window.list);
     window.list->InitDragDropList(Fvector2().set(12,32),Fvector2().set(266,334));
@@ -52,6 +53,17 @@ void CUIActorMenu::SqaPrepareContainers()
         if(!InventoryNextFieldKitEnabled()||InventoryNextContainer(it->live)!=it->owner) {
             SetCurrentItem(nullptr);it->list->ClearAll(true);DetachChild(it->frame);it=m_sqaContainers.erase(it);
         } else {
+            int columns=0,rows=0;
+            if(InventoryNextStorageExtent(it->owner,columns,rows)){
+                const int step=_min(32,_max(1,908/_max(1,columns)));
+                if(it->list->CellSize().x!=step)it->list->SetCellSize(Ivector2().set(step,step));
+                const float width=_max(290.0f,float(columns*step)+52.0f);
+                const float delta=width-it->frame->GetWndSize().x;
+                if(delta!=0){auto position=it->frame->GetWndPos();position.x-=delta*0.5f;clamp(position.x,0.0f,1024.0f-width);
+                    it->frame->SetWndPos(position);it->frame->SetWndSize(Fvector2().set(width,380));it->rim->SetWndSize(it->frame->GetWndSize());
+                    it->title->SetWndSize(Fvector2().set(width-44.0f,20));it->close->SetWndPos(Fvector2().set(width-24.0f,4));
+                    it->list->SetWndSize(Fvector2().set(width-24.0f,334));}
+            }
             InventoryNextStorageView(it->list,it->owner);
             it->frame->Show(SqaLootActive());++it;
         }
@@ -62,7 +74,8 @@ bool CUIActorMenu::SqaCloseContainerAt(float x,float y)
     if(CUIDragDropListEx::m_drag_item)return false;
     for(size_t n=m_sqaContainers.size();n>0;--n) {
         auto& window=m_sqaContainers[n-1];const auto position=window.frame->GetWndPos();
-        if(window.frame->IsShown()&&x>=position.x+266&&x<position.x+286&&y>=position.y+4&&y<position.y+24) {
+        const auto width=window.frame->GetWndSize().x;
+        if(window.frame->IsShown()&&x>=position.x+width-24&&x<position.x+width-4&&y>=position.y+4&&y<position.y+24) {
             SetCurrentItem(nullptr);window.list->ClearAll(true);DetachChild(window.frame);
             m_sqaContainers.erase(m_sqaContainers.begin()+n-1);m_sqaRefresh=true;return true;
         }
@@ -92,7 +105,22 @@ void CUIActorMenu::SqaUpdateChest()
     }
     if(m_sqaChestCaption)m_sqaChestCaption->TextItemControl()->SetText(m_sqaRigView?"Rig":"Armour");
     if(m_pInvList[OUTFIT_SLOT])m_pInvList[OUTFIT_SLOT]->Show(!m_sqaRigView);
-    if(m_pInvList[16])m_pInvList[16]->Show(m_sqaRigView);
+    if(m_pInvList[16])m_pInvList[16]->Show(false); // reserved native slot, never reused
+    const auto rig_live=InventoryNextCustomItem(1,"sqa3.rig");
+    const u64 rig_identity=rig_live!=u16(-1)?InventoryNextIdentityLookup(rig_live):0;
+    const u16 equipment_live[3]={rig_live,rig_identity?InventoryNextCustomItem(rig_identity,"sqa3.mount.p1"):u16(-1),rig_identity?InventoryNextCustomItem(rig_identity,"sqa3.mount.p2"):u16(-1)};
+    for(int index=0;index<3;++index)if(auto list=m_sqaCustomEquipment[index]){
+        const bool visible=m_sqaRigView&&SqaLootActive();list->Show(visible);
+        if(index&&m_sqaPouchFrames[index-1])m_sqaPouchFrames[index-1]->Show(visible);
+        auto item=equipment_live[index]!=u16(-1)?smart_cast<CInventoryItem*>(Level().Objects.net_Find(equipment_live[index])):nullptr;
+        const bool same=list->ItemsCount()==(item?1u:0u)&&(!item||list->GetItemIdx(0)->m_pData==item);
+        if(!same&&!CUIDragDropListEx::m_drag_item){
+            SetCurrentItem(nullptr);list->ClearAll(true);
+            if(item){auto cell=create_cell_item(item);cell->SetSqaFootprint(1,1,false);list->SetItem(cell);
+                const auto original=item->GetInvGridRect();const float scale=_min((list->GetWndSize().x-4.0f)/float(original.x2),(list->GetWndSize().y-4.0f)/float(original.y2));
+                cell->SetWndSize(Fvector2().set(original.x2*scale,original.y2*scale));cell->SetWndPos(Fvector2().set((list->GetWndSize().x-cell->GetWndSize().x)*0.5f,(list->GetWndSize().y-cell->GetWndSize().y)*0.5f));}
+        }
+    }
     if(m_sqaRigView){
         if(m_pInvSlotHighlight[OUTFIT_SLOT])m_pInvSlotHighlight[OUTFIT_SLOT]->Show(false);
         if(m_pInvSlotProgress[OUTFIT_SLOT])m_pInvSlotProgress[OUTFIT_SLOT]->Show(false);
@@ -215,7 +243,7 @@ bool CUIActorMenu::SqaMoveWindow(float x,float y,EUIMessages action)
     }
     if(action==WINDOW_LBUTTON_DOWN)for(size_t n=m_sqaContainers.size();n>0;--n){
         auto& window=m_sqaContainers[n-1];const auto p=window.frame->GetWndPos();
-        if(window.frame->IsShown()&&x>=p.x&&x<p.x+260&&y>=p.y&&y<p.y+28){
+        if(window.frame->IsShown()&&x>=p.x&&x<p.x+window.frame->GetWndSize().x-30.0f&&y>=p.y&&y<p.y+28){
             m_sqaMovingWindow=window.owner;m_sqaWindowOffset.set(x-p.x,y-p.y);return true;
         }
     }

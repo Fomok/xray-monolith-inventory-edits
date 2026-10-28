@@ -1,0 +1,738 @@
+; SQA3 native catalog, schema1. Generated from audited source data.
+; Growth stages are provisional test balancing; edit empty/half/full per definition.
+; Dimensions use ROWS x COLUMNS. Mask rows use | and cell IDs use commas.
+[sqa3_storage_definitions]
+amprig_bandolier = sqa3_storage_amprig_bandolier
+amprig_scout = sqa3_storage_amprig_scout
+amprig_harness = sqa3_storage_amprig_harness
+amprig_barakholka = sqa3_storage_amprig_barakholka
+amprig_vydra = sqa3_storage_amprig_vydra
+amprig_nylon = sqa3_storage_amprig_nylon
+amprig_warsaw = sqa3_storage_amprig_warsaw
+amprig_smersh = sqa3_storage_amprig_smersh
+amprig_karkas = sqa3_storage_amprig_karkas
+amprig_bastion = sqa3_storage_amprig_bastion
+amprig_chicom = sqa3_storage_amprig_chicom
+amprig_volya = sqa3_storage_amprig_volya
+amprig_tarzan = sqa3_storage_amprig_tarzan
+amprig_leshy = sqa3_storage_amprig_leshy
+amprig_carrier = sqa3_storage_amprig_carrier
+amprig_rubezh = sqa3_storage_amprig_rubezh
+zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj = sqa3_storage_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj
+zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p = sqa3_storage_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p
+ampbox_meds = sqa3_storage_ampbox_meds
+ampbox_ammo = sqa3_storage_ampbox_ammo
+ampbox_food = sqa3_storage_ampbox_food
+ampbox_armor = sqa3_storage_ampbox_armor
+ampbox_food_small = sqa3_storage_ampbox_food_small
+ampbox_mags = sqa3_storage_ampbox_mags
+ampbox_ammo_big = sqa3_storage_ampbox_ammo_big
+ampbox_parts = sqa3_storage_ampbox_parts
+ampbox_docs = sqa3_storage_ampbox_docs
+ampbox_weapon = sqa3_storage_ampbox_weapon
+ampbox_weapon_big = sqa3_storage_ampbox_weapon_big
+ampbox_hip = sqa3_storage_ampbox_hip
+ampbox_pistolcase = sqa3_storage_ampbox_pistolcase
+zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v = sqa3_storage_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v
+zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo = sqa3_storage_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo
+amp_rig_bandolier = sqa3_storage_amp_rig_bandolier
+amp_rig_scout = sqa3_storage_amp_rig_scout
+amp_rig_harness = sqa3_storage_amp_rig_harness
+amp_rig_nylon = sqa3_storage_amp_rig_nylon
+amp_rig_warsaw = sqa3_storage_amp_rig_warsaw
+amp_rig_leshy = sqa3_storage_amp_rig_leshy
+amp_rig_chicom = sqa3_storage_amp_rig_chicom
+amp_rig_carrier = sqa3_storage_amp_rig_carrier
+itm_backpack = sqa3_storage_itm_backpack
+equ_small_pack = sqa3_storage_equ_small_pack
+equ_small_military_pack = sqa3_storage_equ_small_military_pack
+equ_military_pack = sqa3_storage_equ_military_pack
+equ_tourist_pack = sqa3_storage_equ_tourist_pack
+af_magpouch_s = sqa3_storage_af_magpouch_s
+af_magpouch_m = sqa3_storage_af_magpouch_m
+af_magpouch_l = sqa3_storage_af_magpouch_l
+
+[sqa3_storage_amprig_bandolier]
+family = rig
+size = 3x3
+mask = 1,1,2|1,1,2|3,4,5
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_scout]
+family = rig
+size = 3x4
+mask = 1,2,3,4|1,2,3,5|0,2,3,6
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_harness]
+family = rig
+size = 3x5
+mask = 1,1,2,3,3|1,1,2,3,3|0,4,5,6,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_barakholka]
+family = rig
+size = 3x5
+mask = 1,2,3,4,5|1,2,3,4,5|1,6,0,7,5
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_vydra]
+family = rig
+size = 3x7
+mask = 1,1,2,3,4,5,5|1,1,6,7,8,5,5|0,0,6,7,8,0,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_nylon]
+family = rig
+size = 3x6
+mask = 1,1,2,3,4,5|1,1,2,3,4,5|6,7,2,3,8,9
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_warsaw]
+family = rig
+size = 3x6
+mask = 1,2,3,4,5,6|1,2,3,4,5,6|7,2,3,4,5,8
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_smersh]
+family = rig
+size = 3x8
+mask = 1,2,2,3,3,4,4,5|1,2,2,3,3,4,4,5|0,6,0,7,0,8,0,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_karkas]
+family = rig
+size = 4x6
+mask = 1,2,3,4,5,5|1,2,3,4,5,5|6,7,3,4,8,9|6,7,0,0,10,11
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_bastion]
+family = rig
+size = 3x8
+mask = 1,1,2,3,4,5,6,6|1,1,2,7,8,5,6,6|0,9,2,7,8,5,10,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_chicom]
+family = rig
+size = 4x6
+mask = 1,2,3,3,4,5|1,2,3,3,4,5|1,2,6,7,4,5|0,8,6,7,9,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_volya]
+family = rig
+size = 3x8
+mask = 1,2,2,3,4,5,5,6|1,2,2,7,7,5,5,6|1,8,0,7,7,0,9,6
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_tarzan]
+family = rig
+size = 3x8
+mask = 1,1,2,3,4,5,6,6|1,1,2,3,4,5,6,6|7,8,9,3,4,10,11,12
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_leshy]
+family = rig
+size = 4x6
+mask = 1,2,3,3,4,5|1,2,3,3,4,5|1,2,6,7,4,5|8,9,6,7,10,11
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_carrier]
+family = rig
+size = 4x8
+mask = 1,1,2,3,3,4,5,5|1,1,2,3,3,4,5,5|6,7,2,8,8,4,9,10|0,0,0,8,8,0,0,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amprig_rubezh]
+family = rig
+size = 4x8
+mask = 1,1,2,3,4,5,6,6|1,1,2,3,4,5,6,6|7,8,2,9,9,5,10,11|0,12,0,9,9,0,13,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj]
+family = pouch
+size = 3x3
+mask = 1,0,0|1,0,0|1,0,0
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 1x1
+half = 1x1
+full = 1x1
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p]
+family = pouch
+size = 3x3
+mask = 1,2,0|1,2,0|1,2,0
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 1x1
+half = 1x1
+full = 1x1
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_ampbox_meds]
+family = box
+size = 4x5
+mask = 1,1,2,2,2|1,1,2,2,2|3,3,3,4,4|3,3,3,4,4
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x2
+half = 2x2
+full = 2x2
+max_contents_grams = 10000
+stack_limit = 99
+
+[sqa3_storage_ampbox_ammo]
+family = box
+size = 3x4
+mask = 1,1,1,1|1,1,1,1|1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x2
+half = 2x2
+full = 2x2
+max_contents_grams = 10000
+stack_limit = 99
+
+[sqa3_storage_ampbox_food]
+family = box
+size = 4x6
+mask = 1,1,1,2,2,2|1,1,1,2,2,2|1,1,1,2,2,2|1,1,1,2,2,2
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x2
+half = 2x2
+full = 2x2
+max_contents_grams = 10000
+stack_limit = 99
+
+[sqa3_storage_ampbox_armor]
+family = box
+size = 6x4
+mask = 1,1,1,1|1,1,1,1|1,1,1,1|1,1,1,1|1,1,1,1|1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 3x2
+half = 3x2
+full = 3x2
+max_contents_grams = 0
+stack_limit = 1
+
+[sqa3_storage_ampbox_food_small]
+family = box
+size = 2x5
+mask = 1,2,3,3,3|1,2,3,3,3
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 1x2
+half = 1x2
+full = 1x2
+max_contents_grams = 10000
+stack_limit = 99
+
+[sqa3_storage_ampbox_mags]
+family = box
+size = 3x4
+mask = 1,1,1,1|1,1,1,1|1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x3
+half = 2x3
+full = 2x3
+max_contents_grams = 15000
+stack_limit = 10
+
+[sqa3_storage_ampbox_ammo_big]
+family = box
+size = 4x6
+mask = 1,1,1,1,1,1|1,1,1,1,1,1|1,1,1,1,1,1|1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x3
+half = 2x3
+full = 2x3
+max_contents_grams = 15000
+stack_limit = 99
+
+[sqa3_storage_ampbox_parts]
+family = box
+size = 5x4
+mask = 1,2,3,4|5,5,5,5|5,5,5,5|6,7,8,9|6,7,8,9
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x3
+half = 2x3
+full = 2x3
+max_contents_grams = 15000
+stack_limit = 999
+
+[sqa3_storage_ampbox_docs]
+family = box
+size = 24x1
+mask = 1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x1
+half = 2x1
+full = 2x1
+max_contents_grams = 0
+stack_limit = 20
+
+[sqa3_storage_ampbox_weapon]
+family = box
+size = 4x6
+mask = 1,1,1,1,1,1|1,1,1,1,1,1|1,1,1,1,1,1|1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x3
+half = 2x3
+full = 2x3
+max_contents_grams = 0
+stack_limit = 1
+
+[sqa3_storage_ampbox_weapon_big]
+family = box
+size = 4x8
+mask = 1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x5
+half = 2x5
+full = 2x5
+max_contents_grams = 0
+stack_limit = 1
+
+[sqa3_storage_ampbox_hip]
+family = box
+size = 3x5
+mask = 1,2,3,4,5|6,7,8,9,10|11,12,13,14,15
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 1x2
+half = 1x2
+full = 1x2
+max_contents_grams = 5000
+stack_limit = 99
+
+[sqa3_storage_ampbox_pistolcase]
+family = box
+size = 5x6
+mask = 1,1,2,2,3,3|4,4,2,2,5,5|6,6,7,7,8,8|9,10,11,11,12,13|9,10,11,11,12,13
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x2
+half = 2x2
+full = 2x2
+max_contents_grams = 0
+stack_limit = 1
+
+[sqa3_storage_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v]
+family = box
+size = 4x6
+mask = 1,1,2,2,3,3|1,1,2,2,3,3|4,4,5,5,6,6|4,4,5,5,6,6
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x3
+half = 2x3
+full = 2x3
+max_contents_grams = 10000
+stack_limit = 99
+
+[sqa3_storage_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo]
+family = box
+size = 2x4
+mask = 1,1,2,2|1,1,2,2
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 2x2
+half = 2x2
+full = 2x2
+max_contents_grams = 10000
+stack_limit = 99
+
+[sqa3_storage_amp_rig_bandolier]
+family = rig
+size = 3x3
+mask = 1,1,2|1,1,2|3,4,5
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amp_rig_scout]
+family = rig
+size = 3x4
+mask = 1,2,3,4|1,2,3,5|0,2,3,6
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amp_rig_harness]
+family = rig
+size = 3x5
+mask = 1,1,2,3,3|1,1,2,3,3|0,4,5,6,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amp_rig_nylon]
+family = rig
+size = 3x6
+mask = 1,1,2,3,4,5|1,1,2,3,4,5|6,7,2,3,8,9
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amp_rig_warsaw]
+family = rig
+size = 3x6
+mask = 1,2,3,4,5,6|1,2,3,4,5,6|7,2,3,4,5,8
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amp_rig_leshy]
+family = rig
+size = 4x6
+mask = 1,2,3,3,4,5|1,2,3,3,4,5|1,2,6,7,4,5|8,9,6,7,10,11
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amp_rig_chicom]
+family = rig
+size = 4x6
+mask = 1,2,3,3,4,5|1,2,3,3,4,5|1,2,6,7,4,5|0,8,6,7,9,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_amp_rig_carrier]
+family = rig
+size = 4x8
+mask = 1,1,2,3,3,4,5,5|1,1,2,3,3,4,5,5|6,7,2,8,8,4,9,10|0,0,0,8,8,0,0,0
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 2x1
+half = 3x2
+full = 4x2
+max_contents_grams = 0
+stack_limit = 0
+; Released rig tear thresholds, basis points; largest pockets first.
+tear_thresholds = 8000,6000,4000,2500,1000
+
+[sqa3_storage_itm_backpack]
+family = backpack
+size = 8x8
+mask = 1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 1x1
+half = 2x2
+full = 3x2
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_equ_small_pack]
+family = backpack
+size = 10x8
+mask = 1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 1x1
+half = 2x2
+full = 3x2
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_equ_small_military_pack]
+family = backpack
+size = 12x8
+mask = 1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 1x1
+half = 2x2
+full = 3x2
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_equ_military_pack]
+family = backpack
+size = 13x8
+mask = 1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 1x1
+half = 2x2
+full = 3x2
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_equ_tourist_pack]
+family = backpack
+size = 15x8
+mask = 1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1|1,1,1,1,1,1,1,1
+allow_container_items = false
+exterior_independent = true
+growing = true
+empty = 1x1
+half = 2x2
+full = 3x2
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_af_magpouch_s]
+family = pouch
+size = 2x3
+mask = 1,0,0|1,0,0
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 1x1
+half = 1x1
+full = 1x1
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_af_magpouch_m]
+family = pouch
+size = 2x3
+mask = 1,2,0|1,2,0
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 1x1
+half = 1x1
+full = 1x1
+max_contents_grams = 0
+stack_limit = 0
+
+[sqa3_storage_af_magpouch_l]
+family = pouch
+size = 2x3
+mask = 1,1,0|1,1,0
+allow_container_items = false
+exterior_independent = true
+growing = false
+empty = 1x1
+half = 1x1
+full = 1x1
+max_contents_grams = 0
+stack_limit = 0

@@ -1,0 +1,1499 @@
+{
+  "schema": "sqa3.native.content.v1",
+  "files": [
+    {
+      "path": "gamedata/configs/text/eng/st_sqa3_catalog.xml",
+      "bytes": 15563,
+      "sha256": "10121f97f111b8562c6bbd49a2626114631fd5ab0639f6aedcde5322020a0e3a",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\configs\\text\\eng\\st_sqa3_catalog.xml"
+    },
+    {
+      "path": "gamedata/configs/text/rus/st_sqa3_catalog.xml",
+      "bytes": 23800,
+      "sha256": "e8bc58ec77c607848f2bdf0fdaf41d25fabb1650ec4b8e0d7dec95314fe63854",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\configs\\text\\rus\\st_sqa3_catalog.xml"
+    },
+    {
+      "path": "gamedata/configs/text/spa/st_sqa3_catalog.xml",
+      "bytes": 11899,
+      "sha256": "510a4f827d965ccc3dc9dd58d13880827e04ad3a9fce594ff4be63de46a50e22",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\configs\\text\\spa\\st_sqa3_catalog.xml"
+    },
+    {
+      "path": "gamedata/configs/text/ukr/st_sqa3_catalog.xml",
+      "bytes": 18430,
+      "sha256": "29addc44ce9f8b008333132800a85995f161c02759c0c8d0a852998c0f77e898",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\configs\\text\\ukr\\st_sqa3_catalog.xml"
+    },
+    {
+      "path": "gamedata/meshes/dynamics/devices/dev_rukzak/dev_rukzak_nvc.ogf",
+      "bytes": 501832,
+      "sha256": "47d10ce5471fae1b972bd69a9e9a12ed4f0b1464a0436ed67c0f637486591183",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_nvc.ogf"
+    },
+    {
+      "path": "gamedata/meshes/dynamics/devices/dev_rukzak/dev_rukzak_sta.ogf",
+      "bytes": 401734,
+      "sha256": "3f2651407eeab6ba5f291efcab919413dd9364579587acd632d4a76fe4d101bc",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_sta.ogf"
+    },
+    {
+      "path": "gamedata/meshes/dynamics/devices/dev_rukzak/dev_rukzak_sta_bl.ogf",
+      "bytes": 401738,
+      "sha256": "34b0c590bcdfe680f5a5049663d9ccf72d4bdabe358406733129f3d98eae73f1",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_sta_bl.ogf"
+    },
+    {
+      "path": "gamedata/meshes/dynamics/devices/dev_rukzak/dev_rukzak_SVO_ZOV_LOLKEK.ogf",
+      "bytes": 466221,
+      "sha256": "7e4592e88d38b740583c4d23ec5eed2458c5dbbf913c0fb98e10514231687474",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_SVO_ZOV_LOLKEK.ogf"
+    },
+    {
+      "path": "gamedata/meshes/squared_away/box_shared.ogf",
+      "bytes": 1912885,
+      "sha256": "41b7bf1b41ee352d6cd51f7e7c26ff9fabaa80c64cfc24172fbbf82096f2d003",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\meshes\\squared_away\\box_shared.ogf"
+    },
+    {
+      "path": "gamedata/meshes/squared_away/rig_shared.ogf",
+      "bytes": 2238745,
+      "sha256": "c54bfb74250539df3c44c52672bedb185f1b594c42b143cabeea8a2af9ffdb7f",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\meshes\\squared_away\\rig_shared.ogf"
+    },
+    {
+      "path": "gamedata/textures/gscfokya/duty/ntr_backpack.dds",
+      "bytes": 2796344,
+      "sha256": "d2d29fde9cd0969834c1b9e2fb79ad134281cf75153e17d24a176f4ab228fd77",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\gscfokya\\duty\\ntr_backpack.dds"
+    },
+    {
+      "path": "gamedata/textures/gscfokya/free/free_back_1.dds",
+      "bytes": 2796344,
+      "sha256": "7d773c3b9d4f4475885250cdc2dcce8af3be0291533921d3cf54c70d6b5c2e6f",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\gscfokya\\free\\free_back_1.dds"
+    },
+    {
+      "path": "gamedata/textures/gscfokya/sta/ntr_backpack.dds",
+      "bytes": 2796344,
+      "sha256": "372b467b7e9d9a0b30faf0e54c91d1596ed74323701f64cec77e01fc601920f7",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\gscfokya\\sta\\ntr_backpack.dds"
+    },
+    {
+      "path": "gamedata/textures/gscfokya/sta/nvc_backpack.dds",
+      "bytes": 11184952,
+      "sha256": "b41387137199d8d49c4bb7c6ed037ee5939acdceba6fbc20922a865507d0fe90",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\gscfokya\\sta\\nvc_backpack.dds"
+    },
+    {
+      "path": "gamedata/textures/squared_away/box_import_v1.dds",
+      "bytes": 16777344,
+      "sha256": "0d6d4cd4bd2f730090183bad2a049dca314bc1196c2d0d66f0dc54bcd1a5fc84",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\squared_away\\box_import_v1.dds"
+    },
+    {
+      "path": "gamedata/textures/squared_away/rig_import_v4.dds",
+      "bytes": 16777344,
+      "sha256": "324e1b0ec5fd30200d1f5e2db222c449b4d4dd5292dc9dfad90c43e9657fa239",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\squared_away\\rig_import_v4.dds"
+    },
+    {
+      "path": "gamedata/textures/ui/ui_amp_boxes.dds",
+      "bytes": 16777344,
+      "sha256": "ef3ab99fa7e3fa3440e172b19b182487f66d54226f8ff77d5464e7c3c175ddd9",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\ui\\ui_amp_boxes.dds"
+    },
+    {
+      "path": "gamedata/textures/ui/ui_amp_pouches.dds",
+      "bytes": 16777344,
+      "sha256": "d0b8c5dfc630f8ff2286e68ffcb1113c098246e8fad408f8d3e12b31ed12c147",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\ui\\ui_amp_pouches.dds"
+    },
+    {
+      "path": "gamedata/textures/ui/ui_amp_rigs.dds",
+      "bytes": 16777344,
+      "sha256": "ab46417929c3dd9c11497e930180b2a96f1362930f10ea726badb067ec888d71",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\ui\\ui_amp_rigs.dds"
+    },
+    {
+      "path": "gamedata/textures/ui/ui_backpacks.dds",
+      "bytes": 524416,
+      "sha256": "91986595658261cf59c5d97806ff6ac2b5049919a1941ad5e7265d51eb86cd29",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\ui\\ui_backpacks.dds"
+    },
+    {
+      "path": "gamedata/textures/ui/ui_magpouches.dds",
+      "bytes": 65664,
+      "sha256": "78a0ad61c5f884e592ad6a7fb6514bacfd1c48019c7c388ef2d72533ff84f10c",
+      "source": "C:\\GAMMA\\sqa-previews\\inventory-next-20261028\\catalog-handoff\\assets-package\\gamedata\\textures\\ui\\ui_magpouches.dds"
+    }
+  ],
+  "source_catalog_sha256": "3e4c4a11e6da306bff83b74ee46e990b4c9c7d1d778b1984507d3f3f9993d5ce",
+  "missing_original_mesh": "dynamics/equipments/aa/kevlar.ogf",
+  "explicit_mesh_mapping": "squared_away/rig_shared.ogf",
+  "supplying_mods": [
+    {
+      "destination": "textures/ui/ui_amp_rigs.dds",
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\ui_amp_rigs.dds",
+      "supplying_mod": "released SQA2",
+      "bytes": 16777344,
+      "sha256": "ab46417929c3dd9c11497e930180b2a96f1362930f10ea726badb067ec888d71"
+    },
+    {
+      "destination": "textures/ui/ui_amp_pouches.dds",
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\ui_amp_pouches.dds",
+      "supplying_mod": "released SQA2",
+      "bytes": 16777344,
+      "sha256": "d0b8c5dfc630f8ff2286e68ffcb1113c098246e8fad408f8d3e12b31ed12c147"
+    },
+    {
+      "destination": "textures/ui/ui_amp_boxes.dds",
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\ui_amp_boxes.dds",
+      "supplying_mod": "released SQA2",
+      "bytes": 16777344,
+      "sha256": "ef3ab99fa7e3fa3440e172b19b182487f66d54226f8ff77d5464e7c3c175ddd9"
+    },
+    {
+      "destination": "meshes/squared_away/box_shared.ogf",
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\meshes\\squared_away\\box_shared.ogf",
+      "supplying_mod": "released SQA2",
+      "bytes": 1912885,
+      "sha256": "41b7bf1b41ee352d6cd51f7e7c26ff9fabaa80c64cfc24172fbbf82096f2d003"
+    },
+    {
+      "destination": "textures/squared_away/box_import_v1.dds",
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\squared_away\\box_import_v1.dds",
+      "supplying_mod": "released SQA2",
+      "bytes": 16777344,
+      "sha256": "0d6d4cd4bd2f730090183bad2a049dca314bc1196c2d0d66f0dc54bcd1a5fc84"
+    },
+    {
+      "destination": "textures/ui/ui_backpacks.dds",
+      "source": "C:\\GAMMA\\mods\\G_FLAT's and Grok's Hunting Kit Rework\\gamedata\\textures\\ui\\ui_backpacks.dds",
+      "supplying_mod": "G_FLAT's and Grok's Hunting Kit Rework",
+      "bytes": 524416,
+      "sha256": "91986595658261cf59c5d97806ff6ac2b5049919a1941ad5e7265d51eb86cd29"
+    },
+    {
+      "destination": "meshes/dynamics/devices/dev_rukzak/dev_rukzak_nvc.ogf",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_nvc.ogf",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 501832,
+      "sha256": "47d10ce5471fae1b972bd69a9e9a12ed4f0b1464a0436ed67c0f637486591183"
+    },
+    {
+      "destination": "textures/gscfokya/sta/nvc_backpack.dds",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\textures\\gscfokya\\sta\\nvc_backpack.dds",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 11184952,
+      "sha256": "b41387137199d8d49c4bb7c6ed037ee5939acdceba6fbc20922a865507d0fe90"
+    },
+    {
+      "destination": "meshes/dynamics/devices/dev_rukzak/dev_rukzak_sta_bl.ogf",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_sta_bl.ogf",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 401738,
+      "sha256": "34b0c590bcdfe680f5a5049663d9ccf72d4bdabe358406733129f3d98eae73f1"
+    },
+    {
+      "destination": "textures/gscfokya/duty/ntr_backpack.dds",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\textures\\gscfokya\\duty\\ntr_backpack.dds",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 2796344,
+      "sha256": "d2d29fde9cd0969834c1b9e2fb79ad134281cf75153e17d24a176f4ab228fd77"
+    },
+    {
+      "destination": "meshes/dynamics/devices/dev_rukzak/dev_rukzak_sta.ogf",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_sta.ogf",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 401734,
+      "sha256": "3f2651407eeab6ba5f291efcab919413dd9364579587acd632d4a76fe4d101bc"
+    },
+    {
+      "destination": "textures/gscfokya/sta/ntr_backpack.dds",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\textures\\gscfokya\\sta\\ntr_backpack.dds",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 2796344,
+      "sha256": "372b467b7e9d9a0b30faf0e54c91d1596ed74323701f64cec77e01fc601920f7"
+    },
+    {
+      "destination": "meshes/dynamics/devices/dev_rukzak/dev_rukzak_SVO_ZOV_LOLKEK.ogf",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\meshes\\dynamics\\devices\\dev_rukzak\\dev_rukzak_SVO_ZOV_LOLKEK.ogf",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 466221,
+      "sha256": "7e4592e88d38b740583c4d23ec5eed2458c5dbbf913c0fb98e10514231687474"
+    },
+    {
+      "destination": "textures/gscfokya/free/free_back_1.dds",
+      "source": "C:\\GAMMA\\mods\\GFY ANOMALY 1.06\\gamedata\\textures\\gscfokya\\free\\free_back_1.dds",
+      "supplying_mod": "GFY ANOMALY 1.06",
+      "bytes": 2796344,
+      "sha256": "7d773c3b9d4f4475885250cdc2dcce8af3be0291533921d3cf54c70d6b5c2e6f"
+    },
+    {
+      "destination": "textures/ui/ui_magpouches.dds",
+      "source": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\textures\\ui\\ui_magpouches.dds",
+      "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6",
+      "bytes": 65664,
+      "sha256": "78a0ad61c5f884e592ad6a7fb6514bacfd1c48019c7c388ef2d72533ff84f10c"
+    },
+    {
+      "destination": "meshes/squared_away/rig_shared.ogf",
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\meshes\\squared_away\\rig_shared.ogf",
+      "supplying_mod": "released SQA2",
+      "bytes": 2238745,
+      "sha256": "c54bfb74250539df3c44c52672bedb185f1b594c42b143cabeea8a2af9ffdb7f"
+    },
+    {
+      "destination": "textures/squared_away/rig_import_v4.dds",
+      "source": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\squared_away\\rig_import_v4.dds",
+      "supplying_mod": "released SQA2",
+      "bytes": 16777344,
+      "sha256": "324e1b0ec5fd30200d1f5e2db222c449b4d4dd5292dc9dfad90c43e9657fa239"
+    }
+  ],
+  "localization": {
+    "eng": {
+      "strings": 82,
+      "missing_keys": [],
+      "provenance": {
+        "st_amprig_bandolier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bandolier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\eng\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_af_magpouch_s_name": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\eng\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_s_descr": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\eng\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_m_name": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\eng\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_m_descr": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\eng\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_l_name": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\eng\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_l_descr": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\eng\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_itm_backpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_itm_backpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smallpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smallpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smilpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smilpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_milpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_milpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_touristpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_touristpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\eng\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        }
+      }
+    },
+    "rus": {
+      "strings": 82,
+      "missing_keys": [],
+      "provenance": {
+        "st_amprig_bandolier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bandolier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\rus\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_af_magpouch_s_name": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\rus\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_s_descr": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\rus\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_m_name": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\rus\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_m_descr": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\rus\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_l_name": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\rus\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_af_magpouch_l_descr": {
+          "file": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\text\\rus\\mag_pouches.xml",
+          "supplying_mod": "Mags Reloaded Fork by Priler UPDATE 6"
+        },
+        "st_itm_backpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_itm_backpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smallpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smallpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smilpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_smilpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_milpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_milpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_touristpack_name": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        },
+        "st_equ_touristpack_desc": {
+          "file": "C:\\GAMMA\\mods\\287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos\\gamedata\\configs\\text\\rus\\st_items_backpacks.xml",
+          "supplying_mod": "287- G.A.M.M.A. Massive Text Overhaul Project - SageDaHerb and Dr.Pr1nkos"
+        }
+      }
+    },
+    "spa": {
+      "strings": 66,
+      "missing_keys": [
+        "st_af_magpouch_l_descr",
+        "st_af_magpouch_l_name",
+        "st_af_magpouch_m_descr",
+        "st_af_magpouch_m_name",
+        "st_af_magpouch_s_descr",
+        "st_af_magpouch_s_name",
+        "st_equ_milpack_desc",
+        "st_equ_milpack_name",
+        "st_equ_smallpack_desc",
+        "st_equ_smallpack_name",
+        "st_equ_smilpack_desc",
+        "st_equ_smilpack_name",
+        "st_equ_touristpack_desc",
+        "st_equ_touristpack_name",
+        "st_itm_backpack_desc",
+        "st_itm_backpack_name"
+      ],
+      "provenance": {
+        "st_amprig_bandolier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bandolier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\spa\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        }
+      }
+    },
+    "ukr": {
+      "strings": 66,
+      "missing_keys": [
+        "st_af_magpouch_l_descr",
+        "st_af_magpouch_l_name",
+        "st_af_magpouch_m_descr",
+        "st_af_magpouch_m_name",
+        "st_af_magpouch_s_descr",
+        "st_af_magpouch_s_name",
+        "st_equ_milpack_desc",
+        "st_equ_milpack_name",
+        "st_equ_smallpack_desc",
+        "st_equ_smallpack_name",
+        "st_equ_smilpack_desc",
+        "st_equ_smilpack_name",
+        "st_equ_touristpack_desc",
+        "st_equ_touristpack_name",
+        "st_itm_backpack_desc",
+        "st_itm_backpack_name"
+      ],
+      "provenance": {
+        "st_amprig_bandolier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bandolier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_scout_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_barakholka_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_harness_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_vydra_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_warsaw_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_nylon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_karkas_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_bastion_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_smersh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_volya_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_chicom_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_leshy_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_tarzan_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_rubezh_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_amprig_carrier_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_meds_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_ammo_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_food_small_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_armor_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_mags_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_docs_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_parts_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_weapon_big_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_hip_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_ampbox_pistolcase_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_name": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        },
+        "st_zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p_descr": {
+          "file": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\text\\ukr\\zzz_amp_text.xml",
+          "supplying_mod": "released SQA2"
+        }
+      }
+    }
+  }
+}

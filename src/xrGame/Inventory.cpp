@@ -112,8 +112,48 @@ CInventory::~CInventory()
 {
 }
 
+PIItem CInventory::ItemFromCustomSlot(u64 host,u32 slot) const
+{
+    const auto found=m_customSlots.find({host,slot});return found==m_customSlots.end()?nullptr:found->second;
+}
+bool CInventory::CustomSlotFor(const CInventoryItem* item,u64& host,u32& slot) const
+{
+    for(const auto& binding:m_customSlots)if(binding.second==item){host=binding.first.first;slot=binding.first.second;return true;}
+    return false;
+}
+void CInventory::RemoveCustomBinding(const CInventoryItem* item)
+{
+    bool changed=false;
+    for(auto it=m_customSlots.begin();it!=m_customSlots.end();)if(it->second==item){it=m_customSlots.erase(it);changed=true;}else ++it;
+    if(changed)InventoryNextCustomChanged();
+}
+bool CInventory::CustomSlot(u64 host,u32 slot,PIItem item,bool restoring)
+{
+    if(!item||item->m_pInventory!=this||!item->object().H_Parent()||
+        item->parent_id()!=GetOwner()->object_id()||
+        std::find(m_all.begin(),m_all.end(),item)==m_all.end()||
+        !InventoryNextCanCustomEquip(host,slot,item->object_id(),restoring))return false;
+    const CustomSlotKey key{host,slot};const auto occupied=m_customSlots.find(key);
+    if(occupied!=m_customSlots.end())return occupied->second==item;
+    // Allocate before touching prior membership; no partial slot transition.
+    auto destination=m_customSlots.emplace(key,nullptr).first;
+    if(item->CurrPlace()==eItemPlaceSlot&&item->CurrSlot()<=LastSlot()){
+        if(GetActiveSlot()==item->CurrSlot())Activate(NO_ACTIVE_SLOT);
+        m_slots[item->CurrSlot()].m_pIItem=nullptr;
+    }
+    m_ruck.erase(std::remove(m_ruck.begin(),m_ruck.end(),item),m_ruck.end());
+    m_belt.erase(std::remove(m_belt.begin(),m_belt.end(),item),m_belt.end());
+    RemoveCustomBinding(item);destination->second=item;
+    item->m_ItemCurrPlace.type=eItemPlaceCustom;item->m_ItemCurrPlace.slot_id=0;
+    item->object().processing_activate();CalcTotalWeight();InvalidateState();
+    InventoryNextCustomChanged();
+    Msg("* SQA3 native custom equipment host=%llu slot=%u live=%u restore=%d",host,slot,item->object_id(),restoring?1:0);
+    return true;
+}
+
 void CInventory::Clear()
 {
+	m_customSlots.clear();
 	m_all.clear();
 	m_ruck.clear();
 	m_belt.clear();
@@ -158,6 +198,11 @@ void CInventory::Take(CGameObject* pObj, bool bNotActivate, bool strict_placemen
 	bool result = false;
 	switch (pIItem->m_ItemCurrPlace.type)
 	{
+    case eItemPlaceCustom:
+        // The full registry binding is restored from SQA3's identity save chunk.
+        // Never auto-equip this item into a legacy slot while awaiting that data.
+        result=Ruck(pIItem,true);
+        break;
 	case eItemPlaceBelt:
 		result = Belt(pIItem, strict_placement);
 		if (!result)
@@ -265,6 +310,9 @@ bool CInventory::DropItem(CGameObject* pObj, bool just_before_destroy, bool dont
 
 	switch (pIItem->CurrPlace())
 	{
+    case eItemPlaceCustom:
+        RemoveCustomBinding(pIItem);
+        break;
 	case eItemPlaceBelt:
 		{
 			VERIFY(InBelt(pIItem));
@@ -401,6 +449,7 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 		return false;
 	}
 
+    RemoveCustomBinding(pIItem);
 	m_slots[slot_id].m_pIItem = pIItem;
 
 	//удалить из рюкзака или пояса
@@ -469,6 +518,7 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 bool CInventory::Belt(PIItem pIItem, bool strict_placement)
 {
 	if (!strict_placement && !CanPutInBelt(pIItem)) return false;
+    RemoveCustomBinding(pIItem);
 
 	//вещь была в слоте
 	bool in_slot = InSlot(pIItem);
@@ -508,6 +558,7 @@ bool CInventory::Belt(PIItem pIItem, bool strict_placement)
 bool CInventory::Ruck(PIItem pIItem, bool strict_placement)
 {
 	if (!strict_placement && !CanPutInRuck(pIItem)) return false;
+    RemoveCustomBinding(pIItem);
 
 	if (!IsGameTypeSingle())
 	{

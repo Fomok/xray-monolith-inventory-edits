@@ -29,12 +29,12 @@ public:
         Node world;world.id=2;world.kind=Kind::WorldRoot;world.category=0;world.container=true;world.grid={8,64};
         std::vector<Node> factsNodes{actor,world};unsigned beltSlot=48;
         for(auto& n:live) {
-            if(n.kind!=Kind::Item||n.id<100||n.parent!=1||(n.container&&!storage.logical))return {false,"native_layout_item"};
+            if(n.kind!=Kind::Item||n.id<100||(n.parent!=1&&n.location!=Location::Mounted)||(n.container&&!storage.logical))return {false,"native_layout_item"};
             if(n.attributes.count("native_place")&&n.attributes.at("native_place")=="2") {
                 if(beltSlot>=64)return {false,"native_belt_capacity"};
                 n.location=Location::Equipment;n.wear_slots=n.equipped_slots=std::uint64_t{1}<<beltSlot++;
             }
-            if(n.location!=Location::Equipment)n.location=Location::Overflow;
+            if(n.location!=Location::Equipment&&n.location!=Location::Mounted)n.location=Location::Overflow;
             // Facts may come from an existing projection. Recovery/equipment
             // staging has no grid coordinates; saved placements are reapplied
             // from model_ only after the new native facts validate.
@@ -95,7 +95,7 @@ public:
         for(const auto& pair:candidate.nodes())if(pair.second.kind==Kind::Item) {
             const auto& n=pair.second;
             if(n.id<100||(!logical&&(n.parent!=1||n.container))||
-               (n.location!=Location::Grid&&n.location!=Location::Overflow&&n.location!=Location::Equipment))return {false,"native_layout_item"};
+               (n.location!=Location::Grid&&n.location!=Location::Overflow&&n.location!=Location::Equipment&&n.location!=Location::Mounted))return {false,"native_layout_item"};
             Id owner=n.parent;
             for(unsigned count=0;candidate.nodes().at(owner).parent&&count<=64;++count)owner=candidate.nodes().at(owner).parent;
             if(owner!=1)return {false,"native_layout_owner"};

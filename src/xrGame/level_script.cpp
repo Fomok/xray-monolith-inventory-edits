@@ -9,6 +9,7 @@
 #include "pch_script.h"
 #include "level.h"
 #include "InventoryNextProbe.h"
+#include "InventoryNextIdentity.h"
 #include "actor.h"
 #include "script_game_object.h"
 #include "patrol_path_storage.h"
@@ -2706,6 +2707,10 @@ void CLevel::script_register(lua_State* L)
 			def("stop_weather_fx", stop_weather_fx),
 
             def("inventory_next_stash_enabled", +[](){return InventoryNextStashEnabled();}),
+            def("inventory_next_custom_equip", +[](u16 live,LPCSTR host,LPCSTR key){try{return InventoryNextCustomEquip(live,std::stoull(host),key);}catch(...){return false;}}),
+            def("inventory_next_custom_unequip", +[](u16 live){return InventoryNextCustomUnequip(live);}),
+            def("inventory_next_identity", +[](u16 live){return luabind::internal_string(std::to_string(InventoryNextIdentityLookup(live)).c_str());}),
+            def("inventory_next_custom_item", +[](LPCSTR host,LPCSTR key){try{return InventoryNextCustomItem(std::stoull(host),key);}catch(...){return u16(-1);}}),
             // This luabind fork only converts its allocator-backed string_class.
             // std::string would be treated as an unregistered userdata type.
             def("inventory_next_stash_identity", +[](u16 live){return luabind::internal_string(InventoryNextStashIdentity(live).c_str());}),

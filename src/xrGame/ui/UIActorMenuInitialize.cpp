@@ -70,6 +70,16 @@ void CUIActorMenu::Construct()
 
 	xml_init.InitWindow(uiXml, "main", 0, this);
     if(InventoryNextFieldKitEnabled()){
+        for(int index=0;index<3;++index){
+            auto list=m_sqaCustomEquipment[index]=xr_new<CUIDragDropListEx>();list->SetAutoDelete(true);AttachChild(list);
+            list->InitDragDropList(Fvector2().set(index?93.0f+float(index-1)*40.0f:93.0f,index?126.0f:12.0f),Fvector2().set(index?35.0f:75.0f,index?35.0f:108.0f));
+            list->SetCellSize(Ivector2().set(index?35:75,index?35:108));list->SetStartCellsCapacity(Ivector2().set(1,1));
+            list->SetGrouping(false);list->SetAutoGrow(false);list->SetCustomPlacement(false);list->back_color=0;
+            BindDragDropListEvents(list);list->Show(false);
+            if(index){auto frame=m_sqaPouchFrames[index-1]=xr_new<CUIStatic>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
+                frame->SetWndPos(list->GetWndPos());frame->SetWndSize(list->GetWndSize());frame->InitTexture("sqa3v1_slot_small");frame->SetStretchTexture(true);frame->Show(false);
+                auto& children=GetChildWndList();auto at=std::find(children.begin(),children.end(),list);if(at!=children.end()){children.erase(at);children.push_back(list);}}
+        }
         auto frame=xr_new<CUIStatic>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
         frame->SetWndPos(Fvector2().set(0,0));frame->SetWndSize(Fvector2().set(260.5f,768.0f));frame->InitTexture("sqa3v1_equipment_panel");frame->SetStretchTexture(true);
     }
@@ -401,6 +411,10 @@ void CUIActorMenu::Construct()
 	DeInitTradeMode();
 	DeInitUpgradeMode();
 	DeInitDeadBodySearchMode();
+    // Custom equipment cells must render above the equipment panel. Keep the
+    // properties popup later in child order so its actions remain clickable.
+    for(auto frame:m_sqaPouchFrames)if(frame){auto& children=GetChildWndList();children.erase(std::remove(children.begin(),children.end(),frame),children.end());children.insert(std::find(children.begin(),children.end(),m_UIPropertiesBox),frame);}
+    for(auto list:m_sqaCustomEquipment)if(list){auto& children=GetChildWndList();children.erase(std::remove(children.begin(),children.end(),list),children.end());children.insert(std::find(children.begin(),children.end(),m_UIPropertiesBox),list);}
 }
 
 void CUIActorMenu::BindDragDropListEvents(CUIDragDropListEx* lst)

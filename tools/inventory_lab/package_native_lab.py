@@ -27,6 +27,17 @@ def main():
     for rel in ["configs/sqa3_capacity.ltx","configs/ui/sqa3_field_kit.xml","configs/mod_system_sqa3_field_kit.ltx","configs/ui/textures_descr/sqa3_native.xml","configs/ui/textures_descr/sqa3_visual_assets.xml","configs/ui/textures_descr/sqa3_visual_assets_v2.xml","configs/ui/textures_descr/sqa3_rank_icons.xml","configs/ui/sqa3_actor_menu.xml","scripts/sqa3_native_autorun.script","scripts/ui_inventory.script"]:
         data=read_overlay('tools/inventory_lab/gamedata/'+rel,optional=rel=='configs/sqa3_capacity.ltx')
         if data is not None:files["gamedata/"+rel]=data
+    catalog=read_overlay('tools/inventory_lab/native-catalog-assets.json',optional=True)
+    if catalog is not None:
+        for entry in json.loads(catalog)['files']:
+            data=Path(entry['source']).read_bytes()
+            assert len(data)==entry['bytes'] and hashlib.sha256(data).hexdigest()==entry['sha256']
+            assert entry['path'].startswith('gamedata/') and '..' not in entry['path'].split('/')
+            assert entry['path'] not in files
+            files[entry['path']]=data
+        for name in ['sqa3_catalog.ltx','sqa3_equipment.ltx','mod_system_sqa3_catalog.ltx']:
+            files['gamedata/configs/'+name]=read_overlay('tools/inventory_lab/gamedata/configs/'+name)
+        files['catalog-provenance.json']=catalog
     files["Start-Native-Input-Check.ps1"]=read_overlay('tools/inventory_lab/Start-Native-Input-Check.ps1')
     main_launcher=read_overlay('tools/inventory_lab/Start-Squared-Away-3.ps1',optional=True)
     if main_launcher is not None:files["Start-Squared-Away-3.ps1"]=main_launcher

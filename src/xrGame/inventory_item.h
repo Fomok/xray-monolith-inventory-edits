@@ -187,7 +187,7 @@ public:
 	//---------------------------------------------------------------------
 	IC float GetCondition() const { return m_fCondition; }
 	virtual float GetConditionToShow() const { return GetCondition(); }
-	IC void SetCondition(float val) { m_fCondition = val; }
+	void SetCondition(float val);
 	void ChangeCondition(float fDeltaCondition);
 	IC float GetLowestBatteryCharge() const { return m_fLowestBatteryCharge; }
 

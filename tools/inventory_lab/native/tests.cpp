@@ -10,6 +10,7 @@
 #include "loaded_storage_session.h"
 #include "ground_pickup.h"
 #include "purchase_session.h"
+#include "equipment_registry.h"
 #include "drag_session.h"
 #include "presentation.h"
 #include "persistence.h"
@@ -67,6 +68,14 @@ int main(int argc,char** argv) {
             check(record.custodian==900&&nodes.at(101).parent==100&&nodes.at(102).parent==101,"world restart lost custody or nested owners");
             check(record.tree.carried_mass()==0&&record.tree.subtree_mass(100)==150&&nodes.at(102).condition==8314&&nodes.at(102).attributes.at("ammo")=="5","world restart lost state or mass");
             std::cout<<"PASS independent detached world subtree restart\n";return 0;
+        }
+        if(argc==3 && std::string(argv[1])=="--read-custom-equipment") {
+            Model saved;yes(load_file(saved,argv[2]));ActorLayout restored;yes(restored.restore(saved.serialize()));
+            const auto& nodes=restored.model().nodes();
+            check(nodes.at(100).location==Location::Equipment&&nodes.at(100).equipped_slots==(std::uint64_t{1}<<19),"custom root equipment lost");
+            check(nodes.at(101).location==Location::Mounted&&nodes.at(101).parent==100&&nodes.at(101).mounted_slot==65537,"custom pouch binding lost");
+            check(nodes.at(102).parent==101&&nodes.at(100).attributes.at("native_custom_slot")=="65536"&&restored.model().carried_mass()==1600,"custom equipment restart changed state");
+            std::cout<<"PASS independent custom equipment and mounted pouch restart\n";return 0;
         }
         if(argc==3 && std::string(argv[1])=="--read") {
             Model m; yes(load_file(m,argv[2])); check(m.carried_mass()==197,"restart mass");
@@ -1077,7 +1086,7 @@ int main(int argc,char** argv) {
             Position p;check(!main.position(a.model().nodes().at(101),p)&&!main.position(a.model().nodes().at(102),p),"closed nested contents visible");
             check(main.recovery.empty()&&main.size.h==3,"empty recovery reserves a row");
             options.owner=101;NativeStorageView window;yes(window.build(a.model(),options));
-            check(window.position(a.model().nodes().at(102),p)&&p.x==4&&p.y==3,"separate window projection");
+            check(window.size.w==4&&window.position(a.model().nodes().at(102),p)&&p.x==2&&p.y==3,"separate window projection uses its actual layout extent");
             Id owner=0;Position local;check(window.destination(p.x,p.y,owner,local)&&owner==101&&local.x==2&&local.y==2,"window drop changed local coordinates");
             options.collapsed.insert(101);yes(window.build(a.model(),options));
             check(!window.position(a.model().nodes().at(102),p)&&!window.destination(4,1,owner,local),"collapsed grid accepts items");
@@ -1295,6 +1304,36 @@ int main(int argc,char** argv) {
             no(purchase.acknowledge({{100,12}},false,{20,100}),"native_rejected");check(purchase.can_save()&&!purchase.committed_model(),"rejected purchase published");
             no(purchase.settled({19,101}),"purchase_state");
         });
+        test("equipment registry reserves every vanilla u16 ID and rejects registration collisions",[]{
+            EquipmentRegistry registry;EquipmentSlotDefinition slot;slot.key="sqa3.rig";slot.families="rig";slot.model_bit=19;
+            for(unsigned id=0;id<=65535;++id){slot.id=id;no(registry.add(slot),"reserved_equipment_slot");}
+            slot.id=65536;yes(registry.add(slot));
+            no(registry.add(slot),"equipment_slot_collision");
+            slot.id=65537;slot.key="sqa3.other";no(registry.add(slot),"equipment_slot_collision");
+            slot.model_bit=20;yes(registry.add(slot));
+            check(registry.find(65536)&&registry.find("sqa3.rig")->id==65536,"stable equipment lookup changed");
+            slot.id=65538;slot.key="sqa3.mount.p1";slot.families="pouch";slot.mounted=true;slot.model_bit=0;slot.minimum_condition=1000;yes(registry.add(slot));
+            check(registry.find(65538)->accepts("pouch")&&!registry.find(65538)->accepts("rig"),"equipment family gate failed");
+        });
+        test("native custom equipment facts preserve mounted contents and recover inactive grants",[&]{
+            Node rig=item(100,1,900);rig.container=true;rig.grid={3,3};rig.empty=rig.half=rig.full={2,3};
+            rig.location=Location::Equipment;rig.wear_slots=rig.equipped_slots=std::uint64_t{1}<<19;
+            rig.mounts.push_back({65537,"custom_mount_65537",{1,1},1,1000,true});
+            rig.attributes={{"native_section","test_rig"},{"native_place","4"},{"native_custom_slot","65536"},{"native_custom_host","1"},{"storage_allow_container_items","0"}};
+            Node pouch=item(101,100,200);pouch.pouch=pouch.container=true;pouch.grid={5,1};pouch.location=Location::Mounted;pouch.mounted_slot=65537;
+            pouch.attributes={{"native_section","test_pouch"},{"native_place","4"},{"native_custom_slot","65537"},{"native_custom_host","100"},{"storage_allow_container_items","0"}};
+            auto med=item(102,1,500);med.attributes["native_section"]="medkit";
+            ActorStorage pockets{{4,2},{},true};ActorLayout layout;yes(layout.reconcile({rig,pouch,med},pockets));
+            yes(layout.move({102,101,{2,0,false},layout.model().revision(),layout.model().session()}));
+            yes(save_atomic(layout.model(),std::string(argv[1])+".custom"));
+            med.condition=8432;yes(layout.reconcile({rig,pouch,med},pockets));
+            check(layout.model().nodes().at(102).parent==101&&layout.model().nodes().at(101).location==Location::Mounted,"native rebuild detached pouch contents");
+            StorageViewOptions options;options.owner=100;options.center=true;NativeStorageView view;yes(view.build(layout.model(),options));
+            check(view.bands.size()==2&&view.size.w==5&&view.bands[0].column==1&&view.bands[1].owner==101,"effective rig/pouch layout omitted or displaced a band");
+            rig.condition=500;yes(layout.reconcile({rig,pouch,med},pockets));
+            check(layout.model().nodes().at(101).location==Location::Mounted&&layout.model().nodes().at(102).location==Location::Overflow,"condition loss lost binding or failed recovery");
+            check(layout.model().carried_mass()==1600&&layout.model().nodes().at(102).condition==8432,"condition recovery changed item state or mass");
+        });
         test("catalog applies authored storage and preserves native instance state",[]{
             StorageCatalog catalog;StorageDefinition pack;
             pack.family="backpack";pack.interior={{3,2},{1,1,0,2,2,0}};
@@ -1306,6 +1345,23 @@ int main(int argc,char** argv) {
             check(n.intrinsic==820&&n.condition==7834&&n.attributes.at("upgrade")=="retained","catalog overwrote native state");
             check(n.attributes.at("storage_allow_container_items")=="0","nesting default not explicit");
             auto before=n.attributes;check(!catalog.apply("unknown",n)&&n.attributes==before,"unknown definition changed state");
+        });
+        test("catalog soft exterior is independent of usable interior and rig tears preserve authored restoration",[]{
+            StorageCatalog catalog;StorageDefinition definition;
+            definition.family="rig";definition.interior={{4,2},{1,1,1,2,3,3,0,2}};
+            definition.empty={1,1};definition.half={1,2};definition.full={2,2};
+            definition.growing=true;definition.independent_exterior=true;definition.tear_thresholds={8000,6000,4000,2500,1000};
+            catalog.definitions.emplace("rig",definition);
+            auto rig=item(100,1,500);check(catalog.apply("rig",rig),"missing catalog rig");
+            Model intact;yes(intact.initialize({root(1,Kind::ActorRoot),rig}));
+            rig.condition=8000;check(catalog.apply("rig",rig),"missing damaged definition");
+            check(rig.cells==std::vector<unsigned>({0,0,0,2,3,3,0,2}),"largest pocket tear mismatch");
+            rig.condition=6000;check(catalog.apply("rig",rig),"missing second tear definition");
+            check(rig.cells==std::vector<unsigned>({0,0,0,2,0,0,0,2}),"tie must tear later authored pocket");
+            rig.condition=0;check(catalog.apply("rig",rig),"missing destroyed definition");
+            Model destroyed;yes(destroyed.initialize({root(1,Kind::ActorRoot),rig}));
+            rig.condition=10000;check(catalog.apply("rig",rig),"missing repaired definition");
+            check(rig.cells==definition.interior.cells&&rig.intrinsic==500,"repair failed authored restoration or changed mass");
         });
         test("authored backpack mask preserves compartment boundaries and rejects malformed imports atomically",[]{
             ActorStorage storage;yes(parse_storage_shape("3x4",7,storage));

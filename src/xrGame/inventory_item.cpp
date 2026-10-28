@@ -13,6 +13,7 @@
 #include "pch_script.h"
 #include "inventory_item.h"
 #include "InventoryNextIdentity.h"
+#include "InventoryNextProbe.h"
 #include "inventory_item_impl.h"
 #include "inventory.h"
 //#include "Physics.h"
@@ -144,10 +145,17 @@ void CInventoryItem::Load(LPCSTR section)
 	m_fLowestBatteryCharge = READ_IF_EXISTS(pSettings, r_float, section, "power_critical", .03f);
 }
 
+void CInventoryItem::SetCondition(float value)
+{
+    if(m_fCondition==value)return;
+    m_fCondition=value;
+    InventoryNextConditionChanged(object_id());
+}
+
 void CInventoryItem::ChangeCondition(float fDeltaCondition)
 {
-	m_fCondition += fDeltaCondition;
-	clamp(m_fCondition, 0.f, 1.f);
+    float value=m_fCondition+fDeltaCondition;
+    clamp(value,0.f,1.f);SetCondition(value);
 }
 
 

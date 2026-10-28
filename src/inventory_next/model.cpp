@@ -126,14 +126,15 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
                 if (n.cells.size()!=static_cast<std::size_t>(n.grid.w*n.grid.h)) return bad("cell_definition");
                 unsigned usable=0;
                 for (unsigned region:n.cells) { if (region>4096) return bad("cell_definition"); if (region) ++usable; }
-                if (!usable) return bad("cell_definition");
+                if (!usable&&!(n.attributes.count("storage_torn_closed")&&n.attributes.at("storage_torn_closed")=="1")) return bad("cell_definition");
                 authored_cells+=n.cells.size();
                 if (authored_cells>65536) return bad("cell_budget");
             }
         } else if (n.soft || n.grid.w || n.grid.h || n.max_contents || !n.cells.empty()) return bad("not_container");
+        const bool independent=n.attributes.count("storage_exterior_independent")&&n.attributes.at("storage_exterior_independent")=="1";
         if (n.soft && (n.half.w < n.empty.w || n.half.h < n.empty.h ||
             n.full.w < n.half.w || n.full.h < n.half.h ||
-            n.full.w * n.full.h < (n.cells.empty() ? n.grid.w * n.grid.h : static_cast<int>(std::count_if(n.cells.begin(),n.cells.end(),[](unsigned c){return c!=0;}))))) return bad("growth_definition");
+            (!independent&&n.full.w * n.full.h < (n.cells.empty() ? n.grid.w * n.grid.h : static_cast<int>(std::count_if(n.cells.begin(),n.cells.end(),[](unsigned c){return c!=0;})))))) return bad("growth_definition");
         std::map<std::string,bool> names;
         for(const auto& [region,name]:n.compartment_names){
             metadata_bytes+=name.size()+8;
@@ -207,7 +208,8 @@ Result analyze(const std::map<Id, Node>& nodes, DerivedMap& result) {
         capacity += granted_capacity;
         if(!active)capacity=0;
         d.occupied = used; d.capacity = capacity;
-        if (n.soft && n.full.w*n.full.h < capacity) return bad("growth_definition");
+        const bool independent=n.attributes.count("storage_exterior_independent")&&n.attributes.at("storage_exterior_independent")=="1";
+        if (n.soft && !independent && n.full.w*n.full.h < capacity) return bad("growth_definition");
         if (n.soft && used) d.size = used * 2 <= capacity ? n.half : n.full;
         result[id] = d;
         color[id] = 2;

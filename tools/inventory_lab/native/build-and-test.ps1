@@ -39,4 +39,6 @@ foreach ($variant in @('debug','release')) {
     if ($LASTEXITCODE -ne 0) { throw "Logical forest restart failed: $variant" }
     & $exe --read-world "$fixture.world" 2>&1 | Tee-Object (Join-Path $out "$variant-world-restart.log")
     if ($LASTEXITCODE -ne 0) { throw "Detached world subtree restart failed: $variant" }
+    & $exe --read-custom-equipment "$fixture.custom" 2>&1 | Tee-Object (Join-Path $out "$variant-custom-restart.log")
+    if ($LASTEXITCODE -ne 0) { throw "Custom equipment restart failed: $variant" }
 }

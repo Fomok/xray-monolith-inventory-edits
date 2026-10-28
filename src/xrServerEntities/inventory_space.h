@@ -59,7 +59,8 @@ enum eItemPlace
 	eItemPlaceUndefined = 0,
 	eItemPlaceSlot,
 	eItemPlaceBelt,
-	eItemPlaceRuck
+	eItemPlaceRuck,
+    eItemPlaceCustom // u32 registry ID is stored by CInventory, never in slot_id
 };
 
 struct SInvItemPlace

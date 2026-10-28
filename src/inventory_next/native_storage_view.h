@@ -18,6 +18,7 @@ class NativeStorageView {
 public:
     Result build(const Model& model,const StorageViewOptions& options={}) {
         NativeStorageView next;
+        if(options.owner)next.size.w=1;
         auto actor=model.nodes().find(1);
         if(actor==model.nodes().end())return {false,"view_actor"};
         if(options.owner) {
@@ -44,6 +45,12 @@ public:
                 (!options.equipped_only||(pair.second.parent==1&&pair.second.location==Location::Equipment)))
                 add(pair.first,pair.second.grid);
         }
+        // Mounted pouch bands belong to the same effective layout as their rig.
+        // Include them when that rig is visible, including a spare-rig window.
+        std::set<Id> visible;
+        for(const auto& band:next.bands)visible.insert(band.owner);
+        for(const auto& pair:model.nodes())if(pair.second.container&&pair.second.location==Location::Mounted&&
+            visible.count(pair.second.parent)&&!visible.count(pair.first))add(pair.first,pair.second.grid);
         next.recovery_row=row;
         for(const auto& pair:model.nodes())if(!options.owner&&pair.second.location==Location::Overflow) {
             const auto footprint=model.footprint(pair.first);

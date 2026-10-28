@@ -1,0 +1,2477 @@
+{
+  "schema": "sqa3.native.catalog.v1",
+  "source_sha256": "3e4c4a11e6da306bff83b74ee46e990b4c9c7d1d778b1984507d3f3f9993d5ce",
+  "definitions": {
+    "amprig_bandolier": {
+      "family": "rig",
+      "width": 3,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_bandolier"
+    },
+    "amprig_scout": {
+      "family": "rig",
+      "width": 4,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        5,
+        0,
+        2,
+        3,
+        6
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_scout"
+    },
+    "amprig_harness": {
+      "family": "rig",
+      "width": 5,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        3,
+        1,
+        1,
+        2,
+        3,
+        3,
+        0,
+        4,
+        5,
+        6,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_harness"
+    },
+    "amprig_barakholka": {
+      "family": "rig",
+      "width": 5,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        6,
+        0,
+        7,
+        5
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_barakholka"
+    },
+    "amprig_vydra": {
+      "family": "rig",
+      "width": 7,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        1,
+        1,
+        6,
+        7,
+        8,
+        5,
+        5,
+        0,
+        0,
+        6,
+        7,
+        8,
+        0,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_vydra"
+    },
+    "amprig_nylon": {
+      "family": "rig",
+      "width": 6,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        2,
+        3,
+        8,
+        9
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_nylon"
+    },
+    "amprig_warsaw": {
+      "family": "rig",
+      "width": 6,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        2,
+        3,
+        4,
+        5,
+        8
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_warsaw"
+    },
+    "amprig_smersh": {
+      "family": "rig",
+      "width": 8,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        1,
+        2,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        0,
+        6,
+        0,
+        7,
+        0,
+        8,
+        0,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_smersh"
+    },
+    "amprig_karkas": {
+      "family": "rig",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        6,
+        7,
+        3,
+        4,
+        8,
+        9,
+        6,
+        7,
+        0,
+        0,
+        10,
+        11
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_karkas"
+    },
+    "amprig_bastion": {
+      "family": "rig",
+      "width": 8,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        1,
+        1,
+        2,
+        7,
+        8,
+        5,
+        6,
+        6,
+        0,
+        9,
+        2,
+        7,
+        8,
+        5,
+        10,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_bastion"
+    },
+    "amprig_chicom": {
+      "family": "rig",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        6,
+        7,
+        4,
+        5,
+        0,
+        8,
+        6,
+        7,
+        9,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_chicom"
+    },
+    "amprig_volya": {
+      "family": "rig",
+      "width": 8,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        2,
+        3,
+        4,
+        5,
+        5,
+        6,
+        1,
+        2,
+        2,
+        7,
+        7,
+        5,
+        5,
+        6,
+        1,
+        8,
+        0,
+        7,
+        7,
+        0,
+        9,
+        6
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_volya"
+    },
+    "amprig_tarzan": {
+      "family": "rig",
+      "width": 8,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        7,
+        8,
+        9,
+        3,
+        4,
+        10,
+        11,
+        12
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_tarzan"
+    },
+    "amprig_leshy": {
+      "family": "rig",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        6,
+        7,
+        4,
+        5,
+        8,
+        9,
+        6,
+        7,
+        10,
+        11
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_leshy"
+    },
+    "amprig_carrier": {
+      "family": "rig",
+      "width": 8,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        5,
+        1,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        5,
+        6,
+        7,
+        2,
+        8,
+        8,
+        4,
+        9,
+        10,
+        0,
+        0,
+        0,
+        8,
+        8,
+        0,
+        0,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_carrier"
+    },
+    "amprig_rubezh": {
+      "family": "rig",
+      "width": 8,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        6,
+        7,
+        8,
+        2,
+        9,
+        9,
+        5,
+        10,
+        11,
+        0,
+        12,
+        0,
+        9,
+        9,
+        0,
+        13,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amprig_rubezh"
+    },
+    "zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj": {
+      "family": "pouch",
+      "width": 3,
+      "height": 3,
+      "cells": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        1,
+        1
+      ],
+      "full": [
+        1,
+        1
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj"
+    },
+    "zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p": {
+      "family": "pouch",
+      "width": 3,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        1,
+        1
+      ],
+      "full": [
+        1,
+        1
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p"
+    },
+    "ampbox_meds": {
+      "family": "box",
+      "width": 5,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        4,
+        4,
+        3,
+        3,
+        3,
+        4,
+        4
+      ],
+      "empty": [
+        2,
+        2
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 10000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_meds"
+    },
+    "ampbox_ammo": {
+      "family": "box",
+      "width": 4,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        2,
+        2
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 10000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_ammo"
+    },
+    "ampbox_food": {
+      "family": "box",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        2,
+        2,
+        2
+      ],
+      "empty": [
+        2,
+        2
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 10000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_food"
+    },
+    "ampbox_armor": {
+      "family": "box",
+      "width": 4,
+      "height": 6,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        2,
+        3
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        3
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 1,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_armor"
+    },
+    "ampbox_food_small": {
+      "family": "box",
+      "width": 5,
+      "height": 2,
+      "cells": [
+        1,
+        2,
+        3,
+        3,
+        3,
+        1,
+        2,
+        3,
+        3,
+        3
+      ],
+      "empty": [
+        2,
+        1
+      ],
+      "half": [
+        2,
+        1
+      ],
+      "full": [
+        2,
+        1
+      ],
+      "growing": false,
+      "max_contents_grams": 10000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_food_small"
+    },
+    "ampbox_mags": {
+      "family": "box",
+      "width": 4,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        3,
+        2
+      ],
+      "half": [
+        3,
+        2
+      ],
+      "full": [
+        3,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 15000,
+      "stack_limit": 10,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_mags"
+    },
+    "ampbox_ammo_big": {
+      "family": "box",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        3,
+        2
+      ],
+      "half": [
+        3,
+        2
+      ],
+      "full": [
+        3,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 15000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_ammo_big"
+    },
+    "ampbox_parts": {
+      "family": "box",
+      "width": 4,
+      "height": 5,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        6,
+        7,
+        8,
+        9,
+        6,
+        7,
+        8,
+        9
+      ],
+      "empty": [
+        3,
+        2
+      ],
+      "half": [
+        3,
+        2
+      ],
+      "full": [
+        3,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 15000,
+      "stack_limit": 999,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_parts"
+    },
+    "ampbox_docs": {
+      "family": "box",
+      "width": 1,
+      "height": 24,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        1,
+        2
+      ],
+      "full": [
+        1,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 20,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_docs"
+    },
+    "ampbox_weapon": {
+      "family": "box",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        3,
+        2
+      ],
+      "half": [
+        3,
+        2
+      ],
+      "full": [
+        3,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 1,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_weapon"
+    },
+    "ampbox_weapon_big": {
+      "family": "box",
+      "width": 8,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        5,
+        2
+      ],
+      "half": [
+        5,
+        2
+      ],
+      "full": [
+        5,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 1,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_weapon_big"
+    },
+    "ampbox_hip": {
+      "family": "box",
+      "width": 5,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "empty": [
+        2,
+        1
+      ],
+      "half": [
+        2,
+        1
+      ],
+      "full": [
+        2,
+        1
+      ],
+      "growing": false,
+      "max_contents_grams": 5000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_hip"
+    },
+    "ampbox_pistolcase": {
+      "family": "box",
+      "width": 6,
+      "height": 5,
+      "cells": [
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+        4,
+        4,
+        2,
+        2,
+        5,
+        5,
+        6,
+        6,
+        7,
+        7,
+        8,
+        8,
+        9,
+        10,
+        11,
+        11,
+        12,
+        13,
+        9,
+        10,
+        11,
+        11,
+        12,
+        13
+      ],
+      "empty": [
+        2,
+        2
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 1,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "ampbox_pistolcase"
+    },
+    "zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v": {
+      "family": "box",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+        1,
+        1,
+        2,
+        2,
+        3,
+        3,
+        4,
+        4,
+        5,
+        5,
+        6,
+        6,
+        4,
+        4,
+        5,
+        5,
+        6,
+        6
+      ],
+      "empty": [
+        3,
+        2
+      ],
+      "half": [
+        3,
+        2
+      ],
+      "full": [
+        3,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 10000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v"
+    },
+    "zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo": {
+      "family": "box",
+      "width": 4,
+      "height": 2,
+      "cells": [
+        1,
+        1,
+        2,
+        2,
+        1,
+        1,
+        2,
+        2
+      ],
+      "empty": [
+        2,
+        2
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        2
+      ],
+      "growing": false,
+      "max_contents_grams": 10000,
+      "stack_limit": 99,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo"
+    },
+    "amp_rig_bandolier": {
+      "family": "rig",
+      "width": 3,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        1,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_bandolier"
+    },
+    "amp_rig_scout": {
+      "family": "rig",
+      "width": 4,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        1,
+        2,
+        3,
+        5,
+        0,
+        2,
+        3,
+        6
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_scout"
+    },
+    "amp_rig_harness": {
+      "family": "rig",
+      "width": 5,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        3,
+        1,
+        1,
+        2,
+        3,
+        3,
+        0,
+        4,
+        5,
+        6,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_harness"
+    },
+    "amp_rig_nylon": {
+      "family": "rig",
+      "width": 6,
+      "height": 3,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        2,
+        3,
+        8,
+        9
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_nylon"
+    },
+    "amp_rig_warsaw": {
+      "family": "rig",
+      "width": 6,
+      "height": 3,
+      "cells": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        2,
+        3,
+        4,
+        5,
+        8
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_warsaw"
+    },
+    "amp_rig_leshy": {
+      "family": "rig",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        6,
+        7,
+        4,
+        5,
+        8,
+        9,
+        6,
+        7,
+        10,
+        11
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_leshy"
+    },
+    "amp_rig_chicom": {
+      "family": "rig",
+      "width": 6,
+      "height": 4,
+      "cells": [
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        1,
+        2,
+        6,
+        7,
+        4,
+        5,
+        0,
+        8,
+        6,
+        7,
+        9,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_chicom"
+    },
+    "amp_rig_carrier": {
+      "family": "rig",
+      "width": 8,
+      "height": 4,
+      "cells": [
+        1,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        5,
+        1,
+        1,
+        2,
+        3,
+        3,
+        4,
+        5,
+        5,
+        6,
+        7,
+        2,
+        8,
+        8,
+        4,
+        9,
+        10,
+        0,
+        0,
+        0,
+        8,
+        8,
+        0,
+        0,
+        0
+      ],
+      "empty": [
+        1,
+        2
+      ],
+      "half": [
+        2,
+        3
+      ],
+      "full": [
+        2,
+        4
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "amp_rig_carrier"
+    },
+    "itm_backpack": {
+      "family": "backpack",
+      "width": 8,
+      "height": 8,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        3
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "itm_backpack"
+    },
+    "equ_small_pack": {
+      "family": "backpack",
+      "width": 8,
+      "height": 10,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        3
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "equ_small_pack"
+    },
+    "equ_small_military_pack": {
+      "family": "backpack",
+      "width": 8,
+      "height": 12,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        3
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "equ_small_military_pack"
+    },
+    "equ_military_pack": {
+      "family": "backpack",
+      "width": 8,
+      "height": 13,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        3
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "equ_military_pack"
+    },
+    "equ_tourist_pack": {
+      "family": "backpack",
+      "width": 8,
+      "height": 15,
+      "cells": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        2,
+        2
+      ],
+      "full": [
+        2,
+        3
+      ],
+      "growing": true,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "provisional SQA3 test balancing; configurable",
+      "source_section": "equ_tourist_pack"
+    },
+    "af_magpouch_s": {
+      "family": "pouch",
+      "width": 3,
+      "height": 2,
+      "cells": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        1,
+        1
+      ],
+      "full": [
+        1,
+        1
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "af_magpouch_s"
+    },
+    "af_magpouch_m": {
+      "family": "pouch",
+      "width": 3,
+      "height": 2,
+      "cells": [
+        1,
+        2,
+        0,
+        1,
+        2,
+        0
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        1,
+        1
+      ],
+      "full": [
+        1,
+        1
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "af_magpouch_m"
+    },
+    "af_magpouch_l": {
+      "family": "pouch",
+      "width": 3,
+      "height": 2,
+      "cells": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "empty": [
+        1,
+        1
+      ],
+      "half": [
+        1,
+        1
+      ],
+      "full": [
+        1,
+        1
+      ],
+      "growing": false,
+      "max_contents_grams": 0,
+      "stack_limit": 0,
+      "growth_provenance": "fixed source exterior",
+      "source_section": "af_magpouch_l"
+    }
+  }
+}

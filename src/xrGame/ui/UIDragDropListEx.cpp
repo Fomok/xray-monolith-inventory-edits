@@ -339,6 +339,12 @@ void CUIDragDropListEx::Compact()
 	}
 }
 
+void CUIDragDropListEx::CenterStorageContent()
+{
+    const float contentWidth=_max(1.0f,GetWndSize().x-m_vScrollBar->GetWidth()-6.0f);
+    m_sqaStorageInset=_max(0.0f,(contentWidth-float(CellsCapacity().x*CellSize().x))*0.5f);
+    m_container->SetWndPos(Fvector2().set(m_sqaStorageInset,m_container->GetWndPos().y));
+}
 void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner,s64 grams,bool collapsed)
 {
     auto label=xr_new<CUIStatic>();label->SetAutoDelete(true);AttachChild(label);
@@ -435,7 +441,7 @@ void CUIDragDropListEx::ReinitScroll()
 	//		m_vScrollBar->SetPageSize	(iFloor(GetWndSize().y/float(CellSize().y)));
 	m_vScrollBar->SetPageSize(1/*CellSize().y*/);
 
-	m_container->SetWndPos(Fvector2().set(0, 0));
+	m_container->SetWndPos(Fvector2().set(m_sqaStorageInset, 0));
 }
 
 bool CUIDragDropListEx::OnMouseAction(float x, float y, EUIMessages mouse_action)

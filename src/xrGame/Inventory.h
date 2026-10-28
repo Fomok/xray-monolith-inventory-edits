@@ -1,5 +1,6 @@
 #pragma once
 #include "inventory_item.h"
+#include <map>
 
 class CInventory;
 class CInventoryItem;
@@ -54,6 +55,13 @@ public:
 	bool Slot(u16 slot_id, PIItem pIItem, bool bNotActivate = false, bool strict_placement = false);
 	bool Belt(PIItem pIItem, bool strict_placement = false);
 	bool Ruck(PIItem pIItem, bool strict_placement = false);
+    // Genuine native equipment membership outside all legacy u16 slot IDs.
+    using CustomSlotKey=std::pair<u64,u32>; // persistent host identity, registry ID
+    bool CustomSlot(u64 host,u32 slot,PIItem item,bool restoring=false);
+    PIItem ItemFromCustomSlot(u64 host,u32 slot) const;
+    bool CustomSlotFor(const CInventoryItem* item,u64& host,u32& slot) const;
+    void RemoveCustomBinding(const CInventoryItem* item);
+    const std::map<CustomSlotKey,PIItem>& CustomSlots() const {return m_customSlots;}
 
 	bool InSlot(const CInventoryItem* pIItem) const;
 	bool InBelt(const CInventoryItem* pIItem) const;
@@ -136,6 +144,7 @@ public:
 
 protected:
 	TISlotArr m_slots;
+    std::map<CustomSlotKey,PIItem> m_customSlots;
 public:
 	//возвращает все кроме PDA в слоте и болта
 	void AddAvailableItems(TIItemContainer& items_container, bool for_trade, bool bOverride = false) const;

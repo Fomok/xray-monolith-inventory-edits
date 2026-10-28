@@ -88,10 +88,13 @@ def main():
         w,h=d['width'],d['height']
         lines += ['',f'[sqa3_storage_{name}]',f'family = {d["family"]}',f'size = {h}x{w}',
             'mask = '+'|'.join(','.join(str(c) for c in d['cells'][y*w:(y+1)*w]) for y in range(h)),
-            'allow_container_items = false',f'growing = {str(d["growing"]).lower()}']
+            'allow_container_items = false','exterior_independent = true',f'growing = {str(d["growing"]).lower()}']
         for key in ['empty','half','full']:
             width,height=d[key];lines.append(f'{key} = {height}x{width}')
         lines += [f'max_contents_grams = {d["max_contents_grams"]}',f'stack_limit = {d["stack_limit"]}']
+        if d['family']=='rig':
+            lines += ['; Released rig tear thresholds, basis points; largest pockets first.',
+                      'tear_thresholds = 8000,6000,4000,2500,1000']
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text('\n'.join(lines)+'\n',encoding='utf-8')
     report={'schema':'sqa3.native.catalog.v1','source_sha256':hashlib.sha256(raw).hexdigest(),'definitions':definitions}
     args.output.with_suffix('.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

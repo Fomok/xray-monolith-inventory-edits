@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 // Explicit diagnostic command only; never registered without -inventory-lab -dbg.
 void InventoryNextProbe(bool export_snapshot, bool show_view = false) noexcept;
 
@@ -12,6 +13,16 @@ void InventoryNextMove(u64 id,int x,int y,bool rotated) noexcept;
 
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view=0) noexcept;
 bool InventoryNextNativeFootprint(u16 live,int& width,int& height) noexcept;
+bool InventoryNextCanCustomEquip(u64 host,u32 slot,u16 live,bool restoring=false) noexcept;
+void InventoryNextCustomChanged() noexcept;
+void InventoryNextConditionChanged(u16 live) noexcept;
+void InventoryNextEquipmentUpdate() noexcept;
+void InventoryNextRigHit(float power,int hit_type) noexcept;
+bool InventoryNextCustomEquip(u16 live,u64 host,const char* key) noexcept;
+bool InventoryNextCustomUnequip(u16 live,int x=-1,int y=-1,u64 view=0) noexcept;
+u16 InventoryNextCustomItem(u64 host,const char* key) noexcept;
+struct InventoryNextEquipmentAction {std::string key,label;u64 host=1,identity=0;u16 live=0xffff;bool detach=false,open=false;};
+std::vector<InventoryNextEquipmentAction> InventoryNextEquipmentActions(u16 live) noexcept;
 bool InventoryNextNativeDrop(u16 live,int x,int y,u64 view=0) noexcept;
 bool InventoryNextNativeDragBegin(u16 live) noexcept;
 bool InventoryNextNativeDragCurrent(u16 live) noexcept;
@@ -23,6 +34,7 @@ bool InventoryNextCanBulkRelease(u16 live) noexcept;
 void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcept;
 class CUIDragDropListEx;
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view=0) noexcept;
+bool InventoryNextStorageExtent(u64 view,int& width,int& height) noexcept;
 int InventoryNextStorageCell(int x,int y,u64 view=0) noexcept;
 
 // Opt-in ground ownership path; trade/loot pre-detach admission is separate.

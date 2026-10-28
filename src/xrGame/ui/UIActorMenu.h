@@ -18,6 +18,7 @@ class CUIDragItem;
 class ui_actor_state_wnd;
 class CUIItemInfo;
 class CUIFrameLineWnd;
+class CUIFrameWindow;
 class CUIStatic;
 class CUITextWnd;
 class CUI3tButton;
@@ -197,7 +198,7 @@ public:
     CUIStatic* m_sqaStatus=nullptr;
     u32 m_sqaRetryAfter=0;
     void SqaPurchaseRefresh();
-    struct SqaContainerWindow { u64 owner=0; u16 live=0xffff; CUIStatic* frame=nullptr; CUIDragDropListEx* list=nullptr; };
+    struct SqaContainerWindow { u64 owner=0; u16 live=0xffff; CUIStatic* frame=nullptr; CUIDragDropListEx* list=nullptr; CUIFrameWindow* rim=nullptr; CUIStatic* title=nullptr; CUI3tButton* close=nullptr; };
     xr_vector<SqaContainerWindow> m_sqaContainers;
     CUIDragDropListEx* SqaContainerList(u64 owner);
     bool SqaActorList(CUIDragDropListEx* list) const;
@@ -205,6 +206,10 @@ public:
     void SqaPrepareContainers();
     bool m_sqaRigView=false;
     CUIStatic* m_sqaChestCaption=nullptr;
+    CUIDragDropListEx* m_sqaCustomEquipment[3]={nullptr,nullptr,nullptr};
+    CUIStatic* m_sqaPouchFrames[2]={nullptr,nullptr};
+    std::vector<InventoryNextEquipmentAction> m_sqaEquipmentActions;
+    u64 m_sqaEquipmentActionSource=0;
     xr_vector<InventoryNextLootSource> m_sqaLootSources;
     xr_vector<CUIStatic*> m_sqaLootTabs;
     xr_map<u16,u64> m_sqaLootIdentity;

@@ -253,6 +253,80 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-custom-equipment",1,true) then
+        local reload=args:find("-sqa3-custom-reload",1,true)~=nil
+        local items={}
+        local function identify()
+            exec_console_cmd("inventory_next_probe export")
+            for key,id in pairs(items) do
+                local identity=level.inventory_next_identity(id)
+                assert(identity and identity~="0","unregistered native fixture item "..key)
+                printf("[SQA3 CUSTOM TEST] item=%s live=%s persistent=%s",key,tostring(id),identity)
+            end
+        end
+        commands={"g_god on"}
+        commands[#commands+1]=function()
+            if reload then
+                local names={}
+                for _,key in ipairs({"rig","spare","pouch","right","bandage"}) do names[load_var(db.actor,"sqa3_custom_"..key,"")]=key end
+                db.actor:iterate_inventory(function(_,item)
+                    local server=alife():object(item:id());local key=server and names[server:name()]
+                    if key then assert(not items[key],"duplicate saved custom item");items[key]=item:id() end
+                    return false
+                end,db.actor)
+                for _,key in ipairs({"rig","spare","pouch","right","bandage"}) do assert(items[key],"missing saved "..key) end
+            else
+                local sections={rig="amprig_bandolier",spare="amprig_scout",pouch="af_magpouch_s",right="af_magpouch_m",bandage="bandage"}
+                local a=db.actor
+                for key,section in pairs(sections) do
+                    local item=alife():create(section,a:position(),a:level_vertex_id(),a:game_vertex_id(),a:id())
+                    assert(item,"custom item spawn failed "..section);items[key]=item.id
+                    save_var(a,"sqa3_custom_"..key,item:name())
+                end
+            end
+        end
+        commands[#commands+1]=identify
+        if not reload then
+            commands[#commands+1]=function()
+                assert(level.inventory_next_custom_equip(items.rig,"1","sqa3.rig"),"native rig equip refused")
+                assert(not level.inventory_next_custom_equip(items.spare,"1","sqa3.rig"),"occupied rig silently replaced")
+                local host=level.inventory_next_identity(items.rig)
+                assert(level.inventory_next_custom_equip(items.pouch,host,"sqa3.mount.p1"),"left pouch mount refused")
+                assert(level.inventory_next_custom_equip(items.right,host,"sqa3.mount.p2"),"right pouch mount refused")
+                assert(not level.inventory_next_custom_equip(items.spare,host,"sqa3.mount.p1"),"wrong-family mount accepted")
+                printf("[SQA3 CUSTOM TEST] native equip and occupied/family refusals passed")
+            end
+            commands[#commands+1]=function()
+                exec_console_cmd("inventory_next_store "..level.inventory_next_identity(items.bandage).." "..level.inventory_next_identity(items.pouch).." 0 0 0")
+            end
+            commands[#commands+1]=function()
+                assert(not level.inventory_next_custom_unequip(items.pouch),"nonempty pouch detached")
+                level.object_by_id(items.rig):set_condition(0.05)
+                printf("[SQA3 CUSTOM TEST] damaged rig below both mount thresholds")
+            end
+            commands[#commands+1]="inventory_next_probe export"
+            commands[#commands+1]="screenshot sqa3_custom_damaged"
+            commands[#commands+1]=function() level.object_by_id(items.rig):set_condition(1) end
+            commands[#commands+1]=function()
+                exec_console_cmd("inventory_next_store "..level.inventory_next_identity(items.bandage).." "..level.inventory_next_identity(items.pouch).." 0 0 0")
+            end
+        end
+        commands[#commands+1]=function()
+            local host=level.inventory_next_identity(items.rig)
+            assert(level.inventory_next_custom_item("1","sqa3.rig")==items.rig,"rig native binding missing")
+            assert(level.inventory_next_custom_item(host,"sqa3.mount.p1")==items.pouch,"left native binding missing")
+            assert(level.inventory_next_custom_item(host,"sqa3.mount.p2")==items.right,"right native binding missing")
+            printf("[SQA3 CUSTOM TEST] native bindings verified reload=%s",tostring(reload))
+        end
+        commands[#commands+1]=toggle_inventory
+        commands[#commands+1]="screenshot sqa3_custom_equipment"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        if not reload then commands[#commands+1]="save sqa3_custom_equipment" end
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-ini-diagnostic",1,true) then
         local checks=0
         local function check_ini()

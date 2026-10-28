@@ -931,6 +931,8 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 
 bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 {
+    if(InventoryNextFieldKitEnabled()&&itm&&itm->m_pData){auto item=static_cast<PIItem>(itm->m_pData);
+        if(item->CurrPlace()==eItemPlaceCustom){const bool result=InventoryNextCustomUnequip(item->object_id());m_sqaRefresh=true;return result;}}
     if(SqaLootActive()&&itm->OwnerList()==m_pDeadBodyBagList)return SqaTakeLoot(static_cast<PIItem>(itm->m_pData));
 	PIItem iitem = (PIItem)itm->m_pData;
 
@@ -1209,9 +1211,18 @@ void CUIActorMenu::ActivatePropertiesBox()
 	CUICellItem* cell_item = CurrentItem();
 	m_UIPropertiesBox->RemoveAll();
 	bool b_show = false;
+    m_sqaEquipmentActions.clear();m_sqaEquipmentActionSource=0;
 
 	if (m_currMenuMode == mmInventory || m_currMenuMode == mmDeadBodySearch)
 	{
+        if(InventoryNextFieldKitEnabled()){
+            m_sqaEquipmentActions=InventoryNextEquipmentActions(item->object_id());
+            m_sqaEquipmentActionSource=InventoryNextIdentityLookup(item->object_id());
+            for(size_t index=0;index<m_sqaEquipmentActions.size();++index){
+                m_UIPropertiesBox->AddItem(m_sqaEquipmentActions[index].label.c_str(),reinterpret_cast<void*>(index),0x53513301);
+                b_show=true;
+            }
+        }
 		PropertiesBoxForSlots(item, b_show);
 		PropertiesBoxForWeapon(cell_item, item, b_show);
 		PropertiesBoxForAddon(item, b_show);
@@ -1737,6 +1748,16 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
 		return;
 	}
 	CWeapon* weapon = smart_cast<CWeapon*>(item);
+    if(m_UIPropertiesBox->GetClickedItem()->GetTAG()==0x53513301){
+        const auto index=reinterpret_cast<size_t>(m_UIPropertiesBox->GetClickedItem()->GetData());
+        if(index>=m_sqaEquipmentActions.size()||InventoryNextIdentityLookup(item->object_id())!=m_sqaEquipmentActionSource)return;
+        const auto action=m_sqaEquipmentActions[index];
+        if(InventoryNextIdentityLookup(action.live)!=action.identity){InventoryNextPickupStatus("Item changed. Reopen its menu.");return;}
+        if(action.open){auto target=smart_cast<CInventoryItem*>(Level().Objects.net_Find(action.live));if(target&&target->parent_id()==Actor()->ID())SqaOpenContainer(target);}
+        else if(action.detach)InventoryNextCustomUnequip(action.live);
+        else if(InventoryNextCustomEquip(action.live,action.host,action.key.c_str())&&action.key=="sqa3.rig")m_sqaRigView=true;
+        m_UIPropertiesBox->Hide();SetCurrentItem(nullptr);m_sqaRefresh=true;return;
+    }
 
 	switch (m_UIPropertiesBox->GetClickedItem()->GetTAG())
 	{

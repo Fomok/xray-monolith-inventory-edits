@@ -46,6 +46,7 @@
 #include "map_manager.h"
 #include "map_location.h"
 #include "script_engine.h"
+#include "../inventory_next/equipment_registry.h"
 
 namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
@@ -54,6 +55,16 @@ inventory_next::DragSession& native_drag(){static inventory_next::DragSession va
 constexpr u32 layout_chunk=0x33514c59;
 constexpr u32 world_storage_chunk=0x33515753;
 bool layout_current=false;
+bool equipment_dirty=false;
+inventory_next::EquipmentRegistry equipment_registry;
+bool equipment_registry_ready=false;
+bool rig_wear_enabled=false;
+float rig_wear_per_hit=0.0f,rig_wear_per_second=0.0f,rig_wear_spent=0.0f;
+u32 rig_wear_started=0;
+std::shared_ptr<const inventory_next::StorageCatalog> storage_catalog_cache;
+struct PendingCustomBinding {u64 item=0,host=0;u32 slot=0;};
+std::vector<PendingCustomBinding> pending_custom_bindings;
+bool restoring_custom_bindings=false;
 bool fieldkit_equipped_view=true;
 inventory_next::NativeStorageView storage_view;
 std::set<u64> collapsed_storage;
@@ -112,6 +123,7 @@ std::map<u64,u16> stash_markers;
 
 bool read_storage_catalog(inventory_next::StorageCatalog& output) {
     using namespace inventory_next;
+    if(storage_catalog_cache){output=*storage_catalog_cache;return true;}
     string_path path;FS.update_path(path,"$game_config$","sqa3_capacity.ltx");
     if(!FS.exist(path)){Msg("! SQA3 capacity config missing");return false;}
     CInifile config(path,TRUE,TRUE,FALSE);
@@ -150,12 +162,84 @@ bool read_storage_catalog(inventory_next::StorageCatalog& output) {
         if(!exterior("empty",definition.empty)||!exterior("half",definition.half)||!exterior("full",definition.full))return false;
         definition.family=config.r_string(section,"family");
         definition.growing=config.r_bool(section,"growing");definition.allow_container_items=config.r_bool(section,"allow_container_items");
+        if(config.line_exist(section,"exterior_independent"))definition.independent_exterior=config.r_bool(section,"exterior_independent");
         if(config.line_exist(section,"max_contents_grams"))definition.max_contents=config.r_s32(section,"max_contents_grams");
         if(config.line_exist(section,"stack_limit"))definition.stack_limit=config.r_u32(section,"stack_limit");
+        if(config.line_exist(section,"tear_thresholds")) {
+            std::istringstream thresholds(config.r_string(section,"tear_thresholds"));std::string value;unsigned previous=10001;
+            while(std::getline(thresholds,value,',')) {
+                const auto last=value.find_last_not_of(" \t");if(last==std::string::npos)return false;
+                value.resize(last+1);std::size_t consumed=0;const auto threshold=std::stoul(value,&consumed);
+                if(consumed!=value.size())return false;
+                if(threshold>=previous||threshold>10000||definition.tear_thresholds.size()>=64)return false;
+                definition.tear_thresholds.push_back(static_cast<unsigned>(threshold));previous=static_cast<unsigned>(threshold);
+            }
+            if(definition.tear_thresholds.empty()||definition.family!="rig")return false;
+        }
         if(definition.max_contents<0||definition.stack_limit>1000000||definition.family.empty())return false;
         if(!candidate.definitions.emplace(item,std::move(definition)).second)return false;
     }
-    output=std::move(candidate);return true;
+    storage_catalog_cache=std::make_shared<const StorageCatalog>(std::move(candidate));output=*storage_catalog_cache;return true;
+}
+bool read_equipment_registry() {
+    using namespace inventory_next;
+    if(equipment_registry_ready)return true;
+    string_path path;FS.update_path(path,"$game_config$","sqa3_equipment.ltx");
+    EquipmentRegistry candidate;
+    bool wear_enabled=false;float per_hit=0.0f,per_second=0.0f;
+    if(FS.exist(path)) {
+        CInifile config(path,TRUE,TRUE,FALSE);
+        if(!config.section_exist("slots"))return false;
+        for(u32 i=0;i<config.line_count("slots");++i) {
+            LPCSTR key=nullptr,section=nullptr;if(!config.r_line("slots",i,&key,&section)||!key||!section||!config.section_exist(section))return false;
+            for(const auto field:{"id","families","mounted","enabled","model_bit","minimum_condition"})if(!config.line_exist(section,field))return false;
+            EquipmentSlotDefinition slot;slot.key=key;slot.id=config.r_u32(section,"id");slot.families=config.r_string(section,"families");
+            slot.label=config.line_exist(section,"label")?config.r_string(section,"label"):"Equipment";
+            slot.mounted=config.r_bool(section,"mounted");slot.enabled=config.r_bool(section,"enabled");
+            slot.model_bit=config.r_u32(section,"model_bit");slot.minimum_condition=config.r_u32(section,"minimum_condition");
+            if(!candidate.add(std::move(slot)))return false;
+        }
+        if(config.section_exist("rig_wear")) {
+            wear_enabled=config.r_bool("rig_wear","enabled");
+            per_hit=config.r_float("rig_wear","per_hit");per_second=config.r_float("rig_wear","per_second");
+            if(!std::isfinite(per_hit)||!std::isfinite(per_second)||per_hit<0||per_hit>1||per_second<0||per_second>1)return false;
+        }
+    }
+    rig_wear_enabled=wear_enabled;rig_wear_per_hit=per_hit;rig_wear_per_second=per_second;rig_wear_spent=0;rig_wear_started=Device.dwTimeGlobal;
+    equipment_registry=std::move(candidate);equipment_registry_ready=true;return true;
+}
+void apply_custom_binding(inventory_next::Node& node,CInventoryItem* item) {
+    using namespace inventory_next;
+    const auto family=node.attributes.find("storage_family");
+    if(family!=node.attributes.end()) {
+        node.pouch=family->second=="pouch";
+        for(const auto& entry:equipment_registry.slots()) {
+            const auto& slot=entry.second;
+            if(!slot.mounted&&slot.enabled&&slot.accepts(family->second))node.wear_slots|=std::uint64_t{1}<<slot.model_bit;
+            if(slot.mounted&&family->second=="rig")node.mounts.push_back({slot.id,"custom_mount_"+std::to_string(slot.id),{1,1},~std::uint64_t{0},slot.minimum_condition,slot.enabled});
+        }
+    }
+    u64 host=0;u32 id=0;
+    if(!Actor()->inventory().CustomSlotFor(item,host,id))return;
+    const auto slot=equipment_registry.find(id);if(!slot)return;
+    node.attributes["native_custom_slot"]=std::to_string(id);node.attributes["native_custom_host"]=std::to_string(host);node.attributes["native_custom_key"]=slot->key;
+    node.parent=host;node.position={};
+    if(slot->mounted){node.location=Location::Mounted;node.mounted_slot=id;node.equipped_slots=0;}
+    else {node.location=Location::Equipment;node.wear_slots|=std::uint64_t{1}<<slot->model_bit;node.equipped_slots=std::uint64_t{1}<<slot->model_bit;}
+}
+void queue_custom_bindings() {
+    using namespace inventory_next;
+    pending_custom_bindings.clear();
+    for(const auto& entry:layout().model().nodes()) {
+        const auto& n=entry.second;
+        if(n.location==Location::Mounted&&n.mounted_slot>65535&&n.mounted_slot<0xffffffffULL)
+            pending_custom_bindings.push_back({n.id,n.parent,static_cast<u32>(n.mounted_slot)});
+        else if(n.location==Location::Equipment&&n.attributes.count("native_custom_slot")) {
+            const auto slot=std::stoull(n.attributes.at("native_custom_slot"));
+            if(slot<=65535||slot>=0xffffffffULL)throw std::runtime_error("invalid custom slot domain");
+            pending_custom_bindings.push_back({n.id,std::stoull(n.attributes.at("native_custom_host")),static_cast<u32>(slot)});
+        }
+    }
 }
 
 }
@@ -163,6 +247,126 @@ bool read_storage_catalog(inventory_next::StorageCatalog& output) {
 bool InventoryNextLogicalStorage() noexcept {
     return InventoryNextEnabled()&&strstr(Core.Params,"-sqa3-logical-storage")!=nullptr;
 }
+void InventoryNextCustomChanged() noexcept {layout_current=false;storage_views.clear();InventoryNextPickupStatus(nullptr);}
+void InventoryNextConditionChanged(u16 live) noexcept try {
+    if(!InventoryNextLogicalStorage()||!layout().initialized())return;
+    const auto id=InventoryNextIdentityLookup(live);const auto found=layout().model().nodes().find(id);
+    if(found!=layout().model().nodes().end()&&found->second.container){equipment_dirty=true;layout_current=false;}
+} catch (...) {equipment_dirty=true;}
+void InventoryNextEquipmentUpdate() noexcept {
+    // Actor update owns reconciliation. Render/tooltip paths remain pure reads;
+    // defer condition recovery while an ownership transaction is in flight.
+    if(equipment_dirty&&InventoryNextPickupCanSave()&&InventoryNextLayoutSync()) {
+        equipment_dirty=false;InventoryNextPickupStatus(nullptr);
+    }
+}
+void InventoryNextRigHit(float power,int hit_type) noexcept try {
+    if(!InventoryNextLogicalStorage()||!std::isfinite(power)||power<=0||!Actor()||!read_equipment_registry()||!rig_wear_enabled)return;
+    switch(hit_type) {
+    case ALife::eHitTypeWound:case ALife::eHitTypeFireWound:case ALife::eHitTypeWound_2:
+    case ALife::eHitTypeExplosion:case ALife::eHitTypeStrike:case ALife::eHitTypeBurn:break;
+    default:return;
+    }
+    if(u32(Device.dwTimeGlobal-rig_wear_started)>=1000){rig_wear_started=Device.dwTimeGlobal;rig_wear_spent=0;}
+    const float room=_max(0.0f,rig_wear_per_second-rig_wear_spent);if(room<=0)return;
+    const auto slot=equipment_registry.find("sqa3.rig");
+    auto rig=slot?Actor()->inventory().ItemFromCustomSlot(1,slot->id):nullptr;if(!rig)return;
+    const float loss=_min(rig->GetCondition(),_min(power*rig_wear_per_hit,room));
+    if(loss>0){rig->SetCondition(_max(0.0f,rig->GetCondition()-loss));rig_wear_spent+=loss;}
+} catch (...) {Msg("! SQA3 rig wear update failed");}
+bool InventoryNextCanCustomEquip(u64 host,u32 slot_id,u16 live,bool restoring) noexcept try {
+    using namespace inventory_next;
+    if(!InventoryNextLogicalStorage()||!Actor()||!g_pGameLevel||!read_equipment_registry())return false;
+    const auto slot=equipment_registry.find(slot_id);
+    if(!slot||(!restoring&&!slot->enabled)||(restoring&&!restoring_custom_bindings))return false;
+    const auto slot_definition=*slot;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    if(!item||item->parent_id()!=Actor()->ID())return false;
+    StorageCatalog catalog;if(!read_storage_catalog(catalog))return false;
+    const auto definition=catalog.definitions.find(item->m_section_id.c_str());
+    if(definition==catalog.definitions.end()||!slot_definition.accepts(definition->second.family))return false;
+    if(slot_definition.mounted) {
+        if(host<100)return false;
+        auto owner=smart_cast<CInventoryItem*>(Level().Objects.net_Find(InventoryNextIdentityServer(host)));
+        if(!owner||owner==item||owner->parent_id()!=Actor()->ID())return false;
+        const auto owner_definition=catalog.definitions.find(owner->m_section_id.c_str());
+        if(owner_definition==catalog.definitions.end()||owner_definition->second.family!="rig")return false;
+        if(!restoring&&owner->GetCondition()*10000.0f<float(slot_definition.minimum_condition))return false;
+    } else if(host!=1)return false;
+    if(auto occupied=Actor()->inventory().ItemFromCustomSlot(host,slot_id))if(occupied!=item)return false;
+    if(restoring)return true;
+    if(!InventoryNextPickupCanSave()||!InventoryNextLayoutSync())return false;
+    const auto id=InventoryNextIdentityLookup(live);if(!layout().model().nodes().count(id))return false;
+    Command command;command.item=id;command.destination=host;command.session=layout().model().session();command.revision=layout().model().revision();
+    if(slot_definition.mounted){command.operation=Operation::Mount;command.mount_slot=slot_id;}
+    else {command.operation=Operation::Equip;command.slots=std::uint64_t{1}<<slot_definition.model_bit;}
+    return layout().model().preview(command).result.ok;
+} catch (...) {return false;}
+bool InventoryNextCustomEquip(u16 live,u64 host,const char* key) noexcept try {
+    if(!key||!read_equipment_registry()||!Actor())return false;
+    const auto slot=equipment_registry.find(std::string(key));
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    const bool result=slot&&item&&Actor()->inventory().CustomSlot(host,slot->id,item);
+    if(!result)InventoryNextPickupStatus("Equipment slot unavailable, occupied, damaged, or incompatible.");
+    else if(!InventoryNextLayoutSync())return false;
+    return result;
+} catch (...) {return false;}
+u16 InventoryNextCustomItem(u64 host,const char* key) noexcept try {
+    if(!Actor()||!key||!read_equipment_registry())return u16(-1);
+    const auto slot=equipment_registry.find(std::string(key));
+    auto item=slot?Actor()->inventory().ItemFromCustomSlot(host,slot->id):nullptr;
+    return item?item->object_id():u16(-1);
+} catch (...) {return u16(-1);}
+std::vector<InventoryNextEquipmentAction> InventoryNextEquipmentActions(u16 live) noexcept try {
+    std::vector<InventoryNextEquipmentAction> actions;
+    if(!InventoryNextLogicalStorage()||!Actor()||!InventoryNextLayoutSync())return actions;
+    const auto id=InventoryNextIdentityLookup(live);const auto& nodes=layout().model().nodes();
+    const auto found=nodes.find(id);if(found==nodes.end())return actions;
+    const auto family=found->second.attributes.find("storage_family");if(family==found->second.attributes.end())return actions;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));if(!item||item->parent_id()!=Actor()->ID())return actions;
+    u64 current_host=0;u32 current_slot=0;
+    if(Actor()->inventory().CustomSlotFor(item,current_host,current_slot))actions.push_back({{},"Unequip / detach",current_host,id,live,true,false});
+    else for(const auto& entry:equipment_registry.slots()) {
+        const auto& slot=entry.second;if(!slot.enabled||!slot.accepts(family->second))continue;
+        if(!slot.mounted)actions.push_back({slot.key,"Equip "+slot.label,1,id,live,false,false});
+        else {
+            const auto rig=InventoryNextCustomItem(1,"sqa3.rig");
+            if(rig!=u16(-1))actions.push_back({slot.key,"Fit "+slot.label,InventoryNextIdentityLookup(rig),id,live,false,false});
+        }
+    }
+    if(family->second=="rig")for(const auto& entry:equipment_registry.slots())if(entry.second.mounted){
+        const auto pouch=Actor()->inventory().ItemFromCustomSlot(id,entry.first);if(!pouch)continue;
+        const auto pouch_id=InventoryNextIdentityLookup(pouch->object_id());
+        actions.push_back({entry.second.key,"Open "+entry.second.label,id,pouch_id,pouch->object_id(),false,true});
+        actions.push_back({entry.second.key,"Detach "+entry.second.label,id,pouch_id,pouch->object_id(),true,false});
+    }
+    return actions;
+} catch (...) {return {};}
+bool InventoryNextCustomUnequip(u16 live,int x,int y,u64 view) noexcept try {
+    using namespace inventory_next;
+    if(!InventoryNextLogicalStorage()||!InventoryNextPickupCanSave()||!InventoryNextLayoutSync())return false;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));u64 host=0;u32 slot=0;
+    if(!item||!Actor()->inventory().CustomSlotFor(item,host,slot))return false;
+    const auto id=InventoryNextIdentityLookup(live);const auto& model=layout().model();
+    if(!model.nodes().count(id))return false;
+    if(model.nodes().at(id).location==Location::Mounted)for(const auto& node:model.nodes())if(node.second.parent==id){InventoryNextPickupStatus("Empty this pouch before detaching it.");return false;}
+    Position position;
+    if(x>=0&&y>=0) {
+        if(!InventoryNextNativeDragCurrent(live))return false;
+        Id destination=0;const auto& selected=view?make_storage_view(view):storage_view;
+        if(!selected.destination(x,y,destination,position)||destination!=1){native_drag().cancel();return false;}
+        const auto proposal=native_drag().release(model,destination,position.x,position.y,false,{});
+        if(!proposal.result){InventoryNextPickupStatus("This item does not fit in that pocket position.");return false;}
+        position=proposal.moves.front().position;
+    } else {
+        const auto placement=find_placement(model,id,{1});
+        if(!placement.result){InventoryNextPickupStatus("No room to put this item in your pockets.");return false;}
+        position=placement.moves.front().position;
+    }
+    if(!Actor()->inventory().Ruck(item,true)||!InventoryNextLayoutSync())return false;
+    const auto result=layout().move({id,1,position,layout().model().revision(),layout().model().session()});
+    InventoryNextCustomChanged();return result.ok;
+} catch (...) {return false;}
 bool InventoryNextLayoutSync() noexcept try {
     layout_current=false;
     if(!InventoryNextEnabled()||!g_pGameLevel||!Actor())return true;
@@ -170,6 +374,21 @@ bool InventoryNextLayoutSync() noexcept try {
     const bool logical=InventoryNextLogicalStorage();
     StorageCatalog catalog;
     if(logical&&!read_storage_catalog(catalog))return false;
+    if(logical&&!read_equipment_registry())return false;
+    if(logical&&!pending_custom_bindings.empty()) {
+        restoring_custom_bindings=true;
+        for(unsigned pass=0;pass<2;++pass)for(auto it=pending_custom_bindings.begin();it!=pending_custom_bindings.end();) {
+            const auto slot=equipment_registry.find(it->slot);
+            if(!slot){Msg("! SQA3 retired custom slot=%u; item retained in recovery",it->slot);it=pending_custom_bindings.erase(it);continue;}
+            if(slot->mounted!=(pass==1)){++it;continue;}
+            auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(InventoryNextIdentityServer(it->item)));
+            if(!item){++it;continue;}
+            if(item->parent_id()==Actor()->ID()&&!Actor()->inventory().CustomSlot(it->host,it->slot,item,true)){restoring_custom_bindings=false;return false;}
+            it=pending_custom_bindings.erase(it);
+        }
+        restoring_custom_bindings=false;
+        if(!pending_custom_bindings.empty())return false;
+    }
     std::vector<Node> nodes;
         for (auto* item : Actor()->inventory().m_all) {
             if (!item || nodes.size()>=4094) { Msg("! SQA3 probe: invalid/count-limited inventory"); return false; }
@@ -202,6 +421,7 @@ bool InventoryNextLayoutSync() noexcept try {
                 const auto& shape=catalog.resolve(section,kind);
                 n.container=true;n.grid=shape.grid;n.cells=shape.cells;
             }
+            if(logical)apply_custom_binding(n,item);
             nodes.push_back(n);
         }
         // Server-acknowledged ownership already reserves storage. Keep the
@@ -217,7 +437,7 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model(),view_options()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {equipment_registry_ready=false;storage_catalog_cache.reset();pending_custom_bindings.clear();restoring_custom_bindings=false;collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
@@ -228,6 +448,8 @@ void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     }
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
+    equipment_registry_ready=false;storage_catalog_cache.reset();
+    pending_custom_bindings.clear();restoring_custom_bindings=false;
     collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};auto chunk=stream.open_chunk(layout_chunk);
     if(!chunk) {
         auto orphan=stream.open_chunk(world_storage_chunk);const bool has_world=orphan!=nullptr;if(orphan)orphan->close();
@@ -236,6 +458,7 @@ void InventoryNextLayoutLoad(IReader& stream) noexcept try {
     CHECK_OR_EXIT(InventoryNextEnabled()&&chunk->length()<=2*1024*1024,"Invalid SQA3 layout mode/size");
     const std::string bytes(reinterpret_cast<const char*>(chunk->pointer()),chunk->length());chunk->close();
     CHECK_OR_EXIT(layout().restore(bytes).ok,"Invalid SQA3 layout data");
+    queue_custom_bindings();
     auto world_chunk=stream.open_chunk(world_storage_chunk);
     if(world_chunk) {
         CHECK_OR_EXIT(world_chunk->length()<=2*1024*1024,"Invalid SQA3 world storage size");
@@ -330,6 +553,11 @@ bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view) 
     if(found->second.location!=inventory_next::Location::Grid)return false;
     x=found->second.position.x;y=found->second.position.y;rotated=found->second.position.rotated;return true;
 } catch (...) {return false;}
+bool InventoryNextStorageExtent(u64 view,int& width,int& height) noexcept try {
+    if(!layout_current||!InventoryNextLogicalStorage())return false;
+    const auto& selected=view?make_storage_view(view):storage_view;
+    width=selected.size.w;height=selected.size.h;return true;
+} catch (...) {return false;}
 int InventoryNextStorageCell(int x,int y,u64 view) noexcept try {
     if(!layout_current||!InventoryNextLogicalStorage())return 0;
     inventory_next::Id owner=0;inventory_next::Position local;
@@ -343,6 +571,7 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     const auto& selected=view?make_storage_view(view):storage_view;
     list->sqaViewOwner=view;
     list->SetStartCellsCapacity(Ivector2().set(selected.size.w,selected.size.h));
+    if(InventoryNextFieldKitEnabled())list->CenterStorageContent();
     list->SetAutoGrow(false);list->SetGrouping(false);
     for(const auto& band:selected.bands) {
         std::string label="Pockets";
@@ -889,11 +1118,13 @@ bool world_node(u16 live,u16 parent,inventory_next::Node& node) {
         const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
         const auto& shape=catalog.resolve(section,kind);node.container=true;node.grid=shape.grid;node.cells=shape.cells;
     }
+    apply_custom_binding(node,item);
     return true;
 }
 void world_refused(const char* message) {
     const u16 proxy=world_transfer&&world_transfer->created_ground_proxy?world_transfer->destination:u16(0xffff);
     world_transfer.reset();
+    queue_custom_bindings();
     if(!cleanup_ground_proxy(proxy))pickup_fault=true;
     InventoryNextPickupStatus(message);
 }
@@ -1028,6 +1259,7 @@ void InventoryNextWorldClientReady() noexcept try {
     }
     world_transfer.reset();
     if(!cleanup_ground_proxy(proxy)){pickup_fault=true;return;}
+    queue_custom_bindings();
     if(!InventoryNextLayoutSync()||!InventoryNextWorldCanSave()){pickup_fault=true;return;}
     InventoryNextPickupStatus("");
     Msg("* SQA3 loaded transfer client completed count=%u save_ready=%d",static_cast<unsigned>(count),InventoryNextPickupCanSave());
@@ -1109,7 +1341,9 @@ bool InventoryNextFieldKitEnabled() noexcept {
 u64 InventoryNextContainer(u16 live) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!layout_current)return 0;
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
-    return found!=layout().model().nodes().end()&&found->second.container&&found->second.location!=inventory_next::Location::Equipment?id:0;
+    if(found==layout().model().nodes().end()||!found->second.container)return 0;
+    const auto family=found->second.attributes.find("storage_family");
+    return found->second.location!=inventory_next::Location::Equipment||(family!=found->second.attributes.end()&&family->second=="rig")?id:0;
 } catch (...) {return 0;}
 u64 InventoryNextViewOwner(u16 live) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!layout_current)return 0;

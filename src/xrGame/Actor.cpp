@@ -692,6 +692,7 @@ void CActor::Hit(SHit* pHDS)
 
 				HDS.ApplyScriptHit(&tLuaHit);
 				HDS.power = HitArtefactsOnBelt(HDS.damage(), HDS.hit_type);
+                if(this==Actor())InventoryNextRigHit(HDS.damage(),int(HDS.hit_type));
 				HDS.add_wound = true;
 
 				/* AVO: send script callback*/
@@ -1149,7 +1150,7 @@ void CActor::UpdateCL()
 	}
 
 	UpdateInventoryOwner(Device.dwTimeDelta);
-    if(this==Actor())InventoryNextGroundUpdate();
+    if(this==Actor()){InventoryNextGroundUpdate();InventoryNextEquipmentUpdate();}
 
 	if (m_feel_touch_characters > 0)
 	{

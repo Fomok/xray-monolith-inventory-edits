@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 namespace inventory_next {
 // SQA authored sizes are rows x columns. Count-only legacy values use the
@@ -63,9 +64,10 @@ struct StorageDefinition {
     ActorStorage interior;
     Size empty,half,full;
     std::string family;
-    bool growing=false,allow_container_items=false;
+    bool growing=false,allow_container_items=false,independent_exterior=false;
     Mass max_contents=0;
     std::uint32_t stack_limit=0;
+    std::vector<unsigned> tear_thresholds;
 };
 struct StorageCatalog {
     ActorStorage pockets{{4,2},{}};
@@ -76,10 +78,26 @@ struct StorageCatalog {
         const auto found=definitions.find(section);if(found==definitions.end())return false;
         const auto& definition=found->second;
         item.container=true;item.grid=definition.interior.grid;item.cells=definition.interior.cells;
+        item.attributes.erase("storage_torn_closed");
+        if(!definition.tear_thresholds.empty()&&!item.cells.empty()) {
+            unsigned torn=0;for(auto threshold:definition.tear_thresholds)if(item.condition<=threshold)++torn;
+            std::map<unsigned,unsigned> areas;
+            for(auto region:item.cells)if(region)++areas[region];
+            std::vector<std::pair<unsigned,unsigned>> order;
+            for(auto entry:areas)order.push_back({entry.second,entry.first});
+            // Released rig rule: largest pockets first; later authored pocket
+            // wins ties. Pouch grants are separate nodes and never torn here.
+            std::sort(order.begin(),order.end(),std::greater<std::pair<unsigned,unsigned>>());
+            for(unsigned i=0;i<torn&&i<order.size();++i)
+                for(auto& region:item.cells)if(region==order[i].second)region=0;
+            if(std::none_of(item.cells.begin(),item.cells.end(),[](unsigned region){return region!=0;}))
+                item.attributes["storage_torn_closed"]="1";
+        }
         item.empty=definition.empty;item.half=definition.half;item.full=definition.full;
         item.soft=definition.growing;item.max_contents=definition.max_contents;item.max_stack_quantity=definition.stack_limit;
         item.attributes["storage_family"]=definition.family;
         item.attributes["storage_allow_container_items"]=definition.allow_container_items?"1":"0";
+        if(definition.independent_exterior)item.attributes["storage_exterior_independent"]="1";
         return true;
     }
     const ActorStorage& resolve(const std::string& worn_section,const std::string& kind) const {

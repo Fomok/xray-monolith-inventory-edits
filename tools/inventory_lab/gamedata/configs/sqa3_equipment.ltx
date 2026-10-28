@@ -1,0 +1,50 @@
+; Stable native u32 equipment IDs. Entire vanilla u16 domain is reserved.
+; model_bit is an internal core projection, never a native slot number.
+[rig_wear]
+; Released Squared Away rig wear; one shared second budget, actual loss charged.
+enabled = true
+per_hit = 0.005
+per_second = 0.01
+
+[slots]
+sqa3.rig = sqa3_rig
+sqa3.mount.p1 = sqa3_mount_p1
+sqa3.mount.p2 = sqa3_mount_p2
+sqa3.hip_pouch = sqa3_hip_pouch
+
+[sqa3_rig]
+label = rig
+id = 65536
+families = rig
+mounted = false
+enabled = true
+model_bit = 19
+minimum_condition = 0
+
+[sqa3_mount_p1]
+label = left pouch
+id = 65537
+families = pouch
+mounted = true
+enabled = true
+model_bit = 0
+minimum_condition = 1000
+
+[sqa3_mount_p2]
+label = right pouch
+id = 65538
+families = pouch
+mounted = true
+enabled = true
+model_bit = 0
+minimum_condition = 5000
+
+; Reserved working extension example. Enable only with an authored item policy.
+[sqa3_hip_pouch]
+label = hip pouch
+id = 65539
+families = backpack|pouch
+mounted = false
+enabled = false
+model_bit = 20
+minimum_condition = 0
