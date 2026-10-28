@@ -791,6 +791,18 @@ float InventoryNextStorageInset(int y,u64 view) noexcept try {
     if(!layout_current||!InventoryNextFieldKitEnabled())return 0.0f;
     const auto& selected=view?make_storage_view(view):storage_view;return selected.row_inset(y);
 } catch (...) {return 0.0f;}
+bool InventoryNextStoragePixelOffset(int x,int y,u64 view,int pitch,float& dx,float& dy) noexcept try {
+    dx=dy=0.0f;
+    if(!layout_current||!InventoryNextFieldKitEnabled())return false;
+    const auto& selected=view?make_storage_view(view):storage_view;
+    return selected.pixel_offset(x,y,pitch,dx,dy);
+} catch (...) {dx=dy=0.0f;return false;}
+bool InventoryNextStoragePixelHit(float px,float py,u64 view,int body,int spacing,int& x,int& y) noexcept try {
+    x=y=-1;
+    if(!layout_current||!InventoryNextFieldKitEnabled())return false;
+    const auto& selected=view?make_storage_view(view):storage_view;
+    return selected.hit_pixel(px,py,body,spacing,x,y);
+} catch (...) {x=y=-1;return false;}
 unsigned InventoryNextStorageRegion(int x,int y,u64 view) noexcept try {
     if(!layout_current||!InventoryNextFieldKitEnabled())return 0;
     const auto& selected=view?make_storage_view(view):storage_view;
@@ -802,11 +814,12 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     const auto record=world_storage().records().find(view);
     const auto& model=record==world_storage().records().end()?layout().model():record->second.tree;
     const int spacing=2;
-    const int body=inventory_next::fitted_cell_body(list->SqaGridContentWidth(),selected.size.w,spacing,list->CellSize().x);
+    const int body=inventory_next::fitted_cell_body(list->SqaGridContentWidth()-selected.extra_x,selected.size.w,spacing,list->CellSize().x);
     if(body<1)return;
     if(list->CellSize().x!=body||list->CellSize().y!=body)list->SetCellSize(Ivector2().set(body,body));
     if(list->CellsSpacing().x!=spacing||list->CellsSpacing().y!=spacing)list->SetCellsSpacing(Ivector2().set(spacing,spacing));
     list->sqaViewOwner=view;
+    list->sqaProjectionExtraX=selected.extra_x;list->sqaProjectionExtraY=selected.extra_y;
     list->SetStartCellsCapacity(Ivector2().set(selected.size.w,selected.size.h));
     if(InventoryNextFieldKitEnabled())list->CenterStorageContent();
     list->SetAutoGrow(false);list->SetGrouping(false);

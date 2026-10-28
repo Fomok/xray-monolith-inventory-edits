@@ -76,6 +76,7 @@ public:
 	static CUIDragItem* m_drag_item;
     void AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner=0,s64 grams=0,bool collapsed=false);
     u64 sqaViewOwner=0;
+    int sqaProjectionExtraX=0,sqaProjectionExtraY=0;
     bool HasStorageHeaders() const {return !m_storageHeaders.empty();}
     void CenterStorageContent();
     int SqaGridContentWidth();

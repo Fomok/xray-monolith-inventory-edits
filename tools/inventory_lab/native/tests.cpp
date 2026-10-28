@@ -1100,15 +1100,17 @@ int main(int argc,char** argv) {
             yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));yes(view.build(a.model()));
             check(view.position(a.model().nodes().at(101),p)&&view.destination(p.x,p.y,owner,local)&&owner==100&&local.y==3,"recovered bag did not restore local destination");
         });
-        test("display-only compartment gutter refuses drops and preserves local cells",[]{
+        test("authored compartments retain normal cell seams and exact local cells",[]{
             auto pack=item(100,1,800);pack.container=true;pack.grid={2,2};pack.cells={1,2,1,2};
             pack.empty=pack.half=pack.full={2,2};
             Model model;yes(model.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),pack}));
             StorageViewOptions options;options.owner=100;NativeStorageView view;yes(view.build(model,options));
-            check(view.bands.size()==1&&view.bands[0].grid.w==3,"gutter did not expand display-only extent");
+            check(view.bands.size()==1&&view.bands[0].grid.w==2&&view.extra_x==0,
+                "authored compartments gained a whole display cell");
             Id owner=0;Position local;
-            check(!view.destination(1,1,owner,local)&&!view.region(1,1),"gutter accepted a drop");
-            check(view.destination(2,1,owner,local)&&owner==100&&local.x==1&&local.y==0,"projected cell lost logical owner coordinate");
+            check(!view.destination(1,0,owner,local)&&!view.region(1,0),"header accepted a drop");
+            check(view.destination(1,1,owner,local)&&owner==100&&local.x==1&&local.y==0,
+                "adjacent authored cell lost logical owner coordinate");
             check(model.nodes().at(100).grid.w==2&&model.nodes().at(100).grid.h==2,"projection changed native capacity");
         });
         test("detached world box view maps an exact child cell without actor ownership",[]{
@@ -1133,6 +1135,8 @@ int main(int argc,char** argv) {
                 check(window>=1&&window<=32&&window*columns+2*(columns-1)<=902,"opened box window extent clipped");
             }
             check(fitted_cell_body(282,0)==0&&fitted_cell_body(0,8)==0,"invalid view metrics accepted");
+            const int rig=fitted_cell_body(282-4,8,2,35);
+            check(rig*8+2*7+4<=282,"side-by-side rig projection clips the interactive width");
         });
         test("actor storage pairs move directly without pocket staging and refuse occupied cells",[]{
             auto pack=bag(100,1,800,{0,0,false});pack.attributes["storage_family"]="backpack";
@@ -1463,21 +1467,68 @@ int main(int argc,char** argv) {
             pouch.attributes={{"native_section","test_pouch"},{"native_place","4"},{"native_custom_slot","65537"},{"native_custom_host","100"},{"storage_allow_container_items","0"}};
             auto med=item(102,1,500);med.attributes["native_section"]="medkit";
             ActorStorage pockets{{4,2},{},true};ActorLayout layout;yes(layout.reconcile({rig,pouch,med},pockets));
+            check(layout.model().footprint(100).w==2&&layout.model().footprint(100).h==3,
+                "carried rig exterior fell below two wide by three tall");
             yes(layout.move({102,101,{2,0,false},layout.model().revision(),layout.model().session()}));
             yes(save_atomic(layout.model(),std::string(argv[1])+".custom"));
             med.condition=8432;yes(layout.reconcile({rig,pouch,med},pockets));
             check(layout.model().nodes().at(102).parent==101&&layout.model().nodes().at(101).location==Location::Mounted,"native rebuild detached pouch contents");
             StorageViewOptions options;options.owner=100;options.center=true;NativeStorageView view;yes(view.build(layout.model(),options));
-            check(view.bands.size()==2&&view.size.w==5&&view.bands[0].column==1&&view.bands[1].owner==101,"effective rig/pouch layout omitted or displaced a band");
+            check(view.bands.size()==2&&view.size.w==8&&view.extra_x==4&&view.bands[0].column==0&&
+                view.bands[1].column==3&&view.bands[1].row==view.bands[0].row&&view.bands[1].owner==101,
+                "rig and grants were not placed side by side");
             check(view.bands[0].header&&!view.bands[1].header,"mounted pouch gained a separate section header");
-            check(view.row_inset(view.bands[0].row)==0.0f&&view.row_inset(view.bands[1].row)==0.0f,"matching parity added an inset");
+            float dx=0.0f,dy=0.0f;
+            check(view.pixel_offset(0,view.bands[0].row,37,dx,dy)&&dx==0.0f&&dy==0.0f,
+                "main rig origin moved unexpectedly");
+            check(view.pixel_offset(3,view.bands[1].row,37,dx,dy)&&dx==4.0f&&dy==0.0f,
+                "right grant block lost the six-unit separation");
+            int hit_x=-1,hit_y=-1;const int top=view.bands[0].row*37;
+            check(view.hit_pixel(108.0f,float(top+2),35,2,hit_x,hit_y)&&hit_x==2,
+                "rig last cell was not hittable");
+            check(!view.hit_pixel(111.0f,float(top+2),35,2,hit_x,hit_y),
+                "six-unit block separator accepted a drop");
+            check(view.hit_pixel(115.0f,float(top+2),35,2,hit_x,hit_y)&&hit_x==3,
+                "first grant cell was not hittable at its displayed origin");
             rig.grid={4,3};rig.attributes["storage_exterior_independent"]="1";yes(layout.reconcile({rig,pouch,med},pockets));yes(view.build(layout.model(),options));
-            check(view.row_inset(view.bands[0].row)==0.5f&&view.row_inset(view.bands[1].row)==0.0f,"odd/even bands lost exact half-cell centering");
+            check(view.size.w==9&&view.bands[1].column==4&&view.bands[1].row==view.bands[0].row,
+                "rig width change did not move grant block beside it");
             Id centered_owner=0;Position centered_local;
             check(view.destination(view.bands[0].column,view.bands[0].row,centered_owner,centered_local)&&centered_owner==100&&centered_local.x==0,"pixel inset changed logical owner coordinates");
             rig.condition=500;yes(layout.reconcile({rig,pouch,med},pockets));
             check(layout.model().nodes().at(101).location==Location::Mounted&&layout.model().nodes().at(102).location==Location::Overflow,"condition loss lost binding or failed recovery");
             check(layout.model().carried_mass()==1600&&layout.model().nodes().at(102).condition==8432,"condition recovery changed item state or mass");
+        });
+        test("two mounted grants share a top-aligned right block with three-unit band seam",[]{
+            Node rig=item(100,1,900);rig.container=true;rig.grid={3,3};rig.empty=rig.half=rig.full={2,3};
+            rig.location=Location::Equipment;rig.wear_slots=rig.equipped_slots=std::uint64_t{1}<<19;
+            rig.mounts.push_back({65537,"p1",{1,1},1,1000,true});
+            rig.mounts.push_back({65538,"p2",{1,1},1,1000,true});
+            rig.attributes={{"native_section","test_rig"},{"storage_family","rig"},{"storage_allow_container_items","0"}};
+            Node first=item(101,100,200);first.pouch=first.container=true;first.grid={2,2};
+            first.location=Location::Mounted;first.mounted_slot=65537;
+            first.attributes={{"native_section","test_pouch_1"},{"storage_family","pouch"}};
+            Node second=item(102,100,100);second.pouch=second.container=true;second.grid={1,2};
+            second.location=Location::Mounted;second.mounted_slot=65538;
+            second.attributes={{"native_section","test_pouch_2"},{"storage_family","pouch"}};
+            ActorLayout layout;yes(layout.reconcile({rig,first,second},{{4,2},{},true}));
+            StorageViewOptions options;options.owner=100;options.center=true;
+            NativeStorageView view;yes(view.build(layout.model(),options));
+            check(view.bands.size()==3&&view.size.w==5&&view.extra_x==4&&view.extra_y==1,
+                "grants were not grouped beside the rig");
+            check(view.bands[1].column==3&&view.bands[2].column==4&&
+                view.bands[1].row==view.bands[0].row&&view.bands[2].row==view.bands[1].row+2,
+                "grants lost stable order, right alignment or top alignment");
+            float dx=0.0f,dy=0.0f;const int lower=view.bands[2].row;
+            check(view.pixel_offset(4,lower,37,dx,dy)&&dx==4.0f&&dy==1.0f,
+                "second grant did not use the three-unit band seam");
+            int x=-1,y=-1;
+            check(!view.hit_pixel(4.0f*37.0f+5.0f,float(lower*37-1),35,2,x,y),
+                "grant band seam accepted a drop");
+            check(view.hit_pixel(4.0f*37.0f+5.0f,float(lower*37+1),35,2,x,y)&&x==4&&y==lower,
+                "lower grant hit test missed displayed cell");
+            Id owner=0;Position local;check(view.destination(x,y,owner,local)&&owner==102&&local.x==0&&local.y==0,
+                "lower grant lost its native owner");
         });
         test("quick access distinguishes worn rig and active pouch from possession and closed storage",[]{
             auto actor=root(1,Kind::ActorRoot);actor.allowed_slots=~std::uint64_t{0};actor.equipment_accepts=~std::uint64_t{0};actor.equipment_capacity=64;

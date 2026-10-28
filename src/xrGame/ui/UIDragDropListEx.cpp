@@ -318,6 +318,7 @@ void CUIDragDropListEx::ClearAll(bool bDestroy)
 {
     for(auto& header:m_storageHeaders) DetachChild(header.second); // auto-delete
     m_storageHeaders.clear();m_storageHeaderOwners.clear();
+    sqaProjectionExtraX=sqaProjectionExtraY=0;
 	DestroyDragItem();
 	m_container->ClearAll(bDestroy);
 	m_selected_item = NULL;
@@ -342,7 +343,7 @@ void CUIDragDropListEx::Compact()
 void CUIDragDropListEx::CenterStorageContent()
 {
     const float contentWidth=_max(1.0f,GetWndSize().x-m_vScrollBar->GetWidth()-6.0f);
-    const float gridWidth=float(CellsCapacity().x*CellSize().x+_max(0,CellsCapacity().x-1)*CellsSpacing().x);
+    const float gridWidth=float(CellsCapacity().x*CellSize().x+_max(0,CellsCapacity().x-1)*CellsSpacing().x+sqaProjectionExtraX);
     m_sqaStorageInset=_max(0.0f,(contentWidth-gridWidth)*0.5f);
     m_container->SetWndPos(Fvector2().set(m_sqaStorageInset,m_container->GetWndPos().y));
 }
@@ -720,11 +721,18 @@ void CUICellContainer::PlaceItemAtPos(CUICellItem* itm, Ivector2& cell_pos)
 			C.SetItem(itm, (x == 0 && y == 0));
 		}
 	}
-	itm->SetWndSize(Fvector2().set((m_cellSize.x * cs.x), (m_cellSize.y * cs.y)));
-	if (!m_pParentDragDropList->GetVirtualCells())
-        itm->SetWndPos(Fvector2().set(float((m_cellSpacing.x+m_cellSize.x)*cell_pos.x)+
-            (m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageInset(cell_pos.y,m_pParentDragDropList->sqaViewOwner)*float(m_cellSpacing.x+m_cellSize.x):0.0f),
-            float((m_cellSpacing.y+m_cellSize.y)*cell_pos.y)));
+	if(InventoryNextFieldKitEnabled()&&m_pParentDragDropList->HasStorageHeaders())
+        itm->SetWndSize(Fvector2().set(float(m_cellSize.x*cs.x+m_cellSpacing.x*(cs.x-1)),
+            float(m_cellSize.y*cs.y+m_cellSpacing.y*(cs.y-1))));
+    else itm->SetWndSize(Fvector2().set((m_cellSize.x * cs.x), (m_cellSize.y * cs.y)));
+	if (!m_pParentDragDropList->GetVirtualCells()){
+        float dx=0.0f,dy=0.0f;
+        if(m_pParentDragDropList->HasStorageHeaders())
+            InventoryNextStoragePixelOffset(cell_pos.x,cell_pos.y,m_pParentDragDropList->sqaViewOwner,
+                m_cellSpacing.x+m_cellSize.x,dx,dy);
+        itm->SetWndPos(Fvector2().set(float((m_cellSpacing.x+m_cellSize.x)*cell_pos.x)+dx,
+            float((m_cellSpacing.y+m_cellSize.y)*cell_pos.y)+dy));
+    }
 	else
 	{
 		Ivector2 alignment_vec = m_pParentDragDropList->GetVirtualCellsAlignment();
@@ -933,6 +941,10 @@ void CUICellContainer::ReinitSize()
 	sz.add(CellsSpacing(), CellSize());
 	sz.mul(CellsCapacity());
 	sz.sub(CellsSpacing());
+	if(InventoryNextFieldKitEnabled()){
+        sz.x+=m_pParentDragDropList->sqaProjectionExtraX;
+        sz.y+=m_pParentDragDropList->sqaProjectionExtraY;
+    }
 
 	SetWndSize(Fvector2().set(sz.x, sz.y));
 	m_pParentDragDropList->ReinitScroll();
@@ -997,6 +1009,13 @@ Ivector2 CUICellContainer::PickCell(const Fvector2& abs_pos)
 	    if(!ValidCell(res))res.set(-1,-1);
 	    return res;
 	}
+	if(m_pParentDragDropList->HasStorageHeaders()){
+        Frect clip;m_pParentDragDropList->GetClientArea(clip);
+        if(!clip.in(abs_pos)){res.set(-1,-1);return res;}
+        if(InventoryNextStoragePixelHit(ap.x,ap.y,m_pParentDragDropList->sqaViewOwner,
+            m_cellSize.x,m_cellSpacing.x,res.x,res.y))return res;
+        res.set(-1,-1);return res;
+    }
 	const float pitch_y=float(m_cellSize.y+m_cellSpacing.y);
 	const float pitch_x=float(m_cellSize.x+m_cellSpacing.x);
 	res.y = iFloor(ap.y/pitch_y);
@@ -1023,6 +1042,8 @@ void CUICellContainer::Draw()
 
 	Irect tgt_cells;
 	tgt_cells.lt = TopVisibleCell();
+    if(InventoryNextFieldKitEnabled()&&m_pParentDragDropList->HasStorageHeaders())
+        tgt_cells.lt.y=_max(0,tgt_cells.lt.y-1);
 	tgt_cells.x2 = iFloor((float(clientArea.width()) + float(cell_sz.x) - EPS) / float(cell_sz.x)) + tgt_cells.lt.x;
 	tgt_cells.y2 = iFloor((float(clientArea.height()) + float(cell_sz.y) - EPS) / float(cell_sz.y)) + tgt_cells.lt.y;
 
@@ -1084,11 +1105,16 @@ void CUICellContainer::Draw()
                 UIRender->PushPoint(iFloor(left+point.x*(right-left))-0.5f,iFloor(top+point.y*(bottom-top))-0.5f,0,color,u/gridTextureSize.x,v/gridTextureSize.y);
             }
         };
-        for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
+		for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
             const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y,storage=storageAt(cx,cy);
             if(!storage)continue;
-            const float inset=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageInset(cy,m_pParentDragDropList->sqaViewOwner):0.0f;
-            const float left=drawLT.x+(f_len.x+sp_len.x)*(float(x)+inset),top=drawLT.y+(f_len.y+sp_len.y)*y;
+            float offset_x=0.0f,offset_y=0.0f;
+            if(m_pParentDragDropList->HasStorageHeaders())
+                InventoryNextStoragePixelOffset(cx,cy,m_pParentDragDropList->sqaViewOwner,
+                    m_cellSize.x+m_cellSpacing.x,offset_x,offset_y);
+            Fvector2 offset_scaled;UI().ClientToScreenScaled(offset_scaled,offset_x,offset_y);
+            const float left=drawLT.x+(f_len.x+sp_len.x)*float(x)+offset_scaled.x;
+            const float top=drawLT.y+(f_len.y+sp_len.y)*float(y)+offset_scaled.y;
             const bool projected=preview&&cx>=previewCell.x&&cx<previewCell.x+previewWidth&&cy>=previewCell.y&&cy<previewCell.y+previewHeight;
             const u32 color=projected?(preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220)):(storage==2?color_rgba(210,135,110,255):color_rgba(255,255,255,255));
             quad(left,top,left+f_len.x,top+f_len.y,color,false);
@@ -1097,8 +1123,8 @@ void CUICellContainer::Draw()
                 const auto region=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageRegion(cx,cy,m_pParentDragDropList->sqaViewOwner):0;
                 const bool rightSplit=region&&storageAt(cx+1,cy)&&region!=InventoryNextStorageRegion(cx+1,cy,m_pParentDragDropList->sqaViewOwner);
                 const bool bottomSplit=region&&storageAt(cx,cy+1)&&region!=InventoryNextStorageRegion(cx,cy+1,m_pParentDragDropList->sqaViewOwner);
-                if(!storageAt(cx+1,cy)||rightSplit)quad(left+f_len.x-(rightSplit?2.5f:1.0f)*f_len.x/CellSize().x,top,left+f_len.x,top+f_len.y,color,true);
-                if(!storageAt(cx,cy+1)||bottomSplit)quad(left,top+f_len.y-(bottomSplit?2.5f:1.0f)*f_len.y/CellSize().y,left+f_len.x,top+f_len.y,color,true);
+                if(!storageAt(cx+1,cy)||rightSplit)quad(left+f_len.x-f_len.x/CellSize().x,top,left+f_len.x,top+f_len.y,color,true);
+                if(!storageAt(cx,cy+1)||bottomSplit)quad(left,top+f_len.y-f_len.y/CellSize().y,left+f_len.x,top+f_len.y,color,true);
             }
         }
 		UIRender->SetShader(*hSqaGrid);
@@ -1117,7 +1143,14 @@ void CUICellContainer::Draw()
 		{
 			Fvector2 rect_offset;
 			rect_offset.set((drawLT.x + f_len.x * x + sp_len.x * x), (drawLT.y + f_len.y * y + sp_len.y * y));
-            if(m_pParentDragDropList->HasStorageHeaders())rect_offset.x+=(f_len.x+sp_len.x)*InventoryNextStorageInset(y+tgt_cells.lt.y,m_pParentDragDropList->sqaViewOwner);
+            bool active_storage_cell=true;
+            if(m_pParentDragDropList->HasStorageHeaders()){
+                float offset_x=0.0f,offset_y=0.0f;
+                active_storage_cell=InventoryNextStoragePixelOffset(x+tgt_cells.lt.x,y+tgt_cells.lt.y,
+                    m_pParentDragDropList->sqaViewOwner,m_cellSize.x+m_cellSpacing.x,offset_x,offset_y);
+                Fvector2 offset_scaled;UI().ClientToScreenScaled(offset_scaled,offset_x,offset_y);
+                rect_offset.x+=offset_scaled.x;rect_offset.y+=offset_scaled.y;
+            }
 
 			Ivector2 cpos;
 			cpos.set(x, y);
@@ -1159,7 +1192,7 @@ void CUICellContainer::Draw()
 				UIRender->PushPoint(iFloor(rect_offset.x + p.x * (f_len.x)) - 0.5f,
 				                    iFloor(rect_offset.y + p.y * (f_len.y)) - 0.5f,
 				                    0,
-				                    m_pParentDragDropList->back_color,
+				                    active_storage_cell?m_pParentDragDropList->back_color:0,
 				                    tp.x + uv.x, tp.y + uv.y);
 			} //for k
 		} //for y
