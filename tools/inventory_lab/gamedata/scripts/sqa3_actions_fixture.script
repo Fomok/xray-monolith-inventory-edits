@@ -39,8 +39,10 @@ function plan(snapshot)
         spawn("tool","swiss_knife",db.actor:id())
     end
     commands[#commands+1]=function()
-        export();exec_console_cmd("inventory_next_store "..identity("spare").." 1 2 0 0")
-        assert(node("spare")[25]=="0" and node("spare")[2]=="1","full-pocket fixture not placed")
+        -- Current 4x2 actor storage cannot hold this 2x3 rig. Its ordinary
+        -- spawn enters Recovery; that is the full-pocket pressure for the
+        -- direct foreign-source equip checks below.
+        assert(node("spare")[25]=="3" and node("spare")[2]=="1","full-pocket recovery fixture changed")
         spawn("rig","amprig_bandolier",ids.crate);spawn("pouch","af_magpouch_s",ids.crate)
         spawn("wrong","amprig_scout",ids.crate);spawn("foreign_bread","bread",ids.other)
     end
