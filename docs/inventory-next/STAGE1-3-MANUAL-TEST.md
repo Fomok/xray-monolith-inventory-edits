@@ -10,7 +10,7 @@ After loading, open the console and enter:
 run_string sqa3_test_items.give()
 ```
 
-Close the console and wait a second. A test crate appears beside you. It contains fresh and worn rigs, three pouch sizes, two backpacks, medical/ammo/food cases, medicine, food, a pistol and ammunition. The kit does not equip anything, bypass pickup capacity or overwrite a save. Repeat the command only when you intentionally want another crate. You can also use the normal debug spawner with section IDs below.
+Close the console and wait a second. A test crate appears beside you. It contains fresh and worn rigs, three pouch sizes, two backpacks, medical/ammo/food cases, medicine, food, a pistol, ammunition and a Swiss knife. The kit does not equip anything, bypass pickup capacity or overwrite a save. Repeat the command only when you intentionally want another crate. You can also use the normal debug spawner with section IDs below.
 
 1. Open the crate. Equip a Bandolier rig (`amprig_bandolier`) using its context action or drag to the Rig equipment view. The arrows on the chest frame switch Armour/Rig presentation. That switch must not equip an item by itself. The separate pistol frame remains visual only.
 2. Put a small/medium pouch (`af_magpouch_s`, `af_magpouch_m`) in each mount. Double-click the rig or spare rig to inspect its original compartments and pouch bands. Check that adding/removing a pouch recenters the complete layout without moving logical items. A nonempty pouch must refuse detachment.
@@ -20,8 +20,11 @@ Close the console and wait a second. A test crate appears beside you. It contain
 6. Compare similar carried items using the context menu's Choose item submenu. It lists separate conditions, uses, rounds and upgrades. Selection must leave ownership and equipment unchanged. Operate on the selected member and verify the other members retain their state.
 7. Try empty/partly filled/full backpacks and rigs, then rigid cases/pouches. Only backpacks and rigs change exterior footprint. Fill the intended destination before a pickup or manual unequip: refusal must leave the source intact. A rig swap may use the vacated legal pocket position; an outgoing item that does not fit must leave both participants unchanged.
 8. Inspect the badly damaged Harness (`amprig_harness`, 5% condition). Its torn pockets and disabled mounts must not accept new contents. After forced loss of capacity, affected carried items must remain in explicit recovery. Repair must restore the authored layout without duplicating, deleting or automatically creating extra cargo capacity.
-9. Save as a new `sqa3_manual_test` save, quit, reopen using the same launcher and Load it. Check rig/pouch bindings, compartment positions, exact worn members, ammunition, charges and conditions. Close the game after testing.
+9. With the Swiss knife, try dismantling a loaded rig: it must refuse before tool wear or yield. Empty its own compartments and mounted pouches, then dismantle it. Empty pouches return as the same items, using recovery if pockets are full; the rig yields its original parts recipe and the tool degrades once.
+10. Save as a new `sqa3_manual_test` save, quit, reopen using the same launcher and Load it. Check rig/pouch bindings, compartment positions, exact worn members, ammunition, charges and conditions. Close the game after testing.
 
 Other representative sections: `equ_small_pack`, `af_magpouch_l`, `amprig_scout`. Native default item art comes from the Squared Away catalog; the unavailable original Kevlar world mesh is explicitly mapped to its supplied shared rig model. Growth stages are provisional configurable development balancing.
 
 Report the failed step, item/section, source/destination and save name. Physical drag, keyboard rotation, stack-picker gestures, New Game flow and long-session behavior require their own native observation; a core/adapter test alone does not prove them.
+
+The five backpacks now use new development compartment layouts: main, side and lower pockets with blocked lower corners. These are clearly marked SQA3 layouts, not claimed recovered SQA2 masks. All22 original authored rig masks remain unchanged. Local authoring/preset export can change these layouts.

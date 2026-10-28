@@ -77,11 +77,11 @@ def migrate(document):
     require(document.get('schema')=='sqa3.native.catalog.v1','schema','unsupported version; SQA2 saves are not authoring presets')
     definitions={}
     for section, original in document['definitions'].items():
-        require(not set(original)-(FIELDS|{'source_section','growth_provenance'}),f'definitions.{section}','unknown legacy definition fields')
+        require(not set(original)-(FIELDS|{'source_section','growth_provenance','layout_provenance'}),f'definitions.{section}','unknown legacy definition fields')
         d={k:v for k,v in original.items() if k in FIELDS}
         d.setdefault('allow_container_items',False);d.setdefault('exterior_independent',True)
         d.setdefault('tear_thresholds',[8000,6000,4000,2500,1000] if d.get('family')=='rig' else [])
-        d['provenance']={k:original[k] for k in ['source_section','growth_provenance'] if k in original}
+        d['provenance']={k:original[k] for k in ['source_section','growth_provenance','layout_provenance'] if k in original}
         definitions[section]=d
     return validate(dict(schema=SCHEMA,definitions=definitions))
 

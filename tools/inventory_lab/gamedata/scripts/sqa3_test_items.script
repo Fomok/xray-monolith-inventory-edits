@@ -10,7 +10,7 @@ function give()
         {"af_magpouch_s",1},{"af_magpouch_m",1},{"af_magpouch_l",1},
         {"itm_backpack",1},{"equ_small_pack",1},{"ampbox_meds",1},{"ampbox_ammo",1},{"ampbox_food",1},
         {"bandage",1},{"bandage",0.7},{"medkit",1},{"bread",1},
-        {"wpn_pm",0.9},{"ammo_9x18_fmj",1},{"ammo_9x18_fmj",1}
+        {"wpn_pm",0.9},{"ammo_9x18_fmj",1},{"ammo_9x18_fmj",1},{"swiss_knife",1}
     }
     assert(system_ini():section_exist("inventory_box"),"Missing native test crate section")
     for _,record in ipairs(items) do assert(system_ini():section_exist(record[1]),"Missing native test item "..record[1]) end

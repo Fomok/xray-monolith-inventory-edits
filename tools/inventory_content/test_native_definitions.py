@@ -13,6 +13,12 @@ class Definitions(unittest.TestCase):
     def test_pouch_skyline_trims_only_unused_trailing_columns(self):
         self.assertEqual(pouch_layout([(1,2)]),(1,2,[1,1]))
         self.assertEqual(pouch_layout([(1,2),(1,2)]),(2,2,[1,2,1,2]))
+    def test_backpacks_have_authored_compartments_and_blocked_corners(self):
+        backpacks=[d for d in self.preset['definitions'].values() if d['family']=='backpack']
+        self.assertEqual(len(backpacks),5)
+        for d in backpacks:
+            self.assertEqual(set(d['cells']),{0,1,2,3})
+            self.assertIn('layout_provenance',d['provenance'])
     def setUp(self):
         source=Path(__file__).parents[1]/'inventory_lab/gamedata/configs/sqa3_catalog.json'
         self.preset=migrate(json.loads(source.read_text(encoding='utf-8')))

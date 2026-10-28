@@ -1,7 +1,7 @@
 """Compile audited source geometry into native SQA3 storage definitions.
 
-Outputs development files only. Growth stages are explicit provisional balancing,
-not recovered source facts. Released interior coordinates remain unchanged.
+Outputs development files only. Growth stages and new backpack compartments are
+explicit development balancing. Released rig coordinates remain unchanged.
 """
 import argparse, hashlib, json, math
 from pathlib import Path
@@ -30,6 +30,8 @@ def pouch_layout(grants):
 
 def compile_catalog(source):
     assert source['schema']=='sqa3.catalog.source.v1'
+    backpack_layouts=json.loads(Path(__file__).with_name('native-backpack-layouts.json').read_text(encoding='utf-8'))
+    assert backpack_layouts['schema']=='sqa3.backpack.layouts.v1'
     definitions={}
     rules={item['section']:{key:value['value'] for key,value in item['fields'].items()}
            for item in source['auxiliary_sections']}
@@ -63,6 +65,10 @@ def compile_catalog(source):
                     grants += [tuple(size)]*int(value(key,'0'))
             assert grants, 'unresolved pouch grants: '+section
             w,h,cells=pouch_layout(grants)
+        if family=='backpack':
+            authored=backpack_layouts['layouts'][section]
+            assert (w,h)==(authored['width'],authored['height'])
+            cells=rectangles(authored['compartments'],w,h)
         assert isinstance(w,int) and isinstance(h,int) and 0<w<=64 and 0<h<=64
         assert cells and len(cells)==w*h and all(isinstance(c,int) and 0<=c<=4096 for c in cells)
         ew,eh=item['exterior']['width'],item['exterior']['height']
@@ -79,6 +85,7 @@ def compile_catalog(source):
             'tear_thresholds':[8000,6000,4000,2500,1000] if family=='rig' else [],
             'growth_provenance':'provisional SQA3 test balancing; configurable' if growing else 'fixed source exterior',
             'source_section':section}
+        if family=='backpack':definitions[section]['layout_provenance']=backpack_layouts['provenance']
         if family=='box' and value('amp_box_takes','anything')!='anything':
             rule=rules['amp_box_'+value('amp_box_takes')]
             tokens=lambda raw:'|'.join(part.strip() for part in raw.split(',') if part.strip())

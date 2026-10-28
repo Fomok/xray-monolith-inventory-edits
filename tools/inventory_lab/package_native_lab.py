@@ -40,6 +40,8 @@ def main():
         files['catalog-provenance.json']=catalog
         item_list=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_catalog_items.script',optional=True)
         if item_list is not None:files['gamedata/scripts/sqa3_catalog_items.script']=item_list
+        actions_fixture=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_actions_fixture.script',optional=True)
+        if actions_fixture is not None:files['gamedata/scripts/sqa3_actions_fixture.script']=actions_fixture
         files['gamedata/scripts/sqa3_test_items.script']=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_test_items.script')
         files['MANUAL-TEST.md']=read_overlay('docs/inventory-next/STAGE1-3-MANUAL-TEST.md')
         parts=read_overlay('tools/inventory_lab/gamedata/configs/items/settings/mod_parts_sqa3_rigs.json',optional=True)

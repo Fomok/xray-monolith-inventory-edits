@@ -1,0 +1,141 @@
+-- Bounded, disposable native-route checks; inert without the explicit fixture.
+function plan(snapshot)
+    assert(command_line():find("-sqa3-fixture-actions",1,true))
+    local ids,names={},{}
+    local function object(key) return assert(level.object_by_id(ids[key]),"missing "..key) end
+    local function identity(key) return level.inventory_next_identity(ids[key]) end
+    local function spawn(key,section,parent)
+        local a=db.actor;local pos=a:position();pos.x=pos.x+0.8
+        local item=assert(alife():create(section,pos,a:level_vertex_id(),a:game_vertex_id(),parent))
+        ids[key]=item.id;names[key]=item:name()
+    end
+    local function export() exec_console_cmd("inventory_next_probe export") end
+    local function node(key)
+        export()
+        local file=assert(io.open(getFS():update_path("$app_data_root$","sqa3-native-probe.inv"),"r"));local contents=file:read("*a");file:close()
+        for line in contents:gmatch("[^\n]+") do
+            if line:match("^(%d+) ")==identity(key) then local t={};for v in line:gmatch("%S+") do t[#t+1]=v end return t end
+        end
+        error("missing model member "..key)
+    end
+    local function store(key,host,x,y)
+        exec_console_cmd("inventory_next_store "..identity(key).." "..identity(host).." "..x.." "..y.." 0")
+        assert(node(key)[2]==identity(host) and node(key)[25]=="0","store failed "..key)
+    end
+    local function open(key)
+        ActorMenu.get_actor_menu():HideDialog();assert(object(key):use(db.actor),"crate use failed")
+        assert(ActorMenu.get_actor_menu():IsShown(),"crate UI unavailable")
+    end
+    local function native_equip(key,host,slot)
+        assert(level.inventory_next_loot_custom_equip(ids.crate,identity("crate"),ids[key],identity(key),host,slot),"foreign custom request refused "..key)
+    end
+    local commands={"g_god on",snapshot}
+    commands[#commands+1]=function()
+        spawn("crate","inventory_box");spawn("other","inventory_box")
+        spawn("spare","amprig_scout",db.actor:id())
+        spawn("tool","swiss_knife",db.actor:id())
+    end
+    commands[#commands+1]=function()
+        export();exec_console_cmd("inventory_next_store "..identity("spare").." 1 2 0 0")
+        assert(node("spare")[25]=="0" and node("spare")[2]=="1","full-pocket fixture not placed")
+        spawn("rig","amprig_bandolier",ids.crate);spawn("pouch","af_magpouch_s",ids.crate)
+        spawn("wrong","amprig_scout",ids.crate);spawn("foreign_bread","bread",ids.other)
+    end
+    commands[#commands+1]=function() open("crate") end
+    commands[#commands+1]=function() native_equip("rig","1","sqa3.rig") end
+    commands[#commands+1]=function()
+        assert(object("rig"):parent():id()==db.actor:id(),"rig transfer not acknowledged")
+        assert(level.inventory_next_custom_item("1","sqa3.rig")==ids.rig,"real rig binding missing")
+        native_equip("pouch",identity("rig"),"sqa3.mount.p1")
+    end
+    commands[#commands+1]=function()
+        assert(level.inventory_next_custom_item(identity("rig"),"sqa3.mount.p1")==ids.pouch,"direct pouch mount missing")
+        assert(not level.inventory_next_loot_custom_equip(ids.crate,identity("crate"),ids.wrong,identity("wrong"),"1","sqa3.rig"),"occupied foreign equip accepted")
+        assert(object("wrong"):parent():id()==ids.crate,"refused item left source")
+        printf("[SQA3 ACTION TEST] full-pocket direct rig/pouch custody and occupied refusal PASS")
+        assert(level.inventory_next_fixture_ui("select-source",ids.other),"second source selection failed")
+    end
+    commands[#commands+1]=function()
+        assert(level.inventory_next_fixture_ui("select-loot",ids.foreign_bread),"source member context selection failed")
+        assert(level.inventory_next_fixture_ui("select-source",ids.crate),"source switch failed")
+        assert(level.inventory_next_fixture_ui("selection-clear",0),"source switch retained selection")
+        assert(level.inventory_next_fixture_ui("select-source",ids.other),"source reselect failed")
+        alife_release(alife():object(ids.other))
+    end
+    commands[#commands+1]=function()
+        assert(level.inventory_next_fixture_ui("selection-clear",0),"disappeared source retained context")
+        open("crate")
+        assert(object("wrong"):parent():id()==ids.crate,"other source changed during disappearance")
+        printf("[SQA3 ACTION TEST] source switch/disappearance native context routing PASS")
+        spawn("medicine","bandage",db.actor:id());spawn("ammo","ammo_9x18_fmj",db.actor:id())
+        spawn("hidden_ammo","ammo_9x18_fmj",db.actor:id())
+    end
+    commands[#commands+1]=function()
+        export();store("medicine","pouch",0,0);store("ammo","rig",2,0)
+        object("ammo"):ammo_set_count(7);object("hidden_ammo"):ammo_set_count(13)
+        assert(level.inventory_next_fixture_ui("open-container",ids.rig),"rig window failed")
+    end
+    commands[#commands+1]="screenshot sqa3_actions_rig"
+    commands[#commands+1]=function()
+        assert(level.inventory_next_fixture_ui("close-container",ids.rig),"rig X route failed")
+        ActorMenu.get_actor_menu():HideDialog()
+        assert(level.inventory_next_can_use(ids.medicine),"mounted medicine inaccessible")
+        local root_bandage
+        db.actor:iterate_inventory(function(_,item) if item:section()=="bandage" and item:id()~=ids.medicine then root_bandage=item end return false end,db.actor)
+        assert(root_bandage and not level.inventory_next_can_use(root_bandage:id()),"root medicine bypassed quick-use rule")
+        ids.root_bandage=root_bandage:id();db.actor:eat(root_bandage)
+        assert(level.inventory_next_ammo_accessible(ids.ammo),"worn rig ammo inaccessible")
+        assert(not level.inventory_next_ammo_accessible(ids.hidden_ammo),"recovery ammo accessible")
+    end
+    commands[#commands+1]=function()
+        assert(object("root_bandage"):get_remaining_uses()==1,"blocked medicine consumed")
+        db.actor:eat(object("medicine"))
+    end
+    commands[#commands+1]=function()
+        assert(not level.object_by_id(ids.medicine),"eligible one-use medicine not consumed")
+        local pistol=assert(db.actor:item_in_slot(2));ids.pistol=pistol:id();pistol:set_ammo_elapsed(0)
+        db.actor:activate_slot(2)
+    end
+    commands[#commands+1]=function()
+        local key=bind_to_dik(key_bindings.kWPN_RELOAD,-1);assert(key and key>0,"reload binding absent")
+        level.press_action(key);level.release_action(key)
+    end
+    commands[#commands+1]=function() end
+    commands[#commands+1]=function()
+        assert(object("pistol"):get_ammo_in_magazine()==7,"native reload did not consume exactly eligible rounds")
+        assert(not level.object_by_id(ids.ammo) or object("ammo"):ammo_get_count()==0,"eligible ammo left rounds")
+        assert(object("hidden_ammo"):ammo_get_count()==13,"hidden ammo consumed")
+        printf("[SQA3 ACTION TEST] native medical consume/refusal and ammo 7+13 accounting PASS")
+        -- Add a loaded pouch again to verify refusal before any tool mutation.
+        spawn("dismantle_med","bandage",db.actor:id())
+    end
+    commands[#commands+1]=function()
+        export();store("dismantle_med","pouch",0,0)
+        local condition=object("tool"):condition();ids.tool_condition=condition
+        assert(item_parts.disassembly_item(object("rig"),object("tool"))==false,"loaded rig dismantle accepted")
+        assert(object("tool"):condition()==condition and level.inventory_next_custom_item("1","sqa3.rig")==ids.rig,"refusal mutated tool or rig")
+        db.actor:eat(object("dismantle_med"))
+    end
+    commands[#commands+1]=function()
+        assert(not level.object_by_id(ids.dismantle_med),"pouch not emptied")
+        assert(item_parts.is_suitable_dtool(object("rig"),object("tool")),"native tool unsuitable")
+        item_parts.disassembly_item(object("rig"),object("tool"))
+    end
+    commands[#commands+1]=function() end
+    commands[#commands+1]=function() end
+    commands[#commands+1]=function()
+        assert(not level.object_by_id(ids.rig),"dismantled source retained")
+        assert(object("pouch"):parent():id()==db.actor:id(),"dismantle lost native pouch")
+        assert(node("pouch")[2]=="1" and node("pouch")[25]=="3","full-root pouch not returned to recovery")
+        assert(object("tool"):condition()<ids.tool_condition,"native tool not degraded")
+        assert(level.inventory_next_action_ready(),"dismantle left pending lock")
+        local counts={}
+        db.actor:iterate_inventory(function(_,item) counts[item:section()]=(counts[item:section()] or 0)+1 return false end,db.actor)
+        assert(counts.prt_o_fabrics_1==1 and counts.prt_i_fasteners==1,"native parts recipe yield mismatch")
+        printf("[SQA3 ACTION TEST] loaded refusal, empty native dismantle, pouch recovery and exact parts PASS")
+    end
+    commands[#commands+1]=snapshot;commands[#commands+1]=export
+    commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+    commands[#commands+1]="save sqa3_actions_completed";commands[#commands+1]="quit"
+    return commands
+end

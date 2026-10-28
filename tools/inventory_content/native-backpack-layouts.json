@@ -1,0 +1,126 @@
+{
+  "schema": "sqa3.backpack.layouts.v1",
+  "provenance": "New SQA3 development layouts: main compartment, side compartment, lower compartment and blocked lower corners. Not recovered SQA2 authored masks. Original rig coordinates are unchanged.",
+  "layouts": {
+    "itm_backpack": {
+      "width": 8,
+      "height": 8,
+      "compartments": [
+        [
+          0,
+          0,
+          6,
+          6
+        ],
+        [
+          6,
+          0,
+          2,
+          6
+        ],
+        [
+          1,
+          6,
+          6,
+          2
+        ]
+      ]
+    },
+    "equ_small_pack": {
+      "width": 8,
+      "height": 10,
+      "compartments": [
+        [
+          0,
+          0,
+          6,
+          8
+        ],
+        [
+          6,
+          0,
+          2,
+          8
+        ],
+        [
+          1,
+          8,
+          6,
+          2
+        ]
+      ]
+    },
+    "equ_small_military_pack": {
+      "width": 8,
+      "height": 12,
+      "compartments": [
+        [
+          0,
+          0,
+          6,
+          10
+        ],
+        [
+          6,
+          0,
+          2,
+          10
+        ],
+        [
+          1,
+          10,
+          6,
+          2
+        ]
+      ]
+    },
+    "equ_military_pack": {
+      "width": 8,
+      "height": 13,
+      "compartments": [
+        [
+          0,
+          0,
+          6,
+          11
+        ],
+        [
+          6,
+          0,
+          2,
+          11
+        ],
+        [
+          1,
+          11,
+          6,
+          2
+        ]
+      ]
+    },
+    "equ_tourist_pack": {
+      "width": 8,
+      "height": 15,
+      "compartments": [
+        [
+          0,
+          0,
+          6,
+          13
+        ],
+        [
+          6,
+          0,
+          2,
+          13
+        ],
+        [
+          1,
+          13,
+          6,
+          2
+        ]
+      ]
+    }
+  }
+}

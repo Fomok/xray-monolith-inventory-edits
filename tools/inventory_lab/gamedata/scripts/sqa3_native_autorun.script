@@ -253,6 +253,10 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-actions",1,true) then
+        commands=sqa3_actions_fixture.plan(snapshot)
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-catalog-all",1,true) then
         local reload=args:find("-sqa3-catalog-reload",1,true)~=nil
         local spawned={}
