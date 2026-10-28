@@ -64,7 +64,7 @@ struct StorageDefinition {
     ActorStorage interior;
     Size empty,half,full;
     std::string family;
-    bool growing=false,allow_container_items=false,independent_exterior=false;
+    bool growing=false,allow_container_items=false,allow_rig_items=false,independent_exterior=false;
     Mass max_contents=0;
     std::uint32_t stack_limit=0;
     std::vector<unsigned> tear_thresholds;
@@ -99,6 +99,7 @@ struct StorageCatalog {
         item.soft=definition.growing;item.max_contents=definition.max_contents;item.max_stack_quantity=definition.stack_limit;
         item.attributes["storage_family"]=definition.family;
         item.attributes["storage_allow_container_items"]=definition.allow_container_items?"1":"0";
+        item.attributes["storage_allow_rig_items"]=definition.allow_rig_items?"1":"0";
         for(const auto key:{"storage_accept_kinds","storage_accept_sections","storage_reject_sections","storage_accept_flags"})item.attributes.erase(key);
         if(definition.restricted){
             item.attributes["storage_accept_kinds"]=definition.accept_kinds;

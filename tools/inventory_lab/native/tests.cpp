@@ -1053,6 +1053,17 @@ int main(int argc,char** argv) {
             yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));yes(view.build(a.model()));
             check(view.position(a.model().nodes().at(101),p)&&view.destination(p.x,p.y,owner,local)&&owner==100&&local.y==3,"recovered bag did not restore local destination");
         });
+        test("display-only compartment gutter refuses drops and preserves local cells",[]{
+            auto pack=item(100,1,800);pack.container=true;pack.grid={2,2};pack.cells={1,2,1,2};
+            pack.empty=pack.half=pack.full={2,2};
+            Model model;yes(model.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),pack}));
+            StorageViewOptions options;options.owner=100;NativeStorageView view;yes(view.build(model,options));
+            check(view.bands.size()==1&&view.bands[0].grid.w==3,"gutter did not expand display-only extent");
+            Id owner=0;Position local;
+            check(!view.destination(1,1,owner,local)&&!view.region(1,1),"gutter accepted a drop");
+            check(view.destination(2,1,owner,local)&&owner==100&&local.x==1&&local.y==0,"projected cell lost logical owner coordinate");
+            check(model.nodes().at(100).grid.w==2&&model.nodes().at(100).grid.h==2,"projection changed native capacity");
+        });
         test("recovery container windows permit retrieval display but never extra manual capacity",[]{
             auto pack=item(100,1,800);pack.container=true;pack.grid={8,8};pack.empty=pack.half=pack.full={5,5};
             pack.attributes["native_section"]="backpack";
@@ -1231,6 +1242,17 @@ int main(int argc,char** argv) {
             const auto full=layout.model().serialize();GroundPickup overflow(registry);no(overflow.prepare(layout.model(),incoming,{1},false),"no_fit");
             check(layout.model().serialize()==full,"owned capacity refusal changed carried state");
         });
+        test("owned source exact drop cell is authoritative and refuses without detach",[]{
+            ActorLayout layout;yes(layout.reconcile({},{{2,1},{},true}));
+            EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
+            auto incoming=item(100,2,38);incoming.attributes["native_section"]="bandage";
+            const auto before=layout.model().serialize();
+            GroundPickup invalid(registry);no(invalid.prepare(layout.model(),incoming,{1},false,0,0,0,1,{2,0,false}),"bounds");
+            check(layout.model().serialize()==before,"invalid exact drop changed actor");
+            GroundPickup accepted(registry);yes(accepted.prepare(layout.model(),incoming,{1},false,0,0,0,1,{1,0,false}));
+            yes(accepted.acknowledge(11,true));
+            check(accepted.model().nodes().at(100).parent==1&&accepted.model().nodes().at(100).position.x==1,"exact cell was replaced by auto placement");
+        });
         test("owned source disappearing after reservation requires reconciliation",[]{
             ActorLayout layout;yes(layout.reconcile({},{{1,1},{},true}));
             EntityRegistry registry;for(Id id:{Id{1},Id{2},Id{100}}){yes(registry.add(id));yes(registry.bind(id,static_cast<std::uint16_t>(id+10)));}
@@ -1360,6 +1382,7 @@ int main(int argc,char** argv) {
             check(layout.model().nodes().at(102).parent==101&&layout.model().nodes().at(101).location==Location::Mounted,"native rebuild detached pouch contents");
             StorageViewOptions options;options.owner=100;options.center=true;NativeStorageView view;yes(view.build(layout.model(),options));
             check(view.bands.size()==2&&view.size.w==5&&view.bands[0].column==1&&view.bands[1].owner==101,"effective rig/pouch layout omitted or displaced a band");
+            check(view.bands[0].header&&!view.bands[1].header,"mounted pouch gained a separate section header");
             check(view.row_inset(view.bands[0].row)==0.0f&&view.row_inset(view.bands[1].row)==0.0f,"matching parity added an inset");
             rig.grid={4,3};rig.attributes["storage_exterior_independent"]="1";yes(layout.reconcile({rig,pouch,med},pockets));yes(view.build(layout.model(),options));
             check(view.row_inset(view.bands[0].row)==0.5f&&view.row_inset(view.bands[1].row)==0.0f,"odd/even bands lost exact half-cell centering");
@@ -1489,6 +1512,13 @@ int main(int argc,char** argv) {
             check(before==m.serialize(),"rejected compound admission mutated state");
             Node spawned=bag(30,10,10);Command spawn;spawn.operation=Operation::Spawn;spawn.spawned=spawned;spawn.revision=m.revision();spawn.session=m.session();
             no(m.execute(spawn),"container_nesting_policy");check(before==m.serialize(),"rejected spawn mutated state");
+            auto rig_nodes=fixture();rig_nodes[2].attributes["storage_allow_container_items"]="0";
+            rig_nodes[2].attributes["storage_allow_rig_items"]="1";
+            rig_nodes[3].attributes["storage_family"]="rig";
+            Model rig_allowed;yes(rig_allowed.initialize(rig_nodes));
+            yes(move(rig_allowed,{11,1,{4,4,false},rig_allowed.revision()}));
+            yes(move(rig_allowed,{11,10,{0,0,false},rig_allowed.revision()}));
+            check(rig_allowed.nodes().at(11).parent==10,"rig exception lost nested ownership");
             nodes[2].attributes["storage_allow_container_items"]="1";
             Model enabled;yes(enabled.initialize(nodes));yes(move(enabled,{11,1,{4,4,false},enabled.revision()}));
             yes(move(enabled,{11,10,{0,0,false},enabled.revision()}));

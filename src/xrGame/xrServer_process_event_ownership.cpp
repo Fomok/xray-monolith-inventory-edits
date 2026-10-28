@@ -110,13 +110,15 @@ void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,
     u64 expected_source,expected_item;P.r_u64(expected_source);P.r_u64(expected_item);
     const u16 slot=P.r_u16();
     const u32 custom_slot=P.r_eof()?0:P.r_u32();u64 custom_host=1;if(!P.r_eof())P.r_u64(custom_host);
+    u64 exact_destination=0;if(!P.r_eof())P.r_u64(exact_destination);
+    int exact_x=0,exact_y=0;if(!P.r_eof()){exact_x=P.r_s32();exact_y=P.r_s32();}
     auto from=game->get_entity_from_eid(source);auto to=game->get_entity_from_eid(owner);auto item=game->get_entity_from_eid(live);
     if(source==0xffff&&custom_slot) {
         auto client=ID_to_client(sender);
         if(!to||!item||item->ID_Parent!=0xffff||expected_source||!expected_item||InventoryNextIdentity(live)!=expected_item||
            !is_object_valid_on_svclient(owner)||!is_object_valid_on_svclient(live)||
            (client!=GetServerClient()&&client!=to->owner)||!Actor()->SqaCanPickup(live))return;
-        if(!InventoryNextPickupPrepare(owner,live,source,slot,custom_slot,custom_host))return;
+        if(!InventoryNextPickupPrepare(owner,live,source,slot,custom_slot,custom_host,exact_destination,exact_x,exact_y))return;
         if(!game->OnTouch(owner,live,FALSE)){InventoryNextPickupFinish(owner,live,false);return;}
         if(item->owner!=to->owner)PerformMigration(item,item->owner,to->owner);
         item->ID_Parent=owner;to->children.push_back(live);InventoryNextPickupFinish(owner,live,true);
@@ -132,7 +134,7 @@ void xrServer::Process_event_sqa_acquire(NET_Packet& P,ClientID sender,u32 time,
     if(!expected_source||!expected_item||InventoryNextIdentity(source)!=expected_source||InventoryNextIdentity(live)!=expected_item) {
         InventoryNextPickupStatus("Source changed. Transfer cancelled.");return;
     }
-    if(!InventoryNextPickupPrepare(owner,live,source,slot,custom_slot,custom_host))return;
+    if(!InventoryNextPickupPrepare(owner,live,source,slot,custom_slot,custom_host,exact_destination,exact_x,exact_y))return;
     NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_TRADE_SELL);reject.w_u16(source);reject.w_u16(live);
     if(!Process_event_reject(reject,sender,time,source,live,false)) {
         InventoryNextPickupFinish(owner,live,false);return;

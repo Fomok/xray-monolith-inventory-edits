@@ -60,7 +60,12 @@ const char* container_admission_error(const Node& item,const Node& destination,c
     }
     if(destination.kind!=Kind::Item)return nullptr;
     const auto policy=destination.attributes.find("storage_allow_container_items");
-    if(item.container&&policy!=destination.attributes.end()&&policy->second=="0")return "container_nesting_policy";
+    if(item.container&&policy!=destination.attributes.end()&&policy->second=="0") {
+        const auto rig=destination.attributes.find("storage_allow_rig_items");
+        const auto family=item.attributes.find("storage_family");
+        if(!(rig!=destination.attributes.end()&&rig->second=="1"&&family!=item.attributes.end()&&family->second=="rig"))
+            return "container_nesting_policy";
+    }
     const auto rules=destination.attributes.find("storage_accept_kinds");
     if(rules==destination.attributes.end())return nullptr;
     auto value=[&](const Node& node,const char* key){auto found=node.attributes.find(key);return found==node.attributes.end()?std::string{}:found->second;};

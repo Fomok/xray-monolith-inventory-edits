@@ -77,13 +77,14 @@ def compile_catalog(source):
         assert ew and eh and float(ew).is_integer() and float(eh).is_integer()
         ew,eh=int(ew),int(eh);assert 0<ew<=64 and 0<eh<=64
         growing=family in ('backpack','rig')
-        empty=(max(1,ew-1),max(1,eh-1)) if growing else (ew,eh)
-        half=(ew,eh);full=(ew,min(64,eh+1)) if growing else half
+        minimum=(2,2) if family=='backpack' else (3,2) if family=='rig' else (1,1)
+        empty=(max(minimum[0],ew-1),max(minimum[1],eh-1)) if growing else (ew,eh)
+        half=(max(minimum[0],ew),max(minimum[1],eh));full=(half[0],min(64,half[1]+1)) if growing else half
         definitions[section]={'family':family,'width':w,'height':h,'cells':cells,
             'empty':empty,'half':half,'full':full,'growing':growing,
             'max_contents_grams':round(float(value('amp_box_kg','0'))*1000),
             'stack_limit':int(value('amp_box_stack','0')),
-            'allow_container_items':False,'exterior_independent':True,
+            'allow_container_items':False,'allow_rig_items':family=='backpack','exterior_independent':True,
             'tear_thresholds':[8000,6000,4000,2500,1000] if family=='rig' else [],
             'growth_provenance':'provisional SQA3 test balancing; configurable' if growing else 'fixed source exterior',
             'source_section':section}
@@ -112,7 +113,8 @@ def main():
         w,h=d['width'],d['height']
         lines += ['',f'[sqa3_storage_{name}]',f'family = {d["family"]}',f'size = {h}x{w}',
             'mask = '+'|'.join(','.join(str(c) for c in d['cells'][y*w:(y+1)*w]) for y in range(h)),
-            'allow_container_items = false','exterior_independent = true',f'growing = {str(d["growing"]).lower()}']
+            'allow_container_items = false',f'allow_rig_items = {str(d["allow_rig_items"]).lower()}',
+            'exterior_independent = true',f'growing = {str(d["growing"]).lower()}']
         for key in ['empty','half','full']:
             width,height=d[key];lines.append(f'{key} = {height}x{width}')
         lines += [f'max_contents_grams = {d["max_contents_grams"]}',f'stack_limit = {d["stack_limit"]}']

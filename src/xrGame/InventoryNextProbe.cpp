@@ -179,6 +179,7 @@ bool read_storage_catalog(inventory_next::StorageCatalog& output) {
         if(!exterior("empty",definition.empty)||!exterior("half",definition.half)||!exterior("full",definition.full))return false;
         definition.family=config.r_string(section,"family");
         definition.growing=config.r_bool(section,"growing");definition.allow_container_items=config.r_bool(section,"allow_container_items");
+        if(config.line_exist(section,"allow_rig_items"))definition.allow_rig_items=config.r_bool(section,"allow_rig_items");
         if(config.line_exist(section,"exterior_independent"))definition.independent_exterior=config.r_bool(section,"exterior_independent");
         if(config.line_exist(section,"max_contents_grams")){
             const auto raw=config.r_string(section,"max_contents_grams");if(!raw)return false;
@@ -757,8 +758,7 @@ int InventoryNextStorageCell(int x,int y,u64 view) noexcept try {
     if(!layout_current||!InventoryNextLogicalStorage())return 0;
     inventory_next::Id owner=0;inventory_next::Position local;
     const auto& selected=view?make_storage_view(view):storage_view;
-    for(const auto& band:selected.bands)if(!band.collapsed&&x>=band.column&&x<band.column+band.grid.w&&y>=band.row&&y<band.row+band.grid.h)
-        return layout().model().cell_region(band.owner,x-band.column,y-band.row)?1:0;
+    if(selected.region(x,y))return 1;
     return !selected.recovery.empty()&&y>=selected.recovery_row?2:0;
 } catch (...) {return 0;}
 float InventoryNextStorageInset(int y,u64 view) noexcept try {
@@ -768,9 +768,7 @@ float InventoryNextStorageInset(int y,u64 view) noexcept try {
 unsigned InventoryNextStorageRegion(int x,int y,u64 view) noexcept try {
     if(!layout_current||!InventoryNextFieldKitEnabled())return 0;
     const auto& selected=view?make_storage_view(view):storage_view;
-    for(const auto& band:selected.bands)if(!band.collapsed&&x>=band.column&&x<band.column+band.grid.w&&y>=band.row&&y<band.row+band.grid.h)
-        return layout().model().cell_region(band.owner,x-band.column,y-band.row);
-    return 0;
+    return selected.region(x,y);
 } catch (...) {return 0;}
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     if(!InventoryNextLogicalStorage()||!layout_current||!list)return;
@@ -780,6 +778,7 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     if(InventoryNextFieldKitEnabled())list->CenterStorageContent();
     list->SetAutoGrow(false);list->SetGrouping(false);
     for(const auto& band:selected.bands) {
+        if(!band.header)continue;
         std::string label="Pockets";
         if(band.owner!=1) {
             const auto& n=layout().model().nodes().at(band.owner);
@@ -790,7 +789,8 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
         }
         if(!InventoryNextFieldKitEnabled())label+="  "+std::to_string(band.grid.w)+" x "+std::to_string(band.grid.h);
         inventory_next::Mass contents=0;
-        for(const auto& pair:layout().model().nodes())if(pair.second.parent==band.owner&&pair.second.location==inventory_next::Location::Grid)
+        for(const auto& pair:layout().model().nodes())if(pair.second.parent==band.owner&&
+            (pair.second.location==inventory_next::Location::Grid||pair.second.location==inventory_next::Location::Mounted))
             contents+=layout().model().subtree_mass(pair.first);
         list->AddStorageHeader(band.row-1,label.c_str(),0xffd8dacb,band.owner,contents,band.collapsed);
     }
@@ -891,7 +891,7 @@ bool pickup_slot_compatible(CInventoryItem* item,u16 slot) {
         (base==INV_SLOT_3&&slot==INV_SLOT_2);
 }
 }
-bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custom_slot,u64 custom_host) noexcept try {
+bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custom_slot,u64 custom_host,u64 exact_destination,int exact_x,int exact_y) noexcept try {
     if(!InventoryNextStrictPickup()||!Actor()||owner!=Actor()->ID())return true;
     using namespace inventory_next;
     if(pickup_fault||pickup_transaction||purchase||world_transfer||!InventoryNextWorldCanRelease(live)||!InventoryNextLayoutSync())return false;
@@ -903,6 +903,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custo
     if(source==0xffff?actual_parent!=nullptr:(!actual_parent||actual_parent->ID()!=source))return false;
     if(source!=0xffff&&!InventoryNextStrictOwnedPickup())return false;
     if(!Actor()->inventory().CanTakeItem(item)){InventoryNextPickupStatus("Item cannot be taken. Source unchanged.");return false;}
+    if(exact_destination&&(slot!=0xffff||custom_slot||exact_x<0||exact_y<0||exact_x>=64||exact_y>=64))return false;
     if(slot!=0xffff) {
         auto& inventory=Actor()->inventory();
         if(source==0xffff||slot>=48||slot>inventory.LastSlot()||!pickup_slot_compatible(item,slot)||!inventory.CanPutInSlot(item,slot)) {
@@ -968,7 +969,8 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot,u32 custo
     if(!registry->add(id)||!registry->bind(id,live))return false;
     auto transaction=std::make_unique<GroundPickup>(*registry);
     const auto result=transaction->prepare(layout().model(),n,destinations,source==0xffff,
-        custom&&!custom->mounted?n.wear_slots:(slot==0xffff?0:n.wear_slots),custom&&custom->mounted?custom_host:0,custom&&custom->mounted?custom_slot:0);
+        custom&&!custom->mounted?n.wear_slots:(slot==0xffff?0:n.wear_slots),custom&&custom->mounted?custom_host:0,custom&&custom->mounted?custom_slot:0,
+        exact_destination,{exact_x,exact_y,false});
     if(!result){Msg("! SQA3 %s pickup refused live=%u reason=%s; source retained",source==0xffff?"ground":"owned",live,result.error.c_str());InventoryNextPickupStatus("No space. Item stayed at source.");return false;}
     pickup_registry=std::move(registry);pickup_transaction=std::move(transaction);pickup_source=source;
     if(slot!=0xffff)Msg("* SQA3 direct equip reserved live=%u slot=%u",live,slot);
@@ -1047,9 +1049,11 @@ void InventoryNextPickupStatus(const char* text) noexcept try {
     auto& menu=CurrentGameUI()->GetActorMenu();menu.m_sqaRefresh=true;menu.m_sqaRetryAfter=Device.dwTimeGlobal+250;
     if(text&&menu.m_sqaStatus)menu.m_sqaStatus->TextItemControl()->SetText(text);
 } catch (...) {Msg("! SQA3 acquisition status refresh failed");}
-bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot,u32 custom_slot,u64 custom_host) noexcept try {
+bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot,u32 custom_slot,u64 custom_host,u64 exact_destination,int exact_x,int exact_y) noexcept try {
     if(!InventoryNextStrictOwnedPickup()||!Actor()||owner!=Actor()->ID()||source==owner||(source==0xffff&&!custom_slot))return false;
+    if(exact_destination&&(slot!=0xffff||custom_slot||exact_x<0||exact_y<0||exact_x>=64||exact_y>=64))return false;
     if(!InventoryNextWorldCanRelease(live)) {
+        if(exact_destination){InventoryNextPickupStatus("Loaded bag needs a whole-container transfer. Source unchanged.");return false;}
         if(slot!=0xffff||custom_slot){InventoryNextPickupStatus("Take the loaded bag into storage before equipping it.");return true;}
         return InventoryNextWorldRequest(source,owner,live);
     }
@@ -1059,6 +1063,7 @@ bool InventoryNextRequestOwnedPickup(u16 source,u16 owner,u16 live,u16 slot,u32 
     packet.w_u16(source);packet.w_u16(live);packet.w_u64(source_identity);packet.w_u64(item_identity);
     packet.w_u16(slot);
     packet.w_u32(custom_slot);packet.w_u64(custom_host);
+    packet.w_u64(exact_destination);packet.w_s32(exact_x);packet.w_s32(exact_y);
     // Local single-player dispatch may finish synchronously. Set the pending
     // label first so the resulting refusal/acceptance remains visible.
     InventoryNextPickupStatus("Checking storage...");CGameObject::u_EventSend(packet);return true;
@@ -1661,13 +1666,19 @@ xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse) noexcept 
     if(!ground.items.empty()){std::sort(ground.items.begin(),ground.items.end());result.insert(result.begin(),std::move(ground));}
     return result;
 } catch (...) {return {};}
-bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot,u32 custom_slot,u64 custom_host) noexcept try {
+bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot,u32 custom_slot,u64 custom_host,int drop_x,int drop_y,u64 view) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!Actor()||!InventoryNextPickupCanSave()||!item_identity||InventoryNextIdentity(live)!=item_identity)return false;
     if(source==0xffff){if(custom_slot)return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host);if(slot!=0xffff){InventoryNextPickupStatus("Take this ground item into storage before equipping it.");return false;}return Actor()->SqaPickup(live);}
     if(!source_identity||InventoryNextIdentity(source)!=source_identity||!world_access(source,Actor()->ID()))return false;
     auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
     if(!item||item->parent_id()!=source||!InventoryNextWorldVisible(live))return false;
-    return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host);
+    inventory_next::Id destination=0;inventory_next::Position local;
+    if(drop_x>=0||drop_y>=0){
+        if(drop_x<0||drop_y<0||slot!=0xffff||custom_slot||!InventoryNextLayoutSync())return false;
+        const auto& selected=view?make_storage_view(view):storage_view;
+        if(!selected.destination(drop_x,drop_y,destination,local)){InventoryNextPickupStatus("Drop on an open storage cell. Source unchanged.");return false;}
+    }
+    return InventoryNextRequestOwnedPickup(source,Actor()->ID(),live,slot,custom_slot,custom_host,destination,local.x,local.y);
 } catch (...) {return false;}
 bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 item_identity,u64 host,const char* key) noexcept try {
     if(!key||!read_equipment_registry()||!Actor())return false;

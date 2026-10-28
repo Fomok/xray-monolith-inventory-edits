@@ -10,7 +10,7 @@ import tempfile
 SCHEMA = 'sqa3.storage.preset.v1'
 FAMILIES = {'backpack', 'rig', 'pouch', 'box'}
 FIELDS = {'family', 'width', 'height', 'cells', 'empty', 'half', 'full', 'growing',
-          'allow_container_items', 'exterior_independent', 'max_contents_grams',
+          'allow_container_items', 'allow_rig_items', 'exterior_independent', 'max_contents_grams',
           'stack_limit', 'tear_thresholds', 'acceptance', 'provenance'}
 TOKEN = re.compile(r'^[a-z0-9_]+$')
 
@@ -41,8 +41,9 @@ def validate(document):
         for i, cell in enumerate(cells):
             integer(cell, 0, 4096, path+f'.cells[{i}]')
         require(any(cells), path+'.cells', 'authored mask must have a usable compartment')
-        for key in ['growing', 'allow_container_items', 'exterior_independent']:
+        for key in ['growing', 'allow_container_items', 'allow_rig_items', 'exterior_independent']:
             require(type(d.get(key)) is bool, path+'.'+key, 'expected boolean')
+        require(not d['allow_rig_items'] or d['family']=='backpack', path+'.allow_rig_items', 'only backpacks may allow rigs')
         require(not d['growing'] or d['family'] in {'backpack','rig'}, path+'.growing', 'only backpacks and rigs may grow')
         for key in ['empty','half','full']:
             shape = d.get(key)
@@ -79,7 +80,7 @@ def migrate(document):
     for section, original in document['definitions'].items():
         require(not set(original)-(FIELDS|{'source_section','growth_provenance','layout_provenance'}),f'definitions.{section}','unknown legacy definition fields')
         d={k:v for k,v in original.items() if k in FIELDS}
-        d.setdefault('allow_container_items',False);d.setdefault('exterior_independent',True)
+        d.setdefault('allow_container_items',False);d.setdefault('allow_rig_items',False);d.setdefault('exterior_independent',True)
         d.setdefault('tear_thresholds',[8000,6000,4000,2500,1000] if d.get('family')=='rig' else [])
         d['provenance']={k:original[k] for k in ['source_section','growth_provenance','layout_provenance'] if k in original}
         definitions[section]=d
@@ -95,7 +96,7 @@ def render(document):
         w,h=d['width'],d['height']
         lines += ['',f'[sqa3_storage_{name}]',f'family = {d["family"]}',f'size = {h}x{w}',
                   'mask = '+'|'.join(','.join(map(str,d['cells'][y*w:(y+1)*w])) for y in range(h))]
-        for key in ['growing','allow_container_items','exterior_independent']:
+        for key in ['growing','allow_container_items','allow_rig_items','exterior_independent']:
             lines.append(f'{key} = {str(d[key]).lower()}')
         for key in ['empty','half','full']:
             width,height=d[key];lines.append(f'{key} = {height}x{width}')
@@ -117,6 +118,7 @@ def parse_ltx(path):
         for key in ['empty','half','full']:
             hh,ww=map(int,s[key].lower().split('x'));d[key]=[ww,hh]
         for key in ['growing','allow_container_items','exterior_independent']:d[key]=s.getboolean(key)
+        d['allow_rig_items']=s.getboolean('allow_rig_items',fallback=False)
         for key in ['max_contents_grams','stack_limit']:d[key]=s.getint(key)
         d['tear_thresholds']=[int(v) for v in s.get('tear_thresholds','').split(',') if v]
         if 'accept_kinds' in s:d['acceptance']={key:s[key] for key in ['accept_kinds','accept_sections','reject_sections','accept_flags']}

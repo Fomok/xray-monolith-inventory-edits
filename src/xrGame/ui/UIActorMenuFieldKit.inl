@@ -229,10 +229,10 @@ bool CUIActorMenu::SqaLootClick(float x,float y)
         if(x>=p.x&&x<p.x+size.x&&y>=p.y&&y<p.y+size.y){m_sqaLootSource=m_sqaLootSources[n].live;m_sqaLootSourceIdentity=m_sqaLootSources[n].identity;SqaUpdateLoot(true);return true;}}
     return false;
 }
-bool CUIActorMenu::SqaTakeLoot(PIItem item,u16 slot)
+bool CUIActorMenu::SqaTakeLoot(PIItem item,u16 slot,int drop_x,int drop_y,u64 view)
 {
     if(!item)return false;const auto found=m_sqaLootIdentity.find(item->object_id());if(found==m_sqaLootIdentity.end())return false;
-    const bool result=InventoryNextLootTake(m_sqaLootSource,m_sqaLootSourceIdentity,found->first,found->second,slot);
+    const bool result=InventoryNextLootTake(m_sqaLootSource,m_sqaLootSourceIdentity,found->first,found->second,slot,0,1,drop_x,drop_y,view);
     m_sqaLootAfter=0;m_sqaRefresh=true;return result;
 }
 bool CUIActorMenu::SqaPutLoot(PIItem item)

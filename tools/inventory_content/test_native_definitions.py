@@ -20,6 +20,13 @@ class Definitions(unittest.TestCase):
             self.assertEqual(set(d['cells']),{0,1,2,3,4})
             self.assertIn('layout_provenance',d['provenance'])
             self.assertEqual(sum(bool(c) for c in d['cells']),d['width']*(d['height']-1))
+            self.assertTrue(d['allow_rig_items'])
+            self.assertFalse(d['allow_container_items'])
+            self.assertTrue(all(d[stage][0]>=2 and d[stage][1]>=2 for stage in ('empty','half','full')))
+        for d in self.preset['definitions'].values():
+            if d['family']=='rig':
+                self.assertFalse(d['allow_rig_items'])
+                self.assertTrue(all(d[stage][0]>=3 and d[stage][1]>=2 for stage in ('empty','half','full')))
     def setUp(self):
         source=Path(__file__).parents[1]/'inventory_lab/gamedata/configs/sqa3_catalog.json'
         self.preset=migrate(json.loads(source.read_text(encoding='utf-8')))

@@ -224,7 +224,7 @@ public:
     u32 m_sqaLootRenderedCount=0;
     void SqaUpdateLoot(bool force=false);
     bool SqaLootClick(float x,float y);
-    bool SqaTakeLoot(PIItem item,u16 slot=0xffff);
+    bool SqaTakeLoot(PIItem item,u16 slot=0xffff,int drop_x=-1,int drop_y=-1,u64 view=0);
     bool SqaPutLoot(PIItem item);
     bool SqaLootActive() const;
     void SqaForgetLoot(u16 live);

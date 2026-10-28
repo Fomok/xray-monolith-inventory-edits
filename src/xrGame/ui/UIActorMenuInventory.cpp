@@ -941,7 +941,14 @@ bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
         }}
     if(InventoryNextFieldKitEnabled()&&itm&&itm->m_pData){auto item=static_cast<PIItem>(itm->m_pData);
         if(item->CurrPlace()==eItemPlaceCustom){const bool result=InventoryNextCustomUnequip(item->object_id());m_sqaRefresh=true;return result;}}
-    if(SqaLootActive()&&itm->OwnerList()==m_pDeadBodyBagList)return SqaTakeLoot(static_cast<PIItem>(itm->m_pData));
+    if(SqaLootActive()&&itm->OwnerList()==m_pDeadBodyBagList){
+        if(b_use_cursor_pos&&CUIDragDropListEx::m_drag_item){
+            auto list=CUIDragDropListEx::m_drag_item->BackList();
+            if(list){const auto cell=list->PickCell(list->GetDragItemPosition());
+                return SqaTakeLoot(static_cast<PIItem>(itm->m_pData),0xffff,cell.x,cell.y,list->sqaViewOwner);}
+        }
+        return SqaTakeLoot(static_cast<PIItem>(itm->m_pData));
+    }
 	PIItem iitem = (PIItem)itm->m_pData;
 
 	bool b_own_item = (iitem->parent_id() == m_pActorInvOwner->object_id());
