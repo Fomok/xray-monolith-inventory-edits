@@ -5,19 +5,21 @@
 Source-backed requirements: C:/GAMMA/sqa-previews/inventory-next-20261027/SQA3-FEATURE-PARITY.md
 Audit SHA256: dbf5f89d5f7546668f0184cdb58842c46064980200aa4301df119608e8e46654
 
-Current increment: 125 core checks per debug/release build and independent ordinary/logical/world-subtree restarts pass. Dev19 physical nested actor/crate release, reacquisition, full-pocket refusal and all three fresh reloads pass. Dev20 partial native rollback in both directions and exact reloads pass. Dev21 complete ground-bag drop/retrieval, full-pocket refusal, timeout, partial rollback both ways and all six fresh reloads pass; see GROUND-BAG-ACCEPTANCE.md. Ground contents editing and full world lifecycle remain OPEN. Real ground/crate offline-online cycles and initialized ground travel/retrieval/reload passed; pending-transfer travel refusal passed (WORLD-LIFECYCLE.md). Dev25 initialized crate travel, physical retrieval and exact fresh reload pass. Dev24 loaded corpse physical release/retrieval, loaded reload, online/offline cleanup refusal, empty cleanup/reload, offline-save restart, full-pocket refusal and partial rollback in both directions with exact reloads pass; Dev25 actual corpse travel and exact fresh return reload pass (CORPSE-STORAGE.md). Dev15 purchases, ground/container/corpse admission and nested use have bounded native acceptance. Dev16 physical primary-slot-to-crate unequip and exact reload pass. Dev17 physical empty-primary direct equip, correct activation, context-menu occupied-slot refusal and exact reload pass; native-fixture carried-backpack rotation and boundary refusal also survive fresh reloads. Physical occupied-slot drag and R-key automation remain unverified. Dev18 loaded-container safety build0be12d07/CI40502480472 passes physical refusal UI, Move all subtree retention and exact reloads in the isolated lab. Ordinary direct-unequip regression and exact fresh reload also pass. Full77-row parity remains unfinished; detailed evidence below separates tested slices from open requirements.
+Current increment: 128 core checks per debug/release build and independent ordinary/logical/world-subtree restarts pass. Dev19 physical nested actor/crate release, reacquisition, full-pocket refusal and all three fresh reloads pass. Dev20 partial native rollback in both directions and exact reloads pass. Dev21 complete ground-bag drop/retrieval, full-pocket refusal, timeout, partial rollback both ways and all six fresh reloads pass; see GROUND-BAG-ACCEPTANCE.md. Ground contents editing and full world lifecycle remain OPEN. Real ground/crate offline-online cycles and initialized ground travel/retrieval/reload passed; pending-transfer travel refusal passed (WORLD-LIFECYCLE.md). Dev25 initialized crate travel, physical retrieval and exact fresh reload pass. Dev24 loaded corpse physical release/retrieval, loaded reload, online/offline cleanup refusal, empty cleanup/reload, offline-save restart, full-pocket refusal and partial rollback in both directions with exact reloads pass; Dev25 actual corpse travel and exact fresh return reload pass (CORPSE-STORAGE.md). Dev15 purchases, ground/container/corpse admission and nested use have bounded native acceptance. Dev16 physical primary-slot-to-crate unequip and exact reload pass. Dev17 physical empty-primary direct equip, correct activation, context-menu occupied-slot refusal and exact reload pass; native-fixture carried-backpack rotation and boundary refusal also survive fresh reloads. Physical occupied-slot drag and R-key automation remain unverified. Dev18 loaded-container safety build0be12d07/CI40502480472 passes physical refusal UI, Move all subtree retention and exact reloads in the isolated lab. Ordinary direct-unequip regression and exact fresh reload also pass. Full77-row parity remains unfinished; detailed evidence below separates tested slices from open requirements.
 
-Dev27 normal context-menu named loaded-stash creation, exact reload, physical return and exact return reload pass. Empty stash saved but crashed at shutdown; not accepted. Dev28 SDK lifetime fix passes targeted empty creation/save/exit and exact reload/exit; historical caller attribution remains uncertain. Work is stopped per user for visuals; remaining stash refusal/equipped/travel cases are pending. See STASH-INTEGRATION.md and SHUTDOWN-LIFETIME.md.
+Dev27 normal context-menu named loaded-stash creation, exact reload, physical return and exact return reload pass. Empty stash saved but crashed at shutdown; not accepted. Dev28 SDK lifetime fix passes targeted empty creation/save/exit and exact reload/exit; historical caller attribution remains uncertain. The later authorized visual pass is active; broader stash refusal/equipped/travel cases remain pending. New gameplay phases await review of DEVELOPMENT-PLAN.md. See STASH-INTEGRATION.md and SHUTDOWN-LIFETIME.md.
+
+Current visual checkpoint (28 October): Dev31 engine b983a6df/overlay e87cc275 passed nine accepted inventory moves, collapse/expand, carried-bag opening, save/exit and an exact fresh reload of seven items/3198g. Source scene was empty, so this does not close nearby-source tests.06db7402 adds actual identity headers, truthful source headers, textured close controls and expanded separate bag windows; CI40626557352/native acceptance pending. Historical entries below retain their original limits. All 77 rows remain partial or open; no full-row gameplay certification is implied.
 
 Non-negotiable presentation requirement: one replacement inventory through the normal inventory key and normal loot/container paths; preserve useful native controls and semantics; **no3D player-model panel**. Diagnostic windows are not acceptance. Vanilla ui_inventory.script intercepts the normal entry; the scoped enable_feature guard retires this old Lua presentation only in SQA3 development mode.
 
 | ID | Accepted behavior | Current evidence / remaining work |
 |---|---|---|
-| I01 | Ownership independent of visible panels | Core tree plus persistent native identities and authoritative ground/owned/purchase ownership acknowledgments pass bounded native fixtures; all producers and loaded-world subtrees OPEN. |
-| I02 | Player grid, pockets and backpack sections | Native4x2pockets, carried8x8backpack and visible recovery pass physical transfers/reloads. Full authored catalog, rigs and section controls OPEN. |
-| I03 | Backpack capacity and equip/remove transitions | Native backpack equip/remove, carried contents and exact reload pass; loaded ground drop/retrieval, crate transfer and exact reloads pass bounded nested fixtures. Complete backpack catalog and broad world lifecycle OPEN. |
-| I04 | All native equipment slots, including knife and pistol | Native slots retained; pistol unequip/re-equip including rotated bag origin passes. Other slots/full parity OPEN |
-| I05 | Equipment outside grids; grouped arrows | Core equipment and native slot/belt projection preserve mass outside bag. Pistol runtime equip/unequip and reload pass; grouped arrows and all-slot coverage OPEN |
+| I01 | Ownership independent of visible panels | Core tree and persistent native identities; Dev19–25 bounded actor/crate/ground/corpse subtree ownership, rollback, offline/travel and fresh reloads pass. Every producer and all content variants remain OPEN. |
+| I02 | Player grid, pockets and backpack sections | Native pockets/carried backpack/recovery and physical transfers/reloads pass. Dev31 section bars, integrated collapse and carried-bag windows observed. Full catalog, rigs, independent scroll/order and window interaction matrix OPEN. |
+| I03 | Backpack capacity and equip/remove transitions | Native backpack equip/remove and carried persistence pass; loaded ground/crate/corpse transfer and selected lifecycle/reload fixtures pass (Dev19–25). Full catalog and all equip/capacity variants OPEN. |
+| I04 | All native equipment slots, including knife and pistol | Native slots retained; pistol and primary equip/unequip slices pass. Shared knife/binocular visual frame implemented; full all-slot behavior OPEN. Current pistol frame is visual-only; no slot17 gameplay change. |
+| I05 | Equipment outside grids; grouped arrows | Core equipment/group model and native slot/belt projection preserve mass outside bag; primary/pistol slices pass. Texture arrows and equipment presentation exist; actual multi-member group semantics and all-slot coverage OPEN. |
 | I06 | Capacity enforcement on all acquisition paths | Native ground, box/corpse Move/Take All and UI Buy batch guards pass full-storage refusal and exact reload; external equip/belt/use and other producers OPEN. |
 | I07 | Full-grid policy and protected items | Strict ordinary pickup; explicit owned recovery overflow tested, no manual overflow capacity. Native forced-arrival/protected-item policy and per-container recovery OPEN |
 | I08 | Manual placement and rotation persistence | Physical cross-storage drags and persistence pass; reload-binding rotation and edge refusal pass via native input fixture. Full physical keyboard/drag rotation coverage OPEN. |
@@ -40,9 +42,9 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | B02 | Category-specific box acceptance | Core category masks tested; actual category definitions OPEN |
 | B03 | Box stack limits distinct from inventory | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | B04 | Nesting policy conflict | Core acyclic authored nesting, recursive growth tested; content-specific allowed nesting policy OPEN |
-| B05 | Box/rig live ownership and asynchronous transfer | Native box/corpse acquisition preserves source on refusal and reserves until client acknowledgment; rigs and loaded-box subtree transfer OPEN. |
+| B05 | Box/rig live ownership and asynchronous transfer | Native box/corpse admission and acknowledgment reservations pass. Loaded bag subtree actor/crate/ground/corpse release, retrieval, failure rollback and selected lifecycle tests pass (Dev19–25). Actual rig/box catalog and broad combinations OPEN. |
 | B06 | Recursive weight incl contents | Core recursive mass and native item Weight mapping agree in6/71item fixtures and reloads; broader content/nested-world catalog OPEN. |
-| B07 | Persistent box layout/contents/bolts | Core schema4 roundtrip; game entity/bolt serialization OPEN |
+| B07 | Persistent box layout/contents/bolts | Core serialization and native loaded-backpack subtree placement/state survive fresh reloads and selected world travel. Actual box catalog, bolts and every member-state variant OPEN. |
 | X01 | Direct equip from container with full backpack | Dev17 physical empty-primary take, correct active weapon, context-menu occupied-slot refusal and exact reload pass. Occupied-slot drag input, all-slot behavior and swaps remain OPEN. |
 | X02 | Direct unequip into rig/box/stash | Dev16 physical primary-slot to native crate passes with full carried storage; exact71records, both weapon states and fresh reload preserved. Finite target capacity, rigs and loaded-container subtrees OPEN. |
 | X03 | Same-grid/cross-storage swap | Final-state multi-relocation same/cross-container swaps tested, including unequal sizes/rollback; drag route OPEN |
@@ -50,33 +52,33 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | X05 | Quick open, context actions, keyboard controls | Nested carried bread right-click/Eat and exact removal/reload pass. Quick-open and broad keyboard/custom-action parity OPEN. |
 | X06 | Sounds, hover opening, pinning and drag feedback | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | X07 | Inventory vs trade filtered views | Normal inventory, native trade/loot views and hidden-item collision checks pass; complete filter/settings compatibility OPEN. |
-| L01 | Corpse equipment and pockets layout | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| L01 | Corpse equipment and pockets layout | Native corpse ownership/acquisition and loaded-subtree routes tested; dedicated corpse equipment and pocket presentation remains OPEN. |
 | L02 | Looting Takes Time compatibility | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | L03 | Corpse numeric-ID/object normalization | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| L04 | Corpse rearrangement/rotation/save | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| T01 | Fixed stash capacity and exclusions | Core fixed-root grid/caps available; stash definitions/exclusions OPEN |
-| T02 | Stash placement/stack/split/reservations | Core placements, quantity split, masks and persistence; pending reservation/lifecycle OPEN |
-| T03 | Stash swaps and equip routes | Core swaps/equipment routes; actual stash entity route OPEN |
+| L04 | Corpse rearrangement/rotation/save | Loaded corpse subtree release/retrieval and exact persistence/lifecycle fixtures pass; individual corpse-grid manual rearrangement and rotation remain OPEN. |
+| T01 | Fixed stash capacity and exclusions | Core finite grids/caps exist. Real named stash creation tested, but authored stash capacities and exclusions OPEN. |
+| T02 | Stash placement/stack/split/reservations | Core placements/split/masks plus native transfer reservations exist. Dev27 loaded named-stash creation/return and Dev28 empty-stash reload pass; full stash stack/split/UI and failure matrix OPEN. |
+| T03 | Stash swaps and equip routes | Core swaps/equipment routes and Dev16 physical primary-to-crate unequip pass; actual named-stash equip and occupied swaps OPEN. |
 | T04 | Stash-only sorting, no loss or poorer packing | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | T05 | Marker cleanup and take notifications | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | T06 | Weapon attachments in stash | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | T07 | Safe stash disassembly | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| T08 | Stash save/travel/task-spawn lifecycle | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| U01 | Stats layout toggle, labels, gauges and tooltips | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| T08 | Stash save/travel/task-spawn lifecycle | Dev27 named loaded-stash creation/reload/return passed; Dev28 empty-stash save/exit and exact reload passed after SDK lifetime fix. Dev25 crate travel is separate evidence, not named-stash travel. Task spawns and named-stash travel variants OPEN. |
+| U01 | Stats layout toggle, labels, gauges and tooltips | Field Kit stats and information layout exists. Live identity/money headers restored in06db7402; CI/native visual acceptance pending. Complete stats toggle, labels, gauges and tooltips OPEN. |
 | U02 | Food/consumable effect preview | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| U03 | Layout/scale/opacity/icon compatibility | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| U03 | Layout/scale/opacity/icon compatibility | Dev31 reference-derived v1 panels, controls, plain grid and shared utility frame observed in native capture. v2 identity/close atlas integrated in06db7402; native acceptance pending. Full scale/aspect/opacity/icon compatibility OPEN. |
 | U04 | Settings and localization | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | U05 | Optional wearable-device inventory | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | D01 | Existing item catalog and addon registration | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | D02 | Crafting and dismantle recipes | Ordered atomic consume/create batch tested; recipes/dismantle/native producers OPEN |
 | D03 | Repair/upgrades/consumables mutate item state | Native nested bread use removes exact identity/mass and preserves all survivors after reload. Repair/upgrades/custom consumables OPEN. |
 | D04 | Trade/new-game/death/treasure/reward/script spawn | Ground/owned acquisition and batch UI purchases verified including money/refusal/reload; other trade callers, rewards, death/new-game/treasure producers OPEN. |
-| D05 | Save schema and engine reconciliation | Schema6native chunks, stable identities and exact repeated fresh-process item/money reloads pass bounded fixtures. Full travel/reconciliation/failure recovery OPEN. |
+| D05 | Save schema and engine reconciliation | Persistent native identities and exact repeated fresh-process exports pass; selected ground/crate/corpse offline/travel/reconciliation scenarios pass (Dev21–25). General producer recovery, all state variants and long-session matrix OPEN. |
 | K01 | Soft fullness-dependent exterior | Core stepped soft growth through all ancestors and equipped exception tested; game content/UI OPEN |
 | K02 | Masks and separated compartments | Core masks/compartment boundaries, usable-cell fullness, rotation-only fit and persistence tested; content/UI OPEN |
-| K03 | Nearby containers and floor before pickup | Observed source AccessGate revisions, read-only children and loss-of-access rejection tested; real discovery/native authority/UI OPEN |
-| K04 | Independent scroll/collapse/reorder sections | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| K05 | Grouped equipment browsing | Core stable-ID group cycling read-only; selection persistence and arrow widget OPEN |
+| K03 | Nearby containers and floor before pickup | Native nearby-source discovery, tab selection, ground/crate/corpse adapter and access checks implemented in Field Kit. Dev31 test scene had no sources, so it does not validate source UI. Mixed sources, nested reachability, disappearance and physical source-switch acceptance OPEN. |
+| K04 | Independent scroll/collapse/reorder sections | Integrated storage collapse/expand and carried-bag opening observed in Dev31.06db7402 removes collapse from separate windows and adds textured X; native acceptance pending. Independent scroll/order, pending moves and preference persistence OPEN. |
+| K05 | Grouped equipment browsing | Core stable-ID group cycling tested; texture arrow controls implemented. Actual multi-member selection persistence and no-equip-on-browse native acceptance OPEN. |
 | K06 | Queued transfers and reserved cells | Native accepted ground/owned/basket arrivals reserve cells; actual save gate blocks until client acknowledgment. General queued transfer UI/cancellation/reconciliation OPEN. |
 | K07 | Multi-select, take-all, quick transfer and partial split | Core partial stack transfer, ordered batch and final-state layout transactions; multi-select/take-all policy/UI OPEN |
 | K08 | Locked items and favorite-like protection | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
@@ -86,18 +88,22 @@ Non-negotiable presentation requirement: one replacement inventory through the n
 | K12 | Visible overflow recovery | Visible actor recovery preserves existing displaced items and is not ordinary pickup capacity. Per-container recovery and every forced-output producer OPEN. |
 | K13 | Persist layout/order/settings independently of world ownership | Core save plus explicit load invalidation; UI preference/layout template persistence OPEN |
 | K14 | Item-definition editor and preset import/export | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
-| K15 | Hotbar ordering, slot candidates and bindings | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
+| K15 | Hotbar ordering, slot candidates and bindings | Native quickslot artwork observed in Dev31; configurable ordering, candidate selection and binding semantics OPEN. |
 | K16 | Detailed item inspection | OPEN: retained requirement; no matching complete implementation or gameplay validation yet |
 | K17 | Context action grouping and refusal reasons | Native nested bread Eat/Details/Drop menu observed; full-grid owned/purchase reasons visible. Grouping/localization/all custom actions OPEN. |
 | K18 | Container-content amount transfer UI | Core split/merge quantity commands; amount selection UI OPEN |
 
-## Next implementation order
+## Proposed next development sequence
 
-1. Per-container stack policies, individual stateful member representation, atomic multi-item admission and forced-output recovery; do not silently delete overflow.
-2. Rig/pouch mounting/granted storage, damage and removal rules; effective backpack/equipment domains and real item catalog.
-3. Quick store, protected items, queued transfer lifecycle/reservations and view preferences; keep actor manual placement separate from requested stash sorting.
-4. Engine entity/source discovery and authoritative event/save adapter; mapping u16 live IDs to durable IDs, access checks, event completion/rollback, mass mapping and every item producer/consumer.
-5. Native interactive inventory views, scroll/collapse/selection/actions, localization/settings and upstream-compatible integration build. Validate with real game only under separate launch authorization.
+See [DEVELOPMENT-PLAN.md](DEVELOPMENT-PLAN.md) for the reader review plan, dependencies, acceptance gates and remaining design choices. Current work finishes the authorized visual correction; the plan does not authorize starting later gameplay phases.
+
+1. Complete visual/input and stability baseline.
+2. Integrate the actual catalog, stateful stacks and storage definitions.
+3. Finish equipment, rigs, pouches and all-slot transitions.
+4. Finish transfer UX, corpse/stash layout and world lifecycle variants.
+5. Connect gameplay producers, consumers and external action providers.
+6. Complete inspection, configuration and convenience features.
+7. Qualify the full supported package against all 77 rows.
 
 The original standalone GDI tool remains a read-only diagnostic renderer. The current lab additionally runs the native replacement UI with FieldKit textures; see current increment above. Ordered batches validate each intermediate stage; simultaneous occupied-cell permutations use relocate(), which validates final state once. AccessGate currently guards single commands only; batches must not be exposed to untrusted world interactions before a guarded compound-transaction adapter exists.
 
