@@ -81,22 +81,17 @@ def main():
         files["NATIVE-LOGICAL-STORAGE.md"]=logical
         launcher=read_overlay('tools/inventory_lab/Start-Logical-Storage-Lab.ps1',optional=True)
         if launcher is not None:files["Start-Logical-Storage-Lab.ps1"]=launcher
-    files["README.txt"]=("Squared Away 3 native placement DEVELOPMENT lab\n\n"+
-        "Only for the isolated vanilla lab with matching upstream2026.10.11 data overlay.\n"+
-        "Not a complete playable mod or public engine release. Preserve test save and one rollback.\n"+
-        "Start windowed with -dbg -inventory-lab. Use the normal inventory key; one replacement menu also handles loot/trade.\n"+
-        "Fixture is inert without -sqa3-fixture; it writes only separate sqa3_* test saves.\n"+
-        "No3D player model. Final pockets, full native recovery and complete gameplay parity remain unfinished.\n"+
-        ("Opt-in carried backpack storage: also pass -sqa3-logical-storage. Keep this flag for its saves.\n"
-         "Use Start-Logical-Storage-Lab.ps1 for the prepared carried-backpack save; it refuses a second game instance.\n"
-         "Use only disposable sqa3_* saves in the isolated lab. Loaded bag world transfer requires a supporting engine and its explicit mode; full compatibility remains unfinished.\n" if logical is not None else "")+
-        ("Experimental ground pickup: Start-Logical-Storage-Lab.ps1 -StrictGroundPickup.\n" if ground_pickup else "")+
-        ("Experimental ground plus corpse/container Move/Take All: -StrictOwnedPickup. External equip/use admission remains unfinished.\n" if owned_pickup else "")+
-        ("Experimental batch purchases: -StrictTradePickup. Includes owned/ground admission; native purchase acceptance must be checked against the evidence.\n" if trade_pickup else "")+
-        ("Experimental loaded actor/crate transfers: -WorldStorage. World fixture saves automatically select this mode. Consult current test evidence.\n" if world_storage else "")+
-        ("Experimental loaded bag drop/retrieval: -GroundStorage. Dedicated ground custodian preserves original items; vanilla Create stash and full ground interaction remain unfinished.\n" if ground_storage else "")+
-        ("Experimental loaded corpse storage: -CorpseStorage. Recorded loaded storage defers native cleanup until retrieved. See acceptance evidence; no complete corpse lifecycle claim.\n" if corpse_storage else "")+
-        ("Experimental identity-preserving named stashes: -StashStorage. Includes empty backpacks; native acceptance remains required.\n" if stash_storage else "")).encode()
+    files["README.txt"]=("Squared Away 3 isolated native DEVELOPMENT lab\n\n"
+        "For the matching isolated vanilla lab only. Not a public engine release.\n"
+        "Run Start-Squared-Away-3.ps1: windowed1280x720, normal main menu, New Game/Load, second-instance guard.\n"
+        "Read MANUAL-TEST.md for representative items, controls and remaining acceptance.\n"
+        "Explicit test kit: console run_string sqa3_test_items.give() after loading.\n"
+        "Fixtures stay inert without -sqa3-fixture and use separate disposable sqa3_* saves.\n"
+        "Keep all launcher storage flags when loading its development saves. No SQA2 save migration.\n"
+        "Preserve the original test save and one verified rollback. Never install this into the public game.\n"
+        "Original Squared Away art; no3D player model. Current build/overlay/CI and every payload hash are in manifest.json.\n"
+        "Backpack compartments are new development designs with original usable-cell totals preserved; original rig masks retained.\n"
+        "Growth stages are provisional development balancing; external modpack action bridges and long-session parity are later work.\n").encode()
     manifest={"commit":a.commit,"engine_commit":a.commit,"overlay_commit":overlay,"ci":a.ci,"purpose":"isolated native placement development","files":{k:{"sha256":hashlib.sha256(v).hexdigest(),"bytes":len(v)} for k,v in files.items()}}
     manifest['field_kit_opt_in']=b'-sqa3-field-kit' in engine_source
     manifest['logical_storage_opt_in']=logical is not None
