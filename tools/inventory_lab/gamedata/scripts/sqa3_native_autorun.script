@@ -282,6 +282,10 @@ function on_game_start()
             printf("[SQA3 BOX DIRECT] source bandage=%s shell=%s proxy=%s",tostring(bandage_id),tostring(shell_id),tostring(proxy_id))
         end
         commands[#commands+1]=function()
+            exec_console_cmd("inventory_next_probe export")
+            exec_console_cmd("inventory_next_store "..level.inventory_next_identity(bandage_id).." 1 0 0 0")
+        end
+        commands[#commands+1]=function()
             local box=assert(level.object_by_id(proxy_id),"saved stash proxy offline")
             assert(box:use(db.actor),"saved stash menu unavailable")
             assert(ActorMenu.get_actor_menu():IsShown(),"stash menu closed")
