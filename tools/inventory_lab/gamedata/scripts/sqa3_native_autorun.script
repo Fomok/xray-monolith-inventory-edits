@@ -377,7 +377,12 @@ function on_game_start()
                     custody("returned",true);crate_id=box.id
                     if corpse then npc_id=box.id;open_corpse() else open_crate() end
                 end,
-                function() started=started+60000;printf("[SQA3 AUTORUN] travel physical retrieval window") end,
+                function()
+                    if args:find("-sqa3-travel-auto",1,true) then
+                        take_all()
+                        printf("[SQA3 AUTORUN] travel native Take All fixture action")
+                    else started=started+60000;printf("[SQA3 AUTORUN] travel physical retrieval window") end
+                end,
                 function()
                     local bags,medkits=0,0
                     db.actor:iterate_inventory(function(_,item)
