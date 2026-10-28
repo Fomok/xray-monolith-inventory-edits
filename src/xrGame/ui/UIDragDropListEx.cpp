@@ -1153,7 +1153,7 @@ void CUICellContainer::Draw()
                 UIRender->PushPoint(iFloor(left+point.x*(right-left))-0.5f,iFloor(top+point.y*(bottom-top))-0.5f,0,color,u/gridTextureSize.x,v/gridTextureSize.y);
             }
         };
-        if(InventoryNextFieldKitEnabled()&&m_pParentDragDropList->HasStorageHeaders()){
+        if(InventoryNextFieldKitEnabled()){
             const auto fill=CUITextureMaster::GetTextureRect("sqa3v1_grid_fill");
             const auto rule=CUITextureMaster::GetTextureRect("sqa3v1_grid_line");
             const auto border=CUITextureMaster::GetTextureRect("sqa3v1_grid_border");
@@ -1164,13 +1164,14 @@ void CUICellContainer::Draw()
             const auto same=[&](int x,int y,int nx,int ny){
                 const int current=storageAt(x,y),neighbor=storageAt(nx,ny);
                 if(!current||!neighbor)return false;
-                if(current==2&&neighbor==2)return true;
+                if(!m_pParentDragDropList->HasStorageHeaders()||(current==2&&neighbor==2))return true;
                 return InventoryNextStorageSameCompartment(x,y,nx,ny,m_pParentDragDropList->sqaViewOwner);
             };
             const auto origin=[&](int cx,int cy,float& left,float& top){
                 float dx=0.0f,dy=0.0f;
-                InventoryNextStoragePixelOffset(cx,cy,m_pParentDragDropList->sqaViewOwner,
-                    m_cellSize.x+m_cellSpacing.x,dx,dy);
+                if(m_pParentDragDropList->HasStorageHeaders())
+                    InventoryNextStoragePixelOffset(cx,cy,m_pParentDragDropList->sqaViewOwner,
+                        m_cellSize.x+m_cellSpacing.x,dx,dy);
                 Fvector2 scaled;UI().ClientToScreenScaled(scaled,dx,dy);
                 left=drawLT.x+(f_len.x+sp_len.x)*float(cx-tgt_cells.lt.x)+scaled.x;
                 top=drawLT.y+(f_len.y+sp_len.y)*float(cy-tgt_cells.lt.y)+scaled.y;
