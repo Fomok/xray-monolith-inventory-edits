@@ -78,6 +78,7 @@ public:
     u64 sqaViewOwner=0;
     bool HasStorageHeaders() const {return !m_storageHeaders.empty();}
     void CenterStorageContent();
+    int SqaGridContentWidth();
 private:
     float m_sqaStorageInset=0.0f;
     xr_vector<std::pair<int,CUIStatic*>> m_storageHeaders;

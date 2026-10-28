@@ -192,6 +192,7 @@ enum
 	GE_SQA_ACQUIRE, // isolated single-player atomic owned-source acquisition
 	GE_SQA_PURCHASE, // isolated batch acquisition with delayed money settlement
 	GE_SQA_WORLD_TRANSFER, // isolated complete loaded subtree custody transfer
+	GE_SQA_WORLD_MEMBER, // isolated one-item direct detached storage transfer
 	GE_FORCEDWORD = u32(-1)
 };
 

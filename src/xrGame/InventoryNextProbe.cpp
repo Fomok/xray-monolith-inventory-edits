@@ -15,6 +15,7 @@
 #include "../inventory_next/native_layout.h"
 #include "../inventory_next/storage_catalog.h"
 #include "../inventory_next/native_storage_view.h"
+#include "../inventory_next/view_metrics.h"
 #include "ActorBackpack.h"
 #include "ui/UIDragDropListEx.h"
 #include "ui/UIStatic.h"
@@ -91,7 +92,9 @@ inventory_next::StorageViewOptions view_options(u64 owner=0) {
 const inventory_next::NativeStorageView& make_storage_view(u64 owner) {
     const auto cached=storage_views.find(owner);if(cached!=storage_views.end())return cached->second;
     inventory_next::NativeStorageView view;
-    if(!view.build(layout().model(),view_options(owner)))throw std::runtime_error("storage view owner unavailable");
+    const auto world=world_storage().records().find(owner);
+    const auto& model=world==world_storage().records().end()?layout().model():world->second.tree;
+    if(!view.build(model,view_options(owner)))throw std::runtime_error("storage view owner unavailable");
     return storage_views.emplace(owner,std::move(view)).first->second;
 }
 
@@ -128,10 +131,11 @@ u64 next_world_token=0;
 struct NativeWorldMember {
     inventory_next::Model actor_candidate;
     inventory_next::WorldSubtrees world_candidate;
+    inventory_next::Node observed;
     std::string actor_before,world_before;
     u16 source=0xffff,destination=0xffff,live=0xffff;
-    u64 source_identity=0,destination_identity=0,item_identity=0,shell=0,token=0;
-    bool committed=false;
+    u64 source_identity=0,destination_identity=0,item_identity=0,source_shell=0,target_shell=0,token=0;
+    bool actor_source=false,committed=false;
 };
 std::unique_ptr<NativeWorldMember> world_member;
 u64 next_world_member_token=0;
@@ -598,6 +602,7 @@ bool InventoryNextLayoutSync() noexcept try {
             bool departing=false;
             if(world_transfer&&world_transfer->committed&&!world_transfer->acquire)
                 for(const auto& record:world_transfer->records)if(record.live==item->object_id()){departing=true;break;}
+            if(world_member&&world_member->committed&&world_member->actor_source&&world_member->live==item->object_id())departing=true;
             if(departing)continue;
             const double grams=static_cast<double>(item->Weight())*1000.0;
             const double condition=item->GetCondition();
@@ -688,7 +693,7 @@ void InventoryNextStore(u64 id,u64 destination,int x,int y,bool rotated) noexcep
 } catch (...) {Msg("! SQA3 logical store exception");}
 bool InventoryNextCanRelease(u16 live) noexcept try {
     if(!InventoryNextLogicalStorage())return true;
-    if(!pending_pickups.empty()||pickup_transaction||purchase||world_transfer)return false;
+    if(!pending_pickups.empty()||pickup_transaction||purchase||world_transfer||world_member)return false;
     if(!InventoryNextLayoutSync())return false;
     const auto id=InventoryNextIdentity(live);
     if(!id||!layout().model().nodes().count(id))return true;
@@ -746,13 +751,22 @@ bool InventoryNextNativeFootprint(u16 live,int& width,int& height) noexcept try 
     if(!id)return false;
     inventory_next::Size size;
     if(layout().model().nodes().count(id))size=layout().model().footprint(id);
-    else {const auto found=source_footprints.find(id);if(found==source_footprints.end())return false;size=found->second;}
+    else {
+        bool found_world=false;
+        for(const auto& record:world_storage().records())if(record.second.tree.nodes().count(id)){
+            size=record.second.tree.footprint(id);found_world=true;break;
+        }
+        if(!found_world){const auto found=source_footprints.find(id);if(found==source_footprints.end())return false;size=found->second;}
+    }
     width=size.w;height=size.h;return size.w>0&&size.h>0;
 } catch (...) {return false;}
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view) noexcept try {
     if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
-    const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
-    if(found==layout().model().nodes().end())return false;
+    const auto id=InventoryNextIdentity(live);
+    const auto record=world_storage().records().find(view);
+    const auto& model=record==world_storage().records().end()?layout().model():record->second.tree;
+    const auto found=model.nodes().find(id);
+    if(found==model.nodes().end())return false;
     if(InventoryNextLogicalStorage()) {
         const auto& selected=view?make_storage_view(view):storage_view;
         inventory_next::Position p;if(!selected.position(found->second,p))return false;
@@ -785,6 +799,13 @@ unsigned InventoryNextStorageRegion(int x,int y,u64 view) noexcept try {
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     if(!InventoryNextLogicalStorage()||!layout_current||!list)return;
     const auto& selected=view?make_storage_view(view):storage_view;
+    const auto record=world_storage().records().find(view);
+    const auto& model=record==world_storage().records().end()?layout().model():record->second.tree;
+    const int spacing=2;
+    const int body=inventory_next::fitted_cell_body(list->SqaGridContentWidth(),selected.size.w,spacing,list->CellSize().x);
+    if(body<1)return;
+    if(list->CellSize().x!=body||list->CellSize().y!=body)list->SetCellSize(Ivector2().set(body,body));
+    if(list->CellsSpacing().x!=spacing||list->CellsSpacing().y!=spacing)list->SetCellsSpacing(Ivector2().set(spacing,spacing));
     list->sqaViewOwner=view;
     list->SetStartCellsCapacity(Ivector2().set(selected.size.w,selected.size.h));
     if(InventoryNextFieldKitEnabled())list->CenterStorageContent();
@@ -793,7 +814,7 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
         if(!band.header)continue;
         std::string label="Pockets";
         if(band.owner!=1) {
-            const auto& n=layout().model().nodes().at(band.owner);
+            const auto& n=model.nodes().at(band.owner);
             const auto& section=n.attributes.at("native_section");
             label=pSettings->line_exist(section.c_str(),"inv_name")?
                 CStringTable().translate(pSettings->r_string(section.c_str(),"inv_name")).c_str():"Backpack";
@@ -801,14 +822,14 @@ void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
         }
         if(!InventoryNextFieldKitEnabled())label+="  "+std::to_string(band.grid.w)+" x "+std::to_string(band.grid.h);
         inventory_next::Mass contents=0;
-        for(const auto& pair:layout().model().nodes())if(pair.second.parent==band.owner&&
+        for(const auto& pair:model.nodes())if(pair.second.parent==band.owner&&
             (pair.second.location==inventory_next::Location::Grid||pair.second.location==inventory_next::Location::Mounted))
-            contents+=layout().model().subtree_mass(pair.first);
+            contents+=model.subtree_mass(pair.first);
         list->AddStorageHeader(band.row-1,label.c_str(),0xffd8dacb,band.owner,contents,band.collapsed);
     }
     if(!selected.recovery.empty()){
         inventory_next::Mass contents=0;
-        for(const auto& item:selected.recovery)contents+=layout().model().subtree_mass(item.first);
+        for(const auto& item:selected.recovery)contents+=model.subtree_mass(item.first);
         list->AddStorageHeader(selected.recovery_row-1,"Recovery",0xffff9d70,0,contents);
     }
 } catch (...) {Msg("! SQA3 storage view failed");}
@@ -889,6 +910,7 @@ void InventoryNextPickupForget(u16 live) noexcept try {
     for(const auto& record:world_storage().records())
         if(record.second.custodian==identity||record.second.tree.nodes().count(identity))pickup_fault=true;
     if(world_transfer)for(const auto& record:world_transfer->records)if(record.live==live)pickup_fault=true;
+    if(world_member&&world_member->live==live)pickup_fault=true;
     if(purchase&&purchase->session&&purchase->session->state()!=inventory_next::PurchaseSession::State::Prepared)
         for(const auto& record:purchase->records)if(record.live==live)pickup_fault=true;
     pending_pickups.erase(live);
@@ -1572,6 +1594,117 @@ void InventoryNextWorldClientReady() noexcept try {
     Msg("* SQA3 loaded transfer client completed count=%u save_ready=%d",static_cast<unsigned>(count),InventoryNextPickupCanSave());
 } catch (...) {pickup_fault=true;}
 
+bool InventoryNextWorldMemberMove(u16 live,u16 destination,u64 target_shell,int drop_x,int drop_y,u64 view,u64 expected_source_owner) noexcept try {
+    using namespace inventory_next;
+    if(!InventoryNextWorldStorageEnabled()||!InventoryNextFieldKitEnabled()||!Actor()||
+       !InventoryNextPickupCanSave()||!InventoryNextLayoutSync())return false;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    auto server=ai().alife().objects().object(live,true);
+    if(!item||!server||item->object().getDestroy()||item->IsQuestItem())return false;
+    const u16 source=item->parent_id();const Id id=InventoryNextIdentity(live);
+    if(source==0xffff||!id||server->ID_Parent!=source||!item->object().H_Parent()||
+       item->object().H_Parent()->ID()!=source||!smart_cast<CInventoryBox*>(Level().Objects.net_Find(destination))||
+       !world_access(Actor()->ID(),destination)||(source!=Actor()->ID()&&!world_access(source,Actor()->ID())))return false;
+    const Id source_identity=InventoryNextIdentity(source),destination_identity=InventoryNextIdentity(destination);
+    if(!source_identity||!destination_identity)return false;
+    const bool actor_source=source==Actor()->ID();
+    Id source_shell=0;
+    for(const auto& record:world_storage().records())if(record.second.tree.nodes().count(id)){
+        if(record.first==id||record.second.custodian!=source_identity||record.second.tree.nodes().at(id).parent!=record.first)
+            return false;
+        for(const auto& pair:record.second.tree.nodes())if(pair.second.parent==id)return false;
+        source_shell=record.first;break;
+    }
+    if(source_shell!=expected_source_owner||(!actor_source&&!target_shell&&!source_shell))return false;
+    if(actor_source&&(!InventoryNextCanRelease(live)||!layout().model().nodes().count(id)))return false;
+    if(!actor_source&&!source_shell&&!InventoryNextWorldVisible(live))return false;
+    Position position{};
+    if(target_shell){
+        const auto target=world_storage().records().find(target_shell);
+        if(target==world_storage().records().end()||target->second.custodian!=destination_identity||
+           drop_x<0||drop_y<0)return false;
+        Id owner=0;const auto& selected=make_storage_view(view?view:target_shell);
+        if(!selected.destination(drop_x,drop_y,owner,position)||owner!=target_shell)return false;
+    }
+    Node observed;if(!world_node(live,source,observed)||observed.id!=id)return false;
+    if(source_shell){
+        const auto& saved=world_storage().records().at(source_shell).tree.nodes().at(id);
+        if(!same_purchase_node(saved,observed))return false;
+    }
+    auto prepared=std::make_unique<NativeWorldMember>();
+    prepared->source=source;prepared->destination=destination;prepared->live=live;
+    prepared->source_identity=source_identity;prepared->destination_identity=destination_identity;
+    prepared->item_identity=id;prepared->source_shell=source_shell;prepared->target_shell=target_shell;
+    prepared->actor_source=actor_source;prepared->observed=observed;
+    prepared->actor_before=layout().model().serialize();prepared->world_before=world_storage().serialize();
+    prepared->actor_candidate=layout().model();
+    if(actor_source){Command erase;erase.operation=Operation::Erase;erase.item=id;
+        erase.revision=prepared->actor_candidate.revision();erase.session=prepared->actor_candidate.session();
+        if(!prepared->actor_candidate.execute(erase))return false;}
+    WorldSubtrees candidate=world_storage();
+    if(source_shell){WorldSubtrees removed;
+        if(!candidate.without_leaf(source_shell,source_identity,id,removed))return false;
+        candidate=std::move(removed);}
+    if(target_shell){WorldSubtrees inserted;
+        auto stored=observed;stored.parent=target_shell;stored.location=Location::Grid;
+        stored.attributes["native_place"]="3";
+        stored.attributes["native_slot"]="0";
+        stored.attributes.erase("native_custom_slot");stored.attributes.erase("native_custom_host");
+        stored.attributes.erase("native_custom_key");
+        if(!candidate.with_leaf(target_shell,destination_identity,stored,position,inserted)){
+            InventoryNextPickupStatus("That item does not fit in the box. Source unchanged.");return false;}
+        candidate=std::move(inserted);}
+    prepared->world_candidate=std::move(candidate);
+    if(source==destination){
+        if(actor_source||layout().model().serialize()!=prepared->actor_before||
+           world_storage().serialize()!=prepared->world_before)return false;
+        world_storage()=std::move(prepared->world_candidate);storage_views.clear();
+        InventoryNextPickupStatus("");Msg("* SQA3 detached member repositioned live=%u source=%llu destination=%llu",live,source_shell,target_shell);
+        return true;
+    }
+    prepared->token=++next_world_member_token;world_member=std::move(prepared);
+    NET_Packet packet;CGameObject::u_EventGen(packet,GE_SQA_WORLD_MEMBER,Actor()->ID());
+    packet.w_u16(source);packet.w_u16(destination);packet.w_u16(live);packet.w_u64(world_member->token);
+    InventoryNextPickupStatus("Moving item...");CGameObject::u_EventSend(packet);return true;
+} catch (...) {if(world_member)pickup_fault=true;InventoryNextPickupStatus("Direct box transfer needs reconciliation.");return false;}
+bool InventoryNextWorldMemberValidate(u16 source,u16 destination,u16 live,u64 token) noexcept try {
+    if(!world_member||world_member->committed||world_member->token!=token||
+       world_member->source!=source||world_member->destination!=destination||world_member->live!=live)return false;
+    if(!Actor()||!world_access(Actor()->ID(),destination)||
+       (source!=Actor()->ID()&&!world_access(source,Actor()->ID()))||
+       InventoryNextIdentity(source)!=world_member->source_identity||
+       InventoryNextIdentity(destination)!=world_member->destination_identity||
+       InventoryNextIdentity(live)!=world_member->item_identity||
+       layout().model().serialize()!=world_member->actor_before||
+       world_storage().serialize()!=world_member->world_before)return false;
+    inventory_next::Node current;
+    return world_node(live,source,current)&&same_purchase_node(current,world_member->observed);
+} catch (...) {return false;}
+bool InventoryNextWorldMemberFinish(bool accepted) noexcept try {
+    if(!world_member)return false;
+    auto server=ai().alife().objects().object(world_member->live,true);
+    if(!server||server->ID_Parent!=(accepted?world_member->destination:world_member->source)){
+        pickup_fault=true;InventoryNextPickupStatus("Direct box transfer needs reconciliation.");return false;}
+    if(!accepted){world_member.reset();InventoryNextPickupStatus("Item stayed at source.");return true;}
+    if(layout().model().serialize()!=world_member->actor_before||
+       world_storage().serialize()!=world_member->world_before||
+       (world_member->actor_source&&!layout().restore(world_member->actor_candidate.serialize()))){
+        pickup_fault=true;return false;}
+    world_storage()=std::move(world_member->world_candidate);storage_views.clear();
+    world_member->committed=true;
+    Msg("* SQA3 direct world member accepted live=%u source=%u destination=%u",world_member->live,world_member->source,world_member->destination);
+    return true;
+} catch (...) {pickup_fault=true;return false;}
+void InventoryNextWorldMemberClientReady() noexcept try {
+    if(!world_member||!world_member->committed||pickup_fault)return;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(world_member->live));
+    if(!item||InventoryNextIdentity(world_member->live)!=world_member->item_identity){pickup_fault=true;return;}
+    if(item->parent_id()!=world_member->destination)return;
+    const u16 live=world_member->live;world_member.reset();
+    if(!InventoryNextLayoutSync()||!InventoryNextWorldCanSave()){pickup_fault=true;return;}
+    InventoryNextPickupStatus("");Msg("* SQA3 direct world member client ready live=%u save_ready=%d",live,InventoryNextPickupCanSave());
+} catch (...) {pickup_fault=true;}
+
 bool InventoryNextGroundStorageEnabled() noexcept {
     return InventoryNextWorldStorageEnabled()&&strstr(Core.Params,"-sqa3-ground-storage")!=nullptr;
 }
@@ -1623,6 +1756,7 @@ void InventoryNextStashForgetMarker(u16 live) noexcept try {
     }
 } catch (...) {pickup_fault=true;}
 void InventoryNextGroundUpdate() noexcept try {
+    InventoryNextWorldMemberClientReady();
     if(InventoryNextStashEnabled()&&!world_transfer&&!ground_provision&&Actor()&&g_pGameLevel&&Level().bReady)sync_stash_markers();
     if(!ground_provision||!Actor()||!g_pGameLevel)return;
     const u16 proxy=ground_provision->proxy,shell=ground_provision->shell;
@@ -1648,6 +1782,7 @@ bool InventoryNextFieldKitEnabled() noexcept {
 u64 InventoryNextContainer(u16 live) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!layout_current)return 0;
     const auto id=InventoryNextIdentity(live);const auto found=layout().model().nodes().find(id);
+    if(found==layout().model().nodes().end()&&world_storage().records().count(id))return id;
     if(found==layout().model().nodes().end()||!found->second.container)return 0;
     const auto family=found->second.attributes.find("storage_family");
     return found->second.location!=inventory_next::Location::Equipment||(family!=found->second.attributes.end()&&family->second=="rig")?id:0;
@@ -1659,6 +1794,22 @@ u64 InventoryNextViewOwner(u16 live) noexcept try {
     inventory_next::Position p;if(storage_view.position(found->second,p))return 0;
     return found->second.parent;
 } catch (...) {return 0;}
+bool InventoryNextWorldView(u64 owner) noexcept try {
+    return InventoryNextFieldKitEnabled()&&world_storage().records().count(owner)!=0;
+} catch (...) {return false;}
+xr_vector<u16> InventoryNextWorldContents(u64 owner) noexcept try {
+    xr_vector<u16> result;const auto record=world_storage().records().find(owner);
+    if(record==world_storage().records().end())return result;
+    for(const auto& pair:record->second.tree.nodes())if(pair.second.parent==owner){
+        const u16 live=InventoryNextIdentityServer(pair.first);
+        if(live!=0xffff)result.push_back(live);
+    }
+    return result;
+} catch (...) {return {};}
+u16 InventoryNextWorldCustodianLive(u64 owner) noexcept try {
+    const auto record=world_storage().records().find(owner);
+    return record==world_storage().records().end()?u16(0xffff):InventoryNextIdentityServer(record->second.custodian);
+} catch (...) {return 0xffff;}
 void InventoryNextStorageToggle(u64 owner) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!owner||CUIDragDropListEx::m_drag_item)return;
     storage_views.clear();
@@ -1756,12 +1907,14 @@ bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 it
     }
     return InventoryNextLootTake(source,source_identity,live,item_identity,0xffff,slot,host,-1,-1,0,expected_logical_owner);
 } catch (...) {return false;}
-bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept try {
+bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live,int drop_x,int drop_y,u64 target_shell,u64 source_owner) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!Actor()||!InventoryNextPickupCanSave())return false;
     auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
-    if(!item||item->parent_id()!=Actor()->ID()||item->IsQuestItem())return false;
+    if(!item||item->IsQuestItem())return false;
     if(source==0xffff){InventoryNextPickupStatus("Use the Drop item area to put items on the ground.");return false;}
     if(!source_identity||InventoryNextIdentity(source)!=source_identity||!world_access(Actor()->ID(),source))return false;
+    if(target_shell||source_owner)return InventoryNextWorldMemberMove(live,source,target_shell,drop_x,drop_y,target_shell,source_owner);
+    if(item->parent_id()!=Actor()->ID())return false;
     if(InventoryNextWorldRequest(Actor()->ID(),source,live))return true;
     if(!InventoryNextCanRelease(live))return false;
     move_item_from_to(Actor()->ID(),source,live);return true;

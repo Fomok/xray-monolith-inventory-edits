@@ -85,6 +85,48 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 	{
 		return false;
 	}
+    if(InventoryNextFieldKitEnabled()&&(SqaWorldList(old_owner)||SqaWorldList(new_owner))){
+        auto item=static_cast<PIItem>(itm->m_pData);
+        if(!item)return true;
+        const u16 live=item->object_id();
+        if(SqaActorList(old_owner)&&!InventoryNextNativeDragCurrent(live)){
+            InventoryNextPickupStatus("Inventory changed. Drag again.");m_sqaRefresh=true;return true;
+        }
+        const u64 source_owner=SqaWorldList(old_owner)?old_owner->sqaViewOwner:
+            (old_owner==m_pDeadBodyBagList?m_sqaLootOwner:u64{0});
+        if(SqaWorldList(new_owner)){
+            const auto cell=new_owner->PickCell(new_owner->GetDragItemPosition());
+            const u16 custodian=InventoryNextWorldCustodianLive(new_owner->sqaViewOwner);
+            if(custodian!=u16(-1))InventoryNextWorldMemberMove(live,custodian,new_owner->sqaViewOwner,
+                cell.x,cell.y,new_owner->sqaViewOwner,source_owner);
+        }else if(SqaWorldList(old_owner)&&SqaActorList(new_owner)){
+            const auto cell=new_owner->PickCell(new_owner->GetDragItemPosition());
+            const u16 source=item->parent_id();
+            InventoryNextLootTake(source,InventoryNextIdentity(source),live,InventoryNextIdentity(live),
+                0xffff,0,1,cell.x,cell.y,new_owner->sqaViewOwner,source_owner);
+        }else if(SqaWorldList(old_owner)&&new_owner==m_pDeadBodyBagList){
+            ToDeadBodyBag(itm,true);
+        }else if(SqaWorldList(old_owner)){
+            bool custom=false;
+            for(int index=0;index<3;++index)if(new_owner==m_sqaCustomEquipment[index]){
+                const auto rig=InventoryNextCustomItem(1,"sqa3.rig");
+                const auto host=index?(rig!=u16(-1)?InventoryNextIdentityLookup(rig):0):u64{1};
+                const char* keys[]={"sqa3.rig","sqa3.mount.p1","sqa3.mount.p2"};
+                const u16 source=item->parent_id();
+                InventoryNextLootCustomEquip(source,InventoryNextIdentity(source),live,InventoryNextIdentity(live),
+                    host,keys[index],source_owner);custom=true;break;
+            }
+            if(!custom){
+            u16 slot=NO_ACTIVE_SLOT;
+            if(CanSetItemToList(item,new_owner,slot)){
+                const u16 source=item->parent_id();
+                InventoryNextLootTake(source,InventoryNextIdentity(source),live,InventoryNextIdentity(live),
+                    slot,0,1,-1,-1,0,source_owner);
+            }
+            }
+        }
+        m_sqaLootAfter=0;m_sqaRefresh=true;return true;
+    }
     if(InventoryNextFieldKitEnabled())for(int index=0;index<3;++index)if(new_owner==m_sqaCustomEquipment[index]){
         auto item=static_cast<PIItem>(itm->m_pData);
         if(!item){m_sqaRefresh=true;return true;}

@@ -1,5 +1,6 @@
 #include "../../../src/inventory_next/native_layout.h"
 #include "../../../src/inventory_next/native_storage_view.h"
+#include "../../../src/inventory_next/view_metrics.h"
 #include "../../../src/inventory_next/storage_catalog.h"
 #include "model.h"
 #include "access_gate.h"
@@ -1096,6 +1097,29 @@ int main(int argc,char** argv) {
             check(!view.destination(1,1,owner,local)&&!view.region(1,1),"gutter accepted a drop");
             check(view.destination(2,1,owner,local)&&owner==100&&local.x==1&&local.y==0,"projected cell lost logical owner coordinate");
             check(model.nodes().at(100).grid.w==2&&model.nodes().at(100).grid.h==2,"projection changed native capacity");
+        });
+        test("detached world box view maps an exact child cell without actor ownership",[]{
+            auto box=bag(100,2,300);box.attributes["native_section"]="ampbox_meds";
+            auto med=item(101,100,50,{1,1,false});med.attributes["native_section"]="medkit";
+            Model model;yes(model.initialize({root(1,Kind::ActorRoot),root(2,Kind::WorldRoot),box,med}));
+            WorldSubtrees world;yes(world.capture(model,100,900));
+            StorageViewOptions options;options.owner=100;NativeStorageView view;
+            yes(view.build(world.records().at(100).tree,options));
+            Position display,local;Id owner=0;
+            check(view.position(world.records().at(100).tree.nodes().at(101),display)&&
+                view.destination(display.x,display.y,owner,local)&&owner==100&&local.x==1&&local.y==1,
+                "detached box display lost the selected cell");
+            check(!view.destination(0,0,owner,local),"detached box header accepted drop");
+        });
+        test("published 35-unit cell body and spacing fit projected actor and window extents",[]{
+            check(fitted_cell_body(350,8,2,36)==35,"released grid cap changed");
+            for(int columns:{9,16,24,32,64}){
+                const int actor=fitted_cell_body(282,columns,2,35);
+                const int window=fitted_cell_body(902,columns,2,32);
+                check(actor>=1&&actor<=35&&actor*columns+2*(columns-1)<=282,"actor compartment or pouch extent clipped");
+                check(window>=1&&window<=32&&window*columns+2*(columns-1)<=902,"opened box window extent clipped");
+            }
+            check(fitted_cell_body(282,0)==0&&fitted_cell_body(0,8)==0,"invalid view metrics accepted");
         });
         test("actor storage pairs move directly without pocket staging and refuse occupied cells",[]{
             auto pack=bag(100,1,800,{0,0,false});pack.attributes["storage_family"]="backpack";

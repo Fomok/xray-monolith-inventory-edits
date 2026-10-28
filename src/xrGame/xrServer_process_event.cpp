@@ -96,6 +96,9 @@ void xrServer::Process_event(NET_Packet& P, ClientID sender)
 	case GE_SQA_WORLD_TRANSFER:
 		Process_event_sqa_world_transfer(P,sender,timestamp,destination);
 		break;
+	case GE_SQA_WORLD_MEMBER:
+		Process_event_sqa_world_member(P,sender,timestamp,destination);
+		break;
 	case GE_TRADE_BUY:
 	case GE_OWNERSHIP_TAKE:
 		{

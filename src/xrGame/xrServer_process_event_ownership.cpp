@@ -253,3 +253,33 @@ void xrServer::Process_event_sqa_world_transfer(NET_Packet& P,ClientID sender,u3
         SendBroadcast(BroadcastCID,reject,mode);SendBroadcast(BroadcastCID,take,mode);
     }
 }
+
+void xrServer::Process_event_sqa_world_member(NET_Packet& P,ClientID sender,u32 time,u16 actor)
+{
+    if(!InventoryNextWorldStorageEnabled()||game->Type()!=eGameIDSingle||!Actor()||actor!=Actor()->ID())return;
+    const u16 source=P.r_u16(),destination=P.r_u16(),live=P.r_u16();u64 token;P.r_u64(token);
+    auto player=game->get_entity_from_eid(actor);auto from=game->get_entity_from_eid(source);
+    auto to=game->get_entity_from_eid(destination);auto item=game->get_entity_from_eid(live);
+    auto client=ID_to_client(sender);
+    if(!player||(client!=GetServerClient()&&client!=player->owner))return;
+    if(!InventoryNextWorldMemberValidate(source,destination,live,token)){
+        InventoryNextWorldMemberFinish(false);return;
+    }
+    if(!from||!to||!item||item->ID_Parent!=source||!is_object_valid_on_svclient(live)){
+        InventoryNextWorldMemberFinish(false);return;
+    }
+    NET_Packet reject;reject.w_begin(M_EVENT);reject.w_u32(time);reject.w_u16(GE_TRADE_SELL);reject.w_u16(source);reject.w_u16(live);
+    if(!Process_event_reject(reject,sender,time,source,live,false)){
+        InventoryNextWorldMemberFinish(false);return;
+    }
+    if(!game->OnTouch(destination,live,FALSE)){
+        if(game->OnTouch(source,live,FALSE)){item->ID_Parent=source;from->children.push_back(live);}
+        InventoryNextWorldMemberFinish(false);return;
+    }
+    if(from->owner!=to->owner)PerformMigration(item,from->owner,to->owner);
+    item->ID_Parent=destination;to->children.push_back(live);
+    if(!InventoryNextWorldMemberFinish(true))return;
+    NET_Packet take;take.w_begin(M_EVENT);take.w_u32(time);take.w_u16(GE_TRADE_BUY);take.w_u16(destination);take.w_u16(live);
+    const u32 mode=net_flags(TRUE,TRUE,FALSE,TRUE);
+    SendBroadcast(BroadcastCID,reject,mode);SendBroadcast(BroadcastCID,take,mode);
+}

@@ -77,7 +77,7 @@ def compile_catalog(source):
         assert ew and eh and float(ew).is_integer() and float(eh).is_integer()
         ew,eh=int(ew),int(eh);assert 0<ew<=64 and 0<eh<=64
         growing=family in ('backpack','rig')
-        minimum=(2,2) if family=='backpack' else (3,2) if family=='rig' else (1,1)
+        minimum=(2,2) if family=='backpack' else (2,3) if family=='rig' else (1,1)
         empty=(max(minimum[0],ew-1),max(minimum[1],eh-1)) if growing else (ew,eh)
         half=(max(minimum[0],ew),max(minimum[1],eh));full=(half[0],min(64,half[1]+1)) if growing else half
         definitions[section]={'family':family,'width':w,'height':h,'cells':cells,

@@ -77,6 +77,10 @@ bool InventoryNextWorldCanSave() noexcept;
 bool InventoryNextWorldCanDestroy(u16 live) noexcept;
 bool InventoryNextWorldCanRelease(u16 live) noexcept;
 bool InventoryNextWorldVisible(u16 live) noexcept;
+bool InventoryNextWorldMemberMove(u16 live,u16 destination,u64 target_shell,int drop_x=-1,int drop_y=-1,u64 view=0,u64 expected_source_owner=0) noexcept;
+bool InventoryNextWorldMemberValidate(u16 source,u16 destination,u16 live,u64 token) noexcept;
+bool InventoryNextWorldMemberFinish(bool accepted) noexcept;
+void InventoryNextWorldMemberClientReady() noexcept;
 bool InventoryNextGroundStorageEnabled() noexcept;
 bool InventoryNextGroundDrop(u16 live) noexcept;
 void InventoryNextGroundUpdate() noexcept;
@@ -88,13 +92,16 @@ void InventoryNextStashForgetMarker(u16 live) noexcept;
 bool InventoryNextFieldKitEnabled() noexcept;
 u64 InventoryNextContainer(u16 live) noexcept;
 u64 InventoryNextViewOwner(u16 live) noexcept;
+bool InventoryNextWorldView(u64 owner) noexcept;
+xr_vector<u16> InventoryNextWorldContents(u64 owner) noexcept;
+u16 InventoryNextWorldCustodianLive(u64 owner) noexcept;
 void InventoryNextStorageToggle(u64 owner) noexcept;
 
 struct InventoryNextLootSource {u16 live=0xffff;u64 identity=0,logical_owner=0;s64 grams=0;std::string name;xr_vector<u16> items;};
 xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse=0xffff) noexcept;
 bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_identity,u16 slot=0xffff,u32 custom_slot=0,u64 custom_host=1,int drop_x=-1,int drop_y=-1,u64 view=0,u64 expected_logical_owner=0) noexcept;
 bool InventoryNextLootCustomEquip(u16 source,u64 source_identity,u16 live,u64 item_identity,u64 host,const char* key,u64 expected_logical_owner=0) noexcept;
-bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept;
+bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live,int drop_x=-1,int drop_y=-1,u64 target_shell=0,u64 source_owner=0) noexcept;
 
 int InventoryNextNativePreview(u16 live,int x,int y,u64 view,int& width,int& height) noexcept;
 

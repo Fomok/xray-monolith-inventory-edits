@@ -26,7 +26,8 @@ class Definitions(unittest.TestCase):
         for d in self.preset['definitions'].values():
             if d['family']=='rig':
                 self.assertFalse(d['allow_rig_items'])
-                self.assertTrue(all(d[stage][0]>=3 and d[stage][1]>=2 for stage in ('empty','half','full')))
+                self.assertTrue(all(d[stage][0]>=2 and d[stage][1]>=3 for stage in ('empty','half','full')))
+                self.assertEqual(d['empty'],[2,3])
     def setUp(self):
         source=Path(__file__).parents[1]/'inventory_lab/gamedata/configs/sqa3_catalog.json'
         self.preset=migrate(json.loads(source.read_text(encoding='utf-8')))

@@ -223,7 +223,15 @@ void CUIActorMenu::DeInitDeadBodySearchMode()
 
 bool CUIActorMenu::ToDeadBodyBag(CUICellItem* itm, bool b_use_cursor_pos)
 {
-    if(SqaLootActive())return SqaPutLoot(static_cast<PIItem>(itm->m_pData));
+    if(SqaLootActive()){
+        int x=-1,y=-1;u64 source_owner=0;
+        if(b_use_cursor_pos&&CUIDragDropListEx::m_drag_item){
+            auto target=CUIDragDropListEx::m_drag_item->BackList();
+            if(target){const auto cell=target->PickCell(target->GetDragItemPosition());x=cell.x;y=cell.y;}
+            if(itm->OwnerList()&&SqaWorldList(itm->OwnerList()))source_owner=itm->OwnerList()->sqaViewOwner;
+        }
+        return SqaPutLoot(static_cast<PIItem>(itm->m_pData),x,y,source_owner);
+    }
 	if (m_pPartnerInvOwner)
 	{
 		if (!m_pPartnerInvOwner->deadbody_can_take_status())

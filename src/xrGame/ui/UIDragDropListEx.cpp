@@ -342,8 +342,13 @@ void CUIDragDropListEx::Compact()
 void CUIDragDropListEx::CenterStorageContent()
 {
     const float contentWidth=_max(1.0f,GetWndSize().x-m_vScrollBar->GetWidth()-6.0f);
-    m_sqaStorageInset=_max(0.0f,(contentWidth-float(CellsCapacity().x*CellSize().x))*0.5f);
+    const float gridWidth=float(CellsCapacity().x*CellSize().x+_max(0,CellsCapacity().x-1)*CellsSpacing().x);
+    m_sqaStorageInset=_max(0.0f,(contentWidth-gridWidth)*0.5f);
     m_container->SetWndPos(Fvector2().set(m_sqaStorageInset,m_container->GetWndPos().y));
+}
+int CUIDragDropListEx::SqaGridContentWidth()
+{
+    return _max(1,int(GetWndSize().x-m_vScrollBar->GetWidth()-6.0f));
 }
 void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner,s64 grams,bool collapsed)
 {
@@ -981,14 +986,25 @@ void CUICellContainer::ClearAll(bool bDestroy)
 Ivector2 CUICellContainer::PickCell(const Fvector2& abs_pos)
 {
 	Ivector2 res;
+	if(m_cellsCapacity.x<1||m_cellsCapacity.y<1){res.set(-1,-1);return res;}
 	Fvector2 ap;
 	GetAbsolutePos(ap);
 	ap.sub(abs_pos);
 	ap.mul(-1);
-	res.y = iFloor(ap.y / (m_cellSize.y + m_cellSpacing.y * (m_cellsCapacity.y - 1) / m_cellsCapacity.y));
+	if(!InventoryNextFieldKitEnabled()){
+	    res.y=iFloor(ap.y/(m_cellSize.y+m_cellSpacing.y*(m_cellsCapacity.y-1)/m_cellsCapacity.y));
+	    res.x=iFloor(ap.x/(m_cellSize.x+m_cellSpacing.x*(m_cellsCapacity.x-1)/m_cellsCapacity.x));
+	    if(!ValidCell(res))res.set(-1,-1);
+	    return res;
+	}
+	const float pitch_y=float(m_cellSize.y+m_cellSpacing.y);
+	const float pitch_x=float(m_cellSize.x+m_cellSpacing.x);
+	res.y = iFloor(ap.y/pitch_y);
     const float inset=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageInset(res.y,m_pParentDragDropList->sqaViewOwner)*float(m_cellSize.x+m_cellSpacing.x):0.0f;
-    res.x=iFloor((ap.x-inset)/(m_cellSize.x+m_cellSpacing.x*(m_cellsCapacity.x-1)/m_cellsCapacity.x));
-	if (!ValidCell(res))
+	const float local_x=ap.x-inset;
+    res.x=iFloor(local_x/pitch_x);
+	if (!ValidCell(res)||local_x-float(res.x)*pitch_x>=float(m_cellSize.x)||
+	    ap.y-float(res.y)*pitch_y>=float(m_cellSize.y))
 		res.set(-1, -1);
 	return res;
 }
@@ -1017,7 +1033,9 @@ void CUICellContainer::Draw()
 	GetAbsolutePos(lt_abs_pos);
 
 	Fvector2 drawLT;
-	drawLT.set(lt_abs_pos.x + tgt_cells.lt.x * (cell_sz.x + m_cellSpacing.x),
+	if(InventoryNextFieldKitEnabled())drawLT.set(lt_abs_pos.x+tgt_cells.lt.x*cell_sz.x,
+	    lt_abs_pos.y+tgt_cells.lt.y*cell_sz.y);
+	else drawLT.set(lt_abs_pos.x + tgt_cells.lt.x * (cell_sz.x + m_cellSpacing.x),
 	           lt_abs_pos.y + tgt_cells.lt.y * (cell_sz.y + m_cellSpacing.y));
 	UI().ClientToScreenScaled(drawLT, drawLT.x, drawLT.y);
 

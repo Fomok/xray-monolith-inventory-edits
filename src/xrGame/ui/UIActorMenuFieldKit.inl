@@ -17,7 +17,13 @@ bool CUIActorMenu::SqaActorList(CUIDragDropListEx* list) const
 {
     if(list==m_pInventoryBagList)return true;
     if(list)for(auto equipment:m_sqaCustomEquipment)if(list==equipment)return true;
-    if(InventoryNextFieldKitEnabled())for(const auto& window:m_sqaContainers)if(window.list==list)return true;
+    if(InventoryNextFieldKitEnabled())for(const auto& window:m_sqaContainers)if(window.list==list)return !InventoryNextWorldView(window.owner);
+    return false;
+}
+bool CUIActorMenu::SqaWorldList(CUIDragDropListEx* list) const
+{
+    if(InventoryNextFieldKitEnabled())for(const auto& window:m_sqaContainers)
+        if(window.list==list)return InventoryNextWorldView(window.owner);
     return false;
 }
 void CUIActorMenu::SqaSelectPendingMember()
@@ -60,7 +66,7 @@ bool CUIActorMenu::SqaOpenContainer(PIItem item)
     close->InitButton(Fvector2().set(266,4),Fvector2().set(20,20));close->InitTexture("sqa3v2_close");
     window.list=xr_new<CUIDragDropListEx>();window.list->SetAutoDelete(true);window.frame->AttachChild(window.list);
     window.list->InitDragDropList(Fvector2().set(12,32),Fvector2().set(266,334));
-    window.list->SetCellSize(Ivector2().set(32,32));window.list->SetCellsSpacing(Ivector2().set(0,0));
+    window.list->SetCellSize(Ivector2().set(32,32));window.list->SetCellsSpacing(Ivector2().set(2,2));
     window.list->SetAutoGrow(false);window.list->SetGrouping(false);window.list->SetCustomPlacement(true);
     window.list->back_color=0x40454545;window.list->sqaViewOwner=owner;BindDragDropListEvents(window.list);
     m_sqaContainers.push_back(window);m_sqaRefresh=true;
@@ -75,9 +81,9 @@ void CUIActorMenu::SqaPrepareContainers()
         } else {
             int columns=0,rows=0;
             if(InventoryNextStorageExtent(it->owner,columns,rows)){
-                const int step=_min(32,_max(1,908/_max(1,columns)));
+                const int step=_min(32,_max(1,(908-2*_max(0,columns-1))/_max(1,columns)));
                 if(it->list->CellSize().x!=step)it->list->SetCellSize(Ivector2().set(step,step));
-                const float width=_max(290.0f,float(columns*step)+52.0f);
+                const float width=_max(290.0f,float(columns*step+2*_max(0,columns-1))+52.0f);
                 const float delta=width-it->frame->GetWndSize().x;
                 if(delta!=0){auto position=it->frame->GetWndPos();position.x-=delta*0.5f;clamp(position.x,0.0f,1024.0f-width);
                     it->frame->SetWndPos(position);it->frame->SetWndSize(Fvector2().set(width,380.0f));it->rim->SetWndSize(it->frame->GetWndSize());
@@ -85,6 +91,19 @@ void CUIActorMenu::SqaPrepareContainers()
                     it->list->SetWndSize(Fvector2().set(width-24.0f,334.0f));}
             }
             InventoryNextStorageView(it->list,it->owner);
+            if(InventoryNextWorldView(it->owner)&&!CUIDragDropListEx::m_drag_item){
+                it->list->ClearAll(true);
+                for(const auto live:InventoryNextWorldContents(it->owner)){
+                    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+                    int x=0,y=0,w=0,h=0;bool rotated=false;
+                    if(!item||!InventoryNextNativePosition(live,x,y,rotated,it->owner))continue;
+                    auto cell=create_cell_item(item);
+                    if(InventoryNextNativeFootprint(live,w,h))cell->SetSqaFootprint(w,h,rotated);
+                    const auto position=Ivector2().set(x,y);
+                    if(it->list->CanSetItemAt(cell,position))it->list->SetItem(cell,position);
+                    else {xr_delete(cell);Msg("! SQA3 detached box view placement mismatch live=%u",live);}
+                }
+            }
             it->frame->Show(SqaLootActive());++it;
         }
     }
@@ -198,7 +217,11 @@ void CUIActorMenu::SqaUpdateLoot(bool force)
     }
     const float tabHeight=float((sources.size()+2)/3)*22.0f;
     m_pDeadBodyBagList->InitDragDropList(Fvector2().set(680.0f,138.0f+tabHeight),Fvector2().set(306.0f,_max(100.0f,550.0f-tabHeight)));
+    m_pDeadBodyBagList->SetCellSize(Ivector2().set(35,35));m_pDeadBodyBagList->SetCellsSpacing(Ivector2().set(2,2));
     m_pDeadBodyBagList->ReinitScroll();
+    m_pDeadBodyBagList->SetCustomPlacement(selected->logical_owner!=0);
+    if(selected->logical_owner)InventoryNextStorageView(m_pDeadBodyBagList,selected->logical_owner);
+    else m_pDeadBodyBagList->sqaViewOwner=0;
     for(size_t n=0;n<sources.size();++n){
         auto tab=xr_new<CUIStatic>();tab->SetAutoDelete(true);AttachChild(tab);tab->Enable(false);
         tab->SetWndPos(Fvector2().set(652+float(n%3)*120,114+float(n/3)*22));tab->SetWndSize(Fvector2().set(116,20));
@@ -212,7 +235,14 @@ void CUIActorMenu::SqaUpdateLoot(bool force)
         if(!matches)for(int n=0;n<_GetItemCount(m_sort_kinds[mode]);++n){string256 kind;_GetItem(m_sort_kinds[mode],n,kind);if(item->m_kind!=NULL&&item->m_kind.equal(kind)){matches=true;break;}}
         if(!matches)continue;
         m_sqaLootIdentity[live]=InventoryNextIdentity(live);
-        m_pDeadBodyBagList->SetItem(create_cell_item(item));
+        auto cell=create_cell_item(item);
+        int x=0,y=0,w=0,h=0;bool rotated=false;
+        if(selected->logical_owner&&InventoryNextNativePosition(live,x,y,rotated,selected->logical_owner)){
+            if(InventoryNextNativeFootprint(live,w,h))cell->SetSqaFootprint(w,h,rotated);
+            const auto position=Ivector2().set(x,y);
+            if(m_pDeadBodyBagList->CanSetItemAt(cell,position))m_pDeadBodyBagList->SetItem(cell,position);
+            else {xr_delete(cell);Msg("! SQA3 stash box source placement mismatch live=%u",live);}
+        } else m_pDeadBodyBagList->SetItem(cell);
     }
     m_sqaLootFilter=current_sort_mode();m_sqaLootRenderedCount=m_pDeadBodyBagList->ItemsCount();
     string64 amount;xr_sprintf(amount,"%.2f kg",weight);m_PartnerWeight->SetText(amount);
@@ -235,10 +265,10 @@ bool CUIActorMenu::SqaTakeLoot(PIItem item,u16 slot,int drop_x,int drop_y,u64 vi
     const bool result=InventoryNextLootTake(m_sqaLootSource,m_sqaLootSourceIdentity,found->first,found->second,slot,0,1,drop_x,drop_y,view,m_sqaLootOwner);
     m_sqaLootAfter=0;m_sqaRefresh=true;return result;
 }
-bool CUIActorMenu::SqaPutLoot(PIItem item)
+bool CUIActorMenu::SqaPutLoot(PIItem item,int drop_x,int drop_y,u64 source_owner)
 {
     if(!item)return false;
-    const bool result=InventoryNextLootPut(m_sqaLootSource,m_sqaLootSourceIdentity,item->object_id());
+    const bool result=InventoryNextLootPut(m_sqaLootSource,m_sqaLootSourceIdentity,item->object_id(),drop_x,drop_y,m_sqaLootOwner,source_owner);
     m_sqaLootAfter=0;m_sqaRefresh=true;return result;
 }
 

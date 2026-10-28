@@ -198,6 +198,7 @@ public:
 	void Process_event_sqa_acquire(NET_Packet& P, ClientID sender, u32 time, u16 owner);
 	void Process_event_sqa_purchase(NET_Packet& P, ClientID sender, u32 time, u16 owner);
 	void Process_event_sqa_world_transfer(NET_Packet& P, ClientID sender, u32 time, u16 owner);
+	void Process_event_sqa_world_member(NET_Packet& P, ClientID sender, u32 time, u16 owner);
 	bool Process_event_reject(NET_Packet& P, const ClientID sender, const u32 time, const u16 id_parent,
 	                          const u16 id_entity, bool send_message = true);
 	void Process_event_destroy(NET_Packet& P, ClientID sender, u32 time, u16 ID, NET_Packet* pEPack);

@@ -202,6 +202,7 @@ public:
     xr_vector<SqaContainerWindow> m_sqaContainers;
     CUIDragDropListEx* SqaContainerList(u64 owner);
     bool SqaActorList(CUIDragDropListEx* list) const;
+    bool SqaWorldList(CUIDragDropListEx* list) const;
     bool SqaOpenContainer(PIItem item);
     void SqaPrepareContainers();
     bool m_sqaRigView=false;
@@ -226,7 +227,7 @@ public:
     void SqaUpdateLoot(bool force=false);
     bool SqaLootClick(float x,float y);
     bool SqaTakeLoot(PIItem item,u16 slot=0xffff,int drop_x=-1,int drop_y=-1,u64 view=0);
-    bool SqaPutLoot(PIItem item);
+    bool SqaPutLoot(PIItem item,int drop_x=-1,int drop_y=-1,u64 source_owner=0);
     bool SqaLootActive() const;
     void SqaForgetLoot(u16 live);
     bool SqaFixtureAction(const char* action,u16 live);

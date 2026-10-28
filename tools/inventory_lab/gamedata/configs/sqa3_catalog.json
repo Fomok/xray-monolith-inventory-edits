@@ -18,21 +18,22 @@
         5
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -42,8 +43,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_bandolier",
-      "allow_rig_items": false
+      "source_section": "amprig_bandolier"
     },
     "amprig_scout": {
       "family": "rig",
@@ -64,21 +64,22 @@
         6
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -88,8 +89,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_scout",
-      "allow_rig_items": false
+      "source_section": "amprig_scout"
     },
     "amprig_harness": {
       "family": "rig",
@@ -113,21 +113,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -137,8 +138,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_harness",
-      "allow_rig_items": false
+      "source_section": "amprig_harness"
     },
     "amprig_barakholka": {
       "family": "rig",
@@ -162,21 +162,22 @@
         5
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -186,8 +187,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_barakholka",
-      "allow_rig_items": false
+      "source_section": "amprig_barakholka"
     },
     "amprig_vydra": {
       "family": "rig",
@@ -217,21 +217,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -241,8 +242,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_vydra",
-      "allow_rig_items": false
+      "source_section": "amprig_vydra"
     },
     "amprig_nylon": {
       "family": "rig",
@@ -269,21 +269,22 @@
         9
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -293,8 +294,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_nylon",
-      "allow_rig_items": false
+      "source_section": "amprig_nylon"
     },
     "amprig_warsaw": {
       "family": "rig",
@@ -321,21 +321,22 @@
         8
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -345,8 +346,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_warsaw",
-      "allow_rig_items": false
+      "source_section": "amprig_warsaw"
     },
     "amprig_smersh": {
       "family": "rig",
@@ -379,21 +379,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -403,8 +404,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_smersh",
-      "allow_rig_items": false
+      "source_section": "amprig_smersh"
     },
     "amprig_karkas": {
       "family": "rig",
@@ -437,21 +437,22 @@
         11
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -461,8 +462,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_karkas",
-      "allow_rig_items": false
+      "source_section": "amprig_karkas"
     },
     "amprig_bastion": {
       "family": "rig",
@@ -495,21 +495,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -519,8 +520,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_bastion",
-      "allow_rig_items": false
+      "source_section": "amprig_bastion"
     },
     "amprig_chicom": {
       "family": "rig",
@@ -553,21 +553,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -577,8 +578,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_chicom",
-      "allow_rig_items": false
+      "source_section": "amprig_chicom"
     },
     "amprig_volya": {
       "family": "rig",
@@ -611,21 +611,22 @@
         6
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -635,8 +636,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_volya",
-      "allow_rig_items": false
+      "source_section": "amprig_volya"
     },
     "amprig_tarzan": {
       "family": "rig",
@@ -669,21 +669,22 @@
         12
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -693,8 +694,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_tarzan",
-      "allow_rig_items": false
+      "source_section": "amprig_tarzan"
     },
     "amprig_leshy": {
       "family": "rig",
@@ -727,21 +727,22 @@
         11
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -751,8 +752,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_leshy",
-      "allow_rig_items": false
+      "source_section": "amprig_leshy"
     },
     "amprig_carrier": {
       "family": "rig",
@@ -793,21 +793,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -817,8 +818,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_carrier",
-      "allow_rig_items": false
+      "source_section": "amprig_carrier"
     },
     "amprig_rubezh": {
       "family": "rig",
@@ -859,21 +859,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -883,8 +884,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amprig_rubezh",
-      "allow_rig_items": false
+      "source_section": "amprig_rubezh"
     },
     "zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj": {
       "family": "pouch",
@@ -911,11 +911,11 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
-      "source_section": "zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj",
-      "allow_rig_items": false
+      "source_section": "zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj"
     },
     "zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p": {
       "family": "pouch",
@@ -945,11 +945,11 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
-      "source_section": "zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p",
-      "allow_rig_items": false
+      "source_section": "zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p"
     },
     "ampbox_meds": {
       "family": "box",
@@ -993,6 +993,7 @@
       "max_contents_grams": 10000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1002,8 +1003,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": ""
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_ammo": {
       "family": "box",
@@ -1039,6 +1039,7 @@
       "max_contents_grams": 10000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1048,8 +1049,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": "ammo"
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_food": {
       "family": "box",
@@ -1097,6 +1097,7 @@
       "max_contents_grams": 10000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1106,8 +1107,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": ""
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_armor": {
       "family": "box",
@@ -1155,6 +1155,7 @@
       "max_contents_grams": 0,
       "stack_limit": 1,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1164,8 +1165,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": "rig"
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_food_small": {
       "family": "box",
@@ -1199,6 +1199,7 @@
       "max_contents_grams": 10000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1208,8 +1209,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": ""
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_mags": {
       "family": "box",
@@ -1245,6 +1245,7 @@
       "max_contents_grams": 15000,
       "stack_limit": 10,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1254,8 +1255,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": "magazine"
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_ammo_big": {
       "family": "box",
@@ -1303,6 +1303,7 @@
       "max_contents_grams": 15000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1312,8 +1313,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": "ammo"
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_parts": {
       "family": "box",
@@ -1357,6 +1357,7 @@
       "max_contents_grams": 15000,
       "stack_limit": 999,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1366,8 +1367,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": ""
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_docs": {
       "family": "box",
@@ -1415,6 +1415,7 @@
       "max_contents_grams": 0,
       "stack_limit": 20,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1424,8 +1425,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": ""
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_weapon": {
       "family": "box",
@@ -1473,6 +1473,7 @@
       "max_contents_grams": 0,
       "stack_limit": 1,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1482,8 +1483,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": "weapon"
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_weapon_big": {
       "family": "box",
@@ -1539,6 +1539,7 @@
       "max_contents_grams": 0,
       "stack_limit": 1,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1548,8 +1549,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": "weapon"
-      },
-      "allow_rig_items": false
+      }
     },
     "ampbox_hip": {
       "family": "box",
@@ -1588,11 +1588,11 @@
       "max_contents_grams": 5000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
-      "source_section": "ampbox_hip",
-      "allow_rig_items": false
+      "source_section": "ampbox_hip"
     },
     "ampbox_pistolcase": {
       "family": "box",
@@ -1646,6 +1646,7 @@
       "max_contents_grams": 0,
       "stack_limit": 1,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1655,8 +1656,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": "weapon"
-      },
-      "allow_rig_items": false
+      }
     },
     "zb_bd4zhvqbyadxczm3utf11a7l3t_8hpwbhfzaik6o4ijgkcuu7a3v": {
       "family": "box",
@@ -1704,6 +1704,7 @@
       "max_contents_grams": 10000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1713,8 +1714,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": ""
-      },
-      "allow_rig_items": false
+      }
     },
     "zb_bd4zhvqbyadxczm3utf11a7l3t_a5ts10qfqsr9qjumcpxx6ktmo": {
       "family": "box",
@@ -1746,6 +1746,7 @@
       "max_contents_grams": 10000,
       "stack_limit": 99,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
@@ -1755,8 +1756,7 @@
         "accept_sections": "",
         "reject_sections": "",
         "accept_flags": ""
-      },
-      "allow_rig_items": false
+      }
     },
     "amp_rig_bandolier": {
       "family": "rig",
@@ -1774,21 +1774,22 @@
         5
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -1798,8 +1799,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_bandolier",
-      "allow_rig_items": false
+      "source_section": "amp_rig_bandolier"
     },
     "amp_rig_scout": {
       "family": "rig",
@@ -1820,21 +1820,22 @@
         6
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -1844,8 +1845,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_scout",
-      "allow_rig_items": false
+      "source_section": "amp_rig_scout"
     },
     "amp_rig_harness": {
       "family": "rig",
@@ -1869,21 +1869,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -1893,8 +1894,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_harness",
-      "allow_rig_items": false
+      "source_section": "amp_rig_harness"
     },
     "amp_rig_nylon": {
       "family": "rig",
@@ -1921,21 +1921,22 @@
         9
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -1945,8 +1946,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_nylon",
-      "allow_rig_items": false
+      "source_section": "amp_rig_nylon"
     },
     "amp_rig_warsaw": {
       "family": "rig",
@@ -1973,21 +1973,22 @@
         8
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -1997,8 +1998,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_warsaw",
-      "allow_rig_items": false
+      "source_section": "amp_rig_warsaw"
     },
     "amp_rig_leshy": {
       "family": "rig",
@@ -2031,21 +2031,22 @@
         11
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -2055,8 +2056,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_leshy",
-      "allow_rig_items": false
+      "source_section": "amp_rig_leshy"
     },
     "amp_rig_chicom": {
       "family": "rig",
@@ -2089,21 +2089,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -2113,8 +2114,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_chicom",
-      "allow_rig_items": false
+      "source_section": "amp_rig_chicom"
     },
     "amp_rig_carrier": {
       "family": "rig",
@@ -2155,21 +2155,22 @@
         0
       ],
       "empty": [
-        3,
-        2
+        2,
+        3
       ],
       "half": [
-        3,
+        2,
         3
       ],
       "full": [
-        3,
+        2,
         4
       ],
       "growing": true,
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [
         8000,
@@ -2179,8 +2180,7 @@
         1000
       ],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
-      "source_section": "amp_rig_carrier",
-      "allow_rig_items": false
+      "source_section": "amp_rig_carrier"
     },
     "itm_backpack": {
       "family": "backpack",
@@ -2276,12 +2276,12 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": true,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
       "source_section": "itm_backpack",
-      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged.",
-      "allow_rig_items": true
+      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged."
     },
     "equ_small_pack": {
       "family": "backpack",
@@ -2393,12 +2393,12 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": true,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
       "source_section": "equ_small_pack",
-      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged.",
-      "allow_rig_items": true
+      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged."
     },
     "equ_small_military_pack": {
       "family": "backpack",
@@ -2526,12 +2526,12 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": true,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
       "source_section": "equ_small_military_pack",
-      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged.",
-      "allow_rig_items": true
+      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged."
     },
     "equ_military_pack": {
       "family": "backpack",
@@ -2667,12 +2667,12 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": true,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
       "source_section": "equ_military_pack",
-      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged.",
-      "allow_rig_items": true
+      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged."
     },
     "equ_tourist_pack": {
       "family": "backpack",
@@ -2824,12 +2824,12 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": true,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "provisional SQA3 test balancing; configurable",
       "source_section": "equ_tourist_pack",
-      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged.",
-      "allow_rig_items": true
+      "layout_provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged."
     },
     "af_magpouch_s": {
       "family": "pouch",
@@ -2855,11 +2855,11 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
-      "source_section": "af_magpouch_s",
-      "allow_rig_items": false
+      "source_section": "af_magpouch_s"
     },
     "af_magpouch_m": {
       "family": "pouch",
@@ -2887,11 +2887,11 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
-      "source_section": "af_magpouch_m",
-      "allow_rig_items": false
+      "source_section": "af_magpouch_m"
     },
     "af_magpouch_l": {
       "family": "pouch",
@@ -2919,11 +2919,11 @@
       "max_contents_grams": 0,
       "stack_limit": 0,
       "allow_container_items": false,
+      "allow_rig_items": false,
       "exterior_independent": true,
       "tear_thresholds": [],
       "growth_provenance": "fixed source exterior",
-      "source_section": "af_magpouch_l",
-      "allow_rig_items": false
+      "source_section": "af_magpouch_l"
     }
   }
 }

@@ -36,7 +36,7 @@ public:
         auto add=[&](Id owner,const Size& size,bool header=true,Id group=0)->Result {
             const bool collapsed=options.collapsed.count(group?group:owner)!=0;
             bool accepts=true;
-            for(Id current=owner;current!=1;){
+            for(Id current=owner;current!=1&&current!=2;){
                 const auto found=model.nodes().find(current);
                 if(found==model.nodes().end()||found->second.location==Location::Overflow||!model.storage_active(current)){accepts=false;break;}
                 current=found->second.parent;
