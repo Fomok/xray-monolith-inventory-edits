@@ -61,6 +61,10 @@ constexpr u32 layout_chunk=0x33514c59;
 constexpr u32 world_storage_chunk=0x33515753;
 bool layout_current=false;
 bool equipment_dirty=false;
+std::set<u64> dismantling_items;
+// Filled during native source enumeration, never during rendering. HD icon
+// dimensions remain UV coordinates; they are not storage footprints.
+std::map<u64,inventory_next::Size> source_footprints;
 inventory_next::EquipmentRegistry equipment_registry;
 bool equipment_registry_ready=false;
 bool rig_wear_enabled=false;
@@ -512,6 +516,33 @@ bool InventoryNextManualUnequip(u16 live,int x,int y,u64 view) noexcept try {
     if(!result){pickup_fault=true;InventoryNextPickupStatus("Equipment changed during unequip. Saving blocked.");return false;}
     InventoryNextCustomChanged();return true;
 } catch (...) {return false;}
+bool InventoryNextPrepareDismantle(u16 live) noexcept try {
+    using namespace inventory_next;
+    if(!InventoryNextLogicalStorage())return true;
+    if(!Actor()||!InventoryNextActionReady())return false;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    if(!item||item->parent_id()!=Actor()->ID()||item->IsQuestItem())return false;
+    const auto id=InventoryNextIdentityLookup(live);const auto found=layout().model().nodes().find(id);
+    if(found==layout().model().nodes().end())return false;
+    if(!found->second.container)return true;
+    xr_vector<PIItem> pouches;auto candidate=layout().model();
+    for(const auto& entry:candidate.nodes())if(entry.second.parent==id){
+        if(entry.second.location!=Location::Mounted){InventoryNextPickupStatus("Empty this container before dismantling it.");return false;}
+        for(const auto& child:candidate.nodes())if(child.second.parent==entry.first){InventoryNextPickupStatus("Empty the mounted pouches before dismantling this rig.");return false;}
+        auto pouch=smart_cast<CInventoryItem*>(Level().Objects.net_Find(InventoryNextIdentityServer(entry.first)));
+        if(!pouch||pouch->parent_id()!=Actor()->ID())return false;pouches.push_back(pouch);
+    }
+    for(auto pouch:pouches){const auto result=candidate.recover_owned_overflow(InventoryNextIdentityLookup(pouch->object_id()),1,candidate.revision(),candidate.session());if(!result)return false;}
+    for(auto pouch:pouches){
+        const auto placement=find_placement(candidate,InventoryNextIdentityLookup(pouch->object_id()),{1});
+        if(placement.result&&!candidate.relocate(placement.moves))return false;
+    }
+    const auto serialized=candidate.serialize();
+    if(!dismantling_items.insert(id).second)return false;
+    if(!pouches.empty()&&!Actor()->inventory().DetachCustomMounts(id,pouches)){dismantling_items.erase(id);return false;}
+    if(!layout().restore(serialized)||!InventoryNextLayoutSync()){pickup_fault=true;return false;}
+    Msg("* SQA3 dismantle prepared live=%u returned_pouches=%u",live,static_cast<unsigned>(pouches.size()));return true;
+} catch (...) {return false;}
 bool InventoryNextLayoutSync() noexcept try {
     layout_current=false;
     if(!InventoryNextEnabled()||!g_pGameLevel||!Actor())return true;
@@ -583,7 +614,7 @@ bool InventoryNextLayoutSync() noexcept try {
         if(layout_current&&logical)layout_current=storage_view.build(layout().model(),view_options()).ok;
         return layout_current;
 } catch (...) {Msg("! SQA3 native layout sync exception");return false;}
-void InventoryNextLayoutReset() noexcept try {equipment_registry_ready=false;storage_catalog_cache.reset();pending_custom_bindings.clear();restoring_custom_bindings=false;collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
+void InventoryNextLayoutReset() noexcept try {source_footprints.clear();dismantling_items.clear();equipment_registry_ready=false;storage_catalog_cache.reset();pending_custom_bindings.clear();restoring_custom_bindings=false;collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();ground_provision.reset();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};} catch (...) {CHECK_OR_EXIT(false,"SQA3 layout reset failed");}
 void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     if(!layout().initialized())return;
     const auto bytes=layout().model().serialize();stream.open_chunk(layout_chunk);
@@ -594,6 +625,7 @@ void InventoryNextLayoutSave(IWriter& stream) noexcept try {
     }
 } catch (...) {CHECK_OR_EXIT(false,"SQA3 layout save failed");}
 void InventoryNextLayoutLoad(IReader& stream) noexcept try {
+    source_footprints.clear();dismantling_items.clear();
     equipment_registry_ready=false;storage_catalog_cache.reset();
     pending_custom_bindings.clear();restoring_custom_bindings=false;
     collapsed_storage.clear();storage_views.clear();stash_markers.clear();layout_current=false;native_drag().cancel();world_transfer.reset();purchase.reset();pickup_transaction.reset();pickup_registry.reset();pending_pickups.clear();pickup_fault=false;layout().reset();world_storage()=inventory_next::WorldSubtrees{};auto chunk=stream.open_chunk(layout_chunk);
@@ -684,8 +716,11 @@ void InventoryNextProbe(bool export_snapshot,bool show_view) noexcept {
 bool InventoryNextNativeFootprint(u16 live,int& width,int& height) noexcept try {
     if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
     const auto id=InventoryNextIdentityLookup(live);
-    if(!id||!layout().model().nodes().count(id))return false;
-    const auto size=layout().model().footprint(id);width=size.w;height=size.h;return true;
+    if(!id)return false;
+    inventory_next::Size size;
+    if(layout().model().nodes().count(id))size=layout().model().footprint(id);
+    else {const auto found=source_footprints.find(id);if(found==source_footprints.end())return false;size=found->second;}
+    width=size.w;height=size.h;return size.w>0&&size.h>0;
 } catch (...) {return false;}
 bool InventoryNextNativePosition(u16 live,int& x,int& y,bool& rotated,u64 view) noexcept try {
     if(!InventoryNextEnabled()||!layout_current||!layout().initialized())return false;
@@ -711,6 +746,17 @@ int InventoryNextStorageCell(int x,int y,u64 view) noexcept try {
     for(const auto& band:selected.bands)if(!band.collapsed&&x>=band.column&&x<band.column+band.grid.w&&y>=band.row&&y<band.row+band.grid.h)
         return layout().model().cell_region(band.owner,x-band.column,y-band.row)?1:0;
     return !selected.recovery.empty()&&y>=selected.recovery_row?2:0;
+} catch (...) {return 0;}
+float InventoryNextStorageInset(int y,u64 view) noexcept try {
+    if(!layout_current||!InventoryNextFieldKitEnabled())return 0.0f;
+    const auto& selected=view?make_storage_view(view):storage_view;return selected.row_inset(y);
+} catch (...) {return 0.0f;}
+unsigned InventoryNextStorageRegion(int x,int y,u64 view) noexcept try {
+    if(!layout_current||!InventoryNextFieldKitEnabled())return 0;
+    const auto& selected=view?make_storage_view(view):storage_view;
+    for(const auto& band:selected.bands)if(!band.collapsed&&x>=band.column&&x<band.column+band.grid.w&&y>=band.row&&y<band.row+band.grid.h)
+        return layout().model().cell_region(band.owner,x-band.column,y-band.row);
+    return 0;
 } catch (...) {return 0;}
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     if(!InventoryNextLogicalStorage()||!layout_current||!list)return;
@@ -807,11 +853,13 @@ bool InventoryNextStrictPickup() noexcept {
     return InventoryNextLogicalStorage()&&(strstr(Core.Params,"-sqa3-strict-ground-pickup")||InventoryNextStrictOwnedPickup());
 }
 bool InventoryNextPickupCanSave() noexcept {
-    return !pickup_fault&&!pickup_transaction&&!purchase&&!world_transfer&&!ground_provision&&pending_pickups.empty();
+    return !pickup_fault&&!pickup_transaction&&!purchase&&!world_transfer&&!ground_provision&&pending_pickups.empty()&&dismantling_items.empty();
 }
 void InventoryNextPickupForget(u16 live) noexcept try {
     if(CurrentGameUI())CurrentGameUI()->GetActorMenu().SqaForgetLoot(live);
-    const auto identity=InventoryNextIdentity(live);
+    const auto identity=InventoryNextIdentityLookup(live);
+    dismantling_items.erase(identity);
+    source_footprints.erase(identity);
     for(const auto& record:world_storage().records())
         if(record.second.custodian==identity||record.second.tree.nodes().count(identity))pickup_fault=true;
     if(world_transfer)for(const auto& record:world_transfer->records)if(record.live==live)pickup_fault=true;
@@ -1181,8 +1229,18 @@ bool InventoryNextWorldStorageEnabled() noexcept {
 bool InventoryNextWorldCanDestroy(u16 live) noexcept try {
     // Destruction during level teardown must remain native. During play, reject
     // the entire recursive deletion before any member or ancestor is removed.
-    if(!InventoryNextWorldStorageEnabled()||!g_pGameLevel||!Level().bReady||
-       !ai().get_alife()||world_storage().records().empty())return true;
+    if(!InventoryNextLogicalStorage()||!g_pGameLevel||!Level().bReady||
+       !ai().get_alife())return true;
+    if(Actor()&&layout().initialized()){
+        auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+        if(item&&item->parent_id()==Actor()->ID()){
+            const auto id=InventoryNextIdentityLookup(live);
+            if(id)for(const auto& node:layout().model().nodes())if(node.second.parent==id){
+                Msg("* SQA3 retained loaded actor container during destruction live=%u",live);return false;
+            }
+        }
+    }
+    if(world_storage().records().empty())return true;
     auto protected_ancestor=[live](u64 identity) {
         u16 current=InventoryNextIdentityServer(identity);
         if(current==0xffff)return true;
@@ -1312,6 +1370,13 @@ void world_refused(const char* message) {
     InventoryNextPickupStatus(message);
 }
 }
+bool InventoryNextValidateDefinition(u16 live) noexcept try {
+    if(!InventoryNextLogicalStorage()||!strstr(Core.Params,"-sqa3-fixture")||!Actor())return false;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));if(!item)return false;
+    inventory_next::Node node;if(!world_node(live,item->parent_id(),node))return false;
+    inventory_next::StorageCatalog catalog;if(!read_storage_catalog(catalog)||!catalog.definitions.count(item->m_section_id.c_str()))return false;
+    inventory_next::ActorLayout validation;return validation.reconcile({node},{{4,2},{},true}).ok;
+} catch (...) {return false;}
 bool InventoryNextWorldRequest(u16 source,u16 destination,u16 live,bool created_ground_proxy,const char* stash_name) noexcept try {
     if(!InventoryNextWorldStorageEnabled()||!Actor())return false;
     if(!InventoryNextPickupCanSave()){InventoryNextPickupStatus("Finish the pending transfer first.");return true;}
@@ -1547,10 +1612,21 @@ void move_item_from_to(u16,u16,u16);
 xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse) noexcept try {
     xr_vector<InventoryNextLootSource> result;
     if(!InventoryNextFieldKitEnabled()||!InventoryNextStrictOwnedPickup()||!Actor())return result;
+    source_footprints.clear();
+    inventory_next::StorageCatalog catalog;if(!read_storage_catalog(catalog))return result;
+    auto observe=[&](CInventoryItem* item){
+        if(!item)return;
+        const auto id=InventoryNextIdentity(item->object_id());if(!id)return;
+        for(const auto& record:world_storage().records())if(record.second.tree.nodes().count(id)){
+            source_footprints[id]=record.second.tree.footprint(id);return;
+        }
+        const auto definition=catalog.definitions.find(item->m_section_id.c_str());
+        if(definition!=catalog.definitions.end())source_footprints[id]=definition->second.empty;
+    };
     InventoryNextLootSource ground;ground.name="Ground";
     for(u32 n=0;n<Level().Objects.o_count();++n){
         auto object=Level().Objects.o_get_by_iterator(n);if(!object||object->getDestroy())continue;
-        if(Actor()->SqaCanPickup(object->ID())){ground.items.push_back(object->ID());ground.grams+=static_cast<s64>(std::llround(smart_cast<CInventoryItem*>(object)->Weight()*1000.0));}
+        if(Actor()->SqaCanPickup(object->ID())){auto item=smart_cast<CInventoryItem*>(object);observe(item);ground.items.push_back(object->ID());ground.grams+=static_cast<s64>(std::llround(item->Weight()*1000.0));}
         auto box=smart_cast<CInventoryBox*>(object);
         if(!box&&object->ID()!=corpse)continue;
         if(!world_access(object->ID(),Actor()->ID()))continue;
@@ -1563,7 +1639,7 @@ xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse) noexcept 
         }
         TIItemContainer items;
         if(box)box->AddAvailableItems(items);else if(auto owner=smart_cast<CInventoryOwner*>(object))owner->inventory().AddAvailableItems(items,false,false);
-        for(auto item:items)if(item){source.grams+=static_cast<s64>(std::llround(item->Weight()*1000.0));if(InventoryNextWorldVisible(item->object_id()))source.items.push_back(item->object_id());}
+        for(auto item:items)if(item){source.grams+=static_cast<s64>(std::llround(item->Weight()*1000.0));if(InventoryNextWorldVisible(item->object_id())){observe(item);source.items.push_back(item->object_id());}}
         std::sort(source.items.begin(),source.items.end());result.push_back(std::move(source));
     }
     std::sort(result.begin(),result.end(),[](const InventoryNextLootSource& a,const InventoryNextLootSource& b){return a.live<b.live;});

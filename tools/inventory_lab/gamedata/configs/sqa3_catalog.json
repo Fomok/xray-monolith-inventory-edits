@@ -872,18 +872,12 @@
     },
     "zb_pd4zhvqbyadxczm3utf11a7l3t_31hlfiatyyljkszf5y7j9pcdj": {
       "family": "pouch",
-      "width": 3,
+      "width": 1,
       "height": 3,
       "cells": [
         1,
-        0,
-        0,
         1,
-        0,
-        0,
-        1,
-        0,
-        0
+        1
       ],
       "empty": [
         1,
@@ -908,18 +902,15 @@
     },
     "zb_pd4zhvqbyadxczm3utf11a7l3t_64v17nxkaz5z6q30xrpssqh1p": {
       "family": "pouch",
-      "width": 3,
+      "width": 2,
       "height": 3,
       "cells": [
         1,
         2,
-        0,
         1,
         2,
-        0,
         1,
-        2,
-        0
+        2
       ],
       "empty": [
         1,
@@ -2751,15 +2742,11 @@
     },
     "af_magpouch_s": {
       "family": "pouch",
-      "width": 3,
+      "width": 1,
       "height": 2,
       "cells": [
         1,
-        0,
-        0,
-        1,
-        0,
-        0
+        1
       ],
       "empty": [
         1,
@@ -2784,15 +2771,13 @@
     },
     "af_magpouch_m": {
       "family": "pouch",
-      "width": 3,
+      "width": 2,
       "height": 2,
       "cells": [
         1,
         2,
-        0,
         1,
-        2,
-        0
+        2
       ],
       "empty": [
         1,
@@ -2817,15 +2802,13 @@
     },
     "af_magpouch_l": {
       "family": "pouch",
-      "width": 3,
+      "width": 2,
       "height": 2,
       "cells": [
         1,
         1,
-        0,
         1,
-        1,
-        0
+        1
       ],
       "empty": [
         1,

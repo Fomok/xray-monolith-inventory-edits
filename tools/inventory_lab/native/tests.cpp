@@ -1006,6 +1006,7 @@ int main(int argc,char** argv) {
             auto bag=item(100,1,800);bag.container=true;bag.grid={4,4};bag.attributes["native_section"]="bag";
             auto med=item(101,1,200);med.attributes["native_section"]="medkit";
             ActorStorage pockets{{4,2},{},true};ActorLayout a;yes(a.reconcile({bag,med},pockets));
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
             yes(a.move({101,100,{3,3,false},a.model().revision(),a.model().session()}));
             bag.grid={2,2};yes(a.reconcile({bag,med},pockets));
             check(a.model().nodes().at(101).location==Location::Overflow&&a.model().carried_mass()==1000,"shrink lost or silently repacked content");
@@ -1020,6 +1021,8 @@ int main(int argc,char** argv) {
             auto pouch=item(101,1,100);pouch.container=true;pouch.grid={2,2};pouch.soft=true;pouch.half={2,1};pouch.full={2,2};pouch.attributes["native_section"]="pouch";
             auto med=item(102,1,200);med.attributes["native_section"]="medkit";
             ActorStorage pockets{{4,4},{},true};ActorLayout a;yes(a.reconcile({bag,pouch,med},pockets));
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
+            yes(a.move({101,1,{1,0,false},a.model().revision(),a.model().session()}));
             yes(a.move({102,101,{0,0,false},a.model().revision(),a.model().session()}));
             yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
             yes(a.move({100,1,{2,2,false},a.model().revision(),a.model().session()}));
@@ -1036,9 +1039,11 @@ int main(int argc,char** argv) {
         });
         test("native storage view keeps owner coordinates separate from headers and recovery",[]{
             auto pack=item(100,1,800);pack.container=true;pack.grid={8,8};pack.attributes["native_section"]="backpack";
+            pack.location=Location::Equipment;pack.wear_slots=pack.equipped_slots=8192;
             auto med=item(101,1,200);med.attributes["native_section"]="medkit";
             ActorLayout a;yes(a.reconcile({pack,med},{{4,2},{},true}));
             yes(a.move({101,100,{2,3,true},a.model().revision(),a.model().session()}));
+            pack.location=Location::Grid;pack.equipped_slots=0;yes(a.reconcile({pack,med},{{4,2},{},true}));
             auto before=a.model().serialize();NativeStorageView view;yes(view.build(a.model()));
             Position p;check(view.position(a.model().nodes().at(101),p)&&p.x==2&&p.y==7&&p.rotated,"nested coordinate projection");
             Id owner=0;Position local;check(!view.destination(p.x,p.y,owner,local),"recovery ancestor accepted new contents");
@@ -1050,9 +1055,12 @@ int main(int argc,char** argv) {
         });
         test("recovery container windows permit retrieval display but never extra manual capacity",[]{
             auto pack=item(100,1,800);pack.container=true;pack.grid={8,8};pack.empty=pack.half=pack.full={5,5};
-            auto med=item(101,1,200);ActorLayout a;yes(a.reconcile({pack,med},{{4,2},{},true}));
-            check(a.model().nodes().at(100).location==Location::Overflow,"fixture needs recovery pack");
+            pack.attributes["native_section"]="backpack";
+            auto med=item(101,1,200);med.attributes["native_section"]="medkit";ActorLayout a;yes(a.reconcile({pack,med},{{8,8},{},true}));
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
             yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
+            yes(a.reconcile({pack,med},{{4,2},{},true}));
+            check(a.model().nodes().at(100).location==Location::Overflow,"fixture needs recovery pack after forced shrink");
             StorageViewOptions options;options.owner=100;NativeStorageView view;yes(view.build(a.model(),options));
             Position shown;check(view.position(a.model().nodes().at(101),shown),"recovery contents inaccessible for retrieval");
             Id owner=0;Position local;check(!view.destination(3,3,owner,local),"recovery pack became extra capacity");
@@ -1061,6 +1069,8 @@ int main(int argc,char** argv) {
             auto outer=item(100,1,800);outer.container=true;outer.grid={8,8};outer.empty=outer.half=outer.full={2,2};
             auto inner=item(101,1,300);inner.container=true;inner.grid={4,4};auto med=item(102,1,200);
             ActorLayout a;yes(a.reconcile({outer,inner,med},{{4,2},{},true}));
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
+            yes(a.move({101,1,{2,0,false},a.model().revision(),a.model().session()}));
             yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
             yes(a.move({102,101,{2,2,false},a.model().revision(),a.model().session()}));
             yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
@@ -1078,6 +1088,8 @@ int main(int argc,char** argv) {
             auto inner=item(101,1,300);inner.container=true;inner.grid={4,4};
             auto med=item(102,1,200);
             ActorLayout a;yes(a.reconcile({bag,inner,med},{{4,2},{},true}));
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
+            yes(a.move({101,1,{2,0,false},a.model().revision(),a.model().session()}));
             yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
             yes(a.move({102,101,{2,2,false},a.model().revision(),a.model().session()}));
             yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
@@ -1348,6 +1360,11 @@ int main(int argc,char** argv) {
             check(layout.model().nodes().at(102).parent==101&&layout.model().nodes().at(101).location==Location::Mounted,"native rebuild detached pouch contents");
             StorageViewOptions options;options.owner=100;options.center=true;NativeStorageView view;yes(view.build(layout.model(),options));
             check(view.bands.size()==2&&view.size.w==5&&view.bands[0].column==1&&view.bands[1].owner==101,"effective rig/pouch layout omitted or displaced a band");
+            check(view.row_inset(view.bands[0].row)==0.0f&&view.row_inset(view.bands[1].row)==0.0f,"matching parity added an inset");
+            rig.grid={4,3};rig.attributes["storage_exterior_independent"]="1";yes(layout.reconcile({rig,pouch,med},pockets));yes(view.build(layout.model(),options));
+            check(view.row_inset(view.bands[0].row)==0.5f&&view.row_inset(view.bands[1].row)==0.0f,"odd/even bands lost exact half-cell centering");
+            Id centered_owner=0;Position centered_local;
+            check(view.destination(view.bands[0].column,view.bands[0].row,centered_owner,centered_local)&&centered_owner==100&&centered_local.x==0,"pixel inset changed logical owner coordinates");
             rig.condition=500;yes(layout.reconcile({rig,pouch,med},pockets));
             check(layout.model().nodes().at(101).location==Location::Mounted&&layout.model().nodes().at(102).location==Location::Overflow,"condition loss lost binding or failed recovery");
             check(layout.model().carried_mass()==1600&&layout.model().nodes().at(102).condition==8432,"condition recovery changed item state or mass");
@@ -1445,6 +1462,20 @@ int main(int argc,char** argv) {
             yes(move(model,{22,10,{1,0,false},model.revision()}));
             yes(move(model,{24,10,{0,1,false},model.revision()}));
             check(model.carried_mass()==150,"category admission changed mass");
+        });
+        test("recovery shells and their mounted grants cannot become extra manual capacity",[]{
+            auto shell=item(100,1,100);shell.container=true;shell.grid={2,2};shell.location=Location::Overflow;
+            shell.mounts.push_back({65537,"left",{1,1},1,0,true});
+            auto pouch=item(101,100,50);pouch.pouch=pouch.container=true;pouch.grid={1,1};pouch.location=Location::Mounted;pouch.mounted_slot=65537;
+            auto held=item(102,100,10);held.type=1;held.stack_limit=10;
+            auto arriving=item(103,1,10);arriving.type=1;arriving.stack_limit=10;
+            Model model;yes(model.initialize({root(1,Kind::ActorRoot,{1,1}),shell,pouch,held,arriving}));
+            check(!model.storage_active(100)&&!model.storage_active(101),"recovery ancestry exposed an active grant");
+            rollback(model,{103,100,{1,0,false},model.revision()},"recovery_storage");
+            rollback(model,{103,101,{0,0,false},model.revision()},"recovery_storage");
+            Command merge;merge.operation=Operation::Merge;merge.item=103;merge.destination=102;merge.quantity=1;merge.revision=model.revision();merge.session=model.session();
+            const auto before=model.serialize();no(model.execute(merge),"recovery_storage");check(model.serialize()==before,"recovery merge changed quantities");
+            check(model.nodes().at(102).parent==100&&model.carried_mass()==170,"legacy recovery cargo was lost");
         });
         test("configurable portable-container nesting refuses new relationships and preserves legacy state",[]{
             auto nodes=fixture();nodes[2].attributes["storage_allow_container_items"]="0";

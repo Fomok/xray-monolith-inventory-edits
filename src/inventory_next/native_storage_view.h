@@ -17,7 +17,7 @@ struct StorageViewOptions {
 class NativeStorageView {
 public:
     Result build(const Model& model,const StorageViewOptions& options={}) {
-        NativeStorageView next;
+        NativeStorageView next;next.centered=options.center;
         if(options.owner)next.size.w=1;
         auto actor=model.nodes().find(1);
         if(actor==model.nodes().end())return {false,"view_actor"};
@@ -79,6 +79,12 @@ public:
         }
         return false;
     }
+    float row_inset(int y) const {
+        if(centered)for(const auto& band:bands)if(!band.collapsed&&y>=band.row&&y<band.row+band.grid.h)
+            return float((size.w-band.grid.w)%2)*0.5f;
+        return 0.0f;
+    }
+    bool centered=false;
     Size size{8,1};
     int recovery_row=1;
     std::vector<StorageBand> bands;

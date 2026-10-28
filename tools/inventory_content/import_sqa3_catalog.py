@@ -25,7 +25,8 @@ def pouch_layout(grants):
         assert y+h<=64
         rects.append((x,y,w,h));skyline[x:x+w]=[y+h]*w
     height=max(y+h for x,y,w,h in rects)
-    return width,height,rectangles(rects,width,height)
+    occupied_width=max(x+w for x,y,w,h in rects)
+    return occupied_width,height,rectangles(rects,occupied_width,height)
 
 def compile_catalog(source):
     assert source['schema']=='sqa3.catalog.source.v1'
@@ -90,6 +91,7 @@ def compile_catalog(source):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('catalog',type=Path);parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--items-script',type=Path)
     args=parser.parse_args();raw=args.catalog.read_bytes();source=json.loads(raw);definitions=compile_catalog(source)
     lines=['; SQA3 native catalog, schema1. Generated from audited source data.',
         '; Growth stages are provisional test balancing; edit empty/half/full per definition.',
@@ -112,6 +114,9 @@ def main():
     args.output.parent.mkdir(parents=True,exist_ok=True);args.output.write_text('\n'.join(lines)+'\n',encoding='utf-8')
     report={'schema':'sqa3.native.catalog.v1','source_sha256':hashlib.sha256(raw).hexdigest(),'definitions':definitions}
     args.output.with_suffix('.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+    if args.items_script:
+        args.items_script.parent.mkdir(parents=True,exist_ok=True)
+        args.items_script.write_text('-- Generated catalog IDs; no automatic spawn.\nsections = {\n'+''.join('    '+json.dumps(name)+',\n' for name in definitions)+'}\n',encoding='utf-8')
     print(json.dumps({'definitions':len(definitions),'output':str(args.output)}))
 
 if __name__=='__main__':main()

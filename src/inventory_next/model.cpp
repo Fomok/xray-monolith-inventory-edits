@@ -49,7 +49,15 @@ unsigned region_of(const Node& n, int x, int y) {
     if (!n.container || x<0 || y<0 || x>=n.grid.w || y>=n.grid.h) return 0;
     return n.cells.empty() ? 1 : n.cells[static_cast<std::size_t>(y*n.grid.w+x)];
 }
-const char* container_admission_error(const Node& item,const Node& destination) {
+const char* container_admission_error(const Node& item,const Node& destination,const std::map<Id,Node>& nodes) {
+    const Node* current=&destination;
+    for(unsigned depth=0;;++depth){
+        if(current->location==Location::Overflow)return "recovery_storage";
+        if(!current->parent)break;
+        const auto parent=nodes.find(current->parent);if(parent==nodes.end())break;
+        if(depth>=64)return "depth";
+        current=&parent->second;
+    }
     if(destination.kind!=Kind::Item)return nullptr;
     const auto policy=destination.attributes.find("storage_allow_container_items");
     if(item.container&&policy!=destination.attributes.end()&&policy->second=="0")return "container_nesting_policy";
@@ -302,7 +310,7 @@ Result Model::relocate(const std::vector<Move>& requests) {
         auto destination=candidate.find(request.destination);
         if(destination!=candidate.end() &&
             (item->second.parent!=request.destination || item->second.location!=Location::Grid))
-            if(const auto error=container_admission_error(item->second,destination->second))return bad(error);
+            if(const auto error=container_admission_error(item->second,destination->second,candidate))return bad(error);
         item->second.parent = request.destination;
         item->second.position = request.position;
         item->second.location = Location::Grid;
@@ -336,7 +344,12 @@ Result Model::swap_equipment(Id incoming,Id equipped,std::uint64_t revision,std:
     nodes_.swap(candidate);++revision_;return good();
 }
 bool Model::storage_active(Id container) const {
-    auto n=nodes_.find(container);return n!=nodes_.end()&&n->second.container&&active_storage(nodes_,n->second);
+    auto n=nodes_.find(container);if(n==nodes_.end()||!n->second.container)return false;
+    for(unsigned depth=0;;++depth){
+        if(n->second.location==Location::Overflow||!active_storage(nodes_,n->second))return false;
+        if(!n->second.parent)return true;
+        n=nodes_.find(n->second.parent);if(n==nodes_.end()||depth>=64)return false;
+    }
 }
 Result Model::recover_rig_condition(Id rig,unsigned condition,Id actor,std::uint64_t revision,std::uint64_t session) {
     if(!session_||session!=session_)return bad("stale_session");
@@ -389,7 +402,7 @@ Result Model::execute_internal(const Command& request,bool recovery,bool restori
         if (request.spawned.id <= high_water_id_) return bad("id_reuse");
         const auto destination=candidate.find(request.spawned.parent);
         if(request.spawned.location==Location::Grid && destination!=candidate.end())
-            if(const auto error=container_admission_error(request.spawned,destination->second))return bad(error);
+            if(const auto error=container_admission_error(request.spawned,destination->second,candidate))return bad(error);
         candidate.emplace(request.spawned.id, request.spawned);
         if(request.spawned.location==Location::Mounted&&!active_storage(candidate,request.spawned))return bad("mount");
         next_high_water = request.spawned.id;
@@ -402,7 +415,7 @@ Result Model::execute_internal(const Command& request,bool recovery,bool restori
                 const auto destination=candidate.find(request.destination);
                 if(destination!=candidate.end() &&
                     (item->second.parent!=request.destination || item->second.location!=Location::Grid))
-                    if(const auto error=container_admission_error(item->second,destination->second))return bad(error);
+                    if(const auto error=container_admission_error(item->second,destination->second,candidate))return bad(error);
             }
             if(!recovery&&item->second.location==Location::Mounted){
                 for(const auto& [id,n]:candidate){(void)id;if(n.parent==request.item)return bad("mounted_not_empty");}
@@ -447,6 +460,10 @@ Result Model::execute_internal(const Command& request,bool recovery,bool restori
             auto target = candidate.find(request.destination);
             if (target == candidate.end() || target == item || !stack_compatible(item->second, target->second))
                 return bad("stack_compatibility");
+            if(item->second.parent!=target->second.parent){
+                const auto owner=candidate.find(target->second.parent);
+                if(owner!=candidate.end())if(const auto error=container_admission_error(item->second,owner->second,candidate))return bad(error);
+            }
             if (!request.quantity || request.quantity > item->second.quantity ||
                 request.quantity > target->second.stack_limit - target->second.quantity) return bad("merge_quantity");
             target->second.quantity += request.quantity;

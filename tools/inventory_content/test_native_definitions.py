@@ -6,9 +6,13 @@ import tempfile
 import unittest
 
 from native_definitions import migrate, validate, render, parse_ltx, atomic_write
+from import_sqa3_catalog import pouch_layout
 
 
 class Definitions(unittest.TestCase):
+    def test_pouch_skyline_trims_only_unused_trailing_columns(self):
+        self.assertEqual(pouch_layout([(1,2)]),(1,2,[1,1]))
+        self.assertEqual(pouch_layout([(1,2),(1,2)]),(2,2,[1,2,1,2]))
     def setUp(self):
         source=Path(__file__).parents[1]/'inventory_lab/gamedata/configs/sqa3_catalog.json'
         self.preset=migrate(json.loads(source.read_text(encoding='utf-8')))

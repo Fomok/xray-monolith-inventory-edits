@@ -4,7 +4,8 @@ param(
     [Parameter(Mandatory=$true)][ValidatePattern('^[a-z0-9][a-z0-9-]*$')][string]$EvidenceStem,
     [ValidateRange(60,240)][int]$TimeoutSeconds=180,
     [string]$LabRoot='C:/GAMMA/sqa-inventory-lab-game',
-    [switch]$Background
+    [switch]$Background,
+    [switch]$AlwaysActive
 )
 $ErrorActionPreference='Stop'
 $lab=(Resolve-Path -LiteralPath $LabRoot).Path
@@ -34,14 +35,14 @@ try {
     if(!$locked){throw 'Another supervised lab test is active.'}
     if(@(Get-Process | Where-Object {$_.ProcessName -match '^(Anomaly.*|xrEngine|VerifiedDX.*)$'}).Count){throw 'Another game instance is running.'}
     $taskWindowStyle='Normal'
-    if($Background){
-        if($Arguments -match '(^|\s)-ltx\s'){throw 'Background fixture owns its separate settings file.'}
+    if($Background -or $AlwaysActive){
+        if($Arguments -match '(^|\s)-ltx\s'){throw 'Always-active fixture owns its separate settings file.'}
         $taskSettings=Get-Content -LiteralPath (Join-Path $lab 'appdata/user.ltx') -Raw
         if($taskSettings -notmatch '(?m)^g_always_active\s+'){throw 'Expected native background setting missing.'}
         $taskSettings=[regex]::Replace($taskSettings,'(?m)^g_always_active\s+\S+','g_always_active on')
         [IO.File]::WriteAllText((Join-Path $lab 'appdata/sqa3-fixture-user.ltx'),$taskSettings,[Text.UTF8Encoding]::new($false))
         $Arguments+=' -ltx sqa3-fixture-user.ltx'
-        $taskWindowStyle='Hidden'
+        if($Background){$taskWindowStyle='Hidden'}
     }
     $game=Start-Process -FilePath $engine -WorkingDirectory $lab -ArgumentList $Arguments -WindowStyle $taskWindowStyle -PassThru
     Write-Output ('Started lab PID '+$game.Id)

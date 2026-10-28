@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "UICellItemFactory.h"
 #include "UICellCustomItems.h"
+#include "../InventoryNextProbe.h"
 
 
 CUICellItem* create_cell_item(CInventoryItem* itm)
@@ -22,5 +23,7 @@ CUICellItem* create_cell_item(CInventoryItem* itm)
 	{
 		cell_item = xr_new<CUIInventoryCellItem>(itm);
 	}
+	int width=0,height=0;
+	if(InventoryNextNativeFootprint(itm->object_id(),width,height))cell_item->SetSqaFootprint(width,height,false);
 	return cell_item;
 }

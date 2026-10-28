@@ -123,11 +123,12 @@ void CUIActorMenu::SqaUpdateChest()
         }
         if(m_pInvSlotHighlight[5])m_pInvSlotHighlight[5]->Show(false);
     }
+    const auto rig_live=InventoryNextCustomItem(1,"sqa3.rig");
+    const u64 rig_identity=rig_live!=u16(-1)?InventoryNextIdentityLookup(rig_live):0;
+    if(rig_identity!=m_sqaChestRigSeen){if(rig_identity)m_sqaRigView=true;m_sqaChestRigSeen=rig_identity;}
     if(m_sqaChestCaption)m_sqaChestCaption->TextItemControl()->SetText(m_sqaRigView?"Rig":"Armour");
     if(m_pInvList[OUTFIT_SLOT])m_pInvList[OUTFIT_SLOT]->Show(!m_sqaRigView);
     if(m_pInvList[16])m_pInvList[16]->Show(false); // reserved native slot, never reused
-    const auto rig_live=InventoryNextCustomItem(1,"sqa3.rig");
-    const u64 rig_identity=rig_live!=u16(-1)?InventoryNextIdentityLookup(rig_live):0;
     const u16 equipment_live[3]={rig_live,rig_identity?InventoryNextCustomItem(rig_identity,"sqa3.mount.p1"):u16(-1),rig_identity?InventoryNextCustomItem(rig_identity,"sqa3.mount.p2"):u16(-1)};
     for(int index=0;index<3;++index)if(auto list=m_sqaCustomEquipment[index]){
         const bool visible=m_sqaRigView&&SqaLootActive();list->Show(visible);
@@ -243,10 +244,42 @@ bool CUIActorMenu::SqaPutLoot(PIItem item)
 
 void CUIActorMenu::SqaForgetLoot(u16 live)
 {
-    if(!m_sqaLootIdentity.count(live))return;
+    const bool box=m_pInvBox&&m_pInvBox->ID()==live;
+    const bool partner=m_pPartnerInvOwner&&m_pPartnerInvOwner->object_id()==live;
+    const bool source=m_sqaLootSource==live;
+    if(box||partner){
+        if(IsShown())HideDialog();
+        if(box)SetInvBox(nullptr);if(partner)SetPartner(nullptr);
+    }
+    if(!source&&!box&&!partner&&!m_sqaLootIdentity.count(live))return;
     if(CUIDragDropListEx::m_drag_item&&CUIDragDropListEx::m_drag_item->ParentItem()->OwnerList()==m_pDeadBodyBagList)m_pDeadBodyBagList->DestroyDragItem();
     if(CurrentItem()&&CurrentItem()->OwnerList()==m_pDeadBodyBagList){SetCurrentItem(nullptr);InfoCurItem(nullptr);m_UIPropertiesBox->Hide();}
     m_pDeadBodyBagList->ClearAll(true);m_sqaLootIdentity.clear();m_sqaLootAfter=0;
+    if(source||box||partner){m_sqaLootSource=0xffff;m_sqaLootSourceIdentity=0;}
+}
+bool CUIActorMenu::SqaFixtureAction(const char* action,u16 live)
+{
+    if(!InventoryNextFieldKitEnabled()||!strstr(Core.Params,"-sqa3-fixture")||!action||CUIDragDropListEx::m_drag_item)return false;
+    if(!xr_strcmp(action,"selection-clear"))return !CurrentItem()&&!m_UIPropertiesBox->IsShown();
+    if(!xr_strcmp(action,"select-source")){
+        if(!IsShown()||!SqaLootActive())return false;SqaUpdateLoot(true);
+        for(size_t i=0;i<m_sqaLootSources.size()&&i<m_sqaLootTabs.size();++i)if(m_sqaLootSources[i].live==live){
+            const auto position=m_sqaLootTabs[i]->GetWndPos(),size=m_sqaLootTabs[i]->GetWndSize();
+            return SqaLootClick(position.x+size.x*0.5f,position.y+size.y*0.5f)&&m_sqaLootSource==live;
+        }
+        return false;
+    }
+    if(!xr_strcmp(action,"select-loot")){
+        for(u32 i=0;i<m_pDeadBodyBagList->ItemsCount();++i){auto cell=m_pDeadBodyBagList->GetItemIdx(i);auto item=static_cast<PIItem>(cell->m_pData);
+            if(item&&item->object_id()==live){OnItemRButtonClick(cell);return CurrentItem()==cell&&m_UIPropertiesBox->IsShown();}}
+        return false;
+    }
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    if(!item||!Actor()||item->parent_id()!=Actor()->ID())return false;
+    if(!xr_strcmp(action,"open-container"))return SqaOpenContainer(item);
+    if(!xr_strcmp(action,"close-container"))for(const auto& window:m_sqaContainers)if(window.live==live){
+        const auto position=window.frame->GetWndPos();return SqaCloseContainerAt(position.x+window.frame->GetWndSize().x-14.0f,position.y+14.0f);}
+    return false;
 }
 
 bool CUIActorMenu::SqaMoveWindow(float x,float y,EUIMessages action)

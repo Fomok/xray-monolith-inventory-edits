@@ -38,8 +38,15 @@ def main():
         for name in ['sqa3_catalog.ltx','sqa3_equipment.ltx','mod_system_sqa3_catalog.ltx']:
             files['gamedata/configs/'+name]=read_overlay('tools/inventory_lab/gamedata/configs/'+name)
         files['catalog-provenance.json']=catalog
+        item_list=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_catalog_items.script',optional=True)
+        if item_list is not None:files['gamedata/scripts/sqa3_catalog_items.script']=item_list
         files['gamedata/scripts/sqa3_test_items.script']=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_test_items.script')
         files['MANUAL-TEST.md']=read_overlay('docs/inventory-next/STAGE1-3-MANUAL-TEST.md')
+        parts=read_overlay('tools/inventory_lab/gamedata/configs/items/settings/mod_parts_sqa3_rigs.json',optional=True)
+        if parts is not None:
+            files['gamedata/configs/items/settings/mod_parts_sqa3_rigs.ltx']=read_overlay('tools/inventory_lab/gamedata/configs/items/settings/mod_parts_sqa3_rigs.ltx')
+            files['gamedata/scripts/sqa3_item_actions.script']=read_overlay('tools/inventory_lab/gamedata/scripts/sqa3_item_actions.script')
+            files['parts-provenance.json']=parts
     files["Start-Native-Input-Check.ps1"]=read_overlay('tools/inventory_lab/Start-Native-Input-Check.ps1')
     main_launcher=read_overlay('tools/inventory_lab/Start-Squared-Away-3.ps1',optional=True)
     if main_launcher is not None:files["Start-Squared-Away-3.ps1"]=main_launcher

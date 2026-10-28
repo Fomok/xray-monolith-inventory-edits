@@ -10,6 +10,7 @@
 #include "level.h"
 #include "InventoryNextProbe.h"
 #include "InventoryNextIdentity.h"
+#include "ui/UIActorMenu.h"
 #include "actor.h"
 #include "script_game_object.h"
 #include "patrol_path_storage.h"
@@ -2715,6 +2716,9 @@ void CLevel::script_register(lua_State* L)
             def("inventory_next_action_ready", +[](){return InventoryNextActionReady();}),
             def("inventory_next_ammo_accessible", +[](u16 live){return InventoryNextAmmoAccessible(live);}),
             def("inventory_next_can_use", +[](u16 live){return InventoryNextCanUse(live);}),
+            def("inventory_next_prepare_dismantle", +[](u16 live){return InventoryNextPrepareDismantle(live);}),
+            def("inventory_next_validate_definition", +[](u16 live){return InventoryNextValidateDefinition(live);}),
+            def("inventory_next_fixture_ui", +[](LPCSTR action,u16 live){return CurrentGameUI()&&CurrentGameUI()->GetActorMenu().SqaFixtureAction(action,live);}),
             // This luabind fork only converts its allocator-backed string_class.
             // std::string would be treated as an unregistered userdata type.
             def("inventory_next_stash_identity", +[](u16 live){return luabind::internal_string(InventoryNextStashIdentity(live).c_str());}),

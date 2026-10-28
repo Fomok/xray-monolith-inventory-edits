@@ -1,0 +1,316 @@
+{
+  "schema": "sqa3.native.parts.v1",
+  "sources": [
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\items\\settings\\mod_parts_amp_rigs.ltx",
+      "sha256": "4a25209989f23ed62604dc6c1b8c366d4fea8556642e87d478ebf6e200887fa9",
+      "bytes": 8890
+    },
+    {
+      "path": "C:\\GAMMA\\mods\\Mags Reloaded Fork by Priler UPDATE 6\\gamedata\\configs\\items\\settings\\mod_parts_magpouches.ltx",
+      "sha256": "01a33eb3984c2e007ab4c82afcd1846478f0271262fe526b9376b8abbe653efe",
+      "bytes": 220
+    }
+  ],
+  "native_parts_config_sha256": "5e6455c6887b360b2d74ab7457d725261feb8fec758a611de06439f51eebb365",
+  "recipes": {
+    "nor_parts_list": {
+      "amprig_bandolier": [
+        "prt_o_fabrics_1",
+        "prt_i_fasteners"
+      ],
+      "amprig_scout": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners"
+      ],
+      "amprig_barakholka": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_2",
+        "prt_i_scrap"
+      ],
+      "amprig_harness": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners",
+        "prt_i_plastic"
+      ],
+      "amprig_nylon": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_plastic"
+      ],
+      "amprig_warsaw": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners"
+      ],
+      "amprig_vydra": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners"
+      ],
+      "amprig_karkas": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_i_plastic",
+        "prt_i_scrap"
+      ],
+      "amprig_bastion": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners",
+        "prt_i_plastic"
+      ],
+      "amprig_smersh": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners"
+      ],
+      "amprig_leshy": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners",
+        "prt_i_plastic",
+        "prt_i_scrap"
+      ],
+      "amprig_chicom": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners",
+        "prt_i_scrap"
+      ],
+      "amprig_volya": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners",
+        "prt_i_plastic"
+      ],
+      "amprig_tarzan": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners",
+        "prt_i_scrap"
+      ],
+      "amprig_rubezh": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners",
+        "prt_i_plastic",
+        "prt_i_scrap"
+      ],
+      "amprig_carrier": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners",
+        "prt_i_plastic",
+        "prt_i_scrap"
+      ],
+      "amp_rig_bandolier": [
+        "prt_o_fabrics_1",
+        "prt_i_fasteners"
+      ],
+      "amp_rig_scout": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners"
+      ],
+      "amp_rig_harness": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners",
+        "prt_i_plastic"
+      ],
+      "amp_rig_nylon": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_plastic"
+      ],
+      "amp_rig_warsaw": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners"
+      ],
+      "amp_rig_leshy": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners",
+        "prt_i_plastic",
+        "prt_i_scrap"
+      ],
+      "amp_rig_chicom": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_1",
+        "prt_i_fasteners",
+        "prt_i_scrap"
+      ],
+      "amp_rig_carrier": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_2",
+        "prt_i_fasteners",
+        "prt_i_plastic",
+        "prt_i_scrap"
+      ],
+      "af_magpouch_s": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_1"
+      ],
+      "af_magpouch_m": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_1"
+      ],
+      "af_magpouch_l": [
+        "prt_o_fabrics_4",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_1"
+      ]
+    },
+    "con_parts_list": {
+      "amprig_scout": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_2"
+      ],
+      "amprig_bandolier": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_3"
+      ],
+      "amprig_barakholka": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_4"
+      ],
+      "amprig_harness": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3"
+      ],
+      "amprig_nylon": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3",
+        "prt_o_retardant_5"
+      ],
+      "amprig_vydra": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_3"
+      ],
+      "amprig_warsaw": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_3",
+        "prt_o_retardant_5"
+      ],
+      "amprig_karkas": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_9",
+        "prt_o_retardant_5"
+      ],
+      "amprig_smersh": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3",
+        "prt_o_retardant_11",
+        "prt_o_retardant_6"
+      ],
+      "amprig_bastion": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_6",
+        "prt_o_retardant_11"
+      ],
+      "amprig_chicom": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_5"
+      ],
+      "amprig_volya": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_6",
+        "prt_o_retardant_11"
+      ],
+      "amprig_leshy": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_5",
+        "prt_o_retardant_13"
+      ],
+      "amprig_tarzan": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_6",
+        "prt_o_ballistic_19"
+      ],
+      "amprig_carrier": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_11",
+        "prt_o_ballistic_19"
+      ],
+      "amprig_rubezh": [
+        "prt_o_fabrics_4",
+        "prt_o_retardant_6",
+        "prt_o_retardant_11",
+        "prt_o_ballistic_20"
+      ],
+      "amp_rig_scout": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_2"
+      ],
+      "amp_rig_bandolier": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_3"
+      ],
+      "amp_rig_harness": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3",
+        "prt_o_retardant_3"
+      ],
+      "amp_rig_nylon": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3",
+        "prt_o_retardant_5"
+      ],
+      "amp_rig_warsaw": [
+        "prt_o_fabrics_1",
+        "prt_o_fabrics_3",
+        "prt_o_retardant_5"
+      ],
+      "amp_rig_chicom": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_5"
+      ],
+      "amp_rig_leshy": [
+        "prt_o_fabrics_3",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_5",
+        "prt_o_retardant_13"
+      ],
+      "amp_rig_carrier": [
+        "prt_o_fabrics_2",
+        "prt_o_fabrics_4",
+        "prt_o_retardant_11",
+        "prt_o_ballistic_19"
+      ]
+    }
+  },
+  "supplying_mods": [
+    "released Squared Away 2.1.0 Hotfix1",
+    "Mags Reloaded Fork by Priler UPDATE6 (read-only recipe input)"
+  ]
+}

@@ -205,6 +205,7 @@ public:
     bool SqaOpenContainer(PIItem item);
     void SqaPrepareContainers();
     bool m_sqaRigView=false;
+    u64 m_sqaChestRigSeen=0;
     CUIStatic* m_sqaChestCaption=nullptr;
     CUIDragDropListEx* m_sqaCustomEquipment[3]={nullptr,nullptr,nullptr};
     CUIStatic* m_sqaPouchFrames[2]={nullptr,nullptr};
@@ -227,6 +228,7 @@ public:
     bool SqaPutLoot(PIItem item);
     bool SqaLootActive() const;
     void SqaForgetLoot(u16 live);
+    bool SqaFixtureAction(const char* action,u16 live);
     u64 m_sqaMovingWindow=0;
     Fvector2 m_sqaWindowOffset;
     bool SqaMoveWindow(float x,float y,EUIMessages action);

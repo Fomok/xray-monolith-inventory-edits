@@ -717,8 +717,9 @@ void CUICellContainer::PlaceItemAtPos(CUICellItem* itm, Ivector2& cell_pos)
 	}
 	itm->SetWndSize(Fvector2().set((m_cellSize.x * cs.x), (m_cellSize.y * cs.y)));
 	if (!m_pParentDragDropList->GetVirtualCells())
-		itm->SetWndPos(Fvector2().set(((m_cellSpacing.x + m_cellSize.x) * cell_pos.x),
-		                              ((m_cellSpacing.y + m_cellSize.y) * cell_pos.y)));
+        itm->SetWndPos(Fvector2().set(float((m_cellSpacing.x+m_cellSize.x)*cell_pos.x)+
+            (m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageInset(cell_pos.y,m_pParentDragDropList->sqaViewOwner)*float(m_cellSpacing.x+m_cellSize.x):0.0f),
+            float((m_cellSpacing.y+m_cellSize.y)*cell_pos.y)));
 	else
 	{
 		Ivector2 alignment_vec = m_pParentDragDropList->GetVirtualCellsAlignment();
@@ -984,8 +985,9 @@ Ivector2 CUICellContainer::PickCell(const Fvector2& abs_pos)
 	GetAbsolutePos(ap);
 	ap.sub(abs_pos);
 	ap.mul(-1);
-	res.x = iFloor(ap.x / (m_cellSize.x + m_cellSpacing.x * (m_cellsCapacity.x - 1) / m_cellsCapacity.x));
 	res.y = iFloor(ap.y / (m_cellSize.y + m_cellSpacing.y * (m_cellsCapacity.y - 1) / m_cellsCapacity.y));
+    const float inset=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageInset(res.y,m_pParentDragDropList->sqaViewOwner)*float(m_cellSize.x+m_cellSpacing.x):0.0f;
+    res.x=iFloor((ap.x-inset)/(m_cellSize.x+m_cellSpacing.x*(m_cellsCapacity.x-1)/m_cellsCapacity.x));
 	if (!ValidCell(res))
 		res.set(-1, -1);
 	return res;
@@ -1067,14 +1069,18 @@ void CUICellContainer::Draw()
         for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
             const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y,storage=storageAt(cx,cy);
             if(!storage)continue;
-            const float left=drawLT.x+(f_len.x+sp_len.x)*x,top=drawLT.y+(f_len.y+sp_len.y)*y;
+            const float inset=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageInset(cy,m_pParentDragDropList->sqaViewOwner):0.0f;
+            const float left=drawLT.x+(f_len.x+sp_len.x)*(float(x)+inset),top=drawLT.y+(f_len.y+sp_len.y)*y;
             const bool projected=preview&&cx>=previewCell.x&&cx<previewCell.x+previewWidth&&cy>=previewCell.y&&cy<previewCell.y+previewHeight;
             const u32 color=projected?(preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220)):(storage==2?color_rgba(210,135,110,255):color_rgba(255,255,255,255));
             quad(left,top,left+f_len.x,top+f_len.y,color,false);
             // Asset owns top/left lines; close only actual bottom/right boundaries.
             if(InventoryNextFieldKitEnabled()){
-                if(!storageAt(cx+1,cy))quad(left+f_len.x-f_len.x/CellSize().x,top,left+f_len.x,top+f_len.y,color,true);
-                if(!storageAt(cx,cy+1))quad(left,top+f_len.y-f_len.y/CellSize().y,left+f_len.x,top+f_len.y,color,true);
+                const auto region=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageRegion(cx,cy,m_pParentDragDropList->sqaViewOwner):0;
+                const bool rightSplit=region&&storageAt(cx+1,cy)&&region!=InventoryNextStorageRegion(cx+1,cy,m_pParentDragDropList->sqaViewOwner);
+                const bool bottomSplit=region&&storageAt(cx,cy+1)&&region!=InventoryNextStorageRegion(cx,cy+1,m_pParentDragDropList->sqaViewOwner);
+                if(!storageAt(cx+1,cy)||rightSplit)quad(left+f_len.x-(rightSplit?2.5f:1.0f)*f_len.x/CellSize().x,top,left+f_len.x,top+f_len.y,color,true);
+                if(!storageAt(cx,cy+1)||bottomSplit)quad(left,top+f_len.y-(bottomSplit?2.5f:1.0f)*f_len.y/CellSize().y,left+f_len.x,top+f_len.y,color,true);
             }
         }
 		UIRender->SetShader(*hSqaGrid);
@@ -1093,6 +1099,7 @@ void CUICellContainer::Draw()
 		{
 			Fvector2 rect_offset;
 			rect_offset.set((drawLT.x + f_len.x * x + sp_len.x * x), (drawLT.y + f_len.y * y + sp_len.y * y));
+            if(m_pParentDragDropList->HasStorageHeaders())rect_offset.x+=(f_len.x+sp_len.x)*InventoryNextStorageInset(y+tgt_cells.lt.y,m_pParentDragDropList->sqaViewOwner);
 
 			Ivector2 cpos;
 			cpos.set(x, y);

@@ -26,6 +26,8 @@ u16 InventoryNextQuickPick(const char* section) noexcept;
 bool InventoryNextCustomEquip(u16 live,u64 host,const char* key) noexcept;
 bool InventoryNextCustomUnequip(u16 live,int x=-1,int y=-1,u64 view=0) noexcept;
 bool InventoryNextManualUnequip(u16 live,int x=-1,int y=-1,u64 view=0) noexcept;
+bool InventoryNextPrepareDismantle(u16 live) noexcept;
+bool InventoryNextValidateDefinition(u16 live) noexcept;
 u16 InventoryNextCustomItem(u64 host,const char* key) noexcept;
 struct InventoryNextEquipmentAction {std::string key,label;u64 host=1,identity=0;u16 live=0xffff;bool detach=false,open=false,acquire=false;};
 std::vector<InventoryNextEquipmentAction> InventoryNextEquipmentActions(u16 live) noexcept;
@@ -42,6 +44,8 @@ class CUIDragDropListEx;
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view=0) noexcept;
 bool InventoryNextStorageExtent(u64 view,int& width,int& height) noexcept;
 int InventoryNextStorageCell(int x,int y,u64 view=0) noexcept;
+float InventoryNextStorageInset(int y,u64 view=0) noexcept;
+unsigned InventoryNextStorageRegion(int x,int y,u64 view=0) noexcept;
 
 // Opt-in ground ownership path; trade/loot pre-detach admission is separate.
 bool InventoryNextStrictPickup() noexcept;

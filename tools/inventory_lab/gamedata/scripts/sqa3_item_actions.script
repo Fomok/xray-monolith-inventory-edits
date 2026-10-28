@@ -1,0 +1,29 @@
+-- Minimal bridge to vanilla item_parts. Custody, mounting and refusal stay
+-- native; the existing Anomaly tool/yield/animation system remains its owner.
+local installed=false
+
+function on_game_start()
+    if installed or not command_line():find("-inventory-lab",1,true) then return end
+    if not (item_parts and type(item_parts.disassembly_item)=="function") then return end
+    local base=item_parts.disassembly_item
+    item_parts.disassembly_item=function(obj,tool)
+        if not (obj and tool and db and db.actor) then return false end
+        if not item_parts.is_suitable_dtool(obj,tool) then return false end
+        local parent=tool:parent()
+        if not parent or parent:id()~=db.actor:id() then return false end
+        local parts=itms_manager.ini_parts:r_string_ex("nor_parts_list",obj:section())
+        if not parts then return base(obj,tool) end
+        -- Validate every output before returning pouches, consuming a tool,
+        -- changing statistics or scheduling a deferred yield.
+        for section in parts:gmatch("[^,%s]+") do
+            if not system_ini():section_exist(section) then
+                printf("[SQA3 ITEM ACTION] dismantle refused section=%s missing_output=%s",obj:section(),section)
+                return false
+            end
+        end
+        if type(level.inventory_next_prepare_dismantle)~="function" or not level.inventory_next_prepare_dismantle(obj:id()) then return false end
+        return base(obj,tool)
+    end
+    installed=true
+    printf("[SQA3 ITEM ACTION] native dismantle preflight installed")
+end

@@ -253,6 +253,53 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-catalog-all",1,true) then
+        local reload=args:find("-sqa3-catalog-reload",1,true)~=nil
+        local spawned={}
+        commands={"g_god on",snapshot}
+        commands[#commands+1]=function()
+            if reload then
+                local name=load_var(db.actor,"sqa3_catalog_crate","");local matches=0
+                alife():iterate_objects(function(obj) if obj:name()==name then crate_id=obj.id;matches=matches+1 end return false end)
+                assert(matches==1,"saved catalog crate missing or duplicate")
+            else spawn_crate();save_var(db.actor,"sqa3_catalog_crate",alife():object(crate_id):name()) end
+        end
+        commands[#commands+1]=function()
+            assert(#sqa3_catalog_items.sections==49,"catalog list mismatch")
+            local a=db.actor
+            if reload then
+                level.object_by_id(crate_id):iterate_inventory_box(function(_,item)
+                    assert(not spawned[item:section()],"duplicate catalog item on reload");spawned[item:section()]=item:id();return false
+                end,db.actor)
+                return
+            end
+            for _,section in ipairs(sqa3_catalog_items.sections) do
+                assert(system_ini():section_exist(section),"missing catalog item "..section)
+                local item=alife():create(section,a:position(),a:level_vertex_id(),a:game_vertex_id(),crate_id)
+                assert(item,"catalog spawn refused "..section);spawned[section]=item.id
+            end
+        end
+        commands[#commands+1]=open_crate
+        commands[#commands+1]=function()
+            local count=0
+            level.object_by_id(crate_id):iterate_inventory_box(function(_,item)
+                assert(spawned[item:section()]==item:id(),"lost or duplicate native catalog member")
+                assert(level.inventory_next_validate_definition(item:id()),"native definition rejected "..item:section())
+                count=count+1
+                printf("[SQA3 CATALOG TEST] section=%s live=%s grams=%s condition=%s",item:section(),tostring(item:id()),tostring(item:weight()*1000),tostring(item:condition()))
+                return false
+            end,db.actor)
+            assert(count==49,"native catalog count mismatch")
+            printf("[SQA3 CATALOG TEST] native definitions validated=49 reload=%s",tostring(reload))
+        end
+        commands[#commands+1]="screenshot sqa3_catalog_all"
+        commands[#commands+1]=snapshot
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]=function() ActorMenu.get_actor_menu():HideDialog() end
+        if not reload then commands[#commands+1]="save sqa3_catalog_all" end
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-custom-equipment",1,true) then
         local reload=args:find("-sqa3-custom-reload",1,true)~=nil
         local items={}

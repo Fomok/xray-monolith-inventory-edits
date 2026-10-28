@@ -59,6 +59,7 @@ public:
     using CustomSlotKey=std::pair<u64,u32>; // persistent host identity, registry ID
     bool CustomSlot(u64 host,u32 slot,PIItem item,bool restoring=false);
     bool SwapCustomSlot(u64 host,u32 slot,PIItem incoming);
+    bool DetachCustomMounts(u64 host,const xr_vector<PIItem>& expected);
     PIItem ItemFromCustomSlot(u64 host,u32 slot) const;
     bool CustomSlotFor(const CInventoryItem* item,u64& host,u32& slot) const;
     void RemoveCustomBinding(const CInventoryItem* item);

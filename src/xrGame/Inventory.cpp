@@ -167,6 +167,23 @@ bool CInventory::SwapCustomSlot(u64 host,u32 slot,PIItem incoming)
     CalcTotalWeight();InvalidateState();InventoryNextCustomChanged();return true;
 }
 
+bool CInventory::DetachCustomMounts(u64 host,const xr_vector<PIItem>& expected)
+{
+    size_t count=0;
+    for(const auto& binding:m_customSlots)if(binding.first.first==host){
+        ++count;
+        if(!binding.second||binding.second->CurrPlace()!=eItemPlaceCustom||
+           std::find(expected.begin(),expected.end(),binding.second)==expected.end()||
+           std::find(m_ruck.begin(),m_ruck.end(),binding.second)!=m_ruck.end())return false;
+    }
+    if(count!=expected.size())return false;
+    m_ruck.reserve(m_ruck.size()+count);
+    for(auto it=m_customSlots.begin();it!=m_customSlots.end();)if(it->first.first==host){
+        auto item=it->second;m_ruck.push_back(item);item->m_ItemCurrPlace.type=eItemPlaceRuck;item->m_ItemCurrPlace.slot_id=0;
+        it=m_customSlots.erase(it);
+    }else ++it;
+    CalcTotalWeight();InvalidateState();InventoryNextCustomChanged();return true;
+}
 void CInventory::Clear()
 {
 	m_customSlots.clear();
