@@ -170,12 +170,16 @@ void CUIActorMenu::InitDeadBodySearchMode()
 
 	TIItemContainer::iterator it = items_list.begin();
 	TIItemContainer::iterator it_e = items_list.end();
-	for (; it != it_e; ++it)
-	{
-		CUICellItem* itm = create_cell_item(*it);
-		if(!InventoryNextWorldVisible((*it)->object_id())){xr_delete(itm);continue;}
-		m_pDeadBodyBagList->SetItem(itm);
-	}
+    // The shared source view observes logical footprints before constructing
+    // cells. Populating the legacy list first can put a 10-column HD icon in
+    // an 8-column list whose vertical-only growth can never make it fit.
+    if(SqaLootActive())SqaUpdateLoot(true);
+    else for (; it != it_e; ++it)
+    {
+        CUICellItem* itm = create_cell_item(*it);
+        if(!InventoryNextWorldVisible((*it)->object_id())){xr_delete(itm);continue;}
+        m_pDeadBodyBagList->SetItem(itm);
+    }
 
 	CBaseMonster* monster = smart_cast<CBaseMonster*>(m_pPartnerInvOwner);
 
