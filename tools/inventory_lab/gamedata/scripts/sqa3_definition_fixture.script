@@ -79,6 +79,7 @@ function plan(snapshot)
             printf("[SQA3 DEFINITION TEST] native category refusal, nesting refusal and weapon upgrade PASS")
         end
     end
+    if reload then commands[#commands+1]="inventory_next_probe view" end
     commands[#commands+1]=function()
         export()
         assert(object("med1"):get_remaining_uses()==1 and object("med2"):get_remaining_uses()==2,"medical charge instances changed")
