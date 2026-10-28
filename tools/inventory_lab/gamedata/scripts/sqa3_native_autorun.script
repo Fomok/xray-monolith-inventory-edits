@@ -1440,12 +1440,14 @@ function on_game_start()
     end
     if args:find("-sqa3-fixture-field-kit",1,true) then
         assert(args:find("-sqa3-field-kit",1,true),"Field Kit fixture needs visual mode")
+        local regression=args:find("-sqa3-fixture-field-kit-regression",1,true)~=nil
+        local reload=args:find("-sqa3-fixture-field-kit-regression-reload",1,true)~=nil
         commands={"inventory_next_probe export",snapshot,function()
             if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
             assert(ActorMenu.get_actor_menu():IsShown(),"Field Kit inventory did not open")
-            started=started+90000
+            started=started+(reload and 2000 or regression and 150000 or 90000)
             printf("[SQA3 AUTORUN] Field Kit physical input window; display actions must preserve ownership")
-        end,"screenshot sqa3_field_kit",snapshot,"inventory_next_probe export","save sqa3_field_kit","quit"}
+        end,"screenshot sqa3_field_kit",snapshot,"inventory_next_probe export",regression and "save sqa3_field_kit_regression" or "save sqa3_field_kit","quit"}
         RegisterScriptCallback("actor_on_update",update)
         return
     end
