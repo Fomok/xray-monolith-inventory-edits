@@ -12,7 +12,7 @@
   </properties_box>
   <main x="0" y="0" width="1024" height="768">
     <auto_static x="260.5" y="0" width="382" height="768" stretch="1">
-      <texture>sqa_fk_inventory_panel</texture>
+      <texture>sqa3v1_storage_panel</texture>
     </auto_static>
     <auto_static x="12" y="735" width="237" height="24" stretch="1">
       <texture>sqa_fk_surface_rubber</texture>
@@ -20,7 +20,7 @@
     </auto_static>
   </main>
   <left_background x="643" y="0" width="381" height="768" stretch="1">
-    <texture a="255">sqa_fk_inventory_panel</texture>
+    <texture a="255">sqa3v1_storage_panel</texture>
   </left_background>
   <actor_ch_info x="270" y="10" width="361" height="89">
     <name_static x="10" y="18" width="140" height="16">

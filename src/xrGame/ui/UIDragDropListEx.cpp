@@ -347,25 +347,23 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
     label->TextItemControl()->SetTextColor(color);label->TextItemControl()->SetText(text);
     if(InventoryNextFieldKitEnabled()) {
         const float contentWidth=_max(1.0f,GetWndSize().x-m_vScrollBar->GetWidth()-6.0f);
-        label->InitTexture("sqa_fk_surface_olive");label->SetStretchTexture(true);
-        label->SetWndSize(Fvector2().set(contentWidth,28.0f));
+        label->InitTexture("sqa3v1_section_bar");label->SetStretchTexture(true);
+        label->SetWndSize(Fvector2().set(contentWidth,22.0f));
         label->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
-        auto rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);label->AttachChild(rim);
-        rim->SetWndSize(label->GetWndSize());rim->InitTexture("sqa_fk_header");rim->Enable(false);
         label->TextItemControl()->SetText("");
         auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);label->AttachChild(title);title->Enable(false);title->TextureOff();
-        title->SetWndPos(Fvector2().set(78,5));title->SetWndSize(Fvector2().set(contentWidth-156.0f,18.0f));
+        title->SetWndPos(Fvector2().set(78,2));title->SetWndSize(Fvector2().set(contentWidth-156.0f,18.0f));
         title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         title->TextItemControl()->SetTextAlignment(CGameFont::alCenter);title->TextItemControl()->SetEllipsis(true);
         title->TextItemControl()->SetTextColor(color);title->TextItemControl()->SetText(text);
         auto weight=xr_new<CUIStatic>();weight->SetAutoDelete(true);label->AttachChild(weight);weight->Enable(false);
-        weight->SetWndPos(Fvector2().set(contentWidth-78.0f,5.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
+        weight->SetWndPos(Fvector2().set(contentWidth-78.0f,2.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
         weight->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
         string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);weight->TextItemControl()->SetText(amount);
         if(owner) {
             auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);label->AttachChild(button);button->Enable(false);
-            button->SetWndPos(Fvector2().set(4,4));button->SetWndSize(Fvector2().set(20,20));button->InitTexture(collapsed?"sqa3_arrow_down":"sqa3_arrow_up");button->SetStretchTexture(true);
+            button->SetWndPos(Fvector2().set(2,2));button->SetWndSize(Fvector2().set(18,18));button->InitTexture(collapsed?"sqa3v1_arrow_down_e":"sqa3v1_arrow_up_e");button->SetStretchTexture(true);
         }
     }
     m_storageHeaderOwners.push_back(owner);
@@ -443,7 +441,7 @@ bool CUIDragDropListEx::OnMouseAction(float x, float y, EUIMessages mouse_action
     if(InventoryNextFieldKitEnabled()&&mouse_action==WINDOW_LBUTTON_DOWN&&x>=0&&x<24&&!m_drag_item) {
         for(size_t i=0;i<m_storageHeaders.size();++i) {
             const float top=float(m_storageHeaders[i].first*(CellSize().y+CellsSpacing().y)-ScrollPos());
-            if(y>=top&&y<top+28&&m_storageHeaderOwners[i]) {InventoryNextStorageToggle(m_storageHeaderOwners[i]);return true;}
+            if(y>=top&&y<top+22&&m_storageHeaderOwners[i]) {InventoryNextStorageToggle(m_storageHeaderOwners[i]);return true;}
         }
     }
 
@@ -627,7 +625,7 @@ CUICellContainer::CUICellContainer(CUIDragDropListEx* parent)
 {
 	m_pParentDragDropList = parent;
 	hShader->create("hud\\fog_of_war", "ui\\ui_grid");
-	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3_grid_cell","hud\\fog_of_war",hSqaGrid,m_sqaGridRect);
+	if (InventoryNextFieldKitEnabled()) CUITextureMaster::InitTexture("sqa3v1_grid_cell","hud\\fog_of_war",hSqaGrid,m_sqaGridRect);
     else if (InventoryNextEnabled()) {hSqaGrid->create("hud\\fog_of_war", "ui\\sqa_fk_controls");m_sqaGridRect.set(8,8,136,136);}
 	//	hShader_selected->create	( "hud\\fog_of_war", "ui_grid_selected" );
 	m_cellSpacing.set(0, 0);

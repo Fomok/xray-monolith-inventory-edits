@@ -30,8 +30,8 @@ bool CUIActorMenu::SqaOpenContainer(PIItem item)
     window.frame=xr_new<SqaContainerPanel>();window.frame->SetAutoDelete(true);AttachChild(window.frame);
     const float offset=float(m_sqaContainers.size())*28.0f;
     window.frame->SetWndPos(Fvector2().set(340+offset,140+offset));window.frame->SetWndSize(Fvector2().set(290,380));
-    window.frame->InitTexture("sqa_fk_surface_lining");window.frame->SetStretchTexture(true);
-    auto rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);window.frame->AttachChild(rim);rim->Enable(false);rim->SetWndSize(window.frame->GetWndSize());rim->InitTexture("sqa_fk_panel");
+    window.frame->TextureOff();
+    auto rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);window.frame->AttachChild(rim);rim->Enable(false);rim->SetWndSize(window.frame->GetWndSize());rim->InitTexture("sqa3v1_panel_frame");
     auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);window.frame->AttachChild(title);title->Enable(false);
     title->SetWndPos(Fvector2().set(10,5));title->SetWndSize(Fvector2().set(246,20));title->TextureOff();
     title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);title->TextItemControl()->SetText(item->NameItem());
@@ -137,8 +137,8 @@ void CUIActorMenu::SqaUpdateLoot(bool force)
     if(!available){m_sqaLootSources.clear();return;}
     m_sqaLootSource=selected->live;m_sqaLootSourceIdentity=selected->identity;
     const float tabHeight=float((sources.size()+2)/3)*22.0f;
-    m_pDeadBodyBagList->SetWndPos(Fvector2().set(680.0f,114.0f+tabHeight));
-    m_pDeadBodyBagList->SetWndSize(Fvector2().set(306.0f,_max(100.0f,574.0f-tabHeight)));
+    m_pDeadBodyBagList->InitDragDropList(Fvector2().set(680.0f,114.0f+tabHeight),Fvector2().set(306.0f,_max(100.0f,574.0f-tabHeight)));
+    m_pDeadBodyBagList->ReinitScroll();
     for(size_t n=0;n<sources.size();++n){
         auto tab=xr_new<CUIStatic>();tab->SetAutoDelete(true);AttachChild(tab);tab->Enable(false);
         tab->SetWndPos(Fvector2().set(652+float(n%3)*120,90+float(n/3)*22));tab->SetWndSize(Fvector2().set(116,20));
