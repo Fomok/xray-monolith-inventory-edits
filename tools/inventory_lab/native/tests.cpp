@@ -1111,6 +1111,8 @@ int main(int argc,char** argv) {
             check(!view.destination(1,0,owner,local)&&!view.region(1,0),"header accepted a drop");
             check(view.destination(1,1,owner,local)&&owner==100&&local.x==1&&local.y==0,
                 "adjacent authored cell lost logical owner coordinate");
+            check(!view.same_compartment(0,1,1,1)&&view.same_compartment(0,1,0,2),
+                "normal seam lost authored region boundaries");
             check(model.nodes().at(100).grid.w==2&&model.nodes().at(100).grid.h==2,"projection changed native capacity");
         });
         test("detached world box view maps an exact child cell without actor ownership",[]{
@@ -1483,6 +1485,8 @@ int main(int argc,char** argv) {
                 "main rig origin moved unexpectedly");
             check(view.pixel_offset(3,view.bands[1].row,37,dx,dy)&&dx==4.0f&&dy==0.0f,
                 "right grant block lost the six-unit separation");
+            check(!view.same_compartment(2,view.bands[0].row,3,view.bands[1].row),
+                "same-numbered regions on different native owners merged outlines");
             int hit_x=-1,hit_y=-1;const int top=view.bands[0].row*37;
             check(view.hit_pixel(108.0f,float(top+2),35,2,hit_x,hit_y)&&hit_x==2,
                 "rig last cell was not hittable");

@@ -808,6 +808,11 @@ unsigned InventoryNextStorageRegion(int x,int y,u64 view) noexcept try {
     const auto& selected=view?make_storage_view(view):storage_view;
     return selected.region(x,y);
 } catch (...) {return 0;}
+bool InventoryNextStorageSameCompartment(int x,int y,int other_x,int other_y,u64 view) noexcept try {
+    if(!layout_current||!InventoryNextFieldKitEnabled())return false;
+    const auto& selected=view?make_storage_view(view):storage_view;
+    return selected.same_compartment(x,y,other_x,other_y);
+} catch (...) {return false;}
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
     if(!InventoryNextLogicalStorage()||!layout_current||!list)return;
     const auto& selected=view?make_storage_view(view):storage_view;

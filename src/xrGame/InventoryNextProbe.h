@@ -48,6 +48,7 @@ float InventoryNextStorageInset(int y,u64 view=0) noexcept;
 bool InventoryNextStoragePixelOffset(int x,int y,u64 view,int pitch,float& dx,float& dy) noexcept;
 bool InventoryNextStoragePixelHit(float px,float py,u64 view,int body,int spacing,int& x,int& y) noexcept;
 unsigned InventoryNextStorageRegion(int x,int y,u64 view=0) noexcept;
+bool InventoryNextStorageSameCompartment(int x,int y,int other_x,int other_y,u64 view=0) noexcept;
 
 // Opt-in ground ownership path; trade/loot pre-detach admission is separate.
 bool InventoryNextStrictPickup() noexcept;

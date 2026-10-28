@@ -1121,8 +1121,8 @@ void CUICellContainer::Draw()
             // Asset owns top/left lines; close only actual bottom/right boundaries.
             if(InventoryNextFieldKitEnabled()){
                 const auto region=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageRegion(cx,cy,m_pParentDragDropList->sqaViewOwner):0;
-                const bool rightSplit=region&&storageAt(cx+1,cy)&&region!=InventoryNextStorageRegion(cx+1,cy,m_pParentDragDropList->sqaViewOwner);
-                const bool bottomSplit=region&&storageAt(cx,cy+1)&&region!=InventoryNextStorageRegion(cx,cy+1,m_pParentDragDropList->sqaViewOwner);
+                const bool rightSplit=region&&storageAt(cx+1,cy)&&!InventoryNextStorageSameCompartment(cx,cy,cx+1,cy,m_pParentDragDropList->sqaViewOwner);
+                const bool bottomSplit=region&&storageAt(cx,cy+1)&&!InventoryNextStorageSameCompartment(cx,cy,cx,cy+1,m_pParentDragDropList->sqaViewOwner);
                 if(!storageAt(cx+1,cy)||rightSplit)quad(left+f_len.x-f_len.x/CellSize().x,top,left+f_len.x,top+f_len.y,color,true);
                 if(!storageAt(cx,cy+1)||bottomSplit)quad(left,top+f_len.y-f_len.y/CellSize().y,left+f_len.x,top+f_len.y,color,true);
             }

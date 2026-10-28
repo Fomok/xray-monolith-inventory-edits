@@ -145,6 +145,15 @@ public:
         }
         return 0;
     }
+    bool same_compartment(int x,int y,int other_x,int other_y) const {
+        for(const auto& band:bands)if(!band.collapsed){
+            const auto first=band.regions.find({x-band.column,y-band.row});
+            if(first==band.regions.end())continue;
+            const auto second=band.regions.find({other_x-band.column,other_y-band.row});
+            return second!=band.regions.end()&&first->second==second->second;
+        }
+        return false;
+    }
     float row_inset(int y) const {
         if(centered)for(const auto& band:bands)if(!band.collapsed&&y>=band.row&&y<band.row+band.grid.h)
             return band.half_columns;
