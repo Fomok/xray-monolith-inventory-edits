@@ -37,6 +37,17 @@ function plan(snapshot)
         end
         commands[#commands+1]="screenshot sqa3_growth_policy_reload"
         commands[#commands+1]=function()
+            local shell,med=identity("pack"),identity("med")
+            store("med","root",2,0)
+            assert(node("med")[2]=="1" and node("med")[25]=="0" and node("pack")[25]=="3",
+                "Recovery contents did not leave safely")
+            store("pack","root",0,0)
+            assert(node("pack")[2]=="1" and node("pack")[25]=="0" and
+                identity("pack")==shell and identity("med")==med,
+                "fitting Recovery backpack did not return to actor grid")
+            printf("[SQA3 GROWTH POLICY] emptied Recovery backpack retrieved with stable identities PASS")
+        end
+        commands[#commands+1]=function()
             ui_mcm.set("sqa3/growth_collision",0)
             SendScriptCallback("on_option_change",true)
             assert(sqa3_growth_mcm.read_growth_collision()==0,"MCM reset failed")
