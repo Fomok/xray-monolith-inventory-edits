@@ -455,6 +455,13 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 		return;
 
 	CUICellItem* cell_item = create_cell_item(item);
+	// Equipped pack/rig art belongs to the fixed native slot frame. Its
+	// fullness-dependent exterior is only an admission footprint in storage.
+	if(InventoryNextFieldKitEnabled()&&m_pInvList[slot_idx]==curr_list&&
+	   InventoryNextNativeGrowingExterior(item->object_id())){
+		const auto frame=curr_list->CellsCapacity();
+		if(frame.x>0&&frame.y>0)cell_item->SetSqaFootprint(frame.x,frame.y,false);
+	}
 	curr_list->SetItem(cell_item);
 	if (m_currMenuMode == mmTrade && m_pPartnerInvOwner)
 		ColorizeItem(cell_item, !CanMoveToPartner(item));
