@@ -2,7 +2,7 @@
 
 Squared Away 3 has a working native inventory foundation in the isolated vanilla lab. It can preserve nested item ownership and placement across several tested transfers, saves and map changes. It is not yet the complete replacement mod. The next work should turn that foundation into the full item catalog and everyday inventory interactions, then verify the supported modpack integrations.
 
-This plan retains all 77 requirements in [the coverage register](PARITY-COVERAGE.md). The phases below are proposed for review; preparing this plan does not start them. The current header and container-window correction is the last active visual increment.
+This plan retains all 77 requirements in [the coverage register](PARITY-COVERAGE.md). The phases below are proposed for review; preparing this plan does not start them. Dev32 completes the bounded header and container-window correction: actor/one-stash display, textured X, separate-window expansion and exact save/reload checks passed. Its [acceptance record](FIELD-KIT-HEADERS.md) lists the remaining visual and gameplay limits.
 
 ## What already works in bounded tests
 
