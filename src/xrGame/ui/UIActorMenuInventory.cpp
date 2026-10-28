@@ -562,13 +562,23 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
         }
     }
 	m_pQuickSlot->ReloadReferences(m_pActorInvOwner);
+    if(strstr(Core.Params,"-sqa3-fixture-refresh-trace"))
+        Msg("* SQA3 full inventory actor_headers=%u items=%u scroll=%d",
+            m_pInventoryBagList->HasStorageHeaders()?1u:0u,m_pInventoryBagList->ItemsCount(),m_pInventoryBagList->ScrollPos());
 }
 
 bool CUIActorMenu::SqaRefreshFieldKitContents()
 {
     if(!InventoryNextFieldKitEnabled()||!SqaLootActive())return false;
+    // The actor view always has at least its Pockets band. A missing header
+    // means the projected list was not initialized; rebuild it once instead
+    // of retaining cells in an unprojected, visually empty list.
+    if(!m_pInventoryBagList->HasStorageHeaders()){
+        if(strstr(Core.Params,"-sqa3-fixture-refresh-trace"))Msg("* SQA3 stable refresh needs actor projection rebuild");
+        return false;
+    }
     InventoryNextStorageMode(true);
-    if(!InventoryNextLayoutSync())return false;
+    // Update() already synchronized the layout immediately before this call.
     int columns=0,rows=0;
     if(!InventoryNextStorageExtent(0,columns,rows)||m_pInventoryBagList->CellsCapacity().x!=columns||
         m_pInventoryBagList->CellsCapacity().y!=rows)return false;
@@ -582,6 +592,7 @@ bool CUIActorMenu::SqaRefreshFieldKitContents()
     }
     const auto oldBody=m_pInventoryBagList->CellSize();
     InventoryNextStorageView(m_pInventoryBagList);
+    if(!m_pInventoryBagList->HasStorageHeaders())return false;
     if(m_pInventoryBagList->CellSize().x!=oldBody.x||m_pInventoryBagList->CellSize().y!=oldBody.y)return false;
     SqaPrepareContainers(false);
 
@@ -680,7 +691,8 @@ bool CUIActorMenu::SqaRefreshFieldKitContents()
         if(!CurrentItem())restore(m_pInventoryBeltList);
     }
     if(strstr(Core.Params,"-sqa3-fixture-refresh-trace"))
-        Msg("* SQA3 stable refresh kept=%u removed=%u added=%u",kept,removed,added);
+        Msg("* SQA3 stable refresh kept=%u removed=%u added=%u actor_headers=%u scroll=%d",
+            kept,removed,added,m_pInventoryBagList->HasStorageHeaders()?1u:0u,m_pInventoryBagList->ScrollPos());
     if(m_sqaStatus&&m_sqaStatus->TextItemControl()->GetText()&&
        0==xr_strcmp(m_sqaStatus->TextItemControl()->GetText(),"Inventory is updating. Try again."))
         m_sqaStatus->TextItemControl()->SetText("");
