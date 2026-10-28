@@ -348,7 +348,7 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
     label->TextItemControl()->SetTextColor(color);label->TextItemControl()->SetText(text);
     if(InventoryNextFieldKitEnabled()) {
         const float contentWidth=_max(1.0f,GetWndSize().x-m_vScrollBar->GetWidth()-6.0f);
-        label->InitTexture("sqa3v1_section_bar");label->SetStretchTexture(true);
+        label->InitTexture("sqa3v1_section_bar");label->TextureOn();label->SetStretchTexture(true);
         label->SetWndSize(Fvector2().set(contentWidth,22.0f));
         label->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
         label->TextItemControl()->SetText("");
