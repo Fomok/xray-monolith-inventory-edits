@@ -3,6 +3,7 @@
 #include "UIStatic.h"
 #include "UIFrameWindow.h"
 #include "UITextureMaster.h"
+#include "UIFieldKitButton.h"
 #include "UIScrollBar.h"
 #include "object_broker.h"
 #include "UICellItem.h"
@@ -362,8 +363,9 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
         weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
         string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);weight->TextItemControl()->SetText(amount);
         if(owner) {
-            auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);label->AttachChild(button);button->Enable(false);
-            button->SetWndPos(Fvector2().set(2,2));button->SetWndSize(Fvector2().set(18,18));button->InitTexture(collapsed?"sqa3v1_arrow_down_e":"sqa3v1_arrow_up_e");button->SetStretchTexture(true);
+            label->Enable(true);
+            auto button=xr_new<CUIFieldKitButton>([owner](){InventoryNextStorageToggle(owner);});button->SetAutoDelete(true);label->AttachChild(button);
+            button->InitButton(Fvector2().set(2,2),Fvector2().set(18,18));button->InitTexture(collapsed?"sqa3v1_arrow_down":"sqa3v1_arrow_up");
         }
     }
     m_storageHeaderOwners.push_back(owner);
@@ -438,12 +440,6 @@ void CUIDragDropListEx::ReinitScroll()
 
 bool CUIDragDropListEx::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
-    if(InventoryNextFieldKitEnabled()&&mouse_action==WINDOW_LBUTTON_DOWN&&x>=0&&x<24&&!m_drag_item) {
-        for(size_t i=0;i<m_storageHeaders.size();++i) {
-            const float top=float(m_storageHeaders[i].first*(CellSize().y+CellsSpacing().y)-ScrollPos());
-            if(y>=top&&y<top+22&&m_storageHeaderOwners[i]) {InventoryNextStorageToggle(m_storageHeaderOwners[i]);return true;}
-        }
-    }
 
 	bool b = inherited::OnMouseAction(x, y, mouse_action);
 
@@ -1043,18 +1039,32 @@ void CUICellContainer::Draw()
         UIRender->SetShader(*hSqaGrid);
         Fvector2 gridTextureSize;UIRender->GetActiveTextureResolution(gridTextureSize);
 		UI().PushScissor(clientArea);
-		UIRender->StartPrimitive((tgt_cells.width()+1)*(tgt_cells.height()+1)*6,
-			IUIRender::ptTriList, UI().m_currentPointType);
-		for (int x=0;x<=tgt_cells.width();++x)
-			for (int y=0;y<=tgt_cells.height();++y)
-				for (u32 k=0;k<6;++k) {
-					const int storage=m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageCell(x+tgt_cells.lt.x,y+tgt_cells.lt.y,m_pParentDragDropList->sqaViewOwner):1;
-					if(!storage)continue;
-					const Fvector2& p=pts[k];
-					UIRender->PushPoint(iFloor(drawLT.x+(f_len.x+sp_len.x)*x+p.x*f_len.x)-0.5f,
-						iFloor(drawLT.y+(f_len.y+sp_len.y)*y+p.y*f_len.y)-0.5f,0,
-						(preview&&x+tgt_cells.lt.x>=previewCell.x&&x+tgt_cells.lt.x<previewCell.x+previewWidth&&y+tgt_cells.lt.y>=previewCell.y&&y+tgt_cells.lt.y<previewCell.y+previewHeight)?(preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220)):(storage==2?color_rgba(210,135,110,255):color_rgba(255,255,255,255)),(m_sqaGridRect.x1+p.x*m_sqaGridRect.width())/gridTextureSize.x,(m_sqaGridRect.y1+p.y*m_sqaGridRect.height())/gridTextureSize.y);
-				}
+        UIRender->StartPrimitive((tgt_cells.width()+1)*(tgt_cells.height()+1)*18,
+            IUIRender::ptTriList,UI().m_currentPointType);
+        const auto storageAt=[&](int x,int y){
+            if(x<0||y<0||x>=cell_cnt.x||y>=cell_cnt.y)return 0;
+            return m_pParentDragDropList->HasStorageHeaders()?InventoryNextStorageCell(x,y,m_pParentDragDropList->sqaViewOwner):1;
+        };
+        const auto quad=[&](float left,float top,float right,float bottom,u32 color,bool line){
+            for(const auto& point:pts){
+                const float u=line?m_sqaGridRect.x1+0.5f:m_sqaGridRect.x1+point.x*m_sqaGridRect.width();
+                const float v=line?m_sqaGridRect.y1+0.5f:m_sqaGridRect.y1+point.y*m_sqaGridRect.height();
+                UIRender->PushPoint(iFloor(left+point.x*(right-left))-0.5f,iFloor(top+point.y*(bottom-top))-0.5f,0,color,u/gridTextureSize.x,v/gridTextureSize.y);
+            }
+        };
+        for(int x=0;x<=tgt_cells.width();++x)for(int y=0;y<=tgt_cells.height();++y){
+            const int cx=x+tgt_cells.lt.x,cy=y+tgt_cells.lt.y,storage=storageAt(cx,cy);
+            if(!storage)continue;
+            const float left=drawLT.x+(f_len.x+sp_len.x)*x,top=drawLT.y+(f_len.y+sp_len.y)*y;
+            const bool projected=preview&&cx>=previewCell.x&&cx<previewCell.x+previewWidth&&cy>=previewCell.y&&cy<previewCell.y+previewHeight;
+            const u32 color=projected?(preview>0?color_rgba(90,210,100,220):color_rgba(225,70,55,220)):(storage==2?color_rgba(210,135,110,255):color_rgba(255,255,255,255));
+            quad(left,top,left+f_len.x,top+f_len.y,color,false);
+            // Asset owns top/left lines; close only actual bottom/right boundaries.
+            if(InventoryNextFieldKitEnabled()){
+                if(!storageAt(cx+1,cy))quad(left+f_len.x-f_len.x/CellSize().x,top,left+f_len.x,top+f_len.y,color,true);
+                if(!storageAt(cx,cy+1))quad(left,top+f_len.y-f_len.y/CellSize().y,left+f_len.x,top+f_len.y,color,true);
+            }
+        }
 		UIRender->SetShader(*hSqaGrid);
 		UIRender->FlushPrimitive();
 		UI().PopScissor();

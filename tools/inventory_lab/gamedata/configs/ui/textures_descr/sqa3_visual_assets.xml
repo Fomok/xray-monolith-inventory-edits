@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<w>
+  <file name="ui\sqa3_visual_panels">
+    <texture id="sqa3v1_equipment_panel" x="4" y="4" width="521" height="1536" />
+    <texture id="sqa3v1_storage_panel" x="533" y="4" width="764" height="1536" />
+  </file>
+  <file name="ui\sqa3_visual_controls">
+    <texture id="sqa3v1_slot_chest" x="4" y="4" width="150" height="300" />
+    <texture id="sqa3v1_slot_frame" x="162" y="4" width="200" height="192" />
+    <texture id="sqa3v1_slot_frame_lt" x="162" y="4" width="6" height="6" />
+    <texture id="sqa3v1_slot_frame_t" x="168" y="4" width="188" height="6" />
+    <texture id="sqa3v1_slot_frame_rt" x="356" y="4" width="6" height="6" />
+    <texture id="sqa3v1_slot_frame_l" x="162" y="10" width="6" height="180" />
+    <texture id="sqa3v1_slot_frame_back" x="168" y="10" width="188" height="180" />
+    <texture id="sqa3v1_slot_frame_r" x="356" y="10" width="6" height="180" />
+    <texture id="sqa3v1_slot_frame_lb" x="162" y="190" width="6" height="6" />
+    <texture id="sqa3v1_slot_frame_b" x="168" y="190" width="188" height="6" />
+    <texture id="sqa3v1_slot_frame_rb" x="356" y="190" width="6" height="6" />
+    <texture id="sqa3v1_slot_helmet" x="370" y="4" width="150" height="192" />
+    <texture id="sqa3v1_slot_weapon" x="528" y="4" width="474" height="192" />
+    <texture id="sqa3v1_panel_frame" x="4" y="312" width="128" height="128" />
+    <texture id="sqa3v1_panel_frame_lt" x="4" y="312" width="12" height="12" />
+    <texture id="sqa3v1_panel_frame_t" x="16" y="312" width="104" height="12" />
+    <texture id="sqa3v1_panel_frame_rt" x="120" y="312" width="12" height="12" />
+    <texture id="sqa3v1_panel_frame_l" x="4" y="324" width="12" height="104" />
+    <texture id="sqa3v1_panel_frame_back" x="16" y="324" width="104" height="104" />
+    <texture id="sqa3v1_panel_frame_r" x="120" y="324" width="12" height="104" />
+    <texture id="sqa3v1_panel_frame_lb" x="4" y="428" width="12" height="12" />
+    <texture id="sqa3v1_panel_frame_b" x="16" y="428" width="104" height="12" />
+    <texture id="sqa3v1_panel_frame_rb" x="120" y="428" width="12" height="12" />
+    <texture id="sqa3v1_surface" x="140" y="312" width="256" height="128" />
+    <texture id="sqa3v1_identity_bar" x="4" y="448" width="708" height="112" />
+    <texture id="sqa3v1_slot_quick" x="720" y="448" width="69" height="92" />
+    <texture id="sqa3v1_slot_small" x="797" y="448" width="150" height="84" />
+    <texture id="sqa3v1_grid_cell" x="955" y="448" width="64" height="64" />
+    <texture id="sqa3v1_section_bar" x="4" y="568" width="708" height="44" />
+    <texture id="sqa3v1_section_bar_lt" x="4" y="568" width="6" height="6" />
+    <texture id="sqa3v1_section_bar_t" x="10" y="568" width="696" height="6" />
+    <texture id="sqa3v1_section_bar_rt" x="706" y="568" width="6" height="6" />
+    <texture id="sqa3v1_section_bar_l" x="4" y="574" width="6" height="32" />
+    <texture id="sqa3v1_section_bar_back" x="10" y="574" width="696" height="32" />
+    <texture id="sqa3v1_section_bar_r" x="706" y="574" width="6" height="32" />
+    <texture id="sqa3v1_section_bar_lb" x="4" y="606" width="6" height="6" />
+    <texture id="sqa3v1_section_bar_b" x="10" y="606" width="696" height="6" />
+    <texture id="sqa3v1_section_bar_rb" x="706" y="606" width="6" height="6" />
+    <texture id="sqa3v1_arrow_left_d" x="720" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_left_e" x="756" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_left_h" x="792" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_left_t" x="828" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_right_d" x="864" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_right_e" x="900" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_right_h" x="936" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_right_t" x="972" y="568" width="28" height="40" />
+    <texture id="sqa3v1_arrow_down_d" x="4" y="620" width="36" height="36" />
+    <texture id="sqa3v1_arrow_down_e" x="48" y="620" width="36" height="36" />
+    <texture id="sqa3v1_arrow_down_h" x="92" y="620" width="36" height="36" />
+    <texture id="sqa3v1_arrow_down_t" x="136" y="620" width="36" height="36" />
+    <texture id="sqa3v1_arrow_up_d" x="180" y="620" width="36" height="36" />
+    <texture id="sqa3v1_arrow_up_e" x="224" y="620" width="36" height="36" />
+    <texture id="sqa3v1_arrow_up_h" x="268" y="620" width="36" height="36" />
+    <texture id="sqa3v1_arrow_up_t" x="312" y="620" width="36" height="36" />
+    <texture id="sqa3v1_grid_fill" x="356" y="620" width="8" height="8" />
+    <texture id="sqa3v1_grid_line" x="372" y="620" width="2" height="2" />
+  </file>
+</w>

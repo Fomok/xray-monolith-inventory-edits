@@ -23,6 +23,22 @@
       "bytes": 33554560,
       "sha256": "32e928dfce68f3c70975f01063d89fc8b23daae639d7b209adade6b4550167f2",
       "note": "Exact released Field Kit panels; source crops remain in texture descriptors, no raster resampling."
+    },
+    {
+      "source": "C:\\GAMMA\\sqa-engine-inventory-next-harness\\tools\\inventory_lab\\gamedata\\textures\\ui\\sqa3_visual_controls.dds",
+      "repo_relative": "tools/inventory_lab/gamedata/textures/ui/sqa3_visual_controls.dds",
+      "destination": "gamedata/textures/ui/sqa3_visual_controls.dds",
+      "bytes": 4194432,
+      "sha256": "5cd44561009aef6d0b06a1a702abe3b93b1d787d5a72830243138aa02b8f3bbc",
+      "note": "Mod and UI visual-assets-v1; exact handoff payload."
+    },
+    {
+      "source": "C:\\GAMMA\\sqa-engine-inventory-next-harness\\tools\\inventory_lab\\gamedata\\textures\\ui\\sqa3_visual_panels.dds",
+      "repo_relative": "tools/inventory_lab/gamedata/textures/ui/sqa3_visual_panels.dds",
+      "destination": "gamedata/textures/ui/sqa3_visual_panels.dds",
+      "bytes": 16777344,
+      "sha256": "fcf6ac47939bb059ed3c8defe352b313f3c09c54035b411b4c33a4c7f977b266",
+      "note": "Mod and UI visual-assets-v1; exact handoff payload."
     }
   ]
 }

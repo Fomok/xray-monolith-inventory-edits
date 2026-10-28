@@ -1,0 +1,15 @@
+{
+  "status": "pass",
+  "descriptor_ids": 58,
+  "base_assets": 31,
+  "checks": [
+    "DDS/PNG exact pixel equality",
+    "descriptor bounds and unique IDs",
+    "opaque crop interiors",
+    "base asset non-overlap",
+    "four distinct button states",
+    "two-color unframed grid",
+    "payload SHA256"
+  ],
+  "runtime": "not_run"
+}

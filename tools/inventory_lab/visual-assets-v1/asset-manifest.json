@@ -1,0 +1,518 @@
+{
+  "version": 1,
+  "raster_scale": 2,
+  "source_root": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata",
+  "source_crops": [
+    {
+      "material": "dark lining",
+      "source": "sqa_fk_panels.dds",
+      "xywh": [
+        8,
+        1700,
+        256,
+        128
+      ]
+    },
+    {
+      "material": "olive header",
+      "source": "sqa_fk_panels.dds",
+      "xywh": [
+        280,
+        1700,
+        256,
+        128
+      ]
+    },
+    {
+      "material": "outer metal window",
+      "source": "sqa_fk_controls.dds",
+      "xywh": [
+        8,
+        8,
+        128,
+        128
+      ]
+    },
+    {
+      "material": "equipment recess",
+      "source": "sqa_fk_panels.dds",
+      "xywh": [
+        40,
+        26,
+        200,
+        192
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\sqa_fk_panels.dds",
+      "sha256": "32e928dfce68f3c70975f01063d89fc8b23daae639d7b209adade6b4550167f2"
+    },
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\textures\\ui\\sqa_fk_controls.dds",
+      "sha256": "cab0598b6a001a5f28f47b7b2d3f8e173181dd4a6ba640ba43cd6c0225ed10de"
+    },
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\ui\\textures_descr\\sqa_field_kit.xml",
+      "sha256": "6be568c052f2c77a76b0e979dfeebde52bfc9cebaac7a2f06cec81d03b4c2496"
+    },
+    {
+      "path": "C:\\GAMMA\\sqa-previews\\release-2.1.0-hotfix1-full\\source\\gamedata\\configs\\ui\\ui_inventory_16.xml",
+      "sha256": "423af93db4eba7919d741fb4c2e399ab6f66f7a85d5e11fc2513f000237c5d6c"
+    }
+  ],
+  "textures": {
+    "sqa3v1_equipment_panel": {
+      "usage": "Full column; fixed outer rim and tiled lining, no baked slots.",
+      "logical_size": [
+        260.5,
+        768
+      ],
+      "atlas": "sqa3_visual_panels",
+      "xywh": [
+        4,
+        4,
+        521,
+        1536
+      ]
+    },
+    "sqa3v1_storage_panel": {
+      "usage": "Storage or conditional nearby column; one complete panel, never a cell.",
+      "logical_size": [
+        382,
+        768
+      ],
+      "atlas": "sqa3_visual_panels",
+      "xywh": [
+        533,
+        4,
+        764,
+        1536
+      ]
+    },
+    "sqa3v1_slot_chest": {
+      "usage": "Fixed equipment recess; native icons inset and aspect-preserved.",
+      "logical_size": [
+        75.0,
+        150.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        4,
+        4,
+        150,
+        300
+      ]
+    },
+    "sqa3v1_slot_frame": {
+      "usage": "Nine-slice equipment/quickslot frame only; never use for grid cells.",
+      "logical_size": [
+        100,
+        96
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        162,
+        4,
+        200,
+        192
+      ]
+    },
+    "sqa3v1_slot_helmet": {
+      "usage": "Fixed equipment recess; native icons inset and aspect-preserved.",
+      "logical_size": [
+        75.0,
+        96.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        370,
+        4,
+        150,
+        192
+      ]
+    },
+    "sqa3v1_slot_weapon": {
+      "usage": "Fixed equipment recess; native icons inset and aspect-preserved.",
+      "logical_size": [
+        237.0,
+        96.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        528,
+        4,
+        474,
+        192
+      ]
+    },
+    "sqa3v1_panel_frame": {
+      "usage": "Nine-slice outer frame; center replaced with tiled dark lining.",
+      "logical_size": [
+        64,
+        64
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        4,
+        312,
+        128,
+        128
+      ]
+    },
+    "sqa3v1_surface": {
+      "usage": "Tile or use a precomposed panel; never stretch over a full column.",
+      "logical_size": [
+        128,
+        64
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        140,
+        312,
+        256,
+        128
+      ]
+    },
+    "sqa3v1_identity_bar": {
+      "usage": "Optional player/source identity header.",
+      "logical_size": [
+        354,
+        56
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        4,
+        448,
+        708,
+        112
+      ]
+    },
+    "sqa3v1_slot_quick": {
+      "usage": "Fixed equipment recess; native icons inset and aspect-preserved.",
+      "logical_size": [
+        34.5,
+        46.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        720,
+        448,
+        69,
+        92
+      ]
+    },
+    "sqa3v1_slot_small": {
+      "usage": "Fixed equipment recess; native icons inset and aspect-preserved.",
+      "logical_size": [
+        75.0,
+        42.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        797,
+        448,
+        150,
+        84
+      ]
+    },
+    "sqa3v1_grid_cell": {
+      "usage": "Repeat at actual cell pitch; top/left thin lines only. Add bottom/right outer edges once.",
+      "logical_size": [
+        32,
+        32
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        955,
+        448,
+        64,
+        64
+      ]
+    },
+    "sqa3v1_section_bar": {
+      "usage": "Olive tiled center, metal recess rim; names/weight/collapse are separate live controls.",
+      "logical_size": [
+        354,
+        22
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        4,
+        568,
+        708,
+        44
+      ]
+    },
+    "sqa3v1_arrow_left_d": {
+      "usage": "Textured left button: disabled. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        720,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_left_e": {
+      "usage": "Textured left button: enabled. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        756,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_left_h": {
+      "usage": "Textured left button: hover. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        792,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_left_t": {
+      "usage": "Textured left button: pressed. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        828,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_right_d": {
+      "usage": "Textured right button: disabled. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        864,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_right_e": {
+      "usage": "Textured right button: enabled. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        900,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_right_h": {
+      "usage": "Textured right button: hover. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        936,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_right_t": {
+      "usage": "Textured right button: pressed. Keep text empty.",
+      "logical_size": [
+        14.0,
+        20.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        972,
+        568,
+        28,
+        40
+      ]
+    },
+    "sqa3v1_arrow_down_d": {
+      "usage": "Textured down button: disabled. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        4,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_arrow_down_e": {
+      "usage": "Textured down button: enabled. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        48,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_arrow_down_h": {
+      "usage": "Textured down button: hover. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        92,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_arrow_down_t": {
+      "usage": "Textured down button: pressed. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        136,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_arrow_up_d": {
+      "usage": "Textured up button: disabled. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        180,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_arrow_up_e": {
+      "usage": "Textured up button: enabled. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        224,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_arrow_up_h": {
+      "usage": "Textured up button: hover. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        268,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_arrow_up_t": {
+      "usage": "Textured up button: pressed. Keep text empty.",
+      "logical_size": [
+        18.0,
+        18.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        312,
+        620,
+        36,
+        36
+      ]
+    },
+    "sqa3v1_grid_fill": {
+      "usage": "Uniform grid interior; safe to stretch.",
+      "logical_size": [
+        4.0,
+        4.0
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        356,
+        620,
+        8,
+        8
+      ]
+    },
+    "sqa3v1_grid_line": {
+      "usage": "Single logical-pixel grid lines. No metal, bevel or rivets.",
+      "logical_size": [
+        1,
+        1
+      ],
+      "atlas": "sqa3_visual_controls",
+      "xywh": [
+        372,
+        620,
+        2,
+        2
+      ]
+    }
+  },
+  "outputs": [
+    {
+      "path": "package\\gamedata\\configs\\ui\\textures_descr\\sqa3_visual_assets.xml",
+      "bytes": 4818,
+      "sha256": "0c2dd24e3bae62fc9e0d831302b283ee5ed079d251f280492a3a7d8040ddebe5"
+    },
+    {
+      "path": "package\\gamedata\\textures\\ui\\sqa3_visual_controls.dds",
+      "bytes": 4194432,
+      "sha256": "5cd44561009aef6d0b06a1a702abe3b93b1d787d5a72830243138aa02b8f3bbc"
+    },
+    {
+      "path": "package\\gamedata\\textures\\ui\\sqa3_visual_panels.dds",
+      "bytes": 16777344,
+      "sha256": "fcf6ac47939bb059ed3c8defe352b313f3c09c54035b411b4c33a4c7f977b266"
+    }
+  ]
+}

@@ -4,6 +4,7 @@
 #include "../InventoryNextProbe.h"
 #include "UITextureMaster.h"
 #include "UIFrameWindow.h"
+#include "UIFieldKitButton.h"
 #include "UIXmlInit.h"
 #include "xrUIXmlParser.h"
 #include "UICharacterInfo.h"
@@ -209,10 +210,11 @@ void CUIActorMenu::Construct()
 			continue;
 
         if(InventoryNextFieldKitEnabled()&&i!=16&&i!=5){
-            auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
+            auto frame=xr_new<CUIStatic>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
             frame->SetWndPos(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"x",0),uiXml.ReadAttribFlt("slot_dragdrop",0,"y",0)));
             frame->SetWndSize(Fvector2().set(uiXml.ReadAttribFlt("slot_dragdrop",0,"width",75),uiXml.ReadAttribFlt("slot_dragdrop",0,"height",42)));
-            frame->InitTexture("sqa3v1_slot_frame");
+            const LPCSTR texture=i==7?"sqa3v1_slot_chest":((i==12||i==13)?"sqa3v1_slot_helmet":((i==2||i==3)?"sqa3v1_slot_weapon":((i==4||i==6)?"sqa3v1_slot_quick":"sqa3v1_slot_small")));
+            frame->InitTexture(texture);frame->SetStretchTexture(true);
             const LPCSTR labels[]={"","Knife / binoc.","Weapon 2","Weapon 1","Grenade","Binoculars","Bolt","Armour / rig","PDA","Detector","Torch","","Helmet","Backpack"};
             if(i<14){auto caption=xr_new<CUIStatic>();caption->SetAutoDelete(true);frame->AttachChild(caption);caption->Enable(false);caption->TextureOff();
                 caption->SetWndPos(Fvector2().set(4.0f,frame->GetWndSize().y-14.0f));caption->SetWndSize(Fvector2().set(frame->GetWndSize().x-8.0f,12.0f));
@@ -243,15 +245,18 @@ void CUIActorMenu::Construct()
 	uiXml.SetLocalRoot(stored_root);
     if(InventoryNextFieldKitEnabled()){
         // Explicitly visual-only in vanilla: no inventory list, ownership or drop target.
-        auto pistol=xr_new<CUIFrameWindow>();pistol->SetAutoDelete(true);AttachChild(pistol);pistol->Enable(false);
-        pistol->SetWndPos(Fvector2().set(174,171));pistol->SetWndSize(Fvector2().set(75,42));pistol->InitTexture("sqa3v1_slot_frame");
+        auto pistol=xr_new<CUIStatic>();pistol->SetAutoDelete(true);AttachChild(pistol);pistol->Enable(false);
+        pistol->SetWndPos(Fvector2().set(174,171));pistol->SetWndSize(Fvector2().set(75,42));pistol->InitTexture("sqa3v1_slot_small");pistol->SetStretchTexture(true);
         auto caption=xr_new<CUIStatic>();caption->SetAutoDelete(true);pistol->AttachChild(caption);caption->Enable(false);caption->TextureOff();
         caption->SetWndPos(Fvector2().set(4,28));caption->SetWndSize(Fvector2().set(67,12));
         caption->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);caption->TextItemControl()->SetTextAlignment(CGameFont::alCenter);caption->TextItemControl()->SetText("Pistol");
         for(int side=0;side<2;++side){
-            auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);AttachChild(button);button->Enable(false);
-            button->SetWndPos(Fvector2().set(side?163:88,75));button->SetWndSize(Fvector2().set(10,18));
-            button->InitTexture(side?"sqa3v1_arrow_right_e":"sqa3v1_arrow_left_e");button->SetStretchTexture(true);
+            auto button=xr_new<CUIFieldKitButton>([this](){
+                m_sqaRigView=!m_sqaRigView;SetCurrentItem(nullptr);UpdateConditionProgressBars();SqaUpdateChest();
+                Msg("* SQA3 chest view=%s; presentation only",m_sqaRigView?"rig":"armour");
+            });button->SetAutoDelete(true);AttachChild(button);
+            button->InitButton(Fvector2().set(side?161:86,74),Fvector2().set(14,20));
+            button->InitTexture(side?"sqa3v1_arrow_right":"sqa3v1_arrow_left");
         }
     }
 	//-Alun
