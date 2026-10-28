@@ -210,6 +210,9 @@ public:
     CUIStatic* m_sqaPouchFrames[2]={nullptr,nullptr};
     std::vector<InventoryNextEquipmentAction> m_sqaEquipmentActions;
     u64 m_sqaEquipmentActionSource=0;
+    std::vector<std::pair<u64,u16>> m_sqaStackMembers;
+    u64 m_sqaSelectMember=0;
+    void SqaSelectPendingMember();
     xr_vector<InventoryNextLootSource> m_sqaLootSources;
     xr_vector<CUIStatic*> m_sqaLootTabs;
     xr_map<u16,u64> m_sqaLootIdentity;

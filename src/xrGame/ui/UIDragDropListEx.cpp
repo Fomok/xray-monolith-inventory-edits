@@ -501,6 +501,12 @@ int CUIDragDropListEx::ScrollPos()
 {
 	return m_vScrollBar->GetScrollPos();
 }
+void CUIDragDropListEx::RevealItem(CUICellItem* item)
+{
+    if(!item||item->OwnerList()!=this)return;
+    m_vScrollBar->SetScrollPos(_max(0,int(item->GetWndPos().y-GetWndSize().y*0.25f)));
+    OnScrollV(nullptr,nullptr);
+}
 
 void CUIDragDropListEx::SetItem(CUICellItem* itm) //auto
 {

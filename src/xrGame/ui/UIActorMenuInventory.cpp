@@ -26,6 +26,7 @@
 #include "../eatable_item.h"
 #include "../BottleItem.h"
 #include "../WeaponMagazined.h"
+#include "../WeaponAmmo.h"
 #include "../Medkit.h"
 #include "../Antirad.h"
 #include "../CustomOutfit.h"
@@ -1212,12 +1213,35 @@ void CUIActorMenu::ActivatePropertiesBox()
 	m_UIPropertiesBox->RemoveAll();
 	bool b_show = false;
     m_sqaEquipmentActions.clear();m_sqaEquipmentActionSource=0;
+    m_sqaStackMembers.clear();
 
 	if (m_currMenuMode == mmInventory || m_currMenuMode == mmDeadBodySearch)
 	{
         if(InventoryNextFieldKitEnabled()){
             m_sqaEquipmentActions=InventoryNextEquipmentActions(item->object_id());
             m_sqaEquipmentActionSource=InventoryNextIdentityLookup(item->object_id());
+            if(item->parent_id()==Actor()->ID()&&InventoryNextActionReady()) {
+                for(auto member:Actor()->inventory().m_all)if(member&&member->m_section_id==item->m_section_id){
+                    const auto identity=InventoryNextIdentityLookup(member->object_id());if(identity)m_sqaStackMembers.push_back({identity,member->object_id()});
+                }
+                std::sort(m_sqaStackMembers.begin(),m_sqaStackMembers.end());
+                if(m_sqaStackMembers.size()>1){
+                    auto group=m_UIPropertiesBox->AddSubmenu(("Choose item ("+std::to_string(m_sqaStackMembers.size())+")").c_str());
+                    CUIPropertiesBox* page=group;
+                    for(size_t i=0;i<m_sqaStackMembers.size();++i){
+                        if(m_sqaStackMembers.size()>12&&i%12==0)page=group->AddSubmenu(("Items "+std::to_string(i+1)+"-"+std::to_string(_min(i+12,m_sqaStackMembers.size()))).c_str());
+                        auto member=smart_cast<CInventoryItem*>(Level().Objects.net_Find(m_sqaStackMembers[i].second));
+                        std::string label=std::to_string(i+1)+". "+std::to_string(int(member->GetCondition()*100.0f+0.5f))+"%";
+                        if(auto ammo=smart_cast<CWeaponAmmo*>(member))label+="; "+std::to_string(ammo->m_boxCurr)+" rounds";
+                        if(auto weapon=smart_cast<CWeapon*>(member))label+="; "+std::to_string(weapon->GetAmmoElapsed())+" loaded";
+                        if(auto eatable=smart_cast<CEatableItem*>(member))label+="; "+std::to_string(eatable->GetRemainingUses())+"/"+std::to_string(eatable->GetMaxUses())+" uses";
+                        if(!member->upgardes().empty())label+="; "+std::to_string(member->upgardes().size())+" upgrades";
+                        if(member==item)label+=" (selected)";
+                        page->AddItem(label.c_str(),reinterpret_cast<void*>(i),0x53513302);
+                    }
+                    b_show=true;
+                }
+            }
             for(size_t index=0;index<m_sqaEquipmentActions.size();++index){
                 m_UIPropertiesBox->AddItem(m_sqaEquipmentActions[index].label.c_str(),reinterpret_cast<void*>(index),0x53513301);
                 b_show=true;
@@ -1748,6 +1772,16 @@ void CUIActorMenu::ProcessPropertiesBoxClicked(CUIWindow* w, void* d)
 		return;
 	}
 	CWeapon* weapon = smart_cast<CWeapon*>(item);
+    if(m_UIPropertiesBox->GetClickedItem()->GetTAG()==0x53513302){
+        const auto index=reinterpret_cast<size_t>(m_UIPropertiesBox->GetClickedItem()->GetData());
+        if(index>=m_sqaStackMembers.size()||InventoryNextIdentityLookup(item->object_id())!=m_sqaEquipmentActionSource)return;
+        const auto member=m_sqaStackMembers[index];
+        auto target=smart_cast<CInventoryItem*>(Level().Objects.net_Find(member.second));
+        if(!target||target->parent_id()!=Actor()->ID()||target->m_section_id!=item->m_section_id||InventoryNextIdentityLookup(member.second)!=member.first)return;
+        // Selection only. Native ownership, exact instance state and equipment
+        // remain unchanged until the player performs an explicit action.
+        m_sqaSelectMember=member.first;m_UIPropertiesBox->Hide();SetCurrentItem(nullptr);return;
+    }
     if(m_UIPropertiesBox->GetClickedItem()->GetTAG()==0x53513301){
         const auto index=reinterpret_cast<size_t>(m_UIPropertiesBox->GetClickedItem()->GetData());
         if(index>=m_sqaEquipmentActions.size()||InventoryNextIdentityLookup(item->object_id())!=m_sqaEquipmentActionSource)return;

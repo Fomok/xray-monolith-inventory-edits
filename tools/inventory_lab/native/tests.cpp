@@ -11,6 +11,7 @@
 #include "ground_pickup.h"
 #include "purchase_session.h"
 #include "equipment_registry.h"
+#include "quick_access.h"
 #include "drag_session.h"
 #include "presentation.h"
 #include "persistence.h"
@@ -1333,6 +1334,21 @@ int main(int argc,char** argv) {
             rig.condition=500;yes(layout.reconcile({rig,pouch,med},pockets));
             check(layout.model().nodes().at(101).location==Location::Mounted&&layout.model().nodes().at(102).location==Location::Overflow,"condition loss lost binding or failed recovery");
             check(layout.model().carried_mass()==1600&&layout.model().nodes().at(102).condition==8432,"condition recovery changed item state or mass");
+        });
+        test("quick access distinguishes worn rig and active pouch from possession and closed storage",[]{
+            auto actor=root(1,Kind::ActorRoot);actor.allowed_slots=~std::uint64_t{0};actor.equipment_accepts=~std::uint64_t{0};actor.equipment_capacity=64;
+            auto rig=bag(100,1,900);rig.attributes["storage_family"]="rig";rig.location=Location::Equipment;
+            rig.wear_slots=rig.equipped_slots=std::uint64_t{1}<<19;
+            rig.attributes["storage_exterior_independent"]="1";
+            rig.mounts.push_back({65537,"left",{1,1},1,1000,true});
+            auto pouch=bag(101,100,200);pouch.pouch=true;pouch.location=Location::Mounted;pouch.mounted_slot=65537;
+            auto spare=bag(102,1,700,{4,0,false});spare.attributes["storage_family"]="rig";
+            auto box=bag(103,1,100,{8,0,false});
+            auto recovery=item(108,1,10);recovery.location=Location::Overflow;
+            Model model;yes(model.initialize({actor,rig,pouch,spare,box,item(104,100,20),item(105,101,20),item(106,102,20),item(107,103,20),recovery,item(109,1,20,{12,0,false})}));
+            check(equipped_rig_access(model,104)&&equipped_rig_access(model,105),"worn rig/pouch inaccessible");
+            for(Id id:{Id{106},Id{107},Id{108},Id{109},Id{999}})check(!equipped_rig_access(model,id),"possession leaked into quick access");
+            check(model.nodes().count(106)&&model.nodes().count(107),"access changed possession");
         });
         test("catalog applies authored storage and preserves native instance state",[]{
             StorageCatalog catalog;StorageDefinition pack;

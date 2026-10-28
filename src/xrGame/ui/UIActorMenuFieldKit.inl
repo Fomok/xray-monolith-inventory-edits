@@ -20,6 +20,26 @@ bool CUIActorMenu::SqaActorList(CUIDragDropListEx* list) const
     if(InventoryNextFieldKitEnabled())for(const auto& window:m_sqaContainers)if(window.list==list)return true;
     return false;
 }
+void CUIActorMenu::SqaSelectPendingMember()
+{
+    if(!m_sqaSelectMember||CUIDragDropListEx::m_drag_item)return;
+    const auto live=InventoryNextIdentityServer(m_sqaSelectMember);
+    auto item=live!=u16(-1)?smart_cast<CInventoryItem*>(Level().Objects.net_Find(live)):nullptr;
+    if(!item||item->parent_id()!=Actor()->ID()){m_sqaSelectMember=0;return;}
+    auto select=[&](CUIDragDropListEx* list){
+        if(!list)return false;
+        for(u32 i=0;i<list->ItemsCount();++i){auto cell=list->GetItemIdx(i);if(cell->m_pData==item){SetCurrentItem(cell);list->RevealItem(cell);InfoCurItem(cell);m_sqaSelectMember=0;return true;}}
+        return false;
+    };
+    if(select(m_pInventoryBagList))return;
+    for(auto list:m_sqaCustomEquipment)if(select(list))return;
+    for(u32 slot=1;slot<=m_slot_count;++slot)if(select(m_pInvList[slot]))return;
+    for(auto& window:m_sqaContainers)if(select(window.list))return;
+    const auto owner=InventoryNextViewOwner(live);
+    if(owner){auto host=smart_cast<CInventoryItem*>(Level().Objects.net_Find(InventoryNextIdentityServer(owner)));
+        if(host&&!SqaContainerList(owner)){SqaOpenContainer(host);m_sqaRefresh=true;return;}}
+    InventoryNextPickupStatus("Open or expand this item's storage to select it.");m_sqaSelectMember=0;
+}
 bool CUIActorMenu::SqaOpenContainer(PIItem item)
 {
     if(!SqaLootActive()||!item||CUIDragDropListEx::m_drag_item)return false;

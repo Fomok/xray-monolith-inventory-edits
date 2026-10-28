@@ -9,6 +9,7 @@
 #include "entity_alive.h"
 #include "inventory_item_impl.h"
 #include "inventory.h"
+#include "InventoryNextProbe.h"
 #include "xrserver_objects_alife_items.h"
 #include "actor.h"
 #include "../xrEngine/CameraBase.h"
@@ -1694,7 +1695,7 @@ int CWeapon::GetSuitableAmmoTotal(bool use_item_to_spawn) const
 	}
 
 	//÷òîá íå äåëàòü ëèøíèõ ïåðåñ÷åòîâ
-	if (m_pInventory->ModifyFrame() <= m_BriefInfo_CalcFrame)
+	if (!(InventoryNextLogicalStorage()&&ParentIsActor()) && m_pInventory->ModifyFrame() <= m_BriefInfo_CalcFrame)
 	{
 		return ae_count + m_iAmmoCurrentTotal;
 	}
@@ -1735,7 +1736,7 @@ int CWeapon::GetAmmoCount_forType(shared_str const& ammo_type) const
 	for (; itb != ite; ++itb)
 	{
 		CWeaponAmmo* pAmmo = smart_cast<CWeaponAmmo*>(*itb);
-		if (pAmmo && (pAmmo->cNameSect() == ammo_type))
+		if (pAmmo && (pAmmo->cNameSect() == ammo_type) && (!ParentIsActor()||InventoryNextAmmoAccessible(pAmmo->object_id())))
 		{
 			res += pAmmo->m_boxCurr;
 		}
@@ -1746,7 +1747,7 @@ int CWeapon::GetAmmoCount_forType(shared_str const& ammo_type) const
 	for (; itb != ite; ++itb)
 	{
 		CWeaponAmmo* pAmmo = smart_cast<CWeaponAmmo*>(*itb);
-		if (pAmmo && (pAmmo->cNameSect() == ammo_type))
+		if (pAmmo && (pAmmo->cNameSect() == ammo_type) && (!ParentIsActor()||InventoryNextAmmoAccessible(pAmmo->object_id())))
 		{
 			res += pAmmo->m_boxCurr;
 		}

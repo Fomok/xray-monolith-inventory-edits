@@ -7,6 +7,7 @@
 #include "Silencer.h"
 #include "GrenadeLauncher.h"
 #include "inventory.h"
+#include "InventoryNextProbe.h"
 #include "InventoryOwner.h"
 #include "xrserver_objects_alife_items.h"
 #include "ActorEffector.h"
@@ -297,6 +298,7 @@ void CWeaponMagazined::Reload()
 
 bool CWeaponMagazined::TryReload()
 {
+    if(ParentIsActor()&&!InventoryNextActionReady())return false;
 	if (m_pInventory)
 	{
 		if (IsGameTypeSingle() && ParentIsActor())
@@ -311,7 +313,7 @@ bool CWeaponMagazined::TryReload()
 			m_set_next_ammoType_on_reload = undefined_ammo_type;
 		}
 
-		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[m_ammoType].c_str()));
+		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(m_ammoTypes[m_ammoType].c_str()));
 
 		if (IsMisfire() && iAmmoElapsed)
 		{
@@ -329,7 +331,7 @@ bool CWeaponMagazined::TryReload()
 		if (iAmmoElapsed == 0)
 			for (u8 i = 0; i < u8(m_ammoTypes.size()); ++i)
 			{
-				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[i].c_str()));
+				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(m_ammoTypes[i].c_str()));
 				if (m_pCurrentAmmo)
 				{
 					m_set_next_ammoType_on_reload = i;
@@ -348,11 +350,11 @@ bool CWeaponMagazined::TryReload()
 
 bool CWeaponMagazined::IsAmmoAvailable()
 {
-	if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[m_ammoType].c_str())))
+	if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(m_ammoTypes[m_ammoType].c_str())))
 		return (true);
 	else
 		for (u32 i = 0; i < m_ammoTypes.size(); ++i)
-			if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[i].c_str())))
+			if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(m_ammoTypes[i].c_str())))
 				return (true);
 	return (false);
 }
@@ -396,14 +398,14 @@ int CWeaponMagazined::CheckAmmoBeforeReload(u8& v_ammoType)
 		return 0;
 	}
 
-	CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(tmp_sect_name));
+	CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(tmp_sect_name));
 
 	if (!ammo && !m_bLockType)
 	{
 		for (u8 i = 0; i < u8(m_ammoTypes.size()); ++i)
 		{
 			//проверить патроны всех подходящих типов
-			ammo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[i].c_str()));
+			ammo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(m_ammoTypes[i].c_str()));
 			if (ammo)
 			{
 				v_ammoType = i;
@@ -461,7 +463,7 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 	{
 		if (m_pInventory)
 		{
-			CWeaponAmmo* l_pA = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(l_it->first));
+			CWeaponAmmo* l_pA = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(l_it->first));
 			if (l_pA)
 			{
 				u16 l_free = l_pA->m_boxSize - l_pA->m_boxCurr;
@@ -475,6 +477,7 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 
 void CWeaponMagazined::ReloadMagazine()
 {
+    if(ParentIsActor()&&!InventoryNextActionReady())return;
 	m_needReload = false;
 	m_BriefInfo_CalcFrame = 0;
 
@@ -528,14 +531,14 @@ void CWeaponMagazined::ReloadMagazine()
 			return;
 
 		//попытаться найти в инвентаре патроны текущего типа
-		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(tmp_sect_name));
+		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(tmp_sect_name));
 
 		if (!m_pCurrentAmmo && !m_bLockType && iAmmoElapsed == 0)
 		{
 			for (u8 i = 0; i < u8(m_ammoTypes.size()); ++i)
 			{
 				//проверить патроны всех подходящих типов
-				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[i].c_str()));
+				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(m_ammoTypes[i].c_str()));
 				if (m_pCurrentAmmo)
 				{
 					m_ammoType = i;

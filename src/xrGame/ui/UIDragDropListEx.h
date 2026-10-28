@@ -127,6 +127,7 @@ public:
 	const Ivector2 GetVirtualCellsAlignment() { return m_virtual_cells_alignment; };
 
 	int ScrollPos();
+    void RevealItem(CUICellItem* item);
 	void ReinitScroll();
 	void GetClientArea(Frect& r);
 	Fvector2 GetDragItemPosition();

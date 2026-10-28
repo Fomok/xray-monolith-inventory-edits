@@ -47,6 +47,10 @@
 #include "map_location.h"
 #include "script_engine.h"
 #include "../inventory_next/equipment_registry.h"
+#include "../inventory_next/quick_access.h"
+#include "Weapon.h"
+#include "WeaponAmmo.h"
+#include "eatable_item.h"
 
 namespace {
 inventory_next::ActorLayout& layout(){static inventory_next::ActorLayout value;return value;}
@@ -61,6 +65,9 @@ bool equipment_registry_ready=false;
 bool rig_wear_enabled=false;
 float rig_wear_per_hit=0.0f,rig_wear_per_second=0.0f,rig_wear_spent=0.0f;
 u32 rig_wear_started=0;
+bool medical_rig_only=true,medical_menu_exception=true,ammo_rig_only=true;
+std::string medical_kinds="i_medical";
+u32 access_updated_at=0,access_inventory_frame=0;
 std::shared_ptr<const inventory_next::StorageCatalog> storage_catalog_cache;
 struct PendingCustomBinding {u64 item=0,host=0;u32 slot=0;};
 std::vector<PendingCustomBinding> pending_custom_bindings;
@@ -204,9 +211,35 @@ bool read_equipment_registry() {
             per_hit=config.r_float("rig_wear","per_hit");per_second=config.r_float("rig_wear","per_second");
             if(!std::isfinite(per_hit)||!std::isfinite(per_second)||per_hit<0||per_hit>1||per_second<0||per_second>1)return false;
         }
+        if(config.section_exist("quick_access")) {
+            medical_rig_only=config.r_bool("quick_access","medical_rig_only");
+            medical_menu_exception=config.r_bool("quick_access","medical_menu_exception");
+            ammo_rig_only=config.r_bool("quick_access","ammo_rig_only");
+            medical_kinds=config.r_string("quick_access","medical_kinds");
+        }
     }
     rig_wear_enabled=wear_enabled;rig_wear_per_hit=per_hit;rig_wear_per_second=per_second;rig_wear_spent=0;rig_wear_started=Device.dwTimeGlobal;
     equipment_registry=std::move(candidate);equipment_registry_ready=true;return true;
+}
+void native_instance_state(inventory_next::Node& node,CInventoryItem* item) {
+    // One native entity is one independently stateful member. Rounds/charges
+    // inside it are quantities, never extra inventory identities or fake cells.
+    node.quantity=node.stack_limit=1;node.attributes["native_quantity_domain"]="instance";
+    if(auto ammo=smart_cast<CWeaponAmmo*>(item)){
+        node.attributes["native_rounds"]=std::to_string(ammo->m_boxCurr);
+        node.attributes["native_round_capacity"]=std::to_string(ammo->m_boxSize);
+    }
+    if(auto weapon=smart_cast<CWeapon*>(item)){
+        node.attributes["native_loaded_rounds"]=std::to_string(weapon->GetAmmoElapsed());
+        node.attributes["native_addons"]=std::to_string(weapon->GetAddonsState());
+    }
+    if(auto eatable=smart_cast<CEatableItem*>(item)){
+        node.attributes["native_uses"]=std::to_string(eatable->GetRemainingUses());
+        node.attributes["native_max_uses"]=std::to_string(eatable->GetMaxUses());
+    }
+    std::string upgrades;
+    for(const auto& upgrade:item->upgardes()){if(!upgrades.empty())upgrades+='|';upgrades+=upgrade.c_str();}
+    if(!upgrades.empty())node.attributes["native_upgrades"]=upgrades;
 }
 void apply_custom_binding(inventory_next::Node& node,CInventoryItem* item) {
     using namespace inventory_next;
@@ -256,10 +289,40 @@ void InventoryNextConditionChanged(u16 live) noexcept try {
 void InventoryNextEquipmentUpdate() noexcept {
     // Actor update owns reconciliation. Render/tooltip paths remain pure reads;
     // defer condition recovery while an ownership transaction is in flight.
-    if(equipment_dirty&&InventoryNextPickupCanSave()&&InventoryNextLayoutSync()) {
-        equipment_dirty=false;InventoryNextPickupStatus(nullptr);
+    if(!InventoryNextLogicalStorage()||!Actor())return;
+    const auto frame=Actor()->inventory().ModifyFrame();
+    if((equipment_dirty||frame!=access_inventory_frame||u32(Device.dwTimeGlobal-access_updated_at)>=250)&&
+       InventoryNextPickupCanSave()&&InventoryNextLayoutSync()) {
+        access_inventory_frame=frame;access_updated_at=Device.dwTimeGlobal;
+        const bool refresh=equipment_dirty;equipment_dirty=false;if(refresh)InventoryNextPickupStatus(nullptr);
     }
 }
+bool InventoryNextActionReady() noexcept {
+    return !InventoryNextLogicalStorage()||(InventoryNextPickupCanSave()&&InventoryNextLayoutSync());
+}
+bool InventoryNextAmmoAccessible(u16 live) noexcept try {
+    if(!InventoryNextLogicalStorage())return true;
+    if(!equipment_registry_ready||!InventoryNextPickupCanSave()||!layout_current)return false;
+    return !ammo_rig_only||inventory_next::equipped_rig_access(layout().model(),InventoryNextIdentityLookup(live));
+} catch (...) {return false;}
+bool InventoryNextCanUse(u16 live) noexcept try {
+    if(!InventoryNextLogicalStorage())return true;
+    if(!InventoryNextActionReady())return false;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));if(!item||item->parent_id()!=Actor()->ID())return false;
+    if(!medical_rig_only)return true;
+    const auto section=item->m_section_id.c_str();
+    const std::string kind=pSettings->line_exist(section,"kind")?pSettings->r_string(section,"kind"):"";
+    if(kind.empty()||("|"+medical_kinds+"|").find("|"+kind+"|")==std::string::npos)return true;
+    if(medical_menu_exception&&CurrentGameUI()&&CurrentGameUI()->GetActorMenu().IsShown())return true;
+    const bool allowed=inventory_next::equipped_rig_access(layout().model(),InventoryNextIdentityLookup(live));
+    if(!allowed)InventoryNextPickupStatus("No medicine of that type in the equipped rig.");
+    return allowed;
+} catch (...) {return false;}
+u16 InventoryNextQuickPick(const char* section) noexcept try {
+    if(!section||!Actor()||!InventoryNextActionReady())return u16(-1);
+    for(auto item:Actor()->inventory().m_all)if(item&&item->Useful()&&!xr_strcmp(item->m_section_id.c_str(),section)&&InventoryNextCanUse(item->object_id()))return item->object_id();
+    return u16(-1);
+} catch (...) {return u16(-1);}
 void InventoryNextRigHit(float power,int hit_type) noexcept try {
     if(!InventoryNextLogicalStorage()||!std::isfinite(power)||power<=0||!Actor()||!read_equipment_registry()||!rig_wear_enabled)return;
     switch(hit_type) {
@@ -350,7 +413,7 @@ bool InventoryNextCustomUnequip(u16 live,int x,int y,u64 view) noexcept try {
     const auto id=InventoryNextIdentityLookup(live);const auto& model=layout().model();
     if(!model.nodes().count(id))return false;
     if(model.nodes().at(id).location==Location::Mounted)for(const auto& node:model.nodes())if(node.second.parent==id){InventoryNextPickupStatus("Empty this pouch before detaching it.");return false;}
-    Position position;
+    inventory_next::Position position;
     if(x>=0&&y>=0) {
         if(!InventoryNextNativeDragCurrent(live))return false;
         Id destination=0;const auto& selected=view?make_storage_view(view):storage_view;
@@ -415,6 +478,7 @@ bool InventoryNextLayoutSync() noexcept try {
             n.attributes["native_live_id"]=std::to_string(item->object().ID());
             n.attributes["native_place"]=std::to_string(item->CurrPlace());
             n.attributes["native_slot"]=std::to_string(item->CurrSlot());
+            native_instance_state(n,item);
             if(logical&&!catalog.apply(item->m_section_id.c_str(),n)&&smart_cast<CBackpack*>(item)) {
                 const std::string section=item->m_section_id.c_str();
                 const std::string kind=pSettings->line_exist(section.c_str(),"kind")?pSettings->r_string(section.c_str(),"kind"):"";
@@ -722,6 +786,7 @@ bool InventoryNextPickupPrepare(u16 owner,u16 live,u16 source,u16 slot) noexcept
     n.empty=n.half=n.full={shape.x2,shape.y2};
     n.attributes["native_section"]=item->m_section_id.c_str();n.attributes["native_live_id"]=std::to_string(live);
     n.attributes["native_place"]="3";n.attributes["native_slot"]=std::to_string(item->CurrSlot());
+    native_instance_state(n,item);
     if(slot!=0xffff) {
         n.wear_slots=std::uint64_t{1}<<slot;
         n.attributes["native_place"]="1";n.attributes["native_slot"]=std::to_string(slot);
@@ -1108,6 +1173,7 @@ bool world_node(u16 live,u16 parent,inventory_next::Node& node) {
     node.attributes["native_section"]=item->m_section_id.c_str();node.attributes["native_live_id"]=std::to_string(live);
     node.attributes["native_place"]=parent==Actor()->ID()?std::to_string(item->CurrPlace()):"3";
     node.attributes["native_slot"]=std::to_string(item->CurrSlot());
+    native_instance_state(node,item);
     if(parent==Actor()->ID()&&item->CurrPlace()==eItemPlaceSlot) {
         if(item->CurrSlot()>=48)return false;
         node.location=Location::Equipment;node.wear_slots=node.equipped_slots=std::uint64_t{1}<<item->CurrSlot();

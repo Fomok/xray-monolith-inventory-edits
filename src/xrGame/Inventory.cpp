@@ -1087,6 +1087,14 @@ PIItem CInventory::GetAny(LPCSTR name) const
 	return itm;
 }
 
+PIItem CInventory::GetAccessibleAmmo(LPCSTR name) const
+{
+    if(!InventoryNextLogicalStorage()||!Actor()||this!=&Actor()->inventory())return GetAny(name);
+    for(const auto* list:{&m_belt,&m_ruck})for(auto item:*list)
+        if(item&&item->Useful()&&!xr_strcmp(item->m_section_id.c_str(),name)&&InventoryNextAmmoAccessible(item->object_id()))return item;
+    return nullptr;
+}
+
 PIItem CInventory::item(CLASS_ID cls_id) const
 {
 	const TIItemContainer& list = m_all;
@@ -1192,6 +1200,8 @@ bool CInventory::Eat(PIItem pIItem)
 	if (!pInventory || pInventory != this) return false;
 	if (pInventory != IO->m_inventory) return false;
 	if (pItemToEat->object().H_Parent()->ID() != entity_alive->ID()) return false;
+
+    if(Actor()&&this==&Actor()->inventory()&&!InventoryNextCanUse(pIItem->object_id()))return false;
 
 	if (!pItemToEat->UseBy(entity_alive))
 		return false;

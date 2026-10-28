@@ -219,6 +219,7 @@ void CUIActorMenu::Update()
         m_sqaRefresh=false;
         if(m_currMenuMode==mmDeadBodySearch){SetCurrentItem(NULL);m_pDeadBodyBagList->ClearAll(true);InitDeadBodySearchMode();}else InitInventoryContents(m_pInventoryBagList);
     }
+    SqaSelectPendingMember();
 	{
 		// all mode
 		m_last_time = Device.dwTimeGlobal;

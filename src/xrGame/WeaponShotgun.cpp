@@ -4,6 +4,7 @@
 #include "ParticlesObject.h"
 #include "xr_level_controller.h"
 #include "inventory.h"
+#include "InventoryNextProbe.h"
 #include "level.h"
 #include "actor.h"
 #include "script_game_object.h"
@@ -241,6 +242,7 @@ bool CWeaponShotgun::HaveCartridgeInInventory(u8 cnt)
 
 u8 CWeaponShotgun::AddCartridge(u8 cnt)
 {
+    if(ParentIsActor()&&!InventoryNextActionReady())return cnt;
 	if (IsMisfire()) bMisfire = false;
 
 	if (m_set_next_ammoType_on_reload != undefined_ammo_type)
@@ -252,7 +254,8 @@ u8 CWeaponShotgun::AddCartridge(u8 cnt)
 	if (!HaveCartridgeInInventory(1) || iAmmoElapsed >= iMagazineSize)
 		return 0;
 
-	m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[m_ammoType].c_str()));
+	m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAccessibleAmmo(m_ammoTypes[m_ammoType].c_str()));
+    if(!m_pCurrentAmmo&&!unlimited_ammo())return cnt;
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
 

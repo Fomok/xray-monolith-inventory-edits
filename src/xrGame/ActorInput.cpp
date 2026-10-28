@@ -13,6 +13,7 @@
 #include "PHDestroyable.h"
 #include "UIGameSP.h"
 #include "inventory.h"
+#include "InventoryNextProbe.h"
 #include "level.h"
 #include "game_cl_base.h"
 #include "xr_level_controller.h"
@@ -234,7 +235,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			const shared_str& item_name = g_quick_use_slots[cmd - kQUICK_USE_1];
 			if (item_name.size())
 			{
-				PIItem itm = inventory().GetAny(item_name.c_str());
+				PIItem itm = InventoryNextLogicalStorage() ? inventory().get_object_by_id(InventoryNextQuickPick(item_name.c_str())) : inventory().GetAny(item_name.c_str());
 
 				::luabind::functor<bool> funct;
 				if (itm && ai().script_engine().functor("_G.CInventory__eat", funct))
