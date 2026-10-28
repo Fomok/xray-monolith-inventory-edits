@@ -327,7 +327,9 @@ bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
 
 bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
 {
-    if(InventoryNextFieldKitEnabled()&&SqaActorList(itm->OwnerList())&&SqaOpenContainer(static_cast<PIItem>(itm->m_pData)))return true;
+    if(InventoryNextFieldKitEnabled()&&
+       (SqaActorList(itm->OwnerList())||SqaWorldList(itm->OwnerList())||itm->OwnerList()==m_pDeadBodyBagList)&&
+       SqaOpenContainer(static_cast<PIItem>(itm->m_pData)))return true;
 	SetCurrentItem(itm);
 	InfoCurItem(NULL);
 	CUIDragDropListEx* old_owner = itm->OwnerList();
