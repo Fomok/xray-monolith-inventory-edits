@@ -58,6 +58,7 @@ public:
     // Genuine native equipment membership outside all legacy u16 slot IDs.
     using CustomSlotKey=std::pair<u64,u32>; // persistent host identity, registry ID
     bool CustomSlot(u64 host,u32 slot,PIItem item,bool restoring=false);
+    bool SwapCustomSlot(u64 host,u32 slot,PIItem incoming);
     PIItem ItemFromCustomSlot(u64 host,u32 slot) const;
     bool CustomSlotFor(const CInventoryItem* item,u64& host,u32& slot) const;
     void RemoveCustomBinding(const CInventoryItem* item);

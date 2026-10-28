@@ -932,6 +932,13 @@ bool CUIActorMenu::ToSlot(CUICellItem* itm, bool force_place, u16 slot_id)
 
 bool CUIActorMenu::ToBag(CUICellItem* itm, bool b_use_cursor_pos)
 {
+    if(InventoryNextLogicalStorage()&&itm&&itm->m_pData){auto item=static_cast<PIItem>(itm->m_pData);
+        if(item->parent_id()==Actor()->ID()&&(item->CurrPlace()==eItemPlaceSlot||item->CurrPlace()==eItemPlaceBelt)){
+            bool result=false;
+            if(b_use_cursor_pos&&CUIDragDropListEx::m_drag_item){auto list=CUIDragDropListEx::m_drag_item->BackList();if(list){const auto cell=list->PickCell(list->GetDragItemPosition());result=InventoryNextManualUnequip(item->object_id(),cell.x,cell.y,list->sqaViewOwner);}}
+            else result=InventoryNextManualUnequip(item->object_id());
+            m_sqaRefresh=true;return result;
+        }}
     if(InventoryNextFieldKitEnabled()&&itm&&itm->m_pData){auto item=static_cast<PIItem>(itm->m_pData);
         if(item->CurrPlace()==eItemPlaceCustom){const bool result=InventoryNextCustomUnequip(item->object_id());m_sqaRefresh=true;return result;}}
     if(SqaLootActive()&&itm->OwnerList()==m_pDeadBodyBagList)return SqaTakeLoot(static_cast<PIItem>(itm->m_pData));

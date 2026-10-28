@@ -387,10 +387,27 @@ bool InventoryNextCanCustomEquip(u64 host,u32 slot_id,u16 live,bool restoring) n
     else {command.operation=Operation::Equip;command.slots=std::uint64_t{1}<<slot_definition.model_bit;}
     return layout().model().preview(command).result.ok;
 } catch (...) {return false;}
+bool InventoryNextCanCustomSwap(u64 host,u32 slot,u16 incoming) noexcept try {
+    if(host!=1||!InventoryNextLogicalStorage()||!Actor()||!InventoryNextActionReady())return false;
+    const auto definition=equipment_registry.find(slot);if(!definition||!definition->enabled||definition->mounted)return false;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(incoming));
+    auto outgoing=Actor()->inventory().ItemFromCustomSlot(host,slot);
+    if(!item||!outgoing||item==outgoing||item->parent_id()!=Actor()->ID()||item->CurrPlace()!=eItemPlaceRuck)return false;
+    const auto id=InventoryNextIdentityLookup(incoming);const auto found=layout().model().nodes().find(id);
+    if(found==layout().model().nodes().end()||!found->second.attributes.count("storage_family")||!definition->accepts(found->second.attributes.at("storage_family")))return false;
+    auto candidate=layout().model();return candidate.swap_equipment(id,InventoryNextIdentityLookup(outgoing->object_id()),candidate.revision(),candidate.session()).ok;
+} catch (...) {return false;}
 bool InventoryNextCustomEquip(u16 live,u64 host,const char* key) noexcept try {
     if(!key||!read_equipment_registry()||!Actor())return false;
     const auto slot=equipment_registry.find(std::string(key));
     auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    if(slot&&item)if(auto outgoing=Actor()->inventory().ItemFromCustomSlot(host,slot->id))if(outgoing!=item){
+        if(!InventoryNextCanCustomSwap(host,slot->id,live)){InventoryNextPickupStatus("The equipped item does not fit in the vacated pocket position.");return false;}
+        auto candidate=layout().model();const auto plan=candidate.swap_equipment(InventoryNextIdentityLookup(live),InventoryNextIdentityLookup(outgoing->object_id()),candidate.revision(),candidate.session());
+        if(!plan||!Actor()->inventory().SwapCustomSlot(host,slot->id,item))return false;
+        if(!layout().restore(candidate.serialize())||!InventoryNextLayoutSync()){pickup_fault=true;return false;}
+        InventoryNextPickupStatus(nullptr);return true;
+    }
     const bool result=slot&&item&&Actor()->inventory().CustomSlot(host,slot->id,item);
     if(!result)InventoryNextPickupStatus("Equipment slot unavailable, occupied, damaged, or incompatible.");
     else if(!InventoryNextLayoutSync())return false;
@@ -407,7 +424,7 @@ std::vector<InventoryNextEquipmentAction> InventoryNextEquipmentActions(u16 live
     if(!InventoryNextLogicalStorage()||!Actor()||!InventoryNextLayoutSync())return actions;
     auto native=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
     if(native&&native->parent_id()!=Actor()->ID()){
-        StorageCatalog catalog;if(!read_storage_catalog(catalog))return actions;
+        inventory_next::StorageCatalog catalog;if(!read_storage_catalog(catalog))return actions;
         const auto found=catalog.definitions.find(native->m_section_id.c_str());if(found==catalog.definitions.end())return actions;
         const auto identity=InventoryNextIdentity(live);if(!identity)return actions;
         for(const auto& entry:equipment_registry.slots()){
@@ -464,6 +481,36 @@ bool InventoryNextCustomUnequip(u16 live,int x,int y,u64 view) noexcept try {
     if(!Actor()->inventory().Ruck(item,true)||!InventoryNextLayoutSync())return false;
     const auto result=layout().move({id,1,position,layout().model().revision(),layout().model().session()});
     InventoryNextCustomChanged();return result.ok;
+} catch (...) {return false;}
+bool InventoryNextManualUnequip(u16 live,int x,int y,u64 view) noexcept try {
+    using namespace inventory_next;
+    if(!InventoryNextLogicalStorage()||!Actor()||!InventoryNextActionReady())return false;
+    auto item=smart_cast<CInventoryItem*>(Level().Objects.net_Find(live));
+    if(!item||item->parent_id()!=Actor()->ID())return false;
+    if(item->CurrPlace()==eItemPlaceCustom)return InventoryNextCustomUnequip(live,x,y,view);
+    if((item->CurrPlace()!=eItemPlaceSlot&&item->CurrPlace()!=eItemPlaceBelt)||!Actor()->inventory().CanPutInRuck(item))return false;
+    const auto id=InventoryNextIdentityLookup(live);const auto& model=layout().model();
+    if(!model.nodes().count(id))return false;
+    Id destination=1;inventory_next::Position position;
+    if(x>=0&&y>=0){
+        if(!InventoryNextNativeDragCurrent(live))return false;
+        const auto& selected=view?make_storage_view(view):storage_view;
+        if(!selected.destination(x,y,destination,position)){native_drag().cancel();return false;}
+        const auto proposal=native_drag().release(model,destination,position.x,position.y,false,{});
+        if(!proposal.result){InventoryNextPickupStatus("This item does not fit at that position.");return false;}
+        position=proposal.moves.front().position;
+    } else {
+        std::vector<Id> destinations{1};
+        for(const auto& pair:model.nodes())if(pair.second.kind==Kind::Item&&pair.second.container&&pair.first!=id&&
+            pair.second.location!=Location::Overflow&&model.storage_active(pair.first))destinations.push_back(pair.first);
+        const auto placement=find_placement(model,id,destinations);
+        if(!placement.result){InventoryNextPickupStatus("No legal space to unequip this item.");return false;}
+        destination=placement.moves.front().destination;position=placement.moves.front().position;
+    }
+    if(!Actor()->inventory().Ruck(item,true)||!InventoryNextLayoutSync())return false;
+    const auto result=layout().move({id,destination,position,layout().model().revision(),layout().model().session()});
+    if(!result){pickup_fault=true;InventoryNextPickupStatus("Equipment changed during unequip. Saving blocked.");return false;}
+    InventoryNextCustomChanged();return true;
 } catch (...) {return false;}
 bool InventoryNextLayoutSync() noexcept try {
     layout_current=false;

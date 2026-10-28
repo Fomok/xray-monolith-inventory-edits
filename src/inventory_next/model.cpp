@@ -322,6 +322,19 @@ Result Model::relocate(const std::vector<Move>& requests) {
     return good();
 }
 Result Model::execute(const Command& request) { return execute_internal(request,false); }
+Result Model::swap_equipment(Id incoming,Id equipped,std::uint64_t revision,std::uint64_t session) {
+    if(!session_||session!=session_)return bad("stale_session");
+    if(revision!=revision_)return bad("stale_revision");
+    if(revision_==std::numeric_limits<std::uint64_t>::max())return bad("revision_overflow");
+    const auto from=nodes_.find(incoming),to=nodes_.find(equipped);
+    if(from==nodes_.end()||to==nodes_.end()||from==to||from->second.kind!=Kind::Item||to->second.kind!=Kind::Item||
+       from->second.parent!=1||to->second.parent!=1||from->second.location!=Location::Grid||to->second.location!=Location::Equipment)return bad("equipment_swap_source");
+    auto candidate=nodes_;auto& a=candidate.at(incoming);auto& b=candidate.at(equipped);
+    a.location=Location::Equipment;a.equipped_slots=b.equipped_slots;a.position={};
+    b.location=Location::Grid;b.equipped_slots=0;b.position=from->second.position;
+    DerivedMap derived;const auto result=analyze(candidate,derived);if(!result)return result;
+    nodes_.swap(candidate);++revision_;return good();
+}
 bool Model::storage_active(Id container) const {
     auto n=nodes_.find(container);return n!=nodes_.end()&&n->second.container&&active_storage(nodes_,n->second);
 }

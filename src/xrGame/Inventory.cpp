@@ -150,6 +150,22 @@ bool CInventory::CustomSlot(u64 host,u32 slot,PIItem item,bool restoring)
     Msg("* SQA3 native custom equipment host=%llu slot=%u live=%u restore=%d",host,slot,item->object_id(),restoring?1:0);
     return true;
 }
+bool CInventory::SwapCustomSlot(u64 host,u32 slot,PIItem incoming)
+{
+    const auto binding=m_customSlots.find({host,slot});
+    if(!incoming||binding==m_customSlots.end()||!binding->second||incoming==binding->second||
+       incoming->m_pInventory!=this||incoming->CurrPlace()!=eItemPlaceRuck||
+       std::find(m_ruck.begin(),m_ruck.end(),incoming)==m_ruck.end()||
+       !InventoryNextCanCustomSwap(host,slot,incoming->object_id()))return false;
+    auto outgoing=binding->second;
+    // Reserve the only allocation before changing either native membership.
+    m_ruck.reserve(m_ruck.size()+1);
+    m_ruck.push_back(outgoing);m_ruck.erase(std::remove(m_ruck.begin(),m_ruck.end(),incoming),m_ruck.end());
+    binding->second=incoming;
+    incoming->m_ItemCurrPlace.type=eItemPlaceCustom;incoming->m_ItemCurrPlace.slot_id=0;
+    outgoing->m_ItemCurrPlace.type=eItemPlaceRuck;outgoing->m_ItemCurrPlace.slot_id=0;
+    CalcTotalWeight();InvalidateState();InventoryNextCustomChanged();return true;
+}
 
 void CInventory::Clear()
 {

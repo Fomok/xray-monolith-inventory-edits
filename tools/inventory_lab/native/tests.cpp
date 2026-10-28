@@ -1367,6 +1367,25 @@ int main(int argc,char** argv) {
             for(Id id:{Id{106},Id{107},Id{108},Id{109},Id{999}})check(!equipped_rig_access(model,id),"possession leaked into quick access");
             check(model.nodes().count(106)&&model.nodes().count(107),"access changed possession");
         });
+        test("equipment swap uses vacated legal cells and retains each rig's mounted state",[]{
+            auto actor=root(1,Kind::ActorRoot,{3,2});actor.allowed_slots=actor.equipment_accepts=~std::uint64_t{0};actor.equipment_capacity=64;
+            auto rig=bag(100,1,900);rig.location=Location::Equipment;rig.wear_slots=rig.equipped_slots=std::uint64_t{1}<<19;
+            rig.attributes={{"storage_family","rig"},{"storage_exterior_independent","1"}};
+            rig.mounts.push_back({65537,"left",{1,1},1,1000,true});
+            auto pouch=item(101,100,200);pouch.container=pouch.pouch=true;pouch.grid={1,2};pouch.location=Location::Mounted;pouch.mounted_slot=65537;
+            auto med=item(102,101,38);med.condition=7890;med.attributes["charges"]="2";
+            auto spare=item(103,1,700);spare.container=true;spare.grid={1,1};spare.empty=spare.half=spare.full={2,2};spare.wear_slots=std::uint64_t{1}<<19;spare.attributes["storage_family"]="rig";
+            auto a=item(104,1,1,{2,0,false}),b=item(105,1,1,{2,1,false});
+            Model model;yes(model.initialize({actor,rig,pouch,med,spare,a,b}));
+            check(equipped_rig_access(model,102),"initial rig access missing");
+            yes(model.swap_equipment(103,100,model.revision(),model.session()));
+            check(model.nodes().at(103).location==Location::Equipment&&model.nodes().at(100).location==Location::Grid,"native swap locations missing");
+            check(model.nodes().at(101).parent==100&&model.nodes().at(102).parent==101&&model.nodes().at(102).condition==7890&&model.nodes().at(102).attributes.at("charges")=="2","swap reassigned pouch or item state");
+            check(!equipped_rig_access(model,102)&&model.carried_mass()==1840,"swap leaked quick access or changed mass");
+            rig.soft=false;rig.empty=rig.half=rig.full={3,2};Model blocked;yes(blocked.initialize({actor,rig,pouch,med,spare,a,b}));
+            const auto before=blocked.serialize();no(blocked.swap_equipment(103,100,blocked.revision(),blocked.session()),"overlap");
+            check(blocked.serialize()==before,"failed equipment swap changed participants");
+        });
         test("catalog applies authored storage and preserves native instance state",[]{
             StorageCatalog catalog;StorageDefinition pack;
             pack.family="backpack";pack.interior={{3,2},{1,1,0,2,2,0}};

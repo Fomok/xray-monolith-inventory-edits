@@ -275,7 +275,7 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 bool CUIActorMenu::OnItemStartDrag(CUICellItem* itm)
 {
 	InfoCurItem(NULL);
-	if (InventoryNextEnabled() && SqaActorList(itm->OwnerList())) {
+	if (InventoryNextEnabled() && (SqaActorList(itm->OwnerList())||GetListType(itm->OwnerList())==iActorSlot||GetListType(itm->OwnerList())==iActorBelt)) {
 		auto item=static_cast<PIItem>(itm->m_pData);
 		if(!item || !InventoryNextNativeDragBegin(item->object().ID())) {m_sqaRefresh=true;return true;}
 		if(m_sqaStatus)m_sqaStatus->TextItemControl()->SetText("");

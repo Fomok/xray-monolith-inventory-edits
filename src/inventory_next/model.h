@@ -115,6 +115,7 @@ public:
                           std::uint64_t revision, std::uint64_t session);
     Result execute_batch(const std::vector<Command>& requests);
     Result relocate(const std::vector<Move>& requests);
+    Result swap_equipment(Id incoming,Id equipped,std::uint64_t revision,std::uint64_t session);
     Preview preview(const Command& request) const;
     const std::map<Id, Node>& nodes() const { return nodes_; }
     std::uint64_t revision() const { return revision_; }
