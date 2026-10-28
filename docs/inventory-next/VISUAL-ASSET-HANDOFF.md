@@ -24,3 +24,13 @@ No generator file was added. Initial atlas was generated inline; replace with yo
 Engine will wait for final assets before package/visual acceptance. Current installed Dev29 is rejected visual smoke; latest b41a9605 recovery fix is in CI. No game running after user interrupted Computer Use. Do not install or launch from the asset task.
 
 Native grid contract confirmed: CUITextureMaster resolves **sqa3_grid_cell** shader/region and active texture dimensions. Please add that descriptor ID to final XML; no fixed atlas size or crop required. Four arrow IDs remain as above.
+
+
+## Superseding final integration
+
+Mod/UI final handoff visual-assets-v1 is integrated at e05ff97d, using sqa3v1_
+IDs and separate sqa3_visual_assets.xml. Prototype primitives DDS was removed;
+prototype descriptor modifications reverted before integration. Exact new DDS
+and descriptor are copied from Mod/UI's verified package. Runtime buttons use
+CUI3tButton with all four state textures; panel and equipment artwork use measured
+precomposed assets. The earlier provisional texture contract above is historical.

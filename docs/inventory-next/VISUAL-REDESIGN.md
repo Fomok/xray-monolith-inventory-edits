@@ -120,3 +120,60 @@ rims with compact unscaled status text. Recovery containers remain viewable
 for retrieval but reject incoming drops. The bounded Field Kit fixture opens
 a disposable save, allows 90 seconds of physical view testing, captures state,
 saves a separate checkpoint and quits. No runtime acceptance claimed yet.
+
+
+## User-rejected smoke and corrected asset integration
+
+Dev29 (a335154b engine,19734729 overlay) opened the menu but is explicitly
+rejected visually: stretched lining, metallic grid cells, standalone binocular
+frame, unframed quickslots, text arrows and scrollbar overlap. User interruption
+ended Computer Use and the owned process was closed; exit-1 is not clean-exit
+acceptance. Original test save remains unchanged. This supersedes any impression
+that a successful compile or texture-bounds test accepted that appearance.
+
+Under the user's specialist split, Mod and UI authored final visual-assets-v1
+at C:/GAMMA/sqa-previews/inventory-next-20261028/visual-assets-v1. Native integration
+uses its exact three payloads and sqa3v1_ IDs. Provenance/build/verification sources
+are retained under tools/inventory_lab/visual-assets-v1. The two DDS are pinned
+through repo_relative entries in native-visual-assets.json; package creation reads
+them from the pinned overlay commit, not uncommitted workspace bytes.
+
+e05ff97d integrates complete panel artwork, plain grid with closing boundary
+lines, measured equipment artwork and CUI3tButton state textures. Source tabs
+reinitialize their scrollbar to the reduced viewport height. The shared utility
+frame retains both vanilla equipment identities without ownership mutation; when
+both are equipped their icons fit side by side. Chest tabs are14x20 centered on
+x93/168. Quick targets remain native33x44 cells, with framed positions beneath guns.
+Recovery headers sum actual subtree mass. CI40616582069 is the acceptance build;
+corrected native screenshot/control/state/save/exit acceptance is still pending.
+## Dev31 crash regression — 28 October 2026
+
+Engine `b983a6df7a48c7551ec1786a4dd95d908185bac6`, CI `40621440409`
+passed. Overlay `e87cc2759549f32a15f2623795976d9e699dabd1` adds a bounded
+Field Kit regression and separate `sqa3_field_kit_regression` save.
+The header background is now enabled after initialization.
+
+The old drag preview entered `InventoryNextIdentity`, whose `can_save` call
+can invoke Lua. Rendering overlaps the worker's Lua GC and map updates.
+The preview now uses a pure existing-ledger lookup. Save and transfer
+validation still use enrollment checks. This corrects an unsafe path;
+the exact cause of the historical crash/freeze is not conclusively proven.
+
+Actual lab test: PID10200, nine accepted drags (five automated pocket moves,
+four subsequent user bag moves), collapse/expand and bag reopening. Automated
+input paused when outside input was detected; the user confirmed finishing.
+Save/exit0, no timeout. Fresh PID25204 reload/save/exit0. Both exports agree
+exactly: seven items,3198g, identity/ownership/placement/condition unchanged.
+No saveability warning/fatal or new Anomaly event1000; no game remains.
+Original `test` hashes and pristine baseline remain unchanged.
+
+Evidence: `C:/GAMMA/sqa-previews/inventory-next-20261027/ci-40621440409/`
+(`regression-verification.json`, two run records/logs/screenshots and final
+installed/save/process audits). Dev31 ZIP at
+`C:/GAMMA/sqa-previews/inventory-next-20261028/Squared Away 3 Field Kit Dev 31.zip`,
+SHA256 `78a06a971ab61a6a467f2684a975822b30ecfe42dd7b0f986df28c34c5c3fc8f`.
+22 payloads verified and installed only in the lab. The available scene had
+no nearby source panel; source interactions, exact nested-window movement,
+long-session stability and full-mod acceptance remain unverified in this pass.
+No public engine or release changed. Superseded Dev30/diagnostic downloads
+removed with exact path/hash checks; Dev28 rollback retained.
