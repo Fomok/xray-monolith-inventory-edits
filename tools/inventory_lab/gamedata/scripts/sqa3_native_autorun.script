@@ -253,6 +253,10 @@ end
 function on_game_start()
     local args=command_line()
     if not args:find("-sqa3-fixture",1,true) then return end
+    if args:find("-sqa3-fixture-export-reload",1,true) then
+        commands={snapshot,"inventory_next_probe export","quit"}
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-stash-drag",1,true) then
         local pack_id,bandage_id,box_id
         commands={"g_god on",snapshot}
