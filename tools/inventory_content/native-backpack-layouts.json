@@ -1,10 +1,10 @@
 {
   "schema": "sqa3.backpack.layouts.v1",
-  "provenance": "New SQA3 development layouts: main compartment, side compartment, lower compartment and blocked lower corners. Not recovered SQA2 authored masks. Original rig coordinates are unchanged.",
+  "provenance": "New SQA3 development layouts, not recovered SQA2 masks. Main, side, lower and base pockets; blocked lower corners; original rectangular usable-cell totals preserved. Original rig coordinates unchanged.",
   "layouts": {
     "itm_backpack": {
       "width": 8,
-      "height": 8,
+      "height": 9,
       "compartments": [
         [
           0,
@@ -23,12 +23,24 @@
           6,
           6,
           2
+        ],
+        [
+          2,
+          8,
+          4,
+          1
         ]
-      ]
+      ],
+      "source_dimensions": [
+        8,
+        8
+      ],
+      "source_usable_cells": 64,
+      "usable_cells": 64
     },
     "equ_small_pack": {
       "width": 8,
-      "height": 10,
+      "height": 11,
       "compartments": [
         [
           0,
@@ -47,12 +59,24 @@
           8,
           6,
           2
+        ],
+        [
+          2,
+          10,
+          4,
+          1
         ]
-      ]
+      ],
+      "source_dimensions": [
+        8,
+        10
+      ],
+      "source_usable_cells": 80,
+      "usable_cells": 80
     },
     "equ_small_military_pack": {
       "width": 8,
-      "height": 12,
+      "height": 13,
       "compartments": [
         [
           0,
@@ -71,12 +95,24 @@
           10,
           6,
           2
+        ],
+        [
+          2,
+          12,
+          4,
+          1
         ]
-      ]
+      ],
+      "source_dimensions": [
+        8,
+        12
+      ],
+      "source_usable_cells": 96,
+      "usable_cells": 96
     },
     "equ_military_pack": {
       "width": 8,
-      "height": 13,
+      "height": 14,
       "compartments": [
         [
           0,
@@ -95,12 +131,24 @@
           11,
           6,
           2
+        ],
+        [
+          2,
+          13,
+          4,
+          1
         ]
-      ]
+      ],
+      "source_dimensions": [
+        8,
+        13
+      ],
+      "source_usable_cells": 104,
+      "usable_cells": 104
     },
     "equ_tourist_pack": {
       "width": 8,
-      "height": 15,
+      "height": 16,
       "compartments": [
         [
           0,
@@ -119,8 +167,20 @@
           13,
           6,
           2
+        ],
+        [
+          2,
+          15,
+          4,
+          1
         ]
-      ]
+      ],
+      "source_dimensions": [
+        8,
+        15
+      ],
+      "source_usable_cells": 120,
+      "usable_cells": 120
     }
   }
 }

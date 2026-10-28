@@ -67,8 +67,10 @@ def compile_catalog(source):
             w,h,cells=pouch_layout(grants)
         if family=='backpack':
             authored=backpack_layouts['layouts'][section]
-            assert (w,h)==(authored['width'],authored['height'])
+            assert [w,h]==authored['source_dimensions']
+            w,h=authored['width'],authored['height']
             cells=rectangles(authored['compartments'],w,h)
+            assert sum(bool(c) for c in cells)==authored['source_usable_cells']==authored['usable_cells']
         assert isinstance(w,int) and isinstance(h,int) and 0<w<=64 and 0<h<=64
         assert cells and len(cells)==w*h and all(isinstance(c,int) and 0<=c<=4096 for c in cells)
         ew,eh=item['exterior']['width'],item['exterior']['height']

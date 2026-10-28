@@ -17,8 +17,9 @@ class Definitions(unittest.TestCase):
         backpacks=[d for d in self.preset['definitions'].values() if d['family']=='backpack']
         self.assertEqual(len(backpacks),5)
         for d in backpacks:
-            self.assertEqual(set(d['cells']),{0,1,2,3})
+            self.assertEqual(set(d['cells']),{0,1,2,3,4})
             self.assertIn('layout_provenance',d['provenance'])
+            self.assertEqual(sum(bool(c) for c in d['cells']),d['width']*(d['height']-1))
     def setUp(self):
         source=Path(__file__).parents[1]/'inventory_lab/gamedata/configs/sqa3_catalog.json'
         self.preset=migrate(json.loads(source.read_text(encoding='utf-8')))
