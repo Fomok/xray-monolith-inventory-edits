@@ -59,8 +59,14 @@ function plan(snapshot)
             assert(node("food")[2]==before[2] and node("food")[25]==before[25],"wrong category mutated source")
             before=node("pouch");store("pouch","pack",2,0)
             assert(node("pouch")[2]==before[2] and node("pouch")[25]==before[25],"portable nesting bypassed")
-            exec_console_cmd("inv_upgrades_log 1")
-            local pistol=assert(db.actor:item_in_slot(2));assert(pistol:install_upgrade("up_firsta_pm"),"native pistol upgrade failed")
+            -- Native upgrade admission needs a mechanic speaker; this disposable
+            -- debug-map fixture exercises saved item state without that NPC.
+            local pistol=assert(db.actor:item_in_slot(2))
+            local old_force=inventory_upgrades.force_upgrade
+            inventory_upgrades.force_upgrade=true
+            local installed=pistol:install_upgrade("up_firsta_pm")
+            inventory_upgrades.force_upgrade=old_force
+            assert(installed,"native pistol upgrade failed")
             assert(pistol:has_upgrade("up_firsta_pm"),"native upgrade state absent")
             printf("[SQA3 DEFINITION TEST] native category refusal, nesting refusal and weapon upgrade PASS")
         end
