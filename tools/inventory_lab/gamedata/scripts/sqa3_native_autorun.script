@@ -341,6 +341,9 @@ function on_game_start()
             printf("[SQA3 CUSTOM TEST] native bindings verified reload=%s",tostring(reload))
         end
         commands[#commands+1]=toggle_inventory
+        if args:find("-sqa3-custom-inspect",1,true) then
+            commands[#commands+1]=function() started=started+60000;printf("[SQA3 CUSTOM TEST] bounded physical UI window 60 seconds") end
+        end
         commands[#commands+1]="screenshot sqa3_custom_equipment"
         commands[#commands+1]=snapshot
         commands[#commands+1]="inventory_next_probe export"
