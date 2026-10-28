@@ -1029,10 +1029,21 @@ int main(int argc,char** argv) {
             yes(a.move({101,100,{2,3,true},a.model().revision(),a.model().session()}));
             auto before=a.model().serialize();NativeStorageView view;yes(view.build(a.model()));
             Position p;check(view.position(a.model().nodes().at(101),p)&&p.x==2&&p.y==7&&p.rotated,"nested coordinate projection");
-            Id owner=0;Position local;check(view.destination(p.x,p.y,owner,local)&&owner==100&&local.y==3,"drop did not recover logical owner");
+            Id owner=0;Position local;check(!view.destination(p.x,p.y,owner,local),"recovery ancestor accepted new contents");
             check(!view.destination(4,1,owner,local)&&!view.destination(0,0,owner,local)&&!view.destination(0,3,owner,local),"header or nonexistent pocket accepted");
             check(view.position(a.model().nodes().at(100),p)&&p.y==13&&!view.destination(p.x,p.y,owner,local),"recovery became legal capacity");
             check(before==a.model().serialize(),"view changed ownership or mass");
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));yes(view.build(a.model()));
+            check(view.position(a.model().nodes().at(101),p)&&view.destination(p.x,p.y,owner,local)&&owner==100&&local.y==3,"recovered bag did not restore local destination");
+        });
+        test("recovery container windows permit retrieval display but never extra manual capacity",[]{
+            auto pack=item(100,1,800);pack.container=true;pack.grid={8,8};pack.empty=pack.half=pack.full={5,5};
+            auto med=item(101,1,200);ActorLayout a;yes(a.reconcile({pack,med},{{4,2},{},true}));
+            check(a.model().nodes().at(100).location==Location::Overflow,"fixture needs recovery pack");
+            yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
+            StorageViewOptions options;options.owner=100;NativeStorageView view;yes(view.build(a.model(),options));
+            Position shown;check(view.position(a.model().nodes().at(101),shown),"recovery contents inaccessible for retrieval");
+            Id owner=0;Position local;check(!view.destination(3,3,owner,local),"recovery pack became extra capacity");
         });
         test("cross-window drop preview and commit share local coordinates without preview mutation",[]{
             auto outer=item(100,1,800);outer.container=true;outer.grid={8,8};outer.empty=outer.half=outer.full={2,2};
@@ -1040,6 +1051,7 @@ int main(int argc,char** argv) {
             ActorLayout a;yes(a.reconcile({outer,inner,med},{{4,2},{},true}));
             yes(a.move({101,100,{1,1,false},a.model().revision(),a.model().session()}));
             yes(a.move({102,101,{2,2,false},a.model().revision(),a.model().session()}));
+            yes(a.move({100,1,{0,0,false},a.model().revision(),a.model().session()}));
             StorageViewOptions options;options.owner=100;options.center=true;NativeStorageView view;yes(view.build(a.model(),options));
             Id owner=0;Position local;check(view.destination(3,4,owner,local)&&owner==100&&local.x==3&&local.y==3,"destination mapping");
             DragSession drag;yes(drag.begin(a.model(),102));const auto before=a.model().serialize();

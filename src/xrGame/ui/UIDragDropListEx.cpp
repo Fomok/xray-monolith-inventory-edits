@@ -346,24 +346,24 @@ void CUIDragDropListEx::AddStorageHeader(int row,LPCSTR text,u32 color,u64 owner
     label->TextItemControl()->SetTextColor(color);label->TextItemControl()->SetText(text);
     if(InventoryNextFieldKitEnabled()) {
         label->InitTexture("sqa_fk_surface_olive");label->SetStretchTexture(true);
-        label->SetWndSize(Fvector2().set(GetWndSize().x,20.0f));
+        label->SetWndSize(Fvector2().set(GetWndSize().x,28.0f));
         label->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
         auto rim=xr_new<CUIFrameWindow>();rim->SetAutoDelete(true);label->AttachChild(rim);
         rim->SetWndSize(label->GetWndSize());rim->InitTexture("sqa_fk_header");rim->Enable(false);
         label->TextItemControl()->SetText("");
         auto title=xr_new<CUIStatic>();title->SetAutoDelete(true);label->AttachChild(title);title->Enable(false);title->TextureOff();
-        title->SetWndPos(Fvector2().set(24,1));title->SetWndSize(Fvector2().set(GetWndSize().x-104.0f,18.0f));
+        title->SetWndPos(Fvector2().set(78,5));title->SetWndSize(Fvector2().set(GetWndSize().x-156.0f,18.0f));
         title->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         title->TextItemControl()->SetTextAlignment(CGameFont::alCenter);title->TextItemControl()->SetEllipsis(true);
         title->TextItemControl()->SetTextColor(color);title->TextItemControl()->SetText(text);
         auto weight=xr_new<CUIStatic>();weight->SetAutoDelete(true);label->AttachChild(weight);weight->Enable(false);
-        weight->SetWndPos(Fvector2().set(GetWndSize().x-78.0f,1.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
+        weight->SetWndPos(Fvector2().set(GetWndSize().x-78.0f,5.0f));weight->SetWndSize(Fvector2().set(74,18));weight->TextureOff();
         weight->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);
         weight->TextItemControl()->SetTextAlignment(CGameFont::alRight);weight->TextItemControl()->SetTextColor(color);
         string64 amount;xr_sprintf(amount,"%.2f kg",double(grams)/1000.0);weight->TextItemControl()->SetText(amount);
         if(owner) {
             auto button=xr_new<CUIStatic>();button->SetAutoDelete(true);label->AttachChild(button);button->Enable(false);
-            button->SetWndPos(Fvector2().set(1,1));button->SetWndSize(Fvector2().set(18,18));button->InitTexture("sqa_fk_button_e");button->SetStretchTexture(true);
+            button->SetWndPos(Fvector2().set(4,4));button->SetWndSize(Fvector2().set(20,20));button->InitTexture("sqa_fk_button_e");button->SetStretchTexture(true);
             button->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);button->TextItemControl()->SetTextAlignment(CGameFont::alCenter);
             button->TextItemControl()->SetText(collapsed?">":"v");
         }
@@ -443,7 +443,7 @@ bool CUIDragDropListEx::OnMouseAction(float x, float y, EUIMessages mouse_action
     if(InventoryNextFieldKitEnabled()&&mouse_action==WINDOW_LBUTTON_DOWN&&x>=0&&x<24&&!m_drag_item) {
         for(size_t i=0;i<m_storageHeaders.size();++i) {
             const float top=float(m_storageHeaders[i].first*(CellSize().y+CellsSpacing().y)-ScrollPos());
-            if(y>=top&&y<top+20&&m_storageHeaderOwners[i]) {InventoryNextStorageToggle(m_storageHeaderOwners[i]);return true;}
+            if(y>=top&&y<top+28&&m_storageHeaderOwners[i]) {InventoryNextStorageToggle(m_storageHeaderOwners[i]);return true;}
         }
     }
 

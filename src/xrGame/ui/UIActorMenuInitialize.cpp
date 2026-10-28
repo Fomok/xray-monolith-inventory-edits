@@ -55,7 +55,7 @@ void CUIActorMenu::Construct()
         Msg("* SQA3 replacement actor menu: native inventory, equipment, trade and loot controls; no 3D model");
     } else uiXml.Load(CONFIG_PATH, UI_PATH, "actor_menu.xml");
 
-    if(InventoryNextEnabled()) {
+    if(InventoryNextEnabled()&&!InventoryNextFieldKitEnabled()) {
         auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);
         frame->SetWndPos(Fvector2().set(0,0));frame->SetWndSize(Fvector2().set(1024,768));
         frame->InitTexture("sqa_fk_window");frame->Enable(false);
@@ -63,6 +63,11 @@ void CUIActorMenu::Construct()
 	CUIXmlInit xml_init;
 
 	xml_init.InitWindow(uiXml, "main", 0, this);
+    if(InventoryNextFieldKitEnabled())for(int panel=0;panel<2;++panel){
+        auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);AttachChild(frame);frame->Enable(false);
+        frame->SetWndPos(Fvector2().set(panel?260.5f:0.0f,0.0f));frame->SetWndSize(Fvector2().set(panel?382.0f:260.5f,768.0f));frame->InitTexture("sqa_fk_panel");
+    }
+
 	if (InventoryNextEnabled()) m_sqaStatus=UIHelper::CreateStatic(uiXml,"sqa_status",this);
 	m_hint_wnd = UIHelper::CreateHint(uiXml, "hint_wnd");
 
@@ -70,6 +75,11 @@ void CUIActorMenu::Construct()
 	m_LeftBackground->SetAutoDelete(true);
 	AttachChild(m_LeftBackground);
 	xml_init.InitStatic(uiXml, "left_background", 0, m_LeftBackground);
+    if(InventoryNextFieldKitEnabled()){
+        auto frame=xr_new<CUIFrameWindow>();frame->SetAutoDelete(true);m_LeftBackground->AttachChild(frame);frame->Enable(false);
+        frame->SetWndPos(Fvector2().set(0,0));frame->SetWndSize(m_LeftBackground->GetWndSize());frame->InitTexture("sqa_fk_panel");
+    }
+
 
 	m_pUpgradeWnd = xr_new<CUIInventoryUpgradeWnd>();
 	AttachChild(m_pUpgradeWnd);
@@ -205,7 +215,7 @@ void CUIActorMenu::Construct()
             const LPCSTR labels[]={"","Knife","Weapon 2","Weapon 1","Grenade","Binoculars","Bolt","Armour / rig","PDA","Detector","Torch","","Helmet","Backpack"};
             if(i<14){auto caption=xr_new<CUIStatic>();caption->SetAutoDelete(true);frame->AttachChild(caption);caption->Enable(false);caption->TextureOff();
                 caption->SetWndPos(Fvector2().set(4.0f,frame->GetWndSize().y-14.0f));caption->SetWndSize(Fvector2().set(frame->GetWndSize().x-8.0f,12.0f));
-                caption->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);caption->TextItemControl()->SetTextAlignment(CGameFont::alCenter);caption->TextItemControl()->SetText(labels[i]);}
+                caption->TextItemControl()->SetFont(UI().Font().pFontLetterica16Russian);caption->TextItemControl()->SetTextAlignment(CGameFont::alCenter);caption->TextItemControl()->SetText(labels[i]);if(i==OUTFIT_SLOT)m_sqaChestCaption=caption;}
 
         }
 		m_pInvList[i] = xr_new<CUIDragDropListEx>();

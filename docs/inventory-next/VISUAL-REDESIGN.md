@@ -88,10 +88,12 @@ carried-container windows. Reserved native slot 16 supplies the shared rig view;
 this does not add rig item definitions or finish rig/pouch gameplay. The chest
 view toggle changes visibility only. Separate windows are bounded to four.
 
-Core debug and optimized suite: 126 behavioral cases passed, including display
-centering/collapse/separate views and unchanged serialized ownership. Engine
-compilation and runtime visual acceptance are pending. Nearby source tabs,
-placement preview, movable container windows and full rig content remain open.
+Core debug and optimized suite: 128 behavioral cases passed, including display
+centering/collapse/separate views, cross-window moves and rejection of drops
+into recovery-container ancestry. CI40611413303 compiled a335154b successfully.
+Follow-up fixes and runtime visual acceptance remain pending. Nearby source
+tabs, placement preview and movable windows are implemented but not yet
+accepted in game. Full rig content remains outside this UI pass.
 Do not call this checkpoint a completed redesign or player-ready release.
 
 ### Follow-up source checkpoint
@@ -108,3 +110,13 @@ every drawn cell. All these engine integrations await runtime acceptance.
 CI40610107317 (44d7c737) failed: duplicate FieldKit.inl include and mixed integer/
 float Fvector2.set overloads. Corrected in following source; no failed artifact
 installed. Pistol remains visual-only under the latest direct user correction.
+
+### Acceptance build preparation
+
+Follow-up source preserves actor selection during unchanged empty-source scans,
+keeps ordinary trade/living-companion projections, applies source filters and
+readable labels, hides the third column when unavailable, and uses exact atlas
+rims with compact unscaled status text. Recovery containers remain viewable
+for retrieval but reject incoming drops. The bounded Field Kit fixture opens
+a disposable save, allows 90 seconds of physical view testing, captures state,
+saves a separate checkpoint and quits. No runtime acceptance claimed yet.

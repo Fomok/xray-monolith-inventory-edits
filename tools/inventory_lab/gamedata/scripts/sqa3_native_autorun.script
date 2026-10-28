@@ -1413,6 +1413,17 @@ function on_game_start()
         RegisterScriptCallback("actor_on_update",update)
         return
     end
+    if args:find("-sqa3-fixture-field-kit",1,true) then
+        assert(args:find("-sqa3-field-kit",1,true),"Field Kit fixture needs visual mode")
+        commands={"inventory_next_probe export",snapshot,function()
+            if not ActorMenu.get_actor_menu():IsShown() then toggle_inventory() end
+            assert(ActorMenu.get_actor_menu():IsShown(),"Field Kit inventory did not open")
+            started=started+90000
+            printf("[SQA3 AUTORUN] Field Kit physical input window; display actions must preserve ownership")
+        end,"screenshot sqa3_field_kit",snapshot,"inventory_next_probe export","save sqa3_field_kit","quit"}
+        RegisterScriptCallback("actor_on_update",update)
+        return
+    end
     if args:find("-sqa3-fixture-logical",1,true) then
         commands={"inventory_next_probe export",snapshot,toggle_inventory}
         if not args:find("-sqa3-fixture-logical-reload",1,true) then

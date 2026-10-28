@@ -29,6 +29,7 @@
 #include "../WeaponPistol.h"
 
 #include "UIProgressBar.h"
+#include "UIFrameWindow.h"
 #include "UICursor.h"
 #include "UICellItem.h"
 #include "UICellItemFactory.h"
@@ -212,7 +213,7 @@ void CUIActorMenu::Draw()
 void CUIActorMenu::Update()
 {
     SqaUpdateChest();
-    for(auto& window:m_sqaContainers)window.frame->Show(InventoryNextFieldKitEnabled()&&(m_currMenuMode==mmInventory||m_currMenuMode==mmDeadBodySearch));
+    for(auto& window:m_sqaContainers)window.frame->Show(SqaLootActive());
     if(m_sqaRefresh && Device.dwTimeGlobal>=m_sqaRetryAfter && !CUIDragDropListEx::m_drag_item && (m_currMenuMode==mmInventory||m_currMenuMode==mmDeadBodySearch)) {
         m_sqaRetryAfter=Device.dwTimeGlobal+250;
         m_sqaRefresh=false;

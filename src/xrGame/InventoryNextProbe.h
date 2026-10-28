@@ -72,3 +72,5 @@ bool InventoryNextLootTake(u16 source,u64 source_identity,u16 live,u64 item_iden
 bool InventoryNextLootPut(u16 source,u64 source_identity,u16 live) noexcept;
 
 int InventoryNextNativePreview(u16 live,int x,int y,u64 view,int& width,int& height) noexcept;
+
+void InventoryNextStorageMode(bool separate) noexcept;

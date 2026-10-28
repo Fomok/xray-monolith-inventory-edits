@@ -204,12 +204,15 @@ public:
     bool SqaOpenContainer(PIItem item);
     void SqaPrepareContainers();
     bool m_sqaRigView=false;
+    CUIStatic* m_sqaChestCaption=nullptr;
     xr_vector<InventoryNextLootSource> m_sqaLootSources;
     xr_vector<CUIStatic*> m_sqaLootTabs;
     xr_map<u16,u64> m_sqaLootIdentity;
     u16 m_sqaLootSource=0xffff;
     u64 m_sqaLootSourceIdentity=0;
     u32 m_sqaLootAfter=0;
+    int m_sqaLootFilter=-1;
+    u32 m_sqaLootRenderedCount=0;
     void SqaUpdateLoot(bool force=false);
     bool SqaLootClick(float x,float y);
     bool SqaTakeLoot(PIItem item,u16 slot=0xffff);

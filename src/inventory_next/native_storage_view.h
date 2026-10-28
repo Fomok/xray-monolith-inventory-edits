@@ -7,7 +7,7 @@ namespace inventory_next {
 // Presentation-only bands in the existing native scrolling item list. Grid
 // coordinates remain local to their logical owner; headers/recovery are never
 // legal drop destinations. No ownership, mass or item state lives in this view.
-struct StorageBand { Id owner=0; int row=0; Size grid; int column=0; bool collapsed=false; };
+struct StorageBand { Id owner=0; int row=0; Size grid; int column=0; bool collapsed=false; bool accepts_drops=true; };
 struct StorageViewOptions {
     bool equipped_only=false;
     bool center=false;
@@ -28,7 +28,13 @@ public:
         int row=1;
         auto add=[&](Id owner,const Size& size) {
             const bool collapsed=options.collapsed.count(owner)!=0;
-            next.bands.push_back({owner,row,size,0,collapsed});row+=(collapsed?0:size.h)+1;
+            bool accepts=true;
+            for(Id current=owner;current!=1;){
+                const auto found=model.nodes().find(current);
+                if(found==model.nodes().end()||found->second.location==Location::Overflow||!model.storage_active(current)){accepts=false;break;}
+                current=found->second.parent;
+            }
+            next.bands.push_back({owner,row,size,0,collapsed,accepts});row+=(collapsed?0:size.h)+1;
             next.size.w=std::max(next.size.w,size.w);
         };
         if(options.owner)add(options.owner,model.nodes().at(options.owner).grid);
@@ -61,7 +67,7 @@ public:
         return false;
     }
     bool destination(int x,int y,Id& owner,Position& local) const {
-        for(const auto& band:bands)if(!band.collapsed&&x>=band.column&&x<band.column+band.grid.w&&y>=band.row&&y<band.row+band.grid.h) {
+        for(const auto& band:bands)if(!band.collapsed&&band.accepts_drops&&x>=band.column&&x<band.column+band.grid.w&&y>=band.row&&y<band.row+band.grid.h) {
             owner=band.owner;local={x-band.column,y-band.row,false};return true;
         }
         return false;

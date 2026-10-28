@@ -54,12 +54,14 @@ inventory_next::DragSession& native_drag(){static inventory_next::DragSession va
 constexpr u32 layout_chunk=0x33514c59;
 constexpr u32 world_storage_chunk=0x33515753;
 bool layout_current=false;
+bool fieldkit_equipped_view=true;
 inventory_next::NativeStorageView storage_view;
 std::set<u64> collapsed_storage;
 std::map<u64,inventory_next::NativeStorageView> storage_views;
 inventory_next::StorageViewOptions view_options(u64 owner=0) {
     inventory_next::StorageViewOptions options;
-    options.equipped_only=options.center=InventoryNextFieldKitEnabled();
+    options.center=InventoryNextFieldKitEnabled();
+    options.equipped_only=options.center&&fieldkit_equipped_view;
     options.owner=owner;options.collapsed=collapsed_storage;return options;
 }
 const inventory_next::NativeStorageView& make_storage_view(u64 owner) {
@@ -304,7 +306,8 @@ int InventoryNextStorageCell(int x,int y,u64 view) noexcept try {
     if(!layout_current||!InventoryNextLogicalStorage())return 0;
     inventory_next::Id owner=0;inventory_next::Position local;
     const auto& selected=view?make_storage_view(view):storage_view;
-    if(selected.destination(x,y,owner,local))return layout().model().cell_region(owner,local.x,local.y)?1:0;
+    for(const auto& band:selected.bands)if(!band.collapsed&&x>=band.column&&x<band.column+band.grid.w&&y>=band.row&&y<band.row+band.grid.h)
+        return layout().model().cell_region(band.owner,x-band.column,y-band.row)?1:0;
     return !selected.recovery.empty()&&y>=selected.recovery_row?2:0;
 } catch (...) {return 0;}
 void InventoryNextStorageView(CUIDragDropListEx* list,u64 view) noexcept try {
@@ -1087,6 +1090,7 @@ void InventoryNextStorageToggle(u64 owner) noexcept try {
     if(!InventoryNextFieldKitEnabled()||!owner||CUIDragDropListEx::m_drag_item)return;
     storage_views.clear();
     if(collapsed_storage.count(owner))collapsed_storage.erase(owner);else collapsed_storage.insert(owner);
+    Msg("* SQA3 storage owner=%llu collapsed=%d; presentation only",owner,int(collapsed_storage.count(owner)!=0));
     if(CurrentGameUI())CurrentGameUI()->GetActorMenu().m_sqaRefresh=true;
 } catch (...) {}
 
@@ -1103,13 +1107,18 @@ xr_vector<InventoryNextLootSource> InventoryNextNearbyLoot(u16 corpse) noexcept 
         if(!world_access(object->ID(),Actor()->ID()))continue;
         InventoryNextLootSource source;source.live=object->ID();source.identity=InventoryNextIdentity(source.live);
         if(!source.identity)continue;
-        source.name=box?"Stash ":"Corpse ";source.name+=std::to_string(source.live);
+        source.name=box?"Stash":"Corpse";
+        if(!box)if(auto owner=smart_cast<CInventoryOwner*>(object))if(owner->Name()&&*owner->Name())source.name=owner->Name();
+        if(box)for(const auto& record:world_storage().records())if(record.second.custodian==source.identity){
+            const auto name=world_storage().stash_name(record.first);if(!name.empty()){source.name=name;break;}
+        }
         TIItemContainer items;
         if(box)box->AddAvailableItems(items);else if(auto owner=smart_cast<CInventoryOwner*>(object))owner->inventory().AddAvailableItems(items,false,false);
         for(auto item:items)if(item){source.grams+=static_cast<s64>(std::llround(item->Weight()*1000.0));if(InventoryNextWorldVisible(item->object_id()))source.items.push_back(item->object_id());}
         std::sort(source.items.begin(),source.items.end());result.push_back(std::move(source));
     }
     std::sort(result.begin(),result.end(),[](const InventoryNextLootSource& a,const InventoryNextLootSource& b){return a.live<b.live;});
+    unsigned unnamed=0;for(auto& source:result)if(source.name=="Stash")source.name+=" "+std::to_string(++unnamed);
     if(!ground.items.empty()){std::sort(ground.items.begin(),ground.items.end());result.insert(result.begin(),std::move(ground));}
     return result;
 } catch (...) {return {};}
@@ -1144,3 +1153,5 @@ int InventoryNextNativePreview(u16 live,int x,int y,u64 view,int& width,int& hei
     const auto proposal=native_drag().preview(model,owner,local.x,local.y,false,{});
     return proposal.result.ok?1:-1;
 } catch (...) {return -1;}
+
+void InventoryNextStorageMode(bool separate) noexcept {fieldkit_equipped_view=separate;}

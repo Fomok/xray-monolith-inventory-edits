@@ -259,7 +259,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 	case GE_TRADE_BUY:
 	case GE_OWNERSHIP_TAKE:
 		{
-            if(InventoryNextFieldKitEnabled())break;
+            if(SqaLootActive())break;
             if(pItem->parent_id()!=m_pActorInvOwner->object_id()&&!InventoryNextWorldVisible(pItem->object_id()))break;
 			u32 i = 0;
 			bool b_already = false;
@@ -461,6 +461,7 @@ void CUIActorMenu::InitCellForSlot(u16 slot_idx)
 
 void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 {
+    InventoryNextStorageMode(SqaLootActive());
     // Keep the native object, never a cell pointer, across the synchronous rebuild.
     // Re-select only if that same object is still present in the rebuilt bag.
     PIItem sqaSelected = InventoryNextEnabled() && CurrentItem() &&
@@ -525,7 +526,7 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 			continue;
 
         curr_list=pBagList;
-        if(InventoryNextFieldKitEnabled()) {
+        if(SqaLootActive()) {
             const auto owner=InventoryNextViewOwner((*itb)->object().ID());
             if(owner)curr_list=SqaContainerList(owner);
             int px=0,py=0;bool pr=false;
@@ -564,7 +565,7 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 
 void CUIActorMenu::FilterActorBagList(int mode)
 {
-    if(InventoryNextFieldKitEnabled()){
+    if(SqaLootActive()){
         InitInventoryContents(m_pInventoryBagList);
         if(mode<0||mode>=int(m_sort_kinds.size()))return;
         const auto matches=[&](PIItem item){

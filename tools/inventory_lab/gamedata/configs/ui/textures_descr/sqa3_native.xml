@@ -40,6 +40,16 @@
     <texture id="sqa_fk_header_b" x="46" y="212" width="188" height="6" />
     <texture id="sqa_fk_header_rb" x="234" y="212" width="6" height="6" />
     <texture id="sqa_fk_header_back" x="280" y="1700" width="256" height="128" />
+    <texture id="sqa_fk_panel_lt" x="40" y="26" width="6" height="6" />
+    <texture id="sqa_fk_panel_t" x="46" y="26" width="188" height="6" />
+    <texture id="sqa_fk_panel_rt" x="234" y="26" width="6" height="6" />
+    <texture id="sqa_fk_panel_l" x="40" y="32" width="6" height="180" />
+    <texture id="sqa_fk_panel_center" x="46" y="32" width="188" height="180" />
+    <texture id="sqa_fk_panel_r" x="234" y="32" width="6" height="180" />
+    <texture id="sqa_fk_panel_lb" x="40" y="212" width="6" height="6" />
+    <texture id="sqa_fk_panel_b" x="46" y="212" width="188" height="6" />
+    <texture id="sqa_fk_panel_rb" x="234" y="212" width="6" height="6" />
+    <texture id="sqa_fk_panel_back" x="8" y="1700" width="256" height="128" />
   </file>
   <file name="ui\sqa_fk_controls">
     <texture id="sqa_fk_switch_off" x="8" y="160" width="215" height="61" />
