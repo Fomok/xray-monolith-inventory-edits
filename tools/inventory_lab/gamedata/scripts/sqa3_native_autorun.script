@@ -257,6 +257,51 @@ function on_game_start()
         commands={snapshot,"inventory_next_probe export","quit"}
         RegisterScriptCallback("actor_on_update",update);return
     end
+    if args:find("-sqa3-fixture-mixed-sources",1,true) then
+        local first,second,corpse,member
+        commands={"g_god on",snapshot}
+        commands[#commands+1]=function()
+            local a=db.actor;local pos=a:position();pos.x=pos.x+0.8
+            first=assert(alife():create("inventory_box",pos,a:level_vertex_id(),a:game_vertex_id()),"first box").id
+            pos.x=pos.x+0.4
+            second=assert(alife():create("inventory_box",pos,a:level_vertex_id(),a:game_vertex_id()),"second box").id
+            pos.x=pos.x+0.4
+            corpse=assert(alife():create("sim_default_stalker_1",pos,a:level_vertex_id(),a:game_vertex_id()),"corpse actor").id
+            assert(alife():create("bandage",pos,a:level_vertex_id(),a:game_vertex_id(),first),"first member")
+            member=assert(alife():create("bread",pos,a:level_vertex_id(),a:game_vertex_id(),second),"second member").id
+            assert(alife():create("medkit",pos,a:level_vertex_id(),a:game_vertex_id(),corpse),"corpse member")
+            assert(alife():create("bandage",pos,a:level_vertex_id(),a:game_vertex_id()),"ground member")
+        end
+        commands[#commands+1]=function()
+            local npc=assert(level.object_by_id(corpse),"corpse actor offline");npc:kill(npc)
+        end
+        commands[#commands+1]=function()
+            local npc=assert(level.object_by_id(corpse),"corpse actor offline")
+            assert(npc:use(db.actor),"mixed-source menu unavailable")
+            assert(ActorMenu.get_actor_menu():IsShown(),"mixed-source menu closed")
+        end
+        commands[#commands+1]=function()
+            for _,source in ipairs({first,second,corpse,65535,second}) do
+                assert(level.inventory_next_fixture_ui("select-source",source),"missing mixed source "..source)
+                assert(level.inventory_next_fixture_ui("selection-clear",0),"source switch retained stale selection")
+            end
+            assert(level.inventory_next_fixture_ui("select-loot",member),"second source context missing")
+            assert(level.inventory_next_fixture_ui("select-source",first),"first source reselect failed")
+            assert(level.inventory_next_fixture_ui("selection-clear",0),"context survived source switch")
+            assert(level.inventory_next_fixture_ui("select-source",second),"second source before disappearance")
+            alife_release(alife():object(second))
+        end
+        commands[#commands+1]=function()
+            assert(level.inventory_next_fixture_ui("selection-clear",0),"disappeared source retained context")
+            assert(not level.inventory_next_fixture_ui("select-source",second),"disappeared source still selectable")
+            assert(level.inventory_next_fixture_ui("select-source",first),"surviving source missing")
+            printf("[SQA3 MIXED SOURCE] ground corpse two boxes switch context and disappearance PASS")
+        end
+        commands[#commands+1]="inventory_next_probe export"
+        commands[#commands+1]="save sqa3_mixed_sources"
+        commands[#commands+1]="quit"
+        RegisterScriptCallback("actor_on_update",update);return
+    end
     if args:find("-sqa3-fixture-stash-drag",1,true) then
         local pack_id,bandage_id,box_id
         commands={"g_god on",snapshot}
