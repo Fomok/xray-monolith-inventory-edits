@@ -271,7 +271,7 @@ function on_game_start()
             member=assert(alife():create("bread",pos,a:level_vertex_id(),a:game_vertex_id(),second),"second member").id
             assert(alife():create("medkit",pos,a:level_vertex_id(),a:game_vertex_id(),corpse),"corpse member")
             local ground=a:position();local forward=a:direction()
-            ground.x=ground.x+forward.x*0.8;ground.z=ground.z+forward.z*0.8
+            ground.x=ground.x+forward.x*0.8;ground.z=ground.z+forward.z*0.8;ground.y=ground.y+1.4
             assert(alife():create("bandage",ground,a:level_vertex_id(),a:game_vertex_id()),"ground member")
         end
         commands[#commands+1]=function()
