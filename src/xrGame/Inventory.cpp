@@ -1265,6 +1265,8 @@ bool CInventory::Eat(PIItem pIItem)
 	// IS SOMETHING YOU ARE CARRYING.
 	// ============================================================
 	const bool amp_boxed = AmpInCarriedBox(pItemToEat);
+	const bool amp_nested_boxed = amp_boxed &&
+		pItemToEat->object().H_Parent()->H_Parent() != m_pOwner->cast_game_object();
 
 	if (!amp_boxed)
 	{
@@ -1283,7 +1285,11 @@ bool CInventory::Eat(PIItem pIItem)
 	if (Actor() && Actor()->m_inventory == this)
 	{
 		::luabind::functor<bool> amp_veto;
-		if (ai().script_engine().functor("_G.AMP__before_eat", amp_veto))
+		const bool has_veto = ai().script_engine().functor("_G.AMP__before_eat", amp_veto);
+		// A nested item is possessed but not necessarily reachable for a
+		// quick-use key. Require the mod's explicit access decision there.
+		if (amp_nested_boxed && !has_veto) return false;
+		if (has_veto)
 		{
 			CGameObject* go = smart_cast<CGameObject*>(pIItem);
 			if (go && !amp_veto(go->lua_game_object()))

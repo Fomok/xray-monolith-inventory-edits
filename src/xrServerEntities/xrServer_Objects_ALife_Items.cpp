@@ -103,7 +103,12 @@ bool CSE_ALifeInventoryItem::set_rig_membership(CSE_ALifeInventoryItem* rig, LPC
 bool CSE_ALifeInventoryItem::set_box_layout(CSE_ALifeInventoryItem* box,
     int x, int y, int w, int h, bool rotated, int order)
 {
-    if (!box || box == this || !smart_cast<CSE_ALifeItemContainer*>(box)) return false;
+    // II_BPACK remains its original server item class. It can own children
+    // on the client through CBackpack/CInventoryContainer without changing
+    // saved section IDs or its equipment behavior.
+    if (!box || box == this ||
+        (!smart_cast<CSE_ALifeItemContainer*>(box) &&
+            box->base()->m_tClassID != CLSID_EQUIPMENT_BACKPACK)) return false;
     inventory_membership::Membership candidate;
     if (!candidate.set(1,"box",x,y,w,h,rotated,order)) return false;
     if (!box->m_rig_identity) box->m_rig_identity = inventory_membership::allocate();
