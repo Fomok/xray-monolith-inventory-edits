@@ -821,6 +821,31 @@ Registry* sqa_transfer_registry(CScriptGameObject& self)
     }, Device.dwTimeGlobal);
     return &registry;
 }
+
+bool sqa_storage_chain_accessible(CObject* node, CObject* actor, bool allow_dead_corpse)
+{
+    for (u32 depth = 0; node && depth < 64; ++depth)
+    {
+        if (node == actor) return true;
+        if (auto* stash = smart_cast<CInventoryBox*>(node)) return stash->can_take();
+        if (auto* corpse = smart_cast<CAI_Stalker*>(node))
+            return allow_dead_corpse && !corpse->g_Alive();
+        if (node->getDestroy()) return false;
+        CObject* parent = node->H_Parent();
+        if (auto* box = smart_cast<CInventoryContainer*>(parent))
+        {
+            if (std::find(box->m_items.begin(), box->m_items.end(), node->ID()) ==
+                box->m_items.end()) return false;
+        }
+        else if (auto* stash = smart_cast<CInventoryBox*>(parent))
+        {
+            if (std::find(stash->m_items.begin(), stash->m_items.end(), node->ID()) ==
+                stash->m_items.end()) return false;
+        }
+        node = parent;
+    }
+    return false;
+}
 }
 
 bool CScriptGameObject::SqaRigTransfer(CScriptGameObject* item_object, CScriptGameObject* rig_object, bool to_rig)
@@ -862,11 +887,15 @@ bool CScriptGameObject::SqaStorageTransfer(CScriptGameObject* item_object, CScri
         item_object->object().getDestroy() || to->getDestroy()) return false;
     auto* source_container = smart_cast<CInventoryContainer*>(from);
     auto* source_stash = smart_cast<CInventoryBox*>(from);
+    auto* source_corpse = smart_cast<CAI_Stalker*>(from);
     auto* target_container = smart_cast<CInventoryContainer*>(to);
     auto* target_stash = smart_cast<CInventoryBox*>(to);
-    if ((!source_container && !source_stash && from != &object()) ||
+    if ((!source_container && !source_stash && !source_corpse && from != &object()) ||
         (!target_container && !target_stash && to != &object()) ||
-        (source_stash && !source_stash->can_take())) return false;
+        (source_stash && !source_stash->can_take()) ||
+        (source_corpse && source_corpse->g_Alive())) return false;
+    if (!sqa_storage_chain_accessible(from, &object(), true) ||
+        !sqa_storage_chain_accessible(to, &object(), false)) return false;
     // A container may be moved as a whole, but never into itself or one of
     // its descendants. Check every live parent link before dispatching SELL.
     CObject* parent = to;
@@ -885,9 +914,11 @@ bool CScriptGameObject::SqaStorageTransfer(CScriptGameObject* item_object, CScri
             source_stash->m_items.end()) return false;
     auto* anchor = source_container ? source_container : target_container;
     auto* anchor_stash = source_stash ? source_stash : target_stash;
-    if (!anchor && !anchor_stash) return false;
-    const u16 anchor_id = anchor ? u16(anchor->ID()) : u16(anchor_stash->ID());
-    const auto token = anchor ? anchor->SqaTransferGeneration() : anchor_stash->SqaTransferGeneration();
+    if (!anchor && !anchor_stash && !source_corpse) return false;
+    const u16 anchor_id = source_corpse ? u16(source_corpse->ID()) :
+        (anchor ? u16(anchor->ID()) : u16(anchor_stash->ID()));
+    const auto token = source_corpse ? source_corpse->SqaOwnerTransferGeneration() :
+        (anchor ? anchor->SqaTransferGeneration() : anchor_stash->SqaTransferGeneration());
     Entry e{u16(item_object->object().ID()), u16(from->ID()), u16(to->ID()), anchor_id,
         item->SqaTransferGeneration(), token, Device.dwTimeGlobal};
     e.destination_token = target_container ? target_container->SqaTransferGeneration() :
@@ -922,6 +953,7 @@ bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
         (corpse && corpse->g_Alive()) || container_object->object().getDestroy() ||
         item_object->object().getDestroy() ||
         item_object->object().H_Parent() != &container_object->object()) return false;
+    if (!sqa_storage_chain_accessible(&container_object->object(), &object(), true)) return false;
     if (container && std::find(container->m_items.begin(), container->m_items.end(),
         item_object->object().ID()) == container->m_items.end()) return false;
     if (stash && std::find(stash->m_items.begin(), stash->m_items.end(),
