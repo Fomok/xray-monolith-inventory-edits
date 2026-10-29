@@ -292,6 +292,25 @@ void CScriptGameObject::IterateInventoryDirect(::luabind::functor<bool> functor,
 	}
 }
 
+static void sqa_collect_nested_ids(CInventoryContainer* box, xr_vector<u16>& ids,
+    xr_vector<u16>& visited, u32 depth = 0)
+{
+    if (!box || depth >= 64 ||
+        std::find(visited.begin(), visited.end(), box->ID()) != visited.end()) return;
+    visited.push_back(box->ID());
+    const xr_vector<u16> children = box->m_items;
+    for (u16 id : children)
+    {
+        CGameObject* child = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
+        if (!child || child->H_Parent() != box ||
+            std::find(visited.begin(), visited.end(), id) != visited.end()) continue;
+        ids.push_back(id);
+        auto* inner = smart_cast<CInventoryContainer*>(child);
+        if (inner) sqa_collect_nested_ids(inner, ids, visited, depth + 1);
+        else visited.push_back(id);
+    }
+}
+
 //1
 void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::luabind::object object)
 {
@@ -308,6 +327,7 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 	// a later item (including a whole box), invalidating inventory pointers.
 	xr_vector<u16> direct_ids;
 	xr_vector<u16> contained_ids;
+	xr_vector<u16> visited;
 	for (PIItem item : inventory.m_all)
 	{
 		if (item->object().H_Parent() != &this->object())
@@ -316,12 +336,7 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 		CInventoryContainer* box = smart_cast<CInventoryContainer*>(item);
 		if (!box)
 			continue;
-		for (u16 id : box->m_items)
-		{
-			CGameObject* child = smart_cast<CGameObject*>(Level().Objects.net_Find(id));
-			if (child && child->H_Parent() == box)
-				contained_ids.push_back(id);
-		}
+		sqa_collect_nested_ids(box, contained_ids, visited);
 	}
 
 	// Keep loose items first, with the same early-stop behavior as before.
@@ -785,8 +800,11 @@ Observation sqa_observe_transfer(const Entry& e)
     state.item_token = item->SqaTransferGeneration();
     state.rig_token = container ? container->SqaTransferGeneration() :
         (stash ? stash->SqaTransferGeneration() : corpse->SqaOwnerTransferGeneration());
-    auto* destination = smart_cast<CInventoryContainer*>(Level().Objects.net_Find(e.to));
-    state.destination_token = destination ? destination->SqaTransferGeneration() : 0;
+    auto* destination_object = Level().Objects.net_Find(e.to);
+    auto* destination = smart_cast<CInventoryContainer*>(destination_object);
+    auto* destination_stash = smart_cast<CInventoryBox*>(destination_object);
+    state.destination_token = destination ? destination->SqaTransferGeneration() :
+        (destination_stash ? destination_stash->SqaTransferGeneration() : 0);
     state.parent = obj->H_Parent() ? u16(obj->H_Parent()->ID()) : inventory_rig_transfer::none;
     return state;
 }
@@ -841,20 +859,39 @@ bool CScriptGameObject::SqaStorageTransfer(CScriptGameObject* item_object, CScri
     auto* from = item_object->object().H_Parent();
     auto* to = &destination->object();
     if (!item || !from || from == to || to == &item_object->object() ||
-        smart_cast<CInventoryContainer*>(&item_object->object()) || to->getDestroy()) return false;
+        item_object->object().getDestroy() || to->getDestroy()) return false;
     auto* source_container = smart_cast<CInventoryContainer*>(from);
     auto* source_stash = smart_cast<CInventoryBox*>(from);
     auto* target_container = smart_cast<CInventoryContainer*>(to);
+    auto* target_stash = smart_cast<CInventoryBox*>(to);
     if ((!source_container && !source_stash && from != &object()) ||
-        (!target_container && to != &object()) ||
+        (!target_container && !target_stash && to != &object()) ||
         (source_stash && !source_stash->can_take())) return false;
-    auto* anchor = source_container ? static_cast<CInventoryItem*>(source_container) :
-        static_cast<CInventoryItem*>(target_container);
-    const u16 anchor_id = source_stash ? u16(source_stash->ID()) : u16(anchor->object().ID());
-    const auto token = source_stash ? source_stash->SqaTransferGeneration() : anchor->SqaTransferGeneration();
+    // A container may be moved as a whole, but never into itself or one of
+    // its descendants. Check every live parent link before dispatching SELL.
+    CObject* parent = to;
+    for (u32 depth = 0; parent && depth < 64; ++depth)
+    {
+        if (parent == &item_object->object()) return false;
+        if (parent == &object() || smart_cast<CInventoryBox*>(parent)) { parent = nullptr; break; }
+        parent = parent->H_Parent();
+    }
+    if (parent) return false;
+    if (source_container &&
+        std::find(source_container->m_items.begin(), source_container->m_items.end(), item_object->object().ID()) ==
+            source_container->m_items.end()) return false;
+    if (source_stash &&
+        std::find(source_stash->m_items.begin(), source_stash->m_items.end(), item_object->object().ID()) ==
+            source_stash->m_items.end()) return false;
+    auto* anchor = source_container ? source_container : target_container;
+    auto* anchor_stash = source_stash ? source_stash : target_stash;
+    if (!anchor && !anchor_stash) return false;
+    const u16 anchor_id = anchor ? u16(anchor->ID()) : u16(anchor_stash->ID());
+    const auto token = anchor ? anchor->SqaTransferGeneration() : anchor_stash->SqaTransferGeneration();
     Entry e{u16(item_object->object().ID()), u16(from->ID()), u16(to->ID()), anchor_id,
         item->SqaTransferGeneration(), token, Device.dwTimeGlobal};
-    e.destination_token = target_container ? target_container->SqaTransferGeneration() : 0;
+    e.destination_token = target_container ? target_container->SqaTransferGeneration() :
+        (target_stash ? target_stash->SqaTransferGeneration() : 0);
     e.storage_ruck = to == &object();
     if (e.storage_ruck && !smart_cast<CActor*>(&object())->inventory().CanTakeItem(item)) return false;
     const auto result = registry->request(e, sqa_observe_transfer(e));
@@ -884,13 +921,27 @@ bool CScriptGameObject::SqaEquipFromContainer(CScriptGameObject* item_object,
     if (!item || (!container && !stash && !corpse) || (stash && !stash->can_take()) ||
         (corpse && corpse->g_Alive()) || container_object->object().getDestroy() ||
         item_object->object().getDestroy() ||
-        smart_cast<CInventoryContainer*>(&item_object->object()) ||
         item_object->object().H_Parent() != &container_object->object()) return false;
+    if (container && std::find(container->m_items.begin(), container->m_items.end(),
+        item_object->object().ID()) == container->m_items.end()) return false;
+    if (stash && std::find(stash->m_items.begin(), stash->m_items.end(),
+        item_object->object().ID()) == stash->m_items.end()) return false;
     auto& inv = actor->inventory();
     if (!inv.SqaValidSlot(slot)) return false;
     auto* old = inv.ItemFromSlot(slot);
     if (!inv.CanTakeItem(item) || !inv.CanPutInSlot(item, slot, old)) return false;
-    if (old && return_to_source && smart_cast<CInventoryContainer*>(&old->object())) return false;
+    if (old && return_to_source)
+    {
+        // Returning an equipped bag into a box inside that same bag would
+        // create an ownership cycle. A normal stash or unrelated box is safe.
+        CObject* parent = &container_object->object();
+        for (u32 depth = 0; parent && depth < 64; ++depth)
+        {
+            if (parent == &old->object()) return false;
+            parent = parent->H_Parent();
+        }
+        if (parent) return false;
+    }
     const u16 actor_id = u16(object().ID()), container_id = u16(container_object->object().ID());
     const auto source_token = container ? container->SqaTransferGeneration() :
         (stash ? stash->SqaTransferGeneration() : corpse->SqaOwnerTransferGeneration());

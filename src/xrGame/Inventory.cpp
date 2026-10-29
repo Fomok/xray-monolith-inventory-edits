@@ -931,21 +931,21 @@ void CInventory::UpdateDropTasks()
 // UpdateDropItem sends the reject that makes CInventoryContainer::OnEvent
 // erase the id from this very vector, which would leave the loop walking
 // a container that changed under it.
+static void amp_collect_container_items(CInventoryContainer* box, xr_vector<u16>& ids,
+	xr_vector<u16>& visited, u32 depth = 0);
+
 void CInventory::AmpUpdateBoxDrops()
 {
+	xr_vector<u16> ids, visited;
 	for (TIItemContainer::iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
 	{
 		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
-		if (!box)
-			continue;
-
-		xr_vector<u16> ids = box->m_items;
-		for (xr_vector<u16>::const_iterator ci = ids.begin(); ids.end() != ci; ++ci)
-		{
-			PIItem child = smart_cast<CInventoryItem*>(Level().Objects.net_Find(*ci));
-			if (child)
-				UpdateDropItem(child);
-		}
+		amp_collect_container_items(box, ids, visited);
+	}
+	for (u16 id : ids)
+	{
+		PIItem child = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
+		if (child && AmpInCarriedBox(child)) UpdateDropItem(child);
 	}
 }
 
@@ -1000,6 +1000,29 @@ PIItem CInventory::SameSlot(const u16 slot, PIItem pIItem, bool bSearchRuck) con
 	return NULL;
 }
 
+// Snapshot physical descendants and verify each parent link. A bounded walk
+// also protects inventory queries if a broken save contains a cycle.
+static void amp_collect_container_items(CInventoryContainer* box, xr_vector<u16>& ids,
+	xr_vector<u16>& visited, u32 depth)
+{
+	if (!box || depth >= 64 ||
+		std::find(visited.begin(), visited.end(), box->ID()) != visited.end()) return;
+	visited.push_back(box->ID());
+	const xr_vector<u16> children = box->m_items;
+	for (u16 id : children)
+	{
+		CObject* object = Level().Objects.net_Find(id);
+		if (!object || object->H_Parent() != box ||
+			std::find(visited.begin(), visited.end(), id) != visited.end()) continue;
+		PIItem item = smart_cast<CInventoryItem*>(object);
+		if (!item) continue;
+		ids.push_back(id);
+		auto* inner = smart_cast<CInventoryContainer*>(object);
+		if (inner) amp_collect_container_items(inner, ids, visited, depth + 1);
+		else visited.push_back(id);
+	}
+}
+
 // AMP: ...AND INSIDE THE CASES YOU ARE CARRYING
 //
 // A carried container owns real objects - see CInventoryContainer - but
@@ -1009,9 +1032,7 @@ PIItem CInventory::SameSlot(const u16 slot, PIItem pIItem, bool bSearchRuck) con
 // a quest hand-in takes nothing and pays anyway, a craft says you are
 // short, a trader cannot see it.
 //
-// ONE LEVEL, which is not a simplification: a container never holds
-// another container (see the V1 constraints in InventoryContainer.h),
-// so one level IS all of them.
+// Nested cases are supported; each physical child link is checked.
 //
 // SECOND, AND ONLY ON FAILURE. Anything loose in the ruck answers
 // first and this costs nothing at all in the ordinary case - which is
@@ -1023,34 +1044,18 @@ PIItem CInventory::SameSlot(const u16 slot, PIItem pIItem, bool bSearchRuck) con
 static PIItem amp_find_in_containers(const TIItemContainer& list, LPCSTR name,
                                      bool need_useful)
 {
+	xr_vector<u16> ids, visited;
 	for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
 	{
 		CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
-		if (!box)
-			continue;
-
-		for (xr_vector<u16>::const_iterator ci = box->m_items.begin();
-		     box->m_items.end() != ci; ++ci)
-		{
-			CObject* O = Level().Objects.net_Find(*ci);
-			if (!O)
-				continue;
-
-			// NOT smart_cast<CInventoryItem*>(O). A CObject is not an
-			// item; the item is its inventory_item interface, and that
-			// is what every caller of this function expects back.
-			PIItem child = smart_cast<CInventoryItem*>(O);
-			if (!child)
-				continue;
-
-			if (xr_strcmp(child->object().cNameSect(), name))
-				continue;
-
-			if (need_useful && !child->Useful())
-				continue;
-
-			return child;
-		}
+		amp_collect_container_items(box, ids, visited);
+	}
+	for (u16 id : ids)
+	{
+		CObject* object = Level().Objects.net_Find(id);
+		PIItem child = smart_cast<CInventoryItem*>(object);
+		if (child && !xr_strcmp(child->object().cNameSect(), name) &&
+			(!need_useful || child->Useful())) return child;
 	}
 	return NULL;
 }
@@ -1061,11 +1066,17 @@ bool CInventory::AmpInCarriedBox(const CInventoryItem* item) const
 {
 	if (!item)
 		return false;
-	CInventoryContainer* box = smart_cast<CInventoryContainer*>(item->object().H_Parent());
-	if (!box || box->H_Parent() != m_pOwner->cast_game_object())
-		return false;
-	if (std::find(box->m_items.begin(), box->m_items.end(), item->object().ID()) == box->m_items.end())
-		return false;
+	const CObject* child = &item->object();
+	CInventoryContainer* box = smart_cast<CInventoryContainer*>(child->H_Parent());
+	for (u32 depth = 0; box && depth < 64; ++depth)
+	{
+		if (std::find(box->m_items.begin(), box->m_items.end(), child->ID()) == box->m_items.end())
+			return false;
+		if (box->H_Parent() == m_pOwner->cast_game_object()) break;
+		child = box;
+		box = smart_cast<CInventoryContainer*>(box->H_Parent());
+	}
+	if (!box || box->H_Parent() != m_pOwner->cast_game_object()) return false;
 	for (PIItem carried : m_all)
 		if (carried->object().ID() == box->ID())
 			return true;
@@ -1621,23 +1632,18 @@ void CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_tr
 	// ============================================================
 	if (!for_trade)
 	{
+		xr_vector<u16> ids, visited;
 		for (TIItemContainer::const_iterator it = m_all.begin(); m_all.end() != it; ++it)
 		{
 			CInventoryContainer* box = smart_cast<CInventoryContainer*>(*it);
 			if (!box || box->H_Parent() != m_pOwner->cast_game_object())
 				continue;
-
-			for (xr_vector<u16>::const_iterator ci = box->m_items.begin();
-			     box->m_items.end() != ci; ++ci)
-			{
-				CObject* O = Level().Objects.net_Find(*ci);
-				if (!O || O->H_Parent() != box)
-					continue;
-
-				PIItem child = smart_cast<CInventoryItem*>(O);
-				if (child)
-					items_container.push_back(child);
-			}
+			amp_collect_container_items(box, ids, visited);
+		}
+		for (u16 id : ids)
+		{
+			PIItem child = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
+			if (child && AmpInCarriedBox(child)) items_container.push_back(child);
 		}
 	}
 }

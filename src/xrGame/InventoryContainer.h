@@ -12,12 +12,10 @@
 // new against the box is only what "carryable" adds: this class IS an
 // inventory item, and its Weight() answers for everything inside it.
 //
-// V1 CONSTRAINTS (enforced by the mod's scripts, documented here):
-//   * a container belongs to the actor or lies on the ground - it is
-//     never given to an NPC (the NPC offline path walks children one
-//     level deep and would strand the contents);
-//   * a container never holds another container (the switch overrides
-//     recurse one level, matching that rule).
+// Portable containers may own other portable containers. The standard
+// ownership and ALife switch paths preserve their complete child trees;
+// SqaStorageTransfer prevents cycles before sending ownership events.
+// NPC ownership remains unsupported by the public mod's transfer UI.
 ////////////////////////////////////////////////////////////////////////////
 #pragma once
 #include "inventory_item_object.h"
@@ -48,10 +46,8 @@ public:
 	virtual CGameObject* cast_game_object() { return this; }
 
 private:
-	// CInventory::CalcTotalWeight is only re-run when the OWNER's
-	// inventory changes shape. Putting something into a container does
-	// not change the owner's inventory shape, so the total would go
-	// stale until the next take or drop - this pokes it awake.
+	// An inner container has no inventory pointer; walk through enclosing
+	// containers to invalidate the carrying actor's total weight.
 	void RecalcOwnerWeight();
 
 	DECLARE_SCRIPT_REGISTER_FUNCTION

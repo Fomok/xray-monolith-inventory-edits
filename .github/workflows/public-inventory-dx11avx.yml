@@ -1,0 +1,88 @@
+name: Public inventory DX11 AVX diagnostic
+
+on:
+  push:
+    branches: [inventory-public-layouts-nesting]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gamedata:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pack matching gamedata
+        working-directory: compressor
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path ./gamedata | Out-Null
+          Copy-Item -Path ../gamedata/* -Destination ./gamedata -Recurse -Force
+          $packer = Start-Process -FilePath './! compress_gamedata.cmd' -WindowStyle Hidden -Wait -PassThru
+          if ($packer.ExitCode -ne 0) { throw "gamedata packing failed: $($packer.ExitCode)" }
+          if (!(Test-Path -LiteralPath ./gamedata.db0 -PathType Leaf)) { throw 'gamedata.db0 was not produced' }
+          New-Item -ItemType Directory -Force -Path ../stage/db/mods | Out-Null
+          Copy-Item -LiteralPath ./gamedata.db0 -Destination ../stage/db/mods/00_modded_exes_gamedata.db0
+      - uses: actions/upload-artifact@v4.6.0
+        with:
+          name: public-inventory-gamedata
+          path: ./stage/
+          if-no-files-found: error
+          retention-days: 7
+
+  build:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: al-cheb/configure-pagefile-action@v1.3
+        with:
+          minimum-size: 8GB
+          maximum-size: 8GB
+          disk-root: C:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: microsoft/setup-msbuild@v1.3.1
+        with:
+          msbuild-architecture: x64
+      - name: Build DX11 AVX
+        run: |
+          msbuild /p:Configuration=DX11-AVX /p:Platform=x64 src/engine-vs2022.sln
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Stage executable and symbols
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path ./stage/bin | Out-Null
+          foreach ($ext in @('exe', 'pdb')) {
+            $source = "./_build/_game/bin_dbg/AnomalyDX11AVX.$ext"
+            if (!(Test-Path -LiteralPath $source -PathType Leaf)) { throw "Missing $source" }
+            Copy-Item -LiteralPath $source -Destination ./stage/bin/
+          }
+      - uses: actions/upload-artifact@v4.6.0
+        with:
+          name: public-inventory-dx11avx-bin
+          path: ./stage/
+          if-no-files-found: error
+          retention-days: 7
+
+  package:
+    needs: [gamedata, build]
+    runs-on: windows-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: public-inventory-*
+          merge-multiple: true
+          path: ./package
+      - uses: actions/upload-artifact@v4.6.0
+        with:
+          name: Squared-Away-Public-Inventory-DX11-AVX
+          path: ./package/
+          if-no-files-found: error
+          retention-days: 14

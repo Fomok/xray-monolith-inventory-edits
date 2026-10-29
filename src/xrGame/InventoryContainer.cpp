@@ -120,13 +120,19 @@ float CInventoryContainer::Weight() const
 
 void CInventoryContainer::RecalcOwnerWeight()
 {
-	// m_pInventory is set while this item sits in someone's inventory
-	// (the actor's, per the V1 constraint) and null on the ground,
-	// where nobody is carrying the weight anyway.
-	if (m_pInventory)
+	// A nested container has no inventory pointer of its own. Walk to the
+	// carried outer container so an inner item's weight is reflected once.
+	CInventoryContainer* current = this;
+	for (u32 depth = 0; current && depth < 64; ++depth)
 	{
-		m_pInventory->InvalidateState();
-		m_pInventory->CalcTotalWeight();
+		if (current->m_pInventory)
+		{
+			current->m_pInventory->InvalidateState();
+			current->m_pInventory->CalcTotalWeight();
+			return;
+		}
+		CObject* parent = current->H_Parent();
+		current = parent ? smart_cast<CInventoryContainer*>(parent) : nullptr;
 	}
 }
 
