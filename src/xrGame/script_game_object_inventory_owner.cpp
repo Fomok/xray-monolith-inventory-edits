@@ -327,7 +327,7 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 	// a later item (including a whole box), invalidating inventory pointers.
 	xr_vector<u16> direct_ids;
 	xr_vector<u16> contained_ids;
-	xr_vector<u16> visited;
+	xr_vector<u16> traversed_containers;
 	for (PIItem item : inventory.m_all)
 	{
 		if (item->object().H_Parent() != &this->object())
@@ -336,7 +336,7 @@ void CScriptGameObject::IterateInventory(::luabind::functor<bool> functor, ::lua
 		CInventoryContainer* box = smart_cast<CInventoryContainer*>(item);
 		if (!box)
 			continue;
-		sqa_collect_nested_ids(box, contained_ids, visited);
+		sqa_collect_nested_ids(box, contained_ids, traversed_containers);
 	}
 
 	// Keep loose items first, with the same early-stop behavior as before.
