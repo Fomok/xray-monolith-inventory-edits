@@ -450,6 +450,7 @@ public:
     bool SqaRigTransfer(CScriptGameObject* item, CScriptGameObject* rig, bool to_rig);
     bool SqaStorageTransfer(CScriptGameObject* item, CScriptGameObject* destination);
     bool SqaEquipFromContainer(CScriptGameObject* item, CScriptGameObject* container, u16 slot, bool return_to_source);
+    u32 SqaNestedStorageVersion() const { return 1; }
     bool SqaRigTransferPending(u16 id);
     bool SqaRigTransferRigPending(u16 id);
     u32 SqaRigTransferCount();

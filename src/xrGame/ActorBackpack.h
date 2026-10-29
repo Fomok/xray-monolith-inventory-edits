@@ -1,11 +1,14 @@
 #pragma once
 
-#include "inventory_item_object.h"
+#include "InventoryContainer.h"
 
-class CBackpack : public CInventoryItemObject
+// The normal II_BPACK item keeps its slot/upgrade behavior while gaining
+// native child ownership. A bag's contents can then travel with that exact
+// backpack object after it is unequipped or moved into a stash.
+class CBackpack : public CInventoryContainer
 {
 private:
-	typedef CInventoryItemObject inherited;
+	typedef CInventoryContainer inherited;
 public:
 	CBackpack();
 	virtual ~CBackpack();
