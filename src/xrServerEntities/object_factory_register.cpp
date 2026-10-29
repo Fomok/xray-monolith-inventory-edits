@@ -359,7 +359,10 @@ void CObjectFactory::register_classes()
 	ADD(CMilitaryOutfit, CSE_ALifeItemCustomOutfit, CLSID_EQUIPMENT_MILITARY, "equ_military");
 	ADD(CExoOutfit, CSE_ALifeItemCustomOutfit, CLSID_EQUIPMENT_EXO, "equ_exo");
 	ADD(CHelmet, CSE_ALifeItem, CLSID_EQUIPMENT_HELMET, "helmet");
-	ADD(CBackpack, CSE_ALifeItem, CLSID_EQUIPMENT_BACKPACK, "equ_backpack");
+	// The client backpack now owns real children. The container server class
+	// has identical item packet fields and restores those children when a
+	// dropped backpack or its parent switches online/offline.
+	ADD(CBackpack, CSE_ALifeItemContainer, CLSID_EQUIPMENT_BACKPACK, "equ_backpack");
 
 	// Grenades
 	ADD(CF1, CSE_ALifeItemGrenade, CLSID_GRENADE_F1, "wpn_grenade_f1");
