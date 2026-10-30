@@ -17,7 +17,10 @@ bool read(const char*,bool fallback){return settings.enabled;}
 int read(const char*,int fallback){return settings.slot;}
 #define READ_IF_EXISTS(settings,method,section,key,fallback) read(key,fallback)
 struct Packet {u16 value;u16 r_u16(){return value;}};
-struct Item {SInvItemPlace m_ItemCurrPlace;void load(Packet& packet){LOAD}};
+int SqaConfiguredEquipmentSlot(const char*){return -1;}
+struct Section {const char* c_str(){return "legacy";}};
+struct Object {Section cNameSect(){return {};}};
+struct Item {Object object(){return {};} SInvItemPlace m_ItemCurrPlace;void load(Packet& packet){LOAD}};
 '''.replace('PLACE',place).replace('LOAD',load)
 main=r'''
 int main(){
@@ -50,6 +53,6 @@ with tempfile.TemporaryDirectory() as tmp:
  tmp=Path(tmp)
  for label,code,success in [('baseline',head.replace(load,'m_ItemCurrPlace.value=packet.r_u16();'),False),('preview9',head.replace('if (m_ItemCurrPlace.type == eItemPlaceSlot)', 'if (m_ItemCurrPlace.type == eItemPlaceSlot && m_ItemCurrPlace.slot_id == m_ItemCurrPlace.base_slot_id)'),False),('fixed',head,True)]:
   cpp=tmp/(label+'.cpp');exe=tmp/(label+'.exe');cpp.write_text(code+main)
-  build=subprocess.run([args.compiler,'c++','-std=c++17',str(cpp),'-o',str(exe)],capture_output=True,text=True);assert build.returncode==0,build.stderr
+  build=subprocess.run([args.compiler]+(['c++'] if Path(args.compiler).stem=='zig' else [])+['-std=c++17',str(cpp),'-o',str(exe)],capture_output=True,text=True);assert build.returncode==0,build.stderr
   run=subprocess.run([str(exe)],capture_output=True,text=True);assert (run.returncode==0)==success,(label,run.stderr)
   print(run.stdout.strip() if success else 'PASS: '+label+' migration failure reproduced')

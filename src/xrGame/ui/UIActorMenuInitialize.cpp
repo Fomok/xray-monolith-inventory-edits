@@ -162,7 +162,7 @@ void CUIActorMenu::Construct()
 	m_exit_button = UIHelper::Create3tButton(uiXml, "exit_button", this);
 
 	//Alun: Dynamic UI slots bro
-	for (u8 i = 0; i <= LAST_SLOT; ++i)
+	for (u8 i = 0; i < 64; ++i)
 	{
 		m_pInvList[i] = NULL;
 		m_pInvSlotHighlight[i] = NULL;
@@ -173,7 +173,7 @@ void CUIActorMenu::Construct()
 	XML_NODE* node = uiXml.NavigateToNode("inventory_slot_wnd", 0);
 	uiXml.SetLocalRoot(node);
 
-	m_slot_count = (u8)uiXml.GetNodesNum(node, "slot");
+	m_slot_count = (u8)_min(uiXml.GetNodesNum(node, "slot"), 63);
 	for (u8 i = 1; i <= m_slot_count; ++i)
 	{
 		uiXml.SetLocalRoot(node);

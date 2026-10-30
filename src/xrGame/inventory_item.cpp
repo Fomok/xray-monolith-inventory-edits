@@ -119,7 +119,8 @@ void CInventoryItem::Load(LPCSTR section)
 
 	m_cost = pSettings->r_u32(section, "cost");
 	u32 sl = pSettings->r_u32(section, "slot");
-	m_ItemCurrPlace.base_slot_id = (sl == -1) ? 0 : (sl + 1);
+	const int role_slot = SqaConfiguredEquipmentSlot(section);
+	m_ItemCurrPlace.base_slot_id = role_slot >= 0 ? role_slot : ((sl == -1) ? 0 : (sl + 1));
 
 	m_Description = CStringTable().translate(pSettings->r_string(section, "description"));
 
@@ -786,9 +787,20 @@ void CInventoryItem::load(IReader& packet)
 {
 	m_ItemCurrPlace.value = packet.r_u16();
 
+    // Role identity survives changes to the configured numeric slot range.
+    const int role_slot = SqaConfiguredEquipmentSlot(object().cNameSect().c_str());
+    if (role_slot >= 0)
+    {
+        m_ItemCurrPlace.base_slot_id = role_slot;
+        if (m_ItemCurrPlace.type == eItemPlaceSlot)
+        {
+            m_ItemCurrPlace.slot_id = role_slot;
+            if (!role_slot) m_ItemCurrPlace.type = eItemPlaceRuck;
+        }
+    }
 	// Opt-in migration for equipment whose configured slot changed between saves.
 	// Apply before ownership restoration and first-update script cleanup.
-	if (READ_IF_EXISTS(pSettings, r_bool, object().cNameSect(), "restore_slot_from_config", false))
+	if (role_slot < 0 && READ_IF_EXISTS(pSettings, r_bool, object().cNameSect(), "restore_slot_from_config", false))
 	{
 		const int configured_slot = READ_IF_EXISTS(pSettings, r_s32, object().cNameSect(), "slot", -1) + 1;
 		if (configured_slot > 0 && configured_slot < 64)

@@ -999,7 +999,7 @@ CUIDragDropListEx* CUIActorMenu::GetSlotList(u16 slot_idx)
 		return NULL;
 	}
 
-	if (m_pInvList[slot_idx])
+	if (slot_idx < 64 && m_pInvList[slot_idx])
 		return m_pInvList[slot_idx];
 
 	if (m_currMenuMode == mmTrade)

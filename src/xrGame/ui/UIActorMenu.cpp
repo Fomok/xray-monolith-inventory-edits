@@ -546,7 +546,7 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 		}
 	}
 
-	if (m_pInvSlotHighlight[slot_id])
+	if (slot_id < 64 && m_pInvSlotHighlight[slot_id])
 	{
 		m_pInvSlotHighlight[slot_id]->Show(true);
 		return;

@@ -42,6 +42,52 @@ u16 INV_STATE_BLOCK_ALL = 0xffff;
 u16 INV_STATE_INV_WND = INV_STATE_BLOCK_ALL;
 u16 INV_STATE_BUY_MENU = INV_STATE_BLOCK_ALL;
 
+namespace
+{
+struct SqaSlotRegistry
+{
+    unsigned legacyLast = 0;
+    std::vector<std::string> names;
+    SqaSlotRegistry()
+    {
+        string64 persistent, active;
+        for (unsigned slot = 1; slot < SqaEquipmentSlots::Limit; ++slot)
+        {
+            xr_sprintf(persistent, "slot_persistent_%u", slot);
+            xr_sprintf(active, "slot_active_%u", slot);
+            if (!pSettings->line_exist("inventory", persistent) || !pSettings->line_exist("inventory", active)) break;
+            legacyLast = slot;
+        }
+        if (pSettings->section_exist("sqa_equipment_slots"))
+        {
+            LPCSTR key, value;
+            for (u32 i = 0; pSettings->r_line("sqa_equipment_slots", i, &key, &value); ++i)
+                if (pSettings->r_bool("sqa_equipment_slots", key)) names.emplace_back(key);
+        }
+        names = SqaEquipmentSlots::Allocate(legacyLast, names);
+    }
+};
+const SqaSlotRegistry& SqaSlots()
+{
+    static const SqaSlotRegistry registry;
+    return registry;
+}
+bool SqaSlotAccepts(PIItem item, u16 slot)
+{
+    const int roleSlot = SqaConfiguredEquipmentSlot(item->object().cNameSect().c_str());
+    return roleSlot >= 0 ? roleSlot != 0 && slot == roleSlot : slot <= SqaSlots().legacyLast;
+}
+}
+u16 SqaEquipmentSlot(LPCSTR role)
+{
+    return (u16)SqaEquipmentSlots::Resolve(SqaSlots().legacyLast, SqaSlots().names, role);
+}
+int SqaConfiguredEquipmentSlot(LPCSTR section)
+{
+    if (!pSettings->line_exist(section, "sqa_equipment_slot")) return -1;
+    return SqaEquipmentSlot(pSettings->r_string(section, "sqa_equipment_slot"));
+}
+
 CInventorySlot::CInventorySlot()
 {
 	m_pIItem = NULL;
@@ -71,8 +117,10 @@ CInventory::CInventory()
 	xr_strcpy(slot_persistent, "slot_persistent_1");
 	xr_strcpy(slot_active, "slot_active_1");
 
+	m_last_slot = 0;
+	m_slots.resize(1);
 	u16 k = 1;
-	while (pSettings->line_exist("inventory", slot_persistent) && pSettings->line_exist("inventory", slot_active))
+	while (k < SqaEquipmentSlots::Limit && pSettings->line_exist("inventory", slot_persistent) && pSettings->line_exist("inventory", slot_active))
 	{
 		m_last_slot = k;
 
@@ -87,6 +135,16 @@ CInventory::CInventory()
 		xr_sprintf(slot_active, "%s%d", "slot_active_", k);
 	}
 
+    // Named equipment slots are passive and never take a HUD activation slot.
+    const unsigned last = SqaSlots().legacyLast + unsigned(SqaSlots().names.size());
+    m_slots.resize(last + 1);
+    for (unsigned slot = k; slot <= last; ++slot)
+    {
+        m_slots[slot].m_bAct = false;
+        m_slots[slot].m_bPersistent = false;
+    }
+    m_last_slot = (u16)last;
+    k = (u16)last + 1;
 	m_blocked_slots.resize(k + 1);
 
 	for (u16 i = 0; i <= k; ++i)
@@ -349,7 +407,7 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 {
 	VERIFY(pIItem);
 
-	if (slot_id == NO_ACTIVE_SLOT || ItemFromSlot(slot_id) == pIItem)
+	if (!pIItem || !SqaValidSlot(slot_id) || !SqaSlotAccepts(pIItem, slot_id) || ItemFromSlot(slot_id) == pIItem)
 		return false;
 
 	if (!IsGameTypeSingle())
@@ -366,16 +424,10 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 
 	//.	Msg("To Slot %s[%d]", *pIItem->object().cName(), pIItem->object().ID());
 
-	if (!strict_placement && !CanPutInSlot(pIItem, slot_id))
+	if ((!strict_placement || slot_id > SqaSlots().legacyLast) && !CanPutInSlot(pIItem, slot_id))
 	{
 #ifdef _DEBUG
-		Msg("there is item %s[%d,%x] in slot %d[%d,%x]", 
-				ItemFromSlot(pIItem->GetSlot())->object().cName().c_str(), 
-				ItemFromSlot(pIItem->GetSlot())->object().ID(), 
-				ItemFromSlot(pIItem->GetSlot()), 
-				pIItem->GetSlot(), 
-				pIItem->object().ID(),
-				pIItem);
+		Msg("[inventory-slot] refused item %u into slot %u", (unsigned)pIItem->object().ID(), (unsigned)slot_id);
 #endif
 		//.		if(m_slots[pIItem->GetSlot()].m_pIItem == pIItem && !bNotActivate )
 		//.			Activate(pIItem->GetSlot());
@@ -1396,7 +1448,7 @@ bool CInventory::InRuck(const CInventoryItem* pIItem) const
 
 bool CInventory::CanPutInSlot(PIItem pIItem, u16 slot_id, PIItem replacing) const
 {
-    if (!pIItem || !SqaValidSlot(slot_id)) return false;
+    if (!pIItem || !SqaValidSlot(slot_id) || !SqaSlotAccepts(pIItem, slot_id)) return false;
 	if (!m_bSlotsUseful) return false;
 
 	if (!GetOwner()->CanPutInSlot(pIItem, slot_id)) return false;
@@ -1693,7 +1745,7 @@ void CInventory::SetSlotsBlocked(u16 mask, bool bBlock)
 
 	for (u16 i = FirstSlot(), ie = LastSlot(); i <= ie; ++i)
 	{
-		if (mask & (1 << i))
+		if (i < 16 && (mask & (1u << i)))
 		{
 			if (bBlock)
 				BlockSlot(i);

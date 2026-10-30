@@ -1,5 +1,9 @@
 #pragma once
 #include "inventory_item.h"
+#include "SqaEquipmentSlots.h"
+
+u16 SqaEquipmentSlot(LPCSTR role);
+int SqaConfiguredEquipmentSlot(LPCSTR section);
 
 class CInventory;
 class CInventoryItem;

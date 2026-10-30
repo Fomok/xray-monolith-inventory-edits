@@ -3470,3 +3470,8 @@ LPCSTR CScriptGameObject::GetActorDefaultActionForObject()
 
 #endif
 //Alundaio: END
+
+u32 CScriptGameObject::SqaEquipmentSlot(LPCSTR role) const
+{
+    return ::SqaEquipmentSlot(role);
+}

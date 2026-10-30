@@ -451,6 +451,8 @@ public:
     bool SqaStorageTransfer(CScriptGameObject* item, CScriptGameObject* destination);
     bool SqaEquipFromContainer(CScriptGameObject* item, CScriptGameObject* container, u16 slot, bool return_to_source);
     u32 SqaNestedStorageVersion() const { return 1; }
+    u32 SqaEquipmentSlotsVersion() const { return 1; }
+    u32 SqaEquipmentSlot(LPCSTR role) const;
     bool SqaRigTransferPending(u16 id);
     bool SqaRigTransferRigPending(u16 id);
     u32 SqaRigTransferCount();

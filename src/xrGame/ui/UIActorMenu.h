@@ -118,9 +118,9 @@ protected:
 	CUIStatic* m_BackpackOver;
 
 	u8 m_slot_count;
-	CUIStatic* m_pInvSlotHighlight[LAST_SLOT + 1];
-	CUIProgressBar* m_pInvSlotProgress[LAST_SLOT + 1];
-	CUIDragDropListEx* m_pInvList[LAST_SLOT + 1];
+	CUIStatic* m_pInvSlotHighlight[64];
+	CUIProgressBar* m_pInvSlotProgress[64];
+	CUIDragDropListEx* m_pInvList[64];
 
 	CUIStatic* m_QuickSlotsHighlight[4];
 	CUIStatic* m_ArtefactSlotsHighlight[e_af_count];
